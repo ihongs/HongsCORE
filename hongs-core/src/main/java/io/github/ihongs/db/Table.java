@@ -37,12 +37,11 @@ import java.util.Set;
  * 0x1082 配置不能为空
  * 0x1083 缺少表名
  *
- * 0x1089 不能为空
- * 0x108a 精度超出
- * 0x108b 小数位超出
- * 0x108c 不是浮点数值
- * 0x108d 不是整型数值
- * 0x108e 不能为负值
+ * 0x108a 不能为空
+ * 0x108b 字符串超长
+ * 0x108c 小数位超出
+ * 0x108d 不是数值类型
+ * 0x108e 不可以为负值
  * 0x108f 无法识别的日期或时间格式
  * </pre>
  *
@@ -859,17 +858,17 @@ public class Table
 
   private HongsException nullException(String name) {
     String error = "Value for column '"+name+"' can not be NULL";
-    return valiException(0x1089, error, name);
+    return valiException(0x108a, error, name);
   }
 
   private HongsException sizeException(String name, String value, int size) {
     String error = "Value for column '"+name+"'("+value+") must be a less than "+size;
-    return valiException(0x108a, error, name, value, String.valueOf(size));
+    return valiException(0x108b, error, name, value, String.valueOf(size));
   }
 
   private HongsException scleException(String name, String value, int scle) {
     String error = "Scale for column '"+name+"'("+value+") must be a less than "+scle;
-    return valiException(0x108b, error, name, value, String.valueOf(scle));
+    return valiException(0x108c, error, name, value, String.valueOf(scle));
   }
 
   private HongsException numeException(String name, String value) {

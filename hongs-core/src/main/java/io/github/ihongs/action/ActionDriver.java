@@ -297,6 +297,13 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                 agt.doDriver ( core, hlpr);
                 doCommit(core, hlpr, req, rsq );
             } catch (IOException ex) {
+                // 忽略客户端中途断开
+                Throwable cx = ex.getCause();
+                if (cx != null && cx.getClass().getSimpleName().equalsIgnoreCase("EofException")
+                && ( 0 == Core.DEBUG || 4 == ( 4 & Core.DEBUG ) || 8 == ( 8 & Core.DEBUG ) ) ) {
+                    return;
+                }
+
                 CoreLogger.error(ex);
             } catch (ServletException ex ) {
                 CoreLogger.error(ex);

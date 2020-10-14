@@ -87,7 +87,6 @@ public class AuthFilter
    */
   private final Pattern IS_HTML = Pattern.compile( "text/(html|plain)" );
   private final Pattern IS_JSON = Pattern.compile("(text|application)/(x-)?(json|javascript)");
-  private final Pattern IS_AJAX = Pattern.compile("(AJAX|XMLHTTP)" , Pattern.CASE_INSENSITIVE);
 
   @Override
   public void init(FilterConfig config)
@@ -410,7 +409,7 @@ public class AuthFilter
           return  true ; // 使用 iframe 提交通过此参数标识.
       }
       String x  = req.getHeader("X-Requested-With");
-      return x == null ? false : IS_AJAX.matcher(x).find();
+      return x != null && x.length() != 0;
   }
 
   private boolean isHtml(HttpServletRequest req) {

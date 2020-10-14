@@ -78,13 +78,16 @@ public class AuthFilter
   private PasserHelper ignore = null;
 
   /**
+   * 去主机名正则
+   */
+  private final Pattern RM_HOST = Pattern.compile("^\\w+://([^/;?#]+)");
+
+  /**
    * 环境检测正则
    */
-  private final Pattern IS_HTML = Pattern.compile( "text/(html|plain)" );
+  private final Pattern IS_HTML = Pattern.compile( "text/(html|plain)");
   private final Pattern IS_JSON = Pattern.compile("(text|application)/(x-)?(json|javascript)");
   private final Pattern IS_AJAX = Pattern.compile("(AJAX|XMLHTTP)" , Pattern.CASE_INSENSITIVE);
-
-  private final Pattern RM_HOST = Pattern.compile("^\\w+://[^/]+" ); // 去除路径上的域名端口等.
 
   @Override
   public void init(FilterConfig config)
@@ -311,22 +314,25 @@ public class AuthFilter
              */
 
             String src = null;
-            String qry ;
+            String oth ;
 
             if (isAjax(req)) {
                 src =  req.getHeader("Referer");
-                if (src != null && src.length() != 0) {
+                oth =  req.getHeader("Host"   );
+                if (src != null && src.length() != 0
+                &&  oth != null && oth.length() != 0 ) {
                     Matcher mat = RM_HOST.matcher(src);
-                    if (mat.find()) {
+                    if (mat.find ( )
+                    &&  mat.group(1).equals(oth) ) {
                         src = src.substring(mat.end());
                     }
                 }
             } else
             if (isHtml(req)) {
                 src =  req.getRequestURI( );
-                qry =  req.getQueryString();
-                if (qry != null && qry.length() != 0) {
-                    src += "?"  +  qry;
+                oth =  req.getQueryString();
+                if (oth != null && oth.length() != 0 ) {
+                    src += "?"  +  oth;
                 }
             }
 

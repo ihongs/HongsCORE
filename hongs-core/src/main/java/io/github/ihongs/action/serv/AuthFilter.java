@@ -351,7 +351,7 @@ public class AuthFilter
         }
     }
 
-    if (isApi(req) || isAjax(req) || isJson(req) || isJsop(req)) {
+    if (isAjax(req) || isJson(req) || isJsop(req)) {
         Map rep = new HashMap();
         rep.put( "ok"  , false);
         rep.put( "msg" ,  msg );
@@ -405,12 +405,6 @@ public class AuthFilter
     }
   }
 
-  private boolean isApi (HttpServletRequest req) {
-      String act = ActionDriver.getOriginPath(req);
-      return act.endsWith(Cnst.API_EXT)
-          || act.startsWith( "/api/"  );
-  }
-
   private boolean isAjax(HttpServletRequest req) {
       if (Synt.declare(req.getParameter(".ajax") , false)) {
           return  true ; // 使用 iframe 提交通过此参数标识.
@@ -419,23 +413,25 @@ public class AuthFilter
       return x == null ? false : IS_AJAX.matcher(x).find();
   }
 
-  private boolean isJson(HttpServletRequest req) {
-      String a  = req.getHeader("Accept");
-      return a == null ? false : IS_JSON.matcher(a).find();
-  }
-
   private boolean isHtml(HttpServletRequest req) {
       String a  = req.getHeader("Accept");
       return a == null ? false : IS_HTML.matcher(a).find();
   }
 
+  private boolean isJson(HttpServletRequest req) {
+      String a  = req.getHeader("Accept");
+      return a == null ? false : IS_JSON.matcher(a).find();
+  }
+
   private boolean isJsop(HttpServletRequest req) {
-      String c = CoreConfig.getInstance().getProperty("core.callback", "callback");
+      String c = Cnst.CB_KEY ;
       c = req.getParameter(c);
       if (c != null && c.length() != 0) {
           return true;
       }
-      c = Cnst.CB_KEY;
+      c = CoreConfig
+          .getInstance()
+          .getProperty("core.callback", "callback");
       c = req.getParameter(c);
       if (c != null && c.length() != 0) {
           return true;

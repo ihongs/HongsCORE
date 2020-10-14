@@ -409,7 +409,7 @@ public class AuthFilter
           return  true ; // 使用 iframe 提交通过此参数标识.
       }
       String x  = req.getHeader("X-Requested-With");
-      return x != null && x.length() != 0;
+      return x != null && 0 != x.length();
   }
 
   private boolean isHtml(HttpServletRequest req) {

@@ -80,12 +80,12 @@ public class AuthFilter
   /**
    * 去主机名正则
    */
-  private final Pattern RM_HOST = Pattern.compile("^\\w+://([^/;?#]+)");
+  private final Pattern RM_HOST = Pattern.compile("^\\w+://([^/]+)" );
 
   /**
    * 环境检测正则
    */
-  private final Pattern IS_HTML = Pattern.compile( "text/(html|plain)");
+  private final Pattern IS_HTML = Pattern.compile( "text/(html|plain)" );
   private final Pattern IS_JSON = Pattern.compile("(text|application)/(x-)?(json|javascript)");
   private final Pattern IS_AJAX = Pattern.compile("(AJAX|XMLHTTP)" , Pattern.CASE_INSENSITIVE);
 

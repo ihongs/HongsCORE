@@ -368,7 +368,7 @@ public class AuthFilter
     } else {
         /**
          * 如果从收藏或历史打开一个页面
-         * 而此区域兵没有提供跳转的路径
+         * 而此区域并没有提供跳转的路径
          * 则从全局错误跳转构建响应代码
          */
         if (uri == null || uri.length() == 0) {

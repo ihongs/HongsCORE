@@ -39,7 +39,7 @@ public class XsymFilter extends ActionDriver {
     private PasserHelper ignoreRefs = null;
     private byte level = 0;
 
-    private static final Pattern REF_PAT = Pattern.compile("^\\w+://([^/;?#]+)(.*)");
+    private static final Pattern REF_PAT = Pattern.compile("^\\w+://([^/]+)(.*)");
 
     @Override
     public void init(FilterConfig config)

@@ -114,9 +114,9 @@ public class FormSet
 
     lock.lockr();
     try {
-      if (serFile.exists()
-      && !expired( name )) {
+      if (!expired(name)) {
           load( serFile );
+          return;
       }
     } finally {
       lock.unlockr();
@@ -133,10 +133,10 @@ public class FormSet
 
   @Override
   public long lastModified() {
-      File serFile = new File(Core.DATA_PATH
+    File serFile = new File(Core.DATA_PATH
                  + File.separator + "serial"
                  + File.separator + name + Cnst.FORM_EXT + ".ser");
-      return serFile.exists() ? serFile.lastModified() : -1L;
+    return serFile.exists( ) ? serFile.lastModified( ) : 0L ;
   }
 
   protected boolean expired(String namz)
@@ -144,9 +144,14 @@ public class FormSet
     File serFile = new File(Core.DATA_PATH
                  + File.separator + "serial"
                  + File.separator + namz + Cnst.FORM_EXT + ".ser");
+    if (!serFile.exists())
+    {
+      return true;
+    }
+
     File xmlFile = new File(Core.CONF_PATH
                  + File.separator + namz + Cnst.FORM_EXT + ".xml");
-    if ( xmlFile.exists() )
+    if ( xmlFile.exists())
     {
       return xmlFile.lastModified() > serFile.lastModified();
     }

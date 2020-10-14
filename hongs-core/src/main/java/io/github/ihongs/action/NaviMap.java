@@ -148,16 +148,18 @@ public class NaviMap
 
     lock.lockr();
     try {
-      if (serFile.exists()
-      && !expired( name )) {
+      if (!expired(name)) {
           load( serFile );
-          // 子菜单有过期则重新导入全部数据
-          R : {
-              for( String namz : imports) {
-              if (expired(namz)) {
-                  break R;
-              }}
-              return;
+          /**
+           * 逐一检查导入的配置
+           * 任一过期则重新导入
+           */
+          R: {
+          for( String namz : imports)
+          if (expired(namz)) {
+            break R ;
+          }
+            return  ;
           }
       }
     } finally {
@@ -175,10 +177,10 @@ public class NaviMap
 
   @Override
   public long lastModified() {
-      File serFile = new File(Core.DATA_PATH
+    File serFile = new File(Core.DATA_PATH
                  + File.separator + "serial"
                  + File.separator + name + Cnst.FORM_EXT + ".ser");
-      return serFile.exists() ? serFile.lastModified() : -1L;
+    return serFile.exists( ) ? serFile.lastModified( ) : 0L ;
   }
 
   protected boolean expired(String namz)
@@ -186,9 +188,14 @@ public class NaviMap
     File serFile = new File(Core.DATA_PATH
                  + File.separator + "serial"
                  + File.separator + name + Cnst.NAVI_EXT + ".ser");
+    if (!serFile.exists())
+    {
+      return true;
+    }
+
     File xmlFile = new File(Core.CONF_PATH
                  + File.separator + namz + Cnst.NAVI_EXT + ".xml");
-    if ( xmlFile.exists() )
+    if ( xmlFile.exists())
     {
       return xmlFile.lastModified() > serFile.lastModified();
     }

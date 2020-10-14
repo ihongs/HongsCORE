@@ -603,6 +603,10 @@ $.fn.hsCols = function() {
         }
         drawFlds(conf, targetz, widgets);
     });
+    // 重载权限, 重建缓存
+    records.on("saveBack", function(evt, rst) {
+        $.get(hsFixUri("common/auth/default.json"));
+    });
 
     // 字段保存
     context.on("click", ".commit", function() {

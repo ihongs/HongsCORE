@@ -350,7 +350,7 @@ public class AuthFilter
         }
     }
 
-    if (isJson(req) || isJsop(req)) {
+    if (isAjax(req) || isJson(req) || isJsop(req)) {
         Map rep = new HashMap();
         rep.put( "ok"  , false);
         rep.put( "msg" ,  msg );

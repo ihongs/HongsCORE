@@ -1,5 +1,5 @@
 <root>
-    <menu text="论坛" href="centra/data/upland/forum/">
+    <menu text="论坛" href="centra/data/upland/theme/">
         <role name="centra">
             <action>centra/data/upland/topic/create.act</action>
             <action>centra/data/upland/topic/update.act</action>
@@ -9,15 +9,15 @@
             <action>centra/data/upland/issue/delete.act</action>
             <action>centra/data/upland/image/create.act</action>
         </role>
-        <role text="管理论坛" name="centra/data/upland/forum/manage">
+        <role text="管理论坛" name="centra/data/upland/theme">
             <depend>centra</depend>
-            <action>centra/data/upland/forum/create.act</action>
-            <action>centra/data/upland/forum/update.act</action>
-            <action>centra/data/upland/forum/delete.act</action>
-            <action>centra/data/upland/forum/reveal.act</action>
-            <action>centra/data/upland/forum/revert.act</action>
+            <action>centra/data/upland/theme/create.act</action>
+            <action>centra/data/upland/theme/update.act</action>
+            <action>centra/data/upland/theme/delete.act</action>
+            <action>centra/data/upland/theme/reveal.act</action>
+            <action>centra/data/upland/theme/revert.act</action>
             <action>centra/data/upland/topic/revert.act</action>
-            <action>centra/data/upland/issue/revert.act</action>
+            <action>centra/data/upland/tweet/revert.act</action>
         </role>
     </menu>
 </root>

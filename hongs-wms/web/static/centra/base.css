@@ -369,7 +369,18 @@ html, body {
         color: #eee;
         background: #000;
     }
-    
+
+    h1, h2, h3,
+    h4, h5, h6,
+    legend {
+        color: #eee;
+    }
+
+    textarea ,
+    .note-editable {
+        color: #555;
+    }
+
     .well  ,
     .panel ,
     .jumbotron ,
@@ -381,12 +392,6 @@ html, body {
         color: #eee;
         background: #222;
         border-color: #444;
-    }
-
-    h1, h2, h3,
-    h4, h5, h6,
-    legend {
-        color: #eee;
     }
 
     .table-striped>tbody>tr:nth-of-type(odd) {

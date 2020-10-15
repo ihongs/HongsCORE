@@ -37,7 +37,7 @@
             <param name="data-al">centra/master/user/pick.html</param>
         </field>
         <field text="限用户" name="users" type="fork" repeated="yes">
-            <param name="listable">yes</param>
+            <param name="listable">no</param>
             <param name="data-vk">id</param>
             <param name="data-tk">name</param>
             <param name="data-ak">users</param>
@@ -45,7 +45,7 @@
             <param name="data-al">centra/master/user/pick.html</param>
         </field>
         <field text="限部门" name="depts" type="fork" repeated="yes">
-            <param name="listable">yes</param>
+            <param name="listable">no</param>
             <param name="data-vk">id</param>
             <param name="data-tk">name</param>
             <param name="data-ak">depts</param>
@@ -87,6 +87,12 @@
             <param name="default">=%id</param>
             <param name="deforce">create</param>
         </field>
+        <field text="主题" name="theme_id" type="hidden">
+            <param name="data-vk">id</param>
+            <param name="data-tk">name</param>
+            <param name="data-at">centra/data/upland/theme/search</param>
+            <param name="data-al">centra/data/upland/theme/pick.html</param>
+        </field>
         <field text="标题" name="name" type="text" required="yes">
             <param name="listable">yes</param>
             <param name="filtable">yes</param>
@@ -121,7 +127,6 @@
         </field>
         <field text="管理员" name="owner" type="fork" repeated="yes">
             <param name="listable">yes</param>
-            <param name="readonly">yes</param>
             <param name="data-vk">id</param>
             <param name="data-tk">name</param>
             <param name="data-ak">owner</param>
@@ -162,26 +167,19 @@
             <param name="default">=%id</param>
             <param name="deforce">create</param>
         </field>
-        <field text="所属话题" name="topic_id" type="fork">
-            <param name="listable">yes</param>
+        <field text="话题" name="topic_id" type="hidden">
             <param name="data-vk">id</param>
             <param name="data-tk">name</param>
             <param name="data-at">centra/data/upland/topic/search</param>
             <param name="data-al">centra/data/upland/topic/pick.html</param>
         </field>
-        <field text="回复评论" name="tweet_id" type="fork">
-            <param name="listable">yes</param>
+        <field text="评论" name="tweet_id" type="hidden">
             <param name="data-vk">id</param>
             <param name="data-tk">name</param>
             <param name="data-at">centra/data/upland/tweet/search</param>
             <param name="data-al">centra/data/upland/tweet/pick.html</param>
         </field>
-        <field text="内容" name="note" type="textarea">
-            <param name="type">text</param>
-            <param name="listable">yes</param>
-            <param name="srchable">yes</param>
-        </field>
-        <field text="作者" name="cuser" type="fork">
+        <field text="用户" name="cuser" type="fork">
             <param name="listable">yes</param>
             <param name="readonly">yes</param>
             <param name="data-vk">id</param>
@@ -189,8 +187,14 @@
             <param name="data-ak">cuser</param>
             <param name="data-at">centra/master/user/list?rb=id,name,head</param>
             <param name="data-al">centra/master/user/pick.html</param>
-            <param name="default">=%uid</param>
+            <param name="default">=$uid</param>
             <param name="deforce">create</param>
+        </field>
+        <field text="消息" name="note"  type="textarea">
+            <param name="type">text</param>
+            <param name="listable">yes</param>
+            <param name="srchable">yes</param>
+            <param name="nameable">yes</param>
         </field>
         <field text="时间" name="ctime" type="datetime">
             <param name="type">timestamp</param>

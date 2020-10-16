@@ -82,7 +82,7 @@ public class DeptAction {
                     ? AuthKit.getUserRoles(ud)
                     : null
                 );
-            Dict.put(rd, rs, "enus", "roles..role");
+            Dict.put(rd, rs, "enfo", "roles..role");
         }
 
         helper.reply(rd);

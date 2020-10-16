@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * 参数 versions 取值:
  * 20190728 将 :xx 操作符换成 xx
- * 20200906 将 enus 换成 enum 或 menu, create 返回 nid 而非 info 等
+ * 20200906 将 enum/menu 换成 enfo, create 返回 info, update/delete 返回 size
  *
  * @deprecated 仅为兼容
  * @author Hongs
@@ -136,17 +136,20 @@ public class XsymFilter extends ActionDriver {
                 if (ab.contains("!info")) {
                     ab.add(".info");
                 }
+                if (ab.contains(".form")) {
+                    ab.add(".fall");
+                }
                 if (ab.contains("!enum")
                 ||  ab.contains(".enum")) {
-                    ab.add(".enus");
+                    ab.add(".enfo");
                     rf = 1;
                 } else
                 if (ab.contains("!menu")
                 ||  ab.contains(".menu")) {
-                    ab.add(".enus");
+                    ab.add(".enfo");
                     rf = 2;
                 } else
-                if (ab.contains(".enus") == false) {
+                if (ab.contains(".enfo") == false) {
                     rf = 3;
                 }
             }
@@ -157,16 +160,16 @@ public class XsymFilter extends ActionDriver {
         if (2 == (2 & level)) {
             Map sd  = hlpr.getResponseData();
             if (sd != null) {
-                if (sd.containsKey("enus")) {
+                if (sd.containsKey("enfo")) {
                     switch (rf) {
                         case 1:
-                            sd.put("enum", sd.remove("enus"));
+                            sd.put("enum", sd.remove("enfo"));
                             break;
                         case 2:
-                            sd.put("menu", sd.remove("enus"));
+                            sd.put("menu", sd.remove("enfo"));
                             break;
                         case 3:
-                            sd.put("info", sd.remove("enus"));
+                            sd.put("info", sd.remove("enfo"));
                             break;
                     }
                 }

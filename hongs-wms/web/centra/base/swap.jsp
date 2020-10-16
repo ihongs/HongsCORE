@@ -106,7 +106,7 @@
 <%if (listable.length() > 0) {%>
 <b><%=Cnst.RB_KEY%></b>=列举, 取值: <%=listable.substring(1)%>; 逗号分隔, 字段前加 - 表示排除
 <%}%>
-<b><%=Cnst.AB_KEY%></b>=模式, .enus 提供选项数据, .info 提供缺省数据, _text 补全选项文本, _time 附加数字时间, _link 附加完整链接, _fork 增加关联数据, .form 深入子级表单(适用 form/part 类型)
+<b><%=Cnst.AB_KEY%></b>=模式, .enfo 提供选项数据, .info 提供缺省数据, _text 补全选项文本, _time 附加数字时间, _link 附加完整链接, _fork 增加关联数据, .fall 深入子级表单(适用 form/part 类型)
                     </pre>
                 </div>
                 <div class="form-group">
@@ -238,7 +238,7 @@ id=ID 或 id.=ID1&id.=ID2...
                 <div class="form-group">
                     <label class="control-label">参数</label>
                     <pre class="form-control-static">
-<b><%=Cnst.AB_KEY%></b>=模式, .enus 提供选项数据, .info 提供缺省数据, _text 补全选项文本, _time 附加数字时间, _link 附加完整链接, _fork 增加关联数据, .form 深入子级表单(适用 form/part 类型)
+<b><%=Cnst.AB_KEY%></b>=模式, .enfo 提供选项数据, .info 提供缺省数据, _text 补全选项文本, _time 附加数字时间, _link 附加完整链接, _fork 增加关联数据, .fall 深入子级表单(适用 form/part 类型)
                     </pre>
                 </div>
                 <div class="form-group">

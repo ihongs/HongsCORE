@@ -28,14 +28,13 @@ import java.util.regex.Pattern;
  */
 public class SelectHelper {
 
-    public  final static  byte ENUM =  1;
-    public  final static  byte TEXT =  2;
-    public  final static  byte TIME =  4;
-    public  final static  byte LINK =  8;
-    public  final static  byte FORK = 16;
-    public  final static  byte FORM = 32;
-    public  final static  byte INFO = 64;
-    public  final static  byte ENUS = ENUM;
+    public  final static  byte TEXT =  1;
+    public  final static  byte TIME =  2;
+    public  final static  byte LINK =  4;
+    public  final static  byte FORK =  8;
+    public  final static  byte ENFO = 16;
+    public  final static  byte INFO = 32;
+    public  final static  byte FALL = 64;
 
     private final static  Pattern  HOSTP = Pattern.compile("^(\\w+:)?//");
     private final static  Pattern  SERVP = Pattern.compile("^\\$\\{?SER");
@@ -260,20 +259,20 @@ public class SelectHelper {
      * @param action 填充规则, 使用常量 ENUM,TEXT 等, 可用或运算传多个值
      */
     public void select(Map values, byte action) {
-        boolean withEnum = ENUM == (ENUM & action);
         boolean withText = TEXT == (TEXT & action);
         boolean withTime = TIME == (TIME & action);
         boolean withLink = LINK == (LINK & action);
         boolean withFork = FORK == (FORK & action);
-        boolean withForm = FORM == (FORM & action);
+        boolean withEnfo = ENFO == (ENFO & action);
         boolean withInfo = INFO == (INFO & action);
+        boolean fallDown = FALL == (FALL & action);
 
         // 附带枚举数据
-        if (withEnum) {
-            /**/ Map  data = (Map ) values.get("enus");
+        if (withEnfo) {
+            /**/ Map  data = (Map ) values.get("enfo");
             if (data == null) {
                 data  = new LinkedHashMap();
-                values.put( "enus" , data );
+                values.put( "enfo" , data );
             }   injectData(  data  , enums);
         }
 
@@ -317,8 +316,8 @@ public class SelectHelper {
         // 填充下级表单
         // 为规避因循环依赖导致故障
         // 限制填充规则为仅向下一层
-        if (withForm) {
-            inject( values , ( byte ) (action - FORM));
+        if (fallDown) {
+            inject( values , ( byte ) (action - FALL));
         }
     }
 
@@ -337,11 +336,11 @@ public class SelectHelper {
         }
 
         Map xnum = null;
-        if (1 == (1 & action)) {
-            xnum = (Map) values.get("enus");
+        if (ENFO == ( ENFO & action ) ) {
+            xnum = (Map) values.get("enfo");
             if (xnum == null ) {
                 xnum  = new LinkedHashMap();
-                values.put( "enus" , xnum );
+                values.put( "enfo" , xnum );
             }
         }
 
@@ -373,7 +372,7 @@ public class SelectHelper {
             Map fields = et.getValue();
             Map valuez = new HashMap();
             Map anum   = new HashMap();
-            valuez.put( "enus", anum );
+            valuez.put( "enfo", anum );
             valuez.put( "list", maps.get(fn) );
 
             try {

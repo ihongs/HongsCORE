@@ -186,7 +186,7 @@ HsStat.prototype = {
             dataType : "json",
             cache  : true,
             success: function(rst) {
-                rst  = rst.enus || {};
+                rst  = rst.enfo || {};
                 for(var k  in rst) {
                     var d  =  rst [k];
                     var n  =  statBox.find("[data-name='"+k+"']");
@@ -315,8 +315,8 @@ HsStat.prototype = {
                 }
 
                 // 内容
-                if (rst.enus && rst.enus[fn]) {
-                        var a = rst.enus[fn];
+                if (rst.enfo && rst.enfo[fn]) {
+                        var a = rst.enfo[fn];
                     for(var i = 0; i < a.length; i ++) {
                         var b = a [i];
                         if (b[1]===null) b[1] = '#'+b[0];
@@ -745,7 +745,7 @@ HsCate.prototype = {
             dataType : "json",
             cache  : true,
             success: function(rst) {
-                rst  = rst.enus || {};
+                rst  = rst.enfo || {};
                 for(var k  in rst) {
                     var d  =  rst [k];
                     var n  =  statBox.find("[data-name='"+k+"']");
@@ -970,7 +970,7 @@ function hsListFillFilt(x, v, n) {
  */
 function hsListDollFilt(x, v, n) {
     n = n.replace(/^ar\.\d\./, "");
-    v = this._enus[n];
+    v = this._enfo[n];
 
     /**
      * 列表的初始条件是空的

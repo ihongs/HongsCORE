@@ -1,7 +1,7 @@
 <h2>{DO}部门</h2>
 <div id="master-dept-form" class="hide-roles"
      data-topple="hsForm"
-     data-load-url="centra/master/dept/info.act?ab=.enus&amp;with-roles=default"
+     data-load-url="centra/master/dept/info.act?ab=.enfo&amp;with-roles=default"
      data-save-url="centra/master/dept/save.act">
     <form action="" method="POST">
         <input type="hidden" name="id" />
@@ -54,7 +54,7 @@
 
         // 有可分配权限才显示
         context.on("loadBack", function(ev, rd) {
-            if (!rd["enus"]["roles..role"].length ) {
+            if (!rd["enfo"]["roles..role"].length ) {
                 context.find(".role-info").remove();
             } else {
                 context.removeClass( "hide-roles" );

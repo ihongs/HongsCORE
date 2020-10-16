@@ -123,7 +123,7 @@ HsForm.prototype = {
         this.formBox.trigger("loadBack", [rst, this]);
 
         var page = rst["page"] || {};
-        var envm = rst["enus"] || {};
+        var enfo = rst["enfo"] || {};
         var info = rst["info"] ||
                  ( rst["list"] && rst.list[0] ) || {};
 
@@ -137,13 +137,13 @@ HsForm.prototype = {
             }
         }
 
-        this.fillEnus(envm);
+        this.fillEnfo(enfo);
         this.fillInfo(info);
         this.fillPage(page);
 
         this.formBox.trigger("loadOver", [rst, this]);
     },
-    fillEnus : function(envm) {
+    fillEnfo : function(enfo) {
         var fds, fns, fts, fls, i, n, t, v, f;
         fds = this.formBox.find("[data-fn],input[name],select[name],textarea[name]")
                           .not ('.form-ignored');
@@ -175,13 +175,13 @@ HsForm.prototype = {
             }
         }
 
-        this._enus =  envm;
+        this._enfo =  enfo;
         for(n in fns) {
             t  = fts[n];
             f  = fls[n];
-            v  = hsGetValue(envm, n.replace(/(\[\]|\.)$/, '')); // 规避数组键影响
+            v  = hsGetValue(enfo, n.replace(/(\[\]|\.)$/, '')); // 规避数组键影响
             if (v === undefined) {
-                v  =  envm [ n ];
+                v  =  enfo [ n ];
             }
 
             // 获取当前待填充的节点
@@ -213,7 +213,7 @@ HsForm.prototype = {
                 this._doll__review(i, v, n);
             }
         }
-        delete this._enus;
+        delete this._enfo;
     },
     fillInfo : function(info) {
         var fds, fns, fts, fls, i, n, t, v, f;

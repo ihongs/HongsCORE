@@ -120,9 +120,9 @@ public class BynameHelper {
 
         Map newData = new LinkedHashMap(data);
 
-        Map anum = Synt.asMap(data.get("enus"));
+        Map anum = Synt.asMap(data.get("enfo"));
         if (anum != null) {
-            newData.put("enus", out(anum));
+            newData.put("enfo", out(anum));
         }
 
         Map info = Synt.asMap(data.get("info"));

@@ -16,9 +16,9 @@ import java.util.Set;
  * 选项补充处理器
  * <pre>
  * ab 参数含义:
- * .enus 表示要选项数据
+ * .enfo 表示要选项数据
  * .info 表示补充默认值
- * .form 表示处理子表单
+ * .fall 表示处理子表单
  * _text 表示加选项文本
  * _time 表示加数字时间
  * _link 表示加完整链接
@@ -41,16 +41,16 @@ public class SelectInvoker implements FilterInvoker {
                       .get( Cnst.AB_KEY )
             );
             if (ab != null) {
-                if (ab.contains(".enus")) {
-                    adds += SelectHelper.ENUM;
+                if (ab.contains(".enfo")) {
+                    adds += SelectHelper.ENFO;
                 }
 
                 if (ab.contains(".info")) {
                     adds += SelectHelper.INFO;
                 }
 
-                if (ab.contains(".form")) {
-                    adds += SelectHelper.FORM;
+                if (ab.contains(".fall")) {
+                    adds += SelectHelper.FALL;
                 }
 
                 if (ab.contains("_fork")) {

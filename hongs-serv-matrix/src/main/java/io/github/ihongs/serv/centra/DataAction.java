@@ -132,12 +132,13 @@ public class DataAction extends SearchAction {
             Set ab = Synt.toTerms(req.get(Cnst.AB_KEY));
             if (null != ab) {
                 byte md = 0;
-                if (ab.contains(".enus")) md += SelectHelper.ENUM;
+                if (ab.contains(".enfo")) md += SelectHelper.ENFO;
+                if (ab.contains(".info")) md += SelectHelper.INFO;
+                if (ab.contains(".fall")) md += SelectHelper.FALL;
                 if (ab.contains("_text")) md += SelectHelper.TEXT;
                 if (ab.contains("_time")) md += SelectHelper.TIME;
                 if (ab.contains("_link")) md += SelectHelper.LINK;
                 if (ab.contains("_fork")) md += SelectHelper.FORK;
-                if (ab.contains(".form")) md += SelectHelper.FORM;
                 if (md != 0) {
                     new SelectHelper().addItemsByForm(mod, ent).select(rsp, md);
                 }

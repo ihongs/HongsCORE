@@ -197,9 +197,9 @@
 
     var formobj = context.hsForm({
         <%if ("reveal".equals(_action)) {%>
-        _url: "<%=_module%>/<%=_entity%>/reveal.act?<%=Cnst.AB_KEY%>=_text,_fork,.form,older,newer",
+        _url: "<%=_module%>/<%=_entity%>/reveal.act?<%=Cnst.AB_KEY%>=_text,_fork,.fall,older,newer",
         <%} else {%>
-        _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.AB_KEY%>=_text,_fork,.form",
+        _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.AB_KEY%>=_text,_fork,.fall",
         <%} /* End if */%>
         _fill__fork: hsFormFillFork,
         _fill__file: hsFormFillFile,

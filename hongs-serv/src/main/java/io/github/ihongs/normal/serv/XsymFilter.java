@@ -107,7 +107,7 @@ public class XsymFilter extends ActionDriver {
             return;
         }
 
-        int rf = 3;
+        int rf = 0;
         Map rd = hlpr.getRequestData();
 
         if (1 == (1 & level)) {
@@ -140,7 +140,7 @@ public class XsymFilter extends ActionDriver {
                     ab.add(".fall");
                 }
                 if (ab.contains(".enfo")) {
-                    rf = 0;
+                    rf =-1;
                 } else
                 if (ab.contains("!enum")
                 ||  ab.contains(".enum")) {
@@ -168,7 +168,7 @@ public class XsymFilter extends ActionDriver {
                         case 2:
                             sd.put("menu", sd.remove("enfo"));
                             break;
-                        case 3:
+                        case 0:
                             sd.put("info", sd.remove("enfo"));
                             break;
                     }

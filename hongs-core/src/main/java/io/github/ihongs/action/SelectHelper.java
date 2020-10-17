@@ -32,9 +32,9 @@ public class SelectHelper {
     public  final static  byte TIME =  2;
     public  final static  byte LINK =  4;
     public  final static  byte FORK =  8;
+    public  final static  byte FALL = 64;
     public  final static  byte ENFO = 16;
     public  final static  byte INFO = 32;
-    public  final static  byte FALL = 64;
 
     private final static  Pattern  HOSTP = Pattern.compile("^(\\w+:)?//");
     private final static  Pattern  SERVP = Pattern.compile("^\\$\\{?SER");

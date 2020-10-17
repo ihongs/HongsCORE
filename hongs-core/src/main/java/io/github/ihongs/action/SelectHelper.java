@@ -273,7 +273,7 @@ public class SelectHelper {
             if (data == null) {
                 data  = new LinkedHashMap();
                 values.put( "enfo" , data );
-            }   injectData(  data  , enums);
+            }   injectEnfo(  data  , enums);
         }
 
         // 附带默认数据
@@ -394,8 +394,8 @@ public class SelectHelper {
         }
     }
 
-    public void injectData(Map data) {
-        injectData(data, enums);
+    public void injectEnfo(Map enfo) {
+        injectEnfo(enfo, enums);
     }
 
     public void injectInfo(Map info) {
@@ -563,7 +563,7 @@ public class SelectHelper {
         }
     }
 
-    private void injectData(Map data, Map maps) {
+    private void injectEnfo(Map enfo, Map maps) {
         Iterator it = maps.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry et = (Map.Entry) it.next();
@@ -582,7 +582,7 @@ public class SelectHelper {
                 lst.add(a);
             }
 
-            data.put(key, lst);
+            enfo.put(key, lst);
         }
     }
 

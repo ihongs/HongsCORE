@@ -125,13 +125,16 @@
             <param name="keep-naming">yes</param>
             <param name="pass-source">yes</param>
         </field>
-        <field text="管理员" name="owner" type="fork" repeated="yes">
+        <field text="作者" name="cuser" type="fork">
             <param name="listable">yes</param>
+            <param name="readonly">yes</param>
             <param name="data-vk">id</param>
             <param name="data-tk">name</param>
-            <param name="data-ak">owner</param>
+            <param name="data-ak">cuser</param>
             <param name="data-at">centra/master/user/list?rb=id,name,head</param>
             <param name="data-al">centra/master/user/pick.html</param>
+            <param name="default">=$uid</param>
+            <param name="deforce">create</param>
         </field>
         <field text="置顶" name="boost" type="number">
             <param name="type">long</param>

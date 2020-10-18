@@ -1,16 +1,18 @@
 <root>
+    <rsname>#default</rsname>
     <menu text="论坛" href="centra/data/upland/theme/">
         <role name="centra">
             <action>centra/data/upland/topic/create.act</action>
             <action>centra/data/upland/topic/update.act</action>
             <action>centra/data/upland/topic/delete.act</action>
-            <action>centra/data/upland/issue/create.act</action>
-            <action>centra/data/upland/issue/update.act</action>
-            <action>centra/data/upland/issue/delete.act</action>
+            <action>centra/data/upland/tweet/create.act</action>
+            <action>centra/data/upland/tweet/update.act</action>
+            <action>centra/data/upland/tweet/delete.act</action>
             <action>centra/data/upland/image/create.act</action>
         </role>
-        <role text="管理论坛" name="centra/data/upland/theme">
+        <role text="管理论坛" name="centra/data/upland/admin">
             <depend>centra</depend>
+            <action>centra/data/upland/admin</action>
             <action>centra/data/upland/theme/create.act</action>
             <action>centra/data/upland/theme/update.act</action>
             <action>centra/data/upland/theme/delete.act</action>

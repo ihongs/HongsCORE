@@ -13,7 +13,10 @@
 <%@page extends="io.github.ihongs.jsp.Proclet"%>
 <%@page contentType="application/json" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%!
-    private Set getDeptIdsByUid(Object uid) throws HongsException {
+    /**
+     * 获取用户所属的全部部门ID
+     */
+    private Set getUserDeptIds(Object uid) throws HongsException {
         List<Map> rows = DB
             .getInstance("master")
             .getTable("user_dept")
@@ -48,7 +51,7 @@
             Dict.put(req , Synt.listOf(
                 Synt.mapOf("owner", uid),
                 Synt.mapOf("users", uid),
-                Synt.mapOf("depts", getDeptIdsByUid(uid) ),
+                Synt.mapOf("depts", getUserDeptIds( uid )),
                 Synt.mapOf("users", Synt.mapOf(Cnst.IS_REL, "null"),
                            "depts", Synt.mapOf(Cnst.IS_REL, "null"))
             ), Cnst.AR_KEY, "x", Cnst.OR_KEY);

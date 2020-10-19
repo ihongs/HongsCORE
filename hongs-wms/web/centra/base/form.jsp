@@ -304,9 +304,11 @@
                         String mode = "hsFork";
                         String kind =  "_fork";
                         String kn   =    name ;
-                        if (kn.endsWith("_id") ) {
+                        if (kn.endsWith("_id")) {
                             kn = kn.substring(0, kn.length() - 3);
-                        }   kn = kn +  "_fork"; // 增加特定后缀
+                        } else {
+                            kn = kn +  "_fork"; // 增加特定后缀
+                        }
                         if (rptd) {
                             name  = name + "."; // 多选末尾加点
                             extr += " data-repeated=\"repeated\"";
@@ -323,7 +325,21 @@
                         rl = rl.replace("centre", "centra");
                         al = al.replace("centre", "centra");
                         at = at.replace("centre", "centra");
-                        if (!at.isEmpty()) at += Cnst.ACT_EXT;
+                        /**
+                         * 关联路径: base/search!data/xxxx/search?rb=a,b,c
+                         * 需转换为: data/xxxx/search.act?rb=a,b,c
+                         */
+                        if (!at.isEmpty()) {
+                            int p  = at.indexOf  ('!');
+                            if (p != -1) {
+                                at = at.substring(1+p);
+                                p  = at.indexOf  ('?');
+                            if (p != -1) {
+                                at = at.substring(0,p)
+                                   + Cnst.ACT_EXT
+                                   + at.substring(0+p);
+                            }}
+                        }
                         kind += "\" data-ak=\""+ak+"\" data-tk=\""+tk+"\" data-vk=\""+vk+"\" data-at=\""+at
                              +  "\" data-href=\""+rl+"\" data-target=\"@";
                         mode += "\" data-href=\""+al+"\" data-target=\"@";

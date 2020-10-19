@@ -102,6 +102,7 @@ public class RoleSet extends CoreSerial implements CoreSerial.LastModified, Set<
         st = Synt.declare(rs.get("state"), 0 );
         rt = Synt.declare(rs.get("rtime"), 0L);
         if (st <= 0) {
+            rtime = 0;
             return -1; // 用户不存在或已锁定，则删除
         }
 
@@ -117,6 +118,7 @@ public class RoleSet extends CoreSerial implements CoreSerial.LastModified, Set<
         st = Synt.declare(rs.get("state"), 1 );
         ot = Synt.declare(rs.get("rtime"), 0L);
         if (st <= 0) {
+            rtime = 0;
             return -1; // 所在的分组均已锁定，则删除
         }
         if (rt < ot) {

@@ -30,7 +30,7 @@ public class RoleSet extends CoreSerial implements CoreSerial.LastModified, Set<
 
     private RoleSet(String userId) throws HongsException {
         this.userId = userId;
-        init("/serial/master/role/" + Syno.splitPath(userId));
+        init("serial/master/role/" + Syno.splitPath(userId));
     }
 
     @Override

@@ -17,22 +17,11 @@ abstract public class StoreList<T> extends CoreSerial implements Collection<T> {
 
     public StoreList(String name, Collection list) throws HongsException {
         this.list = list;
-        init(name ,  0 );
+        init(name);
     }
 
     public StoreList(String name) throws HongsException {
         this(name , new ArrayList() );
-    }
-
-    /**
-     * 是否已过期, 默认规则永不过期
-     * @param time 缓存文件修改时间
-     * @return 过期 true 反之 flase
-     * @throws HongsException
-     */
-    @Override
-    protected boolean expired(long time) throws HongsException {
-        return false;
     }
 
     @Override

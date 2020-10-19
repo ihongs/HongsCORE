@@ -18,23 +18,12 @@ abstract public class StoreData<K,V> extends CoreSerial implements Map<K,V> {
     protected Map<K,V> data;
 
     public StoreData(String name, Map data) throws HongsException {
-        this.data = data ;
-        init(name ,  0  );
+        this.data = data;
+        init(name);
     }
 
     public StoreData(String name) throws HongsException {
         this(name , new HashMap() );
-    }
-
-    /**
-     * 是否已过期, 默认规则永不过期
-     * @param time 缓存文件修改时间
-     * @return 过期 true 反之 flase
-     * @throws HongsException 
-     */
-    @Override
-    protected boolean expired(long time) throws HongsException {
-        return false;
     }
 
     @Override

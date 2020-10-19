@@ -30,72 +30,7 @@ public class RoleSet extends CoreSerial implements CoreSerial.LastModified, Set<
 
     private RoleSet(String userId) throws HongsException {
         this.userId = userId;
-
-        String  n;
-        File    f;
-
-        n = "master/role/" + Syno.splitPath(userId);
-        f = new File(Core.DATA_PATH
-              + File.separator + "serial"
-              + File.separator + n+".ser"
-        );
-
-        if (f.exists()) {
-            this.init(n, f, 0); // 从文件加载
-        } else {
-            this.init(n, f, 1); // 从库表加载
-            return;
-        }
-
-        DB        db;
-        Table     tb;
-        Table     td;
-        FetchCase fc;
-        Map       rs;
-        int       st;
-        long      rt;
-
-        db = DB.getInstance("master");
-
-        tb = db.getTable("user");
-        fc = new FetchCase( FetchCase.STRICT )
-                .from  (tb.tableName, tb.name)
-                .select(tb.name+".rtime, "+tb.name+".state")
-                .filter(tb.name+".id = ?", userId);
-        rs = db.fetchLess(fc);
-        st = Synt.declare(rs.get("state"), 0 );
-        if (st <=   0 ) { // 删除或锁定
-            rtime = 0 ;
-            return;
-        }
-        rt = Synt.declare(rs.get("rtime"), 0L);
-        if (rt > rtime) { // 从库表加载
-            init(n, f, 1);
-            return;
-        }
-
-        tb = db.getTable("dept");
-        td = db.getTable("dept_user");
-        fc = new FetchCase( FetchCase.STRICT )
-                .from  (tb.tableName, tb.name)
-                .join  (td.tableName, td.name , td.name+".dept_id = "+tb.name+".id" /***/ )
-                .select("MAX("+tb.name+".rtime) AS rtime, MAX("+tb.name+".state) AS state")
-                .filter(td.name+".user_id = ?", userId)
-                .gather(td.name+".user_id");
-        rs = db.fetchLess(fc);
-        if (rs.isEmpty()) { // 部门可选
-            return;
-        }
-        st = Synt.declare(rs.get("state"), 0 );
-        if (st <=   0 ) { // 删除或锁定
-            rtime = 0 ;
-            return;
-        }
-        rt = Synt.declare(rs.get("rtime"), 0L);
-        if (rt > rtime) { // 从库表加载
-            init(n, f, 1);
-//          return;
-        }
+        init("/serial/master/role/" + Syno.splitPath(userId));
     }
 
     @Override
@@ -143,6 +78,60 @@ public class RoleSet extends CoreSerial implements CoreSerial.LastModified, Set<
         //** 当前保存时间 **/
 
         rtime = System.currentTimeMillis() / 1000L;
+    }
+
+    @Override
+    protected byte read(File f) throws HongsException {
+        DB        db;
+        Table     tb;
+        Table     td;
+        FetchCase fc;
+        Map       rs;
+        int       st;
+        long      rt;
+        long      ot;
+
+        db = DB.getInstance("master");
+
+        tb = db.getTable("user");
+        fc = new FetchCase( FetchCase.STRICT )
+                .from  (tb.tableName, tb.name)
+                .select(tb.name+".state, "+tb.name+".rtime")
+                .filter(tb.name+".id = ?", userId);
+        rs = db.fetchLess(fc);
+        st = Synt.declare(rs.get("state"), 0 );
+        rt = Synt.declare(rs.get("rtime"), 0L);
+        if (st <= 0) {
+            return -1; // 用户不存在或已锁定，则删除
+        }
+
+        tb = db.getTable("dept");
+        td = db.getTable("dept_user");
+        fc = new FetchCase( FetchCase.STRICT )
+                .from  (tb.tableName, tb.name)
+                .join  (td.tableName, td.name , td.name+".dept_id = "+tb.name+".id" /***/ )
+                .select("MAX("+tb.name+".state) AS state, MAX("+tb.name+".rtime) AS rtime")
+                .filter(td.name+".user_id = ?", userId   )
+                .gather(td.name+".user_id");
+        rs = db.fetchLess(fc);
+        st = Synt.declare(rs.get("state"), 1 );
+        ot = Synt.declare(rs.get("rtime"), 0L);
+        if (st <= 0) {
+            return -1; // 所在的分组均已锁定，则删除
+        }
+        if (rt < ot) {
+            rt = ot;
+        }
+
+        if (!f.exists()) {
+            return  0;
+        }
+        load(f);
+        if (rt > rtime ) {
+            return  0;
+        } else {
+            return  1;
+        }
     }
 
     @Override

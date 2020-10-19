@@ -144,7 +144,7 @@ public class NaviMap
 
     //* 加锁读写 */
 
-    Block.Larder lock = Block.getLarder(CoreSerial.class.getName() + ":" + name + Cnst.NAVI_EXT);
+    Block.Larder lock = Block.getLarder(NaviMap.class.getName() + ":" + name);
 
     lock.lockr();
     try {

@@ -50,75 +50,6 @@ public abstract class CoreSerial
 {
 
   /**
-   * 以有效时间间隔方式构造实例
-   * @param path
-   * @param name
-   * @param time
-   * @throws io.github.ihongs.HongsException
-   */
-  public CoreSerial(String path, String name, long time)
-    throws HongsException
-  {
-    this.init(path, name, time);
-  }
-
-  /**
-   * 以有效到期时间方式构造实例
-   * @param path
-   * @param name
-   * @param date
-   * @throws io.github.ihongs.HongsException
-   */
-  public CoreSerial(String path, String name, Date date)
-    throws HongsException
-  {
-    this.init(path, name, date);
-  }
-
-  /**
-   * 以有效时间间隔方式构造实例
-   * @param name
-   * @param time
-   * @throws io.github.ihongs.HongsException
-   */
-  public CoreSerial(String name, long time)
-    throws HongsException
-  {
-    this.init(name, time);
-  }
-
-  /**
-   * 以有效到期时间方式构造实例
-   * @param name
-   * @param date
-   * @throws io.github.ihongs.HongsException
-   */
-  public CoreSerial(String name, Date date)
-    throws HongsException
-  {
-    this.init(name, date);
-  }
-
-  /**
-   * 构造无限期的实例
-   * @param name
-   * @throws io.github.ihongs.HongsException
-   */
-  public CoreSerial(String name)
-    throws HongsException
-  {
-    this.init(name);
-  }
-
-  /**
-   * 空构造器(请自行执行init方法)
-   */
-  public CoreSerial()
-  {
-    // TODO: 请自行执行init方法
-  }
-
-  /**
    * 从外部获取属性写入当前对象
    * @throws io.github.ihongs.HongsException
    */
@@ -126,89 +57,32 @@ public abstract class CoreSerial
     throws HongsException;
 
   /**
-   * 是否已经过期
-   * @param time
-   * @return 返回true将重建缓存
-   * @throws io.github.ihongs.HongsException
-   */
-  protected boolean expired(long time)
-    throws HongsException
-  {
-    return time != 0 && time < System.currentTimeMillis();
-  }
-
-  /**
-   * 初始化方法(有效时间间隔方式)
-   * @param path
+   * 加载或引入数据
    * @param name
-   * @param time
    * @throws io.github.ihongs.HongsException
    */
-  protected final void init(String path, String name, long time)
-    throws HongsException
-  {
-    if (path == null)
-    {
-        path = Core.DATA_PATH + File.separator + "serial";
-    }
-    File file = new File(path + File.separator + name + ".ser");
-    this.init(name, file, time + file.lastModified( ));
-  }
-
-  /**
-   * 初始化方法(有效到期时间方式)
-   * @param path
-   * @param name
-   * @param date
-   * @throws io.github.ihongs.HongsException
-   */
-  protected final void init(String path, String name, Date date)
-    throws HongsException
-  {
-    if (path == null)
-    {
-        path = Core.DATA_PATH + File.separator + "serial";
-    }
-    File file = new File(path + File.separator + name + ".ser");
-    this.init(name, file, date!=null?date.getTime():0);
-  }
-
-  protected final void init(String name, long time)
-    throws HongsException
-  {
-    this.init(null, name, time);
-  }
-
-  protected final void init(String name, Date date)
-    throws HongsException
-  {
-    this.init(null, name, date);
-  }
-
   protected final void init(String name)
     throws HongsException
   {
-    this.init(null, name, null);
+    init(new File(Core.DATA_PATH + File.separator + "serial" + name + ".ser"));
   }
 
   /**
    * 加载或引入数据
-   * @param name
    * @param file
-   * @param time
    * @throws io.github.ihongs.HongsException
    */
-  protected final void init(String name, File file, long time)
+  protected final void init(File file)
     throws HongsException
   {
-    Larder lock = Block.getLarder(CoreSerial.class.getName() + ":" + name);
+    Larder lock = Block.getLarder(CoreSerial.class.getName() + ":" + file.getAbsolutePath());
+    byte   code ;
 
     lock.lockr();
     try {
-      if (file.exists ()
-      && !expired(time)) {
-          load(file);
-          return;
+      code = read(file);
+      if (code > 0 ) {
+        return;
       }
     } finally {
       lock.unlockr();
@@ -216,10 +90,32 @@ public abstract class CoreSerial
 
     lock.lockw();
     try {
+      if (code < 0 ) {
+      if (file.exists()) {
+          file.delete();
+      } return;
+      }
       imports ();
       save(file);
     } finally {
       lock.unlockw();
+    }
+  }
+
+  /**
+   * 从文件读取数据
+   * @param file
+   * @return 0 重载, 1 有效, -1 无效(删除文件)
+   * @throws io.github.ihongs.HongsException
+   */
+  protected byte read(File file)
+    throws HongsException
+  {
+    if (file.exists()) {
+      load(file);
+      return 1;
+    } else {
+      return 0;
     }
   }
 

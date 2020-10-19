@@ -60,28 +60,39 @@ public class DBConfig
     throws HongsException
   {
     this.name = name;
-    this.init ( name+Cnst.DB_EXT);
+    this.init ( name + Cnst.DB_EXT);
   }
 
   @Override
-  protected boolean expired(long time)
+  protected byte read(File serFile)
+    throws HongsException
   {
-    File serFile = new File(Core.DATA_PATH
-                 + File.separator + "serial"
-                 + File.separator + name + Cnst.DB_EXT + ".ser");
-    File xmlFile = new File(Core.CONF_PATH
-                 + File.separator + name + Cnst.DB_EXT + ".xml");
-    if ( xmlFile.exists() )
-    {
-      return xmlFile.lastModified() > serFile.lastModified();
+    if (!serFile.exists( ) ) {
+      return 0;
     }
 
+    File xmlFile = new File(
+             Core.CONF_PATH +"/"+ name + Cnst.DB_EXT + ".xml"
+    );
+    if ( xmlFile.exists( ) ) {
+    if ( xmlFile.lastModified() > serFile.lastModified() ) {
+      load(serFile);
+      return 1;
+    } else {
+      return 0;
+    }}
+
     // 为减少判断逻辑对 jar 文件不做变更对比, 只要资源存在即可
-    return null == getClass().getClassLoader().getResource(
+    if (null != getClass().getClassLoader().getResource(
              name.contains(".")
           || name.contains("/") ? name + Cnst.DB_EXT + ".xml"
            : Cnst.CONF_PACK +"/"+ name + Cnst.DB_EXT + ".xml"
-    );
+    )) {
+      load(serFile);
+      return 1;
+    } else {
+      return 0;
+    }
   }
 
   @Override

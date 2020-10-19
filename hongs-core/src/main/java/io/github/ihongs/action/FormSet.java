@@ -110,7 +110,7 @@ public class FormSet
 
     //* 加锁读写 */
 
-    Block.Larder lock = Block.getLarder(CoreSerial.class.getName() + ":" + name + Cnst.FORM_EXT);
+    Block.Larder lock = Block.getLarder(FormSet.class.getName() + ":" + name);
 
     lock.lockr();
     try {

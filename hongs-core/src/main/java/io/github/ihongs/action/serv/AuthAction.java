@@ -93,7 +93,7 @@ public class AuthAction
       // HTTP 304 缓存策略
       if (roleset instanceof CoreSerial.LastModified) {
         CoreSerial.LastModified rolemod = ( CoreSerial.LastModified ) roleset;
-        long l  =  Math.max( sitemap.lastModified(), rolemod.lastModified() );
+        long l  =  Math.max( sitemap.dataModified(), rolemod.dataModified() );
         long m  =  helper.getRequest(  ).getDateHeader( "If-Modified-Since" );
         if ( l != -1 ) {
             // HTTP 时间精确到秒

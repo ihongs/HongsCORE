@@ -61,10 +61,12 @@ public abstract class CoreSerial
    * @param name
    * @throws io.github.ihongs.HongsException
    */
-  protected final void init(String name)
+  protected final File init(String name)
     throws HongsException
   {
-    init(new File(Core.DATA_PATH + File.separator + "serial" + name + ".ser"));
+    File   file = new File(Core.DATA_PATH + "/serial/" + name + ".ser");
+    init  (file);
+    return file ;
   }
 
   /**
@@ -355,7 +357,17 @@ public abstract class CoreSerial
   public static interface LastModified
   {
 
-    public long lastModified();
+    /**
+     * 缓存文件更新时间
+     * @return
+     */
+    public long fileModified();
+
+    /**
+     * 缓存数据更新时间
+     * @return
+     */
+    public long dataModified();
 
   }
 

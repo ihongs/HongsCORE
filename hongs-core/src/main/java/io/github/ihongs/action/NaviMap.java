@@ -99,6 +99,11 @@ public class NaviMap
   protected transient String name;
 
   /**
+   * 更新时间
+   */
+  public long mtime;
+
+  /**
    * 菜单层级信息
    */
   public Map<String, Map> menus;
@@ -176,7 +181,14 @@ public class NaviMap
   }
 
   @Override
-  public long lastModified() {
+  public long dataModified()
+  {
+    return mtime;
+  }
+
+  @Override
+  public long fileModified()
+  {
     File serFile = new File(Core.DATA_PATH
                  + File.separator + "serial"
                  + File.separator + name + Cnst.FORM_EXT + ".ser");

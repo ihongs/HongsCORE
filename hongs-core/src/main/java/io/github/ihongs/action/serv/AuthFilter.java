@@ -199,7 +199,7 @@ public class AuthFilter
     /**
      * 自动重载导航对象(权限表)
      */
-    long las = siteMap.lastModified();
+    long las = siteMap.fileModified();
     if ( las == 0 || las > mod ) {
         try {
             String name = siteMap.getName( /**/ );

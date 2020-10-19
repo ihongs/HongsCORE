@@ -85,6 +85,11 @@ public class FormSet
   protected transient String name;
 
   /**
+   * 更新时间
+   */
+  public long mtime;
+
+  /**
    * 表单集合
    */
   public Map<String, Map> forms;
@@ -132,7 +137,13 @@ public class FormSet
   }
 
   @Override
-  public long lastModified() {
+  public long dataModified() {
+    return mtime;
+  }
+
+  @Override
+  public long fileModified()
+  {
     File serFile = new File(Core.DATA_PATH
                  + File.separator + "serial"
                  + File.separator + name + Cnst.FORM_EXT + ".ser");
@@ -226,6 +237,8 @@ public class FormSet
         throw new HongsException(ex);
       }
     }
+
+    mtime = System.currentTimeMillis();
   }
 
   private void parse(Element element, Map forms, Map enums)

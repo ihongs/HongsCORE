@@ -24,13 +24,25 @@ import java.util.Set;
  */
 public class RoleSet extends CoreSerial implements CoreSerial.LastModified, Set<String> {
 
+    transient private final File file;
+
     public /**/String userId;
     public Set<String> roles;
     public long        rtime;
 
     private RoleSet(String userId) throws HongsException {
         this.userId = userId;
-        init("master/role/" + Syno.splitPath(userId));
+        file = init("master/role/" + Syno.splitPath(userId));
+    }
+
+    @Override
+    public long dataModified() {
+        return rtime * 1000L;
+    }
+
+    @Override
+    public long fileModified() {
+        return file.lastModified();
     }
 
     @Override
@@ -134,11 +146,6 @@ public class RoleSet extends CoreSerial implements CoreSerial.LastModified, Set<
         } else {
             return  1;
         }
-    }
-
-    @Override
-    public long lastModified() {
-        return rtime * 1000L;
     }
 
     //** 构造工厂方法 **/

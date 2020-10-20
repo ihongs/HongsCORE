@@ -2,6 +2,7 @@ package io.github.ihongs.normal.serv;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
+import io.github.ihongs.HongsCause;
 import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.PasserHelper;
@@ -107,8 +108,23 @@ public class XsymFilter extends ActionDriver {
             return;
         }
 
+        /**
+         * 上传文件时可能会发生异常
+         */
+        Map rd;
+        try {
+            rd = hlpr.getRequestData();
+        } catch (Throwable e) {
+            if (e instanceof HongsCause) {
+                hlpr.fault( (HongsCause) e );
+            } else {
+                hlpr.fault( e.getMessage() );
+            }
+            return;
+        }
+
         int rf = 0;
-        Map rd = hlpr.getRequestData();
+        int nf = 0;
 
         if (1 == (1 & level)) {
             /**
@@ -152,6 +168,12 @@ public class XsymFilter extends ActionDriver {
                     ab.add(".enfo");
                     rf = 2;
                 }
+                if (ab.contains(".nid" )) {
+                    nf+= 1;
+                }
+                if (ab.contains(".cnt" )) {
+                    nf+= 2;
+                }
             }
         }
 
@@ -173,13 +195,15 @@ public class XsymFilter extends ActionDriver {
                             break;
                     }
                 }
-                if (sd.containsKey("nid" )
+                if (1 != (1 & nf)
+                &&  sd.containsKey("nid" )
                 && !sd.containsKey("info")) {
                     Object id = sd.get("nid");
                     rd.put(Cnst.ID_KEY , id );
                     sd.put("info", rd );
                 }
-                if (sd.containsKey("cnt" )
+                if (2 != (2 & nf)
+                &&  sd.containsKey("cnt" )
                 && !sd.containsKey("size")) {
                     Object ct = sd.get("cnt");
                     sd.put("size", ct );

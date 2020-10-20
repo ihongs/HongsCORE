@@ -375,24 +375,24 @@ public class ActionHelper implements Cloneable
                 type = type.substring(0 , pos);
             }
             if (allowTypes != null && !allowTypes.contains(type)) {
-                throw new HongsExemption(400, "Type '" +type+ "' is not allowed");
+                throw new HongsExemption(400, "File type '" +type+ "' is not allowed");
             }
             if ( denyTypes != null &&   denyTypes.contains(type)) {
-                throw new HongsExemption(400, "Type '" +type+ "' is denied");
+                throw new HongsExemption(400, "File type '" +type+ "' is denied");
             }
 
             // 检查扩展
             pos  = extn.lastIndexOf('.');
-            if (pos == -1) {
+            if (pos != -1) {
                 extn = extn.substring(1 + pos);
             } else {
                 extn = "";
             }
             if (allowExtns != null && !allowExtns.contains(extn)) {
-                throw new HongsExemption(400, "Type '" +extn+ "' is not allowed");
+                throw new HongsExemption(400, "File type '" +extn+ "' is not allowed");
             }
             if ( denyExtns != null &&   denyExtns.contains(extn)) {
-                throw new HongsExemption(400, "Type '" +extn+ "' is denied");
+                throw new HongsExemption(400, "File type '" +extn+ "' is denied");
             }
 
             /**

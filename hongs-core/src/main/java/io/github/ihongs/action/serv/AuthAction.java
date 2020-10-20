@@ -91,11 +91,11 @@ public class AuthAction
       }
 
       // HTTP 304 缓存策略
-      if (roleset instanceof CoreSerial.LastModified) {
-        CoreSerial.LastModified rolemod = ( CoreSerial.LastModified ) roleset;
+      if (roleset instanceof CoreSerial.Mtimes) {
+        CoreSerial.Mtimes rolemod = (CoreSerial.Mtimes) roleset;
         long l  =  Math.max( sitemap.dataModified(), rolemod.dataModified() );
         long m  =  helper.getRequest(  ).getDateHeader( "If-Modified-Since" );
-        if ( l != -1 ) {
+        if ( l !=  0 ) {
             // HTTP 时间精确到秒
              l  =  l / 1000;
              m  =  m / 1000;

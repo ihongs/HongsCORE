@@ -78,16 +78,12 @@ import org.xml.sax.SAXException;
  * @author Hongs
  */
 public class FormSet
-  extends CoreSerial
-  implements CoreSerial.LastModified
+     extends CoreSerial
+  implements CoreSerial.Mtimes
 {
 
   protected transient String name;
-
-  /**
-   * 更新时间
-   */
-  public long mtime;
+  protected transient  long  time;
 
   /**
    * 表单集合
@@ -106,7 +102,7 @@ public class FormSet
     this.init ( /**/);
   }
 
-  private void init()
+  public final void init()
     throws HongsException
   {
     File serFile = new File(Core.DATA_PATH
@@ -120,7 +116,8 @@ public class FormSet
     lock.lockr();
     try {
       if (!expired(name)) {
-          load( serFile );
+          load (serFile);
+          time =serFile.lastModified();
           return;
       }
     } finally {
@@ -129,16 +126,18 @@ public class FormSet
 
     lock.lockw();
     try {
-      imports( );
-      save(serFile );
+      imports ();
+      save (serFile);
+      time =serFile.lastModified();
     } finally {
       lock.unlockw();
     }
   }
 
   @Override
-  public long dataModified() {
-    return mtime;
+  public long dataModified()
+  {
+    return time;
   }
 
   @Override
@@ -237,8 +236,6 @@ public class FormSet
         throw new HongsException(ex);
       }
     }
-
-    mtime = System.currentTimeMillis();
   }
 
   private void parse(Element element, Map forms, Map enums)

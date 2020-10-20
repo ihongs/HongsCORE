@@ -48,11 +48,6 @@ public class AuthFilter
   private NaviMap siteMap;
 
   /**
-   * 载入时间
-   */
-  private long    mod = 0;
-
-  /**
    * 登录超时
    */
   private long    exp = 0;
@@ -128,7 +123,6 @@ public class AuthFilter
         throw new ServletException(ex);
       }
     }
-    this.mod = System.currentTimeMillis();
 
     /**
      * 获取首页URL
@@ -199,12 +193,11 @@ public class AuthFilter
     /**
      * 自动重载导航对象(权限表)
      */
-    long las = siteMap.fileModified();
-    if ( las == 0 || las > mod ) {
+    long fmt = siteMap.fileModified();
+    long dmt = siteMap.dataModified();
+    if ( fmt == 0 || fmt > dmt ) {
         try {
-            String name = siteMap.getName( /**/ );
-            siteMap = NaviMap.getInstance( name );
-            mod     = System .currentTimeMillis();
+            siteMap.init();
         } catch (HongsException e) {
             throw new ServletException(e);
         }

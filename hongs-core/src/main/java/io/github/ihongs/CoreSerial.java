@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -78,13 +77,21 @@ public abstract class CoreSerial
     throws HongsException
   {
     Larder lock = Block.getLarder(CoreSerial.class.getName() + ":" + file.getAbsolutePath());
-    byte   code ;
 
     lock.lockr();
     try {
-      code = read(file);
-      if (code > 0 ) {
-        return;
+      switch (read(file)) {
+        case  0 : // 缓存过期则需要重新引入
+          break ;
+        case  1 : // 缓存有效则无需再次引入
+          return;
+        case -1 : // 缓存失效则文件是多余的
+          if (file.exists()) {
+              file.delete();
+          }
+          return;
+        default :
+          throw new UnsupportedOperationException("Return code for read(file) must be 1(valid),0(expired),-1(invalid)");
       }
     } finally {
       lock.unlockr();
@@ -92,11 +99,6 @@ public abstract class CoreSerial
 
     lock.lockw();
     try {
-      if (code < 0 ) {
-      if (file.exists()) {
-          file.delete();
-      } return;
-      }
       imports ();
       save(file);
     } finally {
@@ -354,7 +356,7 @@ public abstract class CoreSerial
   /**
    * 缓存最后更新时间
    */
-  public static interface LastModified
+  public static interface Mtimes
   {
 
     /**

@@ -92,16 +92,12 @@ import org.xml.sax.SAXException;
  * @author Hongs
  */
 public class NaviMap
-  extends CoreSerial
-  implements CoreSerial.LastModified
+     extends CoreSerial
+  implements CoreSerial.Mtimes
 {
 
   protected transient String name;
-
-  /**
-   * 更新时间
-   */
-  public long mtime;
+  protected transient  long  time;
 
   /**
    * 菜单层级信息
@@ -140,7 +136,7 @@ public class NaviMap
     this.init ( /**/);
   }
 
-  private void init()
+  public final void init()
     throws HongsException
   {
     File serFile = new File(Core.DATA_PATH
@@ -154,13 +150,14 @@ public class NaviMap
     lock.lockr();
     try {
       if (!expired(name)) {
-          load( serFile );
+          load (serFile);
+          time =serFile.lastModified();
           /**
            * 逐一检查导入的配置
            * 任一过期则重新导入
            */
           R: {
-          for( String namz : imports)
+          for( String namz : imports )
           if (expired(namz)) {
             break R ;
           }
@@ -173,8 +170,9 @@ public class NaviMap
 
     lock.lockw();
     try {
-      imports( );
-      save(serFile );
+      imports ();
+      save (serFile);
+      time =serFile.lastModified();
     } finally {
       lock.unlockw();
     }
@@ -183,7 +181,7 @@ public class NaviMap
   @Override
   public long dataModified()
   {
-    return mtime;
+    return time;
   }
 
   @Override
@@ -199,7 +197,7 @@ public class NaviMap
   {
     File serFile = new File(Core.DATA_PATH
                  + File.separator + "serial"
-                 + File.separator + name + Cnst.NAVI_EXT + ".ser");
+                 + File.separator + namz + Cnst.NAVI_EXT + ".ser");
     if (!serFile.exists())
     {
       return true;

@@ -22,27 +22,84 @@ import java.util.Set;
  * 用户组记录
  * @author Hongs
  */
-public class RoleSet extends CoreSerial implements CoreSerial.LastModified, Set<String> {
+public class RoleSet extends CoreSerial implements CoreSerial.Mtimes, Set<String> {
 
-    transient private final File file;
+    transient public final String userId;
+    transient public final File   file  ;
+    transient public final long   time  ;
 
-    public /**/String userId;
-    public Set<String> roles;
-    public long        rtime;
+    public Set <String> roles = null;
 
     private RoleSet(String userId) throws HongsException {
+        String path = "master/role/" + Syno.splitPath(userId);
         this.userId = userId;
-        file = init("master/role/" + Syno.splitPath(userId));
+        this.file   = init  ( path );
+        this.time   = fileModified();
     }
 
     @Override
     public long dataModified() {
-        return rtime * 1000L;
+        return time * 1000L ;
     }
 
     @Override
     public long fileModified() {
         return file.lastModified();
+    }
+
+    @Override
+    protected byte read(File f) throws HongsException {
+        DB        db;
+        Table     tb;
+        Table     td;
+        FetchCase fc;
+        Map       rs;
+        int       st;
+        long      rt;
+        long      ot;
+
+        db = DB.getInstance("master");
+
+        tb = db.getTable("user");
+        fc = new FetchCase( FetchCase.STRICT )
+                .from  (tb.tableName, tb.name)
+                .select(tb.name+".state, "+tb.name+".rtime")
+                .filter(tb.name+".id = ?", userId);
+        rs = db.fetchLess(fc);
+        st = Synt.declare(rs.get("state"), 0 );
+        rt = Synt.declare(rs.get("rtime"), 0L);
+        if (st <= 0) {
+            return -1; // 用户不存在或已锁定，则删除
+        }
+
+        tb = db.getTable("dept");
+        td = db.getTable("dept_user");
+        fc = new FetchCase( FetchCase.STRICT )
+                .from  (tb.tableName, tb.name)
+                .join  (td.tableName, td.name , td.name+".dept_id = "+tb.name+".id" /***/ )
+                .select("MAX("+tb.name+".state) AS state, MAX("+tb.name+".rtime) AS rtime")
+                .filter(td.name+".user_id = ?", userId)
+                .gather(td.name+".user_id");
+        rs = db.fetchLess(fc);
+        st = Synt.declare(rs.get("state"), 1 );
+        ot = Synt.declare(rs.get("rtime"), 0L);
+        if (st <= 0) {
+            return -1; // 所在的分组均已锁定，则删除
+        }
+        if (rt < ot) {
+            rt = ot;
+        }
+
+        /**
+         * 比较文件修改时间和权限变更时间
+         * 还没有过期则从缓存文件载入即可
+         */
+        if (f.exists() && f.lastModified() >= rt * 1000L) {
+            load(f);
+            return  1;
+        } else {
+            return  0;
+        }
     }
 
     @Override
@@ -86,66 +143,16 @@ public class RoleSet extends CoreSerial implements CoreSerial.LastModified, Set<
         for (Map rm : rz) {
             roles.add((String) rm.get("role"));
         }
-
-        //** 当前保存时间 **/
-
-        rtime = System.currentTimeMillis() / 1000L;
     }
 
     @Override
-    protected byte read(File f) throws HongsException {
-        DB        db;
-        Table     tb;
-        Table     td;
-        FetchCase fc;
-        Map       rs;
-        int       st;
-        long      rt;
-        long      ot;
+    protected void load(Object data) {
+        roles = (Set) data;
+    }
 
-        db = DB.getInstance("master");
-
-        tb = db.getTable("user");
-        fc = new FetchCase( FetchCase.STRICT )
-                .from  (tb.tableName, tb.name)
-                .select(tb.name+".state, "+tb.name+".rtime")
-                .filter(tb.name+".id = ?", userId);
-        rs = db.fetchLess(fc);
-        st = Synt.declare(rs.get("state"), 0 );
-        rt = Synt.declare(rs.get("rtime"), 0L);
-        if (st <= 0) {
-            rtime = 0;
-            return -1; // 用户不存在或已锁定，则删除
-        }
-
-        tb = db.getTable("dept");
-        td = db.getTable("dept_user");
-        fc = new FetchCase( FetchCase.STRICT )
-                .from  (tb.tableName, tb.name)
-                .join  (td.tableName, td.name , td.name+".dept_id = "+tb.name+".id" /***/ )
-                .select("MAX("+tb.name+".state) AS state, MAX("+tb.name+".rtime) AS rtime")
-                .filter(td.name+".user_id = ?", userId   )
-                .gather(td.name+".user_id");
-        rs = db.fetchLess(fc);
-        st = Synt.declare(rs.get("state"), 1 );
-        ot = Synt.declare(rs.get("rtime"), 0L);
-        if (st <= 0) {
-            rtime = 0;
-            return -1; // 所在的分组均已锁定，则删除
-        }
-        if (rt < ot) {
-            rt = ot;
-        }
-
-        if (!f.exists()) {
-            return  0;
-        }
-        load(f);
-        if (rt > rtime ) {
-            return  0;
-        } else {
-            return  1;
-        }
+    @Override
+    protected Object save() {
+        return roles;
     }
 
     //** 构造工厂方法 **/
@@ -158,7 +165,7 @@ public class RoleSet extends CoreSerial implements CoreSerial.LastModified, Set<
             return (RoleSet) c.get( k );
         }
         RoleSet s = new RoleSet(userId);
-        if (s . rtime == 0L ) {
+        if (s.roles == null ) {
             s = null; // 状态不对
         }
         c.put(k , s); // 缓存对象

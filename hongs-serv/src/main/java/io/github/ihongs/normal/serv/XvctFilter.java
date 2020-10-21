@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * 版本兼容
+ * 版本兼容转换
  *
  * 参数 versions 取值:
  * 20190728 将 :xx 操作符换成 xx
@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletResponse;
  * @deprecated 仅为兼容
  * @author Hongs
  */
-public class XsymFilter extends ActionDriver {
+public class XvctFilter extends ActionDriver {
 
     /**
      * 不包含的URL

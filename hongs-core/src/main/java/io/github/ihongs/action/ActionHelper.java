@@ -1165,7 +1165,7 @@ public class ActionHelper implements Cloneable
    */
   public void error400(String msg)
   {
-    this.response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    this.response.setStatus(HttpServletResponse.SC_BAD_REQUEST );
     this.responseData = null;
     this.print(msg);
   }
@@ -1199,17 +1199,6 @@ public class ActionHelper implements Cloneable
   public void error404(String msg)
   {
     this.response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-    this.responseData = null;
-    this.print(msg);
-  }
-
-  /**
-   * 405方法错误
-   * @param msg
-   */
-  public void error405(String msg)
-  {
-    this.response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
     this.responseData = null;
     this.print(msg);
   }

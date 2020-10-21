@@ -145,10 +145,10 @@ public class AuthKit {
             v = cc.getProperty("oauth2.bak.url" , Core.BASE_HREF+"/");
         } while (false);
 
-        // 输出 JSON
         if ("_mine_info_".equals(r)
         ||  "_sign_info_".equals(r)
         ||  "-".equals(r)) {
+            // 输出 JSON
             String errno = "Ex" + Integer.toHexString(err.getErrno());
             helper.reply( Synt.mapOf (
                 "ok" , false,
@@ -156,19 +156,11 @@ public class AuthKit {
                 "err", err.getMessage(),
                 "msg", err.getLocalizedMessage()
             ));
-            return;
+        } else {
+            // 输出 HTML
+            String m = err.getLocalizedMessage();
+            helper.redirect (v, m, 401);
         }
-
-        // 输出 HTML
-        helper.error401(Syno.inject(
-            CoreLocale .getInstance(/* default locale */)
-                       .getProperty("core.redirect.html"),
-            Synt.mapOf (
-                "uri", v,
-                "urt", Core.BASE_HREF,
-                "msg", err.getLocalizedMessage()
-            )
-        ));
     }
 
     /**

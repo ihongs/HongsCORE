@@ -370,30 +370,13 @@ public class AuthFilter
          * 则从全局错误跳转构建响应代码
          */
         if (uri == null || uri.length() == 0) {
-            uri =  core.get(CoreConfig.class)
-                       .getProperty("fore.Er40"+ type +".redirect");
+            uri =  CoreConfig.getInstance().getProperty("fore.Er40"+type+".redirect");
         if (uri == null || uri.length() == 0) {
-            uri =  Core.BASE_HREF +"/";
+            uri =  Core.BASE_HREF + "/";
         }}
 
-        Map rep = new HashMap();
-        rep.put( "msg" ,  msg );
-        rep.put( "uri" ,  uri );
-        rep.put( "urt" , Core.BASE_HREF );
-        String err = lang.translate("core.redirect.html", rep /**/);
-
-        // 禁止缓存
-        rsp.addHeader("Cache-Control", "no-cache");
-        rsp.setHeader(    "Pragma"   , "no-cache");
-        rsp.setDateHeader("Max-Age"  , 0);
-        rsp.setDateHeader("Expires"  , 0);
-
-        // 错误消息
-        if (type == 3) {
-            hlpr.error403(err);
-        } else {
-            hlpr.error401(err);
-        }
+        // 跳转页面
+        hlpr.redirect( uri, msg, type );
     }
   }
 

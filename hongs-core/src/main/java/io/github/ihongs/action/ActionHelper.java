@@ -10,6 +10,7 @@ import io.github.ihongs.HongsExemption;
 import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Dict;
 
+import java.io.File;
 import java.io.Writer;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -1095,6 +1096,45 @@ public class ActionHelper implements Cloneable
     }
 
     this.responseData = null;
+  }
+
+  /**
+   * 跳转页面
+   * @param url
+   * @param msg
+   * @param sta 302,403,404 等
+   */
+  public void redirect(String url, String msg, int sta)
+  {
+    String p = CoreConfig.getInstance().getProperty("core.redirect", "/302.jsp");
+    if ( ! p.isEmpty() && new File(Core.BASE_PATH + p).exists())
+    {
+      this.request.setAttribute("javax.servlet.location" , url);
+      this.request.setAttribute("javax.servlet.error.message", msg);
+      this.request.setAttribute("javax.servlet.error.status_code", sta);
+      try {
+        this.request.getRequestDispatcher(p).forward(request, response);
+      } catch (IOException | ServletException ex) {
+        throw new HongsExemption(0x1110, "Can not send to client.", ex);
+      }
+    }
+    else
+    {
+      if ( sta != 301 && sta != 302) {
+        this.response.setStatus(sta);
+      }
+      try {
+        this.response.getWriter().print(
+            "<html><head>"
+          + "<meta http-equiv=\"Expires\" content=\"0\">"
+          + "<meta http-equiv=\"Refresh\" content=\"3; url="+url+"\">"
+          + "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">"
+          + "<title>"+msg+"</title></head><body> <a href=\""+url+"\">"+msg+"</a> </body></html>"
+        );
+      } catch (IOException ex) {
+        throw new HongsExemption(0x1110, "Can not send to client.", ex);
+      }
+    }
   }
 
   /**

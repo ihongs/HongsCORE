@@ -25,18 +25,34 @@ public class FileAction {
         List  fils = Synt.asList (helper.getRequestData( ).get("file") );
         String uid = Synt.declare(helper.getSessibute(Cnst.UID_SES),"0");
         String nid = Core.newIdentity();
-        String fmt = "%0"+ String.valueOf ( fils.size( ) ).length()+"d" ;
         int    idx = 0;
+
+        if (fils == null
+        ||  fils.size() < 1) {
+            helper.reply(Synt.mapOf(
+                "ok" , false,
+                "ern", "Er400",
+                "err", "file required"
+            ));
+            return;
+        }
+        if (fils.size() > 9) {
+            helper.reply(Synt.mapOf(
+                "ok" , false,
+                "ern", "Er400",
+                "err", "up to 9 files"
+            ));
+            return;
+        }
 
         UploadHelper uh = new UploadHelper( );
         uh.setUploadPath("static/upload/tmp");
         uh.setUploadHref("static/upload/tmp");
 
-        for(Object item  :  fils) {
+        for(Object item :   fils) {
         if (item instanceof Part) {
             Part   part = ( Part) item;
-            String name = ( uid +"-"+ nid ) +"-"+
-            String.format ( fmt , + + idx ) +".";
+            String name = ( uid +"-"+ nid ) +"-"+ (idx++) + "." ;
 
             File   file = uh.upload(part , name);
             String href = uh.getResultHref(/**/);

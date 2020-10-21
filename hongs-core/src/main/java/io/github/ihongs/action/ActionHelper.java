@@ -1214,15 +1214,6 @@ public class ActionHelper implements Cloneable
     this.print(msg);
   }
 
-  /**
-   * 500 系统异常
-   * @param ex
-   */
-  public void error500(Throwable ex)
-  {
-    this.error500(ex.getLocalizedMessage());
-  }
-
   //** 工具方法 **/
 
   /**

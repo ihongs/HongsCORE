@@ -12,7 +12,6 @@ import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.serv.master.Dept;
 import io.github.ihongs.serv.master.UserAction;
-import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.verify.Wrong;
 import io.github.ihongs.util.verify.Wrongs;

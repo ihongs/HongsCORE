@@ -1,5 +1,6 @@
 package io.github.ihongs.jsp;
 
+import io.github.ihongs.Core;
 import io.github.ihongs.HongsCause;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.ActionDriver;
@@ -67,6 +68,18 @@ abstract public class Pagelet extends ActionDriver implements HttpJspPage
       req.setAttribute("javax.servlet.error.exception_type", ax.getClass().getName());
       rsp.sendError(eo, er);
     }
+  }
+
+  /**
+   * 补全URL, 增加应用前缀
+   * @param uri
+   * @return 
+   */
+  public static String fixUri(String uri) {
+      if (! uri.matches( "^(\\w+:)?/" ) ) {
+          uri = Core.BASE_HREF +"/"+ uri;
+      }
+      return uri;
   }
 
   /**

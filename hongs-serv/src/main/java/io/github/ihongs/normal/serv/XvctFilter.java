@@ -25,8 +25,8 @@ import javax.servlet.http.HttpServletResponse;
  * 版本兼容转换
  *
  * 参数 versions 取值:
- * 20190728 将 :xx 操作符换成 xx
- * 20200906 将 enum/menu 换成 enfo, create 返回 info, update/delete 返回 size
+ * 0.9.0 将 :xx 操作符换成 xx
+ * 1.0.1 将 enum/menu 换成 enfo, create 返回 info, update/delete 返回 size
  *
  * @deprecated 仅为兼容
  * @author Hongs

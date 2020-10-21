@@ -65,10 +65,10 @@ public class XvctFilter extends ActionDriver {
          */
         Set vs  = Synt.toTerms(config.getInitParameter("versions"));
         if (vs != null) {
-            if (vs.contains("20190728")) {
+            if (vs.contains("0.9.0")) {
                 level += 1;
             }
-            if (vs.contains("20200906")) {
+            if (vs.contains("1.0.0")) {
                 level += 2;
             }
         }

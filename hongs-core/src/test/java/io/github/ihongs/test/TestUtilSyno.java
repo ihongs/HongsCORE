@@ -16,9 +16,9 @@ import org.junit.Test;
  * 测试 io.github.ihongs.util.Syno
  * @author Hongs
  */
-public class TestSyno extends TestCase {
+public class TestUtilSyno extends TestCase {
 
-    public TestSyno() {
+    public TestUtilSyno() {
 
     }
 

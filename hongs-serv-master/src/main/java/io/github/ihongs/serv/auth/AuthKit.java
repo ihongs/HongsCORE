@@ -37,7 +37,6 @@ public class AuthKit {
     private static final byte[] PAZZ = {'A','B','C','D','E','F','1','2','3','4','5','6','7','8','9','0'};
     private static final String NAME = "uname" ;
     private static final String HEAD = "uhead" ;
-    private static final String SSID = "sid"   ;
 
     /**
      * 登录成功后跳转
@@ -202,9 +201,9 @@ public class AuthKit {
 
         // 返回数据
         Map rd = new HashMap();
-        rd.put(Cnst.UST_SES, time);
+        rd.put(Cnst.SID_KEY, ssid);
         rd.put(Cnst.UID_SES, uuid);
-        rd.put(SSID, ssid );
+        rd.put(Cnst.UST_SES, time);
         rd.put(NAME, uname);
         rd.put(HEAD, uhead);
 

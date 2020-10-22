@@ -98,6 +98,8 @@ public final class Cnst {
 
     //** 会话参数 **/
 
+    public static final String  SID_KEY =  "sid"; // 会话代号
+    
     public static final String  UID_SES =  "uid"; // 用户代号
 
     public static final String  UST_SES =  "ust"; // 登录时间

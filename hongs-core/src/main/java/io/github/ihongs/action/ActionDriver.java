@@ -869,19 +869,19 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
      */
     public static final class URLPatterns {
 
-        private final Pattern pattern;
-        private final Pattern extreme;
+        private final Pattern include;
+        private final Pattern exclude;
 
-        public URLPatterns(String urlPattern, String urlExtreme) {
-            if (urlPattern != null && ! urlPattern.isBlank()) {
-                pattern = compile(urlPattern);
+        public URLPatterns(String urlInclude, String urlExclude) {
+            if (urlInclude != null && ! urlInclude.isBlank()) {
+                include = compile(urlInclude);
             } else {
-                pattern = null;
+                include = null;
             }
-            if (urlExtreme != null && ! urlExtreme.isBlank()) {
-                extreme = compile(urlExtreme);
+            if (urlExclude != null && ! urlExclude.isBlank()) {
+                exclude = compile(urlExclude);
             } else {
-                extreme = null;
+                exclude = null;
             }
         }
 
@@ -891,24 +891,35 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
 
         @Override
         public  String toString( ) {
-            return "Pattern: "+(pattern != null ? pattern.toString() : "")
-                   +  "\r\n"  +
-                   "Extreme: "+(extreme != null ? extreme.toString() : "");
+            if (include == null && exclude == null) {
+                return "";
+            } else
+            if (exclude == null) {
+                return "Include: "+include.toString();
+            } else
+            if (include == null) {
+                return "Exclude: "+include.toString();
+            } else
+            {
+                return "Include: "+include.toString()
+                       +  "\r\n"  +
+                       "Exclude: "+exclude.toString();
+            }
         }
 
         public  boolean matches(String uri) {
-            if (pattern == null && extreme == null) {
+            if (include == null && exclude == null) {
                 return  false  ;
             } else
-            if (extreme == null) {
-                return  pattern.matcher(uri).matches();
+            if (exclude == null) {
+                return  include.matcher(uri).matches();
             } else
-            if (pattern == null) {
-                return !extreme.matcher(uri).matches();
+            if (include == null) {
+                return !exclude.matcher(uri).matches();
             } else
             {
-                return  pattern.matcher(uri).matches()
-                    && !extreme.matcher(uri).matches();
+                return  include.matcher(uri).matches()
+                    && !exclude.matcher(uri).matches();
             }
         }
 

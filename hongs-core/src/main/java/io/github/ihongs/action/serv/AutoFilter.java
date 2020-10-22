@@ -6,7 +6,6 @@ import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
-import io.github.ihongs.action.PasserHelper;
 import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.action.anno.CustomReplies;
 import java.io.File;
@@ -47,10 +46,10 @@ public class AutoFilter extends ActionDriver {
 
     private String action;
     private String layout;
-    private PasserHelper ignore = null;
-    private Set<String>  layset = null;
-    private Set<String>  actset = null;
-    private Set<String>  cstset = null;
+    private URLPatterns ignore = null;
+    private Set<String> layset = null;
+    private Set<String> actset = null;
+    private Set<String> cstset = null;
 //  private Map<String, String> cstmap = null; // 可 inlucde 的动作脚本
 //  private Map<String, String> cxtmap = null; // 可 forward 的动作脚本
 
@@ -70,9 +69,9 @@ public class AutoFilter extends ActionDriver {
         }
 
         // 获取不包含的URL
-        this.ignore = new PasserHelper(
+        this.ignore = new URLPatterns(
             cnf.getInitParameter("ignore-urls"),
-            cnf.getInitParameter("attend-urls")
+            cnf.getInitParameter("intend-urls")
         );
     }
 
@@ -92,7 +91,7 @@ public class AutoFilter extends ActionDriver {
         String ref = ActionDriver.getOriginPath(req);
 
         // 检查是否需要跳过
-        if (ignore != null && ignore.ignore(url)) {
+        if (ignore != null && ignore.matches(url)) {
             chain.doFilter( req , rsp );
             return;
         }

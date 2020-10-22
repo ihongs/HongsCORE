@@ -2,7 +2,7 @@ package io.github.ihongs.normal.serv;
 
 import io.github.ihongs.Core;
 import io.github.ihongs.action.ActionDriver;
-import io.github.ihongs.action.PasserHelper;
+import io.github.ihongs.action.ActionDriver.URLPatterns;
 import io.github.ihongs.util.Synt;
 import java.io.File;
 import java.io.IOException;
@@ -29,14 +29,14 @@ import org.xml.sax.SAXException;
  */
 public class SparFilter implements Filter {
 
-    private PasserHelper ignore;
-    private Set<String>  access;
+    private URLPatterns ignore;
+    private Set<String> access;
 
     @Override
     public void init(FilterConfig cnf) throws ServletException {
-        ignore = new PasserHelper(
+        ignore = new ActionDriver.URLPatterns(
             cnf.getInitParameter("ignore-urls"),
-            cnf.getInitParameter("attend-urls")
+            cnf.getInitParameter("intend-urls")
         );
 
         // 索引文件列表
@@ -58,7 +58,7 @@ public class SparFilter implements Filter {
         HttpServletRequest raq = (HttpServletRequest) req;
         String url = ActionDriver.getRecentPath (raq);
 
-        if (ignore.ignore( url )) {
+        if (ignore.matches( url )) {
             fc.doFilter(req, rsp);
             return;
         }

@@ -7,7 +7,6 @@ import io.github.ihongs.CoreLocale;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.ActionHelper;
-import io.github.ihongs.action.PasserHelper;
 import io.github.ihongs.action.NaviMap;
 import io.github.ihongs.util.Synt;
 import java.io.IOException;
@@ -70,7 +69,7 @@ public class AuthFilter
   /**
    * 不包含的URL
    */
-  private PasserHelper ignore = null;
+  private URLPatterns ignore = null;
 
   /**
    * 去主机名正则
@@ -145,9 +144,9 @@ public class AuthFilter
     /**
      * 获取不包含的URL
      */
-    this.ignore = new PasserHelper(
+    this.ignore = new URLPatterns(
         config.getInitParameter("ignore-urls"),
-        config.getInitParameter("attend-urls")
+        config.getInitParameter("intend-urls")
     );
   }
 
@@ -178,7 +177,7 @@ public class AuthFilter
     /**
      * 检查当前动作是否可以忽略
      */
-    if (ignore != null && ignore.ignore( act ) ) {
+    if (ignore != null && ignore.matches( act ) ) {
         chain.doFilter(req, rsp);
         return;
     }

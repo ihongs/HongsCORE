@@ -14,8 +14,10 @@ import java.util.Enumeration;
 import java.util.Properties;
 import java.util.TimeZone;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
@@ -191,8 +193,16 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
 
         // 设置全局清理的计划任务
         long time = Synt.declare( System.getProperty("core.gc.time") , 600000 );
-        if ( time > 0 ) { new Timer("core.gc", true )
-            .schedule(new DriverTimer(), time, time );
+        if ( time > 0 ) {
+            new Timer("core.gc" , true).schedule( new TimerTask() {
+                @Override
+                public void run ( ) {
+                    if (0 != Core.DEBUG && 8 != (8 & Core.DEBUG)) {
+                        CoreLogger.debug( "CORE global object: "
+                      + Core.GLOBAL_CORE.toString());
+                    }   Core.GLOBAL_CORE.clean(/**/);
+                }
+            } , time , time );
         }
 
         // 启动后需立即执行的任务
@@ -838,17 +848,80 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
     }
 
     /**
-     * 清理计划任务
+     * URL 匹配助手
+     *
+     * 构建通配符简单正则,
+     * 忽略换行及首尾空白.
+     *
+     * <ul>
+     * <li><b>*</b> 表零个或多个字符</li>
+     * <li><b>?</b> 表单独的一个字符</li>
+     * <li><b>;</b> 分隔多组路径模式</li>
+     * </ul>
+     *
+     * <pre>
+     * 如通配项
+     * <code>*.api;*.js;*.json;*.css;*.gif;*.jpg;*.png;</code>
+     * <code>/centre/sign/create.act;/centre/login.html</code>
+     * 转为正则
+     * <code>(.*\.api)|(.*\.js)|(.*\.json)|(.*\.css)|(.*\.gif)|(.*\.jpg)|(.*\.png)|(/centre/sign/create\.act)|(/centre/login\.html)</code>
+     * </pre>
+     *
+     * @author Hongs
      */
-    private static final class DriverTimer extends TimerTask {
+    public static final class URLPatterns {
+
+        private final Pattern pattern;
+        private final Pattern extreme;
+
+        public URLPatterns(String urlPattern, String urlExtreme) {
+            if (urlPattern != null && ! urlPattern.isBlank()) {
+                pattern = compile(urlPattern);
+            } else {
+                pattern = null;
+            }
+            if (urlExtreme != null && ! urlExtreme.isBlank()) {
+                extreme = compile(urlExtreme);
+            } else {
+                extreme = null;
+            }
+        }
+
+        public URLPatterns(String urlInclude) {
+            this(urlInclude, null);
+        }
 
         @Override
-        public void run() {
-            if ( 0 != Core.DEBUG && 8 != (8 & Core.DEBUG) ) {
-                CoreLogger.debug( "CORE global object: "
-              + Core.GLOBAL_CORE.toString());
+        public  String toString( ) {
+            return "Pattern: "+(pattern != null ? pattern.toString() : "")
+                   +  "\r\n"  +
+                   "Extreme: "+(extreme != null ? extreme.toString() : "");
+        }
+
+        public  boolean matches(String uri) {
+            if (pattern == null && extreme == null) {
+                return  false  ;
+            } else
+            if (extreme == null) {
+                return  pattern.matcher(uri).matches();
+            } else
+            if (pattern == null) {
+                return !extreme.matcher(uri).matches();
+            } else
+            {
+                return  pattern.matcher(uri).matches()
+                    && !extreme.matcher(uri).matches();
             }
-                Core.GLOBAL_CORE.clean(/**/);
+        }
+
+        private Pattern compile(String pat) {
+            pat = pat.trim();
+            pat = pat.replaceAll("[\\^\\$\\(\\)\\[\\]\\{\\}\\+\\.\\\\]", "\\\\$0");
+            pat = pat.replaceAll("\\s*;\\s*", ")|(");
+            pat = pat.replace("*", ".*");
+            pat = pat.replace("?", ".?");
+            pat = "(" + pat + ")";
+            return Pattern.compile (pat);
         }
 
     }

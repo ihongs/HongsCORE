@@ -5,7 +5,6 @@ import io.github.ihongs.Core;
 import io.github.ihongs.HongsCause;
 import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.ActionHelper;
-import io.github.ihongs.action.PasserHelper;
 import io.github.ihongs.util.Synt;
 import java.io.IOException;
 import java.util.Collection;
@@ -31,13 +30,13 @@ import javax.servlet.http.HttpServletResponse;
  * @deprecated 仅为兼容
  * @author Hongs
  */
-public class XvctFilter extends ActionDriver {
+public class VersFilter extends ActionDriver {
 
     /**
      * 不包含的URL
      */
-    private PasserHelper ignoreUrls = null;
-    private PasserHelper ignoreRefs = null;
+    private URLPatterns ignoreUrls = null;
+    private URLPatterns ignoreRefs = null;
     private byte level = 0;
 
     private static final Pattern REF_PAT = Pattern.compile("^\\w+://([^/]+)(.*)");
@@ -51,13 +50,13 @@ public class XvctFilter extends ActionDriver {
         /**
          * 获取不包含的URL
          */
-        this.ignoreUrls = new PasserHelper(
+        this.ignoreUrls = new URLPatterns(
             config.getInitParameter("ignore-urls"),
-            config.getInitParameter("attend-urls")
+            config.getInitParameter("intend-urls")
         );
-        this.ignoreRefs = new PasserHelper(
+        this.ignoreRefs = new URLPatterns(
             config.getInitParameter("ignore-refs"),
-            config.getInitParameter("attend-refs")
+            config.getInitParameter("intend-refs")
         );
 
         /**
@@ -98,12 +97,12 @@ public class XvctFilter extends ActionDriver {
             return;
         }
         String act = ActionDriver.getRecentPath(req);
-        if (act != null && ignoreUrls.ignore(act)) {
+        if (act != null && ignoreUrls.matches(act)) {
             chain.doFilter(req, rsp);
             return;
         }
         String ref = /* Referer */getRefersPath(req);
-        if (ref != null && ignoreRefs.ignore(ref)) {
+        if (ref != null && ignoreRefs.matches(ref)) {
             chain.doFilter(req, rsp);
             return;
         }

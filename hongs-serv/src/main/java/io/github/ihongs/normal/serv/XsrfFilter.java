@@ -1,7 +1,7 @@
 package io.github.ihongs.normal.serv;
 
 import io.github.ihongs.action.ActionDriver;
-import io.github.ihongs.action.PasserHelper;
+import io.github.ihongs.action.ActionDriver.URLPatterns;
 import io.github.ihongs.util.Synt;
 import java.io.IOException;
 import java.util.Set;
@@ -24,17 +24,17 @@ public class XsrfFilter implements Filter {
 
     private static final Pattern DOMAIN = Pattern.compile("^(?:\\w+\\:)?//(.+?)(?:\\:\\d+)?/");
 
-    private String       inside = null; // 过滤器标识
-    private PasserHelper ignore = null; // 待忽略用例
-    private Set <String> allows = null; // 许可的域名
+    private String      inside = null; // 过滤器标识
+    private URLPatterns ignore = null; // 待忽略用例
+    private Set<String> allows = null; // 许可的域名
 
     @Override
     public void init(FilterConfig fc) throws ServletException {
         inside = XsrfFilter.class.getName()+":"+fc.getFilterName()+":INSIDE";
         allows = Synt.toTerms (fc.getInitParameter("allow-hosts"));
-        ignore = new PasserHelper(
+        ignore = new ActionDriver.URLPatterns(
             fc.getInitParameter("ignore-urls"),
-            fc.getInitParameter("attend-urls")
+            fc.getInitParameter("intend-urls")
         );
         if (allows != null && allows.isEmpty()) {
             allows  = null;
@@ -50,8 +50,8 @@ public class XsrfFilter implements Filter {
          * 对于嵌套相同过滤, 不在内部重复执行;
          * 如外部设置了忽略, 则跳过忽略的路径.
          */
-        if ((inside != null &&  Synt.declare(req.getAttribute(inside), false ))
-        ||  (ignore != null && ignore.ignore(ActionDriver.getRecentPath(req)))) {
+        if ((inside != null &&  Synt .declare(req.getAttribute(inside), false ))
+        ||  (ignore != null && ignore.matches(ActionDriver.getRecentPath(req)))) {
             fc.doFilter(req, rsp);
             return;
         }
@@ -87,7 +87,7 @@ public class XsrfFilter implements Filter {
         } } }
 
         rsp.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        rsp.getWriter().print("XSRF Access Forbidden!");
+        rsp.getWriter().print("What's your problem...");
     }
 
     @Override

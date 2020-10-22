@@ -63,7 +63,7 @@
         <tracking-mode>SSL</tracking-mode>
         <cookie-config>
             <http-only>true</http-only>
-            <name>SK</name>
+            <name>SID</name>
         </cookie-config>
     </session-config>
     <!-- Default Tags -->
@@ -72,10 +72,6 @@
             <taglib-uri>/hongs.tag</taglib-uri>
             <taglib-location>web.tld</taglib-location>
         </taglib>
-        <jsp-property-group>
-            <url-pattern>/static/*</url-pattern>
-            <scripting-invalid>true</scripting-invalid>
-        </jsp-property-group>
     </jsp-config>
     <!-- Another Sets -->
     <error-page>

@@ -72,6 +72,19 @@
         <filter-name>SparFilter</filter-name>
         <url-pattern>/public/*</url-pattern>
     </filter-mapping>
+    <!-- XRSH Filter -->
+    <filter>
+        <filter-name>XrshFilter</filter-name>
+        <filter-class>io.github.ihongs.normal.serv.XrshFilter</filter-class>
+        <init-param>
+            <param-name>intend-urls</param-name>
+            <param-value>*.js;*.jsp;*.php</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>XrshFilter</filter-name>
+        <url-pattern>/static/*</url-pattern>
+    </filter-mapping>
     <!-- XSRF Filter -->
     <filter>
         <filter-name>XsrfFilter</filter-name>
@@ -83,9 +96,9 @@
     </filter>
     <filter-mapping>
         <filter-name>XsrfFilter</filter-name>
+        <url-pattern>/api/*</url-pattern>
         <url-pattern>*.act</url-pattern>
         <url-pattern>*.api</url-pattern>
-        <url-pattern>/api/*</url-pattern>
     </filter-mapping>
     <!-- Auth Filter -->
     <filter>
@@ -106,8 +119,8 @@
         <init-param>
             <param-name>ignore-urls</param-name>
             <param-value>
-                *.js;*.css;*.png;*.gif;*.jpg;*.bmp;*.api;/api/*;
-                /centra/sign/*;/centra/login.html;
+                *.js;*.css;*.png;*.jpg;*.gif;*.bmp;*.api;
+                /centra/login.html;/centra/sign/create.act
             </param-value>
         </init-param>
     </filter>
@@ -136,8 +149,8 @@
         <init-param>
             <param-name>ignore-urls</param-name>
             <param-value>
-                *.js;*.css;*.png;*.gif;*.jpg;*.bmp;*.api;/api/*;
-                /centre/sign/*;/centre/login.html;
+                *.js;*.css;*.png;*.jpg;*.gif;*.bmp;*.api;
+                /centre/login.html;/centre/sign/create.act
             </param-value>
         </init-param>
     </filter>
@@ -195,7 +208,7 @@
         <tracking-mode>SSL</tracking-mode>
         <cookie-config>
             <http-only>true</http-only>
-            <name>SK</name>
+            <name>SID</name>
         </cookie-config>
     </session-config>
     <!-- Default Tags -->
@@ -204,10 +217,6 @@
             <taglib-uri>/hongs.tag</taglib-uri>
             <taglib-location>web.tld</taglib-location>
         </taglib>
-        <jsp-property-group>
-            <url-pattern>/static/*</url-pattern>
-            <scripting-invalid>true</scripting-invalid>
-        </jsp-property-group>
     </jsp-config>
     <!-- Another Sets -->
     <error-page>

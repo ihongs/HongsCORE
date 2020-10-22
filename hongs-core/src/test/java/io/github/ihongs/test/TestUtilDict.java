@@ -20,11 +20,11 @@ import org.junit.Test;
  * 测试 io.github.ihongs.util.Dict
  * @author Hongs
  */
-public class TestDict extends TestCase {
+public class TestUtilDict extends TestCase {
 
     private Map dict;
 
-    public TestDict() {
+    public TestUtilDict() {
     }
 
     @BeforeClass
@@ -140,10 +140,9 @@ public class TestDict extends TestCase {
 
     @Test
     public void testSplitKeys() {
-//      Object[] a = new Object [] {"", "a", "b", "c", "d", ":e", ":f", "g", ":h", null, "x.y:z", "def", null};
         Object[] a = new Object [] {"", "a", "b", "c", "d", null, "e", "f", "g", "h", null, "x.y:z", "def", null};
         Object[] b = Dict.splitKeys(".a.b[c][d].:e:f[g]:h[][x.y:z].def[]");
-        Object[] c = Dict.splitKeys(".a.b[c][d].:e:f[g]:h[][x.y:z].def." );
+        Object[] c = Dict.splitKeys(".a.b[c][d]..e.f[g].h[][x.y:z].def." );
         System.out.println(Dawn.toString(a));
         System.out.println(Dawn.toString(b));
         System.out.println(Dawn.toString(c));

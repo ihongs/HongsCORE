@@ -28,11 +28,12 @@ import javax.servlet.http.HttpServletResponse;
  *
  * <h3>初始化参数(init-param):</h3>
  * <pre>
+ * url-exclude  排除的 URL, 可用","分割多个, 可用"*"为通配符
+ * url-include  包含的 URL, 可用","分割多个, 可用"*"为通配符
  * config-name  菜单配置, 注: 如存在同名动作, 则全区均需登录
  * expire-time  登录超时(默认为永久)
  * index-page   起始页(为空则不跳转)
  * login-page   登录页(为空则不跳转)
- * ignore-urls  忽略的URL, 可用","分割多个, 可用"*"为前后缀
  * </pre>
  *
  * @author Hongs
@@ -145,8 +146,8 @@ public class AuthFilter
      * 获取不包含的URL
      */
     this.ignore = new URLPatterns(
-        config.getInitParameter("ignore-urls"),
-        config.getInitParameter("intend-urls")
+        config.getInitParameter("url-exclude"),
+        config.getInitParameter("url-include")
     );
   }
 

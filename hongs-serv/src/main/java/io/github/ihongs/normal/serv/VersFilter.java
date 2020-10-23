@@ -51,12 +51,12 @@ public class VersFilter extends ActionDriver {
          * 获取不包含的URL
          */
         this.ignoreUrls = new URLPatterns(
-            config.getInitParameter("ignore-urls"),
-            config.getInitParameter("intend-urls")
+            config.getInitParameter("url-exclude"),
+            config.getInitParameter("url-include")
         );
         this.ignoreRefs = new URLPatterns(
-            config.getInitParameter("ignore-refs"),
-            config.getInitParameter("intend-refs")
+            config.getInitParameter("ref-exclude"),
+            config.getInitParameter("ref-include")
         );
 
         /**

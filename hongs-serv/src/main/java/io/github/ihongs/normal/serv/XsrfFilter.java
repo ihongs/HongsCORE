@@ -33,8 +33,8 @@ public class XsrfFilter implements Filter {
         inside = XsrfFilter.class.getName()+":"+fc.getFilterName()+":INSIDE";
         allows = Synt.toTerms (fc.getInitParameter("allow-hosts"));
         ignore = new ActionDriver.URLPatterns(
-            fc.getInitParameter("ignore-urls"),
-            fc.getInitParameter("intend-urls")
+            fc.getInitParameter("url-exclude"),
+            fc.getInitParameter("url-include")
         );
         if (allows != null && allows.isEmpty()) {
             allows  = null;

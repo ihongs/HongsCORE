@@ -77,8 +77,8 @@
         <filter-name>XrshFilter</filter-name>
         <filter-class>io.github.ihongs.normal.serv.XrshFilter</filter-class>
         <init-param>
-            <param-name>intend-urls</param-name>
-            <param-value>*.js;*.jsp;*.php</param-value>
+            <param-name>url-include</param-name>
+            <param-value>*.jsp;*.php;*.py</param-value>
         </init-param>
     </filter>
     <filter-mapping>
@@ -90,15 +90,15 @@
         <filter-name>XsrfFilter</filter-name>
         <filter-class>io.github.ihongs.normal.serv.XsrfFilter</filter-class>
         <init-param>
-            <param-name>ignore-urls</param-name>
+            <param-name>url-exclude</param-name>
             <param-value>/centre/oauth2/*</param-value>
         </init-param>
     </filter>
     <filter-mapping>
         <filter-name>XsrfFilter</filter-name>
-        <url-pattern>/api/*</url-pattern>
         <url-pattern>*.act</url-pattern>
         <url-pattern>*.api</url-pattern>
+        <url-pattern>/api/*</url-pattern>
     </filter-mapping>
     <!-- Auth Filter -->
     <filter>
@@ -117,7 +117,7 @@
             <param-value>/centra/login.html</param-value>
         </init-param>
         <init-param>
-            <param-name>ignore-urls</param-name>
+            <param-name>url-exclude</param-name>
             <param-value>
                 *.js;*.css;*.png;*.jpg;*.gif;*.bmp;*.api;
                 /centra/login.html;/centra/sign/create.act
@@ -147,7 +147,7 @@
             <param-value>/centre/login.html</param-value>
         </init-param>
         <init-param>
-            <param-name>ignore-urls</param-name>
+            <param-name>url-exclude</param-name>
             <param-value>
                 *.js;*.css;*.png;*.jpg;*.gif;*.bmp;*.api;
                 /centre/login.html;/centre/sign/create.act

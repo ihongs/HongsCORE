@@ -62,8 +62,8 @@ public class SessFilter implements Filter {
 
         inside = SessFilter.class.getName()+":"+fc.getFilterName()+":INSIDE";
         ignore = new ActionDriver.URLPatterns(
-            fc.getInitParameter("ignore-urls"),
-            fc.getInitParameter("intend-urls")
+            fc.getInitParameter("url-exclude"),
+            fc.getInitParameter("url-include")
         );
     }
 
@@ -128,7 +128,7 @@ public class SessFilter implements Filter {
             </param-value>
         </init-param>
         <init-param>
-            <param-name>ignore-urls</param-name>
+            <param-name>url-exclude</param-name>
             <param-value>
                 *.js;*.css;*.png;*.gif;*.jpg;*.bmp
             </param-value>

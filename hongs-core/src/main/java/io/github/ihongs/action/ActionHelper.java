@@ -351,8 +351,7 @@ public class ActionHelper implements Cloneable
             long   size = part.getSize();
             String name = part.getName();
             String type = part.getContentType();
-            String subn = part.getSubmittedFileName();
-            String extn = subn;
+            String extn = part.getSubmittedFileName();
 
             // 无类型的普通参数已在外部处理
             if (name == null

@@ -35,8 +35,8 @@ public class SparFilter implements Filter {
     @Override
     public void init(FilterConfig cnf) throws ServletException {
         ignore = new ActionDriver.URLPatterns(
-            cnf.getInitParameter("ignore-urls"),
-            cnf.getInitParameter("intend-urls")
+            cnf.getInitParameter("url-exclude"),
+            cnf.getInitParameter("url-include")
         );
 
         // 索引文件列表

@@ -28,8 +28,8 @@ public class XrshFilter implements Filter {
     public void init(FilterConfig fc) throws ServletException {
         inside = XsrfFilter.class.getName()+":"+fc.getFilterName()+":INSIDE";
         ignore = new ActionDriver.URLPatterns(
-            fc.getInitParameter("ignore-urls"),
-            fc.getInitParameter("intend-urls")
+            fc.getInitParameter("url-exclude"),
+            fc.getInitParameter("url-include")
         );
     }
 

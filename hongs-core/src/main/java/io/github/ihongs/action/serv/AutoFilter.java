@@ -30,9 +30,10 @@ import javax.servlet.http.HttpServletResponse;
  *
  * <h3>初始化参数(init-param):</h3>
  * <pre>
+ * url-exclude  排除的 URL, 可用","分割多个, 可用"*"为通配符
+ * url-include  包含的 URL, 可用","分割多个, 可用"*"为通配符
  * action-path  默认动作地址
  * layout-path  默认页面地址
- * ignore-urls  忽略的URL, 可用","分割多个, 可用"*"为前后缀
  * </pre>
  * <p>
  * 注意:
@@ -70,8 +71,8 @@ public class AutoFilter extends ActionDriver {
 
         // 获取不包含的URL
         this.ignore = new URLPatterns(
-            cnf.getInitParameter("ignore-urls"),
-            cnf.getInitParameter("intend-urls")
+            cnf.getInitParameter("url-exclude"),
+            cnf.getInitParameter("url-include")
         );
     }
 

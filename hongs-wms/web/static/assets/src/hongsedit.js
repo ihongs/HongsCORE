@@ -278,6 +278,8 @@ function setEditor(node, func) {
                                                 p.css("text-indent", "");
                                             }
                                         }
+                                        // 同步内容
+                                        $(that).summernote('triggerEvent', 'change');
                                     }
                                 } , {
                                     label: "取消",
@@ -336,6 +338,9 @@ function setEditor(node, func) {
             // 关闭时需销毁
             $(this).data("destroy",function() {
                 $(that).summernote("destroy");
+            });
+            $(this).data("synchro",function() {
+                $(that).summernote('triggerEvent', 'change');
             });
         });
         func && func.call(node);

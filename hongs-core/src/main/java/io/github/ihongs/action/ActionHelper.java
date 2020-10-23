@@ -390,10 +390,10 @@ public class ActionHelper implements Cloneable
                 extn = "";
             }
             if (allowExtns != null && !allowExtns.contains(extn)) {
-                throw new HongsExemption(400, "File type '" +extn+ "' is not allowed");
+                throw new HongsExemption(400, "Extension '" +extn+ "' is not allowed");
             }
             if ( denyExtns != null &&   denyExtns.contains(extn)) {
-                throw new HongsExemption(400, "File type '" +extn+ "' is denied");
+                throw new HongsExemption(400, "Extension '" +extn+ "' is denied");
             }
 
             /**

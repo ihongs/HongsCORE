@@ -550,7 +550,6 @@ public class ActionHelper implements Cloneable
 
   /**
    * 获取容器属性
-   * 注意; 为防止歧义, 请不要在 name 中使用 "[","]"和"."
    * @param name
    * @return 当前属性, 没有则为 null
    */
@@ -568,8 +567,7 @@ public class ActionHelper implements Cloneable
 
   /**
    * 设置容器属性
-   * 注意; 为防止歧义, 请不要在 name 中使用 "[","]"和"."
-   *       当 value 为 null 时 name 对应的会话属性将删除
+   * 当 value 为 null 时 name 对应的会话属性将删除
    * @param name
    * @param value
    */
@@ -594,7 +592,6 @@ public class ActionHelper implements Cloneable
 
   /**
    * 获取会话取值
-   * 注意; 为防止歧义, 请不要在 name 中使用 "[","]"和"."
    * @param name
    * @return 当前取值, 没有则为 null
    */
@@ -614,8 +611,7 @@ public class ActionHelper implements Cloneable
 
   /**
    * 设置会话取值
-   * 注意; 为防止歧义, 请不要在 name 中使用 "[","]"和"."
-   *       当 value 为 null 时 name 对应的会话属性将删除
+   * 当 value 为 null 时 name 对应的会话属性将删除
    * @param name
    * @param value
    */

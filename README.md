@@ -1,7 +1,7 @@
 # HongsCORE framework for Java
 
 * 文档版本: 19.01.12
-* 软件版本: 0.9.0-20190801
+* 软件版本: 1.0.1-20201023
 * 设计作者: 黄弘(Kevin Hongs)
 * 技术支持: kevin.hongs@gmail.com
 
@@ -82,6 +82,7 @@
 现在，你可以在 centra/data 或 centre/data 目录下添加一个以表单 ID 为名的目录，在其下添加以下文件即可重建页面体系：
 
     default.html     引导页面
+    defines.css      样式干预定制脚本（默认是空的）
     defines.js       过程干预定制脚本（默认是空的）
     form_init.html   创建表单
     form.html        编辑表单

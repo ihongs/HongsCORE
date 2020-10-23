@@ -873,12 +873,12 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         private final Pattern exclude;
 
         public URLPatterns(String urlInclude, String urlExclude) {
-            if (urlInclude != null && ! urlInclude.isBlank()) {
+            if (urlInclude != null && ! urlInclude.isEmpty()) {
                 include = compile(urlInclude);
             } else {
                 include = null;
             }
-            if (urlExclude != null && ! urlExclude.isBlank()) {
+            if (urlExclude != null && ! urlExclude.isEmpty()) {
                 exclude = compile(urlExclude);
             } else {
                 exclude = null;

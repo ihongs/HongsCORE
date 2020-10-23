@@ -1014,7 +1014,7 @@ public class ActionHelper implements Cloneable
     this.print(str,"application/json");
   }
 
-  //** 跳转及错误 **/
+  //** 底层输出 **/
 
   /**
    * 返回数据

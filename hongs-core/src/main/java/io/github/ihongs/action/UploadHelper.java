@@ -79,6 +79,7 @@ public class UploadHelper {
 
     /**
      * 设置命名摘要算法, 如: MD5, SHA-1, SHA-256
+     * 注意, 仅适用于未指定文件名的上传, 如 upload(Part),upload(File)
      * @param type
      * @return
      */

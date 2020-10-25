@@ -591,10 +591,10 @@ public class Form extends Model {
             // 文件类型要指定上传路径(含字段名)
             if ("file".equals(y)) {
                 if(!fiel.containsKey("href")) {
-                    fiel.put("href", upload + "/" + id + "/" + n);
+                    fiel.put("href", upload + "/" + id);
                 }
                 if(!fiel.containsKey("path")) {
-                    fiel.put("path", upload + "/" + id + "/" + n);
+                    fiel.put("path", upload + "/" + id);
                 }
             }
 

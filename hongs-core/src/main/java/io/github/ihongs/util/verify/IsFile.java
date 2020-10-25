@@ -354,7 +354,7 @@ public class IsFile extends Rule {
 
             // 将上传的存入临时文件
             out  = new FileOutputStream( file );
-            byte[] buf = new byte[1204];
+            byte[] buf = new byte[1024];
             int    ovr ;
             while((ovr = ins.read(buf )) != -1) {
                 out.write(buf, 0, ovr );

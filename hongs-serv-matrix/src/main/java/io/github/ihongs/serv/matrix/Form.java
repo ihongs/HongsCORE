@@ -588,13 +588,13 @@ public class Form extends Model {
                     fiel.put("conf", centra + "/" + id);
                 }
             } else
-            // 文件类型要指定上传路径
+            // 文件类型要指定上传路径(含字段名)
             if ("file".equals(y)) {
                 if(!fiel.containsKey("href")) {
-                    fiel.put("href", upload + "/" + id);
+                    fiel.put("href", upload + "/" + id + "/" + n);
                 }
                 if(!fiel.containsKey("path")) {
-                    fiel.put("path", upload + "/" + id);
+                    fiel.put("path", upload + "/" + id + "/" + n);
                 }
             }
 

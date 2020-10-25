@@ -34,7 +34,7 @@ import javax.servlet.http.Part;
  *  keep-origin yes|no 返回原始路径, 不理会 checks 中新创建的
  *  keep-naming yes|no 保持原文件名, 会对网址末尾的文件名编码
  *  name-digest 命名摘要算法, 如: MD5,SHA-1,SHA-256
- *  path-add-id 追加表单项ID, 将会从 cleans 提取 id
+ *  name-add-id 加当前提交ID, 将会从 cleans 提取 id
  *  temp 上传临时目录, 可用变量 $DATA_PATH, $BASE_PATH 等
  *  path 上传目标目录, 可用变量 $BASE_PATH, $DATA_PATH 等
  *  href 上传文件链接, 可用变量 $BASE_HREF, $SERV_HREF 等, 后者包含域名
@@ -132,7 +132,7 @@ public class IsFile extends Rule {
          * 给当前路径末尾追加表单 ID
          * 以便检测和清理无效文件
          */
-        if (Synt.declare(getParam("path-add-id"), false)) {
+        if (Synt.declare(getParam("name-add-id"), false)) {
             String id = Synt.declare(watch.getCleans().get(Cnst.ID_KEY), String.class);
             if (id == null || id.isEmpty()) {
                 throw new Wrong(Cnst.ID_KEY +" required for file");

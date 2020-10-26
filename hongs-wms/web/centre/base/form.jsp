@@ -307,7 +307,7 @@
                         String kn   =    name ;
                         if (kn.endsWith("_id")) {
                             kn = kn.substring(0, kn.length() - 3);
-                        } else{
+                        } else {
                             kn = kn +  "_fork"; // 增加特定后缀
                         }
                         if (rptd) {

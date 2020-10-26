@@ -23,10 +23,12 @@ public class XrshFilter implements Filter {
 
     private String      inside = null; // 过滤器标识
     private URLPatterns ignore = null; // 待忽略用例
+    private boolean     blocks = false ; // 屏蔽全部
 
     @Override
     public void init(FilterConfig fc) throws ServletException {
         inside = XsrfFilter.class.getName()+":"+fc.getFilterName()+":INSIDE";
+        blocks = Synt.declare (fc.getInitParameter ("block-every") , false );
         ignore = new ActionDriver.URLPatterns(
             fc.getInitParameter("url-exclude"),
             fc.getInitParameter("url-include")
@@ -51,7 +53,8 @@ public class XrshFilter implements Filter {
         /**
          * 文件缺失无需理会，将会自动转入 404
          */
-        if (! new File(Core.BASE_PATH+ActionDriver.getRecentPath(req)).exists()) {
+        if (! blocks
+        &&  ! new File(Core.BASE_PATH+ActionDriver.getRecentPath(req)).exists()) {
             fc.doFilter(req, rsp);
             return;
         }

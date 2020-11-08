@@ -32,7 +32,8 @@ import javax.servlet.http.Part;
  *  down-remote yes|no 是否下载远程文件
  *  drop-origin yes|no 抛弃原始文件, 仅使用 checks 中新创建的
  *  keep-origin yes|no 返回原始路径, 不理会 checks 中新创建的
- *  keep-naming yes|no 保持原文件名, 会对网址末尾的文件名编码
+ *  keep-naming yes|no 保持原文件名, 会对网址末尾的文件名编码(将废弃,请改用 hash-status)
+ *  hash-status yes|no 末尾附加信息, #n=文件名称&s=文件大小等
  *  name-digest 命名摘要算法, 如: MD5,SHA-1,SHA-256
  *  name-add-id 路径要增加ID, 将会从 cleans 提取 id
  *  temp 上传临时目录, 可用变量 $DATA_PATH, $BASE_PATH 等
@@ -40,6 +41,7 @@ import javax.servlet.http.Part;
  *  href 上传文件链接, 可用变量 $BASE_HREF, $SERV_HREF 等, 后者包含域名
  *  type 文件类型限制, 逗号分隔 (Mime-Type)
  *  extn 扩展名称限制, 逗号分隔
+ *  size 文件大小限制
  * </pre>
  * @author Hongs
  */
@@ -68,7 +70,7 @@ public class IsFile extends Rule {
         // 跳过远程地址
         if (Synt.declare(getParam("pass-remote"), false)) {
             String u = value.toString( );
-            if (u.matches("^\\w+://.*")) {
+            if (HREF_PATT.matcher(u).matches()) {
                 return value;
             }
         }
@@ -76,7 +78,7 @@ public class IsFile extends Rule {
         // 下载远程文件
         if (Synt.declare(getParam("down-remote"), false)) {
             String u = value.toString( );
-            if (u.matches("^\\w+://.*")) {
+            if (HREF_PATT.matcher(u).matches()) {
             do {
                 String x;
                 // 如果是本地路径则不再下载
@@ -114,6 +116,7 @@ public class IsFile extends Rule {
         String path;
         Object para;
         String name;
+        long   size;
 
         para = getParam("temp");
         if (para != null && !"".equals(para)) hlpr.setUploadTemp(Synt.declare(para, String.class));
@@ -144,36 +147,49 @@ public class IsFile extends Rule {
             hlpr.setUploadHref(href + "/" + id );
         }
 
+        String hash = "";
         if (value instanceof Part ) {
             Part part =(Part) value;
-            hlpr.upload(part);
             name = part.getSubmittedFileName();
+            size = part.getSize ( );
+            hlpr.upload(part);
         } else
         if (value instanceof File ) {
             File file =(File) value;
-            hlpr.upload(file);
             name = file.getName ( );
+            size = file.length  ( );
+            hlpr.upload(file);
         } else
         {
+            href = value.toString();
+            name = href;
+
             /**
+             * 井号后为附加选项
+             * 竖杆后为真实名称
+             * 又斜杠为旧的记录
              * 外部记录的是网址
              * 必须进行解码才行
-             * 没斜杠为新上传的
-             * 竖杆后真实文件名
              */
-            href = value.toString();
+            int p;
+            p = href.indexOf ("#");
+            if (p != -1) {
+                hash = href.substring(  p);
+                href = href.substring(0,p);
+            }
+            p = href.indexOf ("|");
+            if (p != -1) {
+                name = href.substring(1+p);
+                href = href.substring(0,p);
+            } else
             if (href.contains("/")) {
                 href = decode(href);
-                name =  null ;
-            } else {
-                name =  href ;
-                int  p   = name.indexOf  ("|");
-                if ( p  != -1) {
-                    href = name.substring(0,p);
-                    name = name.substring(1+p);
-                }
+                name = null; // 不在此返回是因 upload 方法还会做检查
             }
-            hlpr.upload(href);
+
+            File file;
+            file = hlpr.upload(href);
+            size = file.length(/**/);
         }
 
         path = hlpr.getResultPath();
@@ -181,7 +197,12 @@ public class IsFile extends Rule {
 
         // 没新上传, 不必检查
         if (null == name) {
-            return  href;
+            return  href  +  hash  ;
+        }
+
+        // 大小检查, 超限报错
+        if (size > getParam("size" , Long.MAX_VALUE )) {
+            throw new Wrong("fore.file.invalid.size");
         }
 
         /**
@@ -263,6 +284,20 @@ public class IsFile extends Rule {
             href = encode(href);
         }
 
+        if (getParam("hash-status", false)) {
+            /**
+             * 附加上原始名称、文件大小
+             * 也可能由 checks 附加信息
+             * 如图片的宽高, 影音的时长
+             */
+            name  = encode( name );
+            href += "#n=" + name  ;
+            href += "&s=" + size  ;
+            if (hp.length > 2) {
+                href += "&"+ hp[2];
+            }
+        }
+
         return href;
     }
 
@@ -275,6 +310,9 @@ public class IsFile extends Rule {
      * @throws Wrong
      */
     protected String stores(String href, String temp) throws Wrong {
+        // 允许不加 http 或 https
+        if (href.startsWith( "/" ) ) href = "http:" + href ;
+
         URL url = null;
         try {
             url = new URL(href);
@@ -445,6 +483,7 @@ public class IsFile extends Rule {
         return path + name;
     }
 
+    private static final Pattern HREF_PATT = Pattern.compile("^(\\w+:)?//.*");
     private static final Pattern NAME_PATT = Pattern.compile("[\"\\/<>*:?|]");
 
 }

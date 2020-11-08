@@ -37,8 +37,8 @@ public class Thumb extends IsFile {
         int    idx  = Synt.declare(getParam("thumb-index"), 0 );
 
         try {
-            String[][] hp = exec ( href, path, extn, size, mode, col, pos );
-            return new String[ ] { hp [0] [idx], hp [1] [idx] };
+            String [][] hps = exec(href, path, extn, size, mode, col, pos);
+            return hps[ idx ];
         } catch (IndexOutOfBoundsException ex) {
             throw new Wrong( ex, "Thumb index out of bounds." );
         } catch (IOException ex) {
@@ -110,10 +110,9 @@ public class Thumb extends IsFile {
             mod = ""; // 尺寸匹配, 无需截取
         }
 
-        List<String> nrs = new ArrayList();
-        List<String> urs = new ArrayList();
-        Builder      bui = null;
-        String       pre , pro ;
+        List<String[]> hps = new ArrayList();
+        Builder        bui = null;
+        String         pre , pro ;
 
         nrl = new File( nrl ).getAbsolutePath( );
         pre = nrl.replaceFirst("\\.[^\\.]+$","");
@@ -174,11 +173,10 @@ public class Thumb extends IsFile {
             try {
                 bui.outputFormat(ext);
             } catch (IllegalArgumentException ex) {
-                throw new Wrong ("Unsupported format: " + ext);
+                throw new Wrong ("Unsupported format: "+ ext);
             }
             bui.toFile(file(nrl));
-            nrs.add(nrl);
-            urs.add(url);
+            hps.add(new String [] {url, nrl, "w="+w+"&h="+h});
         }} else {
             /**
              * 如果没有指定缩放尺寸,
@@ -186,23 +184,23 @@ public class Thumb extends IsFile {
              */
             bui = make(nrl , col);
 
+            BufferedImage img = bui.asBufferedImage();
+            int w = img.getWidth ();
+            int h = img.getHeight();
+
             // 保存到文件
             nrl = pre + suf + "." + ext;
             url = pro + suf + "." + ext;
             try {
                 bui.outputFormat(ext);
             } catch (IllegalArgumentException ex) {
-                throw new Wrong ("Unsupported format: " + ext);
+                throw new Wrong ("Unsupported format: "+ ext);
             }
             bui.toFile(file(nrl));
-            nrs.add(nrl);
-            urs.add(url);
+            hps.add(new String [] {url, nrl, "w="+w+"&h="+h});
         }
 
-        return new String[][] {
-            urs.toArray(new String[] {}),
-            nrs.toArray(new String[] {})
-        };
+        return hps.toArray(new String [][]{});
     }
 
     private Builder make(String nrl, String col, String pos, String mod, int w, int h, boolean f) throws IOException {

@@ -435,7 +435,7 @@ public class StatisHelper {
                         }
                     }
                 }
-            } , counts.keySet(), that);
+            } , counts.keySet().toArray(new String[counts.size()]), that);
 
             finder.search(q, c);
             t = c.countTotals();
@@ -680,7 +680,7 @@ public class StatisHelper {
                         }
                     }
                 }
-            } , counts.keySet(), that );
+            } , counts.keySet().toArray(new String[counts.size()]), that);
 
             finder.search(q, c);
             t = c.countTotals();
@@ -757,7 +757,7 @@ public class StatisHelper {
 
     private static class AcountCollec extends Collec<String[]> {
 
-        public AcountCollec(Coller<String[]> coller, Set<String> fields, LuceneRecord record) {
+        public AcountCollec(Coller<String[]> coller, String[] fields, LuceneRecord record) {
             super(coller, fields, record);
         }
 
@@ -864,7 +864,7 @@ public class StatisHelper {
 
     private static class AmountCollec extends Collec<double[]> {
 
-        public AmountCollec(Coller<double[]> coller, Set<String> fields, LuceneRecord record) {
+        public AmountCollec(Coller<double[]> coller, String[] fields, LuceneRecord record) {
             super(coller, fields, record);
         }
 
@@ -952,9 +952,9 @@ public class StatisHelper {
         private boolean scores;
         private int     totals;
 
-        public Collec(Coller<V> coller, Set<String> fields, LuceneRecord record) {
+        public Collec(Coller<V> coller, String[ ] fields, LuceneRecord record) {
             this.coller = coller;
-            this.fields = fields.toArray(new String[]{});
+            this.fields = fields;
             this.values = new Object[this.fields.length];
             this.groups = new int[this.fields.length][2];
 

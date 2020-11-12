@@ -14,6 +14,7 @@ import java.util.Comparator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -164,7 +165,7 @@ public class StatisHelper {
         //** 排序并截取统计数据 **/
 
         for(Map.Entry<String, Map<String, Integer>> et : counts.entrySet()) {
-            List<Object[]> a = new ArrayList( );
+            List<Object[]> a = new ArrayList ( et.getValue().size(  )  );
             for(Map.Entry<String, Integer> e : et.getValue().entrySet()) {
                 String m = e.getKey ();
                 int c  = e.getValue ();
@@ -368,7 +369,7 @@ public class StatisHelper {
         //** 排序并截取统计数据 **/
 
         for(Map.Entry<String, Map<String, Integer>> et : counts.entrySet()) {
-            List<Object[]> a = new ArrayList();
+            List<Object[]> a = new ArrayList ( et.getValue().size(  )  );
             for(Map.Entry<String, Integer> e : et.getValue().entrySet()) {
                 String m = e.getKey ();
                 int c  = e.getValue ();
@@ -620,7 +621,7 @@ public class StatisHelper {
         //** 排序统计数据 **/
 
         for(Map.Entry<String, Map<Minmax, Cntsum>> et : counts.entrySet()) {
-            List<Object[]> a = new ArrayList();
+            List<Object[]> a = new ArrayList ( et.getValue().size(  )  );
             for(Map.Entry<Minmax, Cntsum> e : et.getValue().entrySet()) {
                 Minmax m = e.getKey  ();
                 Cntsum c = e.getValue();
@@ -811,12 +812,15 @@ public class StatisHelper {
                         continue;
                     }
 
-                    List<String> v = new ArrayList();
-                    long    j ;
+                    List<String> v;
+                    String[]     a;
+                    long         j;
+                    v = new LinkedList();
                     while ((j = b.nextOrd()) != SortedSetDocValues.NO_MORE_ORDS) {
                         v.add(b.lookupOrd(j).utf8ToString() );
                     }
-                    coller.collect(n, v.toArray(new String[ v.size() ]) );
+                    a = v.toArray ( new String [ v.size() ] );
+                    coller.collect(n, a);
                 } else
                 if (groups[i][0] >= 1 && groups[i][1] == 0) {
                     NumericDocValues b = (NumericDocValues) d;

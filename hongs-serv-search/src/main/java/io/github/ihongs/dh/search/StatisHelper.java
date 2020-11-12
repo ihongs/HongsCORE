@@ -812,15 +812,15 @@ public class StatisHelper {
                         continue;
                     }
 
-                    List<String> v;
-                    String[]     a;
+                    List<String> u;
+                    String[]     v;
                     long         j;
-                    v = new LinkedList();
+                    u = new LinkedList();
                     while ((j = b.nextOrd()) != SortedSetDocValues.NO_MORE_ORDS) {
-                        v.add(b.lookupOrd(j).utf8ToString() );
+                        u.add(b.lookupOrd(j).utf8ToString() );
                     }
-                    a = v.toArray ( new String [ v.size() ] );
-                    coller.collect(n, a);
+                    v = u.toArray ( new String [ u.size() ] );
+                    coller.collect(n, v);
                 } else
                 if (groups[i][0] >= 1 && groups[i][1] == 0) {
                     NumericDocValues b = (NumericDocValues) d;

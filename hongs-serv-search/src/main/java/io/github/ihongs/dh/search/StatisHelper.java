@@ -737,24 +737,24 @@ public class StatisHelper {
     }
 
     /**
-     * 为可能的特殊数据分组留有余地
+     * 为可能的特殊数据分组留有余地(废弃)
      * @param v
      * @param k
      * @return
-     */
     protected String getValue(String v, String k) {
         return v;
     }
+     */
 
     /**
-     * 为可能的特殊数据处理留有余地
+     * 为可能的特殊数据处理留有余地(废弃)
      * @param v
      * @param k
      * @return
-     */
     protected double getValue(double v, String k) {
         return v;
     }
+     */
 
     private static class AcountCollec extends Collec<String[]> {
 

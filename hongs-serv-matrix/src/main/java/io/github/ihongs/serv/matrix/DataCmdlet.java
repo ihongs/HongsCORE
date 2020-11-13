@@ -5,14 +5,15 @@ import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
+import io.github.ihongs.action.CommitRunner;
 import io.github.ihongs.cmdlet.CmdletHelper;
 import io.github.ihongs.cmdlet.anno.Cmdlet;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.db.link.Loop;
-import io.github.ihongs.action.CommitRunner;
 import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Synt;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.HashMap;
@@ -20,6 +21,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.Term;
 
 /**
  * 数据操作命令
@@ -41,6 +44,7 @@ public class DataCmdlet {
             "user:s",
             "memo:s",
             "time:i",
+            "drop:b",
             "!A",
             "?Usage: revert --conf CONF_NAME --form FORM_NAME [--time TIMESTAMP] ID0 ID1 ..."
         });
@@ -107,6 +111,26 @@ public class DataCmdlet {
         boolean pr = 0 == Core.DEBUG;
         long tm = System.currentTimeMillis();
         if (pr) CmdletHelper.progres(tm,c,i);
+
+        /**
+         * 清空全部数据
+         * 以便更新结构
+         */
+        if (Synt.declare(opts.get("drop"), false)) {
+            IndexWriter iw = dr.getWriter();
+            /**/ String pd = dr.getPartId();
+            try {
+                if (pd != null && ! pd.isEmpty( )) {
+                    iw.deleteDocuments(new Term("@"+Data.PART_ID_KEY, pd));
+                } else {
+                    iw.deleteAll(/**/);
+                }   iw.commit();
+                iw.deleteUnusedFiles();
+                iw.maybeMerge();
+            } catch ( IOException ex ) {
+                throw new HongsException(0, ex);
+            }
+        }
 
         dr.begin( );
 

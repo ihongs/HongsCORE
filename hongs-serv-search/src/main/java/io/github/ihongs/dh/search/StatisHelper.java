@@ -436,7 +436,7 @@ public class StatisHelper {
                         }
                     }
                 }
-            } , counts.keySet().toArray(new String[counts.size()]), that);
+            } , counts.keySet().toArray(new String[counts.size()]), that.getFields());
 
             finder.search(q, c);
             t = c.countTotals();
@@ -681,7 +681,7 @@ public class StatisHelper {
                         }
                     }
                 }
-            } , counts.keySet().toArray(new String[counts.size()]), that);
+            } , counts.keySet().toArray(new String[counts.size()]), that.getFields());
 
             finder.search(q, c);
             t = c.countTotals();
@@ -758,8 +758,8 @@ public class StatisHelper {
 
     private static class AcountCollec extends Collec<String[]> {
 
-        public AcountCollec(Coller<String[]> coller, String[] fields, LuceneRecord record) {
-            super(coller, fields, record);
+        public AcountCollec(Coller<String[]> coller, String[] fields, Map<String, Map> struct) {
+            super(coller, fields, struct);
         }
 
         @Override
@@ -868,8 +868,8 @@ public class StatisHelper {
 
     private static class AmountCollec extends Collec<double[]> {
 
-        public AmountCollec(Coller<double[]> coller, String[] fields, LuceneRecord record) {
-            super(coller, fields, record);
+        public AmountCollec(Coller<double[]> coller, String[] fields, Map<String, Map> struct) {
+            super(coller, fields, struct);
         }
 
         @Override
@@ -946,66 +946,44 @@ public class StatisHelper {
         public void collect(String k, V v);
     }
 
-    private static abstract class Collec<V> implements Collector, LeafCollector {
+    private static abstract class Collec<V> implements Collector,LeafCollector {
 
         protected final Coller<V> coller;
         protected final String[ ] fields;
         protected final Object[ ] values;
         protected final int[ ][ ] groups; // 类型
-        private Scorer  scorer;
-        private boolean scores;
-        private int     totals;
+        private         int       totals;
 
-        public Collec(Coller<V> coller, String[ ] fields, LuceneRecord record) {
+        public Collec(Coller<V> coller, String[ ] fields, Map<String, Map> struct) {
             this.coller = coller;
             this.fields = fields;
             this.values = new Object[this.fields.length];
             this.groups = new int[this.fields.length][2];
 
-                int  i  = -1;
-                Map fs  = record.getFields();
-            for(String fn : fields) { i ++  ;
-                Map fc  = (Map) fs.get( fn );
-                if (fc == null) {
-                    continue;
+            Map<String,String> g;
+            try {
+                g = FormSet.getInstance().getEnum("__types__");
+            } catch (HongsException e) {
+                throw e.toExemption( );
+            }
+
+            for(int i = 0; i < fields.length; i ++) {
+                Map c = struct.get( fields  [ i ] );
+                String t = (String) c.get("__type__");
+                Object k = (Object) c.get(  "type"  );
+
+                // 基准类型
+                if (g.containsKey(t)) {
+                    t  =  g.get  (t);
                 }
 
-                String  t = (String) fc.get("__type__");
-                if ( t == null) {
-                    continue;
-                }
-
-                if (Synt.declare(fc.get("__repeated__"), false)) {
+                if (Synt.declare(c.get("__repeated__"), false)) {
                     groups[i][1] = 1;
                 } else {
                     groups[i][1] = 0;
                 }
 
-                switch (t) {
-                    case "string":
-                    case "search":
-                    case "sorted":
-                    case "stored":
-                    case "object":
-                        groups[i][0] = 0;
-                        continue ;
-                }
-
-                // 基准类型
-                try {
-                    String k  = (String) FormSet
-                          .getInstance ( /***/ )
-                          .getEnum ("__types__")
-                          .get (t);
-                    if (null != k) {
-                           t  = k;
-                    }
-                } catch (HongsException e) {
-                    throw e.toExemption( );
-                }
-
-                Object  k = fc.get("type");
-                switch (t) {
+                if (null != t) switch(t) {
                     case "number":
                         if (   "int".equals(k)) {
                             groups[i][0] = 1;
@@ -1041,6 +1019,8 @@ public class StatisHelper {
                         break ;
                     default:
                         groups[i][0] = 0;
+                } else {
+                        groups[i][0] = 0;
                 }
             }
         }
@@ -1052,20 +1032,16 @@ public class StatisHelper {
 
         @Override
         public void setScorer(Scorer scorer) throws IOException {
-            this.scorer = scorer;
-        }
-
-        public void needsScores(boolean scores) {
-            this.scores = scores;
+            // 无需打分
         }
 
         @Override
         public boolean needsScores() {
-            return this . scores;
+            return false ;
         }
 
         public int     countTotals() {
-            return this . totals;
+            return totals;
         }
 
     }

@@ -12,7 +12,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <jetty.version>9.4.19.v20190610</jetty.version>
+        <jetty.version>9.4.33.v20201020</jetty.version>
     </properties>
     <dependencies>
         <dependency>

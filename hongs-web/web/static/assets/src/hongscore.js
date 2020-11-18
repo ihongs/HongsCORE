@@ -1863,8 +1863,11 @@ $.hsMask = function(opt) {
     if (opt["html" ] !== undefined) {
         btx.html (opt["html" ]);
     } else
+    if (opt["node" ] !== undefined) {
+        btx. append  (opt["node" ]);
+    } else
     if (opt["load" ] !== undefined) {
-        btx. hsLoad  (opt["load"] );
+        btx. hsLoad  (opt["load" ]);
     }
     if (opt["class"] !== undefined) {
         div.addClass (opt["class"]);

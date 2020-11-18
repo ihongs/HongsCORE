@@ -1214,54 +1214,92 @@ function hsCopyListData(box) {
     tab.attr("style", "margin: 1px; white-space: pre-line;");
     tab.attr("class", "table table-bordered table-copylist");
 
-    // 表头
-    box.find("thead:first tr").each(function() {
-        var tr2 = tr.clone().appendTo(thd);
-        $(this).find("th").each(function() {
-            var th0 = $(this);
-            if (th0.is(".dont-copy,._check,._admin,:hidden")) {
-                return;
-            }
-            var th2 = th.clone().appendTo(tr2);
-            th2.text(th0.text());
-        });
-    });
+    if (box instanceof jQuery || box instanceof Element) {
+        box = $(box);
 
-    // 内容
-    box.find("tbody:first tr").each(function() {
-        if (!$(this).is(".active")) return;
-        var tr2 = tr.clone().appendTo(tbd);
-        $(this).find("td").each(function() {
-            var td0 = $ (this);
-            if (td0.is(".dont-copy,._check,._admin,:hidden")) {
-                return;
-            }
-            var td2 = td.clone().appendTo(tr2);
-            if (td0.data("node" )) {
-                td2.html(hsTidyHtmlTags(td0.data("node")));
-            } else
-            if (td0.data("html" )) {
-                td2.html(hsTidyHtmlTags(td0.data("html")));
-            } else
-            if (td0.data("text" )) {
-                td2.text(td0.data("text" ));
-            } else
-            if (td0.attr("title")) {
-                td2.text(td0.attr("title"));
-            } else
-            {
-                td2.html(hsTidyHtmlTags(td0.html()));
-            }
-            /**
-             * 规避将非数字类型的数字文本解析为数字
-             * mso-number-format: '\@' 仅在 IE 有效
-             * vnd.ms-excel.numberformat: '@' 非 IE 有效
-             */
-            if (! td0.is(".numerial")) {
-                td2.attr("style", "mso-number-format:'\\@';vnd.ms-excel.numberformat:'@';");
-            }
+        // 表头
+        box.find("thead:first tr").each(function() {
+            var tr2 = tr.clone().appendTo(thd);
+            $(this).find("th").each(function() {
+                var th0 = $(this);
+                if (th0.is(".dont-copy,._check,._admin,:hidden")) {
+                    return;
+                }
+                var th2 = th.clone().appendTo(tr2);
+                th2.text(th0.text());
+            });
         });
-    });
+
+        // 内容
+        box.find("tbody:first tr").each(function() {
+            if (!$(this).is(".active")) return;
+            var tr2 = tr.clone().appendTo(tbd);
+            $(this).find("td").each(function() {
+                var td0 = $ (this);
+                if (td0.is(".dont-copy,._check,._admin,:hidden")) {
+                    return;
+                }
+                var td2 = td.clone().appendTo(tr2);
+                if (td0.data("node" )) {
+                    td2.html(hsTidyHtmlTags(td0.data("node")));
+                } else
+                if (td0.data("html" )) {
+                    td2.html(hsTidyHtmlTags(td0.data("html")));
+                } else
+                if (td0.data("text" )) {
+                    td2.text(td0.data("text" ));
+                } else
+                if (td0.attr("title")) {
+                    td2.text(td0.attr("title"));
+                } else
+                {
+                    td2.html(hsTidyHtmlTags(td0.html()));
+                }
+            });
+        });
+
+        /**
+         * 规避将非数字类型的数字文本解析为数字
+         * mso-number-format: '\@' 仅在 IE 有效
+         * vnd.ms-excel.numberformat: '@' 非 IE 有效
+         */
+        tbd.find("td").not(".numerial")
+           .attr("style", "mso-number-format:'\\@';vnd.ms-excel.numberformat:'@';");
+    } else {
+        /**
+         * 拷贝原始数据
+         * 以便导出表格
+         */
+
+        var mod  = new HsList({
+            context : div
+        });
+        mod.listBox = tab;
+
+        // 表头
+            var tr2 = tr.clone().appendTo(thd);
+        for(var i = 1; i < arguments.length; i ++) {
+            var th2 = th.clone().appendTo(tr2);
+            var col = arguments[i];
+            if (typeof col === "string"
+            ||  typeof col === "number") {
+                col = { fn : col };
+            }
+            th2.text( col.tt || col.fn );
+            th2.data( col );
+        }
+
+        // 内容
+        mod.fillList( box );
+
+        /**
+         * 规避将非数字类型的数字文本解析为数字
+         * mso-number-format: '\@' 仅在 IE 有效
+         * vnd.ms-excel.numberformat: '@' 非 IE 有效
+         */
+        tbd.find("td").not(".numerial")
+           .attr("style", "mso-number-format:'\\@';vnd.ms-excel.numberformat:'@';");
+    }
 
     // 就绪
     mok ();

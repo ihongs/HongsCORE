@@ -30,7 +30,7 @@ public class StatisHandle {
 
     private final IndexSearcher finder;
     private       Query   query ;
-    private       Point[] points;
+    private       Quoit[] quoits;
     private       Quota[] quotas;
 
     public StatisHandle (IndexSearcher finder) {
@@ -42,18 +42,18 @@ public class StatisHandle {
         return this;
     }
 
-    public StatisHandle group(Point... points) {
-        this.points = points;
+    public StatisHandle group(Quoit... quoits) {
+        this.quoits = quoits;
         return this;
     }
 
-    public StatisHandle score(Quota... quotas) {
+    public StatisHandle count(Quota... quotas) {
         this.quotas = quotas;
         return this;
     }
 
     public Collection<Map> fetch() throws IOException {
-        Fetch  fetch = new Fetch(points, quotas);
+        Fetch  fetch = new Fetch(quoits, quotas);
         finder.search(query, fetch);
         return fetch.fetchValues( );
     }
@@ -83,12 +83,12 @@ public class StatisHandle {
 
     private static class Fetch implements Collector, LeafCollector {
 
-        private final Point[] points;
+        private final Quoit[] quoits;
         private final Quota[] quotas;
         private final Map<Group, Map> result;
 
-        public Fetch (Point[] points, Quota[] quotas) {
-            this.points = points;
+        public Fetch (Quoit[] quoits, Quota[] quotas) {
+            this.quoits = quoits;
             this.quotas = quotas;
             this.result = new HashMap();
         }
@@ -96,8 +96,8 @@ public class StatisHandle {
         @Override
         public LeafCollector getLeafCollector(LeafReaderContext lrc) throws IOException {
             LeafReader lr = lrc.reader();
-            for(Point point : points) {
-                point.prepare(lr);
+            for(Quoit quoit : quoits) {
+                quoit.prepare(lr);
             }
             for(Quota quota : quotas) {
                 quota.prepare(lr);
@@ -107,10 +107,10 @@ public class StatisHandle {
 
         @Override
         public void collect(int id) throws IOException {
-            Object[] values = new Object[points.length];
+            Object[] values = new Object[quoits.length];
 
-            for(int i = 0; i < points.length; i ++) {
-                values[i] = points[i].collect( id );
+            for(int i = 0; i < quoits.length; i ++) {
+                values[i] = quoits[i].collect( id );
             }
 
             // 获取分组条目
@@ -119,8 +119,8 @@ public class StatisHandle {
             if (  entry == null  ) {
                   entry  = new HashMap(/**/);
                   result . put(group, entry);
-            for(int i = 0; i < points.length; i ++) {
-                String n = points[i].alias;
+            for(int i = 0; i < quoits.length; i ++) {
+                String n = quoits[i].alias;
                 Object v = values[i];
                 entry.put(n, v);
             }}
@@ -226,9 +226,9 @@ public class StatisHandle {
      * 维度字段
      * @param <T>
      */
-    public static class Point<T> extends Field<T> {
+    public static class Quoit<T> extends Field<T> {
 
-        public Point(String field, String alias) {
+        public Quoit(String field, String alias) {
             super(field, alias);
         }
 

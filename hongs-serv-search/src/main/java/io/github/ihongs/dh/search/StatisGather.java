@@ -21,7 +21,11 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Scorer;
 import org.apache.lucene.util.NumericUtils;
 
-public class StatisHandle {
+/**
+ * 聚类统计工具
+ * @author Hongs
+ */
+public class StatisGather {
 
     public static enum TYPE {
         INT , LONG , FLOAT , DOUBLE , STRING , // 单数
@@ -33,21 +37,21 @@ public class StatisHandle {
     private       Quoit[] quoits;
     private       Quota[] quotas;
 
-    public StatisHandle (IndexSearcher finder) {
+    public StatisGather (IndexSearcher finder) {
         this.finder = finder;
     }
 
-    public StatisHandle where(Query query) {
+    public StatisGather where(Query query) {
         this.query = query;
         return this;
     }
 
-    public StatisHandle group(Quoit... quoits) {
+    public StatisGather group(Quoit... quoits) {
         this.quoits = quoits;
         return this;
     }
 
-    public StatisHandle count(Quota... quotas) {
+    public StatisGather count(Quota... quotas) {
         this.quotas = quotas;
         return this;
     }

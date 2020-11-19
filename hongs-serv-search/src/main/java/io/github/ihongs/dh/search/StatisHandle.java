@@ -37,7 +37,7 @@ public class StatisHandle {
         this.finder = finder;
     }
 
-    public StatisHandle query(Query query) {
+    public StatisHandle where(Query query) {
         this.query = query;
         return this;
     }

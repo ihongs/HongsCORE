@@ -2,24 +2,36 @@ package io.github.ihongs.dh.search;
 
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.lucene.index.LeafReader;
+import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.index.SortedDocValues;
 import org.apache.lucene.index.SortedNumericDocValues;
+import org.apache.lucene.index.SortedDocValues;
 import org.apache.lucene.index.SortedSetDocValues;
+import org.apache.lucene.search.Collector;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.LeafCollector;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.Scorer;
 import org.apache.lucene.util.NumericUtils;
 
 public class StatisHandle {
 
+    public static enum TYPE {
+        INT , LONG , FLOAT , DOUBLE , STRING , // 单数
+        INTS, LONGS, FLOATS, DOUBLES, STRINGS  // 复数
+    };
+
     private final IndexSearcher finder;
     private       Query   query ;
-    private       Field[] fields;
-    private       Score[] scores;
+    private       Point[] points;
+    private       Quota[] quotas;
 
     public StatisHandle (IndexSearcher finder) {
         this.finder = finder;
@@ -30,276 +42,782 @@ public class StatisHandle {
         return this;
     }
 
-    public StatisHandle group(Field... field) {
-        this.fields = field;
+    public StatisHandle group(Point... points) {
+        this.points = points;
         return this;
     }
 
-    public StatisHandle score(Score... score) {
-        this.scores = score;
+    public StatisHandle score(Quota... quotas) {
+        this.quotas = quotas;
         return this;
     }
 
-    public List<Map> fetch() {
-        return null;
+    public Collection<Map> fetch() throws IOException {
+        Fetch  fetch = new Fetch(points, quotas);
+        finder.search(query, fetch);
+        return fetch.fetchValues( );
     }
 
-    public static abstract class Value<T> {
+    private static class Group {
 
-        protected static final byte INT    = 1;
-        protected static final byte LONG   = 2;
-        protected static final byte FLOAT  = 3;
-        protected static final byte DOUBLE = 4;
-        protected static final byte STRING = 0;
+        private final Object[] values;
 
-        protected final byte    type  ;
-        protected final boolean many  ;
-        protected final String  name  ;
-        protected       Object  value ;
-        private         Object  values;
+        public Group (Object[] values) {
+            this.values = values;
+        }
 
-        public Value(String name, boolean many) {
-            this.name = name;
-            this.many = many;
+        @Override
+        public boolean equals(Object o) {
+            if (! (o instanceof Group)) {
+                return false;
+            }
+            return Arrays. equals (values, ((Group) o).values);
+        }
 
+        @Override
+        public int hashCode() {
+            return Arrays.hashCode(values);
+        }
+
+    }
+
+    private static class Fetch implements Collector, LeafCollector {
+
+        private final Point[] points;
+        private final Quota[] quotas;
+        private final Map<Group, Map> result;
+
+        public Fetch (Point[] points, Quota[] quotas) {
+            this.points = points;
+            this.quotas = quotas;
+            this.result = new HashMap();
+        }
+
+        @Override
+        public LeafCollector getLeafCollector(LeafReaderContext lrc) throws IOException {
+            LeafReader lr = lrc.reader();
+            for(Point point : points) {
+                point.prepare(lr);
+            }
+            for(Quota quota : quotas) {
+                quota.prepare(lr);
+            }
+            return this;
+        }
+
+        @Override
+        public void collect(int id) throws IOException {
+            Object[] values = new Object[points.length];
+
+            for(int i = 0; i < points.length; i ++) {
+                values[i] = points[i].collect( id );
+            }
+
+            // 获取分组条目
+            Group group  = new Group(values);
+            Map   entry  = result.get(group);
+            if (  entry == null  ) {
+                  entry  = new HashMap(/**/);
+                  result . put(group, entry);
+            for(int i = 0; i < points.length; i ++) {
+                String n = points[i].alias;
+                Object v = values[i];
+                entry.put(n, v);
+            }}
+
+            for(int i = 0; i < quotas.length; i ++) {
+                String n = quotas[i].alias;
+                Object v = entry.get ( n );
+                v = quotas[i].collect(i,v);
+                entry.put(n, v);
+            }
+        }
+
+        @Override
+        public void setScorer(Scorer s) throws IOException {
+            // Nothing to do.
+        }
+
+        @Override
+        public boolean needsScores() {
+            return false;
+        }
+
+        public Collection<Map> fetchValues() {
+            return result.values();
+        }
+
+    }
+
+    abstract private static class Field <T> {
+
+        protected final TYPE    type  ;
+        protected final String  filed ;
+        protected final String  alias ;
+        protected       Object  values;
+
+        public Field(String field, String alias) {
+            this.filed = field;
+            this.alias = alias;
+
+            // 从范型解析字段类型
             Class<T> t = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-            if (t.isAssignableFrom(String.class)) {
-                type = STRING;
+            if (t.isAssignableFrom(String  .class)) {
+                type = TYPE.STRING ;
             } else
-            if (t.isAssignableFrom(Double.class)) {
-                type = DOUBLE;
+            if (t.isAssignableFrom(String[].class)) {
+                type = TYPE.STRINGS;
             } else
-            if (t.isAssignableFrom(Float.class)) {
-                type = FLOAT ;
+            if (t.isAssignableFrom(Double  .class)) {
+                type = TYPE.DOUBLE ;
             } else
-            if (t.isAssignableFrom(Long.class)) {
-                type = LONG  ;
+            if (t.isAssignableFrom(Double[].class)) {
+                type = TYPE.DOUBLES;
             } else
-            if (t.isAssignableFrom(Integer.class)) {
-                type = INT   ;
+            if (t.isAssignableFrom(Float  .class)) {
+                type = TYPE.FLOAT ;
+            } else
+            if (t.isAssignableFrom(Float[].class)) {
+                type = TYPE.FLOATS;
+            } else
+            if (t.isAssignableFrom(Long  .class)) {
+                type = TYPE.LONG ;
+            } else
+            if (t.isAssignableFrom(Long[].class)) {
+                type = TYPE.LONGS;
+            } else
+            if (t.isAssignableFrom(Number  .class)) {
+                type = TYPE.INT ;
+            } else
+            if (t.isAssignableFrom(Number[].class)) {
+                type = TYPE.INTS;
             } else
             {
-                throw new UnsupportedOperationException("Unsupported type " + t.getName());
+                throw new UnsupportedOperationException("Unsupported field type " + t.getName());
             }
         }
 
-        public void collect(LeafReader r) throws IOException {
-            if (!many) {
-                switch (type) {
-                    case STRING:
-                        values = r.getSortedDocValues (name);
+        public void prepare(LeafReader r) throws IOException {
+            switch (type) {
+                case INT:
+                case LONG:
+                case FLOAT:
+                case DOUBLE:
+                    values = r.getNumericDocValues(filed);
+                    break;
+                case INTS:
+                case LONGS:
+                case FLOATS:
+                case DOUBLES:
+                    values = r.getSortedNumericDocValues(filed);
+                    break;
+                case STRING:
+                    values = r.getSortedDocValues   (filed);
+                    break;
+                case STRINGS:
+                    values = r.getSortedSetDocValues(filed);
+                    break;
+            }
+        }
+
+    }
+
+    /**
+     * 维度字段
+     * @param <T>
+     */
+    public static class Point<T> extends Field<T> {
+
+        public Point(String field, String alias) {
+            super(field, alias);
+        }
+
+        public Object collect(int i) throws IOException {
+            Object v;
+            switch (type) {
+                case INT: {
+                    NumericDocValues numValues = ((NumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        v = null;
                         break;
-                    default:
-                        values = r.getNumericDocValues(name);
-                        break;
+                    }
+                    v = (int ) numValues.longValue();
+                    break;
                 }
-            } else {
-                switch (type) {
-                    case STRING:
-                        values = r.getSortedSetDocValues(name);
+                case LONG: {
+                    NumericDocValues numValues = ((NumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        v = null;
                         break;
-                    default:
-                        values = r.getSortedNumericDocValues(name);
+                    }
+                    v = (long) numValues.longValue();
+                    break;
+                }
+                case FLOAT: {
+                    NumericDocValues numValues = ((NumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        v = null;
                         break;
+                    }
+                    v = NumericUtils. sortableIntToFloat ((int ) numValues.longValue());
+                    break;
+                }
+                case DOUBLE: {
+                    NumericDocValues numValues = ((NumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        v = null;
+                        break;
+                    }
+                    v = NumericUtils.sortableLongToDouble((long) numValues.longValue());
+                    break;
+                }
+                case STRING: {
+                    SortedDocValues strValues = ((SortedDocValues) values);
+                    if (! strValues.advanceExact(i)) {
+                        v = null;
+                        break;
+                    }
+                    v = strValues.binaryValue().utf8ToString();
+                    break;
+                }
+                case INTS: {
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        v = null;
+                        break;
+                    }
+                    int[] a = new int[numValues.docValueCount()];
+                    for (int j = 0; j < a.length; j ++) {
+                        a[j] = (int) numValues.nextValue();
+                    }
+                    v = a;
+                    break;
+                }
+                case LONGS: {
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        v = null;
+                        break;
+                    }
+                    long[] a = new long[numValues.docValueCount()];
+                    for (int j = 0; j < a.length; j ++) {
+                        a[j] = (long) numValues.nextValue();
+                    }
+                    v = a;
+                    break;
+                }
+                case FLOATS: {
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        v = null;
+                        break;
+                    }
+                    float[] a = new float[numValues.docValueCount()];
+                    for (int j = 0; j < a.length; j ++) {
+                        a[j] = NumericUtils. sortableIntToFloat ((int ) numValues.nextValue());
+                    }
+                    v = a;
+                    break;
+                }
+                case DOUBLES: {
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        v = null;
+                        break;
+                    }
+                    double[] a = new double[numValues.docValueCount()];
+                    for (int j = 0; j < a.length; j ++) {
+                        a[j] = NumericUtils.sortableLongToDouble((long) numValues.nextValue());
+                    }
+                    v = a;
+                    break;
+                }
+                case STRINGS: {
+                    SortedSetDocValues strValues = ((SortedSetDocValues) values);
+                    if (! strValues.advanceExact(i)) {
+                        v = null;
+                        break;
+                    }
+                    List<String> l = new LinkedList(  );
+                    long    k ;
+                    while ((k = strValues.nextOrd()) != SortedSetDocValues.NO_MORE_ORDS) {
+                        l.add(strValues.lookupOrd(k).utf8ToString());
+                    }
+                    v = l.toArray(new String[l.size()]);
+                    break;
+                }
+                default:
+                    v = null;
+            }
+            return  v ;
+        }
+
+    }
+
+    /**
+     * 指标字段
+     * @param <T>
+     * @param <V>
+     */
+    abstract public static class Quota<T, V> extends Field<T> {
+
+        public Quota(String field, String alias) {
+            super(field, alias);
+        }
+
+        public Object collect(int i , Object o ) throws IOException {
+            return compute(i, (V) o);
+        }
+
+        abstract public Object compute(int i , V v ) throws IOException;
+    }
+
+    /**
+     * 字段计数
+     * @param <T>
+     * @param <V>
+     */
+    public static class Count<T> extends Quota<T, Long> {
+
+        public Count(String field, String alias) {
+            super(field, alias);
+        }
+
+        @Override
+        public Object compute(int i, Long n) throws IOException {
+            if (n == null) {
+                n  =  0L;
+            }
+            switch (type) {
+                case INT:
+                case LONG:
+                case FLOAT:
+                case DOUBLE: {
+                    NumericDocValues numValues = ((NumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    n += 1;
+                    break;
+                }
+                case STRING: {
+                    SortedDocValues  strValues = ((SortedDocValues ) values);
+                    if (! strValues.advanceExact(i)) {
+                        break;
+                    }
+                    n += 1L;
+                    break;
+                }
+                case INTS:
+                case LONGS:
+                case FLOATS:
+                case DOUBLES: {
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    n += numValues.docValueCount();
+                    break;
+                }
+                case STRINGS: {
+                    SortedSetDocValues     strValues = ((SortedSetDocValues    ) values);
+                    if (! strValues.advanceExact(i)) {
+                        break;
+                    }
+                    while (strValues.nextOrd() != SortedSetDocValues.NO_MORE_ORDS) {
+                        n += 1L;
+                    }
+                    break;
                 }
             }
+            return  n ;
         }
 
-        public void collect(int i) throws IOException {
-            if (!many) {
-                switch (type) {
-                    case INT: {
-                        NumericDocValues numValues = ((NumericDocValues) values);
-                        if (! numValues.advanceExact(i)) {
-                            value = null;
-                            break;
-                        }
-                        value = (int ) numValues.longValue();
+    }
+
+    /**
+     * 字段求和
+     * @param <T>
+     */
+    public static class Sum<T> extends Quota<T, Number>  {
+
+        public Sum(String field, String alias) {
+            super(field, alias);
+
+            switch (type) {
+                case STRING:
+                case STRINGS:
+                    throw new UnsupportedOperationException("Unsupported field type String in Sum");
+            }
+        }
+
+        @Override
+        public Object compute(int i, Number n) throws IOException {
+            switch (type) {
+                case INT: {
+                    NumericDocValues numValues = ((NumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
                         break;
                     }
-                    case LONG: {
-                        NumericDocValues numValues = ((NumericDocValues) values);
-                        if (! numValues.advanceExact(i)) {
-                            value = null;
-                            break;
-                        }
-                        value = (long) numValues.longValue();
-                        break;
+                    long x = numValues.longValue( );
+                    if (n != null) {
+                        n  = Long.sum(x, n.longValue());
+                    } else {
+                        n  = x;
                     }
-                    case FLOAT: {
-                        NumericDocValues numValues = ((NumericDocValues) values);
-                        if (! numValues.advanceExact(i)) {
-                            value = null;
-                            break;
-                        }
-                        value = NumericUtils. sortableIntToFloat ((int ) numValues.longValue());
-                        break;
-                    }
-                    case DOUBLE:{
-                        NumericDocValues numValues = ((NumericDocValues) values);
-                        if (! numValues.advanceExact(i)) {
-                            value = null;
-                            break;
-                        }
-                        value = NumericUtils.sortableLongToDouble((long) numValues.longValue());
-                        break;
-                    }
-                    default: {
-                        SortedDocValues strValues = ((SortedDocValues) values);
-                        if (! strValues.advanceExact(i)) {
-                            value = null;
-                            break;
-                        }
-                        value = strValues.binaryValue().utf8ToString();
-                        break;
-                    }
+                    break;
                 }
-            } else {
-                switch (type) {
-                    case INT: {
-                        SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
-                        if (! numValues.advanceExact(i)) {
-                            value = null;
-                            break;
-                        }
-                        int[] a = new int[numValues.docValueCount()];
-                        for (int j = 0; j < a.length; j ++) {
-                            a[j] = (int) numValues.nextValue();
-                        }
-                        value = a;
+                case LONG: {
+                    NumericDocValues numValues = ((NumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
                         break;
                     }
-                    case LONG: {
-                        SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
-                        if (! numValues.advanceExact(i)) {
-                            value = null;
-                            break;
-                        }
-                        long[] a = new long[numValues.docValueCount()];
-                        for (int j = 0; j < a.length; j ++) {
-                            a[j] = (long) numValues.nextValue();
-                        }
-                        value = a;
+                    long x = numValues.longValue( );
+                    if (n != null) {
+                        n  = Long.sum(x, n.longValue());
+                    } else {
+                        n  = x;
+                    }
+                    break;
+                }
+                case FLOAT: {
+                    NumericDocValues numValues = ((NumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
                         break;
                     }
-                    case FLOAT: {
-                        SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
-                        if (! numValues.advanceExact(i)) {
-                            value = null;
-                            break;
-                        }
-                        float[] a = new float[numValues.docValueCount()];
-                        for (int j = 0; j < a.length; j ++) {
-                            a[j] = NumericUtils. sortableIntToFloat ((int ) numValues.nextValue());
-                        }
-                        value = a;
+                    double x = NumericUtils. sortableIntToFloat ((int ) numValues.longValue());
+                    if (n != null) {
+                        n  = Double.sum(x, n.doubleValue());
+                    } else {
+                        n  = x;
+                    }
+                    break;
+                }
+                case DOUBLE: {
+                    NumericDocValues numValues = ((NumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
                         break;
                     }
-                    case DOUBLE: {
-                        SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
-                        if (! numValues.advanceExact(i)) {
-                            value = null;
-                            break;
-                        }
-                        double[] a = new double[numValues.docValueCount()];
-                        for (int j = 0; j < a.length; j ++) {
-                            a[j] = NumericUtils.sortableLongToDouble((long) numValues.nextValue());
-                        }
-                        value = a;
+                    double x = NumericUtils.sortableLongToDouble((long) numValues.longValue());
+                    if (n != null) {
+                        n  = Double.sum(x, n.doubleValue());
+                    } else {
+                        n  = x;
+                    }
+                    break;
+                }
+                case INTS: {
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
                         break;
                     }
-                    default: {
-                        SortedSetDocValues strValues = ((SortedSetDocValues) values);
-                        if (! strValues.advanceExact(i)) {
-                            value = null;
-                            break;
-                        }
-                        List <String> l = new LinkedList();
-                        long    k ;
-                        while ((k = strValues.nextOrd()) != SortedSetDocValues.NO_MORE_ORDS) {
-                            l.add(strValues.lookupOrd(k).utf8ToString());
-                        }
-                        value = l.toArray(new String[l.size()]);
+                    long x = 0L;
+                    int  j = 0 ;
+                    for( ; j < numValues.docValueCount(); j ++) {
+                         x = Long.sum(numValues.nextValue(), x);
+                    }
+                    n = n != null ? Long.sum (n.longValue(), x) : x;
+                    break;
+                }
+                case LONGS: {
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
                         break;
                     }
+                    long x = 0L;
+                    int  j = 0 ;
+                    for( ; j < numValues.docValueCount(); j ++) {
+                         x = Long.sum(numValues.nextValue(), x);
+                    }
+                    n = n != null ? Long.sum (n.longValue(), x) : x;
+                    break;
+                }
+                case FLOATS: {
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    double x = 0D;
+                    int    j = 0 ;
+                    for( ; j < numValues.docValueCount(); j ++) {
+                         x = Double.sum((double) NumericUtils. sortableIntToFloat ((int ) numValues.nextValue()), x);
+                    }
+                    n = n != null ? Double.sum (n.doubleValue(), x) : x;
+                    break;
+                }
+                case DOUBLES: {
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    double x = 0D;
+                    int    j = 0 ;
+                    for( ; j < numValues.docValueCount(); j ++) {
+                         x = Double.sum((double) NumericUtils.sortableLongToDouble((long) numValues.nextValue()), x);
+                    }
+                    n = n != null ? Double.sum (n.doubleValue(), x) : x;
+                    break;
                 }
             }
-        }
-
-        public Object getValue() {
-            return value;
+            return  n ;
         }
 
     }
 
-    public static class Group {
-        
-        private final Field[] fields;
-        
-        public Group(Field... field) {
-            this.fields = field;
-        }
-        
-        
-        
-    }
-    
-    public static abstract class Score<T> extends Value<T> {
+    /**
+     * 求最大值
+     * @param <T>
+     */
+    public static class Max<T> extends Quota<T, Number>  {
 
-        public Score(String name, boolean many) {
-            super(name, many);
-        }
+        public Max(String field, String alias) {
+            super(field, alias);
 
-    }
-
-    public static class Field<T> extends Value<T> {
-
-        public Field(String name, boolean many) {
-            super(name, many);
-        }
-
-    }
-
-    public static class Count<T>  extends Score<T>  {
-
-        public Count(String name, boolean many) {
-            super(name, many);
-        }
-        
-    }
-
-    public static class Sum<T>  extends Score<T>  {
-
-        public Sum(String name, boolean many) {
-            super(name, many);
-
-            if (type == STRING) {
-                throw new UnsupportedOperationException("Unsupported type String for Sum");
+            switch (type) {
+                case STRING:
+                case STRINGS:
+                    throw new UnsupportedOperationException("Unsupported field type String in Max");
             }
         }
 
-    }
-
-    public static class Max<T>  extends Score<T>  {
-
-        public Max(String name, boolean many) {
-            super(name, many);
-
-            if (type == STRING) {
-                throw new UnsupportedOperationException("Unsupported type String for Max");
+        @Override
+        public Object compute(int i, Number n) throws IOException {
+            switch (type) {
+                case INT: {
+                    NumericDocValues numValues = ((NumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    int  x =(int ) numValues.longValue( );
+                    if (n != null) {
+                        n  = Integer.max(x,n. intValue());
+                    } else {
+                        n  = x;
+                    }
+                    break;
+                }
+                case LONG: {
+                    NumericDocValues numValues = ((NumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    long x =(long) numValues.longValue( );
+                    if (n != null) {
+                        n  = Long   .max(x,n.longValue());
+                    } else {
+                        n  = x;
+                    }
+                    break;
+                }
+                case FLOAT: {
+                    NumericDocValues numValues = ((NumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    float  x = NumericUtils. sortableIntToFloat ((int ) numValues.longValue());
+                    if (n != null) {
+                        n  = Float .max(x,n. floatValue());
+                    } else {
+                        n  = x;
+                    }
+                    break;
+                }
+                case DOUBLE: {
+                    NumericDocValues numValues = ((NumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    double x = NumericUtils.sortableLongToDouble((long) numValues.longValue());
+                    if (n != null) {
+                        n  = Double.max(x,n.doubleValue());
+                    } else {
+                        n  = x;
+                    }
+                    break;
+                }
+                case INTS: {
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    int  x =(int ) numValues.nextValue();
+                    int  j = 1;
+                    for( ; j < numValues.docValueCount(); j ++) {
+                         x = Integer.max((int ) numValues.nextValue(), x);
+                    }
+                    n = n != null ? Integer.max(n. intValue(), x) : x;
+                    break;
+                }
+                case LONGS: {
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    long x =(long) numValues.nextValue();
+                    int  j = 1;
+                    for( ; j < numValues.docValueCount(); j ++) {
+                         x = Long   .max((long) numValues.nextValue(), x);
+                    }
+                    n = n != null ? Long   .max(n.longValue(), x) : x;
+                    break;
+                }
+                case FLOATS: {
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    float  x = NumericUtils. sortableIntToFloat ((int ) numValues.nextValue());
+                    int    j = 1;
+                    for( ; j < numValues.docValueCount(); j ++) {
+                         x = Float .max(NumericUtils. sortableIntToFloat ((int ) numValues.nextValue()), x);
+                    }
+                    n = n != null ? Float .max (n. floatValue(), x) : x;
+                    break;
+                }
+                case DOUBLES: {
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    double x = NumericUtils.sortableLongToDouble((long) numValues.nextValue());
+                    int    j = 1;
+                    for( ; j < numValues.docValueCount(); j ++) {
+                         x = Double.max(NumericUtils.sortableLongToDouble((long) numValues.nextValue()), x);
+                    }
+                    n = n != null ? Double.max (n.doubleValue(), x) : x;
+                    break;
+                }
             }
+            return  n ;
         }
 
     }
 
-    public static class Min<T>  extends Score<T>  {
+    /**
+     * 求最小值
+     * @param <T>
+     */
+    public static class Min<T> extends Quota<T, Number>  {
 
-        public Min(String name, boolean many) {
-            super(name, many);
+        public Min(String field, String alias) {
+            super(field, alias);
 
-            if (type == STRING) {
-                throw new UnsupportedOperationException("Unsupported type String for Min");
+            switch (type) {
+                case STRING:
+                case STRINGS:
+                    throw new UnsupportedOperationException("Unsupported field type String in Min");
             }
+        }
+
+        @Override
+        public Object compute(int i, Number n) throws IOException {
+            switch (type) {
+                case INT: {
+                    NumericDocValues numValues = ((NumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    int  x =(int ) numValues.longValue( );
+                    if (n != null) {
+                        n  = Integer.min(x,n. intValue());
+                    } else {
+                        n  = x;
+                    }
+                    break;
+                }
+                case LONG: {
+                    NumericDocValues numValues = ((NumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    long x =(long) numValues.longValue( );
+                    if (n != null) {
+                        n  = Long   .min(x,n.longValue());
+                    } else {
+                        n  = x;
+                    }
+                    break;
+                }
+                case FLOAT: {
+                    NumericDocValues numValues = ((NumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    float  x = NumericUtils. sortableIntToFloat ((int ) numValues.longValue());
+                    if (n != null) {
+                        n  = Float .min(x,n. floatValue());
+                    } else {
+                        n  = x;
+                    }
+                    break;
+                }
+                case DOUBLE: {
+                    NumericDocValues numValues = ((NumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    double x = NumericUtils.sortableLongToDouble((long) numValues.longValue());
+                    if (n != null) {
+                        n  = Double.min(x,n.doubleValue());
+                    } else {
+                        n  = x;
+                    }
+                    break;
+                }
+                case INTS: {
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    int  x =(int ) numValues.nextValue();
+                    int  j = 1;
+                    for( ; j < numValues.docValueCount(); j ++) {
+                         x = Integer.min((int ) numValues.nextValue(), x);
+                    }
+                    n = n != null ? Integer.min(n. intValue(), x) : x;
+                    break;
+                }
+                case LONGS: {
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    long x =(long) numValues.nextValue();
+                    int  j = 1;
+                    for( ; j < numValues.docValueCount(); j ++) {
+                         x = Long   .min((long) numValues.nextValue(), x);
+                    }
+                    n = n != null ? Long   .min(n.longValue(), x) : x;
+                    break;
+                }
+                case FLOATS: {
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    float  x = NumericUtils. sortableIntToFloat ((int ) numValues.nextValue());
+                    int    j = 1;
+                    for( ; j < numValues.docValueCount(); j ++) {
+                         x = Float .min(NumericUtils. sortableIntToFloat ((int ) numValues.nextValue()), x);
+                    }
+                    n = n != null ? Float .min (n. floatValue(), x) : x;
+                    break;
+                }
+                case DOUBLES: {
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    double x = NumericUtils.sortableLongToDouble((long) numValues.nextValue());
+                    int    j = 1;
+                    for( ; j < numValues.docValueCount(); j ++) {
+                         x = Double.min(NumericUtils.sortableLongToDouble((long) numValues.nextValue()), x);
+                    }
+                    n = n != null ? Double.min (n.doubleValue(), x) : x;
+                    break;
+                }
+            }
+            return  n ;
         }
 
     }

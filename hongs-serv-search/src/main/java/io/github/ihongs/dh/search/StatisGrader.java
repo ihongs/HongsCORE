@@ -107,8 +107,8 @@ public class StatisGrader {
         public final String filed;
         public final String alias;
 
-        public Field(String field, String alias, TYPE type) {
-            this.type  = type ;
+        public Field(TYPE type, String field, String alias) {
+            this.type  =  type;
             this.filed = field;
             this.alias = alias;
         }

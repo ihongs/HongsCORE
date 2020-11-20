@@ -280,7 +280,7 @@ public class TitlesHelper {
     @Filter(Titler.class)
     @Target(ElementType.METHOD)
     @Retention(RetentionPolicy.RUNTIME)
-    public @interface Atitle {
+    public @interface Titles {
         String   conf() default "default";
         String   form() default "";
         byte     adds() default 0 ;
@@ -299,7 +299,7 @@ public class TitlesHelper {
         @Override
         public void invoke(ActionHelper helper, ActionRunner chains, Annotation anno)
         throws HongsException {
-            Atitle   ann  = (Atitle) anno;
+            Titles   ann  = (Titles) anno;
             String   conf = ann.conf();
             String   form = ann.form();
             byte     adds = ann.adds();
@@ -373,8 +373,6 @@ public class TitlesHelper {
             // 返回数据
             helper.reply(rsp);
         }
-
     }
-
 
 }

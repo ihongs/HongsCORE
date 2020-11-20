@@ -6,8 +6,15 @@ import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
 import io.github.ihongs.action.FormSet;
+import io.github.ihongs.action.anno.Filter;
+import io.github.ihongs.action.anno.FilterInvoker;
 import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Synt;
+import java.lang.annotation.Annotation;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -22,8 +29,12 @@ import java.util.Set;
  */
 public class TitlesHelper {
 
+    public static final byte TEXT = 1;
+    public static final byte FORK = 8;
+
     protected Map<String, Map<String, String>> enums = null;
     protected Map<String, Map<String, String>> forks = null;
+    private   Set                              _cols = null;
 
     public TitlesHelper() {
         enums = new HashMap();
@@ -38,6 +49,19 @@ public class TitlesHelper {
     public TitlesHelper addFork(String code, Map<String, String> opts) {
         forks.put(code, opts);
         return this;
+    }
+
+    /**
+     * 设置表单可选字段, 需先于 addItemsByForm
+     * @param rb
+     * @return
+     */
+    public TitlesHelper setItemsInForm(Set rb ) {
+      if (rb != null && rb.isEmpty()) {
+          rb  = null;
+      }
+        _cols =  rb ;
+        return  this;
     }
 
     public TitlesHelper addItemsByForm(Map fs ) throws HongsException  {
@@ -65,6 +89,10 @@ public class TitlesHelper {
             String  name = (String) et.getKey();
             String  type = (String) mt.get("__type__");
                     type = (String) ts.get(   type   ); // 类型别名转换
+
+            if (null != _cols && !_cols.contains(name)) {
+                continue ;
+            }
 
             if ("enum".equals(type)
             ||  "date".equals(type)
@@ -100,8 +128,8 @@ public class TitlesHelper {
     public void addTitle(Map info, byte md) throws HongsException {
         addTitle(
             info,
-            1 == (1 & md) ? enums : new HashMap(),
-            2 == (2 & md) ? forks : new HashMap()
+            TEXT == (TEXT & md) ? enums : new HashMap(),
+            FORK == (FORK & md) ? forks : new HashMap()
         );
     }
 
@@ -248,5 +276,105 @@ public class TitlesHelper {
             }
         }
     }
+
+    @Filter(Titler.class)
+    @Target(ElementType.METHOD)
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface Atitle {
+        String   conf() default "default";
+        String   form() default "";
+        byte     adds() default 0 ;
+    }
+
+    /**
+     * 选项补充处理器
+     * <pre>
+     * ab 参数含义:
+     * _text 表示加选项文本
+     * _fork 表示加关联数据
+     * </pre>
+     * @author Hong
+     */
+    public class Titler implements FilterInvoker {
+        @Override
+        public void invoke(ActionHelper helper, ActionRunner chains, Annotation anno)
+        throws HongsException {
+            Atitle   ann  = (Atitle) anno;
+            String   conf = ann.conf();
+            String   form = ann.form();
+            byte     adds = ann.adds();
+
+            if (adds == 0) {
+                Set ab  = Synt.toTerms(
+                    helper.getRequestData ( )
+                          .get( Cnst.AB_KEY )
+                );
+                if (ab != null) {
+                    if (ab.contains("_text")) {
+                        adds += TEXT;
+                    }
+
+                    if (ab.contains("_fork")) {
+                        adds += FORK;
+                    }
+                }
+            }
+
+            // 向下执行
+            chains.doAction();
+            if (adds == 0) {
+                return;
+            }
+            Map  rsp  = helper.getResponseData();
+            if ( rsp == null) {
+                return;
+            }
+            Map  enf  = (Map) rsp.get ( "enfo" );
+            if ( enf == null) {
+                return;
+            }
+
+            // 识别路径
+            if (form.length() == 0) {
+                form = chains.getEntity();
+            }
+            if (conf.length() == 0) {
+                conf = chains.getModule();
+                // 照顾 Module Action 的配置规则. 2018/7/7 改为完全由外部预判
+    //          if (FormSet.hasConfFile(conf+"/"+form)) {
+    //              conf = conf+"/"+form ;
+    //          }
+            }
+
+            // 填充数据
+            try {
+                Set rb = Synt.toTerms(
+                    helper.getRequestData()
+                          .get(Cnst.RB_KEY)
+                );
+
+                Map data  = (Map) helper.getAttribute("form:"+conf+"."+form);
+                if (data == null) {
+                    data  = FormSet.getInstance(conf).getForm(form);
+                }
+
+
+                TitlesHelper sel = new TitlesHelper();
+                sel.setItemsInForm( rb );
+                sel.addItemsByForm(conf, form, data );
+                sel.addTitle(enf , adds);
+            } catch (HongsException ex ) {
+                int  ec  = ex.getErrno();
+                if  (ec != 0x10e8 && ec != 0x10e9 && ec != 0x10ea ) {
+                    throw  ex;
+                }
+            }
+
+            // 返回数据
+            helper.reply(rsp);
+        }
+
+    }
+
 
 }

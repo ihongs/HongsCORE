@@ -1,7 +1,6 @@
 package io.github.ihongs.dh.search;
 
 import java.io.IOException;
-import java.lang.reflect.ParameterizedType;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -11,8 +10,8 @@ import java.util.Map;
 import org.apache.lucene.index.LeafReader;
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.index.SortedNumericDocValues;
 import org.apache.lucene.index.SortedDocValues;
+import org.apache.lucene.index.SortedNumericDocValues;
 import org.apache.lucene.index.SortedSetDocValues;
 import org.apache.lucene.search.Collector;
 import org.apache.lucene.search.IndexSearcher;
@@ -22,7 +21,7 @@ import org.apache.lucene.search.Scorer;
 import org.apache.lucene.util.NumericUtils;
 
 /**
- * 聚类统计工具
+ * 聚合统计工具
  * @author Hongs
  */
 public class StatisGather {
@@ -62,7 +61,11 @@ public class StatisGather {
         return fetch.fetchValues( );
     }
 
-    private static class Group {
+    /**
+     * 分组键
+     * 用于将 Array 作为 Map 的键
+     */
+    public static class Group {
 
         private final Object[] values;
 
@@ -153,52 +156,17 @@ public class StatisGather {
 
     }
 
-    abstract private static class Field <T> {
+    abstract private static class Field {
 
         protected final TYPE    type  ;
         protected final String  filed ;
         protected final String  alias ;
         protected       Object  values;
 
-        public Field(String field, String alias) {
+        public Field(String field, String alias, TYPE type) {
+            this.type  = type ;
             this.filed = field;
             this.alias = alias;
-
-            // 从范型解析字段类型
-            Class<T> t = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-            if (t.isAssignableFrom(String  .class)) {
-                type = TYPE.STRING ;
-            } else
-            if (t.isAssignableFrom(String[].class)) {
-                type = TYPE.STRINGS;
-            } else
-            if (t.isAssignableFrom(Double  .class)) {
-                type = TYPE.DOUBLE ;
-            } else
-            if (t.isAssignableFrom(Double[].class)) {
-                type = TYPE.DOUBLES;
-            } else
-            if (t.isAssignableFrom(Float  .class)) {
-                type = TYPE.FLOAT ;
-            } else
-            if (t.isAssignableFrom(Float[].class)) {
-                type = TYPE.FLOATS;
-            } else
-            if (t.isAssignableFrom(Long  .class)) {
-                type = TYPE.LONG ;
-            } else
-            if (t.isAssignableFrom(Long[].class)) {
-                type = TYPE.LONGS;
-            } else
-            if (t.isAssignableFrom(Number  .class)) {
-                type = TYPE.INT ;
-            } else
-            if (t.isAssignableFrom(Number[].class)) {
-                type = TYPE.INTS;
-            } else
-            {
-                throw new UnsupportedOperationException("Unsupported field type " + t.getName());
-            }
         }
 
         public void prepare(LeafReader r) throws IOException {
@@ -209,17 +177,17 @@ public class StatisGather {
                 case DOUBLE:
                     values = r.getNumericDocValues(filed);
                     break;
+                case STRING:
+                    values = r.getSortedDocValues (filed);
+                    break;
                 case INTS:
                 case LONGS:
                 case FLOATS:
                 case DOUBLES:
                     values = r.getSortedNumericDocValues(filed);
                     break;
-                case STRING:
-                    values = r.getSortedDocValues   (filed);
-                    break;
                 case STRINGS:
-                    values = r.getSortedSetDocValues(filed);
+                    values = r.getSortedSetDocValues    (filed);
                     break;
             }
         }
@@ -228,12 +196,11 @@ public class StatisGather {
 
     /**
      * 维度字段
-     * @param <T>
      */
-    public static class Quoit<T> extends Field<T> {
+    public static class Quoit extends Field {
 
-        public Quoit(String field, String alias) {
-            super(field, alias);
+        public Quoit(String field, String alias, TYPE type) {
+            super(field, alias, type);
         }
 
         public Object collect(int i) throws IOException {
@@ -360,31 +327,28 @@ public class StatisGather {
 
     /**
      * 指标字段
-     * @param <T>
      * @param <V>
      */
-    abstract public static class Quota<T, V> extends Field<T> {
+    abstract public static class Quota<V> extends Field {
 
-        public Quota(String field, String alias) {
-            super(field, alias);
+        public Quota(String field, String alias, TYPE type) {
+            super(field, alias, type);
         }
 
         public Object collect(int i , Object o ) throws IOException {
-            return compute(i, (V) o);
+            return compute(i, (V) o );
         }
 
         abstract public Object compute(int i , V v ) throws IOException;
     }
 
     /**
-     * 字段计数
-     * @param <T>
-     * @param <V>
+     * 计数
      */
-    public static class Count<T> extends Quota<T, Long> {
+    public static class Count extends Quota<Long> {
 
-        public Count(String field, String alias) {
-            super(field, alias);
+        public Count(String field, String alias, TYPE type) {
+            super(field, alias, type);
         }
 
         @Override
@@ -440,18 +404,16 @@ public class StatisGather {
     }
 
     /**
-     * 字段求和
-     * @param <T>
+     * 求和
      */
-    public static class Sum<T> extends Quota<T, Number>  {
+    public static class Sum extends Quota<Number>  {
 
-        public Sum(String field, String alias) {
-            super(field, alias);
+        public Sum(String field, String alias, TYPE type) {
+            super (field, alias, type);
 
-            switch (type) {
-                case STRING:
-                case STRINGS:
-                    throw new UnsupportedOperationException("Unsupported field type String in Sum");
+            if (type == TYPE.STRING
+            ||  type == TYPE.STRINGS ) {
+                throw new UnsupportedOperationException("Unsupported type String in Sum");
             }
         }
 
@@ -570,17 +532,15 @@ public class StatisGather {
 
     /**
      * 求最大值
-     * @param <T>
      */
-    public static class Max<T> extends Quota<T, Number>  {
+    public static class Max extends Quota<Number>  {
 
-        public Max(String field, String alias) {
-            super(field, alias);
+        public Max(String field, String alias, TYPE type) {
+            super (field, alias, type);
 
-            switch (type) {
-                case STRING:
-                case STRINGS:
-                    throw new UnsupportedOperationException("Unsupported field type String in Max");
+            if (type == TYPE.STRING
+            ||  type == TYPE.STRINGS ) {
+                throw new UnsupportedOperationException("Unsupported type String in Max");
             }
         }
 
@@ -699,17 +659,15 @@ public class StatisGather {
 
     /**
      * 求最小值
-     * @param <T>
      */
-    public static class Min<T> extends Quota<T, Number>  {
+    public static class Min extends Quota<Number>  {
 
-        public Min(String field, String alias) {
-            super(field, alias);
+        public Min(String field, String alias, TYPE type) {
+            super (field, alias, type);
 
-            switch (type) {
-                case STRING:
-                case STRINGS:
-                    throw new UnsupportedOperationException("Unsupported field type String in Min");
+            if (type == TYPE.STRING
+            ||  type == TYPE.STRINGS ) {
+                    throw new UnsupportedOperationException("Unsupported type String in Min");
             }
         }
 

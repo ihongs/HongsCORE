@@ -446,7 +446,7 @@ public class StatisHandle {
             String f = n;
             StatisGrader.TYPE g ;
 
-            Map c = items.get(n);
+            Map c = items.get(f);
             if (c == null) {
                 continue ;
             }
@@ -454,7 +454,7 @@ public class StatisHandle {
             String t = (String) c.get ("__type__");
             Object k = (Object) c.get (  "type"  );
 
-            // 基准类型
+            // 使用基准类型
             if (types.containsKey(t)) {
                    t = types.get (t);
             }
@@ -587,7 +587,7 @@ public class StatisHandle {
                 f = n.substring(0,j);
             }
 
-            Map c = items.get(n);
+            Map c = items.get(f);
             if (c == null) {
                 continue ;
             }

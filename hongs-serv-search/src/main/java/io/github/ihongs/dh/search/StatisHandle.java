@@ -40,38 +40,6 @@ public class StatisHandle {
     }
 
     /**
-     * 聚合统计
-     */
-    public Collection<Map> assort (Map rd) throws HongsException {
-        IndexSearcher finder = that.getFinder();
-
-        Set<String> rb = Synt.toTerms (rd.get(Cnst.RB_KEY));
-        if (rb == null || rb.isEmpty()) {
-            throw new NullPointerException("Assort fields required.");
-        }
-        Fields fs = getGatherFields(rb);
-        if (fs.fields.length == 0 || fs.indics.length == 0) {
-            throw new NullPointerException("Assort fields required!");
-        }
-
-        try {
-            Query q = that.padQry(rd);
-
-            if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
-                CoreLogger.debug("StatisHandle.assort: " + q.toString());
-            }
-
-            return new StatisGather(finder)
-                .group(fs.fields)
-                .count(fs.indics)
-                .where(q)
-                .fetch( );
-        } catch (IOException ex) {
-            throw new HongsException ( ex );
-        }
-    }
-
-    /**
      * 分类计数
      * @param rd
      * @return
@@ -428,6 +396,38 @@ public class StatisHandle {
         }
 
         return t;
+    }
+
+    /**
+     * 聚合统计
+     */
+    public Collection<Map> assort (Map rd) throws HongsException {
+        IndexSearcher finder = that.getFinder();
+
+        Set<String> rb = Synt.toTerms (rd.get(Cnst.RB_KEY));
+        if (rb == null || rb.isEmpty()) {
+            throw new NullPointerException("Assort fields required.");
+        }
+        Fields fs = getGatherFields(rb);
+        if (fs.fields.length == 0 || fs.indics.length == 0) {
+            throw new NullPointerException("Assort fields required!");
+        }
+
+        try {
+            Query q = that.padQry(rd);
+
+            if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
+                CoreLogger.debug("StatisHandle.assort: " + q.toString());
+            }
+
+            return new StatisGather(finder)
+                .group(fs.fields)
+                .count(fs.indics)
+                .where(q)
+                .fetch( );
+        } catch (IOException ex) {
+            throw new HongsException ( ex );
+        }
     }
 
     private StatisGrader.Field[] getGraderFields(Set<String> names) {

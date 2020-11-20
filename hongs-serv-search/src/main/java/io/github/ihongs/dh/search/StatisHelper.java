@@ -36,6 +36,7 @@ import org.apache.lucene.util.NumericUtils;
 
 /**
  * 搜索助手
+ * @deprecated 改用 StatisHandle
  * @author Hongs
  */
 public class StatisHelper {
@@ -647,7 +648,7 @@ public class StatisHelper {
     private int amount( Map rd, IndexSearcher finder,
             Map<String, Map<Minmax , Cntsum>> counts,
             Map<String, Set<Minmax         >> countx) throws HongsException {
-        Set<Map.Entry<String, Map<Minmax , Cntsum>>> es = counts.entrySet();
+    //  Set<Map.Entry<String, Map<Minmax , Cntsum>>> es = counts.entrySet();
 
         int t = 0;
 

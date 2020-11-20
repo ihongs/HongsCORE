@@ -50,7 +50,7 @@ public class StatisHandle {
             throw new NullPointerException("Search fields required.");
         }
         Fields fs = getGatherFields(rb);
-        if (fs.quoits.length == 0 || fs.quotas.length == 0) {
+        if (fs.fields.length == 0 || fs.indics.length == 0) {
             throw new NullPointerException("Search fields required!");
         }
 
@@ -62,8 +62,8 @@ public class StatisHandle {
             }
 
             return new StatisGather(finder)
-                .group(fs.quoits)
-                .count(fs.quotas)
+                .group(fs.fields)
+                .count(fs.indics)
                 .where(q)
                 .fetch( );
         } catch (IOException ex) {
@@ -557,17 +557,17 @@ public class StatisHandle {
                 }
             }
 
-            fields[i++] = new StatisGrader.Field(f, n, g);
+            fields[i++] = new StatisGrader.Field(g, f, n);
         }
 
         return fields ;
     }
 
     private Fields getGatherFields(Set<String> names) {
-        List<StatisGather.Quoit> quoits = new ArrayList();
-        List<StatisGather.Quota> quotas = new ArrayList();
-        Map <String, Map   > items  = that.getFields();
-        Map <String, String> types  ;
+        List<StatisGather.Diman> dimans = new ArrayList();
+        List<StatisGather.Index> indics = new ArrayList();
+        Map <String, Map   > items = that.getFields();
+        Map <String, String> types ;
 
         try {
             types = FormSet.getInstance().getEnum("__types__");
@@ -577,12 +577,14 @@ public class StatisHandle {
 
         for(String n : names) {
             String f = n;
-            String q = null ;
-            StatisGather.TYPE g ;
+            String g = null ;
+            StatisGather.TYPE p ;
 
+            // 拆出统计方法
             int j = n.indexOf  ('|');
             if (j > -1) {
-                q = n.substring(1+j);
+                g = n.substring(1+j);
+                f = n.substring(0,j);
             }
 
             Map c = items.get(n);
@@ -593,7 +595,7 @@ public class StatisHandle {
             String t = (String) c.get ("__type__");
             Object k = (Object) c.get (  "type"  );
 
-            // 基准类型
+            // 使用基准类型
             if (types.containsKey(t)) {
                    t = types.get (t);
             }
@@ -605,16 +607,16 @@ public class StatisHandle {
                         if (   "int".equals(k)
                         ||    "byte".equals(k)
                         ||   "short".equals(k)) {
-                            g = StatisGather.TYPE.INT;
+                            p = StatisGather.TYPE.INT;
                         } else
                         if (  "long".equals(k)) {
-                            g = StatisGather.TYPE.LONG;
+                            p = StatisGather.TYPE.LONG;
                         } else
                         if ( "float".equals(k)) {
-                            g = StatisGather.TYPE.FLOAT;
+                            p = StatisGather.TYPE.FLOAT;
                         } else
                         {
-                            g = StatisGather.TYPE.DOUBLE;
+                            p = StatisGather.TYPE.DOUBLE;
                         }
                         break ;
                     case "hidden":
@@ -622,29 +624,29 @@ public class StatisHandle {
                         if (   "int".equals(k)
                         ||    "byte".equals(k)
                         ||   "short".equals(k)) {
-                            g = StatisGather.TYPE.INT;
+                            p = StatisGather.TYPE.INT;
                         } else
                         if (  "long".equals(k)) {
-                            g = StatisGather.TYPE.LONG;
+                            p = StatisGather.TYPE.LONG;
                         } else
                         if ( "float".equals(k)) {
-                            g = StatisGather.TYPE.FLOAT;
+                            p = StatisGather.TYPE.FLOAT;
                         } else
                         if ("double".equals(k)
                         ||  "number".equals(k)) {
-                            g = StatisGather.TYPE.DOUBLE;
+                            p = StatisGather.TYPE.DOUBLE;
                         } else
                         {
-                            g = StatisGather.TYPE.STRING;
+                            p = StatisGather.TYPE.STRING;
                         }
                         break ;
                     case  "date" :
-                        g = StatisGather.TYPE.LONG;
+                        p = StatisGather.TYPE.LONG;
                         break ;
                     default:
-                        g = StatisGather.TYPE.STRING;
+                        p = StatisGather.TYPE.STRING;
                 } else {
-                        g = StatisGather.TYPE.STRING;
+                        p = StatisGather.TYPE.STRING;
                 }
             } else {
                 f = "%" + f;
@@ -653,16 +655,16 @@ public class StatisHandle {
                         if (   "int".equals(k)
                         ||    "byte".equals(k)
                         ||   "short".equals(k)) {
-                            g = StatisGather.TYPE.INTS;
+                            p = StatisGather.TYPE.INTS;
                         } else
                         if (  "long".equals(k)) {
-                            g = StatisGather.TYPE.LONGS;
+                            p = StatisGather.TYPE.LONGS;
                         } else
                         if ( "float".equals(k)) {
-                            g = StatisGather.TYPE.FLOATS;
+                            p = StatisGather.TYPE.FLOATS;
                         } else
                         {
-                            g = StatisGather.TYPE.DOUBLES;
+                            p = StatisGather.TYPE.DOUBLES;
                         }
                         break ;
                     case "hidden":
@@ -670,72 +672,75 @@ public class StatisHandle {
                         if (   "int".equals(k)
                         ||    "byte".equals(k)
                         ||   "short".equals(k)) {
-                            g = StatisGather.TYPE.INT;
+                            p = StatisGather.TYPE.INT;
                         } else
                         if (  "long".equals(k)) {
-                            g = StatisGather.TYPE.LONG;
+                            p = StatisGather.TYPE.LONG;
                         } else
                         if ( "float".equals(k)) {
-                            g = StatisGather.TYPE.FLOAT;
+                            p = StatisGather.TYPE.FLOAT;
                         } else
                         if ("double".equals(k)
                         ||  "number".equals(k)) {
-                            g = StatisGather.TYPE.DOUBLE;
+                            p = StatisGather.TYPE.DOUBLE;
                         } else
                         {
-                            g = StatisGather.TYPE.STRING;
+                            p = StatisGather.TYPE.STRING;
                         }
                         break ;
                     case  "date" :
-                        g = StatisGather.TYPE.LONGS;
+                        p = StatisGather.TYPE.LONGS;
                         break ;
                     default:
-                        g = StatisGather.TYPE.STRINGS;
+                        p = StatisGather.TYPE.STRINGS;
                 } else {
-                        g = StatisGather.TYPE.STRINGS;
+                        p = StatisGather.TYPE.STRINGS;
                 }
             }
 
-            if (q != null) {
-                quotas.add(getGatherField(q, f, n, g));
+            Object o = getGatherField ( p, f, n, g );
+            if (o instanceof StatisGather.Index) {
+                indics.add( (StatisGather.Index) o );
             } else {
-                quoits.add(new StatisGather.Quoit (f, n, g));
+                dimans.add( (StatisGather.Diman) o );
             }
         }
 
         return new Fields (
-            quoits.toArray(new StatisGather.Quoit[quoits.size()]),
-            quotas.toArray(new StatisGather.Quota[quotas.size()])
+            dimans.toArray(new StatisGather.Diman[dimans.size()]),
+            indics.toArray(new StatisGather.Index[indics.size()])
         );
     }
 
-    protected StatisGather.Quota getGatherField(String quota, String field, String alias, StatisGather.TYPE type) {
-        switch (quota) {
+    protected Object getGatherField(StatisGather.TYPE type, String field, String alias, String genre) {
+        if (null != genre) switch (genre) {
             case "count":
-                return new StatisGather.Count(field, alias, type);
-            case "sum":
-                return new StatisGather.Sum(field, alias, type);
-            case "min":
-                return new StatisGather.Min(field, alias, type);
-            case "max":
-                return new StatisGather.Max(field, alias, type);
+                return new StatisGather.Count(type, field, alias);
+            case "sum"  :
+                return new StatisGather.Sum  (type, field, alias);
+            case "min"  :
+                return new StatisGather.Min  (type, field, alias);
+            case "max"  :
+                return new StatisGather.Max  (type, field, alias);
+        } else {
+                return new StatisGather.Datum(type, field, alias);
         }
-        throw new UnsupportedOperationException("Unsupported quota type " + quota);
-    }
-
-    private static class Fields {
-        public final  StatisGather.Quoit[] quoits;
-        public final  StatisGather.Quota[] quotas;
-        public Fields(StatisGather.Quoit[] quoits,
-                      StatisGather.Quota[] quotas) {
-            this.quoits = quoits;
-            this.quotas = quotas;
-        }
+        throw new UnsupportedOperationException("Unsupported method " + genre + " for gather field");
     }
 
     // jdk 1.7 加上这个后排序不会报错
     static {
         System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
+    }
+
+    private static class Fields {
+        public final  StatisGather.Diman[] fields;
+        public final  StatisGather.Index[] indics;
+        public Fields(StatisGather.Diman[] fields,
+                      StatisGather.Index[] indics) {
+            this.fields = fields;
+            this.indics = indics;
+        }
     }
 
     private static class Counts implements Comparator<Object[]> {

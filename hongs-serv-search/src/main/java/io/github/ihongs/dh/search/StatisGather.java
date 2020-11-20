@@ -32,31 +32,31 @@ public class StatisGather {
     };
 
     private final IndexSearcher finder;
+    private       Diman[] dimans;
+    private       Index[] indics;
     private       Query   query ;
-    private       Quoit[] quoits;
-    private       Quota[] quotas;
 
     public StatisGather (IndexSearcher finder) {
         this.finder = finder;
     }
 
-    public StatisGather where(Query query) {
-        this.query = query;
+    public StatisGather group(Diman... fields) {
+        this.dimans = fields;
         return this;
     }
 
-    public StatisGather group(Quoit... quoits) {
-        this.quoits = quoits;
+    public StatisGather count(Index... fields) {
+        this.indics = fields;
         return this;
     }
 
-    public StatisGather count(Quota... quotas) {
-        this.quotas = quotas;
+    public StatisGather where(Query    query ) {
+        this.query  = query ;
         return this;
     }
 
     public Collection<Map> fetch() throws IOException {
-        Fetch  fetch = new Fetch(quoits, quotas);
+        Fetch  fetch = new Fetch(dimans, indics);
         finder.search(query, fetch);
         return fetch.fetchValues( );
     }
@@ -90,34 +90,34 @@ public class StatisGather {
 
     private static class Fetch implements Collector, LeafCollector {
 
-        private final Quoit[] quoits;
-        private final Quota[] quotas;
+        private final Diman[] fields;
+        private final Index[] indics;
         private final Map<Group, Map> result;
 
-        public Fetch (Quoit[] quoits, Quota[] quotas) {
-            this.quoits = quoits;
-            this.quotas = quotas;
+        public Fetch (Diman[] fields, Index[] indics) {
+            this.fields = fields;
+            this.indics = indics;
             this.result = new HashMap();
         }
 
         @Override
         public LeafCollector getLeafCollector(LeafReaderContext lrc) throws IOException {
             LeafReader lr = lrc.reader();
-            for(Quoit quoit : quoits) {
-                quoit.prepare(lr);
+            for(Diman field : fields) {
+                field.prepare(lr);
             }
-            for(Quota quota : quotas) {
-                quota.prepare(lr);
+            for(Index index : indics) {
+                index.prepare(lr);
             }
             return this;
         }
 
         @Override
         public void collect(int id) throws IOException {
-            Object[] values = new Object[quoits.length];
+            Object[] values = new Object[fields.length];
 
-            for(int i = 0; i < quoits.length; i ++) {
-                values[i] = quoits[i].collect( id );
+            for(int i = 0; i < fields.length; i ++) {
+                values[i] = fields[i].collect( id );
             }
 
             // 获取分组条目
@@ -126,16 +126,16 @@ public class StatisGather {
             if (  entry == null  ) {
                   entry  = new HashMap(/**/);
                   result . put(group, entry);
-            for(int i = 0; i < quoits.length; i ++) {
-                String n = quoits[i].alias;
+            for(int i = 0; i < fields.length; i ++) {
+                String n = fields[i].alias;
                 Object v = values[i];
                 entry.put(n, v);
             }}
 
-            for(int i = 0; i < quotas.length; i ++) {
-                String n = quotas[i].alias;
+            for(int i = 0; i < indics.length; i ++) {
+                String n = indics[i].alias;
                 Object v = entry.get ( n );
-                v = quotas[i].collect(i,v);
+                v = indics[i].collect(i,v);
                 entry.put(n, v);
             }
         }
@@ -159,13 +159,13 @@ public class StatisGather {
     abstract private static class Field {
 
         protected final TYPE    type  ;
-        protected final String  filed ;
+        protected final String  field ;
         protected final String  alias ;
         protected       Object  values;
 
-        public Field(String field, String alias, TYPE type) {
-            this.type  = type ;
-            this.filed = field;
+        public Field(TYPE type, String field, String alias) {
+            this.type  =  type;
+            this.field = field;
             this.alias = alias;
         }
 
@@ -175,19 +175,19 @@ public class StatisGather {
                 case LONG:
                 case FLOAT:
                 case DOUBLE:
-                    values = r.getNumericDocValues(filed);
+                    values = r.getNumericDocValues(field);
                     break;
                 case STRING:
-                    values = r.getSortedDocValues (filed);
+                    values = r.getSortedDocValues (field);
                     break;
                 case INTS:
                 case LONGS:
                 case FLOATS:
                 case DOUBLES:
-                    values = r.getSortedNumericDocValues(filed);
+                    values = r.getSortedNumericDocValues(field);
                     break;
                 case STRINGS:
-                    values = r.getSortedSetDocValues    (filed);
+                    values = r.getSortedSetDocValues    (field);
                     break;
             }
         }
@@ -197,12 +197,26 @@ public class StatisGather {
     /**
      * 维度字段
      */
-    public static class Quoit extends Field {
+    abstract public static class Diman extends Field {
 
-        public Quoit(String field, String alias, TYPE type) {
-            super(field, alias, type);
+        public Diman(TYPE type, String field, String alias) {
+            super(type, field, alias);
         }
 
+        abstract public Object collect(int i) throws IOException;
+
+    }
+
+    /**
+     * 取值
+     */
+    public static class Datum extends Diman {
+
+        public Datum(TYPE type, String field, String alias) {
+            super(type, field, alias);
+        }
+
+        @Override
         public Object collect(int i) throws IOException {
             Object v;
             switch (type) {
@@ -257,9 +271,9 @@ public class StatisGather {
                         v = null;
                         break;
                     }
-                    int[] a = new int[numValues.docValueCount()];
+                    int [] a = new int [numValues.docValueCount()];
                     for (int j = 0; j < a.length; j ++) {
-                        a[j] = (int) numValues.nextValue();
+                        a[j] = (int ) numValues.nextValue();
                     }
                     v = a;
                     break;
@@ -329,10 +343,10 @@ public class StatisGather {
      * 指标字段
      * @param <V>
      */
-    abstract public static class Quota<V> extends Field {
+    abstract public static class Index<V> extends Field {
 
-        public Quota(String field, String alias, TYPE type) {
-            super(field, alias, type);
+        public Index(TYPE type, String field, String alias) {
+            super(type, field, alias);
         }
 
         public Object collect(int i , Object o ) throws IOException {
@@ -343,12 +357,117 @@ public class StatisGather {
     }
 
     /**
+     * 取首个值
+     */
+    public static class First extends Index {
+
+        public First(TYPE type, String field, String alias) {
+            super(type, field, alias);
+        }
+
+        @Override
+        public Object compute(int i, Object v) throws IOException {
+            if (v != null) {
+                return v;
+            }
+            switch (type) {
+                case INT: {
+                    NumericDocValues numValues = ((NumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    v = (int ) numValues.longValue();
+                    break;
+                }
+                case LONG: {
+                    NumericDocValues numValues = ((NumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    v = (long) numValues.longValue();
+                    break;
+                }
+                case FLOAT: {
+                    NumericDocValues numValues = ((NumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    v = NumericUtils. sortableIntToFloat ((int ) numValues.longValue());
+                    break;
+                }
+                case DOUBLE: {
+                    NumericDocValues numValues = ((NumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    v = NumericUtils.sortableLongToDouble((long) numValues.longValue());
+                    break;
+                }
+                case STRING: {
+                    SortedDocValues strValues = ((SortedDocValues) values);
+                    if (! strValues.advanceExact(i)) {
+                        break;
+                    }
+                    v = strValues.binaryValue().utf8ToString();
+                    break;
+                }
+                case INTS: {
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    v = (int ) numValues.nextValue();
+                    break;
+                }
+                case LONGS: {
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    v = (long) numValues.nextValue();
+                    break;
+                }
+                case FLOATS: {
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    v = NumericUtils. sortableIntToFloat ((int ) numValues.nextValue() );
+                    break;
+                }
+                case DOUBLES: {
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    v = NumericUtils.sortableLongToDouble((long) numValues.nextValue() );
+                    break;
+                }
+                case STRINGS: {
+                    SortedSetDocValues strValues = ((SortedSetDocValues) values);
+                    if (! strValues.advanceExact(i)) {
+                        break;
+                    }
+                    long    k;
+                    while ((k = strValues.nextOrd()) != SortedSetDocValues.NO_MORE_ORDS) {
+                        v = strValues.lookupOrd(k).utf8ToString();
+                        break;
+                    }
+                    break;
+                }
+            }
+            return  v ;
+        }
+
+    }
+
+    /**
      * 计数
      */
-    public static class Count extends Quota<Long> {
+    public static class Count extends Index<Long> {
 
-        public Count(String field, String alias, TYPE type) {
-            super(field, alias, type);
+        public Count(TYPE type, String field, String alias) {
+            super(type, field, alias);
         }
 
         @Override
@@ -406,10 +525,10 @@ public class StatisGather {
     /**
      * 求和
      */
-    public static class Sum extends Quota<Number>  {
+    public static class Sum extends Index<Number>  {
 
-        public Sum(String field, String alias, TYPE type) {
-            super (field, alias, type);
+        public Sum(TYPE type, String field, String alias) {
+            super (type, field, alias);
 
             if (type == TYPE.STRING
             ||  type == TYPE.STRINGS ) {
@@ -533,10 +652,10 @@ public class StatisGather {
     /**
      * 求最大值
      */
-    public static class Max extends Quota<Number>  {
+    public static class Max extends Index<Number>  {
 
-        public Max(String field, String alias, TYPE type) {
-            super (field, alias, type);
+        public Max(TYPE type, String field, String alias) {
+            super (type, field, alias);
 
             if (type == TYPE.STRING
             ||  type == TYPE.STRINGS ) {
@@ -660,10 +779,10 @@ public class StatisGather {
     /**
      * 求最小值
      */
-    public static class Min extends Quota<Number>  {
+    public static class Min extends Index<Number>  {
 
-        public Min(String field, String alias, TYPE type) {
-            super (field, alias, type);
+        public Min(TYPE type, String field, String alias) {
+            super (type, field, alias);
 
             if (type == TYPE.STRING
             ||  type == TYPE.STRINGS ) {

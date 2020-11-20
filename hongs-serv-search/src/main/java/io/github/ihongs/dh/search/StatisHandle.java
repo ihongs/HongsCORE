@@ -47,18 +47,18 @@ public class StatisHandle {
 
         Set<String> rb = Synt.toTerms (rd.get(Cnst.RB_KEY));
         if (rb == null || rb.isEmpty()) {
-            throw new NullPointerException("Search fields required.");
+            throw new NullPointerException("Assort fields required.");
         }
         Fields fs = getGatherFields(rb);
         if (fs.fields.length == 0 || fs.indics.length == 0) {
-            throw new NullPointerException("Search fields required!");
+            throw new NullPointerException("Assort fields required!");
         }
 
         try {
             Query q = that.padQry(rd);
 
             if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
-                CoreLogger.debug("StatisHelper.acount: " + q.toString());
+                CoreLogger.debug("StatisHandle.assort: " + q.toString());
             }
 
             return new StatisGather(finder)
@@ -227,7 +227,7 @@ public class StatisHandle {
             Query q = that.padQry(rd);
 
             if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
-                CoreLogger.debug("StatisHelper.acount: "+q.toString());
+                CoreLogger.debug("StatisHandle.acount: "+q.toString());
             }
 
             if (counts.isEmpty()) return finder.count(q);
@@ -412,7 +412,7 @@ public class StatisHandle {
             Query q = that.padQry(rd);
 
             if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
-                CoreLogger.debug("StatisHelper.amount: "+q.toString());
+                CoreLogger.debug("StatisHandle.amount: "+q.toString());
             }
 
             if (counts.isEmpty()) return finder.count(q);
@@ -714,14 +714,16 @@ public class StatisHandle {
 
     protected Object getGatherField(StatisGather.TYPE type, String field, String alias, String genre) {
         if (null != genre) switch (genre) {
-            case "count":
-                return new StatisGather.Count(type, field, alias);
-            case "sum"  :
-                return new StatisGather.Sum  (type, field, alias);
-            case "min"  :
-                return new StatisGather.Min  (type, field, alias);
             case "max"  :
                 return new StatisGather.Max  (type, field, alias);
+            case "min"  :
+                return new StatisGather.Min  (type, field, alias);
+            case "sum"  :
+                return new StatisGather.Sum  (type, field, alias);
+            case "count":
+                return new StatisGather.Count(type, field, alias);
+            case "first":
+                return new StatisGather.First(type, field, alias);
         } else {
                 return new StatisGather.Datum(type, field, alias);
         }

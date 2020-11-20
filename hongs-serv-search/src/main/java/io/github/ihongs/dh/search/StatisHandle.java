@@ -40,7 +40,7 @@ public class StatisHandle {
     }
 
     /**
-     * 聚合查询
+     * 聚合统计
      */
     public Collection<Map> assort (Map rd) throws HongsException {
         IndexSearcher finder = that.getFinder();

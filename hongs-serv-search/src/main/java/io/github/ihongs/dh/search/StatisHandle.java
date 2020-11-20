@@ -577,13 +577,13 @@ public class StatisHandle {
 
         for(String n : names) {
             String f = n;
-            String g = null ;
-            StatisGather.TYPE p ;
+            String m = null ;
+            StatisGather.TYPE l ;
 
             // 拆出统计方法
             int j = n.indexOf  ('|');
             if (j > -1) {
-                g = n.substring(1+j);
+                m = n.substring(1+j);
                 f = n.substring(0,j);
             }
 
@@ -607,16 +607,16 @@ public class StatisHandle {
                         if (   "int".equals(k)
                         ||    "byte".equals(k)
                         ||   "short".equals(k)) {
-                            p = StatisGather.TYPE.INT;
+                            l = StatisGather.TYPE.INT;
                         } else
                         if (  "long".equals(k)) {
-                            p = StatisGather.TYPE.LONG;
+                            l = StatisGather.TYPE.LONG;
                         } else
                         if ( "float".equals(k)) {
-                            p = StatisGather.TYPE.FLOAT;
+                            l = StatisGather.TYPE.FLOAT;
                         } else
                         {
-                            p = StatisGather.TYPE.DOUBLE;
+                            l = StatisGather.TYPE.DOUBLE;
                         }
                         break ;
                     case "hidden":
@@ -624,29 +624,29 @@ public class StatisHandle {
                         if (   "int".equals(k)
                         ||    "byte".equals(k)
                         ||   "short".equals(k)) {
-                            p = StatisGather.TYPE.INT;
+                            l = StatisGather.TYPE.INT;
                         } else
                         if (  "long".equals(k)) {
-                            p = StatisGather.TYPE.LONG;
+                            l = StatisGather.TYPE.LONG;
                         } else
                         if ( "float".equals(k)) {
-                            p = StatisGather.TYPE.FLOAT;
+                            l = StatisGather.TYPE.FLOAT;
                         } else
                         if ("double".equals(k)
                         ||  "number".equals(k)) {
-                            p = StatisGather.TYPE.DOUBLE;
+                            l = StatisGather.TYPE.DOUBLE;
                         } else
                         {
-                            p = StatisGather.TYPE.STRING;
+                            l = StatisGather.TYPE.STRING;
                         }
                         break ;
                     case  "date" :
-                        p = StatisGather.TYPE.LONG;
+                        l = StatisGather.TYPE.LONG;
                         break ;
                     default:
-                        p = StatisGather.TYPE.STRING;
+                        l = StatisGather.TYPE.STRING;
                 } else {
-                        p = StatisGather.TYPE.STRING;
+                        l = StatisGather.TYPE.STRING;
                 }
             } else {
                 f = "%" + f;
@@ -655,16 +655,16 @@ public class StatisHandle {
                         if (   "int".equals(k)
                         ||    "byte".equals(k)
                         ||   "short".equals(k)) {
-                            p = StatisGather.TYPE.INTS;
+                            l = StatisGather.TYPE.INTS;
                         } else
                         if (  "long".equals(k)) {
-                            p = StatisGather.TYPE.LONGS;
+                            l = StatisGather.TYPE.LONGS;
                         } else
                         if ( "float".equals(k)) {
-                            p = StatisGather.TYPE.FLOATS;
+                            l = StatisGather.TYPE.FLOATS;
                         } else
                         {
-                            p = StatisGather.TYPE.DOUBLES;
+                            l = StatisGather.TYPE.DOUBLES;
                         }
                         break ;
                     case "hidden":
@@ -672,33 +672,33 @@ public class StatisHandle {
                         if (   "int".equals(k)
                         ||    "byte".equals(k)
                         ||   "short".equals(k)) {
-                            p = StatisGather.TYPE.INT;
+                            l = StatisGather.TYPE.INT;
                         } else
                         if (  "long".equals(k)) {
-                            p = StatisGather.TYPE.LONG;
+                            l = StatisGather.TYPE.LONG;
                         } else
                         if ( "float".equals(k)) {
-                            p = StatisGather.TYPE.FLOAT;
+                            l = StatisGather.TYPE.FLOAT;
                         } else
                         if ("double".equals(k)
                         ||  "number".equals(k)) {
-                            p = StatisGather.TYPE.DOUBLE;
+                            l = StatisGather.TYPE.DOUBLE;
                         } else
                         {
-                            p = StatisGather.TYPE.STRING;
+                            l = StatisGather.TYPE.STRING;
                         }
                         break ;
                     case  "date" :
-                        p = StatisGather.TYPE.LONGS;
+                        l = StatisGather.TYPE.LONGS;
                         break ;
                     default:
-                        p = StatisGather.TYPE.STRINGS;
+                        l = StatisGather.TYPE.STRINGS;
                 } else {
-                        p = StatisGather.TYPE.STRINGS;
+                        l = StatisGather.TYPE.STRINGS;
                 }
             }
 
-            Object o = getGatherField ( p, f, n, g );
+            Object o = getGatherField ( l, f, n, m );
             if (o instanceof StatisGather.Index) {
                 indics.add( (StatisGather.Index) o );
             } else {
@@ -712,8 +712,8 @@ public class StatisHandle {
         );
     }
 
-    protected Object getGatherField(StatisGather.TYPE type, String field, String alias, String genre) {
-        if (null != genre) switch (genre) {
+    protected Object getGatherField(StatisGather.TYPE type, String field, String alias, String mode) {
+        if (null != mode) switch (mode) {
             case "max"  :
                 return new StatisGather.Max  (type, field, alias);
             case "min"  :
@@ -727,7 +727,7 @@ public class StatisHandle {
         } else {
                 return new StatisGather.Datum(type, field, alias);
         }
-        throw new UnsupportedOperationException("Unsupported method " + genre + " for gather field");
+        throw new UnsupportedOperationException("Unsupported method " + mode + " for gather field");
     }
 
     // jdk 1.7 加上这个后排序不会报错

@@ -1,12 +1,15 @@
 package io.github.ihongs.dh.search;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.apache.lucene.index.LeafReader;
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.NumericDocValues;
@@ -208,12 +211,17 @@ public class StatisGather {
     }
 
     /**
-     * 取值
+     * 字段取值
      */
     public static class Datum extends Diman {
 
         public Datum(TYPE type, String field, String alias) {
             super(type, field, alias);
+
+            // 仅支持单一取值字段
+            if (type.ordinal() > TYPE.STRING.ordinal()) {
+                throw new UnsupportedOperationException("Only supports single value field for " + alias);
+            }
         }
 
         @Override
@@ -265,6 +273,8 @@ public class StatisGather {
                     v = strValues.binaryValue().utf8ToString();
                     break;
                 }
+                // 分组字段不支持多个值
+                /*
                 case INTS: {
                     SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
                     if (! numValues.advanceExact(i)) {
@@ -331,10 +341,97 @@ public class StatisGather {
                     v = l.toArray(new String[l.size()]);
                     break;
                 }
+                */
                 default:
                     v = null;
             }
             return  v ;
+        }
+
+    }
+
+    /**
+     * 区间取值
+     */
+    public static class Range extends Diman {
+
+        private final StatisGrader.Range[] ranges;
+
+        public Range(TYPE type, String field, String alias, String... ranges) {
+            super(type, field, alias);
+
+            // 仅支持单一数值字段
+            if (type.ordinal() > TYPE.DOUBLE.ordinal()) {
+                throw new UnsupportedOperationException("Only supports single digit field for " + alias);
+            }
+
+            // 区间字串转区间对象
+                this.ranges = new StatisGrader.Range[ranges.length];
+            for(int i = 0 ; i < ranges.length ; i ++) {
+                this.ranges[i] = new StatisGrader.Range (ranges[i]);
+            }
+        }
+
+        public Range(TYPE type, String field, String alias, StatisGrader.Range... ranges) {
+            super(type, field, alias);
+
+            // 仅支持单一数值字段
+            if (type.ordinal() > TYPE.DOUBLE.ordinal()) {
+                throw new UnsupportedOperationException("Only supports single digit field for " + alias);
+            }
+
+            this.ranges = ranges;
+        }
+
+        @Override
+        public Object collect(int i) throws IOException {
+            Number v;
+            switch (type) {
+                case INT: {
+                    NumericDocValues numValues = ((NumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        return null;
+                    }
+                    v = (int ) numValues.longValue();
+                    break;
+                }
+                case LONG: {
+                    NumericDocValues numValues = ((NumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        return null;
+                    }
+                    v = (long) numValues.longValue();
+                    break;
+                }
+                case FLOAT: {
+                    NumericDocValues numValues = ((NumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        return null;
+                    }
+                    v = NumericUtils. sortableIntToFloat ((int ) numValues.longValue());
+                    break;
+                }
+                case DOUBLE: {
+                    NumericDocValues numValues = ((NumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        return null;
+                    }
+                    v = NumericUtils.sortableLongToDouble((long) numValues.longValue());
+                    break;
+                }
+                default:
+                    return null;
+            }
+            if (ranges.length  !=  0 )
+            for(StatisGrader.Range range : ranges) {
+                if ( ! range.covers(v) ) {
+                    continue;
+                }
+                return range.toString( );
+            } else {
+                return v; // 未指定区间则返回原始值
+            }
+            return  null;
         }
 
     }
@@ -523,6 +620,197 @@ public class StatisGather {
     }
 
     /**
+     * 量化
+     */
+    public static class Ratio extends Index<Number[]> {
+
+        public Ratio(TYPE type, String field, String alias) {
+            super (type, field, alias);
+
+            if (type == TYPE.STRING
+            ||  type == TYPE.STRINGS ) {
+                throw new UnsupportedOperationException("Unsupported type String(s) for " + alias);
+            }
+        }
+
+        @Override
+        public Object compute(int i, Number[] n) throws IOException {
+            switch (type) {
+                case INT: {
+                    NumericDocValues numValues = ((NumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    int  x =(int ) numValues.longValue();
+                    if (n != null) {
+                        n  = new Number[]{1L + n[0].longValue() ,
+                                 Long.sum( x , n[1].longValue()),
+                              Integer.min( x , n[2]. intValue()),
+                              Integer.max( x , n[3]. intValue())};
+                    } else {
+                        n  = new Number[]{1L , x, x, x };
+                    }
+                    break;
+                }
+                case LONG: {
+                    NumericDocValues numValues = ((NumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    long x =(long) numValues.longValue();
+                    if (n != null) {
+                        n  = new Number[]{1L + n[0].longValue() ,
+                                 Long.sum( x , n[1].longValue()),
+                                 Long.min( x , n[2].longValue()),
+                                 Long.max( x , n[3].longValue())};
+                    } else {
+                        n  = new Number[]{1L , x, x, x };
+                    }
+                    break;
+                }
+                case FLOAT: {
+                    NumericDocValues numValues = ((NumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    float  x = NumericUtils. sortableIntToFloat ((int ) numValues.longValue());
+                    if (n != null) {
+                        n  = new Number[]{1L + n[0].longValue() ,
+                               Double.sum( x , n[1].doubleValue()),
+                               Float .min( x , n[2]. floatValue()),
+                               Float .max( x , n[3]. floatValue())};
+                    } else {
+                        n  = new Number[]{1L , x, x, x };
+                    }
+                    break;
+                }
+                case DOUBLE: {
+                    NumericDocValues numValues = ((NumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    double x = NumericUtils.sortableLongToDouble((long) numValues.longValue());
+                    if (n != null) {
+                        n  = new Number[]{1L + n[0].longValue() ,
+                               Double.sum( x , n[1].doubleValue()),
+                               Double.min( x , n[2].doubleValue()),
+                               Double.max( x , n[3].doubleValue())};
+                    } else {
+                        n  = new Number[]{1L , x, x, x };
+                    }
+                    break;
+                }
+                case INTS: {
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    int  x = (int ) numValues.nextValue();
+                    int  min = x ;
+                    int  max = x ;
+                    long sum = x ;
+                    int  j = 1 ;
+                    for( ; j < numValues.docValueCount(); j ++) {
+                         x = (int ) numValues.nextValue();
+                         min = Integer.min(min, x);
+                         max = Integer.max(max, x);
+                         sum = Long.sum(sum, x);
+                    }
+                    if (n != null) {
+                        n  = new Number[]{1L + n[0].longValue() ,
+                                 Long.sum(sum, n[1].longValue()),
+                              Integer.min(min, n[2]. intValue()),
+                              Integer.max(max, n[3]. intValue())};
+                    } else {
+                        n  = new Number[]{1L , sum, min, max};
+                    }
+                    break;
+                }
+                case LONGS: {
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    long x = (long) numValues.nextValue();
+                    long min = x ;
+                    long max = x ;
+                    long sum = x ;
+                    int  j = 1 ;
+                    for( ; j < numValues.docValueCount(); j ++) {
+                         x = (long) numValues.nextValue();
+                         min = Long.min(min, x);
+                         max = Long.max(max, x);
+                         sum = Long.sum(sum, x);
+                    }
+                    if (n != null) {
+                        n  = new Number[]{1L + n[0].longValue() ,
+                                 Long.sum(sum, n[1].longValue()),
+                                 Long.min(min, n[2].longValue()),
+                                 Long.max(max, n[3].longValue())};
+                    } else {
+                        n  = new Number[]{1L , sum, min, max};
+                    }
+                    break;
+                }
+                case FLOATS: {
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    float  x = NumericUtils. sortableIntToFloat ((int ) numValues.nextValue());
+                    float  min = x ;
+                    float  max = x ;
+                    double sum = x ;
+                    int    j = 1 ;
+                    for( ; j < numValues.docValueCount(); j ++) {
+                         x = NumericUtils. sortableIntToFloat ((int ) numValues.nextValue());
+                         min = Float .min(min, x);
+                         max = Float .max(max, x);
+                         sum = Double.sum(sum, x);
+                    }
+                    if (n != null) {
+                        n  = new Number[]{1L + n[0].longValue() ,
+                               Double.sum(sum, n[1].doubleValue()),
+                               Float .min(min, n[2]. floatValue()),
+                               Float .max(max, n[3]. floatValue())};
+                    } else {
+                        n  = new Number[]{1L , sum, min, max};
+                    }
+                    break;
+                }
+                case DOUBLES: {
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    double x = NumericUtils.sortableLongToDouble((long) numValues.nextValue());
+                    double min =  x ;
+                    double max =  x ;
+                    double sum = x;
+                    int    j = 1 ;
+                    for( ; j < numValues.docValueCount(); j ++) {
+                         x = NumericUtils.sortableLongToDouble((long) numValues.nextValue());
+                         min = Double.min(min, x);
+                         max = Double.max(max, x);
+                         sum = Double.sum(sum, x);
+                    }
+                    if (n != null) {
+                        n  = new Number[]{1L + n[0].longValue() ,
+                               Double.sum(sum, n[1].doubleValue()),
+                               Double.min(min, n[2].doubleValue()),
+                               Double.max(max, n[3].doubleValue())};
+                    } else {
+                        n  = new Number[]{1L , sum, min, max};
+                    }
+                    break;
+                }
+            }
+            return  n ;
+        }
+
+    }
+
+    /**
      * 求和
      */
     public static class Sum extends Index<Number>  {
@@ -532,7 +820,7 @@ public class StatisGather {
 
             if (type == TYPE.STRING
             ||  type == TYPE.STRINGS ) {
-                throw new UnsupportedOperationException("Unsupported type String in Sum");
+                throw new UnsupportedOperationException("Unsupported type String(s) for " + alias);
             }
         }
 
@@ -659,7 +947,7 @@ public class StatisGather {
 
             if (type == TYPE.STRING
             ||  type == TYPE.STRINGS ) {
-                throw new UnsupportedOperationException("Unsupported type String in Max");
+                throw new UnsupportedOperationException("Unsupported type String(s) for " + alias);
             }
         }
 
@@ -786,7 +1074,7 @@ public class StatisGather {
 
             if (type == TYPE.STRING
             ||  type == TYPE.STRINGS ) {
-                    throw new UnsupportedOperationException("Unsupported type String in Min");
+                    throw new UnsupportedOperationException("Unsupported type String(s) for " + alias);
             }
         }
 

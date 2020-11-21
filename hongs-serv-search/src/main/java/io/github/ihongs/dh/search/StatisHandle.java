@@ -740,6 +740,7 @@ public class StatisHandle {
         switch (mode) {
         case "range": {
             /**
+             * 区间维度:
              * 从请求数据中
              * 提取区间列表
              */

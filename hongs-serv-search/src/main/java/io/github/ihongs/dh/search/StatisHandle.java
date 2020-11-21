@@ -840,23 +840,48 @@ public class StatisHandle {
                 Object v1 = m1.get(fn);
                 Object v2 = m2.get(fn);
 
-                // 能比较则比较
-                if (v1 instanceof Comparable
-                &&  v2 instanceof Comparable) {
-                    int x = ((Comparable) v1).compareTo((Comparable) v2);
-                    if (x != 0) {
-                        return desces[i] ? 0 - x : x;
-                    }
+                int x  = compares (v1, v2);
+                if (x != 0) {
+                    return desces [i] ? 0 - x : x;
                 }
+            }
 
-                // 空值总是最小
-                if (v1 != null) {
-                    if (v2 == null) {
-                        return desces[i] ? 1 : -1;
-                    }
+            return  0;
+        }
+
+        private static int compares(Object v1, Object v2) {
+            // 空值总是最小
+            if (v1 == null) {
+                if (v2 == null) {
+                    return  0;
                 } else {
-                    if (v2 != null) {
-                        return desces[i] ? -1 : 1;
+                    return  1;
+                }
+            } else {
+                if (v2 == null) {
+                    return -1;
+                }
+            }
+
+            // 能比较则比较
+            if (v1 instanceof Comparable
+            &&  v2 instanceof Comparable) {
+                int x  = ((Comparable)v1).compareTo((Comparable)v2);
+                if (x != 0) {
+                    return  x;
+                }
+            }
+
+            // 数组逐一比较
+            if (v1 instanceof  Object[]
+            &&  v2 instanceof  Object[] ) {
+                Object[] a1 = (Object[] ) v1;
+                Object[] a2 = (Object[] ) v2;
+                    int l  = Integer.min(a1.length, a2.length);
+                for(int i  = 0; i < l; i ++ ) {
+                    int x  =  compares  (a1 [ i ] , a2 [ i ] );
+                    if (x != 0) {
+                        return  x;
                     }
                 }
             }

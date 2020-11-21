@@ -8,6 +8,7 @@ import io.github.ihongs.action.FormSet;
 import io.github.ihongs.dh.lucene.LuceneRecord;
 import io.github.ihongs.dh.search.StatisGrader.Range;
 import io.github.ihongs.dh.search.StatisGrader.Ratio;
+import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Synt;
 
 import java.io.IOException;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -200,7 +202,7 @@ public class StatisHandle {
 
             if (counts.isEmpty()) return finder.count(q);
 
-            StatisGrader.Field[] f = getGraderFields (counts.keySet());
+            StatisGrader.Field[] f = getGraderFields (counts.keySet(), rd);
             StatisGrader.Collec  c = new StatisGrader.Collec(new StatisGrader.Acount(counts, countx), f);
 
             finder.search(q, c);
@@ -385,7 +387,7 @@ public class StatisHandle {
 
             if (counts.isEmpty()) return finder.count(q);
 
-            StatisGrader.Field[] f = getGraderFields (counts.keySet());
+            StatisGrader.Field[] f = getGraderFields (counts.keySet(), rd);
             StatisGrader.Collec  c = new StatisGrader.Collec(new StatisGrader.Amount(counts, countx), f);
 
             finder.search(q, c);
@@ -400,19 +402,24 @@ public class StatisHandle {
 
     /**
      * 聚合统计
+     * @param rd
+     * @return
+     * @throws HongsException
      */
     public Collection<Map> assort (Map rd) throws HongsException {
         IndexSearcher finder = that.getFinder();
 
+        Set<String> ob = Synt.toTerms (rd.get(Cnst.OB_KEY));
         Set<String> rb = Synt.toTerms (rd.get(Cnst.RB_KEY));
         if (rb == null || rb.isEmpty()) {
             throw new NullPointerException("Assort fields required.");
         }
-        Fields fs = getGatherFields(rb);
-        if (fs.fields.length == 0 || fs.indics.length == 0) {
+        Fields fs = getGatherFields (rb, rd);
+        if (fs.dimans.length == 0 && fs.indics.length == 0) {
             throw new NullPointerException("Assort fields required!");
         }
 
+        Collection<Map> list;
         try {
             Query q = that.padQry(rd);
 
@@ -420,18 +427,29 @@ public class StatisHandle {
                 CoreLogger.debug("StatisHandle.assort: " + q.toString());
             }
 
-            return new StatisGather(finder)
-                .group(fs.fields)
+            list = new StatisGather(finder)
+                .group(fs.dimans)
                 .count(fs.indics)
                 .where(q)
                 .fetch( );
-        } catch (IOException ex) {
-            throw new HongsException ( ex );
+        } catch ( IOException e ) {
+            throw new HongsException(e);
         }
+
+        if (ob == null || ob.isEmpty()) {
+            return list;
+        }
+
+        // 排序
+        String[] sb = ob.toArray(new String[ob.size()]);
+        Orders sort = new Orders( sb );
+        List   lizt = new ArrayList(list);
+        Collections . sort ( lizt , sort);
+        return lizt;
     }
 
-    private StatisGrader.Field[] getGraderFields(Set<String> names) {
-        StatisGrader.Field[] fields = new StatisGrader.Field[names.size()];
+    private StatisGrader.Field[] getGraderFields(Set<String> names, Map rd) {
+        StatisGrader.Field[] fields = new StatisGrader.Field[names.size( )];
         Map <String, Map   > items  = that.getFields();
         Map <String, String> types  ;
 
@@ -563,7 +581,7 @@ public class StatisHandle {
         return fields ;
     }
 
-    private Fields getGatherFields(Set<String> names) {
+    private Fields getGatherFields(Set<String> names, Map rd ) {
         List<StatisGather.Diman> dimans = new ArrayList();
         List<StatisGather.Index> indics = new ArrayList();
         Map <String, Map   > items = that.getFields();
@@ -698,7 +716,7 @@ public class StatisHandle {
                 }
             }
 
-            Object o = getGatherField ( g, f, n, m );
+            Object o = getGatherField(g, f,n, m, rd);
             if (o instanceof StatisGather.Index) {
                 indics.add( (StatisGather.Index) o );
             } else {
@@ -712,21 +730,38 @@ public class StatisHandle {
         );
     }
 
-    protected Object getGatherField(StatisGather.TYPE type, String field, String alias, String mode) {
-        if (null != mode) switch (mode) {
-            case "max"  :
-                return new StatisGather.Max  (type, field, alias);
-            case "min"  :
-                return new StatisGather.Min  (type, field, alias);
-            case "sum"  :
-                return new StatisGather.Sum  (type, field, alias);
-            case "count":
-                return new StatisGather.Count(type, field, alias);
-            case "first":
-                return new StatisGather.First(type, field, alias);
-        } else {
-                return new StatisGather.Datum(type, field, alias);
+    protected Object getGatherField(StatisGather.TYPE type, String field, String alias, String mode, Map rd) {
+        // 维度
+        if (null == mode) {
+            return new StatisGather.Datum(type, field, alias);
         }
+
+        // 指标
+        switch (mode) {
+        case "range": {
+            /**
+             * 从请求数据中
+             * 提取区间列表
+             */
+            Set<String> rz = Dict.getValue (rd, Set.class, Cnst.IN_REL, alias);
+            if (null == rz ) rz = new LinkedHashSet();
+            String [  ] rs = rz . toArray(new String[rz.size()] );
+            return new StatisGather.Range(type, field, alias, rs);
+        }
+        case "first":
+            return new StatisGather.First(type, field, alias);
+        case "count":
+            return new StatisGather.Count(type, field, alias);
+        case "ratio":
+            return new StatisGather.Ratio(type, field, alias);
+        case "max"  :
+            return new StatisGather.Max  (type, field, alias);
+        case "min"  :
+            return new StatisGather.Min  (type, field, alias);
+        case "sum"  :
+            return new StatisGather.Sum  (type, field, alias);
+        }
+
         throw new UnsupportedOperationException("Unsupported method " + mode + " for gather field");
     }
 
@@ -736,11 +771,11 @@ public class StatisHandle {
     }
 
     private static class Fields {
-        public final  StatisGather.Diman[] fields;
+        public final  StatisGather.Diman[] dimans;
         public final  StatisGather.Index[] indics;
-        public Fields(StatisGather.Diman[] fields,
+        public Fields(StatisGather.Diman[] dimans,
                       StatisGather.Index[] indics) {
-            this.fields = fields;
+            this.dimans = dimans;
             this.indics = indics;
         }
     }
@@ -771,6 +806,58 @@ public class StatisHandle {
             double sum2 = (double) o2[3];
             if (sum1 != sum2) {
                 return  sum1>sum2 ? -1:1;
+            }
+
+            return 0;
+        }
+    }
+
+    private static class Orders implements Comparator<Map> {
+        private final String [] fields;
+        private final boolean[] desces;
+
+        public Orders(String [] fields) {
+            this.fields = fields;
+            this.desces = new boolean[fields.length];
+
+            // 整理出逆序表
+            for(int i = 0; i < fields.length; i ++ ) {
+                String fn = fields[i];
+                if (fn.startsWith("-")) {
+                    fields[i] = fn.substring(1);
+                    desces[i] = true ;
+                } else {
+                    desces[i] = false;
+                }
+            }
+        }
+
+        @Override
+        public int compare(Map m1, Map m2) {
+            for(int i = 0; i < fields.length; i ++ ) {
+                String fn = fields[i ];
+                Object v1 = m1.get(fn);
+                Object v2 = m2.get(fn);
+
+                // 能比较则比较
+                if (v1 instanceof Comparable
+                &&  v2 instanceof Comparable) {
+                    int x = ((Comparable) v1).compareTo((Comparable) v2);
+                    if (x != 0) {
+                        return desces[i] ? 0 - x : x;
+                    }
+                }
+
+                // 空值总是最小
+                if (v1 != null) {
+                    if (v2 == null) {
+                        return desces[i] ? 1 : -1;
+                    }
+                } else {
+                    if (v2 != null) {
+                        return desces[i] ? -1 : 1;
+                    }
+                }
             }
 
             return 0;

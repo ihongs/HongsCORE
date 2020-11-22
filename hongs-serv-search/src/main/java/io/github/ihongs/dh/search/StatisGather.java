@@ -1,15 +1,11 @@
 package io.github.ihongs.dh.search;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.apache.lucene.index.LeafReader;
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.NumericDocValues;
@@ -58,7 +54,7 @@ public class StatisGather {
         return this;
     }
 
-    public Collection<Map> fetch() throws IOException {
+    public List<Map> fetch() throws IOException {
         Fetch  fetch = new Fetch(dimans, indics);
         finder.search(query, fetch);
         return fetch.fetchValues( );
@@ -95,12 +91,14 @@ public class StatisGather {
 
         private final Diman[] dimans;
         private final Index[] indics;
-        private final Map<Group, Map> result;
+        private final Map <Group, Map> dict; // 分组字典
+        private final List<       Map> list; // 结果列表
 
         public Fetch (Diman[] dimans, Index[] indics) {
             this.dimans = dimans;
             this.indics = indics;
-            this.result = new HashMap();
+            this.dict = new HashMap();
+            this.list = new LinkedList();
         }
 
         @Override
@@ -125,10 +123,11 @@ public class StatisGather {
 
             // 获取分组条目
             Group group  = new Group(values);
-            Map   entry  = result.get(group);
+            Map   entry  = dict.get(group);
             if (  entry == null  ) {
-                  entry  = new HashMap(/**/);
-                  result . put(group, entry);
+                  entry  = new HashMap();
+                  dict.put(group, entry);
+                  list.add(       entry);
             for(int i = 0; i < dimans.length; i ++) {
                 String n = dimans[i].alias;
                 Object v = values[i];
@@ -153,8 +152,8 @@ public class StatisGather {
             return false;
         }
 
-        public Collection<Map> fetchValues() {
-            return result.values();
+        public List<Map> fetchValues() {
+            return list;
         }
 
     }
@@ -453,14 +452,14 @@ public class StatisGather {
             super(type, field, alias);
         }
 
-        public Object collecs(int i, Object o) throws IOException {
+        public Object collecs(int i, Object data) throws IOException {
             if (values == null) {
-                return    null;
+                return    data;
             }
-            return collect(i, (V) o);
+            return collect(i, (V) data);
         }
 
-        abstract public Object collect(int i , V v ) throws IOException;
+        abstract public Object collect(int i , V v) throws IOException;
     }
 
     /**

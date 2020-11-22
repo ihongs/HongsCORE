@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -427,12 +426,11 @@ public class StatisHandle {
                 CoreLogger.debug("StatisHandle.assort: " + q.toString());
             }
 
-            Collection lizt = new StatisGather(finder)
+            list = new StatisGather(finder)
                 .group(fs.dimans)
                 .count(fs.indics)
                 .where(q)
                 .fetch( );
-            list = new ArrayList (lizt);
         } catch ( IOException e ) {
             throw new HongsException(e);
         }
@@ -444,9 +442,9 @@ public class StatisHandle {
         // 排序
         String[] sb = ob.toArray(new String[ob.size()]);
         Orders sort = new Orders( sb );
-        List   lizt = new ArrayList(list);
-        Collections . sort ( lizt , sort);
-        return lizt;
+        Collections . sort(list, sort);
+
+        return list ;
     }
 
     private StatisGrader.Field[] getGraderFields(Set<String> names, Map rd) {
@@ -604,6 +602,12 @@ public class StatisHandle {
             if (j > -1) {
                 m = n.substring(1+j);
                 f = n.substring(0,j);
+
+                // 统计行数
+                if (m.equals("count")
+                &&  f.equals( "*" ) ) {
+                    f = Cnst.ID_KEY ;
+                }
             }
 
             Map c = items.get(f);
@@ -856,11 +860,11 @@ public class StatisHandle {
                 if (v2 == null) {
                     return  0;
                 } else {
-                    return  1;
+                    return -1;
                 }
             } else {
                 if (v2 == null) {
-                    return -1;
+                    return  1;
                 }
             }
 

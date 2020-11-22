@@ -645,8 +645,8 @@ public class StatisGather {
                     if (n != null) {
                         n  = new Number[]{1L + n[0].longValue() ,
                                  Long.sum( x , n[1].longValue()),
-                              Integer.min( x , n[2]. intValue()),
-                              Integer.max( x , n[3]. intValue())};
+                                 Int .min( x , n[2]. intValue()),
+                                 Int .max( x , n[3]. intValue())};
                     } else {
                         n  = new Number[]{1L , x, x, x };
                     }
@@ -712,15 +712,15 @@ public class StatisGather {
                     int  j = 1 ;
                     for( ; j < numValues.docValueCount(); j ++) {
                          x = (int ) numValues.nextValue();
-                         min = Integer.min(min, x);
-                         max = Integer.max(max, x);
+                         min = Int .min(min, x);
+                         max = Int .max(max, x);
                          sum = Long.sum(sum, x);
                     }
                     if (n != null) {
                         n  = new Number[]{1L + n[0].longValue() ,
                                  Long.sum(sum, n[1].longValue()),
-                              Integer.min(min, n[2]. intValue()),
-                              Integer.max(max, n[3]. intValue())};
+                                 Int .min(min, n[2]. intValue()),
+                                 Int .max(max, n[3]. intValue())};
                     } else {
                         n  = new Number[]{1L , sum, min, max};
                     }
@@ -961,7 +961,7 @@ public class StatisGather {
                     }
                     int  x =(int ) numValues.longValue( );
                     if (n != null) {
-                        n  = Integer.max(x,n. intValue());
+                        n  = Int . max(x , n. intValue());
                     } else {
                         n  = x;
                     }
@@ -974,7 +974,7 @@ public class StatisGather {
                     }
                     long x =(long) numValues.longValue( );
                     if (n != null) {
-                        n  = Long   .max(x,n.longValue());
+                        n  = Long. max(x , n.longValue());
                     } else {
                         n  = x;
                     }
@@ -1014,9 +1014,9 @@ public class StatisGather {
                     int  x =(int ) numValues.nextValue();
                     int  j = 1;
                     for( ; j < numValues.docValueCount(); j ++) {
-                         x = Integer.max((int ) numValues.nextValue(), x);
+                         x = Int .max((int ) numValues.nextValue(), x);
                     }
-                    n = n != null ? Integer.max(n. intValue(), x) : x;
+                    n = n != null ? Int .max(n. intValue(), x) : x;
                     break;
                 }
                 case LONGS: {
@@ -1027,9 +1027,9 @@ public class StatisGather {
                     long x =(long) numValues.nextValue();
                     int  j = 1;
                     for( ; j < numValues.docValueCount(); j ++) {
-                         x = Long   .max((long) numValues.nextValue(), x);
+                         x = Long.max((long) numValues.nextValue(), x);
                     }
-                    n = n != null ? Long   .max(n.longValue(), x) : x;
+                    n = n != null ? Long.max(n.longValue(), x) : x;
                     break;
                 }
                 case FLOATS: {
@@ -1042,7 +1042,7 @@ public class StatisGather {
                     for( ; j < numValues.docValueCount(); j ++) {
                          x = Float .max(NumericUtils. sortableIntToFloat ((int ) numValues.nextValue()), x);
                     }
-                    n = n != null ? Float .max (n. floatValue(), x) : x;
+                    n = n != null ? Float .max(n. floatValue(), x) : x;
                     break;
                 }
                 case DOUBLES: {
@@ -1055,7 +1055,7 @@ public class StatisGather {
                     for( ; j < numValues.docValueCount(); j ++) {
                          x = Double.max(NumericUtils.sortableLongToDouble((long) numValues.nextValue()), x);
                     }
-                    n = n != null ? Double.max (n.doubleValue(), x) : x;
+                    n = n != null ? Double.max(n.doubleValue(), x) : x;
                     break;
                 }
             }
@@ -1088,7 +1088,7 @@ public class StatisGather {
                     }
                     int  x =(int ) numValues.longValue( );
                     if (n != null) {
-                        n  = Integer.min(x,n. intValue());
+                        n  = Int . min(x , n. intValue());
                     } else {
                         n  = x;
                     }
@@ -1101,7 +1101,7 @@ public class StatisGather {
                     }
                     long x =(long) numValues.longValue( );
                     if (n != null) {
-                        n  = Long   .min(x,n.longValue());
+                        n  = Long. min(x , n.longValue());
                     } else {
                         n  = x;
                     }
@@ -1141,9 +1141,9 @@ public class StatisGather {
                     int  x =(int ) numValues.nextValue();
                     int  j = 1;
                     for( ; j < numValues.docValueCount(); j ++) {
-                         x = Integer.min((int ) numValues.nextValue(), x);
+                         x = Int .min((int ) numValues.nextValue(), x);
                     }
-                    n = n != null ? Integer.min(n. intValue(), x) : x;
+                    n = n != null ? Int .min(n. intValue(), x) : x;
                     break;
                 }
                 case LONGS: {
@@ -1154,9 +1154,9 @@ public class StatisGather {
                     long x =(long) numValues.nextValue();
                     int  j = 1;
                     for( ; j < numValues.docValueCount(); j ++) {
-                         x = Long   .min((long) numValues.nextValue(), x);
+                         x = Long.min((long) numValues.nextValue(), x);
                     }
-                    n = n != null ? Long   .min(n.longValue(), x) : x;
+                    n = n != null ? Long.min(n.longValue(), x) : x;
                     break;
                 }
                 case FLOATS: {
@@ -1189,6 +1189,18 @@ public class StatisGather {
             return  n ;
         }
 
+    }
+
+    /**
+     * 重度对齐强迫症专用
+     */
+    private static final class Int {
+        public static int  min(int a, int b) {
+            return Integer.min(a , b);
+        }
+        public static int  max(int a, int b) {
+            return Integer.max(a , b);
+        }
     }
 
 }

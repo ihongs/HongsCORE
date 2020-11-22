@@ -38,6 +38,9 @@
             margin : 0;
             padding: 0;
         }
+        a {
+            color  : #eee;
+        }
         .context {
             width  : 100%;
             height : 100%;

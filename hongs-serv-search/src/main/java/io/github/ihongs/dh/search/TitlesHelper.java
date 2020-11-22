@@ -280,7 +280,7 @@ public class TitlesHelper {
     @Filter(Titler.class)
     @Target(ElementType.METHOD)
     @Retention(RetentionPolicy.RUNTIME)
-    public @interface Titles {
+    public static @interface Titles {
         String   conf() default "default";
         String   form() default "";
         byte     adds() default 0 ;
@@ -295,7 +295,7 @@ public class TitlesHelper {
      * </pre>
      * @author Hong
      */
-    public class Titler implements FilterInvoker {
+    public static class Titler implements FilterInvoker {
         @Override
         public void invoke(ActionHelper helper, ActionRunner chains, Annotation anno)
         throws HongsException {

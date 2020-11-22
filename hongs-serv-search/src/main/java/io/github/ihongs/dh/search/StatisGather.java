@@ -153,7 +153,7 @@ public class StatisGather {
         }
 
         public List<Map> fetchValues() {
-            return list;
+            return list ;
         }
 
     }

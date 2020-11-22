@@ -135,14 +135,14 @@ abstract public class Core
   };
 
   /**
-   * 客户地址标识
+   * 服务路径标识
    */
-  public static final ThreadLocal<String> CLIENT_ADDR
+  public static final ThreadLocal<String> SERVER_HREF
                 = new ThreadLocal() {
       @Override
       protected String initialValue() {
         try {
-          return io.github.ihongs.action.ActionDriver.getClientAddr(
+          return io.github.ihongs.action.ActionDriver.getServerHref(
                  io.github.ihongs.action.ActionHelper.getInstance( )
                                                      .getRequest ( ) );
         } catch (NullPointerException|UnsupportedOperationException e) {
@@ -152,14 +152,14 @@ abstract public class Core
   };
 
   /**
-   * 服务路径标识
+   * 客户地址标识
    */
-  public static final ThreadLocal<String> SERVER_HREF
+  public static final ThreadLocal<String> CLIENT_ADDR
                 = new ThreadLocal() {
       @Override
       protected String initialValue() {
         try {
-          return io.github.ihongs.action.ActionDriver.getServerHref(
+          return io.github.ihongs.action.ActionDriver.getClientAddr(
                  io.github.ihongs.action.ActionHelper.getInstance( )
                                                      .getRequest ( ) );
         } catch (NullPointerException|UnsupportedOperationException e) {

@@ -30,18 +30,19 @@
     <meta http-equiv="Refresh" content="3; url=<%=escapeXML(href)%>">
     <title><%=escapeXML(link)%></title>
     <style type="text/css">
+        a {
+            text-decoration: none;
+            text-shadow: 0 0 10px #ccc;
+            color  : #eee;
+        }
         html ,
         body {
-            background: #066;
+            background: #063;
             color  : #eee;
             width  : 100%;
             height : 100%;
             margin : 0;
             padding: 0;
-        }
-        a {
-            color  : #eee;
-            text-decoration: none;
         }
         .context {
             width  : 100%;

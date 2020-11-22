@@ -121,16 +121,50 @@ abstract public class Core
                 = new ThreadLocal() {
       @Override
       protected Core initialValue() {
-            return new Simple ();
+          return new Simple();
       }
       @Override
       public void remove() {
-          try {
-            ( (Core) get()).close();
-          } catch (Throwable ex) {
-            throw  new Error(ex);
-          }
-            super.remove();
+        try {
+          ( (Core) get()).close();
+        } catch (Throwable e) {
+          throw  new Error(e);
+        }
+          super.remove();
+      }
+  };
+
+  /**
+   * 客户地址标识
+   */
+  public static final ThreadLocal<String> CLIENT_ADDR
+                = new ThreadLocal() {
+      @Override
+      protected String initialValue() {
+        try {
+          return io.github.ihongs.action.ActionDriver.getClientAddr(
+                 io.github.ihongs.action.ActionHelper.getInstance( )
+                                                     .getRequest ( ) );
+        } catch (NullPointerException|UnsupportedOperationException e) {
+          return null;
+        }
+      }
+  };
+
+  /**
+   * 服务路径标识
+   */
+  public static final ThreadLocal<String> SERVER_HREF
+                = new ThreadLocal() {
+      @Override
+      protected String initialValue() {
+        try {
+          return io.github.ihongs.action.ActionDriver.getServerHref(
+                 io.github.ihongs.action.ActionHelper.getInstance( )
+                                                     .getRequest ( ) );
+        } catch (NullPointerException|UnsupportedOperationException e) {
+          return null;
+        }
       }
   };
 
@@ -156,12 +190,6 @@ abstract public class Core
    * 动作路径标识
    */
   public static final InheritableThreadLocal<String> ACTION_NAME
-                = new InheritableThreadLocal();
-
-  /**
-   * 客户地址标识
-   */
-  public static final InheritableThreadLocal<String> CLIENT_ADDR
                 = new InheritableThreadLocal();
 
   /**

@@ -347,11 +347,15 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
     throws ServletException {
         Core.ACTION_TIME.set(System.currentTimeMillis(/***/));
         Core.ACTION_NAME.set(getOriginPath(req).substring(1));
-        Core.CLIENT_ADDR.set(getClientAddr(req) /* IP4,6 */ );
+        /*
+        // 无需指定, 在需要时提取
+        Core.CLIENT_ADDR.set(getClientAddr(req));
+        Core.SERVER_HREF.set(getServerHref(req));
+        */
 
         // 外部没有指定网站域名则在首次请求时进行设置(非线程安全)
-        if (Core.SITE_HREF==null || Core.SITE_HREF.isEmpty()) {
-            Core.SITE_HREF = getSchemeHost(req);
+        if (Core.SITE_HREF == null || Core.SITE_HREF.isEmpty()) {
+            Core.SITE_HREF  = Core.SERVER_HREF.get();
         }
 
         CoreConfig conf = core.get(CoreConfig.class);
@@ -651,7 +655,80 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
     }
 
     /**
-     * 获得发起的客户端IP
+     * 获取当前的服务网址
+     * @param req
+     * @return
+     */
+    public static final String getServerHref(HttpServletRequest req) {
+        String item = (String) req.getAttribute(Cnst.SERVER_ATTR);
+        if (null != item) {
+            return  item;
+        }
+
+        String prot;
+        String host;
+        int    port;
+
+        prot = req.getScheme();
+        host = req.getServerName();
+        port = req.getServerPort();
+
+        // RFC 7239, 标准代理格式
+        item = req.getHeader("Forwarded");
+        if (null != item) {
+            String  line;
+            int beg = 0 , end, sep;
+                end = item.indexOf(',', beg);
+                if (end != -1) {
+                    item = item.substring(beg, end);
+                }
+            while  (end != -1) {
+                end = item.indexOf(';', beg);
+                if (end != -1) {
+                    line = item.substring(beg, end);
+                } else {
+                    line = item.substring(beg /**/);
+                }
+                sep = line.indexOf("=" /**/);
+                if (sep != -1) {
+                    String key = line.substring(0, sep).trim();
+                    String val = line.substring(1+ sep).trim();
+                    if ("proto".equals(key)) {
+                        prot = val;
+                    } else
+                    if ("host" .equals(key)) {
+                        host = val;
+                    } else
+                    if ("port" .equals(key)) {
+                        port = Synt.asInt(val);
+                    }
+                }
+                beg = end + 1;
+            }
+        } else {
+            // 非标准的格式
+            item = req.getHeader("X-Forwarded-Proto");
+            if (item != null) {
+                prot  = item;
+            }
+            item = req.getHeader("X-Forwarded-Host" );
+            if (item != null) {
+                host  = item;
+            }
+            item = req.getHeader("X-Forwarded-Port" );
+            if (item != null) {
+                port  = Synt.asInt(item);
+            }
+        }
+
+        if (port != 80 && port != 443) {
+            host += ":" + port;
+        }
+        return prot+"://"+host;
+    }
+
+    /**
+     * 获取当前的远程地址
      * @param req
      * @return
      */
@@ -761,79 +838,6 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
 
         // 上级客户端真实网络地址
         return  req.getRemoteAddr( );
-    }
-
-    /**
-     * 获取当前的服务网址
-     * @param req
-     * @return
-     */
-    public static final String getSchemeHost(HttpServletRequest req) {
-        String item = (String) req.getAttribute(Cnst.SCHEME_ATTR);
-        if (null != item) {
-            return  item;
-        }
-
-        String prot;
-        String host;
-        int    port;
-
-        prot = req.getScheme();
-        host = req.getServerName();
-        port = req.getServerPort();
-
-        // RFC 7239, 标准代理格式
-        item = req.getHeader("Forwarded");
-        if (null != item) {
-            String  line;
-            int beg = 0 , end, sep;
-                end = item.indexOf(',', beg);
-                if (end != -1) {
-                    item = item.substring(beg, end);
-                }
-            while  (end != -1) {
-                end = item.indexOf(';', beg);
-                if (end != -1) {
-                    line = item.substring(beg, end);
-                } else {
-                    line = item.substring(beg /**/);
-                }
-                sep = line.indexOf("=" /**/);
-                if (sep != -1) {
-                    String key = line.substring(0, sep).trim();
-                    String val = line.substring(1+ sep).trim();
-                    if ("proto".equals(key)) {
-                        prot = val;
-                    } else
-                    if ("host" .equals(key)) {
-                        host = val;
-                    } else
-                    if ("port" .equals(key)) {
-                        port = Synt.asInt(val);
-                    }
-                }
-                beg = end + 1;
-            }
-        } else {
-            // 非标准的格式
-            item = req.getHeader("X-Forwarded-Proto");
-            if (item != null) {
-                prot  = item;
-            }
-            item = req.getHeader("X-Forwarded-Host" );
-            if (item != null) {
-                host  = item;
-            }
-            item = req.getHeader("X-Forwarded-Port" );
-            if (item != null) {
-                port  = Synt.asInt(item);
-            }
-        }
-
-        if (port != 80 && port != 443) {
-            host += ":" + port;
-        }
-        return prot+"://"+host;
     }
 
     /**

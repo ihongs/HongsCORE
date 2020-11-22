@@ -93,12 +93,12 @@ public class StatisGather {
 
     private static class Fetch implements Collector, LeafCollector {
 
-        private final Diman[] fields;
+        private final Diman[] dimans;
         private final Index[] indics;
         private final Map<Group, Map> result;
 
-        public Fetch (Diman[] fields, Index[] indics) {
-            this.fields = fields;
+        public Fetch (Diman[] dimans, Index[] indics) {
+            this.dimans = dimans;
             this.indics = indics;
             this.result = new HashMap();
         }
@@ -106,8 +106,8 @@ public class StatisGather {
         @Override
         public LeafCollector getLeafCollector(LeafReaderContext lrc) throws IOException {
             LeafReader lr = lrc.reader();
-            for(Diman field : fields) {
-                field.prepare(lr);
+            for(Diman diman : dimans) {
+                diman.prepare(lr);
             }
             for(Index index : indics) {
                 index.prepare(lr);
@@ -117,10 +117,10 @@ public class StatisGather {
 
         @Override
         public void collect(int id) throws IOException {
-            Object[] values = new Object[fields.length];
+            Object[] values = new Object[dimans.length];
 
-            for(int i = 0; i < fields.length; i ++) {
-                values[i] = fields[i].collect( id );
+            for(int i = 0; i < dimans.length; i ++) {
+                values[i] = dimans[i].collecs( id );
             }
 
             // 获取分组条目
@@ -129,8 +129,8 @@ public class StatisGather {
             if (  entry == null  ) {
                   entry  = new HashMap(/**/);
                   result . put(group, entry);
-            for(int i = 0; i < fields.length; i ++) {
-                String n = fields[i].alias;
+            for(int i = 0; i < dimans.length; i ++) {
+                String n = dimans[i].alias;
                 Object v = values[i];
                 entry.put(n, v);
             }}
@@ -138,7 +138,7 @@ public class StatisGather {
             for(int i = 0; i < indics.length; i ++) {
                 String n = indics[i].alias;
                 Object v = entry.get ( n );
-                v = indics[i].collect(i,v);
+                v = indics[i].collecs(i,v);
                 entry.put(n, v);
             }
         }
@@ -204,6 +204,13 @@ public class StatisGather {
 
         public Diman(TYPE type, String field, String alias) {
             super(type, field, alias);
+        }
+
+        public Object collecs(int i) throws IOException {
+            if (values == null) {
+                return    null ;
+            }
+            return collect( i );
         }
 
         abstract public Object collect(int i) throws IOException;
@@ -446,11 +453,14 @@ public class StatisGather {
             super(type, field, alias);
         }
 
-        public Object collect(int i , Object o ) throws IOException {
-            return compute(i, (V) o );
+        public Object collecs(int i, Object o) throws IOException {
+            if (values == null) {
+                return    null;
+            }
+            return collect(i, (V) o);
         }
 
-        abstract public Object compute(int i , V v ) throws IOException;
+        abstract public Object collect(int i , V v ) throws IOException;
     }
 
     /**
@@ -463,7 +473,7 @@ public class StatisGather {
         }
 
         @Override
-        public Object compute(int i, Object v) throws IOException {
+        public Object collect(int i, Object v) throws IOException {
             if (v != null) {
                 return v;
             }
@@ -568,7 +578,7 @@ public class StatisGather {
         }
 
         @Override
-        public Object compute(int i, Long n) throws IOException {
+        public Object collect(int i, Long n) throws IOException {
             if (n == null) {
                 n  =  0L;
             }
@@ -634,7 +644,7 @@ public class StatisGather {
         }
 
         @Override
-        public Object compute(int i, Number[] n) throws IOException {
+        public Object collect(int i, Number[] n) throws IOException {
             switch (type) {
                 case INT: {
                     NumericDocValues numValues = ((NumericDocValues) values);
@@ -825,7 +835,7 @@ public class StatisGather {
         }
 
         @Override
-        public Object compute(int i, Number n) throws IOException {
+        public Object collect(int i, Number n) throws IOException {
             switch (type) {
                 case INT: {
                     NumericDocValues numValues = ((NumericDocValues) values);
@@ -952,7 +962,7 @@ public class StatisGather {
         }
 
         @Override
-        public Object compute(int i, Number n) throws IOException {
+        public Object collect(int i, Number n) throws IOException {
             switch (type) {
                 case INT: {
                     NumericDocValues numValues = ((NumericDocValues) values);
@@ -1079,7 +1089,7 @@ public class StatisGather {
         }
 
         @Override
-        public Object compute(int i, Number n) throws IOException {
+        public Object collect(int i, Number n) throws IOException {
             switch (type) {
                 case INT: {
                     NumericDocValues numValues = ((NumericDocValues) values);

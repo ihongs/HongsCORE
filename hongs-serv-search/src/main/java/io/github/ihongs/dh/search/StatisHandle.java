@@ -406,7 +406,7 @@ public class StatisHandle {
      * @return
      * @throws HongsException
      */
-    public Collection<Map> assort (Map rd) throws HongsException {
+    public List<Map> assort (Map rd) throws HongsException {
         IndexSearcher finder = that.getFinder();
 
         Set<String> ob = Synt.toTerms (rd.get(Cnst.OB_KEY));
@@ -419,7 +419,7 @@ public class StatisHandle {
             throw new NullPointerException("Assort fields required!");
         }
 
-        Collection<Map> list;
+        List<Map> list;
         try {
             Query q = that.padQry(rd);
 
@@ -427,11 +427,12 @@ public class StatisHandle {
                 CoreLogger.debug("StatisHandle.assort: " + q.toString());
             }
 
-            list = new StatisGather(finder)
+            Collection lizt = new StatisGather(finder)
                 .group(fs.dimans)
                 .count(fs.indics)
                 .where(q)
                 .fetch( );
+            list = new ArrayList (lizt);
         } catch ( IOException e ) {
             throw new HongsException(e);
         }
@@ -784,8 +785,8 @@ public class StatisHandle {
     private static class Counts implements Comparator<Object[]> {
         @Override
         public int compare(Object[] o1, Object[] o2) {
-            int    cnt1 = (int)    o1[2];
-            int    cnt2 = (int)    o2[2];
+            long   cnt1 = (long)   o1[2];
+            long   cnt2 = (long)   o2[2];
             if (cnt1 != cnt2) {
                 return  cnt1>cnt2 ? -1:1;
             }
@@ -797,8 +798,8 @@ public class StatisHandle {
     private static class Mounts implements Comparator<Object[]> {
         @Override
         public int compare(Object[] o1, Object[] o2) {
-            int    cnt1 = (int)    o1[2];
-            int    cnt2 = (int)    o2[2];
+            long   cnt1 = (long)   o1[2];
+            long   cnt2 = (long)   o2[2];
             if (cnt1 != cnt2) {
                 return  cnt1>cnt2 ? -1:1;
             }

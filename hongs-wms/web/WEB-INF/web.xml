@@ -202,10 +202,10 @@
     </filter-mapping>
     <!-- Session Sets -->
     <session-config>
-        <session-timeout>1440</session-timeout><!-- one day -->
+        <session-timeout>1440</session-timeout>
         <tracking-mode>COOKIE</tracking-mode>
         <tracking-mode>URL</tracking-mode>
-        <tracking-mode>SSL</tracking-mode>
+        <!--tracking-mode>SSL</tracking-mode-->
         <cookie-config>
             <http-only>true</http-only>
             <name>SID</name>

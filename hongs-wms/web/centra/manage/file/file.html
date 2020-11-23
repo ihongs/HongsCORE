@@ -82,6 +82,13 @@
             $(td).find(":checkbox").data("type", this._info.type);
         });
 
+        context.data("_fill_name", function(td, v) {
+            if (this._info.type == "txt") {
+                td = $('< a href=" " class="modify"></ a>')
+                  .appendTo(td);
+            }   td.text (  v  );
+        });
+
         context.on("click", ".create", function( ) {
             var inst  =  context.data("HsList");
             inst.open($(this), $(this).hsFind("@"),
@@ -90,14 +97,14 @@
 
         context.on("click", ".modify", function( ) {
             var inst  =  context.data("HsList");
-            var item  =  inst.getOne (   );
+            var item  =  inst.getRow (  this  );
             if (item === null ) {
                 return;
             }
             var type  =  item.data("type");
             var path  =  item.val ( /**/ );
             if (type !== "txt") {
-                hsWarn("抱歉, 暂不支持编辑非文本文件");
+                $.hsWarn("抱歉, 暂不支持编辑非文本文件", "warning");
                 return;
             }
             inst.open($(this), $(this).hsFind("@"),
@@ -105,7 +112,7 @@
         });
 
         context.on("click", ".upload,.dnload", function() {
-            hsWarn("抱歉, 暂不支持上传和下载");
+            $.hsWarn("抱歉, 暂不支持上传和下载", "warning");
         });
     })(jQuery);
 </script>

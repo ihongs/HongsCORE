@@ -457,8 +457,8 @@ public class StatisHandle {
     /**
      * 聚合统计(分页)
      * @param rd
-     * @param rn
-     * @param pn
+     * @param rn 条数
+     * @param pn 页码
      * @return
      */
     public Map assort (Map rd, int rn, int pn) throws HongsException {

@@ -2,10 +2,12 @@ package io.github.ihongs.dh.search;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.apache.lucene.index.LeafReader;
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.NumericDocValues;
@@ -558,6 +560,135 @@ public class StatisGather {
                     while ((k = strValues.nextOrd()) != SortedSetDocValues.NO_MORE_ORDS) {
                         v = strValues.lookupOrd(k).utf8ToString();
                         break;
+                    }
+                    break;
+                }
+            }
+            return  v ;
+        }
+
+    }
+
+    /**
+     * 取所有值
+     */
+    public static class Flock extends Index {
+
+        public Flock(TYPE type, String field, String alias) {
+            super(type, field, alias);
+        }
+
+        @Override
+        public Object collect(int i, Object v) throws IOException {
+            switch (type) {
+                case INT: {
+                    NumericDocValues numValues = ((NumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    v = (int ) numValues.longValue();
+                    break;
+                }
+                case LONG: {
+                    NumericDocValues numValues = ((NumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    v = (long) numValues.longValue();
+                    break;
+                }
+                case FLOAT: {
+                    NumericDocValues numValues = ((NumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    v = NumericUtils. sortableIntToFloat ((int ) numValues.longValue());
+                    break;
+                }
+                case DOUBLE: {
+                    NumericDocValues numValues = ((NumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    v = NumericUtils.sortableLongToDouble((long) numValues.longValue());
+                    break;
+                }
+                case STRING: {
+                    SortedDocValues strValues = ((SortedDocValues) values);
+                    if (! strValues.advanceExact(i)) {
+                        break;
+                    }
+                    v = strValues.binaryValue().utf8ToString();
+                    break;
+                }
+                case INTS: {
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    Set a = (Set ) v;
+                    if (a == null) {
+                        v = a = new LinkedHashSet();
+                    }
+                    for(int j = 0; j < numValues.docValueCount(); j ++) {
+                        a.add((int ) numValues.nextValue());
+                    }
+                    break;
+                }
+                case LONGS: {
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    Set a = (Set ) v;
+                    if (a == null) {
+                        v = a = new LinkedHashSet();
+                    }
+                    for(int j = 0; j < numValues.docValueCount(); j ++) {
+                        a.add((long) numValues.nextValue());
+                    }
+                    break;
+                }
+                case FLOATS: {
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    Set a = (Set ) v;
+                    if (a == null) {
+                        v = a = new LinkedHashSet();
+                    }
+                    for(int j = 0; j < numValues.docValueCount(); j ++) {
+                        a.add(NumericUtils. sortableIntToFloat ( (int ) numValues.nextValue() ));
+                    }
+                    break;
+                }
+                case DOUBLES: {
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
+                    if (! numValues.advanceExact(i)) {
+                        break;
+                    }
+                    Set a = (Set ) v;
+                    if (a == null) {
+                        v = a = new LinkedHashSet();
+                    }
+                    for(int j = 0; j < numValues.docValueCount(); j ++) {
+                        a.add(NumericUtils.sortableLongToDouble( (long) numValues.nextValue() ));
+                    }
+                    break;
+                }
+                case STRINGS: {
+                    SortedSetDocValues strValues = ((SortedSetDocValues) values);
+                    if (! strValues.advanceExact(i)) {
+                        break;
+                    }
+                    Set a = (Set ) v;
+                    if (a == null) {
+                        v = a = new LinkedHashSet();
+                    }
+                    long    k;
+                    while ((k = strValues.nextOrd()) != SortedSetDocValues.NO_MORE_ORDS) {
+                        a.add(strValues.lookupOrd(k).utf8ToString());
                     }
                     break;
                 }

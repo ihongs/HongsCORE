@@ -506,6 +506,7 @@ public class StatisHandle {
 
                 // 截取列表
                 list = list.subList(b, d);
+                data . put ("list", list);
             }
         }
 

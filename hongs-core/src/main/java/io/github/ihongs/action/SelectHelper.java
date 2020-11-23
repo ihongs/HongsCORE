@@ -628,15 +628,16 @@ public class SelectHelper {
             }
 
             if (val instanceof Collection) {
-                // 预置一个空列表, 规避无值导致客户端取文本节点出错
-                Dict.setValue(info, new ArrayList(), key + "_text");
-                for (Object vxl : (Collection) val) {
+                Collection col = (Collection ) val;
+                Collection cxl = new ArrayList(col.size());
+                Dict.setValue( info, cxl, key +  "_text" );
+                for (Object vxl : col) {
                     vxl = codeToText(vxl, map);
-                    Dict.setValue(info, vxl, key + "_text" , null );
+                    cxl.add(vxl);
                 }
             } else {
                     val = codeToText(val, map);
-                    Dict.setValue(info, val, key + "_text");
+                Dict.setValue( info, val, key +  "_text" );
             }
         }
     }
@@ -652,15 +653,16 @@ public class SelectHelper {
             }
 
             if (val instanceof Collection) {
-                // 预置一个空列表, 规避无值导致客户端取文本节点出错
-                Dict.setValue(info, new ArrayList(), key + "_time");
-                for (Object vxl : (Collection) val) {
+                Collection col = (Collection ) val;
+                Collection cxl = new ArrayList(col.size());
+                Dict.setValue( info, cxl, key +  "_time" );
+                for (Object vxl : col) {
                     vxl = dataToTime(vxl);
-                    Dict.setValue(info, vxl, key + "_time" , null );
+                    cxl.add(vxl);
                 }
             } else {
                     val = dataToTime(val);
-                    Dict.setValue(info, val, key + "_time");
+                Dict.setValue( info, val, key +  "_time" );
             }
         }
     }
@@ -683,15 +685,16 @@ public class SelectHelper {
             }
 
             if (val instanceof Collection) {
-                // 预置一个空列表, 规避无值导致客户端取文本节点出错
-                Dict.setValue(info, new ArrayList(), key + "_link");
-                for (Object vxl : (Collection) val) {
+                Collection col = (Collection ) val;
+                Collection cxl = new ArrayList(col.size());
+                Dict.setValue( info, cxl, key +  "_text" );
+                for (Object vxl : col) {
                     vxl = hrefToLink(vxl);
-                    Dict.setValue(info, vxl, key + "_link" , null );
+                    cxl.add(vxl);
                 }
             } else {
                     val = hrefToLink(val);
-                    Dict.setValue(info, val, key + "_link");
+                Dict.setValue( info, val, key +  "_text" );
             }
         }
     }

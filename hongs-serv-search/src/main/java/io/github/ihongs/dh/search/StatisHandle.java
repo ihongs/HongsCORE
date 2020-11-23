@@ -49,7 +49,6 @@ public class StatisHandle {
     public Map acount(Map rd) throws HongsException {
         IndexSearcher finder = that.getFinder();
 
-        int         topn = Synt.declare(rd.get(Cnst.RN_KEY), 0);
         Map         incs = Synt.asMap  (rd.get(Cnst.IN_REL) );
         Map         excs = Synt.asMap  (rd.get(Cnst.NI_REL) );
         Set<String> cntz = Synt.toTerms(rd.get(Cnst.RB_KEY) );
@@ -168,20 +167,25 @@ public class StatisHandle {
 
         //** 排序并截取统计数据 **/
 
+        int t = Synt.declare(rd.get(Cnst.RN_KEY), 0); // Top N
+        
         for(Map.Entry<String, Map<Object, Long>> et : counts.entrySet()) {
             List<Object[]> a = new ArrayList(et.getValue().size(  )  );
             for(Map.Entry<Object , Long> e : et.getValue().entrySet()) {
                 Object m = e.getKey  ();
                 long   c = e.getValue();
                 if (0 != c) {
-                    a.add(new Object [] {m, null, c});
+                    a.add( new Object[] {m, null, c} );
                 }
             }
-            Collections.sort (a, new Counts());
-            if (0 < topn && topn < a . size()) {
-                a = a.subList(0, topn);
+            Collections.sort(a, new Counts());
+
+            int n = Synt.declare(rd.get(Cnst.RN_KEY +"-"+ et.getKey()), t);
+            if (n > 0 && n < a.size()) {
+                a = a.subList (0, n );
             }
-            cnts.put( et.getKey(), a );
+
+            cnts.put(et.getKey(), a );
         }
 
         return cnts;
@@ -223,7 +227,6 @@ public class StatisHandle {
     public Map amount(Map rd) throws HongsException {
         IndexSearcher finder = that.getFinder();
 
-        int         topn = Synt.declare(rd.get(Cnst.RN_KEY), 0);
         Map         incs = Synt.asMap  (rd.get(Cnst.IN_REL) );
         Map         excs = Synt.asMap  (rd.get(Cnst.NI_REL) );
         Set<String> cntz = Synt.toTerms(rd.get(Cnst.RB_KEY) );
@@ -348,6 +351,8 @@ public class StatisHandle {
 
         //** 排序统计数据 **/
 
+        int t = Synt.declare(rd.get(Cnst.RN_KEY), 0); // Top N
+
         for(Map.Entry<String, Map<Range, Ratio>> et : counts.entrySet()) {
             List<Object[]> a = new ArrayList(et.getValue().size(  )  );
             for(Map.Entry<Range , Ratio> e : et.getValue().entrySet()) {
@@ -362,11 +367,14 @@ public class StatisHandle {
                     } );
                 }
             }
-            Collections.sort (a, new Mounts());
-            if (0 < topn && topn < a . size()) {
-                a = a.subList(0, topn);
+            Collections.sort(a, new Mounts());
+
+            int n = Synt.declare(rd.get(Cnst.RN_KEY +"-"+ et.getKey()), t);
+            if (n > 0 && n < a.size()) {
+                a = a.subList (0, n );
             }
-            cnts.put( et.getKey(), a );
+
+            cnts.put(et.getKey(), a );
         }
 
         return cnts;
@@ -406,8 +414,6 @@ public class StatisHandle {
      * @throws HongsException
      */
     public List<Map> assort (Map rd) throws HongsException {
-        IndexSearcher finder = that.getFinder();
-
         Set<String> ob = Synt.toTerms (rd.get(Cnst.OB_KEY));
         Set<String> rb = Synt.toTerms (rd.get(Cnst.RB_KEY));
         if (rb == null || rb.isEmpty()) {
@@ -418,6 +424,7 @@ public class StatisHandle {
             throw new NullPointerException("Assort fields required!");
         }
 
+        // 查询
         List<Map> list;
         try {
             Query q = that.padQry(rd);
@@ -426,7 +433,7 @@ public class StatisHandle {
                 CoreLogger.debug("StatisHandle.assort: " + q.toString());
             }
 
-            list = new StatisGather(finder)
+            list = new StatisGather( that.getFinder() )
                 .group(fs.dimans)
                 .count(fs.indics)
                 .where(q)
@@ -436,7 +443,7 @@ public class StatisHandle {
         }
 
         if (ob == null || ob.isEmpty()) {
-            return list;
+            return  list ;
         }
 
         // 排序
@@ -756,6 +763,8 @@ public class StatisHandle {
         }
         case "first":
             return new StatisGather.First(type, field, alias);
+        case "flock":
+            return new StatisGather.Flock(type, field, alias);
         case "count":
             return new StatisGather.Count(type, field, alias);
         case "ratio":
@@ -768,7 +777,7 @@ public class StatisHandle {
             return new StatisGather.Sum  (type, field, alias);
         }
 
-        throw new UnsupportedOperationException("Unsupported method " + mode + " for gather field");
+        throw new UnsupportedOperationException ("Unsupported field " + alias);
     }
 
     // jdk 1.7 加上这个后排序不会报错

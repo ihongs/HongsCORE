@@ -84,7 +84,7 @@
 
         context.data("_fill_name", function(td, v) {
             if (this._info.type == "txt") {
-                td = $('< a href=" " class="modify"></ a>')
+                td = $('<a href="javascript:;" class="modify"></a>')
                   .appendTo(td);
             }   td.text (  v  );
         });

@@ -183,6 +183,18 @@
             } else {
                 type = "acount";
             }
+
+            // 图表类型
+            String plot = (String)info.get("stat-plot");
+            if (plot != null && ! plot.isEmpty()) {
+                type += "\" data-plot=\"" + plot;
+            }
+
+            // 附加参数
+            String prms = (String)info.get("stat-prms");
+            if (prms != null && ! prms.isEmpty()) {
+                type += "\" data-prms=\"" + prms;
+            }
         %>
         <div class="stat-group col-xs-6" data-name="<%=name%>" data-text="<%=text%>" data-type="<%=type%>">
             <div class="panel panel-body panel-default clearfix" style="height: 302px;">

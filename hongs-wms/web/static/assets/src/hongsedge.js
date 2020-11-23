@@ -149,7 +149,7 @@ HsStat.prototype = {
 
         itemBox.each(function() {
             if ($(this).data("name")) rb.push($(this).data("name"));
-            if ($(this).data("extr")) eb.push($(this).data("extr"));
+            if ($(this).data("prms")) eb.push($(this).data("prms"));
 
             $(this).find(".checkbox").hide();
             $(this).find(".chartbox").hide();
@@ -711,7 +711,7 @@ HsCate.prototype = {
 
         itemBox.each(function() {
             if ($(this).data("name")) rb.push($(this).data("name"));
-            if ($(this).data("extr")) eb.push($(this).data("extr"));
+            if ($(this).data("prms")) eb.push($(this).data("prms"));
 
             $(this).empty(); // 清空待写入选项
         });

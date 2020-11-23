@@ -98,6 +98,12 @@
                     } else {
                         type = "acount";
                     }
+
+                    // 附加参数
+                    String prms = (String)info.get("stat-prms");
+                    if (prms != null && ! prms.isEmpty()) {
+                        type += "\" data-prms=\"" + prms;
+                    }
                 %>
                 <div class="checkbox" data-name="<%=name%>" data-type="<%=type%>"></div>
             </div>

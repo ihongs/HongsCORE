@@ -168,7 +168,7 @@ public class StatisHandle {
         //** 排序并截取统计数据 **/
 
         int t = Synt.declare(rd.get(Cnst.RN_KEY), 0); // Top N
-        
+
         for(Map.Entry<String, Map<Object, Long>> et : counts.entrySet()) {
             List<Object[]> a = new ArrayList(et.getValue().size(  )  );
             for(Map.Entry<Object , Long> e : et.getValue().entrySet()) {
@@ -414,13 +414,12 @@ public class StatisHandle {
      * @throws HongsException
      */
     public List<Map> assort (Map rd) throws HongsException {
-        Set<String> ob = Synt.toTerms (rd.get(Cnst.OB_KEY));
-        Set<String> rb = Synt.toTerms (rd.get(Cnst.RB_KEY));
+        Set<String> rb = Synt.toTerms(rd.get(Cnst.RB_KEY));
         if (rb == null || rb.isEmpty()) {
             throw new NullPointerException("Assort fields required.");
         }
-        Fields fs = getGatherFields (rb, rd);
-        if (fs.dimans.length == 0 && fs.indics.length == 0) {
+        Fields fs = getGatherFields(rb, rd);
+        if (fs == null || fs.isEmpty()) {
             throw new NullPointerException("Assort fields required!");
         }
 
@@ -442,6 +441,7 @@ public class StatisHandle {
             throw new HongsException(e);
         }
 
+        Set<String> ob = Synt.toTerms(rd.get(Cnst.OB_KEY));
         if (ob == null || ob.isEmpty()) {
             return  list ;
         }
@@ -452,6 +452,64 @@ public class StatisHandle {
         Collections . sort(list, sort);
 
         return list ;
+    }
+
+    /**
+     * 聚合统计(分页)
+     * @param rd
+     * @param rn
+     * @param pn
+     * @return
+     */
+    public Map assort (Map rd, int rn, int pn) throws HongsException {
+        List list = assort ( rd );
+
+        Map  page = new HashMap();
+        Map  data = new HashMap();
+
+        data.put( "list" , list );
+        data.put( "page" , page );
+        page.put(Cnst.RN_KEY, rn);
+        page.put(Cnst.PN_KEY, pn);
+
+        int rc = list.size();
+        if (rc == 0) {
+            page.put("count", 0 );
+            page.put("pages", 0 );
+            page.put("state", 0 );
+        } else
+        if (rn <= 0) { // rn 为 0 不要分页只要列表
+            data.remove( "page" );
+        } else
+        if (pn <= 0) { // pn 为 0 不要列表只要分页
+            data.remove( "list" );
+
+            int p = (int) Math.ceil(((double) rc) / ((double) rn));
+            page.put("count", rc);
+            page.put("pages", p );
+            page.put("state", 1 );
+        } else
+        {
+            int p = (int) Math.ceil(((double) rc) / ((double) rn));
+            page.put("count", rc);
+            page.put("pages", p );
+
+            int b = rn * (pn - 1);
+            int d = rn +  b ;
+            if (d > rc) { // 数量不够, 取到最后
+                d = rc;
+            }
+            if (b > rc) { // 页码超出, 返回错误
+                page.put("state", 0 );
+            } else {
+                page.put("state", 1 );
+
+                // 截取列表
+                list = list.subList(b, d);
+            }
+        }
+
+        return  data ;
     }
 
     private StatisGrader.Field[] getGraderFields(Set<String> names, Map rd) {
@@ -588,6 +646,10 @@ public class StatisHandle {
     }
 
     private Fields getGatherFields(Set<String> names, Map rd ) {
+        if (names == null) {
+            return   null;
+        }
+
         List<StatisGather.Diman> dimans = new ArrayList();
         List<StatisGather.Index> indics = new ArrayList();
         Map <String, Map   > items = that.getFields();
@@ -792,6 +854,11 @@ public class StatisHandle {
                       StatisGather.Index[] indics) {
             this.dimans = dimans;
             this.indics = indics;
+        }
+
+        public boolean isEmpty() {
+            return dimans.length == 0
+                && indics.length == 0;
         }
     }
 

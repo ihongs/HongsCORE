@@ -140,7 +140,7 @@ public class SearchAction extends JAction {
         Set ob = Synt.toTerms(rd.get(Cnst.OB_KEY));
         Map es = Synt.asMap  (rd.get(Cnst.IN_REL));
         Map fs = sr.getFields( );
-        Set st = sr.getCaseNames("statable");
+        Set st = sr.getCaseNames("sortable");
         Map ts = FormSet.getInstance( ).getEnum ("__types__");
         Set hs = Synt.setOf("sum", "min", "max", "ratio", "range");      // 计算方法
         Set ks = Synt.setOf("int", "long", "float", "double", "number"); // 数字类型
@@ -178,7 +178,7 @@ public class SearchAction extends JAction {
                 throw new HongsException(400, "Field '"+fn+"' is not existent");
             }
             if (! st.contains   (fn)) {
-                throw new HongsException(400, "Field '"+fn+"' is not statable");
+                throw new HongsException(400, "Field '"+fn+"' is not sortable");
             }
 
             /**

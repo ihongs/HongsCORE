@@ -78,9 +78,9 @@ public class SearchAction extends JAction {
         // 检查参数
         acheck(sr, rd, 1 );
 
-        Map xd = sh.acount (rd);
+        Map xd = sh.acount ( rd );
 
-        Map sd = Synt.mapOf("enfo" , xd);
+        Map sd = Synt.mapOf("enfo", xd );
         sd = getRspMap(helper, sr, "acount", sd);
 
         helper.reply( sd );
@@ -99,9 +99,9 @@ public class SearchAction extends JAction {
         // 检查参数
         acheck(sr, rd, 2 );
 
-        Map xd = sh.amount (rd);
+        Map xd = sh.amount ( rd );
 
-        Map sd = Synt.mapOf("enfo" , xd);
+        Map sd = Synt.mapOf("enfo", xd );
         sd = getRspMap(helper, sr, "amount", sd);
 
         helper.reply( sd );
@@ -120,9 +120,10 @@ public class SearchAction extends JAction {
         // 检查参数
         acheck(sr, rd, 3 );
 
-        List <Map> xd = sh.assort(rd);
+        int rn = Synt.declare(rd.get(Cnst.RN_KEY), 0);
+        int pn = Synt.declare(rd.get(Cnst.PN_KEY), 1);
+        Map sd = sh.assort(rd, rn, pn);
 
-        Map sd = Synt.mapOf("list" , xd);
         sd = getRspMap(helper, sr, "assort", sd);
 
         helper.reply( sd );

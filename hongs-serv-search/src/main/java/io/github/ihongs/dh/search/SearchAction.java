@@ -16,7 +16,9 @@ import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Synt;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -141,12 +143,21 @@ public class SearchAction extends JAction {
         Set ob = Synt.toTerms(rd.get(Cnst.OB_KEY));
         Map es = Synt.asMap  (rd.get(Cnst.IN_REL));
         Map fs = sr.getFields( );
-        Set st = sr.getCaseNames("sortable");
-        Map ts = FormSet.getInstance( ).getEnum ("__types__");
-        Set hs = Synt.setOf("sum", "min", "max", "ratio", "range");      // 计算方法
-        Set ks = Synt.setOf("int", "long", "float", "double", "number"); // 数字类型
-        String cn = Dict.getValue(fs, "default", "@", "conf");
-//      String nn = Dict.getValue(fs, "unknown", "@", "form");
+        Map ts = FormSet.getInstance( ).getEnum("__types__");
+        String cn = Dict.getValue(fs, "default", "@","conf");
+//      String nn = Dict.getValue(fs, "unknown", "@","form");
+
+        // 字段限定
+        Set ns ;
+        Set ks = NUM_KINDS;
+        Set hs = CAL_HANDS;
+        if (nb < ACT_NAMES.length) {
+            ns = sr.getCaseNames(ACT_NAMES[nb] + "able");
+        if (ns == null ) {
+            ns = sr.getCaseNames("statable");
+        }} else {
+            ns = sr.getCaseNames("statable");
+        }
 
         // 枚举统计
         if (es == null ) {
@@ -178,7 +189,7 @@ public class SearchAction extends JAction {
             if (! fs.containsKey(fn)) {
                 throw new HongsException(400, "Field '"+fn+"' is not existent");
             }
-            if (! st.contains   (fn)) {
+            if (! ns.contains   (fn)) {
                 throw new HongsException(400, "Field '"+fn+"' is not sortable");
             }
 
@@ -245,5 +256,9 @@ public class SearchAction extends JAction {
             }
         }
     }
+
+    private static final String [  ] ACT_NAMES = new String [] {"", "acount", "amount", "assort"};                       // 统计名称
+    private static final Set<String> CAL_HANDS = new HashSet(Arrays.asList("sum", "min" , "max"  , "ratio" , "range" )); // 计算方法
+    private static final Set<String> NUM_KINDS = new HashSet(Arrays.asList("int", "long", "float", "double", "number")); // 数字类型
 
 }

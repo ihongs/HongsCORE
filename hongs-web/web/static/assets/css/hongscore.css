@@ -281,6 +281,17 @@ div.bootstrap-tagsinput .tag [data-role="remove"]:after {
 
 /** 布局 **/
 
+.flex-middle {
+    display  : flex;
+    flex-wrap: wrap;
+    align-content: center;
+}
+.flex-center {
+    display  : flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
 .radio     label ,
 .checkbox  label {
     margin-right: 1.0em;

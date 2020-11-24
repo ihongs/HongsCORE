@@ -595,7 +595,7 @@ HsForm.prototype = {
                     inp = inp.parent();
                 }
                 var leg;
-                inp = jQuery('<optgroup></optgroup>').appendTo(inp);
+                inp = jQuery('<fieldset></fieldset>').appendTo(inp);
                 leg = jQuery(  '<legend></legend>'  ).appendTo(inp);
                 leg.text(              t);
                 inp.attr("data-value", k);
@@ -623,7 +623,7 @@ HsForm.prototype = {
                     inp = inp.parent();
                 }
                 var leg;
-                inp = jQuery('<optgroup></optgroup>').appendTo(inp);
+                inp = jQuery('<fieldset></fieldset>').appendTo(inp);
                 leg = jQuery(  '<legend></legend>'  ).appendTo(inp);
                 leg.text(              t);
                 inp.attr("data-value", k);

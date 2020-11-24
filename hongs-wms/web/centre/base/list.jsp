@@ -226,7 +226,7 @@
         <input type="submit" class="invisible"/>
     </form>
     <!-- 列表 -->
-    <div class="itembox col-md-4 col-sm-6" style="display: none; padding: 0 7.5px 15px 7.5px;">
+    <div class="itembox col-md-4 col-sm-6 col-xs-12" style="display: none; padding: 0 7.5px 15px 7.5px;">
         <input type="hidden" name="id" data-fn="id" data-fl="$(this).val(v) && undefined" />
         <div class="panel panel-default" style="margin: 0; padding: 0; position: relative;">
             <div class="panel-body" style="display: table; width: 100%;">
@@ -250,9 +250,9 @@
             </div>
         </div>
     </div>
-    <div class="listbox clearfix" style="margin: 0px -7.5px;">
+    <div class="listbox clearfix flex-center" style="margin: 0 -7.5px 5px -7.5px;">
     </div>
-    <div class="pagebox clearfix" style="text-align: center;">
+    <div class="pagebox clearfix text-center">
     </div>
 </div>
 <script type="text/javascript">

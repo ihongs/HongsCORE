@@ -2,8 +2,8 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@include file="_base_.jsp"%>
 <%
-    // 仅开放接口则抛出资源缺失异常
-    if ("!DENY".equals($hrel)) {
+    // 仅开放接口则抛出资源缺失异常, 兼容旧版 NONE
+    if ("!DENY".equals($hrel) || "NONE".equals($hrel)) {
         throw new HongsException(404, $locale.translate("core.error.no.thing"));
     }
     String $func = "in_"+($module+"_"+$entity).replace ('/', '_');
@@ -33,10 +33,12 @@
     </head>
     <body class="sider-open">
         <div id="context">
-            <%if (!"!HIDE".equals($hrel)) {%>
+            <%if (!"!HIDE".equals($hrel) && !"HIDE".equals($hrel)) {%>
             <div id="headbox">
                 <div id="menu-context" data-load="centra/head.jsp" data-active="<%=$module+"/"+$entity+"/"%>"></div>
             </div>
+            <%} else {%>
+            <div id="leadbox"></div>
             <%} /* End if */%>
             <div id="bodybox">
                 <div id="main-context" class="container-fluid">

@@ -9,11 +9,20 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
                 <version>3.7.0</version>
                 <configuration>
                     <debug>true</debug>
+                </configuration>
+            </plugin>
+            <plugin>
+                <!-- Usage: mvn versions:set -DnewVersion=1.0-SNAPSHOT -->
+                <artifactId>versions-maven-plugin</artifactId>
+                <groupId>org.codehaus.mojo</groupId>
+                <version>2.8.1</version>
+                <configuration>
+                    <generateBackupPoms>false</generateBackupPoms>
                 </configuration>
             </plugin>
         </plugins>

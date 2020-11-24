@@ -24,11 +24,17 @@
             String hrel = (String) item.get("hrel");
 //          String icon = (String) item.get("icon");
 
+            if (href == null
+            ||  href.startsWith("!")) {
+                continue;
+            }
             if (hrel != null
             &&  hrel.startsWith("!")) {
                 continue;
             }
-            if (href.startsWith("!")) {
+            // 兼容旧版
+            if ("NONE".equals(hrel)
+            ||  "HIDE".equals(hrel) ) {
                 continue;
             }
 

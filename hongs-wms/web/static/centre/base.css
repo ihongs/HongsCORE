@@ -6,12 +6,17 @@
 
 #context {
     display: flex;
-    flex-direction: column;
     min-height: 100vh;
+    flex-direction: column;
 }
 #bodybox {
     flex: 1;
-    padding-top: 71px; /* 顶部菜单距离 */
+}
+#leadbox {
+    height : 20px; /* 顶部空隙高度 */
+}
+#headbox {
+    height : 71px; /* 顶部菜单高度 */
 }
 #footbox .navbar ,
 #footbox .navbar blockquote {

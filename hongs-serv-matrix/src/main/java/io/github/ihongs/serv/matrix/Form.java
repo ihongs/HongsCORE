@@ -954,12 +954,12 @@ public class Form extends Model {
             role.appendChild ( docm.createTextNode("@centre"));
 
             // 公共读取权限
-            role = docm.createElement("role");
+            role = docm.createElement( "role" );
             menu.appendChild ( role );
             role.setAttribute("name", "public");
 
             // 增删改须登录
-            role = docm.createElement("role");
+            role = docm.createElement( "role" );
             menu.appendChild ( role );
             role.setAttribute("name", "centre");
             actn = docm.createElement("action");
@@ -971,6 +971,11 @@ public class Form extends Model {
             actn = docm.createElement("action");
             role.appendChild ( actn );
             actn.appendChild ( docm.createTextNode(href +"delete"+ Cnst.ACT_EXT) );
+
+            // 聚合统计接口, 默认禁止访问 (较耗资源)
+            role = docm.createElement( "role" );
+            menu.appendChild ( role );
+            role.setAttribute("name", "_deny_");
             actn = docm.createElement("action");
             role.appendChild ( actn );
             actn.appendChild ( docm.createTextNode(href +"assort"+ Cnst.ACT_EXT) );

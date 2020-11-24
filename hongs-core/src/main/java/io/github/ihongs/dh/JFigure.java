@@ -185,6 +185,7 @@ public class JFigure implements IFigure {
         // 关闭此属性
         if ("@not".equals(ab)) {
             fns = new LinkedHashSet();
+            fns.add("-"); // 区分空设置
             return  fns;
         }
 

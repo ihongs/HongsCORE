@@ -1104,7 +1104,8 @@ public class Data extends SearchEntity {
             wdCols = Synt.setOf("word");
         } else {
             wdCols = getCaseNames("wordable");
-            if (wdCols.isEmpty()) {
+            if (wdCols == null
+            ||  wdCols.isEmpty()) {
                 wdCols = getSrchable( );
             }
             wdCols.remove("word");
@@ -1121,7 +1122,8 @@ public class Data extends SearchEntity {
             nmCols = Synt.setOf("name");
         } else {
             nmCols = getCaseNames("nameable");
-//          if (nmCols.isEmpty()) {
+//          if (nmCols == null
+//          ||  nmCols.isEmpty()) {
 //              nmCols = getListable( );
 //          }
             nmCols.remove("name");
@@ -1134,8 +1136,9 @@ public class Data extends SearchEntity {
             return  skCols;
         }
         skCols = getCaseNames("skipable");
-        if (skCols.isEmpty( ) ) {
-        skCols = new HashSet( );
+        if (skCols == null
+        ||  skCols.isEmpty( ) ) {
+            skCols =  new  HashSet();
             skCols.add("mtime");
             skCols.add("muser");
             skCols.add("memo" );

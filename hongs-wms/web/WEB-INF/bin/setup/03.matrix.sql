@@ -96,5 +96,5 @@ VALUES ('user', '-', '用户', '', '', '{
     "data-at":"centra/master/user/list",
     "data-al":"centra/master/user/pick.html",
     "data-rl":""
-}', 0, 0, 0, 3);
+}', 0, 0, 0, 6);
 

@@ -6,8 +6,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.Thumbnails.Builder;
 
@@ -28,7 +26,8 @@ import net.coobird.thumbnailator.Thumbnails.Builder;
 public class Thumb extends IsFile {
 
     @Override
-    public String[] checks(String href, String path) throws Wrong {
+    public String[] checks(String href, String path)
+    throws Wrong {
         String extn = Synt.declare(getParam("thumb-extn" ), "");
         String size = Synt.declare(getParam("thumb-size" ), "");
         String mode = Synt.declare(getParam("thumb-mode" ), "");
@@ -46,8 +45,6 @@ public class Thumb extends IsFile {
         }
     }
 
-    private static final Pattern TEST_PATT = Pattern.compile("(\\d+)([\\*/])(\\d+)");
-
     /**
      * 生成缩略图
      * @param url 原始图片链接
@@ -62,14 +59,14 @@ public class Thumb extends IsFile {
      * @throws IOException
      */
     private String[][] exec(String url, String nrl, String ext, String suf, String mod, String col, String pos)
-    throws Wrong, IOException {
+    throws  Wrong, IOException {
         // 没有指定扩展名则无需改变格式
-        if (ext.length() == 0 ) {
+        if (ext.length() == 0) {
             int idx = nrl.lastIndexOf('.');
             if (idx > 0) {
                 ext = nrl.substring(1+idx);
             } else {
-                throw new Wrong( "Missing extension." );
+                ext = "png";
             }
         }
 
@@ -79,35 +76,70 @@ public class Thumb extends IsFile {
          * 会取出配置的第一个尺寸或比例,
          * 多个尺寸后面的会进行缩放处理.
          */
-        if ("test".equals(mod)) {
-            BufferedImage img = make(nrl, null).asBufferedImage();
-            Matcher mat = TEST_PATT.matcher (suf);
-            int w = img.getWidth ();
-            int h = img.getHeight();
+        if ("test".equals( mod )) {
+            BufferedImage  img = make(nrl, null).asBufferedImage();
+            int      rw  = img.getWidth ();
+            int      rh  = img.getHeight();
+            String[] sia = suf.split (",");
+            boolean  mat = false;
+            boolean  rat;
+            int      w;
+            int      h;
 
-            if (mat.matches()) {
-                String sc = mat.group(2);
-                int w2 = Integer.parseInt(mat.group(1));
-                int h2 = Integer.parseInt(mat.group(3));
-
-                if ("*".equals(sc)) {
-                    if (w != w2 || h != h2) {
-                        throw new Wrong("fore.size.unmatch")
-                            .setLocalizedOptions(mat.group(1), mat.group(3));
-                    }
+        for (String siz : sia) {
+            /**
+             * 解析后缀和缩放尺寸,
+             * 除号为仅按比例裁剪.
+             */
+            try {
+                String[ ] arr;
+                siz = siz.trim();
+                if (rat = siz.contains("/")) {
+                    arr = siz.split( "/" , 2 );
                 } else {
-                    if (w *  h2 != h *  w2) {
-                        throw new Wrong("fore.scal.unmatch")
-                            .setLocalizedOptions(mat.group(1), mat.group(3));
-                    }
+                    arr = siz.split("\\*", 2 );
                 }
-            } else {
-                throw new Wrong("Thumb size config can not be used for test mode");
+                w   = Integer.parseInt(arr[0]);
+                h   = Integer.parseInt(arr[1]);
+            } catch ( IndexOutOfBoundsException | NumberFormatException e ) {
+                throw new Wrong("Wrong thumb size `"+siz+"`. Usage: W*H W/H");
             }
 
-            Thumbnails.of(nrl).scale(1).toFile(nrl); // 重新存储, 规避 iOS 旋转
+            /**
+             * 为了应对发长图的需求,
+             * 可限制单一的宽或者高.
+             */
+            if (! rat ) {
+                if (w == 0) {
+                    w =  rw *  h /  rh;
+                } else
+                if (h == 0) {
+                    h =  rh *  w /  rw;
+                }
+            } else {
+                throw new Wrong("Wrong thumb size `"+siz+"`. Usage: W*0 0/H");
+            }
 
-            mod = ""; // 尺寸匹配, 无需截取
+            if (! rat ) {
+                if (w == rw && h == rh) {
+                    mat = true;
+                    break;
+                }
+            } else {
+                if (w *  rh == h *  rw) {
+                    mat = true;
+                    break;
+                }
+            }
+        }
+
+            if (! mat ) {
+                throw new Wrong("fore.size.invalid").setLocalizedOptions(suf);
+            }
+
+            // 尺寸匹配, 无需改变
+            suf = "" ;
+            mod = "" ;
         }
 
         List<String[]> hps = new ArrayList();
@@ -156,6 +188,27 @@ public class Thumb extends IsFile {
             }
 
             /**
+             * 为了应对发长图的需求,
+             * 可限制单一的宽或者高.
+             */
+            if (! rat ) {
+                if (w == 0) {
+                    BufferedImage img = Thumbnails.of(nrl).asBufferedImage();
+                    int rw = img.getWidth ();
+                    int rh = img.getHeight();
+                    w = rw * h / rh;
+                } else
+                if (h == 0) {
+                    BufferedImage img = Thumbnails.of(nrl).asBufferedImage();
+                    int rw = img.getWidth ();
+                    int rh = img.getHeight();
+                    h = rh * w / rw;
+                }
+            } else {
+                throw new Wrong("Wrong thumb size `"+siz+"`. Usage: Suffix:W*0 Suffix:0*H W*0 0*H");
+            }
+
+            /**
              * 第一个或比例有了变化,
              * 才需要特别去裁剪铺贴.
              */
@@ -173,7 +226,7 @@ public class Thumb extends IsFile {
             try {
                 bui.outputFormat(ext);
             } catch (IllegalArgumentException ex) {
-                throw new Wrong ("Unsupported format: "+ ext);
+                throw new Wrong(ex, "fore.type.invalid").setLocalizedOptions(ext);
             }
             bui.toFile(file(nrl));
             hps.add(new String [] {url, nrl, "w="+w+"&h="+h});
@@ -194,7 +247,7 @@ public class Thumb extends IsFile {
             try {
                 bui.outputFormat(ext);
             } catch (IllegalArgumentException ex) {
-                throw new Wrong ("Unsupported format: "+ ext);
+                throw new Wrong(ex, "fore.type.invalid").setLocalizedOptions(ext);
             }
             bui.toFile(file(nrl));
             hps.add(new String [] {url, nrl, "w="+w+"&h="+h});
@@ -203,7 +256,8 @@ public class Thumb extends IsFile {
         return hps.toArray(new String [][]{});
     }
 
-    private Builder make(String nrl, String col, String pos, String mod, int w, int h, boolean f) throws IOException {
+    private Builder make(String nrl, String col, String pos, String mod, int w, int h, boolean f)
+    throws  IOException {
         io.github.ihongs.util.sketch.Thumb thb = new io.github.ihongs.util.sketch.Thumb(nrl);
 
         // 设置背景颜色
@@ -224,7 +278,8 @@ public class Thumb extends IsFile {
         }
     }
 
-    private Builder make(String nrl, String col) throws IOException {
+    private Builder make(String nrl, String col)
+    throws  IOException {
         io.github.ihongs.util.sketch.Thumb thb = new io.github.ihongs.util.sketch.Thumb(nrl);
 
         if (col != null) {

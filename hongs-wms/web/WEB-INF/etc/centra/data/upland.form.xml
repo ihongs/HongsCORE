@@ -52,6 +52,12 @@
             <param name="data-at">centra/master/dept/list</param>
             <param name="data-al">centra/master/dept/pick.html</param>
         </field>
+        <field text="发帖" name="grade" type="select">
+            <param name="conf">centra/data/upland</param>
+            <param name="enum">theme_grade</param>
+            <param name="type">int</param>
+            <param name="default">1</param>
+        </field>
         <field text="置顶" name="boost" type="number">
             <param name="type">long</param>
             <param name="default">0</param>
@@ -135,6 +141,12 @@
             <param name="data-al">centra/master/user/pick.html</param>
             <param name="default">=$uid</param>
             <param name="deforce">create</param>
+        </field>
+        <field text="评论" name="grade" type="select">
+            <param name="conf">centra/data/upland</param>
+            <param name="enum">topic_grade</param>
+            <param name="type">int</param>
+            <param name="default">1</param>
         </field>
         <field text="置顶" name="boost" type="number">
             <param name="type">long</param>
@@ -224,4 +236,12 @@
             <param name="pass-source">yes</param>
         </field>
     </form>
+    <enum name="theme_grade">
+        <value code="1">所有人均可发帖</value>
+        <value code="0">仅管理员可发帖</value>
+    </enum>
+    <enum name="topic_grade">
+        <value code="1">开启评论</value>
+        <value code="0">关闭评论</value>
+    </enum>
 </root>

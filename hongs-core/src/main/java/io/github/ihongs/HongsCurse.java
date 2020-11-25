@@ -253,10 +253,10 @@ public final class HongsCurse {
 
     /**
      * 设置翻译短语
-     * @param word
+     * @param term
      */
-    public void setLocalizedContent(String    word) {
-        this.term = word;
+    public void setLocalizedContent(String    term) {
+        this.term = term;
     }
 
     /**

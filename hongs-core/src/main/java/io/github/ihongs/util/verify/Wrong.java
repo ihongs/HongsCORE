@@ -8,27 +8,39 @@ import io.github.ihongs.HongsException;
  * @author Hongs
  */
 public class Wrong extends HongsException {
-    private String text = null;
+    private String     name = null;
     private CoreLocale lang = null;
 
-    public Wrong(Throwable cause, String desc, String... prms) {
-        super(400 , desc , cause);
+    public Wrong(Throwable cause, String term, String... opts) {
+        super(400 , term , cause);
         this.setLocalizedContext("default");
-        this.setLocalizedOptions(   prms  );
+        this.setLocalizedContent(term);
+        this.setLocalizedOptions(opts);
     }
 
-    public Wrong(String desc, String... prms) {
-        super(400 , desc   /**/ );
+    public Wrong(String term, String... opts) {
+        super(400 , term );
         this.setLocalizedContext("default");
-        this.setLocalizedOptions(   prms  );
+        this.setLocalizedContent(term);
+        this.setLocalizedOptions(opts);
     }
 
-    @Override
-    public Wrong  setLocalizedOptions(String...  opts) {
-        super.setLocalizedOptions(opts);
+    /**
+     * 设置语言对象 (以便复用)
+     * @param lang
+     * @return
+     */
+    public Wrong  setLocalizedContext(CoreLocale lang) {
+        super.setLocalizedContext(null);
+        this.lang = lang;
         return this;
     }
 
+    /**
+     * 设置区块名称
+     * @param name
+     * @return
+     */
     @Override
     public Wrong  setLocalizedContext(String     name) {
         super.setLocalizedContext(name);
@@ -36,20 +48,50 @@ public class Wrong extends HongsException {
         return this;
     }
 
-    public Wrong  setLocalizedContext(CoreLocale lang) {
-        this.lang = lang;
+    /**
+     * 设置错误短语
+     * @param name
+     * @return
+     */
+    @Override
+    public Wrong  setLocalizedContent(String     term) {
+        super.setLocalizedContent(term);
         return this;
     }
 
-    public Wrong  setLocalizedCaption(String     text) {
-        this.text = text;
+    /**
+     * 设置错误参数
+     * @param name
+     * @return
+     */
+    @Override
+    public Wrong  setLocalizedOptions(String...  opts) {
+        super.setLocalizedOptions(opts);
         return this;
     }
 
+    /**
+     * 设置字段标签
+     * @param name
+     * @return
+     */
+    public Wrong  setLocalizedCaption(String     name) {
+        this.name = name;
+        return this;
+    }
+
+    /**
+     * 获取字段标签
+     * @return
+     */
     public String getLocalizedCaption() {
-        return text;
+        return name;
     }
 
+    /**
+     * 获取错误内容
+     * @return 
+     */
     public String getLocalizedMistake() {
         if (null== lang) {
             lang = CoreLocale.getInstance(getLocalizedContext());
@@ -57,16 +99,20 @@ public class Wrong extends HongsException {
         return lang.translate(getError(), getLocalizedOptions());
     }
 
+    /**
+     * 获取错误消息 (含字段名)
+     * @return 
+     */
     @Override
     public String getLocalizedMessage() {
         if (null== lang) {
             lang = CoreLocale.getInstance(getLocalizedContext());
         }
-        if (null!= text && 0 < text.length()) {
-            return lang.translate(text)
-            +": "+ lang.translate(getError(), getLocalizedOptions());
+        if (null!= name && 0 < name.length()) {
+            return lang.translate(name)
+            +": "+ lang.translate(getLocalizedContent(), getLocalizedOptions());
         } else {
-            return lang.translate(getError(), getLocalizedOptions());
+            return lang.translate(getLocalizedContent(), getLocalizedOptions());
         }
     }
 

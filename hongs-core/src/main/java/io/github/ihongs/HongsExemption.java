@@ -109,8 +109,8 @@ public class HongsExemption
     }
 
     @Override
-    public HongsExemption setLocalizedContent(String    word) {
-        that.setLocalizedContent(word);
+    public HongsExemption setLocalizedContent(String    term) {
+        that.setLocalizedContent(term);
         return this;
     }
 

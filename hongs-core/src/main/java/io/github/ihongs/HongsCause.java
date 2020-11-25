@@ -14,7 +14,7 @@ public interface HongsCause
     public int getState();
 
     public String getStage();
-    
+
     public Throwable getCause();
 
     public String getMessage( );
@@ -29,12 +29,12 @@ public interface HongsCause
 
     public HongsCause setLocalizedContext(String    lang);
 
-    public HongsCause setLocalizedContent(String    lang);
+    public HongsCause setLocalizedContent(String    term);
 
     public HongsCause setLocalizedOptions(String... opts);
 
     public HongsException toException();
-    
+
     public HongsExemption toExemption();
-    
+
 }

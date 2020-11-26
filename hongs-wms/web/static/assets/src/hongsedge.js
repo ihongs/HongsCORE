@@ -1116,7 +1116,7 @@ function hsHideListCols(box) {
               + '<span style="display:inline-block"></span></label>');
 
     ths.each(function() {
-        if ($(this).is(".dont-hide,._check,._admin")) {
+        if ($(this).is(".dont-hide,._admin,._check,._radio,._rowid")) {
             return;
         }
         var ch = cho.clone().appendTo(chs);

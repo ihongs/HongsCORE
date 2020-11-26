@@ -533,7 +533,7 @@ HsList.prototype = {
 
     getAll   : function() {
         var cks = this.context.find(".checkone").filter(":checked");
-        if (cks.length == 0) {
+        if (cks.length === 0) {
             alert(hsGetLang("list.get.all"));
             return null;
         }
@@ -543,7 +543,7 @@ HsList.prototype = {
     },
     getOne   : function() {
         var cks = this.context.find(".checkone").filter(":checked");
-        if (cks.length != 1) {
+        if (cks.length !== 1) {
             alert(hsGetLang("list.get.one"));
             return null;
         }
@@ -552,8 +552,12 @@ HsList.prototype = {
         }
     },
     getRow   : function(o) {
-        var chk = jQuery(o).closest("tr,.itembox").find(".checkone,[name=id],[data-fn=id],[data-ft=id]").first();
-        // 规避未选中无法获取参数的问题
+        var chk = jQuery(o).parentsUntil(this.listBox,"tr,.itembox")
+               .first( )
+               .find (".checkone,.row-id,[data-fn=id],[data-ft=id]")
+               .first( );
+
+        // 规避未选中无取值的问题
         if (chk.is  (".checkone")
         &&  chk.is  (":checkbox,:radio")) {
             chk.not (":checked" )
@@ -565,20 +569,19 @@ HsList.prototype = {
                .prop( "checked" , false )
                .change();
         }
+
         return chk;
     },
     getIds   : function(o) {
-        if (jQuery.inArray (this.listBox[0], jQuery(o).parents()) != -1) {
-            return this.getRow(o);
-        }
-        else if (jQuery(o).hasClass("for-choose")) {
-            return this.getOne( );
-        }
-        else if (jQuery(o).hasClass("for-checks")) {
+        o = jQuery(o);
+        if (o.hasClass("for-checks")) {
             return this.getAll( );
-        }
-        else {
-            return jQuery();
+        } else
+        if (o.hasClass("for-choose")) {
+            return this.getOne( );
+        } else
+        {
+            return this.getRow(o);
         }
     },
 
@@ -592,13 +595,19 @@ HsList.prototype = {
         return false;
     },
     _fill__check : function(td, v, n) {
-        jQuery('<input type="checkbox" class="input-checkbox checkone"/>')
+        jQuery('<input type="checkbox" class="checkone"/>')
             .attr("name" , n).val( v)
             .appendTo(td);
         return false;
     },
     _fill__radio : function(td, v, n) {
-        jQuery('<input type="radio" class="input-radio checkone"/>')
+        jQuery('<input type="radio" class="checkone"/>')
+            .attr("name" , n).val( v)
+            .appendTo(td);
+        return false;
+    },
+    _fill__rowid : function(td, v, n) {
+        jQuery('<input type="hidden" class="row-id" />')
             .attr("name" , n).val( v)
             .appendTo(td);
         return false;

@@ -508,6 +508,10 @@ ol.repeated ,
 .listbox td._amenu {
     overflow: visible;
 }
+.listbox th._rowid ,
+.listbox td._rowid {
+    display : none !important;
+}
 
 /* 横向菜单 */
 .listbox ._amenu .dropdown-menu {

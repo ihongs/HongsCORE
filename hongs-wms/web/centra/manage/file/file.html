@@ -97,7 +97,7 @@
 
         context.on("click", ".modify", function( ) {
             var inst  =  context.data("HsList");
-            var item  =  inst.getRow (  this  );
+            var item  =  inst.getIds (  this  );
             if (item === null ) {
                 return;
             }

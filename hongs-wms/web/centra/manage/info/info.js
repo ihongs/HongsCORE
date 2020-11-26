@@ -482,7 +482,7 @@
                             runChart.setOption(runOpts, true);
                         }
                     });
-                } , 2000);
+                } , 5000);
 
                 // 应用信息
                 var a ;

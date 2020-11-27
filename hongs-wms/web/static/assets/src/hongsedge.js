@@ -181,7 +181,7 @@ HsStat.prototype = {
         while (false);
 
         // 重建数据, 删除可能冲突的参数
-        dat = $.extend({}, hsSerialDic(dat));
+        dat = hsSerialMix({}, dat);
         delete dat["rb" ];
         delete dat["rb."];
         delete dat["ob" ];
@@ -747,7 +747,7 @@ HsCate.prototype = {
         while (false);
 
         // 重建数据, 删除可能冲突的参数
-        dat = $.extend({}, hsSerialDic(dat));
+        dat = hsSerialMix({}, dat);
         delete dat["rb" ];
         delete dat["rb."];
         delete dat["ob" ];

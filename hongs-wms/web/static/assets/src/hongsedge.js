@@ -636,7 +636,7 @@ HsStat.prototype = {
     }
 };
 jQuery.fn.hsStat = function(opts) {
-  return this.hsBind(HsStat, opts);
+    return this.hsBind(HsStat, opts);
 };
 
 /**
@@ -804,7 +804,7 @@ HsCate.prototype = {
     setAmountCheck: function(box, data) {
         var name  = box.data("name");
         var text  = box.data("text");
-        var box2  = box.empty();
+        var box2  = box.find(".checkbox").empty();
 
         if (data.length == 0) {
             box.closest(".form-group").hide();
@@ -836,7 +836,7 @@ HsCate.prototype = {
     setAcountCheck: function(box, data) {
         var name  = box.data("name");
         var text  = box.data("text");
-        var box2  = box.empty();
+        var box2  = boxbox.find(".checkbox").empty();
 
         if (data.length == 0) {
             box.closest(".form-group").hide();
@@ -866,7 +866,7 @@ HsCate.prototype = {
     }
 };
 jQuery.fn.hsCate = function(opts) {
-  return this.hsBind(HsCate, opts);
+    return this.hsBind(HsCate, opts);
 };
 
 /**
@@ -915,7 +915,6 @@ function HsPops (context , urls) {
         }
     });
     $(window).trigger("popstate");
-
 
     /**
      * 还需要处理内部加载的页面
@@ -967,7 +966,7 @@ function HsPops (context , urls) {
     });
 }
 jQuery.fn.hsPops = function(opts) {
-  return this.hsBind(HsPops, opts);
+    return this.hsBind(HsPops, opts);
 };
 
 /**

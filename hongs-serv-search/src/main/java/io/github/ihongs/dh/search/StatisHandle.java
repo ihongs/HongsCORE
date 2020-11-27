@@ -614,20 +614,20 @@ public class StatisHandle {
                         if (   "int".equals(k)
                         ||    "byte".equals(k)
                         ||   "short".equals(k)) {
-                            g = StatisGrader.TYPE.INT;
+                            g = StatisGrader.TYPE.INTS;
                         } else
                         if (  "long".equals(k)) {
-                            g = StatisGrader.TYPE.LONG;
+                            g = StatisGrader.TYPE.LONGS;
                         } else
                         if ( "float".equals(k)) {
-                            g = StatisGrader.TYPE.FLOAT;
+                            g = StatisGrader.TYPE.FLOATS;
                         } else
                         if ("double".equals(k)
                         ||  "number".equals(k)) {
-                            g = StatisGrader.TYPE.DOUBLE;
+                            g = StatisGrader.TYPE.DOUBLES;
                         } else
                         {
-                            g = StatisGrader.TYPE.STRING;
+                            g = StatisGrader.TYPE.STRINGS;
                         }
                         break ;
                     case  "date" :
@@ -765,20 +765,20 @@ public class StatisHandle {
                         if (   "int".equals(k)
                         ||    "byte".equals(k)
                         ||   "short".equals(k)) {
-                            g = StatisGather.TYPE.INT;
+                            g = StatisGather.TYPE.INTS;
                         } else
                         if (  "long".equals(k)) {
-                            g = StatisGather.TYPE.LONG;
+                            g = StatisGather.TYPE.LONGS;
                         } else
                         if ( "float".equals(k)) {
-                            g = StatisGather.TYPE.FLOAT;
+                            g = StatisGather.TYPE.FLOATS;
                         } else
                         if ("double".equals(k)
                         ||  "number".equals(k)) {
-                            g = StatisGather.TYPE.DOUBLE;
+                            g = StatisGather.TYPE.DOUBLES;
                         } else
                         {
-                            g = StatisGather.TYPE.STRING;
+                            g = StatisGather.TYPE.STRINGS;
                         }
                         break ;
                     case  "date" :

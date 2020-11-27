@@ -153,7 +153,7 @@ public class SearchAction extends JAction {
         Set hs = CAL_HANDS;
         if (nb < ACT_NAMES.length) {
             ns = sr.getCaseNames(ACT_NAMES[nb] + "able");
-        if (ns == null ) {
+        if (ns == null || ns.isEmpty()) {
             ns = sr.getCaseNames("statable");
         }} else {
             ns = sr.getCaseNames("statable");
@@ -190,7 +190,7 @@ public class SearchAction extends JAction {
                 throw new HongsException(400, "Field '"+fn+"' is not existent");
             }
             if (! ns.contains   (fn)) {
-                throw new HongsException(400, "Field '"+fn+"' is not sortable");
+                throw new HongsException(400, "Field '"+fn+"' is not statable");
             }
 
             /**

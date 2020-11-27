@@ -836,7 +836,7 @@ HsCate.prototype = {
     setAcountCheck: function(box, data) {
         var name  = box.data("name");
         var text  = box.data("text");
-        var box2  = boxbox.find(".checkbox").empty();
+        var box2  = box.find(".checkbox").empty();
 
         if (data.length == 0) {
             box.closest(".form-group").hide();
@@ -1556,7 +1556,7 @@ if (hsChkUri('public')) {
                     tim = now ;
                 }
             });
-        } , 600000 ); // 10 分钟
+        } , 1800000 ); // 30 分钟
     }
 });
 

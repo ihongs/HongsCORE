@@ -180,17 +180,12 @@ HsStat.prototype = {
         }
         while (false);
 
-        // 删除可能冲突的参数
-        mod = hsSerialArr(dat);
-        dat = [ ];
-        $.each(mod, function() {
-            if(this.name !== "rb"
-            && this.name !== "rb."
-            && this.name !== "ob"
-            && this.name !== "ob.") {
-                dat.push(this);
-            }
-        });
+        // 重建数据, 删除可能冲突的参数
+        dat = $.extend({}, hsSerialDic(dat));
+        delete dat["rb" ];
+        delete dat["rb."];
+        delete dat["ob" ];
+        delete dat["ob."];
 
         $.hsAjax({
             url : url,
@@ -751,17 +746,12 @@ HsCate.prototype = {
         }
         while (false);
 
-        // 删除可能冲突的参数
-        mod = hsSerialArr(dat);
-        dat = [ ];
-        $.each(mod, function() {
-            if(this.name !== "rb"
-            && this.name !== "rb."
-            && this.name !== "ob"
-            && this.name !== "ob.") {
-                dat.push(this);
-            }
-        });
+        // 重建数据, 删除可能冲突的参数
+        dat = $.extend({}, hsSerialDic(dat));
+        delete dat["rb" ];
+        delete dat["rb."];
+        delete dat["ob" ];
+        delete dat["ob."];
 
         $.hsAjax({
             url : url,

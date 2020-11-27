@@ -1,3 +1,4 @@
+<%@page import="io.github.ihongs.serv.matrix.Data"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.Map"%>
 <%@page import="java.util.Set"%>
@@ -67,6 +68,15 @@
             Dict.put(req , Synt.listOf(
                 Synt.mapOf("owner", uid)
             ), Cnst.AR_KEY, "x", Cnst.OR_KEY);
+        }
+    } else
+    if ("create".equals(met)
+    ||  "revert".equals(met)) {
+        /**
+         * 限制用户发新的主题
+         */
+        if (! NaviMap.getInstance("centra").chkAuth("centra/data/upland/admin")) {
+            throw new HongsException(403, "您无权新建/重建主题");
         }
     }
 

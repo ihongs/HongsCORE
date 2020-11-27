@@ -206,7 +206,6 @@
             <param name="deforce">create</param>
         </field>
         <field text="消息" name="note"  type="textarea">
-            <param name="type">text</param>
             <param name="listable">yes</param>
             <param name="srchable">yes</param>
             <param name="nameable">yes</param>

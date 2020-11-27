@@ -144,7 +144,7 @@
 <div id="head-powered">
     <p>
         &copy; <%=CoreLocale.getInstance().translate("fore.copy.right")%>
-        &sect; <%=CoreLocale.getInstance().translate("fore.site.links")%>
+        &bull; <%=CoreLocale.getInstance().translate("fore.site.links")%>
         &bull; Powered by <a href="<%=Core.BASE_HREF%>/power.html" target="_blank">HongsCORE</a>
     </p>
 </div>

@@ -157,7 +157,7 @@
         <blockquote><p class="clearfix">
             <span>&copy; <%=CoreLocale.getInstance().translate("fore.copy.right")%></span>
             <span style="display: inline-block; width: 1em;"></span>
-            <span>&sect; <%=CoreLocale.getInstance().translate("fore.site.links")%></span>
+            <span>&bull; <%=CoreLocale.getInstance().translate("fore.site.links")%></span>
             <span class="pull-right">Powered by <a href="<%=request.getContextPath()%>/power.html" target="_blank">HongsCORE</a></span>
         </p></blockquote>
     </div>

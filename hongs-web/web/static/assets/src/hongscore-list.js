@@ -552,10 +552,9 @@ HsList.prototype = {
         }
     },
     getRow   : function(o) {
-        var chk = jQuery(o).parentsUntil(this.listBox,"tr,.itembox")
-               .first( )
-               .find (".checkone,.row-id,[data-fn=id],[data-ft=id]")
-               .first( );
+        var chk = jQuery(o).closest("tr,.itembox", this . listBox )
+               .find(".checkone,.row-id,[data-fn=id],[data-ft=id]")
+               .first ();
 
         // 规避未选中无取值的问题
         if (chk.is  (".checkone")

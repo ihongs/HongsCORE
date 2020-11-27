@@ -299,7 +299,7 @@
         curl: "<%=_module%>/<%=_entity%>/acount.act?<%=Cnst.RN_KEY%>=<%=Cnst.RN_DEF%>&<%=Cnst.AB_KEY%>=_text,_fork"
     });
 
-    var loadres = hsSerialDat(loadres);
+    var loadres = hsSerialDat(loadbox);
     var denycss = (loadres._deny_||"").split (",");
     delete loadres._deny_ ;
 

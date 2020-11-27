@@ -176,9 +176,21 @@ HsStat.prototype = {
                 break;
             }
 
-            dat = hsSerialDic ( findBox);
+            dat = findBox;
         }
         while (false);
+
+        // 删除可能冲突的参数
+        mod = hsSerialArr(dat);
+        dat = [ ];
+        $.each(mod, function() {
+            if(this.name !== "rb"
+            && this.name !== "rb."
+            && this.name !== "ob"
+            && this.name !== "ob.") {
+                dat.push(this);
+            }
+        });
 
         $.hsAjax({
             url : url,
@@ -735,9 +747,21 @@ HsCate.prototype = {
                 break;
             }
 
-            dat = hsSerialDic ( findBox);
+            dat = findBox;
         }
         while (false);
+
+        // 删除可能冲突的参数
+        mod = hsSerialArr(dat);
+        dat = [ ];
+        $.each(mod, function() {
+            if(this.name !== "rb"
+            && this.name !== "rb."
+            && this.name !== "ob"
+            && this.name !== "ob.") {
+                dat.push(this);
+            }
+        });
 
         $.hsAjax({
             url : url,

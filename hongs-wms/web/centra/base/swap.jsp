@@ -121,17 +121,18 @@
         "<%=Cnst.RN_KEY%>": "行数参数",
         "pages": "总页数",
         "count": "总行数",
+        "state": "1 正常, 0 错误: count 等于 0 表示列表为空, count 大于 0 表示页码超出"
     },
+    "enfo": {}, // 参见 select<%=Cnst.ACT_EXT%> 接口
     // ...
 }
 <b>详情:</b> {
     "info": {
         "字段名": "字段值"
     },
-    "enum": {
-        "字段名": [
-            ["值", "文本"],
-        ]
+    "page": {
+        "count": "1 或 0"
+        "state": "1 正常, 0 错误: count 等于 0 表示数据缺失, count 大于 0 表示无权查阅"
     },
     // ...
 }
@@ -160,9 +161,7 @@
                     <label class="control-label">响应</label>
                     <pre class="form-control-static">
 {
-    "info": {
-        "字段名": "字段值"
-    },
+    "nid": "新的记录ID",
     // ...
 }
                     </pre>
@@ -191,7 +190,7 @@ id=ID 或 id.=ID1&id.=ID2...
                     <label class="control-label">响应</label>
                     <pre class="form-control-static">
 {
-    "size": "更新的条数",
+    "cnt": "更新的条数",
     // ...
 }
                     </pre>
@@ -219,7 +218,7 @@ id=ID 或 id.=ID1&id.=ID2...
                     <label class="control-label">响应</label>
                     <pre class="form-control-static">
 {
-    "size": "删除的条数",
+    "cnt": "删除的条数",
     // ...
 }
                     </pre>
@@ -248,7 +247,7 @@ id=ID 或 id.=ID1&id.=ID2...
     "info": {
         "字段名": "字段值"
     },
-    "enum": {
+    "enfo": {
         "字段名": [
             ["值", "文本"],
         ]
@@ -267,32 +266,42 @@ id=ID 或 id.=ID1&id.=ID2...
                     <pre class="form-control-static">
 计数: <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/acount<%=Cnst.ACT_EXT%>
 计算: <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/amount<%=Cnst.ACT_EXT%>
+聚合: <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/assort<%=Cnst.ACT_EXT%>
                     </pre>
                 </div>
                 <div class="form-group">
                     <label class="control-label">参数</label>
                     <pre class="form-control-static">
 <b><%=Cnst.RN_KEY%></b>=条数, 按统计数量从多到少排列, 默认取前
-<b><%=Cnst.RB_KEY%></b>=字段, 可用于统计的; acount 用于一般选项计数; amount 用于数值区间统计; amount 可返回求和等数据.
+<b><%=Cnst.RB_KEY%></b>=字段, 可用于统计的; acount 用于一般选项计数; amount 用于数值区间统计; assort 用于维度聚合计算.
+聚合计算中, 字段分维度和指标. 指标形式为: 字段|方法; 指标方法有: |count 计数, |sum 求和, |min 最小, |max 最大, |ratio 综合[sum,min,max], |first 首个值, |flock 所有值.
+聚合计算还可以接受类似 search<%=Cnst.ACT_EXT%> 接口的分页(<%=Cnst.PN_KEY%>)和排序(<%=Cnst.OB_KEY%>)参数. 
                     </pre>
                 </div>
                 <div class="form-group">
                     <label class="control-label">返回</label>
                     <pre class="form-control-static">
-计数: {
+<b>计数:</b> {
     "info": {
         "字段名": [
             ["值", "文本", "数量"],
         ]
     },
     // ...
-},
-计算: {
+}
+<b>计算:</b> {
     "info": {
         "字段名": [
             ["值", "文本", "数量", "求和", "最小值", "最大值"],
         ]
     },
+    // ...
+}
+<b>聚合:</b> {
+    "list": [{
+        "维度字段": "字段值",
+        "指标字段|方法": "计算值"
+    }],
     // ...
 }
                     </pre>

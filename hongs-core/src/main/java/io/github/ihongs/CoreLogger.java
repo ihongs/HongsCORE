@@ -104,24 +104,30 @@ public class CoreLogger
 
     /**
      * 错误
-     * 既不显示又不记录则记录错误
+     * 既不显示又不记录则输出错误
      * @param text
      * @param args
      */
     public static void error(String text, Object... args) {
         String flag = space("");
+
+        if (1 != (1 & Core.DEBUG )
+        &&  2 != (2 & Core.DEBUG)) {
+            getLogger("hongs.out" + flag).error(envir(text), args);
+            return;
+        }
+
         if (1 == (1 & Core.DEBUG)) {
             getLogger("hongs.out" + flag).error(envir(text), args);
         }
-        if (1 != (1 & Core.DEBUG )
-        ||  2 == (2 & Core.DEBUG)) {
+        if (2 == (2 & Core.DEBUG)) {
             getLogger("hongs.log" + flag).error(envir(text), args);
         }
     }
 
     /**
      * 错误
-     * 既不显示又不记录则记录概要
+     * 既不显示又不记录则输出概要
      * @param t
      */
     public static void error(Throwable t) {
@@ -129,7 +135,7 @@ public class CoreLogger
 
         if (1 != (1 & Core.DEBUG )
         &&  2 != (2 & Core.DEBUG)) {
-            getLogger("hongs.log" + flag).error(envir(t.toString()));
+            getLogger("hongs.out" + flag).error(envir(t.toString()));
             return;
         }
 

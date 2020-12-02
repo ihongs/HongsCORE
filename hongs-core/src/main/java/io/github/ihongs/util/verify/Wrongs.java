@@ -3,6 +3,8 @@ package io.github.ihongs.util.verify;
 import io.github.ihongs.CoreLocale;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.util.Dict;
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -13,12 +15,23 @@ import java.util.Map;
  */
 public class Wrongs extends HongsException {
   protected final Map<String,Wrong> wrongs ;
-  protected CoreLocale lang = null;
+  private /**/Causes caus = null;
+  private CoreLocale lang = null;
 
     public Wrongs(Map<String,Wrong> wrongs) {
-        super( 400  ,  "fore.form.invalid");
-        this.setLocalizedContext("default");
+        super(400);
+        this.setLocalizedContext(     "default"     );
+        this.setLocalizedContent("fore.form.invalid");
         this.wrongs = wrongs;
+    }
+
+    @Override
+    public Throwable getCause() {
+        if (caus == null) {
+            caus = new Causes(wrongs);
+        }
+        return ! caus.isEmpty()
+               ? caus : null ;
     }
 
     @Override
@@ -35,6 +48,7 @@ public class Wrongs extends HongsException {
     }
 
     public Wrongs setLocalizedContext(CoreLocale lang) {
+        super.setLocalizedContext(null);
         this.lang = lang;
         return this;
     }
@@ -123,5 +137,59 @@ public class Wrongs extends HongsException {
             data.put("msg", CoreLocale.getInstance().translate("fore.form.invalid"));
         }
         return data;
+    }
+
+    private static class Causes extends Throwable {
+    private final Map<String, Throwable> causes ;
+
+        public Causes(Map<String, Wrong> wrongs ) {
+                causes = new LinkedHashMap();
+            for(Map.Entry<String, Wrong> et : wrongs.entrySet()) {
+                String    fn = et.getKey(  );
+                Wrong     wr = et.getValue();
+                Throwable tr = wr.getCause();
+                if (tr != null) {
+                    causes.put(fn, tr);
+                }
+            }
+        }
+
+        public boolean isEmpty() {
+            return causes.isEmpty();
+        }
+
+        @Override
+        public String getMessage() {
+            if (isEmpty()) {
+                return "";
+            }
+            StringBuilder sb = new StringBuilder();
+                sb.append("Causes of wrongs");
+            for(Map.Entry<String , Throwable> et : causes.entrySet()) {
+                sb.append("\r\n")
+                  .append(et.getKey( ))
+                  .append( ": " )
+                  .append(et.getValue().getMessage());
+            }
+            return sb.toString();
+        }
+
+        @Override
+        public void printStackTrace(PrintStream ps) {
+                ps.print ("Causes of wrongs\r\n");
+            for(Map.Entry<String , Throwable> et : causes.entrySet()) {
+                ps.print ( et.getKey(  ) + ": " );
+                et.getValue().printStackTrace(ps);
+            }
+        }
+
+        @Override
+        public void printStackTrace(PrintWriter ps) {
+                ps.print ("Causes of wrongs\r\n");
+            for(Map.Entry<String , Throwable> et : causes.entrySet()) {
+                ps.print ( et.getKey(  ) + ": " );
+                et.getValue().printStackTrace(ps);
+            }
+        }
     }
 }

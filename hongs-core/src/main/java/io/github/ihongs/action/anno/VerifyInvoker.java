@@ -1,6 +1,8 @@
 package io.github.ihongs.action.anno;
 
 import io.github.ihongs.Cnst;
+import io.github.ihongs.Core;
+import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
@@ -101,6 +103,14 @@ public class VerifyInvoker implements FilterInvoker {
             // Servlet 环境下设置状态码为 400 (错误的请求)
             if (helper.getResponse() != null) {
                 helper.getResponse().setStatus(SC_BAD_REQUEST);
+            }
+
+            // 调试模式下记录可能引起错误的原因
+            if (0 != Core.DEBUG && 8 != (8 & Core.DEBUG)) {
+                Throwable tr = err.getCause();
+                if (null != tr) {
+                    CoreLogger.error (  tr  );
+                }
             }
 
             return;

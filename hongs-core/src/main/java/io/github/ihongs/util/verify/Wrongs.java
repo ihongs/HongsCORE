@@ -41,6 +41,12 @@ public class Wrongs extends HongsException {
     }
 
     @Override
+    public Wrongs setLocalizedContent(String     term) {
+        super.setLocalizedContent(term);
+        return this;
+    }
+
+    @Override
     public Wrongs setLocalizedContext(String     name) {
         super.setLocalizedContext(name);
         this.lang = null;

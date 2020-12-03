@@ -285,10 +285,11 @@ public class StatisGrader {
         public int compareTo(Object o) {
             if (o instanceof Range) {
                 Range that =(Range) o;
+
                 if (this.min < that.min) {
                     return -1;
                 }
-                if (this.max > that.max) {
+                if (this.min > that.min) {
                     return  1;
                 }
 
@@ -296,6 +297,13 @@ public class StatisGrader {
                     return -1;
                 }
                 if (that.le && !this.le) {
+                    return  1;
+                }
+
+                if (this.max < that.max) {
+                    return -1;
+                }
+                if (this.max > that.max) {
                     return  1;
                 }
 
@@ -383,6 +391,7 @@ public class StatisGrader {
         public int compareTo(Object o) {
             if (o instanceof Ratio) {
                 Ratio that =(Ratio) o;
+
                 if (this.cnt < that.cnt) {
                     return -1;
                 }

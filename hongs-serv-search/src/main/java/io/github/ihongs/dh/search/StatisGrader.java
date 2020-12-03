@@ -291,6 +291,20 @@ public class StatisGrader {
                 if (this.max > that.max) {
                     return  1;
                 }
+
+                if (this.le && !that.le) {
+                    return -1;
+                }
+                if (that.le && !this.le) {
+                    return  1;
+                }
+
+                if (!this.ge && that.ge) {
+                    return -1;
+                }
+                if (!that.ge && this.ge) {
+                    return  1;
+                }
             }
             return  0;
         }

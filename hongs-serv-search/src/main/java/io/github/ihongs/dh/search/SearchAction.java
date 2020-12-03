@@ -72,7 +72,7 @@ public class SearchAction extends JAction {
     @Titles(conf="", form="")
     public void acount(ActionHelper helper) throws HongsException {
         SearchEntity sr = (SearchEntity) getEntity(helper);
-        StatisHandle sh = new StatisHandle(sr);
+        StatisHelper sh = new StatisHelper(sr);
 
         Map rd = helper.getRequestData();
         rd = getReqMap(helper, sr, "acount", rd);
@@ -93,7 +93,7 @@ public class SearchAction extends JAction {
     @Titles(conf="", form="")
     public void amount(ActionHelper helper) throws HongsException {
         SearchEntity sr = (SearchEntity) getEntity(helper);
-        StatisHandle sh = new StatisHandle(sr);
+        StatisHelper sh = new StatisHelper(sr);
 
         Map rd = helper.getRequestData();
         rd = getReqMap(helper, sr, "amount", rd);
@@ -114,7 +114,7 @@ public class SearchAction extends JAction {
     @Select(conf="", form="")
     public void assort(ActionHelper helper) throws HongsException {
         SearchEntity sr = (SearchEntity) getEntity(helper);
-        StatisHandle sh = new StatisHandle(sr);
+        StatisHelper sh = new StatisHelper(sr);
 
         Map rd = helper.getRequestData();
         rd = getReqMap(helper, sr, "assort", rd);

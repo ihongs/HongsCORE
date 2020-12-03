@@ -1,975 +1,415 @@
 package io.github.ihongs.dh.search;
 
-import io.github.ihongs.Cnst;
-import io.github.ihongs.Core;
-import io.github.ihongs.CoreLogger;
-import io.github.ihongs.HongsException;
-import io.github.ihongs.action.FormSet;
-import io.github.ihongs.dh.lucene.LuceneRecord;
-import io.github.ihongs.dh.search.StatisGrader.Range;
-import io.github.ihongs.dh.search.StatisGrader.Ratio;
-import io.github.ihongs.util.Dict;
-import io.github.ihongs.util.Synt;
-
+import io.github.ihongs.HongsExemption;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.Iterator;
+import java.util.function.Consumer;
+import org.apache.lucene.index.LeafReader;
+import org.apache.lucene.index.LeafReaderContext;
+import org.apache.lucene.index.NumericDocValues;
+import org.apache.lucene.index.SortedDocValues;
+import org.apache.lucene.index.SortedSetDocValues;
+import org.apache.lucene.index.SortedNumericDocValues;
+import org.apache.lucene.search.Scorer;
+import org.apache.lucene.search.Collector;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.LeafCollector;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.util.NumericUtils;
 
 /**
- * 搜索助手
+ * 统计辅助工具
  * @author Hongs
  */
-public class StatisHandle {
+public final class StatisHandle {
 
-    private final LuceneRecord that;
+    public static enum TYPE {
+        INT , LONG , FLOAT , DOUBLE , STRING , // 单数
+        INTS, LONGS, FLOATS, DOUBLES, STRINGS  // 复数
+    };
 
-    public StatisHandle(LuceneRecord that) {
-        this.that = that;
-    }
+    public static final int  NO_MORE_VALS = (int ) SortedSetDocValues.NO_MORE_ORDS;
+    public static final long NO_MORE_ORDS = (long) SortedSetDocValues.NO_MORE_ORDS;
 
-    public final LuceneRecord getRecord( ) {
-        return that;
-    }
+    private final IndexSearcher finder;
+    private       Field[] fields;
+    private       Query   query ;
 
-    /**
-     * 分类计数
-     * @param rd
-     * @return
-     * @throws HongsException
-     */
-    public Map acount(Map rd) throws HongsException {
-        IndexSearcher finder = that.getFinder();
-
-        Map         incs = Synt.asMap  (rd.get(Cnst.IN_REL) );
-        Map         excs = Synt.asMap  (rd.get(Cnst.NI_REL) );
-        Set<String> cntz = Synt.toTerms(rd.get(Cnst.RB_KEY) );
-        Map<String, Map<Object, Long>> counts = new HashMap();
-        Map<String, Set<Object      >> countx = new HashMap();
-
-        //** 整理待统计的数据 **/
-
-        if (cntz != null && !cntz.isEmpty()) {
-            if (incs == null) {
-                incs  = new HashMap();
-            }
-            if (excs == null) {
-                excs  = new HashMap();
-            }
-
-            for(String x : cntz) {
-                Map cnt; Set inc, exc, cnx;
-
-                    cnt  = new  HashMap( );
-                    inc  = Synt.asSet(incs.get(x));
-                if (inc != null && !inc.isEmpty()) {
-                    for(Object v:inc) {
-                        String s = v.toString ( );
-                       cnt.put(s, 0 );
-                    }
-                }   counts.put(x,cnt);
-
-                    cnx  = new  HashSet( );
-                    exc  = Synt.asSet(excs.get(x));
-                if (exc != null && !exc.isEmpty()) {
-                    for(Object v:inc) {
-                        String s = v.toString ( );
-                       cnx.add(s/**/);
-                    }
-                }   countx.put(x,cnx);
-            }
-        }
-
-        //** 分块统计数据 **/
-
-        Map<String, Map<Object, Long>> counts2 = new HashMap();
-        Map<String, Set<Object      >> countx2 = new HashMap();
-
-        Map<String, Map<Object, Long>> counts3 = new HashMap();
-        Map<String, Set<Object      >> countx3 = new HashMap();
-
-        /**
-         * 根据请求数据进行综合判断,
-         * 如果字段已经作为过滤条件,
-         * 则此字段的统计需单独进行,
-         * 且需抛开此字段的过滤数据.
-         *
-         * 例如某数据有一个地区字段且每条记录只能有一个地区,
-         * 如果没有以下处理则选某地后其他未选地区数量将为零.
-         *
-         * 与 LinkedIn 左侧筛选类似.
-         */
-
-        for(String  k  : counts.keySet()) {
-            Map     vd = null;
-            Set     vs = null;
-            Object  vo = rd.get(k);
-            if (vo instanceof Map) {
-                Map vm = (Map) vo ;
-                if (vm.containsKey ( /***/ Cnst.IN_REL)) {
-                    vs = Synt.asSet(vm.get(Cnst.IN_REL));
-                    vd = new HashMap( rd );
-                    vm = new HashMap( vm );
-                    vm.remove(Cnst.IN_REL);
-                    vd.put(k , vm);
-                }
-            }
-
-            if (vs == null || vs.isEmpty()) {
-                if (counts .containsKey(k)) {
-                    counts2.put(k, counts.get(k));
-                }
-                if (countx .containsKey(k)) {
-                    countx2.put(k, countx.get(k));
-                }
-            } else {
-                Map<Object, Long> vz = counts.get(k);
-                Set<Object      > vx = countx.get(k);
-
-                counts3.clear();
-                countx3.clear();
-
-                if (vx != null) {
-                    countx3.put(k, vx);
-                }
-                if (vz != null) {
-                    counts3.put(k, vz);
-                } else {
-                    vz = new HashMap();
-                    counts3.put(k, vz);
-                }
-
-                /* 如果将参数值加入, 下面会跳过其他值
-                for(Object v : vs) {
-                    String s = v.toString();
-                    if (vx  == null || ! vx.contains(s)) {
-                        vz.put( s, 0 );
-                    }
-                }
-                */
-
-                acount(vd, finder, counts3, countx3);
-            }
-        }
-
-        int z = acount(rd, finder, counts2, countx2);
-
-        Map cnts = new HashMap();
-        cnts.put("__count__", z);
-
-        //** 排序并截取统计数据 **/
-
-        int t = Synt.declare(rd.get(Cnst.RN_KEY), 0); // Top N
-
-        for(Map.Entry<String, Map<Object, Long>> et : counts.entrySet()) {
-            List<Object[]> a = new ArrayList(et.getValue().size(  )  );
-            for(Map.Entry<Object , Long> e : et.getValue().entrySet()) {
-                Object m = e.getKey  ();
-                long   c = e.getValue();
-                if (0 != c) {
-                    a.add( new Object[] {m, null, c} );
-                }
-            }
-            Collections.sort(a, new Counts());
-
-            int n = Synt.declare(rd.get(Cnst.RN_KEY +"-"+ et.getKey()), t);
-            if (n > 0 && n < a.size()) {
-                a = a.subList (0, n );
-            }
-
-            cnts.put(et.getKey(), a );
-        }
-
-        return cnts;
-    }
-
-    private int acount( Map rd, IndexSearcher finder,
-            Map<String, Map<Object , Long > > counts,
-            Map<String, Set<Object        > > countx) throws HongsException {
-        int t = 0;
-
-        try {
-            Query q = that.padQry(rd);
-
-            if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
-                CoreLogger.debug("StatisHandle.acount: "+q.toString());
-            }
-
-            if (counts.isEmpty()) return finder.count(q);
-
-            StatisGrader.Field[] f = getGraderFields (counts.keySet(), rd);
-            StatisGrader.Collec  c = new StatisGrader.Collec(new StatisGrader.Acount(counts, countx), f);
-
-            finder.search(q, c);
-
-            t = (int) c.countTotals ( );
-        } catch (IOException e) {
-            throw new HongsException(e);
-        }
-
-        return t;
+    public StatisHandle (IndexSearcher finder) {
+        this.finder = finder;
     }
 
     /**
-     * 分类计算
-     * @param rd
+     * 限定字段
+     * @param fields
      * @return
-     * @throws HongsException
      */
-    public Map amount(Map rd) throws HongsException {
-        IndexSearcher finder = that.getFinder();
-
-        Map         incs = Synt.asMap  (rd.get(Cnst.IN_REL) );
-        Map         excs = Synt.asMap  (rd.get(Cnst.NI_REL) );
-        Set<String> cntz = Synt.toTerms(rd.get(Cnst.RB_KEY) );
-        Map<String, Map<Range, Ratio>> counts = new HashMap();
-        Map<String, Set<Range       >> countx = new HashMap();
-
-        //** 整理待统计的数据 **/
-
-        if (cntz != null && !cntz.isEmpty()) {
-            if (incs == null) {
-                incs  = new HashMap();
-            }
-            if (excs == null) {
-                excs  = new HashMap();
-            }
-
-            for(String x : cntz) {
-                Map cnt; Set inc, exc, cnx;
-
-                    inc  = Synt.asSet(incs.get(x));
-                if (inc != null && !inc.isEmpty()) {
-                    cnt  = new  HashMap();
-                    for(Object v:inc) {
-                        String s = v.toString ( );
-                        Range  m = new Range  (s);
-                        Ratio  c = new Ratio  ( );
-                       cnt.put(m, c );
-                    }
-                    counts.put(x,cnt);
-                }
-
-                    exc  = Synt.asSet(excs.get(x));
-                if (exc != null && !exc.isEmpty()) {
-                    cnx  = new  HashSet( );
-                    for(Object v:inc) {
-                        String s = v.toString ( );
-                        Range  m = new Range  (s);
-                    //  Ratio  c = new Ratio  ( );
-                       cnx.add(m/**/);
-                    }
-                    countx.put(x,exc);
-                }
-            }
-        }
-
-        //** 分块统计数据 **/
-
-        Map<String, Map<Range, Ratio>> counts2 = new HashMap();
-        Map<String, Set<Range       >> countx2 = new HashMap();
-
-        Map<String, Map<Range, Ratio>> counts3 = new HashMap();
-        Map<String, Set<Range       >> countx3 = new HashMap();
-
-        /**
-         * 根据请求数据进行综合判断,
-         * 如果字段已经作为过滤条件,
-         * 则此字段的统计需单独进行,
-         * 且需抛开此字段的过滤数据.
-         *
-         * 例如某数据有一个时间字段且每条记录只能有一个时间,
-         * 如果没有以下处理则选某段后其他未选区间数量将为零.
-         *
-         * 与 acount 的对应逻辑类似
-         */
-
-        for(String  k  : counts.keySet()) {
-            Map     vd = null;
-            Set     vs = null;
-            Object  vo = rd.get(k);
-            if (vo instanceof Map) {
-                Map vm = (Map) vo ;
-                if (vm.containsKey ( /***/ Cnst.RG_REL)) {
-                    vs = Synt.asSet(vm.get(Cnst.RG_REL));
-                    vd = new HashMap( rd );
-                    vm = new HashMap( vm );
-                    vm.remove(Cnst.RG_REL);
-                    vd.put(k , vm);
-                }
-            }
-
-            if (vs == null || vs.isEmpty()) {
-                if (counts .containsKey(k)) {
-                    counts2.put(k, counts.get(k));
-                }
-                if (countx .containsKey(k)) {
-                    countx2.put(k, countx.get(k));
-                }
-            } else {
-                Map<Range, Ratio> vz = counts.get(k);
-                Set<Range       > vx = countx.get(k);
-
-                counts3.clear();
-                countx3.clear();
-
-                if (vx != null) {
-                    countx3.put(k, vx);
-                }
-                if (vz != null) {
-                    counts3.put(k, vz);
-                } else {
-                    vz = new HashMap();
-                    counts3.put(k, vz);
-                }
-
-                /* 如果将参数值加入, 下面会跳过其他值
-                for(Object v : vs) {
-                    Minmax m = new Minmax(v.toString( ));
-                    if (vx  == null || ! vx.contains(m)) {
-                        vz.put( m, new Cntsum() );
-                    }
-                }
-                */
-
-                amount(vd, finder, counts3, countx3);
-            }
-        }
-
-        int z = amount(rd, finder, counts2, countx2);
-
-        Map cnts = new HashMap();
-        cnts.put("__count__", z);
-
-        //** 排序统计数据 **/
-
-        int t = Synt.declare(rd.get(Cnst.RN_KEY), 0); // Top N
-
-        for(Map.Entry<String, Map<Range, Ratio>> et : counts.entrySet()) {
-            List<Object[]> a = new ArrayList(et.getValue().size(  )  );
-            for(Map.Entry<Range , Ratio> e : et.getValue().entrySet()) {
-                Range  m = e.getKey  ();
-                Ratio  c = e.getValue();
-                String v = m.toString();
-                if (0 < c.cnt) {
-                    a.add( new Object[] {
-                        v, null,
-                        c.cnt, c.sum,
-                        c.min, c.max
-                    } );
-                }
-            }
-            Collections.sort(a, new Mounts());
-
-            int n = Synt.declare(rd.get(Cnst.RN_KEY +"-"+ et.getKey()), t);
-            if (n > 0 && n < a.size()) {
-                a = a.subList (0, n );
-            }
-
-            cnts.put(et.getKey(), a );
-        }
-
-        return cnts;
-    }
-
-    private int amount( Map rd, IndexSearcher finder,
-            Map<String, Map<Range , Ratio > > counts,
-            Map<String, Set<Range         > > countx) throws HongsException {
-        int t = 0;
-
-        try {
-            Query q = that.padQry(rd);
-
-            if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
-                CoreLogger.debug("StatisHandle.amount: "+q.toString());
-            }
-
-            if (counts.isEmpty()) return finder.count(q);
-
-            StatisGrader.Field[] f = getGraderFields (counts.keySet(), rd);
-            StatisGrader.Collec  c = new StatisGrader.Collec(new StatisGrader.Amount(counts, countx), f);
-
-            finder.search(q, c);
-
-            t = (int) c.countTotals ( );
-        } catch (IOException e) {
-            throw new HongsException(e);
-        }
-
-        return t;
+    public StatisHandle field(Field... fields) {
+        this.fields = fields;
+        return this;
     }
 
     /**
-     * 聚合统计
-     * @param rd
+     * 限定条件
+     * @param query
      * @return
-     * @throws HongsException
      */
-    public List<Map> assort (Map rd) throws HongsException {
-        Set<String> rb = Synt.toTerms(rd.get(Cnst.RB_KEY));
-        if (rb == null || rb.isEmpty()) {
-            throw new NullPointerException("Assort fields required.");
-        }
-        Fields fs = getGatherFields(rb, rd);
-        if (fs == null || fs.isEmpty()) {
-            throw new NullPointerException("Assort fields required!");
-        }
-
-        // 查询
-        List<Map> list;
-        try {
-            Query q = that.padQry(rd);
-
-            if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
-                CoreLogger.debug("StatisHandle.assort: " + q.toString());
-            }
-
-            list = new StatisGather( that.getFinder() )
-                .group(fs.dimans)
-                .count(fs.indics)
-                .where(q)
-                .fetch( );
-        } catch ( IOException e ) {
-            throw new HongsException(e);
-        }
-
-        Set<String> ob = Synt.toTerms(rd.get(Cnst.OB_KEY));
-        if (ob == null || ob.isEmpty()) {
-            return  list ;
-        }
-
-        // 排序
-        String[] sb = ob.toArray(new String[ob.size()]);
-        Orders sort = new Orders( sb );
-        Collections . sort(list, sort);
-
-        return list ;
+    public StatisHandle where(Query    query ) {
+        this.query  = query ;
+        return this;
     }
 
     /**
-     * 聚合统计(分页)
-     * @param rd
-     * @param rn 条数
-     * @param pn 页码
-     * @return
+     * 查询数据
+     * @param fx
+     * @throws IOException
      */
-    public Map assort (Map rd, int rn, int pn) throws HongsException {
-        List list = assort ( rd );
-
-        Map  page = new HashMap();
-        Map  data = new HashMap();
-
-        data.put( "list" , list );
-        data.put( "page" , page );
-        page.put(Cnst.RN_KEY, rn);
-        page.put(Cnst.PN_KEY, pn);
-
-        int rc = list.size();
-        if (rc == 0) {
-            page.put("count", 0 );
-            page.put("pages", 0 );
-            page.put("state", 0 );
-        } else
-        if (rn <= 0) { // rn 为 0 不要分页只要列表
-            data.remove( "page" );
-        } else
-        if (pn <= 0) { // pn 为 0 不要列表只要分页
-            data.remove( "list" );
-
-            int p = (int) Math.ceil(((double) rc) / ((double) rn));
-            page.put("count", rc);
-            page.put("pages", p );
-            page.put("state", 1 );
-        } else
-        {
-            int p = (int) Math.ceil(((double) rc) / ((double) rn));
-            page.put("count", rc);
-            page.put("pages", p );
-
-            int b = rn * (pn - 1);
-            int d = rn +  b ;
-            if (d > rc) { // 数量不够, 取到最后
-                d = rc;
+    public void search( Consumer<Field[]> fx )
+    throws IOException {
+        finder. search( query , new Fetch(fields) {
+            @Override
+            public void collect(int id)
+            throws IOException {
+                super.collect(id);
+                fx.accept(fields);
             }
-            if (b > rc) { // 页码超出, 返回错误
-                page.put("state", 0 );
-            } else {
-                page.put("state", 1 );
-
-                // 截取列表
-                list = list.subList(b, d);
-                data . put ("list", list);
-            }
-        }
-
-        return  data ;
+        });
     }
 
-    private StatisGrader.Field[] getGraderFields(Set<String> names, Map rd) {
-        StatisGrader.Field[] fields = new StatisGrader.Field[names.size( )];
-        Map <String, Map   > items  = that.getFields();
-        Map <String, String> types  ;
+    /**
+     * 数据采集对象
+     * 可以重写 collect 采集数据
+     */
+    public static class Fetch implements Collector, LeafCollector {
 
-        try {
-            types = FormSet.getInstance().getEnum("__types__");
-        } catch (HongsException e) {
-            throw e.toExemption( );
-        }
+        protected final Field[] fields;
 
-        int i = 0;
-        for(String n : names) {
-            String f = n;
-            StatisGrader.TYPE g ;
-
-            Map c = items.get(f);
-            if (c == null) {
-                continue ;
-            }
-
-            String t = (String) c.get ("__type__");
-            Object k = (Object) c.get (  "type"  );
-
-            // 使用基准类型
-            if (types.containsKey(t)) {
-                   t = types.get (t);
-            }
-
-            if (Synt.declare(c.get("__repeated__"), false) == false) {
-                f = "#" + f;
-                if (null != t) switch(t) {
-                    case "number":
-                        if (   "int".equals(k)
-                        ||    "byte".equals(k)
-                        ||   "short".equals(k)) {
-                            g = StatisGrader.TYPE.INT;
-                        } else
-                        if (  "long".equals(k)) {
-                            g = StatisGrader.TYPE.LONG;
-                        } else
-                        if ( "float".equals(k)) {
-                            g = StatisGrader.TYPE.FLOAT;
-                        } else
-                        {
-                            g = StatisGrader.TYPE.DOUBLE;
-                        }
-                        break ;
-                    case "hidden":
-                    case  "enum" :
-                        if (   "int".equals(k)
-                        ||    "byte".equals(k)
-                        ||   "short".equals(k)) {
-                            g = StatisGrader.TYPE.INT;
-                        } else
-                        if (  "long".equals(k)) {
-                            g = StatisGrader.TYPE.LONG;
-                        } else
-                        if ( "float".equals(k)) {
-                            g = StatisGrader.TYPE.FLOAT;
-                        } else
-                        if ("double".equals(k)
-                        ||  "number".equals(k)) {
-                            g = StatisGrader.TYPE.DOUBLE;
-                        } else
-                        {
-                            g = StatisGrader.TYPE.STRING;
-                        }
-                        break ;
-                    case  "date" :
-                        g = StatisGrader.TYPE.LONG;
-                        break ;
-                    default:
-                        g = StatisGrader.TYPE.STRING;
-                } else {
-                        g = StatisGrader.TYPE.STRING;
-                }
-            } else {
-                f = "%" + f;
-                if (null != t) switch(t) {
-                    case "number":
-                        if (   "int".equals(k)
-                        ||    "byte".equals(k)
-                        ||   "short".equals(k)) {
-                            g = StatisGrader.TYPE.INTS;
-                        } else
-                        if (  "long".equals(k)) {
-                            g = StatisGrader.TYPE.LONGS;
-                        } else
-                        if ( "float".equals(k)) {
-                            g = StatisGrader.TYPE.FLOATS;
-                        } else
-                        {
-                            g = StatisGrader.TYPE.DOUBLES;
-                        }
-                        break ;
-                    case "hidden":
-                    case  "enum" :
-                        if (   "int".equals(k)
-                        ||    "byte".equals(k)
-                        ||   "short".equals(k)) {
-                            g = StatisGrader.TYPE.INTS;
-                        } else
-                        if (  "long".equals(k)) {
-                            g = StatisGrader.TYPE.LONGS;
-                        } else
-                        if ( "float".equals(k)) {
-                            g = StatisGrader.TYPE.FLOATS;
-                        } else
-                        if ("double".equals(k)
-                        ||  "number".equals(k)) {
-                            g = StatisGrader.TYPE.DOUBLES;
-                        } else
-                        {
-                            g = StatisGrader.TYPE.STRINGS;
-                        }
-                        break ;
-                    case  "date" :
-                        g = StatisGrader.TYPE.LONGS;
-                        break ;
-                    default:
-                        g = StatisGrader.TYPE.STRINGS;
-                } else {
-                        g = StatisGrader.TYPE.STRINGS;
-                }
-            }
-
-            fields[i++] = new StatisGrader.Field(g, f, n);
-        }
-
-        return fields ;
-    }
-
-    private Fields getGatherFields(Set<String> names, Map rd ) {
-        if (names == null) {
-            return   null;
-        }
-
-        List<StatisGather.Diman> dimans = new ArrayList();
-        List<StatisGather.Index> indics = new ArrayList();
-        Map <String, Map   > items = that.getFields();
-        Map <String, String> types ;
-
-        try {
-            types = FormSet.getInstance().getEnum("__types__");
-        } catch (HongsException e) {
-            throw e.toExemption( );
-        }
-
-        for(String n : names) {
-            String f = n;
-            String m = null ;
-            StatisGather.TYPE g ;
-
-            // 拆出统计方法
-            int j = n.indexOf  ('|');
-            if (j > -1) {
-                m = n.substring(1+j);
-                f = n.substring(0,j);
-
-                // 统计行数
-                if (m.equals("count")
-                &&  f.equals( "*" ) ) {
-                    f = Cnst.ID_KEY ;
-                }
-            }
-
-            Map c = items.get(f);
-            if (c == null) {
-                continue ;
-            }
-
-            String t = (String) c.get ("__type__");
-            Object k = (Object) c.get (  "type"  );
-
-            // 使用基准类型
-            if (types.containsKey(t)) {
-                   t = types.get (t);
-            }
-
-            if (Synt.declare(c.get("__repeated__"), false) == false) {
-                f = "#" + f;
-                if (null != t) switch(t) {
-                    case "number":
-                        if (   "int".equals(k)
-                        ||    "byte".equals(k)
-                        ||   "short".equals(k)) {
-                            g = StatisGather.TYPE.INT;
-                        } else
-                        if (  "long".equals(k)) {
-                            g = StatisGather.TYPE.LONG;
-                        } else
-                        if ( "float".equals(k)) {
-                            g = StatisGather.TYPE.FLOAT;
-                        } else
-                        {
-                            g = StatisGather.TYPE.DOUBLE;
-                        }
-                        break ;
-                    case "hidden":
-                    case  "enum" :
-                        if (   "int".equals(k)
-                        ||    "byte".equals(k)
-                        ||   "short".equals(k)) {
-                            g = StatisGather.TYPE.INT;
-                        } else
-                        if (  "long".equals(k)) {
-                            g = StatisGather.TYPE.LONG;
-                        } else
-                        if ( "float".equals(k)) {
-                            g = StatisGather.TYPE.FLOAT;
-                        } else
-                        if ("double".equals(k)
-                        ||  "number".equals(k)) {
-                            g = StatisGather.TYPE.DOUBLE;
-                        } else
-                        {
-                            g = StatisGather.TYPE.STRING;
-                        }
-                        break ;
-                    case  "date" :
-                        g = StatisGather.TYPE.LONG;
-                        break ;
-                    default:
-                        g = StatisGather.TYPE.STRING;
-                } else {
-                        g = StatisGather.TYPE.STRING;
-                }
-            } else {
-                f = "%" + f;
-                if (null != t) switch(t) {
-                    case "number":
-                        if (   "int".equals(k)
-                        ||    "byte".equals(k)
-                        ||   "short".equals(k)) {
-                            g = StatisGather.TYPE.INTS;
-                        } else
-                        if (  "long".equals(k)) {
-                            g = StatisGather.TYPE.LONGS;
-                        } else
-                        if ( "float".equals(k)) {
-                            g = StatisGather.TYPE.FLOATS;
-                        } else
-                        {
-                            g = StatisGather.TYPE.DOUBLES;
-                        }
-                        break ;
-                    case "hidden":
-                    case  "enum" :
-                        if (   "int".equals(k)
-                        ||    "byte".equals(k)
-                        ||   "short".equals(k)) {
-                            g = StatisGather.TYPE.INTS;
-                        } else
-                        if (  "long".equals(k)) {
-                            g = StatisGather.TYPE.LONGS;
-                        } else
-                        if ( "float".equals(k)) {
-                            g = StatisGather.TYPE.FLOATS;
-                        } else
-                        if ("double".equals(k)
-                        ||  "number".equals(k)) {
-                            g = StatisGather.TYPE.DOUBLES;
-                        } else
-                        {
-                            g = StatisGather.TYPE.STRINGS;
-                        }
-                        break ;
-                    case  "date" :
-                        g = StatisGather.TYPE.LONGS;
-                        break ;
-                    default:
-                        g = StatisGather.TYPE.STRINGS;
-                } else {
-                        g = StatisGather.TYPE.STRINGS;
-                }
-            }
-
-            Object o = getGatherField(g, f,n, m, rd);
-            if (o instanceof StatisGather.Index) {
-                indics.add( (StatisGather.Index) o );
-            } else {
-                dimans.add( (StatisGather.Diman) o );
-            }
-        }
-
-        return new Fields (
-            dimans.toArray(new StatisGather.Diman[dimans.size()]),
-            indics.toArray(new StatisGather.Index[indics.size()])
-        );
-    }
-
-    protected Object getGatherField(StatisGather.TYPE type, String field, String alias, String mode, Map rd) {
-        // 维度
-        if (null == mode) {
-            return new StatisGather.Datum(type, field, alias);
-        }
-
-        // 指标
-        switch (mode) {
-        case "range": {
-            /**
-             * 区间维度:
-             * 从请求数据中
-             * 提取区间列表
-             */
-            Set<String> rz = Dict.getValue (rd, Set.class, Cnst.IN_REL, alias);
-            if (null == rz ) rz = new LinkedHashSet();
-            String [  ] rs = rz . toArray(new String[rz.size()] );
-            return new StatisGather.Range(type, field, alias, rs);
-        }
-        case "first":
-            return new StatisGather.First(type, field, alias);
-        case "flock":
-            return new StatisGather.Flock(type, field, alias);
-        case "count":
-            return new StatisGather.Count(type, field, alias);
-        case "ratio":
-            return new StatisGather.Ratio(type, field, alias);
-        case "max"  :
-            return new StatisGather.Max  (type, field, alias);
-        case "min"  :
-            return new StatisGather.Min  (type, field, alias);
-        case "sum"  :
-            return new StatisGather.Sum  (type, field, alias);
-        }
-
-        throw new UnsupportedOperationException ("Unsupported field " + alias);
-    }
-
-    // jdk 1.7 加上这个后排序不会报错
-    static {
-        System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
-    }
-
-    private static class Fields {
-        public final  StatisGather.Diman[] dimans;
-        public final  StatisGather.Index[] indics;
-        public Fields(StatisGather.Diman[] dimans,
-                      StatisGather.Index[] indics) {
-            this.dimans = dimans;
-            this.indics = indics;
-        }
-
-        public boolean isEmpty() {
-            return dimans.length == 0
-                && indics.length == 0;
-        }
-    }
-
-    private static class Counts implements Comparator<Object[]> {
-        @Override
-        public int compare(Object[] o1, Object[] o2) {
-            long   cnt1 = (long)   o1[2];
-            long   cnt2 = (long)   o2[2];
-            if (cnt1 != cnt2) {
-                return  cnt1>cnt2 ? -1:1;
-            }
-
-            return 0;
-        }
-    }
-
-    private static class Mounts implements Comparator<Object[]> {
-        @Override
-        public int compare(Object[] o1, Object[] o2) {
-            long   cnt1 = (long)   o1[2];
-            long   cnt2 = (long)   o2[2];
-            if (cnt1 != cnt2) {
-                return  cnt1>cnt2 ? -1:1;
-            }
-
-            double sum1 = (double) o1[3];
-            double sum2 = (double) o2[3];
-            if (sum1 != sum2) {
-                return  sum1>sum2 ? -1:1;
-            }
-
-            return 0;
-        }
-    }
-
-    private static class Orders implements Comparator<Map> {
-        private final String [] fields;
-        private final boolean[] desces;
-
-        public Orders(String [] fields) {
+        public Fetch(Field... fields) {
             this.fields = fields;
-            this.desces = new boolean[fields.length];
+        }
 
-            // 整理出逆序表
-            for(int i = 0; i < fields.length; i ++ ) {
-                String fn = fields[i];
-                if (fn.startsWith("-")) {
-                    fields[i] = fn.substring(1);
-                    desces[i] = true ;
-                } else {
-                    desces[i] = false;
-                }
+        @Override
+        public LeafCollector getLeafCollector(LeafReaderContext c) throws IOException {
+            LeafReader r = c.reader();
+            for(Field field : fields) {
+                field.prepare(r);
+            }
+            return this;
+        }
+
+        @Override
+        public void collect(int i) throws IOException {
+            for(Field field : fields) {
+                field.collect(i);
             }
         }
 
         @Override
-        public int compare(Map m1, Map m2) {
-            for(int i = 0; i < fields.length; i ++ ) {
-                String fn = fields[i ];
-                Object v1 = m1.get(fn);
-                Object v2 = m2.get(fn);
-
-                int x  = compares (v1, v2);
-                if (x != 0) {
-                    return desces [i] ? 0 - x : x;
-                }
-            }
-
-            return  0;
+        public void setScorer(Scorer s) {
+            // 不需要打分
         }
 
-        private static int compares(Object v1, Object v2) {
-            // 空值总是最小
-            if (v1 == null) {
-                if (v2 == null) {
-                    return  0;
-                } else {
-                    return -1;
-                }
+        @Override
+        public boolean needsScores( ) {
+            return false;
+        }
+
+    }
+
+    /**
+     * 字段
+     */
+    public static class Field {
+
+        public final TYPE   type ;
+        public final String filed;
+        public final String alias;
+        public final Values values;
+
+        public Field(TYPE type, String field, String alias) {
+            this.type  = type ;
+            this.filed = field;
+            this.alias = alias;
+
+            switch (type) {
+                case INT:
+                case LONG:
+                case FLOAT:
+                case DOUBLE:
+                    values = new NumberValues(field, type);
+                    break;
+                case STRING:
+                    values = new StringValues(field);
+                    break;
+                case INTS:
+                case LONGS:
+                case FLOATS:
+                case DOUBLES:
+                    values = new NumberSetValues(field, type);
+                    break;
+                case STRINGS:
+                    values = new StringSetValues(field);
+                    break;
+                default:
+                    throw new UnsupportedOperationException("Unsupported field type");
+            }
+        }
+
+        public Object getDocValues() {
+            return values.getDocValues( );
+        }
+
+        public void prepare(LeafReader r) throws IOException {
+            values.prepare(r);
+        }
+
+        public void collect(    int    i) throws IOException {
+            values.collect(i);
+        }
+
+    }
+
+    /**
+     * 取值
+     * @param <T>
+     */
+    abstract public static class Values<T> implements Iterator<T>, Iterable<T> {
+
+      protected final String field;
+
+        public Values(String field) {
+            this.field = field;
+        }
+
+        @Override
+        public Iterator <T> iterator() {
+            return this;
+        }
+
+        public abstract Object getDocValues();
+
+        public abstract void prepare(LeafReader r) throws IOException;
+
+        public abstract void collect(    int    i) throws IOException;
+
+    }
+
+    /**
+     * 单一数字类型值
+     */
+    public static class NumberValues extends Values<Number> {
+
+        protected final TYPE type;
+        protected int   j  = NO_MORE_VALS;
+        protected NumericDocValues values = null;
+
+        public NumberValues(String field, TYPE type) {
+            super(field);
+            this.type = type;
+        }
+
+        @Override
+        public Object getDocValues() {
+            return values;
+        }
+
+        @Override
+        public void prepare(LeafReader r) throws IOException {
+            values = r.getNumericDocValues(field);
+        }
+
+        @Override
+        public void collect(int i) throws IOException {
+            if (values == null
+            ||  values.advanceExact(i) == false) {
+                j = NO_MORE_VALS;
             } else {
-                if (v2 == null) {
-                    return  1;
-                }
+                j = 0;
             }
-
-            // 能比较则比较
-            if (v1 instanceof Comparable
-            &&  v2 instanceof Comparable) {
-                int x  = ((Comparable)v1).compareTo((Comparable)v2);
-                if (x != 0) {
-                    return  x;
-                }
-            }
-
-            // 数组逐一比较
-            if (v1 instanceof  Object[]
-            &&  v2 instanceof  Object[] ) {
-                Object[] a1 = (Object[] ) v1;
-                Object[] a2 = (Object[] ) v2;
-                    int l  = Integer.min(a1.length, a2.length);
-                for(int i  = 0; i < l; i ++ ) {
-                    int x  =  compares  (a1 [ i ] , a2 [ i ] );
-                    if (x != 0) {
-                        return  x;
-                    }
-                }
-            }
-
-            return 0;
         }
+
+        @Override
+        public boolean hasNext() {
+            return j != NO_MORE_VALS;
+        }
+
+        @Override
+        public Number next() {
+            try {  j  = NO_MORE_VALS;
+                switch (type) {
+                    case DOUBLE:
+                        return NumericUtils.sortableLongToDouble(/***/ values.longValue());
+                    case FLOAT :
+                        return NumericUtils. sortableIntToFloat ((int) values.longValue());
+                    case INT:
+                        return (int) values.longValue();
+                    default :
+                        return /***/ values.longValue();
+                }
+            }
+            catch (IOException e) {
+                throw new HongsExemption(e);
+            }
+        }
+
+    }
+
+    /**
+     * 数字集合类型值
+     */
+    public static class NumberSetValues extends Values<Number> {
+
+        protected final TYPE type;
+        protected int   j  = NO_MORE_VALS;
+        protected SortedNumericDocValues values = null;
+
+        public NumberSetValues(String field, TYPE type) {
+            super(field);
+            this.type = type;
+        }
+
+        @Override
+        public Object getDocValues() {
+            return values;
+        }
+
+        @Override
+        public void prepare(LeafReader r) throws IOException {
+            values = r.getSortedNumericDocValues(field);
+        }
+
+        @Override
+        public void collect(int i) throws IOException {
+            if (values == null
+            ||  values.advanceExact(i) == false) {
+                j = NO_MORE_VALS;
+            } else {
+                j = 0;
+            }
+        }
+
+        @Override
+        public boolean hasNext() {
+            return j != NO_MORE_VALS && j < values.docValueCount();
+        }
+
+        @Override
+        public Number next() {
+            try {  j ++ ;
+                switch (type) {
+                    case DOUBLE:
+                        return NumericUtils.sortableLongToDouble(/***/ values.nextValue());
+                    case FLOAT :
+                        return NumericUtils. sortableIntToFloat ((int) values.nextValue());
+                    case INT:
+                        return (int) values.nextValue();
+                    default :
+                        return /***/ values.nextValue();
+                }
+            }
+            catch (IOException e) {
+                throw new HongsExemption(e);
+            }
+        }
+
+    }
+
+    /**
+     * 单一字串类型值
+     */
+    public static class StringValues extends Values<String> {
+
+        private SortedDocValues values = null;
+        private int j = NO_MORE_VALS;
+
+        public StringValues(String field) {
+            super(field);
+        }
+
+        @Override
+        public Object getDocValues() {
+            return values;
+        }
+
+        @Override
+        public void prepare(LeafReader r) throws IOException {
+            values = r.getSortedDocValues(field);
+        }
+
+        @Override
+        public void collect(int i) throws IOException {
+            if (values == null
+            ||  values.advanceExact(i) == false) {
+                j = NO_MORE_VALS;
+            } else {
+                j = 0;
+            }
+        }
+
+        @Override
+        public boolean hasNext() {
+            return j != NO_MORE_VALS;
+        }
+
+        @Override
+        public String next() {
+            try {  j  = NO_MORE_VALS;
+                return values.binaryValue().utf8ToString();
+            }
+            catch (IOException e) {
+                throw new HongsExemption(e);
+            }
+        }
+
+    }
+
+    /**
+     * 字串集合类型值
+     */
+    public static class StringSetValues extends Values<String> {
+
+        private SortedSetDocValues values = null;
+        private long j = NO_MORE_ORDS;
+
+        public StringSetValues(String field) {
+            super(field);
+        }
+
+        @Override
+        public Object getDocValues() {
+            return values;
+        }
+
+        @Override
+        public void prepare(LeafReader r) throws IOException {
+            values = r.getSortedSetDocValues(field);
+        }
+
+        @Override
+        public void collect(int i) throws IOException  {
+            if (values == null
+            ||  values.advanceExact(i) == false) {
+                j = NO_MORE_ORDS;
+            } else {
+                j = 0;
+            }
+        }
+
+        @Override
+        public boolean hasNext() {
+            return j != NO_MORE_ORDS;
+        }
+
+        @Override
+        public String next() {
+            try {  j  = values.nextOrd  ( );
+                return  values.lookupOrd(j).utf8ToString();
+            }
+            catch (IOException e) {
+                throw new HongsExemption(e);
+            }
+        }
+
     }
 
 }

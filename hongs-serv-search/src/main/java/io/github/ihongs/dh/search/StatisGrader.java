@@ -221,7 +221,7 @@ public class StatisGrader {
     /**
      * 数字区间
      */
-    public static class Range {
+    public static class Range implements Comparable {
         public double min = Double.NEGATIVE_INFINITY;
         public double max = Double.POSITIVE_INFINITY;
         public boolean le = true;
@@ -268,7 +268,7 @@ public class StatisGrader {
 
         @Override
         public int hashCode() {
-            return toString().hashCode();
+            return Double.valueOf(min + max).hashCode();
         }
 
         @Override
@@ -279,6 +279,20 @@ public class StatisGrader {
             Range  m = (Range ) o;
             return m.le  == le  && m.ge  == ge
                 && m.min == min && m.max == max;
+        }
+
+        @Override
+        public int compareTo(Object o) {
+            if (o instanceof Range) {
+                Range that =(Range) o;
+                if (this.min < that.min) {
+                    return -1;
+                }
+                if (this.max > that.max) {
+                    return  1;
+                }
+            }
+            return  0;
         }
 
         public boolean covers(Number n) {
@@ -310,7 +324,7 @@ public class StatisGrader {
     /**
      * 计算结果
      */
-    public static class Ratio {
+    public static class Ratio implements Comparable {
         public int    cnt = 0;
         public double sum = 0;
         public double min = Double.NEGATIVE_INFINITY;
@@ -329,6 +343,61 @@ public class StatisGrader {
             if (max < v || max == Double.POSITIVE_INFINITY) {
                 max = v;
             }
+        }
+
+        @Override
+        public String toString() {
+            return cnt+ "," +sum+ "," + min + "," + max;
+        }
+
+        @Override
+        public int hashCode() {
+            return Double.valueOf(sum + cnt).hashCode();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (! (o instanceof Ratio)) {
+                return false;
+            }
+            Ratio  m = (Ratio ) o;
+            return m.cnt == cnt && m.sum == sum
+                && m.min == min && m.max == max;
+        }
+
+        @Override
+        public int compareTo(Object o) {
+            if (o instanceof Ratio) {
+                Ratio that =(Ratio) o;
+                if (this.cnt < that.cnt) {
+                    return -1;
+                }
+                if (this.cnt > that.cnt) {
+                    return  1;
+                }
+
+                if (this.sum < that.sum) {
+                    return -1;
+                }
+                if (this.sum > that.sum) {
+                    return  1;
+                }
+
+                if (this.min < that.min) {
+                    return -1;
+                }
+                if (this.min > that.min) {
+                    return  1;
+                }
+
+                if (this.max < that.max) {
+                    return -1;
+                }
+                if (this.max > that.max) {
+                    return  1;
+                }
+            }
+            return 0;
         }
     }
 

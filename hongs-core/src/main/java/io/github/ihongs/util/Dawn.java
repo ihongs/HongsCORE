@@ -220,7 +220,7 @@ public final class Dawn
     else
     {
       sb.append('"');
-            Dawn.escape(sb, val.toString());
+         escape( sb , val.toString() );
       sb.append('"');
     }
 

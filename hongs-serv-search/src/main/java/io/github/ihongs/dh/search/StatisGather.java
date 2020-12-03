@@ -1,5 +1,8 @@
 package io.github.ihongs.dh.search;
 
+import io.github.ihongs.dh.search.StatisHandle.TYPE;
+import io.github.ihongs.dh.search.StatisHandle.Field;
+import io.github.ihongs.dh.search.StatisGrader.Range;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,8 +15,8 @@ import org.apache.lucene.index.LeafReader;
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.NumericDocValues;
 import org.apache.lucene.index.SortedDocValues;
-import org.apache.lucene.index.SortedNumericDocValues;
 import org.apache.lucene.index.SortedSetDocValues;
+import org.apache.lucene.index.SortedNumericDocValues;
 import org.apache.lucene.search.Collector;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.LeafCollector;
@@ -26,11 +29,6 @@ import org.apache.lucene.util.NumericUtils;
  * @author Hongs
  */
 public class StatisGather {
-
-    public static enum TYPE {
-        INT , LONG , FLOAT , DOUBLE , STRING , // 单数
-        INTS, LONGS, FLOATS, DOUBLES, STRINGS  // 复数
-    };
 
     private final IndexSearcher finder;
     private       Diman[] dimans;
@@ -57,9 +55,9 @@ public class StatisGather {
     }
 
     public List<Map> fetch() throws IOException {
-        Fetch  fetch = new Fetch(dimans, indics);
+        Flood  fetch = new Flood(dimans, indics);
         finder.search(query, fetch);
-        return fetch.fetchValues( );
+        return fetch . getResult( );
     }
 
     /**
@@ -89,14 +87,14 @@ public class StatisGather {
 
     }
 
-    private static class Fetch implements Collector, LeafCollector {
+    private static class Flood implements Collector, LeafCollector {
 
         private final Diman[] dimans;
         private final Index[] indics;
         private final Map <Group, Map> dict; // 分组字典
         private final List<       Map> list; // 结果列表
 
-        public Fetch (Diman[] dimans, Index[] indics) {
+        public Flood (Diman[] dimans, Index[] indics) {
             this.dimans = dimans;
             this.indics = indics;
             this.dict = new HashMap();
@@ -145,55 +143,17 @@ public class StatisGather {
         }
 
         @Override
-        public void setScorer(Scorer s) throws IOException {
-            // Nothing to do.
+        public void setScorer(Scorer s) {
+            // 不需要打分
         }
 
         @Override
-        public boolean needsScores() {
+        public boolean needsScores( ) {
             return false;
         }
 
-        public List<Map> fetchValues() {
+        public List<Map> getResult( ) {
             return list ;
-        }
-
-    }
-
-    abstract private static class Field {
-
-        protected final TYPE    type  ;
-        protected final String  field ;
-        protected final String  alias ;
-        protected       Object  values;
-
-        public Field(TYPE type, String field, String alias) {
-            this.type  =  type;
-            this.field = field;
-            this.alias = alias;
-        }
-
-        public void prepare(LeafReader r) throws IOException {
-            switch (type) {
-                case INT:
-                case LONG:
-                case FLOAT:
-                case DOUBLE:
-                    values = r.getNumericDocValues(field);
-                    break;
-                case STRING:
-                    values = r.getSortedDocValues (field);
-                    break;
-                case INTS:
-                case LONGS:
-                case FLOATS:
-                case DOUBLES:
-                    values = r.getSortedNumericDocValues(field);
-                    break;
-                case STRINGS:
-                    values = r.getSortedSetDocValues    (field);
-                    break;
-            }
         }
 
     }
@@ -207,14 +167,7 @@ public class StatisGather {
             super(type, field, alias);
         }
 
-        public Object collecs(int i) throws IOException {
-            if (values == null) {
-                return    null ;
-            }
-            return collect( i );
-        }
-
-        abstract public Object collect(int i) throws IOException;
+        abstract public Object collecs(int i) throws IOException;
 
     }
 
@@ -233,127 +186,13 @@ public class StatisGather {
         }
 
         @Override
-        public Object collect(int i) throws IOException {
-            Object v;
-            switch (type) {
-                case INT: {
-                    NumericDocValues numValues = ((NumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        v = null;
-                        break;
-                    }
-                    v = (int ) numValues.longValue();
-                    break;
-                }
-                case LONG: {
-                    NumericDocValues numValues = ((NumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        v = null;
-                        break;
-                    }
-                    v = (long) numValues.longValue();
-                    break;
-                }
-                case FLOAT: {
-                    NumericDocValues numValues = ((NumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        v = null;
-                        break;
-                    }
-                    v = NumericUtils. sortableIntToFloat ((int ) numValues.longValue());
-                    break;
-                }
-                case DOUBLE: {
-                    NumericDocValues numValues = ((NumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        v = null;
-                        break;
-                    }
-                    v = NumericUtils.sortableLongToDouble((long) numValues.longValue());
-                    break;
-                }
-                case STRING: {
-                    SortedDocValues strValues = ((SortedDocValues) values);
-                    if (! strValues.advanceExact(i)) {
-                        v = null;
-                        break;
-                    }
-                    v = strValues.binaryValue().utf8ToString();
-                    break;
-                }
-                // 分组字段不支持多个值
-                /*
-                case INTS: {
-                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        v = null;
-                        break;
-                    }
-                    int [] a = new int [numValues.docValueCount()];
-                    for (int j = 0; j < a.length; j ++) {
-                        a[j] = (int ) numValues.nextValue();
-                    }
-                    v = a;
-                    break;
-                }
-                case LONGS: {
-                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        v = null;
-                        break;
-                    }
-                    long[] a = new long[numValues.docValueCount()];
-                    for (int j = 0; j < a.length; j ++) {
-                        a[j] = (long) numValues.nextValue();
-                    }
-                    v = a;
-                    break;
-                }
-                case FLOATS: {
-                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        v = null;
-                        break;
-                    }
-                    float[] a = new float[numValues.docValueCount()];
-                    for (int j = 0; j < a.length; j ++) {
-                        a[j] = NumericUtils. sortableIntToFloat ((int ) numValues.nextValue());
-                    }
-                    v = a;
-                    break;
-                }
-                case DOUBLES: {
-                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        v = null;
-                        break;
-                    }
-                    double[] a = new double[numValues.docValueCount()];
-                    for (int j = 0; j < a.length; j ++) {
-                        a[j] = NumericUtils.sortableLongToDouble((long) numValues.nextValue());
-                    }
-                    v = a;
-                    break;
-                }
-                case STRINGS: {
-                    SortedSetDocValues strValues = ((SortedSetDocValues) values);
-                    if (! strValues.advanceExact(i)) {
-                        v = null;
-                        break;
-                    }
-                    List<String> l = new LinkedList(  );
-                    long    k ;
-                    while ((k = strValues.nextOrd()) != SortedSetDocValues.NO_MORE_ORDS) {
-                        l.add(strValues.lookupOrd(k).utf8ToString());
-                    }
-                    v = l.toArray(new String[l.size()]);
-                    break;
-                }
-                */
-                default:
-                    v = null;
+        public Object collecs(int i) throws IOException {
+                collect (i);
+            if ( ! values.hasNext()) {
+                return null;
             }
-            return  v ;
+
+            return values.next();
         }
 
     }
@@ -361,26 +200,11 @@ public class StatisGather {
     /**
      * 区间取值
      */
-    public static class Range extends Diman {
+    public static class Scope extends Diman {
 
-        private final StatisGrader.Range[] ranges;
+        private final Range[] ranges;
 
-        public Range(TYPE type, String field, String alias, String... ranges) {
-            super(type, field, alias);
-
-            // 仅支持单一数值字段
-            if (type.ordinal() > TYPE.DOUBLE.ordinal()) {
-                throw new UnsupportedOperationException("Only supports single digit field for " + alias);
-            }
-
-            // 区间字串转区间对象
-                this.ranges = new StatisGrader.Range[ranges.length];
-            for(int i = 0 ; i < ranges.length ; i ++) {
-                this.ranges[i] = new StatisGrader.Range (ranges[i]);
-            }
-        }
-
-        public Range(TYPE type, String field, String alias, StatisGrader.Range... ranges) {
+        public Scope(TYPE type, String field, String alias, Range ... ranges) {
             super(type, field, alias);
 
             // 仅支持单一数值字段
@@ -391,55 +215,44 @@ public class StatisGather {
             this.ranges = ranges;
         }
 
-        @Override
-        public Object collect(int i) throws IOException {
-            Number v;
-            switch (type) {
-                case INT: {
-                    NumericDocValues numValues = ((NumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        return null;
-                    }
-                    v = (int ) numValues.longValue();
-                    break;
-                }
-                case LONG: {
-                    NumericDocValues numValues = ((NumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        return null;
-                    }
-                    v = (long) numValues.longValue();
-                    break;
-                }
-                case FLOAT: {
-                    NumericDocValues numValues = ((NumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        return null;
-                    }
-                    v = NumericUtils. sortableIntToFloat ((int ) numValues.longValue());
-                    break;
-                }
-                case DOUBLE: {
-                    NumericDocValues numValues = ((NumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        return null;
-                    }
-                    v = NumericUtils.sortableLongToDouble((long) numValues.longValue());
-                    break;
-                }
-                default:
-                    return null;
+        public Scope(TYPE type, String field, String alias, String... ranges) {
+            super(type, field, alias);
+
+            // 仅支持单一数值字段
+            if (type.ordinal() > TYPE.DOUBLE.ordinal()) {
+                throw new UnsupportedOperationException("Only supports single digit field for " + alias);
             }
-            if (ranges.length  !=  0 )
-            for(StatisGrader.Range range : ranges) {
-                if ( ! range.covers(v) ) {
+
+            // 区间字串转区间对象
+                this.ranges = new Range[ranges.length];
+            for(int i = 0 ; i < ranges.length ; i ++) {
+                this.ranges[i] = new Range (ranges[i]);
+            }
+        }
+
+        @Override
+        public Object collecs(int i) throws IOException {
+                collect (i);
+            if (! values.hasNext() ) {
+                return null;
+            }
+
+            Number item = ( Number ) values.next();
+
+            // 未指定区间则返回原始值
+            if (ranges.length == 0 ) {
+                return item;
+            }
+
+            // 逐一检查判断所处的区间
+            for(Range range : ranges ) {
+                if (! range.covers(item) ) {
                     continue;
                 }
                 return range.toString( );
-            } else {
-                return v; // 未指定区间则返回原始值
             }
-            return  null;
+
+            return null;
         }
 
     }
@@ -455,10 +268,12 @@ public class StatisGather {
         }
 
         public Object collecs(int i, Object data) throws IOException {
-            if (values == null) {
-                return    data;
+                collect (i);
+            if (! values.hasNext() ) {
+                return data;
             }
-            return collect(i, (V) data);
+
+            return collect (i, (V) data);
         }
 
         abstract public Object collect(int i , V v) throws IOException;
@@ -475,96 +290,11 @@ public class StatisGather {
 
         @Override
         public Object collect(int i, Object v) throws IOException {
-            if (v != null) {
-                return v;
+            if (null != v) {
+                return  v;
             }
-            switch (type) {
-                case INT: {
-                    NumericDocValues numValues = ((NumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
-                    v = (int ) numValues.longValue();
-                    break;
-                }
-                case LONG: {
-                    NumericDocValues numValues = ((NumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
-                    v = (long) numValues.longValue();
-                    break;
-                }
-                case FLOAT: {
-                    NumericDocValues numValues = ((NumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
-                    v = NumericUtils. sortableIntToFloat ((int ) numValues.longValue());
-                    break;
-                }
-                case DOUBLE: {
-                    NumericDocValues numValues = ((NumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
-                    v = NumericUtils.sortableLongToDouble((long) numValues.longValue());
-                    break;
-                }
-                case STRING: {
-                    SortedDocValues strValues = ((SortedDocValues) values);
-                    if (! strValues.advanceExact(i)) {
-                        break;
-                    }
-                    v = strValues.binaryValue().utf8ToString();
-                    break;
-                }
-                case INTS: {
-                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
-                    v = (int ) numValues.nextValue();
-                    break;
-                }
-                case LONGS: {
-                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
-                    v = (long) numValues.nextValue();
-                    break;
-                }
-                case FLOATS: {
-                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
-                    v = NumericUtils. sortableIntToFloat ((int ) numValues.nextValue() );
-                    break;
-                }
-                case DOUBLES: {
-                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
-                    v = NumericUtils.sortableLongToDouble((long) numValues.nextValue() );
-                    break;
-                }
-                case STRINGS: {
-                    SortedSetDocValues strValues = ((SortedSetDocValues) values);
-                    if (! strValues.advanceExact(i)) {
-                        break;
-                    }
-                    long    k;
-                    while ((k = strValues.nextOrd()) != SortedSetDocValues.NO_MORE_ORDS) {
-                        v = strValues.lookupOrd(k).utf8ToString();
-                        break;
-                    }
-                    break;
-                }
-            }
-            return  v ;
+
+            return values.next();
         }
 
     }
@@ -572,128 +302,21 @@ public class StatisGather {
     /**
      * 取所有值
      */
-    public static class Flock extends Index {
+    public static class Flock extends Index<Set> {
 
         public Flock(TYPE type, String field, String alias) {
             super(type, field, alias);
         }
 
         @Override
-        public Object collect(int i, Object v) throws IOException {
-            switch (type) {
-                case INT: {
-                    NumericDocValues numValues = ((NumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
-                    v = (int ) numValues.longValue();
-                    break;
-                }
-                case LONG: {
-                    NumericDocValues numValues = ((NumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
-                    v = (long) numValues.longValue();
-                    break;
-                }
-                case FLOAT: {
-                    NumericDocValues numValues = ((NumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
-                    v = NumericUtils. sortableIntToFloat ((int ) numValues.longValue());
-                    break;
-                }
-                case DOUBLE: {
-                    NumericDocValues numValues = ((NumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
-                    v = NumericUtils.sortableLongToDouble((long) numValues.longValue());
-                    break;
-                }
-                case STRING: {
-                    SortedDocValues strValues = ((SortedDocValues) values);
-                    if (! strValues.advanceExact(i)) {
-                        break;
-                    }
-                    v = strValues.binaryValue().utf8ToString();
-                    break;
-                }
-                case INTS: {
-                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
-                    Set a = (Set ) v;
-                    if (a == null) {
-                        v = a = new LinkedHashSet();
-                    }
-                    for(int j = 0; j < numValues.docValueCount(); j ++) {
-                        a.add((int ) numValues.nextValue());
-                    }
-                    break;
-                }
-                case LONGS: {
-                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
-                    Set a = (Set ) v;
-                    if (a == null) {
-                        v = a = new LinkedHashSet();
-                    }
-                    for(int j = 0; j < numValues.docValueCount(); j ++) {
-                        a.add((long) numValues.nextValue());
-                    }
-                    break;
-                }
-                case FLOATS: {
-                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
-                    Set a = (Set ) v;
-                    if (a == null) {
-                        v = a = new LinkedHashSet();
-                    }
-                    for(int j = 0; j < numValues.docValueCount(); j ++) {
-                        a.add(NumericUtils. sortableIntToFloat ( (int ) numValues.nextValue() ));
-                    }
-                    break;
-                }
-                case DOUBLES: {
-                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
-                    Set a = (Set ) v;
-                    if (a == null) {
-                        v = a = new LinkedHashSet();
-                    }
-                    for(int j = 0; j < numValues.docValueCount(); j ++) {
-                        a.add(NumericUtils.sortableLongToDouble( (long) numValues.nextValue() ));
-                    }
-                    break;
-                }
-                case STRINGS: {
-                    SortedSetDocValues strValues = ((SortedSetDocValues) values);
-                    if (! strValues.advanceExact(i)) {
-                        break;
-                    }
-                    Set a = (Set ) v;
-                    if (a == null) {
-                        v = a = new LinkedHashSet();
-                    }
-                    long    k;
-                    while ((k = strValues.nextOrd()) != SortedSetDocValues.NO_MORE_ORDS) {
-                        a.add(strValues.lookupOrd(k).utf8ToString());
-                    }
-                    break;
-                }
+        public Object collect(int i, Set v) throws IOException {
+            if (v == null) {
+                v =  new LinkedHashSet();
             }
-            return  v ;
+            for(Object o : values) {
+                v.add( o );
+            }
+            return v;
         }
 
     }
@@ -717,18 +340,18 @@ public class StatisGather {
                 case LONG:
                 case FLOAT:
                 case DOUBLE: {
-                    NumericDocValues numValues = ((NumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
+                //  NumericDocValues numValues = ((NumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
                     n += 1;
                     break;
                 }
                 case STRING: {
-                    SortedDocValues  strValues = ((SortedDocValues ) values);
-                    if (! strValues.advanceExact(i)) {
-                        break;
-                    }
+                //  SortedDocValues  strValues = ((SortedDocValues ) getDocValues());
+                //  if (!strValues.advanceExact(i)) {
+                //      break;
+                //  }
                     n += 1L;
                     break;
                 }
@@ -736,18 +359,18 @@ public class StatisGather {
                 case LONGS:
                 case FLOATS:
                 case DOUBLES: {
-                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
                     n += numValues.docValueCount();
                     break;
                 }
                 case STRINGS: {
-                    SortedSetDocValues     strValues = ((SortedSetDocValues    ) values);
-                    if (! strValues.advanceExact(i)) {
-                        break;
-                    }
+                    SortedSetDocValues     strValues = ((SortedSetDocValues    ) getDocValues());
+                //  if (!strValues.advanceExact(i)) {
+                //      break;
+                //  }
                     while (strValues.nextOrd() != SortedSetDocValues.NO_MORE_ORDS) {
                         n += 1L;
                     }
@@ -777,10 +400,10 @@ public class StatisGather {
         public Object collect(int i, Number[] n) throws IOException {
             switch (type) {
                 case INT: {
-                    NumericDocValues numValues = ((NumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
+                    NumericDocValues numValues = ((NumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
                     int  x =(int ) numValues.longValue();
                     if (n != null) {
                         n  = new Number[]{1L + n[0].longValue() ,
@@ -793,10 +416,10 @@ public class StatisGather {
                     break;
                 }
                 case LONG: {
-                    NumericDocValues numValues = ((NumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
+                    NumericDocValues numValues = ((NumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
                     long x =(long) numValues.longValue();
                     if (n != null) {
                         n  = new Number[]{1L + n[0].longValue() ,
@@ -809,10 +432,10 @@ public class StatisGather {
                     break;
                 }
                 case FLOAT: {
-                    NumericDocValues numValues = ((NumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
+                    NumericDocValues numValues = ((NumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
                     float  x = NumericUtils. sortableIntToFloat ((int ) numValues.longValue());
                     if (n != null) {
                         n  = new Number[]{1L + n[0].longValue() ,
@@ -825,10 +448,10 @@ public class StatisGather {
                     break;
                 }
                 case DOUBLE: {
-                    NumericDocValues numValues = ((NumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
+                    NumericDocValues numValues = ((NumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
                     double x = NumericUtils.sortableLongToDouble((long) numValues.longValue());
                     if (n != null) {
                         n  = new Number[]{1L + n[0].longValue() ,
@@ -841,10 +464,10 @@ public class StatisGather {
                     break;
                 }
                 case INTS: {
-                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
                     int  x = (int ) numValues.nextValue();
                     int  min = x ;
                     int  max = x ;
@@ -867,10 +490,10 @@ public class StatisGather {
                     break;
                 }
                 case LONGS: {
-                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
                     long x = (long) numValues.nextValue();
                     long min = x ;
                     long max = x ;
@@ -893,10 +516,10 @@ public class StatisGather {
                     break;
                 }
                 case FLOATS: {
-                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
                     float  x = NumericUtils. sortableIntToFloat ((int ) numValues.nextValue());
                     float  min = x ;
                     float  max = x ;
@@ -919,10 +542,10 @@ public class StatisGather {
                     break;
                 }
                 case DOUBLES: {
-                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
                     double x = NumericUtils.sortableLongToDouble((long) numValues.nextValue());
                     double min =  x ;
                     double max =  x ;
@@ -968,10 +591,10 @@ public class StatisGather {
         public Object collect(int i, Number n) throws IOException {
             switch (type) {
                 case INT: {
-                    NumericDocValues numValues = ((NumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
+                    NumericDocValues numValues = ((NumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
                     long x = numValues.longValue( );
                     if (n != null) {
                         n  = Long.sum(x, n.longValue());
@@ -981,10 +604,10 @@ public class StatisGather {
                     break;
                 }
                 case LONG: {
-                    NumericDocValues numValues = ((NumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
+                    NumericDocValues numValues = ((NumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
                     long x = numValues.longValue( );
                     if (n != null) {
                         n  = Long.sum(x, n.longValue());
@@ -994,10 +617,10 @@ public class StatisGather {
                     break;
                 }
                 case FLOAT: {
-                    NumericDocValues numValues = ((NumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
+                    NumericDocValues numValues = ((NumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
                     double x = NumericUtils. sortableIntToFloat ((int ) numValues.longValue());
                     if (n != null) {
                         n  = Double.sum(x, n.doubleValue());
@@ -1007,10 +630,10 @@ public class StatisGather {
                     break;
                 }
                 case DOUBLE: {
-                    NumericDocValues numValues = ((NumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
+                    NumericDocValues numValues = ((NumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
                     double x = NumericUtils.sortableLongToDouble((long) numValues.longValue());
                     if (n != null) {
                         n  = Double.sum(x, n.doubleValue());
@@ -1020,10 +643,10 @@ public class StatisGather {
                     break;
                 }
                 case INTS: {
-                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
                     long x = 0L;
                     int  j = 0 ;
                     for( ; j < numValues.docValueCount(); j ++) {
@@ -1033,10 +656,10 @@ public class StatisGather {
                     break;
                 }
                 case LONGS: {
-                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
                     long x = 0L;
                     int  j = 0 ;
                     for( ; j < numValues.docValueCount(); j ++) {
@@ -1046,10 +669,10 @@ public class StatisGather {
                     break;
                 }
                 case FLOATS: {
-                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
                     double x = 0D;
                     int    j = 0 ;
                     for( ; j < numValues.docValueCount(); j ++) {
@@ -1059,10 +682,10 @@ public class StatisGather {
                     break;
                 }
                 case DOUBLES: {
-                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
                     double x = 0D;
                     int    j = 0 ;
                     for( ; j < numValues.docValueCount(); j ++) {
@@ -1095,10 +718,10 @@ public class StatisGather {
         public Object collect(int i, Number n) throws IOException {
             switch (type) {
                 case INT: {
-                    NumericDocValues numValues = ((NumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
+                    NumericDocValues numValues = ((NumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
                     int  x =(int ) numValues.longValue( );
                     if (n != null) {
                         n  = Int . max(x , n. intValue());
@@ -1108,10 +731,10 @@ public class StatisGather {
                     break;
                 }
                 case LONG: {
-                    NumericDocValues numValues = ((NumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
+                    NumericDocValues numValues = ((NumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
                     long x =(long) numValues.longValue( );
                     if (n != null) {
                         n  = Long. max(x , n.longValue());
@@ -1121,10 +744,10 @@ public class StatisGather {
                     break;
                 }
                 case FLOAT: {
-                    NumericDocValues numValues = ((NumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
+                    NumericDocValues numValues = ((NumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
                     float  x = NumericUtils. sortableIntToFloat ((int ) numValues.longValue());
                     if (n != null) {
                         n  = Float .max(x,n. floatValue());
@@ -1134,10 +757,10 @@ public class StatisGather {
                     break;
                 }
                 case DOUBLE: {
-                    NumericDocValues numValues = ((NumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
+                    NumericDocValues numValues = ((NumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
                     double x = NumericUtils.sortableLongToDouble((long) numValues.longValue());
                     if (n != null) {
                         n  = Double.max(x,n.doubleValue());
@@ -1147,10 +770,10 @@ public class StatisGather {
                     break;
                 }
                 case INTS: {
-                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
                     int  x =(int ) numValues.nextValue();
                     int  j = 1;
                     for( ; j < numValues.docValueCount(); j ++) {
@@ -1160,10 +783,10 @@ public class StatisGather {
                     break;
                 }
                 case LONGS: {
-                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
                     long x =(long) numValues.nextValue();
                     int  j = 1;
                     for( ; j < numValues.docValueCount(); j ++) {
@@ -1173,10 +796,10 @@ public class StatisGather {
                     break;
                 }
                 case FLOATS: {
-                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
                     float  x = NumericUtils. sortableIntToFloat ((int ) numValues.nextValue());
                     int    j = 1;
                     for( ; j < numValues.docValueCount(); j ++) {
@@ -1186,10 +809,10 @@ public class StatisGather {
                     break;
                 }
                 case DOUBLES: {
-                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
                     double x = NumericUtils.sortableLongToDouble((long) numValues.nextValue());
                     int    j = 1;
                     for( ; j < numValues.docValueCount(); j ++) {
@@ -1222,10 +845,10 @@ public class StatisGather {
         public Object collect(int i, Number n) throws IOException {
             switch (type) {
                 case INT: {
-                    NumericDocValues numValues = ((NumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
+                    NumericDocValues numValues = ((NumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
                     int  x =(int ) numValues.longValue( );
                     if (n != null) {
                         n  = Int . min(x , n. intValue());
@@ -1235,10 +858,10 @@ public class StatisGather {
                     break;
                 }
                 case LONG: {
-                    NumericDocValues numValues = ((NumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
+                    NumericDocValues numValues = ((NumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
                     long x =(long) numValues.longValue( );
                     if (n != null) {
                         n  = Long. min(x , n.longValue());
@@ -1248,10 +871,10 @@ public class StatisGather {
                     break;
                 }
                 case FLOAT: {
-                    NumericDocValues numValues = ((NumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
+                    NumericDocValues numValues = ((NumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
                     float  x = NumericUtils. sortableIntToFloat ((int ) numValues.longValue());
                     if (n != null) {
                         n  = Float .min(x,n. floatValue());
@@ -1261,10 +884,10 @@ public class StatisGather {
                     break;
                 }
                 case DOUBLE: {
-                    NumericDocValues numValues = ((NumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
+                    NumericDocValues numValues = ((NumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
                     double x = NumericUtils.sortableLongToDouble((long) numValues.longValue());
                     if (n != null) {
                         n  = Double.min(x,n.doubleValue());
@@ -1274,10 +897,10 @@ public class StatisGather {
                     break;
                 }
                 case INTS: {
-                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
                     int  x =(int ) numValues.nextValue();
                     int  j = 1;
                     for( ; j < numValues.docValueCount(); j ++) {
@@ -1287,10 +910,10 @@ public class StatisGather {
                     break;
                 }
                 case LONGS: {
-                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
                     long x =(long) numValues.nextValue();
                     int  j = 1;
                     for( ; j < numValues.docValueCount(); j ++) {
@@ -1300,10 +923,10 @@ public class StatisGather {
                     break;
                 }
                 case FLOATS: {
-                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
                     float  x = NumericUtils. sortableIntToFloat ((int ) numValues.nextValue());
                     int    j = 1;
                     for( ; j < numValues.docValueCount(); j ++) {
@@ -1313,10 +936,10 @@ public class StatisGather {
                     break;
                 }
                 case DOUBLES: {
-                    SortedNumericDocValues numValues = ((SortedNumericDocValues) values);
-                    if (! numValues.advanceExact(i)) {
-                        break;
-                    }
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
                     double x = NumericUtils.sortableLongToDouble((long) numValues.nextValue());
                     int    j = 1;
                     for( ; j < numValues.docValueCount(); j ++) {

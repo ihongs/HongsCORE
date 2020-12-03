@@ -1,36 +1,21 @@
 package io.github.ihongs.dh.search;
 
+import io.github.ihongs.dh.search.StatisHandle.Fetch;
+import io.github.ihongs.dh.search.StatisHandle.Field;
 import io.github.ihongs.util.Synt;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.index.SortedDocValues;
-import org.apache.lucene.index.SortedNumericDocValues;
-import org.apache.lucene.index.SortedSetDocValues;
-import org.apache.lucene.search.Collector;
 import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.LeafCollector;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.util.NumericUtils;
 
 /**
  * 分类统计工具
  * @author Kevin
  */
 public class StatisGrader {
-
-    public static enum TYPE {
-        INT , LONG , FLOAT , DOUBLE , STRING , // 单数
-        INTS, LONGS, FLOATS, DOUBLES, STRINGS  // 复数
-    };
 
     private final IndexSearcher finder;
     private       Field[] fields;
@@ -61,15 +46,6 @@ public class StatisGrader {
     }
 
     /**
-     * 一般查询
-     * @param coller
-     * @throws IOException
-     */
-    public void search(Coller coller) throws IOException {
-        finder. search(query, new Collec(coller, fields));
-    }
-
-    /**
      * 分类统计
      * @return
      * @throws IOException
@@ -80,8 +56,8 @@ public class StatisGrader {
         for(Field field : fields) {
             counts.put(field.alias, new HashMap());
         }
-        search(new Acount(counts, countx));
-        return counts;
+        finder.search (query, new Acount(fields, counts, countx));
+        return counts ;
     }
 
     /**
@@ -94,245 +70,43 @@ public class StatisGrader {
         for(Field field : fields) {
             counts.put(field.alias, new HashMap());
         }
-        search(new Amount(counts, countx));
-        return counts;
+        finder.search (query, new Amount(fields, counts, countx));
+        return counts ;
     }
 
-    /**
-     * 字段
-     */
-    public static class Field {
+    public static class Collec extends Fetch {
 
-        public final TYPE   type ;
-        public final String filed;
-        public final String alias;
+        private int count = 0;
 
-        public Field(TYPE type, String field, String alias) {
-            this.type  =  type;
-            this.filed = field;
-            this.alias = alias;
-        }
-
-        /**
-         * 获取当前字段的 DocValues
-         * 返回类型 SortedDocValues|SortedSetDocValues|NumericDocValues|SortedNumericDocValues
-         * @param r
-         * @return
-         * @throws IOException
-         */
-        public Object getDocValues(LeafReader r) throws IOException {
-            switch (type) {
-                case INT:
-                case LONG:
-                case FLOAT:
-                case DOUBLE:
-                    return r.getNumericDocValues(filed);
-                case STRING:
-                    return r.getSortedDocValues (filed);
-                case INTS:
-                case LONGS:
-                case FLOATS:
-                case DOUBLES:
-                    return r.getSortedNumericDocValues(filed);
-                case STRINGS:
-                    return r.getSortedSetDocValues    (filed);
-            }
-            return  null;
-        }
-
-    }
-
-    /**
-     * 采集器
-     */
-    public static class Collec implements Collector, LeafCollector {
-
-        protected final Coller   coller;
-        protected       Object[] values;
-        protected       Field [] fields;
-        private         long     total ;
-
-        public Collec(Coller coller, Field... fields) {
-            this.coller = coller;
-            this.fields = fields;
-            this.values = new Object[fields.length];
-
-            // 初始化
-            if (coller instanceof Collar) {
-              ((Collar ) coller ).collate ( fields);
-            }
+        public Collec(Field... fields) {
+            super(fields);
         }
 
         @Override
-        public LeafCollector getLeafCollector(LeafReaderContext lrc) throws IOException {
-            LeafReader r  = lrc.reader();
-            for (int i = 0; i < fields.length; i ++ ) {
-                values[i] = fields[i].getDocValues(r);
-            }
-            return this;
+        public void collect(int i) throws IOException {
+            super.collect(i);
+            count ++;
         }
 
-        @Override
-        public void collect(int doc) throws IOException {
-            total ++ ;
-
-            for (int i = 0; i < fields.length; i ++) {
-                Field  f = fields[i];
-                Object d = values[i];
-                if (d == null) {
-                    continue ;
-                }
-
-                switch(f.type) {
-                    case INT : {
-                        NumericDocValues b = (NumericDocValues) d;
-                        if (!b.advanceExact(doc)) {
-                            continue;
-                        }
-                        coller.collect(f , (int ) b.longValue());
-                        break;
-                    }
-                    case LONG: {
-                        NumericDocValues b = (NumericDocValues) d;
-                        if (!b.advanceExact(doc)) {
-                            continue;
-                        }
-                        coller.collect(f , (long) b.longValue());
-                        break;
-                    }
-                    case FLOAT: {
-                        NumericDocValues b = (NumericDocValues) d;
-                        if (!b.advanceExact(doc)) {
-                            continue;
-                        }
-                        coller.collect(f , NumericUtils. sortableIntToFloat ((int ) b.longValue()));
-                        break;
-                    }
-                    case DOUBLE: {
-                        NumericDocValues b = (NumericDocValues) d;
-                        if (!b.advanceExact(doc)) {
-                            continue;
-                        }
-                        coller.collect(f , NumericUtils.sortableLongToDouble((long) b.longValue()));
-                        break;
-                    }
-                    case STRING: {
-                        SortedDocValues  b = (SortedDocValues ) d;
-                        if (!b.advanceExact(doc)) {
-                            continue;
-                        }
-                        coller.collect(f , b.binaryValue().utf8ToString() );
-                        break;
-                    }
-                    case INTS : {
-                        SortedNumericDocValues b = (SortedNumericDocValues) d;
-                        if (!b.advanceExact(doc)) {
-                            continue;
-                        }
-                        Object[] v = new Object[b.docValueCount()];
-                        for( int j = 0 ; j < v.length ; j ++ ) {
-                            v[j] =(int ) b.nextValue();
-                        }
-                        coller.collect(f , v);
-                        break;
-                    }
-                    case LONGS: {
-                        SortedNumericDocValues b = (SortedNumericDocValues) d;
-                        if (!b.advanceExact(doc)) {
-                            continue;
-                        }
-                        Object[] v = new Object[b.docValueCount()];
-                        for( int j = 0 ; j < v.length ; j ++ ) {
-                            v[j] =(long) b.nextValue();
-                        }
-                        coller.collect(f , v);
-                        break;
-                    }
-                    case FLOATS: {
-                        SortedNumericDocValues b = (SortedNumericDocValues) d;
-                        if (!b.advanceExact(doc)) {
-                            continue;
-                        }
-                        Object[] v = new Object[b.docValueCount()];
-                        for( int j = 0 ; j < v.length ; j ++ ) {
-                            v[j] = NumericUtils. sortableIntToFloat ((int ) b.nextValue());
-                        }
-                        coller.collect(f , v);
-                        break;
-                    }
-                    case DOUBLES: {
-                        SortedNumericDocValues b = (SortedNumericDocValues) d;
-                        if (!b.advanceExact(doc)) {
-                            continue;
-                        }
-                        Object[] v = new Object[b.docValueCount()];
-                        for( int j = 0 ; j < v.length ; j ++ ) {
-                            v[j] = NumericUtils.sortableLongToDouble((long) b.nextValue());
-                        }
-                        coller.collect(f , v);
-                        break;
-                    }
-                    case STRINGS: {
-                        SortedSetDocValues b = (SortedSetDocValues) d;
-                        if (!b.advanceExact(doc)) {
-                            continue;
-                        }
-                        List<String> u;
-                        Object[]     v;
-                        long         j;
-                        u = new LinkedList( );
-                        while ((j = b.nextOrd()) != SortedSetDocValues.NO_MORE_ORDS) {
-                            u .add(b.lookupOrd(j).utf8ToString());
-                        }
-                        v = u .toArray( new String [ u.size() ] );
-                        coller.collect(f , v);
-                        break;
-                    }
-                }
-            }
+        public int count() {
+            return count ;
         }
 
-        @Override
-        public void setScorer(Scorer scorer) {
-            // 默认无需打分
-        }
-
-        @Override
-        public boolean needsScores() {
-            return false;
-        }
-
-        public long    countTotals() {
-            return total;
-        }
-
-    }
-
-    /**
-     * 预处理
-     */
-    public static interface Collar {
-        public void collate (Field... fields);
-    }
-
-    /**
-     * 处理器
-     */
-    public static interface Coller {
-        public void collect (Field field, Object... values);
     }
 
     /**
      * 分类统计处理器
      */
-    public static class Acount implements Coller {
+    public static class Acount extends Collec {
 
         private final Map<String, Map<Object, Long>> counts;
         private final Map<String, Set<Object      >> countx;
         private final Set<String                   > limits;
 
-        public Acount(Map<String, Map<Object, Long>> counts,
+        public Acount(Field[] fields,
+                      Map<String, Map<Object, Long>> counts,
                       Map<String, Set<Object      >> countx) {
+            super(fields);
             this.counts = counts;
             this.countx = countx;
             this.limits = new HashSet();
@@ -346,36 +120,42 @@ public class StatisGrader {
         }
 
         @Override
-        public void collect(Field f, Object... a) {
-            String k = f.alias;
-            Map<Object, Long> cntc = counts.get(k);
-            Set<Object      > cntx = countx.get(k);
+        public void collect(int i) throws IOException {
+            super.collect(i);
 
-            if (cntc == null) {
-                cntc  = new HashMap();
-                counts.put( k, cntc );
-            }
+            for(Field  f :  fields) {
+                String k = f.alias;
+                Map<Object, Long> cntc = counts.get(k);
+                Set<Object      > cntx = countx.get(k);
 
-            if (limits.contains( k )) {
-                for ( Object v : a  ) {
-                    if (cntx != null
-                    &&  cntx.contains   (v)) {
-                        continue;
-                    }
-                    if (cntc.containsKey(v)) {
-                        cntc.put(v, 1L + cntc.get(v));
-                    }
+                if (cntc == null) {
+                    cntc  = new HashMap();
+                    counts.put( k, cntc );
                 }
-            } else {
-                for ( Object v : a  ) {
-                    if (cntx != null
-                    &&  cntx.contains   (v)) {
-                        continue;
+
+                Iterable a = f.values;
+
+                if (limits.contains( k )) {
+                    for ( Object v : a  ) {
+                        if (cntx != null
+                        &&  cntx.contains   (v)) {
+                            continue;
+                        }
+                        if (cntc.containsKey(v)) {
+                            cntc.put(v, 1L + cntc.get(v));
+                        }
                     }
-                    if (cntc.containsKey(v)) {
-                        cntc.put(v, 1L + cntc.get(v));
-                    } else {
-                        cntc.put(v, 1L);
+                } else {
+                    for ( Object v : a  ) {
+                        if (cntx != null
+                        &&  cntx.contains   (v)) {
+                            continue;
+                        }
+                        if (cntc.containsKey(v)) {
+                            cntc.put(v, 1L + cntc.get(v));
+                        } else {
+                            cntc.put(v, 1L);
+                        }
                     }
                 }
             }
@@ -386,43 +166,51 @@ public class StatisGrader {
     /**
      * 数值计算处理器
      */
-    public static class Amount implements Coller {
+    public static class Amount extends Collec {
 
         private final Map<String, Map<Range, Ratio>> counts;
         private final Map<String, Set<Range       >> countx;
 
-        public Amount(Map<String, Map<Range, Ratio>> counts,
+        public Amount(Field[] fields,
+                      Map<String, Map<Range, Ratio>> counts,
                       Map<String, Set<Range       >> countx) {
+            super(fields);
             this.counts = counts;
             this.countx = countx;
         }
 
         @Override
-        public void collect(Field f, Object... a) {
-            String k = f.alias;
-            Map<Range, Ratio> cntc = counts.get(k);
-            Set<Range       > cntx = countx.get(k);
+        public void collect(int i) throws IOException {
+            super.collect(i);
 
-            if (cntc == null) {
-                cntc  = new HashMap();
-                counts.put( k, cntc );
-            }
+            for(Field  f :  fields) {
+                String k = f.alias;
+                Map<Range, Ratio> cntc = counts.get(k);
+                Set<Range       > cntx = countx.get(k);
 
-            F : for(Object o :  a  ) {
-                    Number v = (Number) o;
-                if (  null  != cntx)
-                for(Range  w : cntx) {
-                    if (w.covers(v)) {
-                        continue F ;
-                    }
+                if (cntc == null) {
+                    cntc  = new HashMap();
+                    counts.put( k, cntc );
                 }
 
-                for(Map.Entry<Range, Ratio> rr : cntc.entrySet()) {
-                    Ratio w = rr.getValue();
-                    Range m = rr.getKey  ();
+                Iterable a = f.values;
 
-                    if (m.covers(v)) {
-                        w.add   (v);
+                F : for(Object o :  a  ) {
+                        Number v = (Number) o;
+                    if (  null  != cntx)
+                    for(Range  w : cntx) {
+                        if (w.covers(v)) {
+                            continue F ;
+                        }
+                    }
+
+                    for(Map.Entry<Range, Ratio> rr : cntc.entrySet()) {
+                        Ratio w = rr.getValue();
+                        Range m = rr.getKey  ();
+
+                        if (m.covers(v)) {
+                            w.add   (v);
+                        }
                     }
                 }
             }

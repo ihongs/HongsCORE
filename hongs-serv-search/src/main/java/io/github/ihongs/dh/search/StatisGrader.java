@@ -250,6 +250,31 @@ public class StatisGrader {
             ge = (boolean) a[3];
         }
 
+        public boolean covers(Number n) {
+            double x = n.doubleValue( );
+            return covers(x);
+        }
+
+        public boolean covers(double n) {
+            if (le) { if (n >  max) {
+                return false;
+            }} else { if (n >= max) {
+                return false;
+            }}
+            if (ge) { if (n <  min) {
+                return false;
+            }} else { if (n <= min) {
+                return false;
+            }}
+            return true;
+        }
+
+        public boolean covers() {
+            return le && ge
+            && min == Double.NEGATIVE_INFINITY
+            && max == Double.POSITIVE_INFINITY;
+        }
+
         @Override
         public String toString() {
             // 不限则为空
@@ -315,31 +340,6 @@ public class StatisGrader {
                 }
             }
             return  0;
-        }
-
-        public boolean covers(Number n) {
-            double x = n.doubleValue( );
-            return covers(x);
-        }
-
-        public boolean covers(double n) {
-            if (le) { if (n >  max) {
-                return false;
-            }} else { if (n >= max) {
-                return false;
-            }}
-            if (ge) { if (n <  min) {
-                return false;
-            }} else { if (n <= min) {
-                return false;
-            }}
-            return true;
-        }
-
-        public boolean covers() {
-            return le && ge
-            && min == Double.NEGATIVE_INFINITY
-            && max == Double.POSITIVE_INFINITY;
         }
     }
 

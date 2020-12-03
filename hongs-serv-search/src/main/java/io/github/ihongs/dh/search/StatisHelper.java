@@ -544,9 +544,9 @@ public class StatisHelper {
             }
 
             new StatisHandle(that.getFinder())
-                    .where (q )
-                    .field (fs)
-                    .search(fx);
+                .where (  q   )
+                .field (  fs  )
+                .search(  fx  );
         } catch (IOException e) {
             throw new HongsException(e);
         }

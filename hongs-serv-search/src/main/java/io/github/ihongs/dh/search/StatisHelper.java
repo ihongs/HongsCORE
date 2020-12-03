@@ -1073,39 +1073,10 @@ public class StatisHelper {
         }
     }
 
-    private static Function asInt    = new Function<Object, Number>() {
-        @Override
-        public Integer apply(Object v) {
-            return Synt.asInt   (v);
-        }
-    };
-
-    private static Function asLong   = new Function<Object, Number>() {
-        @Override
-        public Number apply(Object v) {
-            return Synt.asLong  (v);
-        }
-    };
-
-    private static Function asFloat  = new Function<Object, Number>() {
-        @Override
-        public Number apply(Object v) {
-            return Synt.asFloat (v);
-        }
-    };
-
-    private static Function asDouble = new Function<Object, Number>() {
-        @Override
-        public Number apply(Object v) {
-            return Synt.asDouble(v);
-        }
-    };
-
-    private static Function asString = new Function<Object, String>() {
-        @Override
-        public String apply(Object v) {
-            return Synt.asString(v);
-        }
-    };
+    private static final Function asInt    = (Function<Object, Number>) Synt::asInt;
+    private static final Function asLong   = (Function<Object, Number>) Synt::asLong;
+    private static final Function asFloat  = (Function<Object, Number>) Synt::asFloat;
+    private static final Function asDouble = (Function<Object, Number>) Synt::asDouble;
+    private static final Function asString = (Function<Object, String>) Synt::asString;
 
 }

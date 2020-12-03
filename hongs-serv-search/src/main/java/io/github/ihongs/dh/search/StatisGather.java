@@ -31,9 +31,9 @@ import org.apache.lucene.util.NumericUtils;
 public class StatisGather {
 
     private final IndexSearcher finder;
-    private       Diman[] dimans;
-    private       Index[] indics;
-    private       Query   query ;
+    private       Diman[]       dimans;
+    private       Index[]       indics;
+    private       Query         query ;
 
     public StatisGather (IndexSearcher finder) {
         this.finder = finder;

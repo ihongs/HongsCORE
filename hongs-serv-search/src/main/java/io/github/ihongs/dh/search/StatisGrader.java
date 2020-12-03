@@ -18,8 +18,8 @@ import org.apache.lucene.search.Query;
 public class StatisGrader {
 
     private final IndexSearcher finder;
-    private       Field[] fields;
-    private       Query   query ;
+    private       Field[]       fields;
+    private       Query         query ;
 
     public StatisGrader (IndexSearcher finder) {
         this.finder = finder;

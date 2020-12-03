@@ -23,6 +23,9 @@ import org.apache.lucene.util.NumericUtils;
  */
 public final class StatisHandle {
 
+    /**
+     * 字段取值类型
+     */
     public static enum TYPE {
         INT , LONG , FLOAT , DOUBLE , STRING , // 单数
         INTS, LONGS, FLOATS, DOUBLES, STRINGS  // 复数
@@ -32,8 +35,8 @@ public final class StatisHandle {
     public static final long NO_MORE_ORDS = (long) SortedSetDocValues.NO_MORE_ORDS;
 
     private final IndexSearcher finder;
-    private       Field[] fields;
-    private       Query   query ;
+    private       Field[]       fields;
+    private       Query         query ;
 
     public StatisHandle (IndexSearcher finder) {
         this.finder = finder;

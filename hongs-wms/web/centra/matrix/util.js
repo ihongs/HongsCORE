@@ -786,6 +786,7 @@ function hsFormMove(treebox, listbox) {
 
         treebox.find(".tree-node table" )
         .droppable({
+            tolerance: "pointer",
             accept: function(item) {
                 return ! item.is(".tree-name")
                     || ! $.contains(item.closest(".tree-node").get(0), $(this).get(0));

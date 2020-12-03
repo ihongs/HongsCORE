@@ -105,10 +105,10 @@ public class VerifyInvoker implements FilterInvoker {
                 helper.getResponse().setStatus(SC_BAD_REQUEST);
             }
 
-            // 调试模式下记录可能引起错误的原因
-            if (0 != Core.DEBUG && 8 != (8 & Core.DEBUG)) {
+            // 记录可能引起错误的原因
+            if (0 != Core.DEBUG ) {
                 Throwable tr = err.getCause();
-                if (null != tr) {
+                if ( null != tr ) {
                     CoreLogger.error (  tr  );
                 }
             }

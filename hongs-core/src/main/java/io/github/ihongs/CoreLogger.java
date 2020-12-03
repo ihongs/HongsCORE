@@ -127,27 +127,34 @@ public class CoreLogger
 
     /**
      * 错误
-     * 既不显示又不记录则输出概要
-     * @param t
+     * 既不显示又不记录则输出错误
+     * @param flaw
      */
-    public static void error(Throwable t) {
+    public static void error(Throwable flaw) {
         String flag = space("");
+        String text ;
+
+        // 非调试模式取完整错误栈
+        if (4 != (4 & Core.DEBUG )
+        &&  8 != (8 & Core.DEBUG)) {
+            ByteArrayOutputStream buff = new ByteArrayOutputStream();
+            flaw.printStackTrace( new PrintStream( buff ) ) ;
+            text = buff.toString().replaceAll("(\r\n|\r|\n)","$1\t");
+        } else {
+            text = flaw.toString().replaceAll("(\r\n|\r|\n)","$1\t");
+        }
 
         if (1 != (1 & Core.DEBUG )
         &&  2 != (2 & Core.DEBUG)) {
-            getLogger("hongs.out" + flag).error(envir(t.toString()));
+            getLogger("hongs.out" + flag).error(envir(text));
             return;
         }
 
-        ByteArrayOutputStream b = new ByteArrayOutputStream();
-        t.printStackTrace(new PrintStream ( b ) );
-        String s = b.toString().replaceAll("^\\S","  $0");
-
         if (1 == (1 & Core.DEBUG)) {
-            getLogger("hongs.out" + flag).error(envir(s));
+            getLogger("hongs.out" + flag).error(envir(text));
         }
         if (2 == (2 & Core.DEBUG)) {
-            getLogger("hongs.log" + flag).error(envir(s));
+            getLogger("hongs.log" + flag).error(envir(text));
         }
     }
 

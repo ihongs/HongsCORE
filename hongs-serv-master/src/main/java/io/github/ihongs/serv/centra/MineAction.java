@@ -22,28 +22,35 @@ import java.util.Map;
 @Action("centra/mine")
 public class MineAction {
 
-    @Action("same")
-    @Preset(conf="master", form="mine")
-    public void sameName(ActionHelper ah)
-    throws HongsException {
-        Map rd = ah.getRequestData();
-        String id = (String) ah.getSessibute(Cnst.UID_SES);
-        rd.put( "id", id );
-
-        UserAction ua = new UserAction();
-        ua.isUnique ( ah );
-    }
-
     @Action("info")
     @Preset(conf="master", form="mine")
     public void mineInfo(ActionHelper ah)
     throws HongsException {
+        Object id = ah.getSessibute(Cnst.UID_SES);
+        if (id == null || "".equals(id) ) {
+            throw new  HongsException ( 401, "" );
+        }
+
+        UserAction ua = new UserAction( );
         Map rd = ah.getRequestData();
-        String id = (String) ah.getSessibute(Cnst.UID_SES);
         rd.put( "id", id );
 
-        UserAction ua = new UserAction();
-        ua.getInfo(ah);
+        ua. getInfo ( ah );
+    }
+
+    @Action("same")
+    @Preset(conf="master", form="mine")
+    public void sameName(ActionHelper ah)
+    throws HongsException {
+        Object id = ah.getSessibute(Cnst.UID_SES);
+        if (id == null || "".equals(id) ) {
+            throw new  HongsException ( 401, "" );
+        }
+
+        UserAction ua = new UserAction( );
+        Map rd = ah.getRequestData();
+        rd.put( "id", id );
+        ua.isUnique ( ah );
     }
 
     @Action("save")
@@ -52,8 +59,12 @@ public class MineAction {
     @CommitSuccess
     public void mineSave(ActionHelper ah)
     throws HongsException {
+        Object id = ah.getSessibute(Cnst.UID_SES);
+        if (id == null || "".equals(id) ) {
+            throw new  HongsException ( 401, "" );
+        }
+
         Map rd = ah.getRequestData();
-        String id = (String) ah.getSessibute(Cnst.UID_SES);
         rd.put( "id", id );
 
         // 禁止危险修改, 其实校验已经做过限制了. 这是以防万一
@@ -126,7 +137,7 @@ public class MineAction {
             }
         }
 
-        UserAction ua = new UserAction();
+        UserAction ua = new UserAction( );
         ua.doSave( ah );
     }
 

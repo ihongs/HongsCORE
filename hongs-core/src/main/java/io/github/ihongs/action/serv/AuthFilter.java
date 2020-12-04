@@ -22,6 +22,7 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  * 动作权限过滤器
@@ -174,6 +175,7 @@ public class AuthFilter
      * 标记当前登录区域, 以便区分不同权限
      */
     req.setAttribute(AuthFilter.class.getName( ) + ":config", aut);
+    req.setAttribute(AuthFilter.class.getName( ) + ":expire", exp);
 
     /**
      * 检查当前动作是否可以忽略
@@ -208,12 +210,12 @@ public class AuthFilter
      * 未超时且是调试模式
      * 对超级管理员无限制
      */
-    Set <String> authset = null;
-    long ust = Synt.declare ( hlpr.getSessibute ( Cnst.UST_SES ) , 0L );
+    Set authset = null;
     long now = System.currentTimeMillis() / 1000;
+    long ust = Synt.declare(hlpr.getSessibute(Cnst.UST_SES), 0L);
     if ( exp == 0 || exp > now - ust ) {
-        if ( 0 < Core.DEBUG && 8 != (8 & Core.DEBUG) ) {
-            String uid = Synt.asString(hlpr.getSessibute(Cnst.UID_SES));
+        if (0 != Core.DEBUG && 8 != (8 & Core.DEBUG) ) {
+               Object uid = hlpr.getSessibute(Cnst.UID_SES);
             if ( Cnst.ADM_UID.equals(uid)) {
                 chain.doFilter( req, rsp );
                 return;
@@ -225,6 +227,7 @@ public class AuthFilter
         } catch (HongsException ex) {
             throw new ServletException(ex);
         }
+
         ust = 0;
     }
 

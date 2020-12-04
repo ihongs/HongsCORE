@@ -150,7 +150,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                 }
             }
 
-            if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
+            if (0 != Core.DEBUG && 8 != (8 & Core.DEBUG)) {
             // 调试系统属性
             for(Map.Entry et : cnf.entrySet()) {
                 String k = (String) et.getKey  ();
@@ -428,7 +428,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
 
     private void doFinish(Core core, ActionHelper hlpr, HttpServletRequest req) {
         try {
-            if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
+            if (0 != Core.DEBUG && 8 != (8 & Core.DEBUG)) {
                 /**
                  * 提取必要的客户相关标识
                  * 以便判断用户和模拟登录

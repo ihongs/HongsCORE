@@ -773,9 +773,18 @@ public final class Synt {
         }
 
         /**
+         * 单一数值, 直接构建
+         */
+        if (val instanceof Number ) {
+            return new Object[] {
+                val, val, true, true
+            };
+        }
+
+        /**
          * 按区间格式进行解析
          */
-        if (val instanceof String  ) {
+        if (val instanceof String ) {
             String vs = declare(val, "");
             Matcher m = RNGP.matcher(vs);
             if (m.matches()) {
@@ -791,7 +800,7 @@ public final class Synt {
             // 单一值区间
             if ( ! RNGQ.matcher(vs).find( ) ) {
                 return new Object[] {
-                    vs , vs , true , true
+                    vs , vs , true, true
                 };
             }
             throw new ClassCastException("'"+val+"' can not be cast to range");

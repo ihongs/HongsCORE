@@ -3,6 +3,7 @@ package io.github.ihongs.dh.search;
 import io.github.ihongs.dh.search.StatisHandle.TYPE;
 import io.github.ihongs.dh.search.StatisHandle.Field;
 import io.github.ihongs.dh.search.StatisGrader.Range;
+import io.github.ihongs.dh.search.StatisHandle.Valuer;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -18,8 +19,8 @@ import org.apache.lucene.index.SortedDocValues;
 import org.apache.lucene.index.SortedSetDocValues;
 import org.apache.lucene.index.SortedNumericDocValues;
 import org.apache.lucene.search.Collector;
-import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.LeafCollector;
+import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Scorer;
 import org.apache.lucene.util.NumericUtils;
@@ -55,7 +56,7 @@ public class StatisGather {
     }
 
     public List<Map> fetch() throws IOException {
-        Flood  fetch = new Flood(dimans, indics);
+        Fetch  fetch = new Fetch(dimans, indics);
         finder.search(query, fetch);
         return fetch . getResult( );
     }
@@ -66,9 +67,9 @@ public class StatisGather {
      */
     public static class Group {
 
-        private final Object[] values;
+        private final Object[] values ;
 
-        public Group (Object[] values) {
+        public Group( Object[] values ) {
             this.values = values;
         }
 
@@ -87,14 +88,17 @@ public class StatisGather {
 
     }
 
-    private static class Flood implements Collector, LeafCollector {
+    /**
+     * 采集器
+     */
+    public static class Fetch implements Collector, LeafCollector {
 
         private final Diman[] dimans;
         private final Index[] indics;
         private final Map <Group, Map> dict; // 分组字典
         private final List<       Map> list; // 结果列表
 
-        public Flood (Diman[] dimans, Index[] indics) {
+        public Fetch( Diman[] dimans, Index[] indics ) {
             this.dimans = dimans;
             this.indics = indics;
             this.dict = new HashMap();
@@ -187,12 +191,12 @@ public class StatisGather {
 
         @Override
         public Object collecs(int i) throws IOException {
-                collect (i);
-            if ( ! values.hasNext()) {
-                return null;
-            }
+            collect (i);
 
-            return values.next();
+            Valuer values = getValues();
+            return values.hasNext()
+                 ? values.   next()
+                 : null  ;
         }
 
     }
@@ -232,8 +236,10 @@ public class StatisGather {
 
         @Override
         public Object collecs(int i) throws IOException {
-                collect (i);
-            if (! values.hasNext() ) {
+            collect(i);
+
+            Valuer values = getValues();
+            if ( ! values.hasNext()) {
                 return null;
             }
 
@@ -245,12 +251,10 @@ public class StatisGather {
             }
 
             // 逐一检查判断所处的区间
-            for(Range range : ranges ) {
-                if (! range.covers(item) ) {
-                    continue;
-                }
-                return range.toString( );
-            }
+            for(Range  range : ranges ) {
+            if (range.covers ( item ) ) {
+                return range.toString();
+            }}
 
             return null;
         }
@@ -268,12 +272,14 @@ public class StatisGather {
         }
 
         public Object collecs(int i, Object data) throws IOException {
-                collect (i);
-            if (! values.hasNext() ) {
+            collect (i);
+
+            Valuer values = getValues();
+            if ( ! values.hasNext ( ) ) {
                 return data;
             }
 
-            return collect (i, (V) data);
+            return collect(i, (V) data);
         }
 
         abstract public Object collect(int i , V v) throws IOException;
@@ -290,11 +296,10 @@ public class StatisGather {
 
         @Override
         public Object collect(int i, Object v) throws IOException {
-            if (null != v) {
-                return  v;
+            if (v == null) {
+                v  = getValues().next( );
             }
-
-            return values.next();
+            return v;
         }
 
     }
@@ -311,9 +316,9 @@ public class StatisGather {
         @Override
         public Object collect(int i, Set v) throws IOException {
             if (v == null) {
-                v =  new LinkedHashSet();
+                v  = new LinkedHashSet();
             }
-            for(Object o : values) {
+            for(Object o : getValues() ) {
                 v.add( o );
             }
             return v;

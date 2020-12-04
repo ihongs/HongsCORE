@@ -1,6 +1,5 @@
 package io.github.ihongs.dh.search;
 
-import io.github.ihongs.dh.search.StatisHandle.Fetch;
 import io.github.ihongs.dh.search.StatisHandle.Field;
 import io.github.ihongs.util.Synt;
 import java.io.IOException;
@@ -8,8 +7,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.apache.lucene.index.LeafReader;
+import org.apache.lucene.index.LeafReaderContext;
+import org.apache.lucene.search.Collector;
+import org.apache.lucene.search.LeafCollector;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.Scorer;
 
 /**
  * 分类统计工具
@@ -74,22 +78,48 @@ public class StatisGrader {
         return counts ;
     }
 
-    public static class Collec extends Fetch {
+    /**
+     * 采集器
+     * 可以重写 collect 采集数据
+     */
+    public static class Fetch implements Collector, LeafCollector {
 
-        private int count = 0;
+        protected final Field [] fields;
+        private   int   count  =   0   ;
 
-        public Collec(Field... fields) {
-            super(fields);
+        public Fetch(Field... fields) {
+            this.fields = fields;
+        }
+
+        @Override
+        public LeafCollector getLeafCollector(LeafReaderContext c) throws IOException {
+            LeafReader r = c.reader();
+            for(Field field : fields) {
+                field.prepare(r);
+            }
+            return this;
         }
 
         @Override
         public void collect(int i) throws IOException {
-            super.collect(i);
-            count ++;
+            for(Field field : fields) {
+                field.collect(i);
+            }
+            count ++ ;
+        }
+
+        @Override
+        public void setScorer(Scorer s) {
+            // 不需要打分
+        }
+
+        @Override
+        public boolean needsScores( ) {
+            return false;
         }
 
         public int count() {
-            return count ;
+            return count;
         }
 
     }
@@ -97,7 +127,7 @@ public class StatisGrader {
     /**
      * 分类统计处理器
      */
-    public static class Acount extends Collec {
+    public static class Acount extends Fetch {
 
         private final Map<String, Map<Object, Long>> counts;
         private final Map<String, Set<Object      >> countx;
@@ -133,7 +163,7 @@ public class StatisGrader {
                     counts.put( k, cntc );
                 }
 
-                Iterable a = f.values;
+                Iterable a = f.getValues( );
 
                 if (limits.contains( k )) {
                     for ( Object v : a  ) {
@@ -166,7 +196,7 @@ public class StatisGrader {
     /**
      * 数值计算处理器
      */
-    public static class Amount extends Collec {
+    public static class Amount extends Fetch {
 
         private final Map<String, Map<Range, Ratio>> counts;
         private final Map<String, Set<Range       >> countx;
@@ -193,7 +223,7 @@ public class StatisGrader {
                     counts.put( k, cntc );
                 }
 
-                Iterable a = f.values;
+                Iterable a = f.getValues( );
 
                 F : for(Object o :  a  ) {
                         Number v = (Number) o;
@@ -235,7 +265,7 @@ public class StatisGrader {
             min = max = n.doubleValue( );
         }
 
-        public Range(String s) {
+        public Range(Object s) {
             Object[] a = Synt.toRange(s);
             if (a == null) {
                 return;
@@ -347,7 +377,7 @@ public class StatisGrader {
      * 计算结果
      */
     public static class Ratio implements Comparable {
-        public int    cnt = 0;
+        public long   cnt = 0;
         public double sum = 0;
         public double min = Double.NEGATIVE_INFINITY;
         public double max = Double.POSITIVE_INFINITY;

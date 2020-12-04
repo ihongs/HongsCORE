@@ -1491,66 +1491,6 @@ function hsListInitSort(x, v, n) {
 //** 一般事件功能 */
 
 /**
- * 设置当前用户ID, 登录时写入
- */
-if (hsChkUri('public')) {
-    window.HsCUID = H$('%HsCUID');
-    window.HsCUST = H$('%HsCUST');
-} else {
-    window.HsCUID = null ;
-    window.HsCUST = null ;
-    H$ ( '%HsCUID', null);
-    H$ ( '%HsCUST', null);
-}
-
-/**
- * 保持用户登录状态
- */
-(function() {
-    var upd , del ;
-    var ref = hsGetConf("BASE_HREF");
-    if (location.pathname.length >= 8 + ref.length
-    &&  location.pathname.substr(1, 1 + ref.length) === ref) { // /BASE_HREF/centr_/
-        ref = location.pathname.substr( ref.length + 1 , 8 );  // /centr_/
-        if (ref === "centra") {
-            ref = hsFixUri("centra/login.html");
-            upd = hsFixUri("centra/sign/update.act");
-            del = hsFixUri("centra/sign/delete.act");
-        } else
-        if (ref === "centre") {
-            ref = hsFixUri("centre/login.html");
-            upd = hsFixUri("centre/sign/update.act");
-            del = hsFixUri("centre/sign/delete.act");
-        }
-    }
-    if (upd) {
-        var tim = new Date().getTime();
-        setInterval(function() {
-            $.ajax({
-                url : upd,
-                complete : function (rst) {
-                    rst = hsResponse(rst, 3);
-                    var now = new Date().getTime();
-                    if (! rst.ok || now > tim + 28800000) { // 8 小时
-                        hsWarn("登录超时\r\n您未登录或登录超时，点击确定将转入登录页。离开系统 8 小时以上将退出登录。", "warning",
-                        function() {
-                            $.ajax({
-                                url : del,
-                                complete : function (rst) {
-                                    location.replace(ref+"?r="+encodeURIComponent(location.pathname+location.search+location.hash));
-                                }
-                            });
-                        });
-                        return;
-                    }
-                    tim = now ;
-                }
-            });
-        } , 1800000 ); // 30 分钟
-    }
-});
-
-/**
  * 返回键联动导航条
  */
 $(window).on("popstate", function(ev) {
@@ -1573,3 +1513,18 @@ $(document).on("reset", ".HsList .findbox", function() {
                .first().click();
     } , 500);
 });
+
+/**
+ * 当前用户ID, 登录时写入
+ */
+if (hsGetAuth('centra', false )
+||  hsGetAuth('centre', false )
+||  hsGetAuth('public', false)) {
+    window.HsCUID = H$('%HsCUID');
+    window.HsCUST = H$('%HsCUST');
+} else {
+    window.HsCUID = null ;
+    window.HsCUST = null ;
+    H$ ( '%HsCUID', null);
+    H$ ( '%HsCUST', null);
+}

@@ -4,6 +4,9 @@
         <role text="访问前台" name="centre">
             <action>public</action><!-- 非区域同名才开放访问 -->
             <action>centre/data/upload/image/create.act</action>
+            <action>centre/mine/info.act</action>
+            <action>centre/mine/same.act</action>
+            <action>centre/mine/save.act</action>
         </role>
         <menu text="首页" href="centre/#manage" hrel="centre/manage/main.html"></menu>
         <import>centra/data/upload</import>

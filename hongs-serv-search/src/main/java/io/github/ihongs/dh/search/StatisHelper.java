@@ -28,6 +28,8 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
 
 /**
@@ -44,6 +46,196 @@ public class StatisHelper {
 
     public final LuceneRecord getRecord( ) {
         return that;
+    }
+
+    /**
+     * 统计枚举
+     * @param rd
+     * @return
+     * @throws HongsException
+     * @deprecated 查询次数随统计列和值一同增多, 效率不够理想
+     */
+    public Map ecount(Map rd) throws HongsException {
+        IndexSearcher finder = that.getFinder();
+
+        int         topn = Synt.declare(rd.get(Cnst.RN_KEY) , 0);
+        Map         incs = Synt.asMap  (rd.get(Cnst.IN_REL)    );
+        Map         excs = Synt.asMap  (rd.get(Cnst.NI_REL)    );
+        Set<String> cntz = Synt.toTerms(rd.get(Cnst.RB_KEY)    );
+        Map<String, Map<String, Integer>> counts = new HashMap();
+
+        //** 整理待统计的数据 **/
+
+        if (incs != null && ! incs.isEmpty( )
+        &&  cntz != null && ! cntz.isEmpty()) {
+        //  if (incs == null) {
+        //      incs  = new HashMap();
+        //  }
+            if (excs == null) {
+                excs  = new HashMap();
+            }
+
+            for(String x : cntz) {
+                Map cnt; Set inc, exc;
+                    inc  = Synt.asSet(incs.get(x));
+                if (inc != null && !inc.isEmpty()) {
+                    exc  = Synt.asSet(excs.get(x));
+                if (exc == null) {
+                    exc  = new HashSet( );
+                }
+                    cnt  = new HashMap( );
+                    counts.put( x , cnt );
+                    for( Object v : inc ) {
+                    if (!exc.contains(v)) {
+                        cnt.put(v.toString() , 0 );
+                    }}
+                }
+            }
+        }
+
+        //** 分块统计数据 **/
+
+        Map<String, Map<String, Integer>> counts2 = new HashMap();
+
+        Map<String, Map<String, Integer>> counts3 = new HashMap();
+
+        /**
+         * 根据请求数据进行综合判断,
+         * 如果字段已经作为过滤条件,
+         * 则此字段的统计需单独进行,
+         * 且需抛开此字段的过滤数据.
+         *
+         * 例如某数据有一个地区字段且每条记录只能有一个地区,
+         * 如果没有以下处理则选某地后其他未选地区数量将为零.
+         *
+         * 与 LinkedIn 左侧筛选类似.
+         */
+
+        for(String  k  : counts.keySet()) {
+            Map     vd = null;
+            Set     vs = null;
+            Object  vo = rd.get(k);
+            if (vo instanceof Map) {
+                Map vm = (Map) vo ;
+                if (vm.containsKey ( /***/ Cnst.IN_REL)) {
+                    vs = Synt.asSet(vm.get(Cnst.IN_REL));
+                    vd = new HashMap( rd );
+                    vm = new HashMap( vm );
+                    vm.remove(Cnst.IN_REL);
+                    vd.put(k , vm);
+                }
+            }
+
+            if (vs == null || vs.isEmpty()) {
+                if (counts .containsKey(k)) {
+                    counts2.put(k, counts.get(k));
+                }
+            } else {
+                Map<String, Integer> vz = counts.get(k);
+
+                counts3.clear();
+
+                if (vz != null) {
+                    counts3.put(k, vz);
+                } else {
+                    vz = new HashMap();
+                    counts3.put(k, vz);
+                }
+
+                ecount(vd, finder, counts3);
+            }
+        }
+
+        int z = ecount(rd, finder, counts2);
+
+        // 以上仅对枚举值计数, 以下计算全部
+        try {
+            Query q ;
+            q = that.padQry (rd);
+            z = finder.count( q);
+        } catch (IOException  e) {
+            throw new HongsException(e);
+        }
+
+        Map cnts = new HashMap();
+        cnts.put("__count__", z);
+
+        //** 排序并截取统计数据 **/
+
+        for(Map.Entry<String, Map<String, Integer>> et : counts.entrySet()) {
+            List<Object[]> a = new ArrayList ( et.getValue().size(  )  );
+            for(Map.Entry<String, Integer> e : et.getValue().entrySet()) {
+                String m = e.getKey ();
+                int c  = e.getValue ();
+                if (c != 0) {
+                    a.add(new Object[] {m, null, c});
+                }
+            }
+            Collections.sort (a, new Counts());
+            if (0 < topn && topn < a . size()) {
+                a = a.subList(0, topn);
+            }
+            cnts.put( et.getKey(), a );
+        }
+
+        return cnts;
+    }
+
+    private int ecount( Map rd, IndexSearcher finder,
+            Map<String, Map<String, Integer>> counts) throws HongsException {
+        int total = 0 ;
+
+        Query q = that.padQry(rd);
+
+        if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG) ) {
+            CoreLogger.debug("StatisHelper.ecount: "+ q.toString());
+        }
+
+        Map fs = getRecord().getFields();
+        Map ts = FormSet.getInstance().getEnum("__types__");
+        Set ks = Synt.setOf("int", "long", "float", "double", "number");
+
+        for(Map.Entry<String, Map<String, Integer>> et : counts.entrySet()) {
+            Map<String, Integer> fo = et.getValue();
+                String fn = et.getKey();
+
+                // 数值类型采用区间查法
+                Map    fc = ( Map ) fs.get(fn);
+                Object ft = fc.get("__type__");
+                Object fk = fc.get(  "type"  );
+                       ft = ts.containsKey(ft) ? ts.get(ft) : ft ;
+                String fr = "date" .equals(ft)
+                       ||  "number".equals(ft)
+                       || ( "enum" .equals(ft) && ks.contains(fk))
+                       || ("hidden".equals(ft) && ks.contains(fk))
+                          ? Cnst.RG_REL
+                          : Cnst.IN_REL;
+
+            for(Map.Entry<String, Integer> xt : fo.entrySet()) {
+                String fv = xt.getKey();
+
+                // 增加查询条件
+                Query b = that.padQry(Synt.mapOf(fn, Synt.mapOf(fr, fv)));
+                BooleanQuery.Builder bq = new BooleanQuery.Builder();
+                bq.add(q, BooleanClause.Occur.MUST);
+                bq.add(b, BooleanClause.Occur.MUST);
+
+                // 计算命中数量
+                int c ;
+                try {
+                    c = finder.count(bq.build());
+                } catch (IOException ex) {
+                    throw new HongsException(ex);
+                }
+
+                xt.setValue(c);
+                if (total < c) {
+                    total = c;
+                }
+            }
+        }
+
+        return total;
     }
 
     /**

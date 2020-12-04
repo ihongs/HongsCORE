@@ -258,7 +258,7 @@ public class CmdletRunner implements Runnable
         }
     }
 
-    if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
+    if (0 != Core.DEBUG && 8 != (8 & Core.DEBUG)) {
     // 调试系统属性
     for(Map.Entry et : cnf.entrySet()) {
         String k = (String) et.getKey  ();

@@ -1,6 +1,5 @@
 package io.github.ihongs.serv.centre;
 
-import io.github.ihongs.Cnst;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
@@ -75,35 +74,16 @@ public class SignAction extends io.github.ihongs.serv.centra.SignAction {
     }
 
     /**
-     * 注销
-     * @param ah
-     * @throws HongsException
-     */
-    @Action("user/delete")
-    @CommitSuccess
-    public void userDelete(ActionHelper ah) throws HongsException {
-        String id = (String) ah.getSessibute(Cnst.UID_SES);
-        if (id == null) {
-            ah.reply(AuthKit.getWrong("","core.sign.phase.invalid"));
-            return;
-        }
-
-        User user = (User) DB.getInstance("master").getModel("user");
-        user. del (id); // 删除当前用户
-        signDelete(ah); // 消除登录状态
-    }
-
-    /**
      * 查重
      * @param ah
      * @throws HongsException
      */
     @Action("user/unique")
     public void userUnique(ActionHelper ah) throws HongsException {
-        User user = (User) DB.getInstance("master").getModel("user");
-        Map  data =  ah.getRequestData();
-        boolean v =  user.unique( data );
-        ah.reply  (  null,  v ? 1 : 0  );
+        User uo = (User) DB.getInstance("master").getModel("user");
+        Map  rd = ah.getRequestData();
+        boolean  v = uo.unique ( rd );
+        ah.reply ( null, v ? 1 : 0  );
     }
 
 }

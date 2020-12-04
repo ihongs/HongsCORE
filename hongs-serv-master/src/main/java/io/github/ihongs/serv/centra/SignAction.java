@@ -8,6 +8,7 @@ import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.action.anno.CommitSuccess;
 import io.github.ihongs.action.anno.Verify;
+import io.github.ihongs.action.serv.AuthFilter;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.db.util.FetchCase;
@@ -137,13 +138,26 @@ public class SignAction {
      */
     @Action("update")
     public void signUpdate(ActionHelper ah) throws HongsException {
-        HttpSession ss = ah.getRequest().getSession(false);
-        if (null == ss) {
+        HttpSession ss  =  ah.getRequest( ).getSession( false );
+        if (null == ss || null == ss.getAttribute(Cnst.UID_SES) ) {
             ah.reply(AuthKit.getWrong(null, "core.sign.phase.invalid"));
             return;
         }
 
-        ss.setAttribute(Cnst.UST_SES, System.currentTimeMillis()/1000 );
+        // 登录超时
+        String curr_exp_key = AuthFilter.class.getName()+":expire";
+        long exp = Synt.declare(ah.getAttribute(curr_exp_key), 0L);
+        long ust = Synt.declare(ss.getAttribute(Cnst.UST_SES), 0L);
+        long now = System.currentTimeMillis() / 1000;
+        if ( exp != 0 && exp <= now - ust ) {
+            ah.reply(AuthKit.getWrong(null, "core.sign.phase.invalid"));
+            return;
+        }
+
+        // 重设时间
+        if ( exp != 0 ) {
+            ss.setAttribute(Cnst.UST_SES,now);
+        }
 
         ah.reply ( "" );
     }
@@ -156,8 +170,8 @@ public class SignAction {
      */
     @Action("delete")
     public void signDelete(ActionHelper ah) throws HongsException {
-        HttpSession ss = ah.getRequest().getSession(false);
-        if (null == ss) {
+        HttpSession ss  =  ah.getRequest( ).getSession( false );
+        if (null == ss || null == ss.getAttribute(Cnst.UID_SES) ) {
             ah.reply(AuthKit.getWrong(null, "core.sign.phase.invalid"));
             return;
         }

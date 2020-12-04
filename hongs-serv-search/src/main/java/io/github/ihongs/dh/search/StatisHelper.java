@@ -71,10 +71,11 @@ public class StatisHelper {
                 excs  = new HashMap();
             }
 
+            try{
             for(String x : cntz) {
                 Map cnt; Set inc, exc, cnx;
 
-                // 将参数转换成字段对应的类型
+                // 将参数转换成字段对应类型
                 Function f = getGraderFormat(x);
                 if (null == f) {
                     continue ;
@@ -97,6 +98,9 @@ public class StatisHelper {
                        cnx.add(s/**/);
                     }
                 }   countx.put(x,cnx);
+            }
+            } catch ( ClassCastException ex ) {
+                throw new HongsException(400, ex ); // 值与字段不符
             }
         }
 
@@ -212,7 +216,7 @@ public class StatisHelper {
             Query q = that.padQry(rd);
 
             if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
-                CoreLogger.debug("StatisHandle.acount: " + q.toString());
+                CoreLogger.debug("StatisHelper.acount: " + q.toString());
             }
 
             if (counts.isEmpty()) {
@@ -253,6 +257,7 @@ public class StatisHelper {
                 excs  = new HashMap();
             }
 
+            try{
             for(String x : cntz) {
                 Map cnt; Set inc, exc, cnx;
 
@@ -260,9 +265,8 @@ public class StatisHelper {
                 if (inc != null && !inc.isEmpty()) {
                     cnt  = new  HashMap();
                     for(Object v:inc) {
-                        String s = v.toString ( );
-                        Range  m = new Range  (s);
-                        Ratio  c = new Ratio  ( );
+                        Range  m  = new Range (v);
+                        Ratio  c  = new Ratio ( );
                        cnt.put(m, c );
                     }
                     counts.put(x,cnt);
@@ -272,13 +276,15 @@ public class StatisHelper {
                 if (exc != null && !exc.isEmpty()) {
                     cnx  = new  HashSet( );
                     for(Object v:inc) {
-                        String s = v.toString ( );
-                        Range  m = new Range  (s);
-                    //  Ratio  c = new Ratio  ( );
+                        Range  m  = new Range (v);
+                    //  Ratio  c  = new Ratio ( );
                        cnx.add(m/**/);
                     }
                     countx.put(x,exc);
                 }
+            }
+            } catch ( ClassCastException ex ) {
+                throw new HongsException(400, ex ); // 区间格式不对
             }
         }
 
@@ -399,7 +405,7 @@ public class StatisHelper {
             Query q = that.padQry(rd);
 
             if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
-                CoreLogger.debug("StatisHandle.amount: " + q.toString());
+                CoreLogger.debug("StatisHelper.amount: " + q.toString());
             }
 
             if (counts.isEmpty()) {
@@ -437,14 +443,14 @@ public class StatisHelper {
             Query q = that.padQry(rd);
 
             if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
-                CoreLogger.debug("StatisHandle.assort: " + q.toString());
+                CoreLogger.debug("StatisHelper.assort: " + q.toString());
             }
 
-            list = new StatisGather( that.getFinder() )
-                .group(fs.dimans)
-                .count(fs.indics)
-                .where(q)
-                .fetch( );
+            IndexSearcher finder = that.getFinder();
+            StatisGather.Fetch c = new StatisGather.Fetch(fs.dimans, fs.indics);
+
+            finder.search( q, c );
+            list = c.getResult( );
         } catch ( IOException e ) {
             throw new HongsException(e);
         }
@@ -540,14 +546,14 @@ public class StatisHelper {
             Query q = that.padQry(rd);
 
             if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
-                CoreLogger.debug("StatisHandle.acount: " + q.toString());
+                CoreLogger.debug("StatisHelper.search: " + q.toString());
             }
 
-            new StatisHandle(that.getFinder())
-                .where (  q   )
-                .field (  fs  )
-                .search(  fx  );
-        } catch (IOException e) {
+            IndexSearcher finder = that.getFinder();
+            StatisHandle.Fetch c = new StatisHandle.Fetch(fx, fs);
+
+            finder.search( q, c );
+        } catch ( IOException e ) {
             throw new HongsException(e);
         }
     }

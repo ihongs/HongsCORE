@@ -10,11 +10,11 @@ import org.apache.lucene.index.NumericDocValues;
 import org.apache.lucene.index.SortedDocValues;
 import org.apache.lucene.index.SortedSetDocValues;
 import org.apache.lucene.index.SortedNumericDocValues;
-import org.apache.lucene.search.Scorer;
 import org.apache.lucene.search.Collector;
-import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.LeafCollector;
+import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.Scorer;
 import org.apache.lucene.util.NumericUtils;
 
 /**
@@ -69,25 +69,20 @@ public final class StatisHandle {
      */
     public void search( Consumer<Field[]> fx )
     throws IOException {
-        finder. search( query , new Fetch(fields) {
-            @Override
-            public void collect(int id)
-            throws IOException {
-                super.collect(id);
-                fx.accept(fields);
-            }
-        });
+        finder. search( query , new Fetch(fx, fields) );
     }
 
     /**
-     * 数据采集对象
+     * 采集器
      * 可以重写 collect 采集数据
      */
     public static class Fetch implements Collector, LeafCollector {
 
-        protected final Field[] fields;
+        private final Consumer<Field[]> actor ;
+        private final /*Base*/ Field[]  fields;
 
-        public Fetch(Field... fields) {
+        public Fetch( Consumer<Field[]> actor , Field... fields ) {
+            this.actor  = actor ;
             this.fields = fields;
         }
 
@@ -105,6 +100,7 @@ public final class StatisHandle {
             for(Field field : fields) {
                 field.collect(i);
             }
+            actor.accept(fields);
         }
 
         @Override
@@ -162,6 +158,10 @@ public final class StatisHandle {
             return values.getDocValues( );
         }
 
+        public Valuer getValues() {
+            return values;
+        }
+
         public void prepare(LeafReader r) throws IOException {
             values.prepare(r);
         }
@@ -173,20 +173,28 @@ public final class StatisHandle {
     }
 
     /**
-     * 取值
+     * 值迭代
      * @param <T>
      */
-    abstract public static class Values<T> implements Iterator<T>, Iterable<T> {
+    public static interface Valuer<T> extends Iterator<T>, Iterable<T> {
+
+        @Override
+        public default Iterator<T> iterator() {
+            return this;
+        }
+
+    }
+
+    /**
+     * 字段值
+     * @param <T>
+     */
+    abstract public static class Values<T> implements Valuer<T> {
 
       protected final String field;
 
         public Values(String field) {
             this.field = field;
-        }
-
-        @Override
-        public Iterator <T> iterator() {
-            return this;
         }
 
         public abstract Object getDocValues();
@@ -237,7 +245,7 @@ public final class StatisHandle {
         }
 
         @Override
-        public Number next() {
+        public  Number next() {
             try {  j  = NO_MORE_VALS;
                 switch (type) {
                     case DOUBLE:
@@ -249,8 +257,7 @@ public final class StatisHandle {
                     default :
                         return /***/ values.longValue();
                 }
-            }
-            catch (IOException e) {
+            } catch (IOException e ) {
                 throw new HongsExemption(e);
             }
         }
@@ -297,7 +304,7 @@ public final class StatisHandle {
         }
 
         @Override
-        public Number next() {
+        public  Number next() {
             try {  j ++ ;
                 switch (type) {
                     case DOUBLE:
@@ -309,8 +316,7 @@ public final class StatisHandle {
                     default :
                         return /***/ values.nextValue();
                 }
-            }
-            catch (IOException e) {
+            } catch (IOException e ) {
                 throw new HongsExemption(e);
             }
         }
@@ -322,8 +328,8 @@ public final class StatisHandle {
      */
     public static class StringValues extends Values<String> {
 
-        private SortedDocValues values = null;
         private int j = NO_MORE_VALS;
+        private SortedDocValues values = null;
 
         public StringValues(String field) {
             super(field);
@@ -355,11 +361,10 @@ public final class StatisHandle {
         }
 
         @Override
-        public String next() {
+        public  String next() {
             try {  j  = NO_MORE_VALS;
                 return values.binaryValue().utf8ToString();
-            }
-            catch (IOException e) {
+            } catch (IOException e ) {
                 throw new HongsExemption(e);
             }
         }
@@ -371,8 +376,8 @@ public final class StatisHandle {
      */
     public static class StringSetValues extends Values<String> {
 
-        private SortedSetDocValues values = null;
         private long j = NO_MORE_ORDS;
+        private SortedSetDocValues values = null;
 
         public StringSetValues(String field) {
             super(field);
@@ -394,7 +399,7 @@ public final class StatisHandle {
             ||  values.advanceExact(i) == false) {
                 j = NO_MORE_ORDS;
             } else {
-                j = 0;
+                j = values.nextOrd();
             }
         }
 
@@ -404,11 +409,13 @@ public final class StatisHandle {
         }
 
         @Override
-        public String next() {
-            try {  j  = values.nextOrd  ( );
-                return  values.lookupOrd(j).utf8ToString();
-            }
-            catch (IOException e) {
+        public  String next() {
+            try {
+                String s;
+                s = values.lookupOrd(j).utf8ToString();
+                j = values.nextOrd();
+                return s;
+            } catch (IOException e ) {
                 throw new HongsExemption(e);
             }
         }

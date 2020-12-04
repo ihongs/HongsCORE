@@ -122,7 +122,7 @@ public class TitlesHelper {
     /**
      * 通过表单配置设置枚举数据(及关联关系)
      * @param info
-     * @param md 1 绑定枚举, 2 绑定关联, 3 全绑定
+     * @param md 1 绑定枚举, 8 绑定关联, 9 全绑定
      * @throws HongsException
      */
     public void addTitle(Map info, byte md) throws HongsException {

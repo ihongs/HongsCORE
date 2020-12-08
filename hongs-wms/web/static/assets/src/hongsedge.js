@@ -2,19 +2,33 @@
 
 //** 资源扩展功能 **/
 
-H$.inst = function() {
-    var context = $(".HsList,.HsForm").filter(":visible:first");
+H$.uid  = function() {
+    if (window.HsCUID === undefined) {
+        if (hsGetAuth('centra', false)
+        ||  hsGetAuth('centre', false)
+        ||  hsGetAuth('public', false)) {
+            window.HsCUID = H$('%HsCUID');
+        } else {
+            window.HsCUID = null ;
+            H$ ( '%HsCUID', null);
+        }
+    }
+    return  window.HsCUID ;
+};
+H$.mod  = function() {
+    var context = $(".HsList,.HsForm")
+            .filter(":visible:first" );
     return context.data("HsList")
         || context.data("HsForm");
 };
 H$.src  = function() {
-    return (H$.inst()._url || location.pathname)
+    return (H$.mod()._url || location.pathname)
     //  .replace(/\#.*/, '')
         .replace(/\?.*/, '')
         .replace(/\/[^\/]+$/, '');
 };
 H$.load = function(req) {
-    var mod = H$.inst();
+    var mod = H$.mod();
     mod.load(undefined, hsSerialMix(mod._data, req));
 };
 H$.send = function(url, req) {
@@ -1434,7 +1448,7 @@ function hsListShowEdit(d, v) {
             v = v. id;
         }
     }
-    if (v && v == window.HsCUID) {
+    if (v && v == H$.uid()) {
         d.show ();
     }
 }
@@ -1443,10 +1457,11 @@ function hsListShowEdit(d, v) {
  * 列表属主权限控制
  */
 function hsListInitMine(x, v, n) {
+    var uid = H$.uid();
     x.next().on( "change", ":radio", function() {
         switch ($(this).val()) {
-            case "1": x.attr("name", n + ".eq").val(HsCUID); break;
-            case "2": x.attr("name", n + ".ne").val(HsCUID); break;
+            case "1": x.attr("name", n+".eq").val(uid); break;
+            case "2": x.attr("name", n+".ne").val(uid); break;
             default : x.attr("name", n).val(""); break;
         }
 
@@ -1513,18 +1528,3 @@ $(document).on("reset", ".HsList .findbox", function() {
                .first().click();
     } , 500);
 });
-
-/**
- * 当前用户ID, 登录时写入
- */
-if (hsGetAuth('centra', false )
-||  hsGetAuth('centre', false )
-||  hsGetAuth('public', false)) {
-    window.HsCUID = H$('%HsCUID');
-    window.HsCUST = H$('%HsCUST');
-} else {
-    window.HsCUID = null ;
-    window.HsCUST = null ;
-    H$ ( '%HsCUID', null);
-    H$ ( '%HsCUST', null);
-}

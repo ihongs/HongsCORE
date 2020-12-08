@@ -358,7 +358,7 @@
             }
         });
         // 用户未登录则隐藏我的
-        if (!window.HsCUID) {
+        if (!H$.uid()) {
             findbox.find(".mine-group").remove();
         }
         // 无可排序选项则隐藏之

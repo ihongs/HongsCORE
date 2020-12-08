@@ -136,6 +136,7 @@
                 // 表单
                 context.on("saveBack", function(ev, rd, md) {
                     H$('%HsCUID', rd.info.uid);
+                    H$('%HsCUST', rd.info.ust);
                     location.replace(hsFixUri(hsGetParam(location.href, "r") || "centre/"));
                 });
                 context.on("saveFail", function(ev, rd, md) {

@@ -71,7 +71,7 @@
                         <div></div>
                         <div></div>
                         <div></div>
-                        <div data-load="<%=$module%>/<%=$entity%>/list.html"></div>
+                        <div><div data-load="<%=$module%>/<%=$entity%>/list.html"></div></div>
                     </div>
                 </div>
             </div>

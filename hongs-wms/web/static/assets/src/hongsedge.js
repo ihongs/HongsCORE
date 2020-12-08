@@ -879,95 +879,69 @@ jQuery.fn.hsCate = function(opts) {
  * @param {Object} urls
  * @return {HsPops}
  */
-function HsPops (context , urls) {
-    var paneBox, inState, IF, NF;
-    context = jQuery( context  );
-    paneBox = context.children(".labs");
-    if (paneBox.size( ) === 0  ) {
-    paneBox = context.closest (".labs");
+function HsPops (context, urls) {
+    var tabsBox, labsBox, urlz ;
+    context = jQuery( context );
+    tabsBox = context.children(".tabs");
+    labsBox = context.children(".labs");
+
+    // 反转映射
+    urlz  = { };
+    jQuery.each(urls, function( k , v ) {
+        urlz[v] = k ;
+    });
+
+    labsBox.on("hsReady" , ".loadbox" , function () {
+        if (!$(this).parent().parent().is(labsBox)) {
+            return;
+        }
+
+        var base, srch, hash;
+
+        // 去掉路径前缀
+        base = hsFixUri("" );
+        href = hsFixUri($( this ).data( "href" ));
+        if (href.length <= base.length
+        ||  href.substr(0, base.length) !== base) {
+            return;
+        }
+        href = href.substr(base.length);
+
+        // 提取页面路径
+        var p  = href.indexOf('?');
+        if (p >= 0 ) {
+            srch = href.substring(1+ p);
+            href = href.substring(0, p);
+        }
+
+        hash = urlz[href] || '';
+        if (hash) {
+            hash  = '#' + hash ;
+        if (srch) {
+            hash += '&' + srch ;
+        }}
+
+        history.replaceState({}, '', location.pathname + location.search + hash);
+    });
+    labsBox.on("hsClose" , ".loadbox" , function () {
+        if (!$(this).parent().parent().is(labsBox)) {
+            return;
+        }
+
+        history.replaceState({}, '', location.pathname + location.search);
+    });
+
+    // 打开内页
+    var hash = /^#(\w+)(&.+)?/.exec(location.hash);
+    if (hash) {
+        var href = urls [hash[1]];
+        if (href) {
+            href = href+(hash[2] || '' );
+            href = href.replace('&','?');
+            tabsBox.hsTabs (    );
+            tabsBox.hsOpen (href);
+        }
     }
-    inState = false ;
-    IF = "1" ; // 处于表单中
-    NF = null; // 非表单模式
-
-    /**
-     * 列表和查看对公共区很重要
-     * 如果有给编号则打开详情页
-     */
-    $(window).on("popstate", function() {
-        inState = true;
-        paneBox.children().eq(2).children().hsClose();
-        if (hsGetParam(location.search, "id")) {
-            if (hsGetParam(location.search, "if")) {
-                if (urls.formUrl) {
-                    inState = true;
-                    paneBox.hsOpen(urls.formUrl + location.search);
-                }
-            } else {
-                if (urls.infoUrl) {
-                    inState = true;
-                    paneBox.hsOpen(urls.infoUrl + location.search);
-                }
-            }
-        } else {
-            if (hsGetParam(location.search, "if")) {
-                if (urls.addsUrl) {
-                    inState = true;
-                    paneBox.hsOpen(urls.addsUrl + location.search);
-                }
-            }
-        }
-    });
-    $(window).trigger("popstate");
-
-    /**
-     * 还需要处理内部加载的页面
-     */
-    paneBox.on("hsReady", ".loadbox", function() {
-        if (inState) {
-            inState = false;
-            return;
-        }
-
-        var id ;
-        var ul = location.search;
-        var rl = hsFixUri($(this).data("href"));
-
-        if (urls.infoUrl && rl.substr(0, urls.infoUrl.length) == urls.infoUrl ) {
-            id = hsGetParam(rl, "id");
-            ul = hsSetParam(ul, "id", id);
-            ul = hsSetParam(ul, "if", NF);
-            history.pushState({}, "", location.pathname + ul);
-        } else
-        if (urls.formUrl && rl.substr(0, urls.formUrl.length) == urls.formUrl ) {
-            id = hsGetParam(rl, "id");
-            ul = hsSetParam(ul, "id", id);
-            ul = hsSetParam(ul, "if", IF);
-            history.pushState({}, "", location.pathname + ul);
-        } else
-        if (urls.addsUrl && rl.substr(0, urls.addsUrl.length) == urls.addsUrl ) {
-            ul = hsSetParam(ul, "id", NF);
-            ul = hsSetParam(ul, "if", IF);
-            history.pushState({}, "", location.pathname + ul);
-        }
-    });
-    paneBox.on("hsClose", ".loadbox", function() {
-        if (inState) {
-            inState = false;
-            return;
-        }
-
-        var ul = location.search;
-        var rl = hsFixUri($(this).data("href"));
-
-        if((urls.infoUrl && rl.substr(0, urls.infoUrl.length) == urls.infoUrl )
-        || (urls.formUrl && rl.substr(0, urls.formUrl.length) == urls.formUrl )
-        || (urls.addsUrl && rl.substr(0, urls.addsUrl.length) == urls.addsUrl)) {
-            ul = hsSetParam(ul, "id", NF);
-            ul = hsSetParam(ul, "if", NF);
-            history.pushState({}, "", location.pathname + ul);
-        }
-    });
 }
 jQuery.fn.hsPops = function(opts) {
     return this.hsBind(HsPops, opts);

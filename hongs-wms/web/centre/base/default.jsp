@@ -58,7 +58,7 @@
                     </ol>
                     <div class="labs laps">
                         <div></div>
-                        <div data-load="<%=$module%>/<%=$entity%>/list.html"></div>
+                        <div><div data-load="<%=$module%>/<%=$entity%>/list.html"></div></div>
                     </div>
                 </div>
             </div>
@@ -72,10 +72,9 @@
 
                 // 虚拟导航
                 context.hsPops({
-                    listUrl: "<%=$module%>/<%=$entity%>/list.html",
-                    infoUrl: "<%=$module%>/<%=$entity%>/info.html",
-                    formUrl: "<%=$module%>/<%=$entity%>/form.html",
-                    addsUrl: "<%=$module%>/<%=$entity%>/form_init.html"
+                    info: "<%=$module%>/<%=$entity%>/info.html",
+                    form: "<%=$module%>/<%=$entity%>/form.html",
+                    adds: "<%=$module%>/<%=$entity%>/form_init.html"
                 });
             })(jQuery);
         </script>

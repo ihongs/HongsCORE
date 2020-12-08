@@ -919,7 +919,9 @@ function HsPops (context, urls) {
             hash  = '#' + hash ;
         if (srch) {
             hash += '&' + srch ;
-        }}
+        }} else {
+            return;
+        }
 
         history.replaceState({}, '', location.pathname + location.search + hash);
     });

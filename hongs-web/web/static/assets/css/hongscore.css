@@ -314,10 +314,10 @@ ol.repeated ,
 
 .labs>*>h1,
 .labs>*>h2,
-.labs>*>.openbox>h1,
-.labs>*>.openbox>h2,
-.modal-body.openbox>h1 ,
-.modal-body.openbox>h2 {
+.labs>*>.loadbox>h1,
+.labs>*>.loadbox>h2,
+.modal-body.loadbox>h1 ,
+.modal-body.loadbox>h2 {
     display: none;
 }
 

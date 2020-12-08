@@ -841,17 +841,18 @@ function hsSetParam(url, name, value) {
     name = encodeURIComponent( name );
     var nam = name.replace('.','\\.');
     var reg = new RegExp("[\\?&#]"+ nam +"=([^&#]*)", "g");
-    url = url.replace(reg, "");
-    if (!jQuery.isArray(value)) {
+    var sig = /^#/.test ( url ) ? '#' : '?'; // hash or search
+    url = url.replace(reg, "" );
+    if (! jQuery.isArray(value)) {
         value =  value !== undefined
               && value !== null
-              ? [value] : [];
+              ? [value] :  []  ;
     }
     for(var i = 0; i < value.length; i ++) {
         url+= "&"+ name +"="+ encodeURIComponent(value[i]);
     }
-    if (url.indexOf( "?" ) < 0) {
-        url = url.replace("&", "?");
+    if (url.indexOf(sig) === -1) {
+        url = url.replace("&", sig);
     }
     return url;
 }

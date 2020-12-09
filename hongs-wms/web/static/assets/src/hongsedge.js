@@ -34,16 +34,16 @@ H$.load = function(req) {
 H$.send = function(url, req) {
     var rzt;
     $.hsAjax({
-        url     : hsFixUri   (url),
-        data    : hsSerialArr(req),
-        complete: function   (rst) {
-            rzt = hsResponse (rst , 3);
-        },
+        url     :  url,
+        data    :  req,
         type    : "post",
         dataType: "json",
         async   : false ,
         cache   : false ,
-        global  : false
+        global  : false ,
+        complete: function  (rst) {
+            rzt = hsResponse(rst, 3);
+        }
     });
     return  rzt ;
 };

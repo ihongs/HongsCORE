@@ -46,7 +46,7 @@ def hsClean(dn, tm, ep, op, nm, ne):
                     if  not ne:
                         continue
 
-            print time.strftime("%Y/%m/%d %H:%M:%S", time.localtime(st.st_mtime)), fn
+            print(time.strftime("%Y/%m/%d %H:%M:%S", time.localtime(st.st_mtime)), fn)
             if  not op:
                 os.remove(fn)
             fe += 1
@@ -58,7 +58,7 @@ def hsClean(dn, tm, ep, op, nm, ne):
             if  not ep:
                 continue
 
-            print "0000/00/00 00:00:00" , fn
+            print("0000/00/00 00:00:00" , fn)
             if  not op:
                 os.remove(fn)
             fe += 1
@@ -106,17 +106,17 @@ def hsPtime(tm):
 
 if  __name__ == "__main__":
     def cmd_help():
-        print "Usage: strip.py DIR_NAME EXP_TIME"
-        print "EXP_TIME format:"
-        print "  2015/12/17T12:34:56   Before this time"
-        print "  1234567890            Before this timestamp"
-        print "  1w2d3h5m6s            Before some weeks, days..."
-        print "Another options:"
-        print "  -p --print            Just print files"
-        print "  -e --empty            Remove empty dir"
-        print "  -n --name REGEXP      File name regexp"
-        print "  -x --deny             Exclude names"
-        print "  -h --help             Show this msg"
+        print("Usage: strip.py DIR_NAME EXP_TIME")
+        print("EXP_TIME format:")
+        print("  2015/12/17T12:34:56   Before this time")
+        print("  1234567890            Before this timestamp")
+        print("  1w2d3h5m6s            Before some weeks, days...")
+        print("Another options:")
+        print("  -p --print            Just print files")
+        print("  -e --empty            Remove empty dir")
+        print("  -n --name REGEXP      File name regexp")
+        print("  -x --deny             Exclude names")
+        print("  -h --help             Show this msg")
 
     if  len(sys.argv) < 3:
         cmd_help( )
@@ -130,11 +130,11 @@ if  __name__ == "__main__":
     ne = False
 
     if  not dn:
-        print "Argument 1 (folder name) required!"
+        print("Argument 1 (folder name) required!")
         cmd_help( )
         sys.exit(1)
     if  not tm:
-        print "Argument 2 (expire time) required!"
+        print("Argument 2 (expire time) required!")
         cmd_help( )
         sys.exit(1)
 
@@ -157,6 +157,6 @@ if  __name__ == "__main__":
     if  nm:
         nm  =  re.compile(nm)
 
-    print "Delete files before " + time.strftime(r"%Y/%m/%d %H:%M:%S", time.localtime(tm)) + " in " + dn
+    print("Delete files before " + time.strftime(r"%Y/%m/%d %H:%M:%S", time.localtime(tm)) + " in " + dn)
 
     hsClean(dn, tm, ep, op, nm, ne)

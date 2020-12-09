@@ -625,12 +625,9 @@ public class StatisHelper {
      */
     public List<Map> assort (Map rd) throws HongsException {
         Set<String> rb = Synt.toTerms(rd.get(Cnst.RB_KEY));
-        if (rb == null || rb.isEmpty()) {
-            throw new NullPointerException("Assort fields required.");
-        }
-        Fields fs = getGatherFields(rb, rd);
-        if (fs == null || fs.isEmpty()) {
-            throw new NullPointerException("Assort fields required!");
+            Fields  fs = this.getGatherFields ( rb , rd ) ;
+        if (null == fs ) {
+            throw new NullPointerException("Assort fields required");
         }
 
         // 查询
@@ -1162,10 +1159,6 @@ public class StatisHelper {
                       Index[] indics) {
             this.dimans = dimans;
             this.indics = indics;
-        }
-        public boolean isEmpty() {
-            return dimans.length == 0
-                && indics.length == 0;
         }
     }
 

@@ -816,9 +816,13 @@ public class StatisHelper {
     }
 
     private Field[] getGraderFields(Set<String> names, Map rd) {
-        Field[]             fields = new Field[ names.size() ];
-        Map<String, Map   > items  = that.getFields();
-        Map<String, String> types  ;
+        if (names == null) {
+            return   null;
+        }
+        
+        List<Field> fields = new ArrayList(names.size());
+        Map <String, Map   > items = that.getFields (  );
+        Map <String, String> types ;
 
         try {
             types = FormSet.getInstance().getEnum("__types__");
@@ -826,7 +830,6 @@ public class StatisHelper {
             throw e.toExemption( );
         }
 
-        int i = 0;
         for(String n : names) {
             TYPE   g ;
             String f = n ;
@@ -942,10 +945,10 @@ public class StatisHelper {
                 }
             }
 
-            fields[i++] = new Field(g, f, n);
+            fields.add(new Field(g, f, n));
         }
 
-        return fields ;
+        return fields.toArray(new Field[fields.size()]);
     }
 
     private Fields getGatherFields(Set<String> names, Map rd ) {

@@ -58,10 +58,9 @@ public class StatisHelper {
     public Map ecount(Map rd) throws HongsException {
         IndexSearcher finder = that.getFinder();
 
-        int         topn = Synt.declare(rd.get(Cnst.RN_KEY) , 0);
-        Map         incs = Synt.asMap  (rd.get(Cnst.IN_REL)    );
-        Map         excs = Synt.asMap  (rd.get(Cnst.NI_REL)    );
-        Set<String> cntz = Synt.toTerms(rd.get(Cnst.RB_KEY)    );
+        Map         incs = Synt.asMap  (rd.get(Cnst.IN_REL));
+        Map         excs = Synt.asMap  (rd.get(Cnst.NI_REL));
+        Set<String> cntz = Synt.toTerms(rd.get(Cnst.RB_KEY));
         Map<String, Map<String, Integer>> counts = new HashMap();
 
         //** 整理待统计的数据 **/
@@ -162,20 +161,25 @@ public class StatisHelper {
 
         //** 排序并截取统计数据 **/
 
+        int t = Synt.declare(rd.get(Cnst.RN_KEY), 0); // Top N
+
         for(Map.Entry<String, Map<String, Integer>> et : counts.entrySet()) {
             List<Object[]> a = new ArrayList ( et.getValue().size(  )  );
             for(Map.Entry<String, Integer> e : et.getValue().entrySet()) {
-                String m = e.getKey ();
-                int c  = e.getValue ();
+                String m = e.getKey  ();
+                int    c = e.getValue();
                 if (c != 0) {
-                    a.add(new Object[] {m, null, c});
+                    a.add( new Object[] {m, null, c} );
                 }
             }
-            Collections.sort (a, new Counts());
-            if (0 < topn && topn < a . size()) {
-                a = a.subList(0, topn);
+            Collections.sort(a, Counts);
+
+            int n = Synt.declare(rd.get(Cnst.RN_KEY +"-"+ et.getKey()), t);
+            if (0 < n && n < a.size()) {
+                a = a.subList (0, n );
             }
-            cnts.put( et.getKey(), a );
+
+            cnts.put(et.getKey(), a );
         }
 
         return cnts;
@@ -386,7 +390,7 @@ public class StatisHelper {
                     a.add( new Object[] {m, null, c} );
                 }
             }
-            Collections.sort(a, new Counts());
+            Collections.sort(a, Counts);
 
             int n = Synt.declare(rd.get(Cnst.RN_KEY +"-"+ et.getKey()), t);
             if (n > 0 && n < a.size()) {
@@ -575,7 +579,7 @@ public class StatisHelper {
                     } );
                 }
             }
-            Collections.sort(a, new Mounts());
+            Collections.sort(a, Mounts);
 
             int n = Synt.declare(rd.get(Cnst.RN_KEY +"-"+ et.getKey()), t);
             if (n > 0 && n < a.size()) {
@@ -1142,10 +1146,11 @@ public class StatisHelper {
         throw new UnsupportedOperationException ("Unsupported field " + alias);
     }
 
-    // jdk 1.7 加上这个后排序不会报错
-    static {
-        System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
-    }
+    private static final Function asInt    = (Function<Object, Number>) Synt::asInt;
+    private static final Function asLong   = (Function<Object, Number>) Synt::asLong;
+    private static final Function asFloat  = (Function<Object, Number>) Synt::asFloat;
+    private static final Function asDouble = (Function<Object, Number>) Synt::asDouble;
+    private static final Function asString = (Function<Object, String>) Synt::asString;
 
     private static class Fields {
         public final  Diman[] dimans;
@@ -1155,14 +1160,17 @@ public class StatisHelper {
             this.dimans = dimans;
             this.indics = indics;
         }
-
         public boolean isEmpty() {
             return dimans.length == 0
                 && indics.length == 0;
         }
     }
 
-    private static class Counts implements Comparator<Object[]> {
+    /**
+     * 计数排序
+     * 按数量从多到少排列
+     */
+    private static final Comparator<Object[]> Counts = new Comparator<Object[]>() {
         @Override
         public int compare(Object[] o1, Object[] o2) {
             long   cnt1 = (long)   o1[2];
@@ -1173,9 +1181,14 @@ public class StatisHelper {
 
             return 0;
         }
-    }
+    };
 
-    private static class Mounts implements Comparator<Object[]> {
+    /**
+     * 计算排序
+     * 先按数量从多到少排
+     * 再按求和从大到小排
+     */
+    private static final Comparator<Object[]> Mounts = new Comparator<Object[]>() {
         @Override
         public int compare(Object[] o1, Object[] o2) {
             long   cnt1 = (long)   o1[2];
@@ -1192,9 +1205,14 @@ public class StatisHelper {
 
             return 0;
         }
-    }
+    };
 
-    private static class Orders implements Comparator<Map> {
+    /**
+     * 统计排序
+     * 按给定字段依次对比
+     * 负号前缀可表示逆序
+     */
+    public static class Orders implements Comparator<Map> {
         private final String [] fields;
         private final boolean[] desces;
 
@@ -1271,10 +1289,9 @@ public class StatisHelper {
         }
     }
 
-    private static final Function asInt    = (Function<Object, Number>) Synt::asInt;
-    private static final Function asLong   = (Function<Object, Number>) Synt::asLong;
-    private static final Function asFloat  = (Function<Object, Number>) Synt::asFloat;
-    private static final Function asDouble = (Function<Object, Number>) Synt::asDouble;
-    private static final Function asString = (Function<Object, String>) Synt::asString;
+    // jdk 1.7 加上这个后排序不会报错
+    static {
+        System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
+    }
 
 }

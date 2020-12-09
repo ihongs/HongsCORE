@@ -13,13 +13,12 @@ from getopt import getopt
 
 if  __name__ == "__main__":
     def cmd_help():
-        print "Usage: | steal.py REGEXP"
-        print "Another options:"
-        print "  -n --name             Action or Cmdlet name"
-        print "  -a --addr             Client IP address"
-        print "  -l --type             Logs type level"
-        print "  -t --time             Logs time range"
-        print "  -h --help             Show this msg"
+        print("Usage: | steal.py REGEXP")
+        print("Another options:")
+        print("  -n --name             Action or Cmdlet name")
+        print("  -d --addr             Client IP address")
+        print("  -l --type             Logs type level")
+        print("  -h --help             Show this msg")
 
     if  len(sys.argv) < 2:
         cmd_help( )
@@ -31,26 +30,24 @@ if  __name__ == "__main__":
     lv = None
     tr = None
 
-    opts, args = getopt(sys.argv[1:], "n:a:l:t:h", ["name", "addr", "type", "time", "help"])
+    opts, args = getopt(sys.argv[1:], "n:d:l:h", ["name", "addr", "type", "help"])
     for n,v in opts:
         if  n in ("-n", "--name"):
             if  v.startswith('*'):
-                tn = re.compile(re.escape(v[:-1]+".*"))
+                tn = re.compile(".*"+re.escape(v[ 1:]))
             elif  v.endswith('*'):
-                tn = re.compile(re.escape(".*"+v[ 1:]))
+                tn = re.compile(re.escape(v[:-1])+".*")
             else:
                 tn = re.compile(re.escape(v))
         if  n in ("-d", "--addr"):
             if  v.startswith('*'):
-                ip = re.compile(re.escape(v[:-1]+".*"))
+                ip = re.compile(".*"+re.escape(v[ 1:]))
             elif  v.endswith('*'):
-                ip = re.compile(re.escape(".*"+v[ 1:]))
+                ip = re.compile(re.escape(v[:-1])+".*")
             else:
                 ip = re.compile(re.escape(v))
         if  n in ("-l", "--type"):
             lv = v
-        if  n in ("-t", "--time"):
-            tr = v
         if  n in ("-h", "--help"):
             cmd_help( )
             sys.exit(0)
@@ -71,7 +68,7 @@ if  __name__ == "__main__":
                 continue
 
             if  rf or (tx and tx.search(rb)):
-                print  rb.strip()
+                print (rb.strip())
 
         rb = None
         rf = None
@@ -80,25 +77,21 @@ if  __name__ == "__main__":
             continue
 
         rb = ln
-        mt = ln.strip().split(' ', 6) # 日志拆解, 此处格式: Date Time ClientAddr ActionPath
+        mt = ln.strip().split(' ', 6) # 日志拆解, 此处格式: Date Time Level ClientAddr ActionPath
 
-        if  tn and tn.match(mt[4]):
-            rf = True
+        if  lv and lv != mt[2]:
             continue
 
-        if  ip and ip.match(mt[3]):
-            rf = True
+        if  ip and not ip.match(mt[3]):
             continue
 
-        if  lv and lv == mt[2]:
-            rf = True
+        if  tn and not tn.match(mt[4]):
             continue
 
-        if  tr:
-            pass
+        rf = True
 
     # 退出时检查缓冲区是否有内容
     # 不做此操作可能遗失最后一个
     if  rb:
         if  rf or (tx and tx.search(rb)):
-            print  rb.strip()
+            print (rb.strip())

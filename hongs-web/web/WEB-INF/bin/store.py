@@ -16,17 +16,17 @@ from getopt import getopt
 
 if  __name__ == "__main__":
     def cmd_help():
-        print "Usage: store.py SRC_PATH DST_PATH"
-        print "Another options:"
-        print "  -n --name             Dest name with time format"
-        print "  -p --pack             Pack the back"
-        print "  -z --gzip             Gzip the back"
-        print "  -h --help             Show this msg"
-        print "--name(-n) syntax:"
-        print "  $n_%Y%m%d$x for default"
-        print "  $n is file name, like 'dump'"
-        print "  $x is extension, like '.sql'"
-        print "  %Y,%m,%d,%H,%M,%S is current year,month,date,hour,minute,second"
+        print("Usage: store.py SRC_PATH DST_PATH")
+        print("Another options:")
+        print("  -n --name             Dest name with time format")
+        print("  -c --pack             Pack backup files")
+        print("  -z --gzip             Gzip backup files")
+        print("  -h --help             Show this msg")
+        print("--name(-n) syntax:")
+        print("  $n_%Y%m%d$x for default")
+        print("  $n is file name, like 'dump'")
+        print("  $x is extension, like '.sql'")
+        print("  %Y,%m,%d,%H,%M,%S is current year,month,date,hour,minute,second")
 
     if  len(sys.argv) < 3:
         cmd_help( )
@@ -39,11 +39,11 @@ if  __name__ == "__main__":
     gz = False
 
     if  not sp:
-        print "Argument 1 (source path) required!"
+        print("Argument 1 (source path) required!")
         cmd_help( )
         sys.exit(1)
     if  not dn:
-        print "Argument 2 (target path) required!"
+        print("Argument 2 (target path) required!")
         cmd_help( )
         sys.exit(1)
 
@@ -51,11 +51,11 @@ if  __name__ == "__main__":
     sp = rp.sub( "", sp )
     dn = rp.sub( "", dn )
 
-    opts, args = getopt(sys.argv[3:], "n:zxh", ["name", "gzip", "pack", "help"])
+    opts, args = getopt(sys.argv[3:], "n:zch", ["name", "pack", "gzip", "help"])
     for n,v in opts:
         if  n in ("-n", "--name"):
             tn = v
-        if  n in ("-p", "--pack"):
+        if  n in ("-c", "--pack"):
             pc = True
         if  n in ("-z", "--gzip"):
             gz = True
@@ -86,7 +86,7 @@ if  __name__ == "__main__":
 
     # 执行备份操作
 
-    print "Backup files from '" + sp + "' to '" + tn + "'"
+    print("Backup files from '" + sp + "' to '" + tn + "'")
 
     if  pc or gz:
         zp = tarfile.open(tn, md)

@@ -12,6 +12,7 @@ import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.Collector;
 import org.apache.lucene.search.LeafCollector;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Scorer;
 
@@ -60,6 +61,9 @@ public class StatisGrader {
         for(Field field : fields) {
             counts.put(field.alias, new HashMap());
         }
+        if (query == null) {
+            query =  new MatchAllDocsQuery();
+        }
         finder.search (query, new Acount(fields, counts, countx));
         return counts ;
     }
@@ -73,6 +77,9 @@ public class StatisGrader {
         Map<String, Set<Range       >> countx = new HashMap();
         for(Field field : fields) {
             counts.put(field.alias, new HashMap());
+        }
+        if (query == null) {
+            query =  new MatchAllDocsQuery();
         }
         finder.search (query, new Amount(fields, counts, countx));
         return counts ;
@@ -88,6 +95,10 @@ public class StatisGrader {
         private   int   count  =   0   ;
 
         public Fetch(Field... fields) {
+            if (fields == null || fields.length == 0) {
+                throw new NullPointerException("Fields required");
+            }
+
             this.fields = fields;
         }
 

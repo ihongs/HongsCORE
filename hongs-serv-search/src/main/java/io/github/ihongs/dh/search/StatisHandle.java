@@ -13,6 +13,7 @@ import org.apache.lucene.index.SortedNumericDocValues;
 import org.apache.lucene.search.Collector;
 import org.apache.lucene.search.LeafCollector;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Scorer;
 import org.apache.lucene.util.NumericUtils;
@@ -67,9 +68,13 @@ public final class StatisHandle {
      * @param fx
      * @throws IOException
      */
-    public void search( Consumer<Field[]> fx )
+    public void search (Consumer<Field[]> fx)
     throws IOException {
-        finder. search( query , new Fetch(fx, fields) );
+        if (query == null) {
+            query =  new MatchAllDocsQuery( );
+        }
+
+        finder. search (query , new Fetch(fx, fields));
     }
 
     /**
@@ -78,11 +83,18 @@ public final class StatisHandle {
      */
     public static class Fetch implements Collector, LeafCollector {
 
-        private final Consumer<Field[]> actor ;
+        private final Consumer<Field[]> filter;
         private final /*Base*/ Field[]  fields;
 
-        public Fetch( Consumer<Field[]> actor , Field... fields ) {
-            this.actor  = actor ;
+        public Fetch( Consumer<Field[]> filter, Field... fields ) {
+            if (filter == null) {
+                throw new NullPointerException("Filter required");
+            }
+            if (fields == null || fields.length == 0) {
+                throw new NullPointerException("Fields required");
+            }
+
+            this.filter = filter;
             this.fields = fields;
         }
 
@@ -100,7 +112,7 @@ public final class StatisHandle {
             for(Field field : fields) {
                 field.collect(i);
             }
-            actor.accept(fields);
+            filter.accept(fields);
         }
 
         @Override

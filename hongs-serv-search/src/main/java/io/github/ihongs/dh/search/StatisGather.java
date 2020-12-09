@@ -21,6 +21,7 @@ import org.apache.lucene.index.SortedNumericDocValues;
 import org.apache.lucene.search.Collector;
 import org.apache.lucene.search.LeafCollector;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Scorer;
 import org.apache.lucene.util.NumericUtils;
@@ -55,7 +56,11 @@ public class StatisGather {
         return this;
     }
 
-    public List<Map> fetch() throws IOException {
+    public List<Map> search() throws IOException {
+        if (query == null) {
+            query =  new MatchAllDocsQuery();
+        }
+
         Fetch  fetch = new Fetch(dimans, indics);
         finder.search(query, fetch);
         return fetch . getResult( );
@@ -99,6 +104,12 @@ public class StatisGather {
         private final List<       Map> list; // 结果列表
 
         public Fetch( Diman[] dimans, Index[] indics ) {
+            if (dimans == null) dimans = new Diman[]{};
+            if (indics == null) indics = new Index[]{};
+            if (dimans.length==0 && indics.length==0 ) {
+                throw new NullPointerException("Fields required");
+            }
+
             this.dimans = dimans;
             this.indics = indics;
             this.dict = new HashMap();

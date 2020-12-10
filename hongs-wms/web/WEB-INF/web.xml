@@ -120,7 +120,7 @@
             <param-name>url-exclude</param-name>
             <param-value>
                 *.js;*.css;*.png;*.jpg;*.gif;*.bmp;*.api;
-                /centra/login.html;/centra/sign/create.act
+                /centra/sign/*;/centra/login.html
             </param-value>
         </init-param>
     </filter>
@@ -150,7 +150,7 @@
             <param-name>url-exclude</param-name>
             <param-value>
                 *.js;*.css;*.png;*.jpg;*.gif;*.bmp;*.api;
-                /centre/login.html;/centre/sign/create.act
+                /centre/sign/*;/centre/login.html
             </param-value>
         </init-param>
     </filter>

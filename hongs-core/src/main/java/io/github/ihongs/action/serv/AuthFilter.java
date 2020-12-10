@@ -22,7 +22,6 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 /**
  * 动作权限过滤器
@@ -283,6 +282,13 @@ public class AuthFilter
             msg =  lang.translate("core.error.no.place.redirect");
         }
     break  ;
+    case 0 :
+        // 登录超时, 删除会话标识
+        hlpr.setSessibute(Cnst.UID_SES, null);
+        hlpr.setSessibute(Cnst.UST_SES, null);
+        if (siteMap.session != null) {
+            hlpr.setSessibute(siteMap.session, null);
+        }
     default:
         uri = this.loginPage;
         if (uri == null || uri.length() == 0) {

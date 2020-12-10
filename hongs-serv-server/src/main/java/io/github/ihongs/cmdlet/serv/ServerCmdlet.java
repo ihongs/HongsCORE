@@ -39,10 +39,10 @@ import org.eclipse.jetty.server.session.FileSessionDataStore;
 import org.eclipse.jetty.server.session.JDBCSessionDataStore;
 
 // JSP 初始化依赖的类
+import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletHolder;
-import org.eclipse.jetty.servlet. FilterHolder;
-import org.eclipse.jetty.plus.annotation.ContainerInitializer;
 import org.eclipse.jetty.apache.jsp.JettyJasperInitializer;
+import org.eclipse.jetty.plus.annotation.ContainerInitializer;
 import org.apache.tomcat.InstanceManager;
 import org.apache.tomcat.SimpleInstanceManager;
 

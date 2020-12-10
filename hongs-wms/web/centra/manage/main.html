@@ -60,7 +60,8 @@
 <blockquote style="font-size: inherit;">
     <span style="padding-right: 1em;" data-i18n="centra.title"    ></span>
     <span style="padding-right: 1em;" data-i18n="centra.sub.title"></span>
-    &copy; <span data-i18n="copy.right"></span>
+    &copy; <span data-eval="$(this).html(H$(':copy.right'))"></span>
+    &emsp; <span data-eval="$(this).html(H$(':site.links'))"></span>
     &bull; Powered by <a href="power.html" target="_blank">HongsCORE</a>
 </blockquote>
 <script type="text/javascript">

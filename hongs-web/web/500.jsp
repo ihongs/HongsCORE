@@ -101,9 +101,9 @@
         <nav id="footbox" class="navbar navbar-fixed-bottom">
             <div class="container">
                 <blockquote><p class="clearfix">
-                    <span class="pull-left ">&copy; <%=CoreLocale.getInstance().translate("fore.copy.right")%></span>
-                    <span class="pull-left ">&nbsp; <%=CoreLocale.getInstance().translate("fore.site.links")%></span>
-                    <span class="pull-right">Powered by <a href="<%=request.getContextPath()%>/power.html" target="_blank">HongsCORE</a></small>
+                    <small class="pull-right">Powered by <a href="<%=request.getContextPath()%>/power.html" target="_blank">HongsCORE</a></small>
+                    <span>&copy;&nbsp;</span><span><%=CoreLocale.getInstance().translate("fore.copy.right")%></span>
+                    <span>&nbsp;&nbsp;</span><span><%=CoreLocale.getInstance().translate("fore.site.links")%></span>
                 </p></blockquote>
             </div>
         </nav>

@@ -143,9 +143,9 @@
 
 <div id="head-powered">
     <p>
-        &copy; <%=CoreLocale.getInstance().translate("fore.copy.right")%>
-        &emsp; <%=CoreLocale.getInstance().translate("fore.site.links")%>
-        &bull; Powered by <a href="<%=Core.BASE_HREF%>/power.html" target="_blank">HongsCORE</a>
+        <span>&copy;&nbsp;</span><span><%=CoreLocale.getInstance().translate("fore.copy.right")%></span>
+    <!--<span>&nbsp;&nbsp;</span><span><%=CoreLocale.getInstance().translate("fore.site.links")%></span>-->
+        <span>&nbsp;&nbsp;</span><span>Powered by <a href="<%=Core.BASE_HREF%>/power.html" target="_blank">HongsCORE</a></span>
     </p>
 </div>
 

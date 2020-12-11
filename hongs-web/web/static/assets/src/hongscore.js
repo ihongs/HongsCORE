@@ -2295,7 +2295,7 @@ $.fn.hsReady = function() {
 
     // 为避免 chrome 等浏览器中显示空白间隔, 清除全部独立的空白文本节点
     box.find("*").contents().filter(function() {
-        return this.nodeType === 3 && /^\s+$/.test(this.nodeValue);
+        return this.nodeType === 3 && /^[ \r\n\v\t\f]+$/.test(this.nodeValue);
     }).remove();
 
     // 输入类
@@ -2313,15 +2313,12 @@ $.fn.hsReady = function() {
         }
     });
 
-    // 国际化
+    // 国际化, 取标题
     box.find("[data-i18n]").each(function() {
         $(this).hsI18n();
-    });
+    }); $( box).hsL10n();
 
-    // 标题化
-    box.hsL10n ( );
-
-    // 在加载前触发事件
+    // 加载前触发事件
     box.trigger("hsReady");
 
     // 加载
@@ -2454,13 +2451,15 @@ $.fn.hsTdel = function(ref) {
 $.fn.hsL10n = function(tit) {
     var box = $(this);
     var prt = box.parent( );
-    var hea = box.children("h1,h2,h3,h4,h5,h6");
 
     // 从其下标题提取
     if (! tit) {
-    if (! hea.size())
-        return ;
-    tit = hea.text();
+        var hea = box.children("h1,h2,h3,h4,h5,h6");
+        if ( 1 <= hea.size()) {
+            tit = hea.text();
+        } else {
+            return;
+        }
     }
 
     // 针对共用的表单, 有 ID 即为更新

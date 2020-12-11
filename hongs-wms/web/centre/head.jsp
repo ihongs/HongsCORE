@@ -155,9 +155,9 @@
 <nav class="navbar navbar-default">
     <div class="container">
         <blockquote><p class="clearfix">
-            <span>&copy; <%=CoreLocale.getInstance().translate("fore.copy.right")%></span>
-            <span>&emsp; <%=CoreLocale.getInstance().translate("fore.site.links")%></span>
-            <span class="pull-right">Powered by <a href="<%=request.getContextPath()%>/power.html" target="_blank">HongsCORE</a></span>
+            <small class="pull-right">Powered by <a href="<%=request.getContextPath()%>/power.html" target="_blank">HongsCORE</a></small>
+            <span>&copy;&nbsp;</span><span><%=CoreLocale.getInstance().translate("fore.copy.right")%></span>
+            <span>&nbsp;&nbsp;</span><span><%=CoreLocale.getInstance().translate("fore.site.links")%></span>
         </p></blockquote>
     </div>
 </nav>

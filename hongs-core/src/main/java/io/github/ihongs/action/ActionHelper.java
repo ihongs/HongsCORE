@@ -974,7 +974,7 @@ public class ActionHelper implements Cloneable
 
     try {
         out.write(txt);
-    } catch (IOException e)  {
+    } catch (IOException e ) {
       throw new HongsExemption(0x1110, "Can not send to client.", e);
     }
   }
@@ -1133,25 +1133,27 @@ public class ActionHelper implements Cloneable
   }
 
   /**
+   * 跳转页面
+   * @param url
+   * @param msg
+   */
+  public void redirect(String url, String msg)
+  {
+    this.redirect(url , msg , 302);
+  }
+
+  /**
    * 302重定向
    * @param url
    */
   public void redirect(String url)
   {
-    this.response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
-    this.response.setHeader("Location", url);
-    this.responseData = null;
-  }
-
-  /**
-   * 301重定向
-   * @param url
-   */
-  public void relocate(String url)
-  {
-    this.response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
-    this.response.setHeader("Location", url);
-    this.responseData = null;
+    try {
+      this.responseData = null;
+      this.response.sendRedirect(url);
+    } catch ( IOException e ) {
+      throw new HongsExemption(0x1110, "Can not send to client.", e);
+    }
   }
 
   /**
@@ -1160,9 +1162,12 @@ public class ActionHelper implements Cloneable
    */
   public void error400(String msg)
   {
-    this.response.setStatus(HttpServletResponse.SC_BAD_REQUEST );
-    this.responseData = null;
-    this.print(msg);
+    try {
+      this.responseData = null;
+      this.response.sendError (HttpServletResponse.SC_BAD_REQUEST , msg);
+    } catch ( IOException e ) {
+      throw new HongsExemption(0x1110, "Can not send to client.", e);
+    }
   }
 
   /**
@@ -1171,9 +1176,12 @@ public class ActionHelper implements Cloneable
    */
   public void error401(String msg)
   {
-    this.response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-    this.responseData = null;
-    this.print(msg);
+    try {
+      this.responseData = null;
+      this.response.sendError (HttpServletResponse.SC_UNAUTHORIZED, msg);
+    } catch ( IOException e ) {
+      throw new HongsExemption(0x1110, "Can not send to client.", e);
+    }
   }
 
   /**
@@ -1182,9 +1190,12 @@ public class ActionHelper implements Cloneable
    */
   public void error403(String msg)
   {
-    this.response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-    this.responseData = null;
-    this.print(msg);
+    try {
+      this.responseData = null;
+      this.response.sendError (HttpServletResponse.SC_FORBIDDEN , msg);
+    } catch ( IOException e ) {
+      throw new HongsExemption(0x1110, "Can not send to client.", e);
+    }
   }
 
   /**
@@ -1193,9 +1204,12 @@ public class ActionHelper implements Cloneable
    */
   public void error404(String msg)
   {
-    this.response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-    this.responseData = null;
-    this.print(msg);
+    try {
+      this.responseData = null;
+      this.response.sendError (HttpServletResponse.SC_NOT_FOUND , msg);
+    } catch ( IOException e ) {
+      throw new HongsExemption(0x1110, "Can not send to client.", e);
+    }
   }
 
   /**
@@ -1204,9 +1218,12 @@ public class ActionHelper implements Cloneable
    */
   public void error500(String msg)
   {
-    this.response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-    this.responseData = null;
-    this.print(msg);
+    try {
+      this.responseData = null;
+      this.response.sendError (HttpServletResponse.SC_INTERNAL_SERVER_ERROR, msg);
+    } catch ( IOException e ) {
+      throw new HongsExemption(0x1110, "Can not send to client.", e);
+    }
   }
 
   //** 工具方法 **/

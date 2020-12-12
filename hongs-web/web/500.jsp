@@ -77,14 +77,14 @@
         <![endif]-->
         <script type="text/javascript" src="<%=request.getContextPath()%>/static/assets/jquery.min.js"></script>
         <style type="text/css">
-            #footbox.navbar, body, .jumbotron, .container
-                { background-color: #8f0000; color: #fff; border: 0; }
-            #footbox blockquote
-                { background-color: #6f0000; color: #ddd; }
-            h1, h3, pre
-                { font-weight: bold; }
+            h1
+                { font-weight: bolder; }
             pre
-                { background-color: transparent; color: #ddd; border: 0; }
+                { color: #ddd; background-color: transparent; border-color: transparent; }
+            #footbox blockquote
+                { color: #ddd; background-color: #600; }
+            #footbox.navbar, body, .jumbotron, .container
+                { color: #fff; background-color: #800; }
         </style>
     </head>
     <body>
@@ -92,6 +92,7 @@
         <div class="jumbotron">
             <div class="container">
                 <h1>: (</h1>
+                <p> &nbsp; </p>
                 <p>  <%=escapeXML(text.trim())%>  </p>
                 <%if (trac != null) {%>
                 <pre><%=escapePRE(trac.trim())%></pre>

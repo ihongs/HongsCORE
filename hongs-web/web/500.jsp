@@ -63,6 +63,7 @@
         }   trac  = null ;
     }
 %>
+<!--MSG: <%=escapeXML(text.trim())%>-->
 <!doctype html>
 <html>
     <head>
@@ -88,7 +89,6 @@
         </style>
     </head>
     <body>
-        <!--MSG: <%=escapeXML(text.trim())%>-->
         <div class="jumbotron">
             <div class="container">
                 <h1>: (</h1>

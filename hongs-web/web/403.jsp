@@ -30,13 +30,14 @@
     }
     String  link  = CoreLocale.getInstance().translate("core.error.to.index");
 %>
+<!--MSG: <%=escapeXML(text)%>-->
 <!doctype html>
 <html>
     <head>
         <title><%=response.getStatus()%> Error</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="icon" type="image/x-icon" href="favicon.ico"/>
+        <link rel="icon" type="image/x-icon" href="<%=request.getContextPath()%>/favicon.ico"/>
         <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/static/assets/css/bootstrap.min.css"/>
         <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/static/assets/css/hongscore.min.css"/>
         <!--[if glt IE8.0]>
@@ -53,7 +54,6 @@
         </style>
     </head>
     <body>
-        <!--MSG: <%=escapeXML(text)%>-->
         <div class="jumbotron">
             <div class="container">
                 <h1>: (</h1>

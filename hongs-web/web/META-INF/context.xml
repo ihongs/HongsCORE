@@ -1,3 +1,3 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Context antiJARLocking="true" path="/HongsWeb" reloadable="true">
+<Context path="/HongsWeb" reloadable="true" antiJARLocking="true" antiResourceLocking="true">
 </Context>

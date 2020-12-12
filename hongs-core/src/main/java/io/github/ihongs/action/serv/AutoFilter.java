@@ -37,8 +37,10 @@ import javax.servlet.http.HttpServletResponse;
  * </pre>
  * <p>
  * 注意:
- * action-path, layout-path 与 filter-mapping 的 url-pattern 不能有从属关系,
- * 否则会造成死循环
+ * action-path, layout-path 与 filter-mapping 的 url-pattern
+ * 需要避免从属关系, 否则会造成死循环.
+ * action-path, layout-path 在 filter-mapping 的 url-pattern
+ * 内部时需将其排除, 即 url-exclude.
  * </p>
  *
  * @author Hongs
@@ -51,10 +53,9 @@ public class AutoFilter extends ActionDriver {
     private Set<String> layset = null;
     private Set<String> actset = null;
     private Set<String> cstset = null;
-//  private Map<String, String> cstmap = null; // 可 inlucde 的动作脚本
-//  private Map<String, String> cxtmap = null; // 可 forward 的动作脚本
 
-    private static final Pattern DENY_JSPS = Pattern.compile("(/_|\\.)[^/]*\\.jsp$"); // [_#$]
+    // 禁止访问: xxx.xxx.jsp
+    private static final Pattern DENY_JSPS = Pattern.compile(".*(/_|\\.)[^/]*\\.jsp$"); // [_#$]
 
     @Override
     public void init(FilterConfig cnf) throws ServletException {
@@ -89,7 +90,6 @@ public class AutoFilter extends ActionDriver {
         HttpServletResponse rsp = hlpr.getResponse();
         HttpServletRequest  req = hlpr.getRequest( );
         String url = ActionDriver.getRecentPath(req);
-        String ref = ActionDriver.getOriginPath(req);
 
         // 检查是否需要跳过
         if (ignore != null && ignore.matches(url)) {
@@ -98,8 +98,8 @@ public class AutoFilter extends ActionDriver {
         }
 
         // 禁止访问动作脚本, 避免绕过权限过滤
-        if (DENY_JSPS.matcher(ref).find()) {
-            rsp.sendError(HttpServletResponse.SC_NOT_FOUND, "What's your problem?");
+        if (DENY_JSPS.matcher( url ).matches(   )) {
+            rsp.sendError ( HttpServletResponse.SC_NOT_FOUND , "What's your problem?" );
             return;
         }
 
@@ -124,10 +124,9 @@ public class AutoFilter extends ActionDriver {
 
                 pos = act.lastIndexOf('/');
                 src = act.substring(0,pos);
-//              met = act.substring(1+pos);
             } catch (IndexOutOfBoundsException ex) {
                 // 如果无法拆分则直接跳过
-                chain.doFilter ( req, rsp);
+                chain.doFilter( req, rsp );
                 return;
             }
 
@@ -137,42 +136,14 @@ public class AutoFilter extends ActionDriver {
                 include ( req, rsp, url, uri);
                 return;
             }
-            // 废弃, 仅用以上方式处理
-            /*
-            uri = "/"+ src +"/#"+ met +".jsp";
+
+            uri =  layout  +  "/__main__.jsp";
             if (new File(Core.BASE_PATH+ uri).exists()) {
                 include ( req, rsp, url, uri);
                 return;
             }
-            uri = "/"+ src +"/$"+ met +".jsp";
-            if (new File(Core.BASE_PATH+ uri).exists()) {
-                forward ( req, rsp, url, uri);
-                return;
-            }
-            */
 
-            if (!ActionRunner.getActions().containsKey(act)) {
-                // 检查是否有重写动作脚本 (废弃, 动作的归动作)
-                /*
-                getlays();
-                for(Map.Entry<String, String> et : cstmap.entrySet()) {
-                    met = et.getKey  (  );
-                    uri = et.getValue(  );
-                    if (act.endsWith(met)) {
-                        include(req,rsp, url, layout + uri);
-                        return;
-                    }
-                }
-                for(Map.Entry<String, String> et : cxtmap.entrySet()) {
-                    met = et.getKey  (  );
-                    uri = et.getValue(  );
-                    if (act.endsWith(met)) {
-                        forward(req,rsp, url, layout + uri);
-                        return;
-                    }
-                }
-                */
-
+            if (ActionRunner.getActions().containsKey(act) == false) {
                 for(String axt: getacts()) {
                     if (act.endsWith(axt)) {
                         if (cstset.contains(axt)) {
@@ -185,42 +156,23 @@ public class AutoFilter extends ActionDriver {
                 }
             }
         } else {
-            // 默认引导页总叫 default.html
-            if ( url.endsWith("/") ) {
-                 url = url + "default.html";
+            // 默认引导页总是叫 default.html
+            if (url.endsWith("/")) {
+                url  = url + "default.html";
             }
 
-            File urf = new File(Core.BASE_PATH+ url);
-            if (!urf.exists( )) {
-                boolean jsp = url.endsWith (".jsp" );
-                boolean htm = url.endsWith (".htm" )
-                           || url.endsWith (".html");
-                String  uxl = null;
-                if (htm) {
-                    int pos = url.lastIndexOf( "." );
-                        uxl = url.substring(0 , pos);
-                }
+            if (new File(Core.BASE_PATH + url).exists() == false) {
+                // xxx.xxx > xxx.xxx.jsp
+                String jsp = url + ".jsp";
 
                 for(String uri: getlays()) {
-                    if (url.endsWith(uri)) {
+                    if (jsp.endsWith(uri)) {
                         forward(req, rsp, url, layout + uri);
                         return;
                     }
-                    if (jsp) {
-                        continue;
-                    }
-                    if (htm) {
-                        // xxx.htm => xxx.jsp
-                        if ((uxl + ".jsp").endsWith(uri)) {
-                            forward(req, rsp, url, layout + uri);
-                            return;
-                        }
-                    } else {
-                        // xxx.xxx => xxx.xxx.jsp
-                        if ((url + ".jsp").endsWith(uri)) {
-                            forward(req, rsp, url, layout + uri);
-                            return;
-                        }
+                    if (url.endsWith(uri)) {
+                        forward(req, rsp, url, layout + uri);
+                        return;
                     }
                 }
             }
@@ -325,8 +277,6 @@ public class AutoFilter extends ActionDriver {
          * 下面是按越深越先加入的
          */
         layset = new LinkedHashSet();
-//      cstmap = new LinkedHashMap();
-//      cxtmap = new LinkedHashMap();
 
         // 递归获取目录下所有文件
         getlays(layset, dir, "/");
@@ -356,27 +306,6 @@ public class AutoFilter extends ActionDriver {
             if (fx.isDirectory(   )) {
                 getlays(layset , fx , dn + fn + "/");
             }
-
-            /**
-             * #,$ 都表示这是一个动作脚步
-             * # 为 include, $ 为 forward
-             * 废弃, 动作的归动作
-             */
-            /*
-            if (fn.startsWith ("#")) {
-                int    l  = fn.lastIndexOf(".");
-                String ln = fn.substring(1 , l);
-                cstmap.put( dn + ln , dn + fn );
-            } else
-            if (fn.startsWith ("$")) {
-                int    l  = fn.lastIndexOf(".");
-                String ln = fn.substring(1 , l);
-                cxtmap.put( dn + ln , dn + fn );
-            } else
-            {
-                layset.add( dn + fn);
-            }
-            */
         }
 
         layset.addAll(tmpset);

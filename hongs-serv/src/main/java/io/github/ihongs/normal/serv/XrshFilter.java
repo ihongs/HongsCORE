@@ -59,8 +59,7 @@ public class XrshFilter implements Filter {
             return;
         }
 
-        rsp.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        rsp.getWriter().print("What's your problem...");
+        rsp.sendError(HttpServletResponse.SC_FORBIDDEN, "What's your problem?");
     }
 
     @Override

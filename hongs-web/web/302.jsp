@@ -6,34 +6,29 @@
 <%@page extends="io.github.ihongs.jsp.Pagelet"%>
 <%@page contentType="text/html" pageEncoding="UTF-8" isErrorPage="true" trimDirectiveWhitespaces="true"%>
 <%
-    // 如果有内部返回, 则不要显示此页
-    if (null != request.getAttribute(Cnst.RESPON_ATTR)) {
-        return;
-    }
-
     Integer code;
     String  text;
+    String  href;
+    String  link;
     code = (Integer ) request.getAttribute("javax.servlet.error.status_code");
-    if (null != code) {
-        response.setStatus(code); // 不知何故 sendError 之后总是 500, 此为修正
+    text = (String  ) request.getAttribute("javax.servlet.error.message");
+    href = (String  ) request.getAttribute("javax.servlet.location");
+    link = CoreLocale.getInstance().translate("core.error.redirect");
+    if (href == null) {
+        href  = request.getContextPath() + "/";
     }
-    if (null == exception) {
-        exception = (Throwable) request.getAttribute("javax.servlet.error.exception");
+    if (code != null
+    &&  code != 301
+    &&  code != 302 ) {
+        response.setStatus(code);
     }
-    if (null != exception) {
-        text  = exception.getLocalizedMessage();
-    } else {
-        text  = (String) request.getAttribute("javax.servlet.error.message" );
-        if (null == text ) {
-            text  = CoreLocale.getInstance().translate("core.error.no.power");
-        }
-    }
-    String  link  = CoreLocale.getInstance().translate("core.error.to.index");
 %>
+<!--MSG: <%=escapeXML(text)%>-->
 <!doctype html>
 <html>
     <head>
-        <title><%=response.getStatus()%> Error</title>
+        <title><%=escapeXML(link)%></title>
+        <meta http-equiv="Refresh" content="3; url=<%=escapeXML( href )%>">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="icon" type="image/x-icon" href="favicon.ico"/>
@@ -47,19 +42,24 @@
             h1
                 { font-weight: bolder; }
             #footbox blockquote
-                { color: #ddd; background-color: #048; }
+                { color: #444; background-color: #ccc; }
             #footbox.navbar, body, .jumbotron, .container
-                { color: #fff; background-color: #036; }
+                { color: #222; background-color: #eee; }
+            @media ( prefers-color-scheme: dark ) {
+            #footbox blockquote
+                { color: #ccc; background-color: #444; }
+            #footbox.navbar, body, .jumbotron, .container
+                { color: #eee; background-color: #222; }
+            }
         </style>
     </head>
     <body>
-        <!--MSG: <%=escapeXML(text)%>-->
         <div class="jumbotron">
             <div class="container">
-                <h1>: (</h1>
+                <h1>: )</h1>
                 <p> &nbsp; </p>
                 <p> <%=escapeXML(text)%> </p>
-                <p> <a href="<%=request.getContextPath()%>/" class="btn btn-lg btn-info">
+                <p> <a href="<%=escapeXML(href)%>" class="btn btn-lg btn-success">
                     <%=escapeXML(link)%>
                     </a>
                 </p>

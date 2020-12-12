@@ -24,7 +24,7 @@
         text  = exception.getLocalizedMessage();
     } else {
         text  = (String) request.getAttribute("javax.servlet.error.message" );
-        if (null != text ) {
+        if (null == text ) {
             text  = CoreLocale.getInstance().translate("core.error.no.thing");
         }
     }
@@ -44,14 +44,12 @@
         <![endif]-->
         <script type="text/javascript" src="<%=request.getContextPath()%>/static/assets/jquery.min.js"></script>
         <style type="text/css">
-            #footbox.navbar, body, .jumbotron, .container
-                { background-color: #004f8f; color: #fff; border: 0; }
+            h1
+                { font-weight: bolder; }
             #footbox blockquote
-                { background-color: #003f6f; color: #ddd; }
-            h1, h3, pre
-                { font-weight: bold; }
-            pre
-                { background-color: transparent; color: #ddd; border: 0; }
+                { color: #ddd; background-color: #048; }
+            #footbox.navbar, body, .jumbotron, .container
+                { color: #fff; background-color: #036; }
         </style>
     </head>
     <body>
@@ -59,6 +57,7 @@
         <div class="jumbotron">
             <div class="container">
                 <h1>: (</h1>
+                <p> &nbsp; </p>
                 <p> <%=escapeXML(text)%> </p>
                 <p> <a href="<%=request.getContextPath()%>/" class="btn btn-lg btn-info">
                     <%=escapeXML(link)%>

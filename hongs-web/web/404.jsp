@@ -48,9 +48,9 @@
             h1
                 { font-weight: bolder; }
             #footbox blockquote
-                { color: #ddd; background-color: #048; }
+                { color: #ddd; background-color: #036; }
             #footbox.navbar, body, .jumbotron, .container
-                { color: #fff; background-color: #036; }
+                { color: #fff; background-color: #048; }
         </style>
     </head>
     <body>

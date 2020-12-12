@@ -59,7 +59,7 @@
                 <h1>: (</h1>
                 <p> &nbsp; </p>
                 <p> <%=escapeXML(text)%> </p>
-                <p> <a href="<%=request.getContextPath()%>/" class="btn btn-lg btn-info">
+                <p> <a href="<%=request.getContextPath()%>/" class="btn btn-lg btn-primary">
                     <%=escapeXML(link)%>
                     </a>
                 </p>

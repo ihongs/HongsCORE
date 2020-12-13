@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -99,7 +100,12 @@ public class AutoFilter extends ActionDriver {
 
         // 禁止访问动作脚本, 避免绕过权限过滤
         if (DENY_JSPS.matcher( url ).matches(   )) {
-            rsp.sendError ( HttpServletResponse.SC_NOT_FOUND , "What's your problem?" );
+            if (req.getAttribute(RequestDispatcher.INCLUDE_SERVLET_PATH) != null
+            &&  req.getAttribute(RequestDispatcher.FORWARD_SERVLET_PATH) != null) {
+                rsp.sendError( HttpServletResponse.SC_NOT_FOUND , "What's your problem?" );
+            } else {
+              chain.doFilter ( req , rsp );
+            }
             return;
         }
 

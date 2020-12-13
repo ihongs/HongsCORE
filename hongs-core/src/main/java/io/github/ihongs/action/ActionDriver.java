@@ -336,6 +336,22 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
     private void doCommit(Core core, ActionHelper hlpr, HttpServletRequest req, HttpServletResponse rsp)
     throws ServletException {
         Map dat  = hlpr.getResponseData();
+
+        // 可能会有 sendError
+        if (dat == null) {
+            Object ern = req.getAttribute("");
+            Object err = req.getAttribute("");
+            Object msg = req.getAttribute("");
+            Map dst  = new HashMap( );
+            if (ern != null) dst.put("ern", "Er"  +  ern  );
+            if (err != null) dst.put("err", err.toString());
+            if (msg != null) dst.put("msg", msg.toString());
+            if (dst.isEmpty()==false) {
+                dst.put("ok" , false);
+                hlpr.reply(dat = dst);
+            }
+        }
+
         if (dat != null) {
             req .setAttribute(Cnst.RESPON_ATTR, dat);
             hlpr.updateHelper( req, rsp );

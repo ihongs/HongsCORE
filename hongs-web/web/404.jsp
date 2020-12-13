@@ -24,7 +24,7 @@
         text  = exception.getLocalizedMessage();
     } else {
         text  = (String) request.getAttribute("javax.servlet.error.message" );
-        if (null == text ) {
+        if (null == text || text.equalsIgnoreCase("NOT FOUND")) {
             text  = CoreLocale.getInstance().translate("core.error.no.thing");
         }
     }

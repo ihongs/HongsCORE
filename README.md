@@ -1,8 +1,8 @@
 # HongsCORE framework for Java
 
 * 文档版本: 19.01.12
-* 软件版本: 1.0.1-20201023
-* 设计作者: 黄弘(Kevin Hongs)
+* 软件版本: 1.0.2-20201212
+* 设计作者: 黄弘(Hongs)
 * 技术支持: kevin.hongs@gmail.com
 
 **HongsCORE** 即 **Hong's Common Object Requesting Engine**, 通用对象请求引擎, 拼凑的有些生硬. 在设计第一个原型框架时(PHP 版 2006 年), 我买了一台 Intel Core CPU 的笔记本电脑, 当时随意的给她取了个名字叫 Core, 后来觉得名字应该更有意义才扩展成了以上缩写.
@@ -10,15 +10,16 @@
 
 ## 特性概叙
 
-1. 支持库表配置, 支持多数据库;
-2. 支持 JOIN 或 IN 的关联查询, 并可自动处理关联插入;
-3. 支持隶属/一对多/多对多等关联模式并能自动处理关系;
-4. 有简单的存取模型基类, 对常规增删改查无需编写代码;
-5. 统一的服务端维护程序, 可与前端应用共享配置及模型;
-6. 简单有效的动作权限解决方案;
-7. 与对应的 HongsCORE4JS(for Javascript) WEB 组件配合实现高效的开发方案;
-8. 默认嵌入 jetty,sqlite,lucene 等库, 除 JDK 外无需安装其他软件即可运行;
-9. 内含自助模块, 无需编程即可构建简单的信息管理系统.
+ 1. 支持库表配置, 支持多数据库;
+ 2. 支持 JOIN 或 IN 的关联查询, 并可自动处理关联插入;
+ 3. 支持隶属/一对多/多对多等关联模式并能自动处理关系;
+ 4. 有简单的存取模型基类, 对常规增删改查无需编写代码;
+ 5. 统一的服务端维护程序, 可与前端应用共享配置及模型;
+ 6. 简单有效的动作权限解决方案;
+ 7. 与对应的 HongsCORE4JS(for Javascript) WEB 组件配合实现高效的开发方案;
+ 8. 默认嵌入 jetty,sqlite,lucene 等库, 除 JDK 外无需安装其他软件即可运行;
+ 9. 内含自助模块, 无需编程即可构建简单的信息管理系统;
+10. 内含统计模块, 可实现简单分类、区间及分组聚合统计.
 
 另见 [**更新日志**](UPDATE.md), 及 [**HongsCORE framework for Javascript**](hongs-web/web/static/assets/src/).
 
@@ -63,7 +64,7 @@
 
     JDK 下载地址: http://www.oracle.com/technetwork/java/javase/downloads/index.html
     MVN 下载地址: http://maven.apache.org/download.cgi
-    OpenJDK 地址: http://jdk.java.net/10/
+    OpenJDK 地址: http://jdk.java.net/archive/
 
 ## 定制开发
 
@@ -115,8 +116,6 @@
 在这套系统里，这个 scheme 文件有两种：一是早期围绕关系数据库做的 [.db.xml](hongs-core/src/main/resources/io/github/ihongs/config/default.db.xml)，结合数据库的表结构，来描述资源模型；另一个是后定义的 [.form.xml](hongs-core/src/main/resources/io/github/ihongs/config/default.form.xml) 配置，旨在完整的描述数据结构、枚举数据、校验规则，这主要是受到 Protobuf 的启发。后者衍生出了针对 lucene 的模型, 亦可用于 neo4j,mongodb 等。
 
 正确的解释并查询是一方面，但也需要在正确的存储后才能保障，故校验规则是这套体系里非常重要的部分。与别的校验框架理念并不相同，别人可能只在意数据能不能被许可往下传递，而这个系统更关注如何向下传递需要的数据。比如：传递过来一个文件，在这套系统并不仅仅关心这个文件的格式、尺寸对不对，更要处理存到哪里、如何组织 URL，如果是图片，可能还要按自定规则处理成缩略图。[Verify](hongs-core/src/main/java/io/github/ihongs/util/verify/Verify.java) 是校验入口，通过同包下的其他 Rule 类进行校验，也支持函数式的方式快速自定规则；另外利用 [VerifyHelper](hongs-core/src/main/java/io/github/ihongs/action/VerifyHelper.java) 可以将 .form.xml 中的设置"翻译"成实际的校验规则。
-
-这部分不太容易讲清，日后另行发文详细讨论。
 
 ## 文件体系
 
@@ -291,7 +290,7 @@ ern 为 Er301,Er302,Er401,Er402,Er403,Er404 时, err 如有值为"Goto URL"则�
     // 验证结果, 在 unique,exists 动作返回
     "cnt" : 1真, 0假
 
-在调用 API(REST) 时, 可将所有请求数据采用 JSON 或 URLEncode 编码放入 .data 参数传递; 如加请求参数 .mode=wrap 可将全部返回数据放入 data 键下; 如加请求参数 .mode=scok 则即使发生异常也返回 200 状态; 可加请求参数 .mode=RULES 启用数据转换规则. 多个可用逗号分隔, 另附 RULES 参数:
+在调用 .api 时, 可将所有请求数据采用 JSON 或 URLEncode 编码放入 .data 参数传递; 如加请求参数 .mode=wrap 可将全部返回数据放入 data 键下; 如加请求参数 .mode=scok 则即使发生异常也返回 200 状态; 可加请求参数 .mode=RULES 启用数据转换规则. 多个可用逗号分隔, 另附 RULES 参数:
 
     all2str     全部转为字串
     num2str     数字转为字串
@@ -356,7 +355,7 @@ dete2mic 或 date2sec 搭配 all2str 则将转换后的时间戳数字再转为�
 
 因字段名可用于 URL 中作为过滤参数, 而部分参数已有特殊含义, 字段取名时请尽量避开这些名称: pn,gn,rn,wd,ob,rb,ab,or,ar, 比较简单的办法是避免取 2 个字母的字段名. 另, 在 Cnst 类和配置文件中可以重新定义这些名称, 但并不建议修改(我信奉少量的约定胜于过多的配置).
 
-> 以下为 K.I.S.S 原则的中文翻译, 这是此项目的核心信仰。
+> 以下为 K.I.S.S 原则的中文翻译, 这是此项目的核心信仰, 然而我并不会完全遵守。
 
 # KEEP IT SIMPLE, STUPID!
 

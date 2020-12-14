@@ -80,7 +80,7 @@ public class AuthFilter
   /**
    * 环境检测正则
    */
-  private final Pattern IS_HTML = Pattern.compile( "text/(html|plain)" );
+  private final Pattern IS_HTML = Pattern.compile("(text|application)/(x?html|plain)");
   private final Pattern IS_JSON = Pattern.compile("(text|application)/(x-)?(json|javascript)");
 
   @Override

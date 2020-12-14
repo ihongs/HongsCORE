@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
+import javax.servlet.DispatcherType;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
@@ -68,6 +69,11 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
      * 关闭标识, 为 true 表示有初始化, 需要承担全局清理
      */
     private boolean SETUP = false;
+
+    /**
+     * 数据类型识别
+     */
+    private final Pattern CTYPE = Pattern.compile("(text|application)/(x?html|plain)");
 
     /**
      * 初始化 Filter
@@ -301,7 +307,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             core.put ( ActionHelper.class.getName(), hlpr );
 
             try {
-                doLaunch(core, hlpr, req, rsq );
+                doLaunch(core, hlpr, req );
                 agt.doDriver ( core, hlpr);
                 doCommit(core, hlpr, req, rsq );
             } catch (IOException ex) {
@@ -334,24 +340,60 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
     }
 
     private void doCommit(Core core, ActionHelper hlpr, HttpServletRequest req, HttpServletResponse rsp)
-    throws ServletException {
-        Map dat  = hlpr.getResponseData();
-
-        // 可能会有 sendError
-        if (dat == null) {
-            Object ern = req.getAttribute("");
-            Object err = req.getAttribute("");
-            Object msg = req.getAttribute("");
-            Map dst  = new HashMap( );
-            if (ern != null) dst.put("ern", "Er"  +  ern  );
-            if (err != null) dst.put("err", err.toString());
-            if (msg != null) dst.put("msg", msg.toString());
-            if (dst.isEmpty()==false) {
-                dst.put("ok" , false);
-                hlpr.reply(dat = dst);
+    throws ServletException, IOException {
+        /**
+         * 输出特定服务信息
+         */
+        if (rsp.isCommitted( ) == false) {
+            String pb;
+            CoreConfig cc = core.get(CoreConfig.class);
+            pb = cc.getProperty("core.service.by");
+            if ( pb != null && pb.length( ) != 0 ) {
+                rsp.setHeader(  "Server"    , pb );
+            }
+            pb = cc.getProperty("core.powered.by");
+            if ( pb != null && pb.length( ) != 0 ) {
+                rsp.setHeader("X-Powered-By", pb );
             }
         }
 
+        /**
+         * 处理标准错误消息
+         */
+        Integer ern  = (Integer) req.getAttribute("javax.servlet.error.status_code");
+        if (ern != null && ern > 300) {
+            Object  err  = req.getAttribute("javax.servlet.error.exception");
+            Object  msg  = req.getAttribute("javax.servlet.error.message"  );
+            String  acc  = req.getHeader ("Accept");
+            if (acc != null && CTYPE.matcher( acc ).find( )) {
+                if (req.getDispatcherType() == DispatcherType.ERROR) {
+                    // 跳过内部错误页
+                } else
+                if (err != null) {
+                    rsp.sendError( ern , err.toString() );
+                } else
+                if (msg != null) {
+                    rsp.sendError( ern , msg.toString() );
+                } else
+                {
+                    rsp.sendError( ern );
+                }
+                return; // 退出
+            } else {
+                Map dat = new HashMap( );
+                dat.put("ok" ,  false  );
+                dat.put("ern", "Er"+ern);
+                if (err != null) {
+                    dat.put("err" , err.toString( ));
+                }
+                if (msg != null) {
+                    dat.put("msg" , msg.toString( ));
+                }
+                hlpr.reply ( dat );
+            }
+        }
+        
+        Map dat  = hlpr.getResponseData();
         if (dat != null) {
             req .setAttribute(Cnst.RESPON_ATTR, dat);
             hlpr.updateHelper( req, rsp );
@@ -359,7 +401,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         }
     }
 
-    private void doLaunch(Core core, ActionHelper hlpr, HttpServletRequest req, HttpServletResponse rsp)
+    private void doLaunch(Core core, ActionHelper hlpr, HttpServletRequest req)
     throws ServletException {
         Core.ACTION_TIME.set(System.currentTimeMillis(/***/));
         Core.ACTION_NAME.set(getOriginPath(req).substring(1));
@@ -423,21 +465,6 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             if (lang != null) {
                 Core.ACTION_LANG.set(lang);
             }
-            }
-        }
-
-        if (! hlpr.getResponse().isCommitted()) {
-            /**
-             * 输出特定的服务器信息
-             */
-            String pb;
-            pb = conf.getProperty("core.powered.by");
-            if (pb != null && pb.length() != 0) {
-                rsp.setHeader("X-Powered-By", pb);
-            }
-            pb = conf.getProperty("core.service.by");
-            if (pb != null && pb.length() != 0) {
-                rsp.setHeader(  "Server"    , pb);
             }
         }
     }

@@ -98,10 +98,13 @@ public class AutoFilter extends ActionDriver {
             return;
         }
 
-        // 禁止访问动作脚本, 避免绕过权限过滤
+        /**
+         * 可能存在批处理接口按外部参数转发
+         * 因此需要规避目标为动作脚本的情况
+         * 以免绕过权限过滤从而带来安全问题
+         */
         if (DENY_JSPS.matcher( url ).matches(   )) {
-            if (req.getAttribute(RequestDispatcher.INCLUDE_SERVLET_PATH) != null
-            &&  req.getAttribute(RequestDispatcher.FORWARD_SERVLET_PATH) != null) {
+            if (url.substring(  1  ).equals ( Core.ACTION_NAME.get() )) {
                 rsp.sendError( HttpServletResponse.SC_NOT_FOUND , "What's your problem?" );
             } else {
               chain.doFilter ( req , rsp );

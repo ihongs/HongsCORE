@@ -130,11 +130,15 @@
             yAxis: [{
                 name: "负载",
                 type: 'value',
-                min : 1.0
+                min : 0,
+                max : 1.0,
+                splitNumber: 5
             },{
                 name: "内存",
                 type: 'value',
-                max : 100
+                min : 0,
+                max : 100,
+                splitNumber: 5
             }],
             series: [{
                 name: '负载(＊)',

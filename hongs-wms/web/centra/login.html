@@ -63,12 +63,15 @@
         <nav id="footbox" class="navbar">
             <div class="container">
                 <blockquote><p class="clearfix">
-                    <small class="pull-right">Powered by <a href="power.html" target="_blank">HongsCORE</a></small>
-                    <span>&copy;&nbsp;</span><span><script type="text/javascript">document.write(H$(":copy.right"))</script></span>
-                    <span>&nbsp;&nbsp;</span><span><script type="text/javascript">document.write(H$(":site.links"))</script></span>
+                    <span>&copy;&nbsp;</span><span class="copy-right"><script type="text/javascript">document.write(H$(":copy.right"))</script></span>
+                    <span>&nbsp;&nbsp;</span><span class="site-links"><script type="text/javascript">document.write(H$(":site.links"))</script></span>
+                    <span class="pull-right text-muted">Powered by <a href="power.html" target="_blank">HongsCORE</a></span>
                 </p></blockquote>
             </div>
         </nav>
+        <style  type="text/css">
+            #footbox .site-links a {margin-right: 1em;}
+        </style>
         <script type="text/javascript">
             (function($) {
                 var context = $("#sign-in-form");

@@ -136,7 +136,7 @@ html, body {
 #main-menubar li.acting > a.dropup ,
 #user-menubar li a ,
 #user-menubar li.acting > a.dropup {
-    color: #335070;
+    color: #336080;
     background: transparent;
     border-left: 4px solid transparent;
 }
@@ -180,7 +180,7 @@ html, body {
 #main-menubar:hover .caret ,
 #user-menubar:hover .caret {
     float:  right ;
-    color: #335070;
+    color: #336080;
 }
 #main-menubar .caret {
     margin-right: -10px; /* 修正上层内补误差 */
@@ -448,5 +448,15 @@ html, body {
     #main-context>.laps.tabs.breadcrumb {
         background-color: #222;
         border-color: #222;
+    }
+    #main-menubar .caret ,
+    #user-menubar .caret {
+        float:  right ;
+        color: #202222;
+    }
+    #main-menubar:hover .caret ,
+    #user-menubar:hover .caret {
+        float:  right ;
+        color: #336080;
     }
 }

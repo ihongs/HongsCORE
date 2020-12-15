@@ -369,16 +369,21 @@ html, body {
         color: #eee;
         background: #000;
     }
-
-    h1, h2, h3,
-    h4, h5, h6,
     legend {
-        color: #eee;
+        color: #ccc;
     }
 
-    textarea ,
-    .note-editable {
-        color: #555;
+    body .form-control  ,
+    body .note-editable ,
+    body .note-viewable ,
+    body .bootstrap-tagsinput {
+        color: #eee;
+        background: #000;
+    }
+    .input-group-addon ,
+    .input-group.datebox {
+        color: #aaa;
+        background: #222;
     }
 
     .well  ,
@@ -394,6 +399,12 @@ html, body {
         border-color: #444;
     }
 
+    .panel>.panel-body.run-info-box ,
+    .panel>.panel-body.sys-info-box ,
+    .panel>.chartbox {
+        background-color: #eee;
+    }
+
     .table-striped>tbody>tr:nth-of-type(odd) {
         color: #eee;
         background-color: #111;
@@ -405,15 +416,15 @@ html, body {
     }
     .table tbody tr.active:hover td ,
     .table tbody tr.active:hover th ,
-    .table-hover>tbody>tr:hover {
+    .table-hover>tbody> tr:hover {
         color: #eee;
         background-color: #333;
     }
-    .table>thead>tr>th,
-    .table>tbody>tr>th,
-    .table>tfoot>tr>th,
-    .table>thead>tr>td,
-    .table>tbody>tr>td,
+    .table>thead>tr>th ,
+    .table>tbody>tr>th ,
+    .table>tfoot>tr>th ,
+    .table>thead>tr>td ,
+    .table>tbody>tr>td ,
     .table>tfoot>tr>td {
         border-color: #444;
     }
@@ -421,10 +432,16 @@ html, body {
         border-color: #444;
     }
 
-    .panel>.panel-body.run-info-box ,
-    .panel>.panel-body.sys-info-box ,
-    .panel>.chartbox {
-        background-color: #eee;
+    .pagination>li>a ,
+    .pagination>li>span ,
+    .pagination>.disabled>a ,
+    .pagination>.disabled>a:hover ,
+    .pagination>.disabled>a:focus ,
+    .pagination>.disabled>span ,
+    .pagination>.disabled>span:hover ,
+    .pagination>.disabled>span:focus {
+        background-color: #222;
+        border-color: #444;
     }
 
     #headbox ,
@@ -451,12 +468,6 @@ html, body {
     }
     #main-menubar .caret ,
     #user-menubar .caret {
-        float:  right ;
-        color: #202222;
-    }
-    #main-menubar:hover .caret ,
-    #user-menubar:hover .caret {
-        float:  right ;
-        color: #336080;
+        color: #222;
     }
 }

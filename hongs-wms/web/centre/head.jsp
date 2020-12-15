@@ -155,14 +155,17 @@
 <nav class="navbar navbar-default">
     <div class="container">
         <blockquote><p class="clearfix">
-            <small class="pull-right">Powered by <a href="<%=request.getContextPath()%>/power.html" target="_blank">HongsCORE</a></small>
-            <span>&copy;&nbsp;</span><span><%=CoreLocale.getInstance().translate("fore.copy.right")%></span>
-            <span>&nbsp;&nbsp;</span><span><%=CoreLocale.getInstance().translate("fore.site.links")%></span>
+            <span>&copy;&nbsp;</span><span class="copy-right"><%=CoreLocale.getInstance().translate("fore.copy.right")%></span>
+            <span>&nbsp;&nbsp;</span><span class="site-links"><%=CoreLocale.getInstance().translate("fore.site.links")%></span>
+            <span class="pull-right text-muted">Powered by <a href="<%=request.getContextPath()%>/power.html" target="_blank">HongsCORE</a></span>
         </p></blockquote>
     </div>
 </nav>
 </div>
 
+<style  type="text/css">
+    #footbox .site-links a {margin-right: 1em;}
+</style>
 <script type="text/javascript">
     (function($) {
         // 挪动页尾到外部

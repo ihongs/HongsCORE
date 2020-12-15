@@ -1,19 +1,23 @@
-<div class="jumbotron" style="text-align:center;">
+<div class="jumbotron text-center">
     <h1>Hello, world!</h1>
 </div>
-<blockquote style="font-size: inherit;">
+<blockquote class="centre-manage-main-foot" style="font-size: inherit;">
     <p>
-        <span style="font-weight: 900;" data-i18n="centre.title"    ></span>
+        <span style="font-weight: border;" data-i18n="centra.title"    ></span>
         <br/>
-        <span style="font-weight: 100;" data-i18n="centre.sub.title"></span>
+        <span style="font-weight: normal;" data-i18n="centra.sub.title"></span>
     </p>
     <p>
         <span>&copy;&nbsp;</span>
-        <span data-eval="$(this).html(H$(':copy.right'))"></span>
+        <span class="copy-right" data-eval="$(this).html(H$(':copy.right'))"></span>
         <br/>
-        <span data-eval="$(this).html(H$(':site.links'))"></span>
+        <span class="site-links" data-eval="$(this).html(H$(':site.links'))"></span>
     </p>
-    <p>
+    <p class="text-muted">
         Powered by <a href="power.html" target="_blank">HongsCORE</a>
     </p>
 </blockquote>
+<style  type="text/css">
+    .centre-manage-main-foot .site-links {white-space: pre-line;}
+    .centre-manage-main-foot .site-links a:after {content: "\A";}
+</style>

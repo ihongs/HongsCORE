@@ -80,12 +80,14 @@
         <style type="text/css">
             h1
                 { font-weight: bolder; }
-            pre
-                { color: #ddd; background-color: transparent; border-color: transparent; }
+            #footbox .site-links a
+                { margin-right: 1.0em; }
             #footbox blockquote
                 { color: #ddd; background-color: #600; }
             #footbox.navbar, body, .jumbotron, .container
                 { color: #fff; background-color: #800; }
+            pre
+                { color: #ddd; background-color: transparent; border-color: transparent; }
         </style>
     </head>
     <body>
@@ -102,9 +104,9 @@
         <nav id="footbox" class="navbar navbar-fixed-bottom">
             <div class="container">
                 <blockquote><p class="clearfix">
-                    <small class="pull-right">Powered by <a href="<%=request.getContextPath()%>/power.html" target="_blank">HongsCORE</a></small>
-                    <span>&copy;&nbsp;</span><span><%=CoreLocale.getInstance().translate("fore.copy.right")%></span>
-                    <span>&nbsp;&nbsp;</span><span><%=CoreLocale.getInstance().translate("fore.site.links")%></span>
+                    <span>&copy;&nbsp;</span><span class="copy-right"><%=CoreLocale.getInstance().translate("fore.copy.right")%></span>
+                    <span>&nbsp;&nbsp;</span><span class="site-links"><%=CoreLocale.getInstance().translate("fore.site.links")%></span>
+                    <span class="pull-right text-muted">Powered by <a href="<%=request.getContextPath()%>/power.html" target="_blank">HongsCORE</a></span>
                 </p></blockquote>
             </div>
         </nav>

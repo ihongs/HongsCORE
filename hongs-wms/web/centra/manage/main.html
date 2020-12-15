@@ -46,7 +46,7 @@
     </div>
     <div class="form-group">
         <div class="form-control-static">
-            权限分组: &emsp; <span data-fn="depts..name" data-fl="v?v.sort():[]" class="repeated" data-item-style="display: inline-block; margin-right: 1em; text-decoration: underline;"></span>
+            权限分组: &emsp; <span data-fn="depts..name" data-fl="v?v.sort():[]" class="repeated" data-item-class="label label-default"></span>
         </div>
     </div>
     <div class="form-group" style="margin-bottom: 0;">
@@ -57,22 +57,26 @@
         </div>
     </div>
 </div>
-<blockquote style="font-size: inherit;">
+<blockquote class="centra-manage-main-foot" style="font-size: inherit;">
     <p>
-        <span style="font-weight: 900;" data-i18n="centra.title"    ></span>
+        <span style="font-weight: border;" data-i18n="centra.title"    ></span>
         <br/>
-        <span style="font-weight: 100;" data-i18n="centra.sub.title"></span>
+        <span style="font-weight: normal;" data-i18n="centra.sub.title"></span>
     </p>
     <p>
         <span>&copy;&nbsp;</span>
-        <span data-eval="$(this).html(H$(':copy.right'))"></span>
+        <span class="copy-right" data-eval="$(this).html(H$(':copy.right'))"></span>
         <br/>
-        <span data-eval="$(this).html(H$(':site.links'))"></span>
+        <span class="site-links" data-eval="$(this).html(H$(':site.links'))"></span>
     </p>
-    <p>
+    <p class="text-muted">
         Powered by <a href="power.html" target="_blank">HongsCORE</a>
     </p>
 </blockquote>
+<style  type="text/css">
+    .centra-manage-main-foot .site-links {white-space: pre-line;}
+    .centra-manage-main-foot .site-links a:after {content: "\A";}
+</style>
 <script type="text/javascript">
     (function($) {
         var context = H$("#centra-manage-main");

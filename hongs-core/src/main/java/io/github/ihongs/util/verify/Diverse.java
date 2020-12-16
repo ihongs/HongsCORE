@@ -5,7 +5,6 @@ import io.github.ihongs.Core;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
-import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Synt;
 import java.util.HashMap;
 import java.util.List;
@@ -36,66 +35,46 @@ public class Diverse extends Rule {
             return STAND;
         }
 
-        String at = (String) getParam("data-ut" );
+        String ut = (String) getParam("data-ut" );
+        String uk = (String) getParam("data-uk" );
         String nk = (String) getParam("__name__");
         String ck = (String) getParam("__conf__");
         String fk = (String) getParam("__form__");
-        String ad = null;
-        String aq = null;
 
-        if (at == null || at.isEmpty()) {
-            at = ck + "/" + fk + "/search" ;
-        } else {
-            // 尝试解析附加参数
-            int ps;
-            ps = at.indexOf('#');
-            if (ps > 0) {
-                ad = at.substring(1 + ps).trim();
-                at = at.substring(0 , ps).trim();
-            }
-            ps = at.indexOf('?');
-            if (ps > 0) {
-                aq = at.substring(1 + ps).trim();
-                at = at.substring(0 , ps).trim();
-            }
+        if (ut == null || ut.isEmpty()) {
+            ut = ck + "/" + fk + "/search" ;
+        }
+        if (uk == null && uk.isEmpty()) {
+            uk = nk ;
         }
 
         // 请求数据
+        Map cd = new HashMap();
         Map rd = new HashMap();
         rd.put(Cnst.PN_KEY, 0);
         rd.put(Cnst.RN_KEY, 1);
         rd.put(Cnst.RB_KEY, Synt.setOf (  Cnst.ID_KEY  ) );
-        rd.put(nk , value);
-        if (watch.isUpdate( )) { // 更新需排除当前记录
+
+        // 更新需排除当前记录
+        if (watch.isUpdate( )) {
             Object vo = watch.getValues().get(Cnst.ID_KEY);
             Map ne = new HashMap( );
             ne.put(Cnst.NE_REL, vo);
             rd.put(Cnst.ID_KEY, ne);
         }
 
-        // 附加参数
-        if (ad != null && !"".equals(ad)) {
-            Set<String> ks = Synt.toTerms ( ad );
-            if (null != ks) for (String kn: ks ) {
-                rd.put( kn, watch.getValues().get(kn) );
-            }
-        }
-        if (aq != null && !"".equals(aq)) {
-            if (aq.startsWith("{") && aq.endsWith("}")) {
-                rd.putAll( ( Map )  Dawn.toObject(aq) );
-            } else {
-                rd.putAll(ActionHelper.parseQuery(aq) );
-            }
+        // 参与唯一约束的字段
+        Set<String> ks = Synt.toTerms ( uk );
+        if (null != ks) for (String kn: ks ) {
+            rd.put( kn , watch.getValues().get(kn) );
         }
 
         // 执行动作
         ActionHelper ah = ActionHelper.newInstance();
-        ah.setContextData(Synt.mapOf(
-            Cnst.ORIGIN_ATTR, Core.ACTION_NAME.get()
-        ));
+        ah.setContextData( cd );
         ah.setRequestData( rd );
         try {
-            ActionRunner.newInstance(ah, at).doInvoke();
+            ActionRunner.newInstance(ah, ut).doInvoke();
         } catch (HongsException ex) {
             throw ex.toExemption( );
         }

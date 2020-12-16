@@ -64,6 +64,7 @@ public class IsFork extends Rule {
         }
 
         // 请求数据
+        Map cd = new HashMap( );
         Map rd = new HashMap( );
         Set rb = new HashSet( );
         Set id = new HashSet( );
@@ -77,9 +78,7 @@ public class IsFork extends Rule {
 
         // 执行动作
         ActionHelper ah = ActionHelper.newInstance();
-        ah.setContextData(Synt.mapOf(
-            Cnst.ORIGIN_ATTR, Core.ACTION_NAME.get()
-        ));
+        ah.setContextData( cd );
         ah.setRequestData( rd );
         try {
             ActionRunner.newInstance(ah, at).doInvoke();

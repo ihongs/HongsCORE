@@ -142,6 +142,13 @@ public class ActionRunner {
             ah.getRequestData( /**/ ).putAll( rd );
         }
 
+        // 来源路径
+        if (ah.getAttribute(Cnst.ORIGIN_ATTR) == null) {
+            Object op = ah.getAttribute(Cnst.ACTION_ATTR);
+            if (null == op) op  =  Core.ACTION_NAME.get();
+            ah.setAttribute(Cnst.ORIGIN_ATTR, op );
+        }
+
         // 虚拟路径
         ad = ActionRunner.getActions(  );
         if (null != ap && !"".equals(ap)) {

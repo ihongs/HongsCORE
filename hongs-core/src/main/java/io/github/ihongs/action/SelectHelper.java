@@ -432,7 +432,6 @@ public class SelectHelper {
 
         ah.setRequestData(rd);
         ah.setContextData(cd);
-        cd.put(Cnst.ORIGIN_ATTR, Core.ACTION_NAME.get());
 
         // 传递 ab 参数
         if (TEXT==(TEXT & ad)) {
@@ -452,8 +451,10 @@ public class SelectHelper {
             Map    mt = (Map) et.getValue( );
             String fn = (String) et.getKey();
 
+            String fk = (String) mt.get("data-fk"); // 关联外键
+            
             // 建立映射, 清除空值可避免不必要的查询
-            Map<Object, List> ms = mm.mapped( fn );
+            Map<Object, List> ms = mm.mapped( fk != null ? fk : fn );
             ms.remove(  ""  );
             ms.remove( null );
             if (ms.isEmpty( )) {
@@ -471,13 +472,16 @@ public class SelectHelper {
                 at  =  c +"/"+ f +"/search";
             }
             if (ak == null || ak.isEmpty()) {
+            if (fk == null || fk.isEmpty()) {
                 if (fn.endsWith("_id")) {
                     int  ln = fn.length()-3;
                     ak = fn.substring(0,ln);
                 } else {
                     ak = fn + "_fork";
                 }
-            }
+            } else {
+                    ak = fk ;
+            }}
             if (vk == null || vk.isEmpty()) {
                 vk =  Cnst.ID_KEY;
             }

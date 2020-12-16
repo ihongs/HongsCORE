@@ -234,7 +234,6 @@ public class TitlesHelper {
         Set rb = new HashSet();
         rd.put(Cnst.RB_KEY, rb );
         rd.put(Cnst.RN_KEY,1024);
-        cd.put(Cnst.ORIGIN_ATTR, Core.ACTION_NAME.get( ) );
         rb.add(vk);
         rb.add(tk);
 

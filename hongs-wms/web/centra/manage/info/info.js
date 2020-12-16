@@ -117,8 +117,8 @@
             },
             grid: {
                 top: 15,
-                left: 30,
-                right: 30,
+                left: 35,
+                right: 35,
                 bottom: 30
             },
             xAxis: {
@@ -220,7 +220,7 @@
                 {
                     name:'负载',
                     type:'gauge',
-                    radius : '100%',
+                    radius : '90%',
                     min:0,
                     max:10,
                     splitNumber:10,
@@ -262,7 +262,7 @@
                 {
                     name:data.free[2],
                     type:'gauge',
-                    center : ['25%', '50%'],    // 默认全局居中
+                    center : ['20%', '50%'],    // 默认全局居中
                     radius : '80%',
                     min:0,
                     max:data.size[0],
@@ -309,8 +309,8 @@
                 {
                     name:data.used[2],
                     type:'gauge',
-                    center : ['75%', '50%'],    // 默认全局居中
-                    radius : '75%',
+                    center : ['80%', '50%'],    // 默认全局居中
+                    radius : '80%',
                     min:0,
                     max:data.dist[0],
                     startAngle:135,
@@ -355,8 +355,8 @@
                 {
                     name:data.uses[2],
                     type:'gauge',
-                    center : ['75%', '50%'],    // 默认全局居中
-                    radius : '75%',
+                    center : ['80%', '50%'],    // 默认全局居中
+                    radius : '80%',
                     min:0,
                     max:data.dist[0],
                     startAngle:315,
@@ -413,11 +413,19 @@
     }
 
     function setAllCharts(ec, et) {
-        var context = $( "#centra-info" );
-        var formObj = new HsForm(context , {});
+        var context = H$("#centra-info");
+        var formObj = new HsForm(context, {});
+        
+        formObj._fill_dir_info = function () {
+            var v = this._info ;
+            return "系统: " + v.core_dir["#"][1] + "/" + v.core_dir["@"][1] + "\r\n"
+                 + "配置: " + v.conf_dir["#"][1] + "/" + v.conf_dir["@"][1] + "\r\n"
+                 + "网站: " + v.base_dir["#"][1] + "/" + v.base_dir["@"][1] + "\r\n"
+                 + "数据: " + v.data_dir["#"][1] + "/" + v.data_dir["@"][1] ;
+        };
 
         $.hsAjax({
-            url: "centra/info/search.act?rb=app_info,sys_info,run_info,core_info,lock_info",
+            url: "centra/info/search.act?rb=app_info,sys_info,run_info,dir_info,core_info,lock_info",
             dataType: "json",
             success: function(rst) {
                 var box;

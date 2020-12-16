@@ -3,13 +3,13 @@
         <div class="col-lg-6">
             <div class="panel panel-default">
                 <div class="panel-heading"><span class="glyphicon glyphicon-fire" ></span> 运行状态</div>
-                <div class="panel-body run-info-box" style="height:208px;"></div>
+                <div class="panel-body"><div class="run-info-box center-block chartbox" style="width:438px;height:180px;"></div></div>
             </div>
         </div>
         <div class="col-lg-6">
             <div class="panel panel-default">
                 <div class="panel-heading"><span class="glyphicon glyphicon-tint" ></span> 系统负载</div>
-                <div class="panel-body sys-info-box" style="height:208px"></div>
+                <div class="panel-body"><div class="sys-info-box center-block chartbox" style="width:438px;height:180px"></div></div>
             </div>
         </div>
         <!--
@@ -42,19 +42,19 @@
             <fieldset class="board-top form-horizontal">
                 <legend>运行信息</legend>
                 <div class="form-group row">
-                    <label class="col-xs-2 control-label text-right">全局对象</label>
-                    <div class="col-xs-10"><pre class="form-control-static" style="max-height: 83px; overflow: auto;" data-fn="core_set" data-fl="v?v:'-'"></pre></div>
+                    <label class="col-xs-3 control-label text-right">全局对象</label>
+                    <div class="col-xs-9"><pre class="form-control-static" data-fn="core_set" data-fl="v?v:'-'"></pre></div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-xs-2 control-label text-right">基础锁</label>
-                    <div class="col-xs-10"><pre class="form-control-static" style="max-height: 83px; overflow: auto;" data-fn="lock_map.Locker" data-fl="v?v:'-'"></pre></div>
+                    <label class="col-xs-3 control-label text-right">基础锁</label>
+                    <div class="col-xs-9"><pre class="form-control-static" data-fn="lock_map.Locker" data-fl="v?v:'-'"></pre></div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-xs-2 control-label text-right">读写锁</label>
-                    <div class="col-xs-10"><pre class="form-control-static" style="max-height: 83px; overflow: auto;" data-fn="lock_map.Larder" data-fl="v?v:'-'"></pre></div>
+                    <label class="col-xs-3 control-label text-right">读写锁</label>
+                    <div class="col-xs-9"><pre class="form-control-static" data-fn="lock_map.Larder" data-fl="v?v:'-'"></pre></div>
                 </div>
                 <div class="row">
-                    <div class="col-xs-10 col-xs-offset-2">
+                    <div class="col-xs-9 col-xs-offset-3">
                         <a href="javascript:;" class="reload-core-and-lock btn btn-primary">刷新</a>
                     </div>
                 </div>
@@ -64,32 +64,36 @@
             <fieldset class="board-top form-horizontal">
                 <legend>系统信息</legend>
                 <div class="form-group row">
-                    <label class="col-xs-2 control-label text-right">启动时间</label>
-                    <div class="col-xs-10"><div class="form-control-static" data-fn="app_info.starts_time" data-ft="_datetime"></div></div>
+                    <label class="col-xs-3 control-label text-right">启动时间</label>
+                    <div class="col-xs-9"><div class="form-control-static" data-fn="app_info.starts_time" data-ft="_datetime"></div></div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-xs-2 control-label text-right">服务编号</label>
-                    <div class="col-xs-10"><div class="form-control-static" data-fn="app_info.server_id"></div></div>
+                    <label class="col-xs-3 control-label text-right">服务编号</label>
+                    <div class="col-xs-9"><div class="form-control-static" data-fn="app_info.server_id"></div></div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-xs-2 control-label text-right">网站链接</label>
-                    <div class="col-xs-10"><div class="form-control-static" data-fn="app_info.site_href"></div></div>
+                    <label class="col-xs-3 control-label text-right">网站链接</label>
+                    <div class="col-xs-9"><div class="form-control-static" data-fn="app_info.site_href"></div></div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-xs-2 control-label text-right">系统路径</label>
-                    <div class="col-xs-10"><div class="form-control-static" data-fn="app_info.core_path"></div></div>
+                    <label class="col-xs-3 control-label text-right">系统路径</label>
+                    <div class="col-xs-9"><div class="form-control-static" data-fn="app_info.core_path"></div></div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-xs-2 control-label text-right">操作系统</label>
-                    <div class="col-xs-10"><div class="form-control-static" data-fn="sys_info.name"></div></div>
+                    <label class="col-xs-3 control-label text-right">磁盘剩余</label>
+                    <div class="col-xs-9"><div class="form-control-static" data-fn="dir_info" style="white-space: pre-line;"></div></div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-xs-2 control-label text-right">运行环境</label>
-                    <div class="col-xs-10"><div class="form-control-static" data-fn="sys_info.java"></div></div>
+                    <label class="col-xs-3 control-label text-right">操作系统</label>
+                    <div class="col-xs-9"><div class="form-control-static" data-fn="sys_info.name"></div></div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-xs-2 control-label text-right">执行用户</label>
-                    <div class="col-xs-10"><div class="form-control-static" data-fn="sys_info.user"></div></div>
+                    <label class="col-xs-3 control-label text-right">运行环境</label>
+                    <div class="col-xs-9"><div class="form-control-static" data-fn="sys_info.java"></div></div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-xs-3 control-label text-right">执行用户</label>
+                    <div class="col-xs-9"><div class="form-control-static" data-fn="sys_info.user"></div></div>
                 </div>
             </fieldset>
         </div>

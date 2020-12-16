@@ -15,14 +15,14 @@ import java.util.Properties;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-/*
 import java.io.File;
+/*
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 */
+import java.util.LinkedHashMap;
 
 /**
  * 管理信息
@@ -92,7 +92,6 @@ public class InfoAction {
             inf.put("uses", new Object[] {stk, Syno.humanSize(stk), "非堆"});
         }
 
-        /*
         // 磁盘情况
         if ( rb == null || rb.contains("dir_info") ) {
             rsp.put("base_dir", getAllSize(new File(Core.BASE_PATH)));
@@ -100,7 +99,6 @@ public class InfoAction {
             rsp.put("conf_dir", getAllSize(new File(Core.CONF_PATH)));
             rsp.put("core_dir", getAllSize(new File(Core.CORE_PATH)));
         }
-        */
 
         /**
          * 公共核心情况和锁情况
@@ -115,13 +113,13 @@ public class InfoAction {
         helper.reply(Synt.mapOf("info", rsp));
     }
 
-    /*
     private static Map  getAllSize(File d) {
         Map     map = new LinkedHashMap();
         long    tot ;
         long    one ;
         String  hum ;
 
+        /*
         long    all = 0;
         long    oth = 0;
 
@@ -148,6 +146,7 @@ public class InfoAction {
 
         hum = Syno.humanSize(oth);
         map.put("!", new Object[] {oth, hum, "其他文件"});
+        */
 
         tot = d.getTotalSpace();
         hum = Syno.humanSize(tot);
@@ -157,10 +156,13 @@ public class InfoAction {
         hum = Syno.humanSize(one);
         map.put("#", new Object[] {one, hum, "磁盘剩余"});
 
+        /*
         one = tot - one;
         hum = Syno.humanSize(one);
         map.put("$", new Object[] {one, hum, "磁盘已用"});
+        */
 
+        /*
         // 排序
         List<Map.Entry> a = new ArrayList(map.entrySet());
         Collections.sort(a, new sortBySize());
@@ -168,10 +170,12 @@ public class InfoAction {
         for (Map.Entry  n : a) {
             map.put(n.getKey(), n.getValue());
         }
+        */
 
         return map;
     }
 
+    /*
     private static long getDirSize(File d) {
         long s  = 0 ;
         for (File f : d.listFiles()) {

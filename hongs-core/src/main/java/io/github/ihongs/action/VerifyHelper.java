@@ -5,6 +5,7 @@ import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.verify.Default;
 import io.github.ihongs.util.verify.Defiant;
+import io.github.ihongs.util.verify.Diverse;
 import io.github.ihongs.util.verify.Ordinary;
 import io.github.ihongs.util.verify.Optional;
 import io.github.ihongs.util.verify.Repeated;
@@ -180,6 +181,45 @@ public class VerifyHelper extends Verify {
 
                 rule.config (opts);
                 this.addRule(name, rule);
+            }
+        }
+
+        /**
+         * 唯一键约束
+         */
+        Map fp  = (Map) fs.get("@");
+        if (fp != null) {
+            String fn ;
+            Object uk ;
+            Object ut ;
+                ut = fp.get("data-ut");
+            if (ut == null) {
+                ut = fp.get("data-at");
+            if (ut == null) {
+                ut = conf +"/"+ form + "/search";
+            }}
+
+            for(Object o : fp.entrySet()) {
+                Map.Entry e = (Map.Entry) o;
+                fn = e.getKey().toString( );
+
+                if (fn.startsWith("data-uk-")) {
+                    fn = "UK-" + fn.substring(8);
+                } else
+                if (fn.equals/**/("data-uk" )) {
+                    fn = "UK";
+                } else {
+                    continue ;
+                }
+
+                uk = e.getValue();
+                Rule fr = new Diverse (true)
+                    .config(Synt.mapOf(
+                      "__name__" , fn,
+                        "data-ut", ut,
+                        "data-uk", uk
+                    ));
+                this.addRule( fn , fr );
             }
         }
 

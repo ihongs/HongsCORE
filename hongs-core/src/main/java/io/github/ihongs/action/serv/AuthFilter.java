@@ -75,13 +75,13 @@ public class AuthFilter
   /**
    * 去主机名正则
    */
-  private final Pattern RM_HOST = Pattern.compile("^\\w+://([^/]+)" );
+  private static final Pattern RM_HOST = Pattern.compile("^\\w+://([^/]+)" );
 
   /**
    * 环境检测正则
    */
-  private final Pattern IS_HTML = Pattern.compile("(text|application)/(x?html|plain)");
-  private final Pattern IS_JSON = Pattern.compile("(text|application)/(x-)?(json|javascript)");
+  private static final Pattern IS_HTML = Pattern.compile("(text|application)/(x?html|plain)");
+  private static final Pattern IS_JSON = Pattern.compile("(text|application)/(x-)?(json|javascript)");
 
   @Override
   public void init(FilterConfig config)
@@ -352,7 +352,7 @@ public class AuthFilter
         }
     }
 
-    if (isAjax(req) || isJson(req) || isJsop(req)) {
+    if (inAjax(req)) {
         Map rep = new HashMap();
         rep.put( "ok"  , false);
         rep.put( "msg" ,  msg );
@@ -389,10 +389,22 @@ public class AuthFilter
     }
   }
 
+  private boolean inAjax(HttpServletRequest req) {
+      if (isJson(req)) {
+          return true ;
+      }
+      if (isHtml(req)) {
+          return false;
+      }
+      return isAjax(req)
+          || isJsop(req);
+  }
+
   private boolean isAjax(HttpServletRequest req) {
       if (Synt.declare(req.getParameter(".ajax") , false)) {
-          return  true ; // 使用 iframe 提交通过此参数标识.
+          return  true ; // 标识 iframe 内的 ajax 方法
       }
+
       String x  = req.getHeader("X-Requested-With");
       return x != null && 0 != x.length();
   }
@@ -410,16 +422,17 @@ public class AuthFilter
   private boolean isJsop(HttpServletRequest req) {
       String c = Cnst.CB_KEY ;
       c = req.getParameter(c);
-      if (c != null && c.length() != 0) {
+      if (c != null && ! c.isEmpty()) {
           return true;
       }
-      c = CoreConfig
-          .getInstance()
-          .getProperty("core.callback", "callback");
+
+      CoreConfig cnf = CoreConfig.getInstance("default");
+      c = cnf.getProperty ("core.callback" , "callback");
       c = req.getParameter(c);
-      if (c != null && c.length() != 0) {
+      if (c != null && ! c.isEmpty()) {
           return true;
       }
+
       return false;
   }
 

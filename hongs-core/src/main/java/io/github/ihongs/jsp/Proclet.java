@@ -24,8 +24,6 @@ import javax.servlet.http.HttpServletRequestWrapper;
 abstract public class Proclet extends ActionDriver implements HttpJspPage
 {
 
-  ActionHelper helper = null;
-
   @Override
   public void jspInit()
   {

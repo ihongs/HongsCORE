@@ -23,7 +23,6 @@ import java.util.regex.Pattern;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
-import javax.servlet.DispatcherType;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
@@ -69,11 +68,6 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
      * 关闭标识, 为 true 表示有初始化, 需要承担全局清理
      */
     private boolean SETUP = false;
-
-    /**
-     * 数据类型识别
-     */
-    private final Pattern CTYPE = Pattern.compile("(text|application)/(x?html|plain)");
 
     /**
      * 初始化 Filter
@@ -357,45 +351,9 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             }
         }
 
-        /**
-         * 处理标准错误消息
-         */
-        Integer ern  = (Integer) req.getAttribute("javax.servlet.error.status_code");
-        if (ern != null && ern > 300) {
-            Object  err  = req.getAttribute("javax.servlet.error.exception");
-            Object  msg  = req.getAttribute("javax.servlet.error.message"  );
-            String  acc  = req.getHeader ("Accept");
-            if (acc != null && CTYPE.matcher( acc ).find( )) {
-                if (req.getDispatcherType() == DispatcherType.ERROR) {
-                    // 跳过内部错误页
-                } else
-                if (err != null) {
-                    rsp.sendError( ern , err.toString() );
-                } else
-                if (msg != null) {
-                    rsp.sendError( ern , msg.toString() );
-                } else
-                {
-                    rsp.sendError( ern );
-                }
-                return; // 退出
-            } else {
-                Map dat = new HashMap( );
-                dat.put("ok" ,  false  );
-                dat.put("ern", "Er"+ern);
-                if (err != null) {
-                    dat.put("err" , err.toString( ));
-                }
-                if (msg != null) {
-                    dat.put("msg" , msg.toString( ));
-                }
-                hlpr.reply ( dat );
-            }
-        }
-        
         Map dat  = hlpr.getResponseData();
         if (dat != null) {
-            req .setAttribute(Cnst.RESPON_ATTR, dat);
+            req .setAttribute( Cnst.RESPON_ATTR, dat );
             hlpr.updateHelper( req, rsp );
             hlpr.responed();
         }

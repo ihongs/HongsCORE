@@ -71,10 +71,10 @@ abstract public class Pagelet extends ActionDriver implements HttpJspPage
                     ah.fault((HongsCause) ax);
                 } else
                 if (ax instanceof HongsCause) {
-                    ah.fault((HongsCause) ax);
+                    ah.fault((HongsCause) ex);
                 } else {
                     ah.fault( new HongsException(
-                        500 , ( String ) msg ,
+                        ern , ( String ) msg ,
                         ax != null ? ax : ex
                     ));
                 }

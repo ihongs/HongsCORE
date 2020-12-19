@@ -77,10 +77,10 @@ import org.xml.sax.SAXException;
  *
  * <h3>异常代码:</h3>
  * <pre>
- * 区间: 0x10e0~0x10e7
- * 0x10e0 配置文件不存在
- * 0x10e1 解析文件失败
- * 0x10e2 角色无法获取
+ * 区间: 920~929
+ * 920 配置文件不存在
+ * 921 解析文件失败
+ * 922 角色无法获取
  * </pre>
  *
  * <h3>特别注意:</h3>
@@ -238,7 +238,7 @@ public class NaviMap
         is = this.getClass().getClassLoader().getResourceAsStream(fn);
         if (  is  ==  null )
         {
-            throw new HongsException(0x10e0,
+            throw new HongsException(920,
                 "Can not find the config file '" + name + Cnst.NAVI_EXT + ".xml'.");
         }
     }
@@ -263,15 +263,15 @@ public class NaviMap
     }
     catch ( IOException ex)
     {
-      throw new HongsException(0x10e1, "Read '" +name+Cnst.NAVI_EXT+".xml error'", ex);
+      throw new HongsException(921, "Read '" +name+Cnst.NAVI_EXT+".xml error'", ex);
     }
     catch (SAXException ex)
     {
-      throw new HongsException(0x10e1, "Parse '"+name+Cnst.NAVI_EXT+".xml error'", ex);
+      throw new HongsException(921, "Parse '"+name+Cnst.NAVI_EXT+".xml error'", ex);
     }
     catch (ParserConfigurationException ex)
     {
-      throw new HongsException(0x10e1, "Parse '"+name+Cnst.NAVI_EXT+".xml error'", ex);
+      throw new HongsException(921, "Parse '"+name+Cnst.NAVI_EXT+".xml error'", ex);
     }
 
     this.menus = new LinkedHashMap();
@@ -462,7 +462,7 @@ public class NaviMap
         catch (HongsException ex )
         {
           // 找不到文件仅将错误写到日志
-          if (0x10e0 == ex.getErrno( ))
+          if (920 == ex.getErrno())
           {
             CoreLogger.error( ex );
           }
@@ -683,7 +683,7 @@ public class NaviMap
       lang = CoreLocale.getInstance(name).clone();
     }
     catch (HongsExemption e) {
-      if  (e.getErrno() != 0x82a) {
+      if  (e.getErrno( ) != 826 ) {
         throw e;
       }
       lang = new CoreLocale(null);

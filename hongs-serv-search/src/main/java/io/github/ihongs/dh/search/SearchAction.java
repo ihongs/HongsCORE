@@ -221,7 +221,7 @@ public class SearchAction extends JAction {
                     try {
                         es.put( fn, FormSet.getInstance(xc).getEnum(xn).keySet() );
                     } catch ( HongsException ex) {
-                    if (ex.getErrno() != 0x10eb) {
+                    if (ex.getErrno() != 913 ) {
                         throw ex;
                     }}
                 }

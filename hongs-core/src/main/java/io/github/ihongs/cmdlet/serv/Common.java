@@ -185,17 +185,17 @@ public class Common {
         }
         catch (ClassNotFoundException e)
         {
-          throw new HongsException(0x10d8, e);
+          throw new HongsException(904, e);
         }
         catch ( FileNotFoundException e)
         {
-          throw new HongsException(0x10d6, e);
+          throw new HongsException(903, e);
         }
         catch (           IOException e)
         {
-          throw new HongsException(0x10d4, e);
+          throw new HongsException(902, e);
         }
-        catch (HongsExemption e) //0x1051
+        catch (HongsExemption e) // 1049
         {
           throw e.toException( );
         }

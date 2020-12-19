@@ -22,8 +22,8 @@ import java.util.Properties;
  *
  * <h3>错误代码:</h3>
  * <pre>
- * 0x82a 无法找到配置文件
- * 0x82b 无法读取配置文件
+ * 826 无法找到配置文件
+ * 827 无法读取配置文件
  * </pre>
  *
  * @author Hongs
@@ -81,7 +81,7 @@ public class CoreConfig
         defaults.load( is);
     }
     catch (IOException ex) {
-        throw new HongsExemption(0x82b, "Can not read '"+name+".properties'.", ex);
+        throw new HongsExemption(827, "Can not read '"+name+".properties'.", ex);
     }
 
     // 优先尝试从配置目录的 .properties 加载数据
@@ -95,7 +95,7 @@ public class CoreConfig
         er = ex;
     }
     catch (IOException ex) {
-        throw new HongsExemption(0x82b, "Can not read '"+name+".properties'.", ex);
+        throw new HongsExemption(827, "Can not read '"+name+".properties'.", ex);
     }
 
     // 然后尝试从配置目录的 .prop.xml 中加载数据
@@ -109,14 +109,14 @@ public class CoreConfig
         er = ex;
     }
     catch (IOException ex) {
-        throw new HongsExemption(0x82b, "Can not read '"+name+Cnst.PROP_EXT+".xml'.", ex);
+        throw new HongsExemption(827, "Can not read '"+name+Cnst.PROP_EXT+".xml'.", ex);
     }
 
     // 没有额外的配置则将默认配置放到前台
     if (ld) {
         this.putAll(defaults);
     } else {
-        throw new HongsExemption(0x82a, "Can not find '"+name+"' properties config.", er);
+        throw new HongsExemption(826, "Can not find '"+name+"' properties config.", er);
     }
   }
 
@@ -129,7 +129,7 @@ public class CoreConfig
     try {
         this.load(name);
     } catch (HongsExemption e) {
-        if  (e.getErrno() != 0x82a) {
+        if  (e.getErrno() != 826) {
             throw e;
         }
     }

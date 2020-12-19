@@ -44,7 +44,7 @@ public final class HongsCurse {
         if ( 600 > code ) {
             return code ;
         }
-        String     codx = "Ex"+ Integer.toString(code, 16 );
+        String     codx = "Ex"+ Integer.toString(code, 10 );
         CoreConfig conf = CoreConfig.getInstance("defects");
         if (null!= lang ) {
             conf = conf.clone();
@@ -60,7 +60,7 @@ public final class HongsCurse {
     public String getStage() {
         int code  = getState(); // 尝试转换
         if (code >= 600 ) {
-            return "Ex" + Integer.toString(code, 16);
+            return "Ex" + Integer.toString(code, 10);
         } else
         if (code >= 400 ) {
             return "Er" + Integer.toString(code, 10);
@@ -115,7 +115,7 @@ public final class HongsCurse {
         String codx, desx;
 
         if (code >= 600 ) {
-            codx  = "Ex" + Integer.toString(code, 16);
+            codx  = "Ex" + Integer.toString(code, 10);
         } else
         if (code >= 400 ) {
             codx  = "Er" + Integer.toString(code, 10);
@@ -155,7 +155,7 @@ public final class HongsCurse {
         String codx, desx;
 
         if (code >= 600 ) {
-            codx  = "Ex" + Integer.toString(code, 16);
+            codx  = "Ex" + Integer.toString(code, 10);
         } else
         if (code >= 400 ) {
             codx  = "Er" + Integer.toString(code, 10);

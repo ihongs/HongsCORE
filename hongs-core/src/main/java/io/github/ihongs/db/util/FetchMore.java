@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
  *
  * <h3>异常代码:</h3>
  * <pre>
- * 0x10c0 获取行号失败, 可能缺少关联字段
+ * 1170  获取行号失败, 可能缺少关联字段 (废弃, 缺失将跳过)
  * </pre>
  *
  * @author Hongs
@@ -148,7 +148,7 @@ public class FetchMore
     Set ids = map.keySet();
     if (ids.isEmpty())
     {
-      //throw new HongsException(0x10c0, "Ids map is empty");
+      //throw new HongsException(1170, "Ids map is empty");
       return;
     }
 
@@ -216,7 +216,7 @@ public class FetchMore
 
         if (lst == null)
         {
-          //throw new HongsException(0x10c0, "Line nums is null");
+          //throw new HongsException(1170, "Line nums is null");
           continue;
         }
 
@@ -247,7 +247,7 @@ public class FetchMore
 
         if (lst == null)
         {
-          //throw new HongsException(0x10c0, "Line nums is null");
+          //throw new HongsException(1170, "Line nums is null");
           continue;
         }
 

@@ -28,42 +28,37 @@ import java.lang.reflect.InvocationTargetException;
  *
  * <h3>异常代码:</h3>
  * <pre>
- * 区间: 0x1020~0x105f
+ * 区间: 1020~1059
  *
- * 0x1021  找不到外部数据源配置
- * 0x1022  连接外部数据源失败
- * 0x1023  找不到内部数据源配置
- * 0x1024  连接内部数据源失败
- * 0x1025  找不到数据源配置
- * 0x1026  设置自动提交失败
+ * 1021  找不到外部数据源配置
+ * 1022  连接外部数据源失败
+ * 1023  找不到内部数据源配置
+ * 1024  连接内部数据源失败
+ * 1025  找不到数据源配置
  *
- * 0x1031  开启Connection失败
- * 0x1032  关闭Connection失败
- * 0x1033  取消Statement失败
- * 0x1034  关闭Statement失败
- * 0x1035  关闭ResultSet失败
+ * 1031  开启Connection失败
+ * 1032  关闭Connection失败
+ * 1033  取消Statement失败
+ * 1034  关闭Statement失败
+ * 1035  关闭ResultSet失败
  *
- * 0x1039  找不到表配置
- * 0x103a  找不到表对应的类
- * 0x103b  无法获取表构造器
- * 0x103c  无法获取表实例
- * 0x103d  找不到模型对应的类
- * 0x103e  无法获取模型构造器
- * 0x103f  无法获取模型实例
+ * 1026  找不到表配置
+ * 1027  找不到表对应的类
+ * 1028  无法获取表构造器
+ * 1029  无法获取表实例
+ * 1036  找不到模型对应的类
+ * 1037  无法获取模型构造器
+ * 1038  无法获取模型实例
  *
- * 0x1041  构建语句失败
- * 0x1042  绑定参数失败
- * 0x1043  查询语句失败
- *
- * 0x104a  执行语句失败
- * 0x104b  插入的值不能为空
- * 0x104c  执行插入语句失败
- * 0x104d  更新的值不能为空
- * 0x104e  执行更新语句失败
- * 0x104f  执行删除语句失败
- *
- * 0x1051  语句参数个数不符
- * 0x1052  语句条件不能为空
+ * 1041  构建语句失败
+ * 1042  绑定参数失败
+ * 1043  查询语句失败
+ * 1044  执行语句失败
+ * 1045  执行更新语句失败
+ * 1046  插入的值不能为空
+ * 1047  更新的值不能为空
+ * 1048  语句条件不能为空
+ * 1049  语句参数个数不符
  * </pre>
  *
  * @author Hongs
@@ -165,7 +160,7 @@ public class DB
     }
     catch (SQLException ex)
     {
-      throw new HongsException(0x1031 , ex);
+      throw new HongsException(1031 , ex);
     }
 
     /**
@@ -194,11 +189,11 @@ public class DB
 
       if (origin.containsKey("jndi") == false)
       {
-        throw new HongsException(0x1021, "Can not find jndi in origin");
+        throw new HongsException(1021, "Can not find jndi in origin");
       }
       if (origin.containsKey("name") == false)
       {
-        throw new HongsException(0x1021, "Can not find name in origin");
+        throw new HongsException(1021, "Can not find name in origin");
       }
 
       String mode = (String)origin.get("jndi");
@@ -211,7 +206,7 @@ public class DB
       }
       catch (SQLException ex)
       {
-        throw new HongsException(0x1022 , ex );
+        throw new HongsException(1022, ex );
       }
       catch (javax.naming.NamingException ex )
       {
@@ -238,11 +233,11 @@ public class DB
 
       if (!source.containsKey("jdbc"))
       {
-        throw new HongsException(0x1023, "Can not find jdbc in source");
+        throw new HongsException(1023, "Can not find jdbc in source");
       }
       if (!source.containsKey("name"))
       {
-        throw new HongsException(0x1023, "Can not find name in source");
+        throw new HongsException(1023, "Can not find name in source");
       }
 
       String mode = (String)source.get("jdbc");
@@ -255,7 +250,7 @@ public class DB
       }
       catch (SQLException ex)
       {
-        throw new HongsException(0x1024 , ex );
+        throw new HongsException(1024, ex );
       }
 
       if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG))
@@ -269,11 +264,11 @@ public class DB
 
     if (ez !=null)
     {
-      throw new HongsException(0x1025, ez);
+      throw new HongsException(1025, ez);
     }
     else
     {
-      throw new HongsException(0x1025, "Can not find source or origin");
+      throw new HongsException(1025, "Can not find source or origin");
     }
 
     }
@@ -418,7 +413,7 @@ public class DB
 
     if (!this.tableConfigs.containsKey(tableName))
     {
-      throw new HongsException(0x1039, "Can not find config for table '"+this.name+"."+tableName+"'.");
+      throw new HongsException(1026, "Can not find config for table '"+this.name+"."+tableName+"'.");
     }
 
     /**
@@ -475,7 +470,7 @@ public class DB
     }
     catch (ClassNotFoundException ex)
     {
-      throw new HongsException(0x103a, ex);
+      throw new HongsException(1027, ex);
     }
 
     /**
@@ -488,11 +483,11 @@ public class DB
     }
     catch (NoSuchMethodException ex)
     {
-      throw new HongsException(0x103b, ex);
+      throw new HongsException(1028, ex);
     }
     catch (SecurityException ex)
     {
-      throw new HongsException(0x103b, ex);
+      throw new HongsException(1028, ex);
     }
 
     /**
@@ -505,19 +500,19 @@ public class DB
     }
     catch (InstantiationException ex)
     {
-      throw new HongsException(0x103c, ex);
+      throw new HongsException(1029, ex);
     }
     catch (IllegalAccessException ex)
     {
-      throw new HongsException(0x103c, ex);
+      throw new HongsException(1029, ex);
     }
     catch (IllegalArgumentException ex)
     {
-      throw new HongsException(0x103c, ex);
+      throw new HongsException(1029, ex);
     }
     catch (InvocationTargetException ex)
     {
-      throw new HongsException(0x103c, ex);
+      throw new HongsException(1029, ex);
     }
 
     this.tableObjects.put(tableName, tobj);
@@ -553,7 +548,7 @@ public class DB
 
     if (!this.tableConfigs.containsKey(tableName))
     {
-      throw new HongsException(0x1039, "Can not find config for table '"+this.name+"."+tableName+"'.");
+      throw new HongsException(1026, "Can not find config for table '"+this.name+"."+tableName+"'.");
     }
 
     /**
@@ -597,7 +592,7 @@ public class DB
     }
     catch (ClassNotFoundException ex)
     {
-      throw new HongsException(0x103d, ex);
+      throw new HongsException(1037, ex);
     }
 
     /**
@@ -610,11 +605,11 @@ public class DB
     }
     catch (NoSuchMethodException ex)
     {
-      throw new HongsException(0x103e, ex);
+      throw new HongsException(1038, ex);
     }
     catch (SecurityException ex)
     {
-      throw new HongsException(0x103e, ex);
+      throw new HongsException(1038, ex);
     }
 
     /**
@@ -627,19 +622,19 @@ public class DB
     }
     catch (InstantiationException ex)
     {
-      throw new HongsException(0x103f, ex);
+      throw new HongsException(1039, ex);
     }
     catch (IllegalAccessException ex)
     {
-      throw new HongsException(0x103f, ex);
+      throw new HongsException(1039, ex);
     }
     catch (IllegalArgumentException ex)
     {
-      throw new HongsException(0x103f, ex);
+      throw new HongsException(1039, ex);
     }
     catch (InvocationTargetException ex)
     {
-      throw new HongsException(0x103f, ex);
+      throw new HongsException(1039, ex);
     }
 
     this.modelObjects.put(tableName, mobj);

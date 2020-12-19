@@ -49,8 +49,8 @@ abstract public class JAction implements IActing, IAction {
                 fs = FormSet.getInstance(mod).getForm(ent);
                 break;
             } catch ( HongsException ex) {
-            if (ex.getErrno() != 0x10e8
-            &&  ex.getErrno() != 0x10ea) {
+            if (ex.getErrno() != 910
+            &&  ex.getErrno() != 912) {
                 throw ex;
             }}
 
@@ -60,8 +60,8 @@ abstract public class JAction implements IActing, IAction {
                 fs = FormSet.getInstance(mod).getForm(ent);
                 runner.setModule ( mod );
             } catch ( HongsException ex) {
-            if (ex.getErrno() != 0x10e8
-            &&  ex.getErrno() != 0x10ea) {
+            if (ex.getErrno() != 910
+            &&  ex.getErrno() != 912) {
                 throw ex;
             }}
         } while (false) ;

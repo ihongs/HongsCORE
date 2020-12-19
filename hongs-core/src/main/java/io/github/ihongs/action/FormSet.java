@@ -66,13 +66,13 @@ import org.xml.sax.SAXException;
     }
  * </pre>
  *
- * <h3>异常代码:</h3>
+ * <h3>错误代码:</h3>
  * <pre>
- * 区间: 0x10e8~0x10ef
- * 0x10e8 配置文件不存在
- * 0x10e9 解析文件失败
- * 0x10ea 表单不存在
- * 0x10eb 枚举不存在
+ * 区间: 910~919
+ * 910 配置文件不存在
+ * 911 解析文件失败
+ * 912 表单不存在
+ * 913 枚举不存在
  * </pre>
  *
  * @author Hongs
@@ -194,7 +194,7 @@ public class FormSet
         is = this.getClass().getClassLoader().getResourceAsStream(fn);
         if ( null == is )
         {
-            throw new HongsException(0x10e8,
+            throw new HongsException(910,
                 "Can not find the config file '" + name + Cnst.FORM_EXT + ".xml'.");
         }
     }
@@ -212,15 +212,15 @@ public class FormSet
     }
     catch ( IOException ex)
     {
-      throw new HongsException(0x10e9, "Read '" +name+Cnst.FORM_EXT+".xml error'", ex);
+      throw new HongsException(911, "Read '" +name+Cnst.FORM_EXT+".xml error'", ex);
     }
     catch (SAXException ex)
     {
-      throw new HongsException(0x10e9, "Parse '"+name+Cnst.FORM_EXT+".xml error'", ex);
+      throw new HongsException(911, "Parse '"+name+Cnst.FORM_EXT+".xml error'", ex);
     }
     catch (ParserConfigurationException ex)
     {
-      throw new HongsException(0x10e9, "Parse '"+name+Cnst.FORM_EXT+".xml error'", ex);
+      throw new HongsException(911, "Parse '"+name+Cnst.FORM_EXT+".xml error'", ex);
     }
 
     this.forms = new HashMap();
@@ -470,7 +470,7 @@ public class FormSet
     if (name . startsWith ("@")) {
         return  ( Map  )  Core.getInstance(name.substring(1));
     }
-    throw new HongsException(0x10eb, "Enum "+name+" in "+this.name+" is not exists");
+    throw new HongsException(913, "Enum "+name+" in "+this.name+" is not exists");
   }
 
   public Map getForm(String name) throws HongsException {
@@ -488,7 +488,7 @@ public class FormSet
     if (name . startsWith ("@")) {
         return  ( Map  )  Core.getInstance(name.substring(1));
     }
-    throw new HongsException(0x10ea, "Form "+name+" in "+this.name+" is not exists");
+    throw new HongsException(912, "Form "+name+" in "+this.name+" is not exists");
   }
 
   public CoreLocale getCurrTranslator() {
@@ -496,7 +496,7 @@ public class FormSet
       return CoreLocale.getInstance(name);
     }
     catch (HongsExemption e) {
-      if  (e.getErrno() != 0x82a) {
+      if  (e.getErrno( ) != 826 ) {
         throw e;
       }
       return new CoreLocale(null);

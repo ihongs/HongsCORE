@@ -21,8 +21,8 @@ import java.util.Map;
  *
  * <h3>异常代码</h3>
  * <pre>
- * 代码区间 0x10f0~0x10ff
- * Ex10f1=找不到表单规则
+ * 代码区间 1120~1129
+ * 1121=找不到表单规则
  * </pre>
  *
  * <h3>特别注意</h3>
@@ -167,16 +167,16 @@ public class VerifyHelper extends Verify {
                     rule = (Rule) (Class.forName(item).newInstance());
                 }
                 catch (ClassNotFoundException ex) {
-                    throw new HongsException(0x10f1, "Failed to get rule: "+item+" in "+conf+":"+form, ex);
+                    throw new HongsException(1120, "Failed to get rule: "+item+" in "+conf+":"+form, ex);
                 }
                 catch (InstantiationException ex) {
-                    throw new HongsException(0x10f1, "Failed to get rule: "+item+" in "+conf+":"+form, ex);
+                    throw new HongsException(1121, "Failed to get rule: "+item+" in "+conf+":"+form, ex);
                 }
                 catch (IllegalAccessException ex) {
-                    throw new HongsException(0x10f1, "Failed to get rule: "+item+" in "+conf+":"+form, ex);
+                    throw new HongsException(1121, "Failed to get rule: "+item+" in "+conf+":"+form, ex);
                 }
                 catch (ClassCastException ex) {
-                    throw new HongsException(0x10f1, "Failed to get rule: "+item+" in "+conf+":"+form, ex);
+                    throw new HongsException(1121, "Failed to get rule: "+item+" in "+conf+":"+form, ex);
                 }
 
                 rule.config (opts);

@@ -112,7 +112,7 @@ public class SelectInvoker implements FilterInvoker {
             sel.select ( rsp, adds );
         } catch (HongsException ex ) {
             int  ec  = ex.getErrno();
-            if  (ec != 0x10e8 && ec != 0x10e9 && ec != 0x10ea ) {
+            if  (ec != 910 && ec != 911 && ec != 912 ) {
                 throw  ex;
             }
         }

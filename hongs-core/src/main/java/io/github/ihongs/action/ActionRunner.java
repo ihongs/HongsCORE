@@ -23,15 +23,15 @@ import java.util.Map;
  *
  * <h3>异常代码</h3>
  * <pre>
- * 区间: 0x1100~0x110f
- * 0x1100 错误请求
- * 0x1101 尚未登陆
- * 0x1102 区域错误
- * 0x1103 无权访问
- * 0x1104 无此动作
- * 0x1105 非法请求
- * 0x110e 内部错误
- * 0x110f 无法执行, 禁止访问或参数错误
+ * 区间: 1100~1109
+ * 1100 错误请求
+ * 1101 尚未登陆
+ * 1102 区域错误
+ * 1103 无权访问
+ * 1104 无此动作
+ * 1105 非法请求
+ * 1106 内部错误
+ * 1108 无法执行, 禁止访问或参数错误
  * </pre>
  *
  * @author Hong
@@ -60,9 +60,9 @@ public class ActionRunner {
             this.annarr = this.method.getAnnotations();
             this.len    = this.annarr.length;
         } catch (NoSuchMethodException ex) {
-            throw new HongsException(0x1104, "Can not find action '"+ mclass.getName() +"."+ method +"'");
+            throw new HongsException(1104, "Can not find action '"+ mclass.getName() +"."+ method +"'");
         } catch (    SecurityException ex) {
-            throw new HongsException(0x1104, "Can not exec action '"+ mclass.getName() +"."+ method +"'");
+            throw new HongsException(1104, "Can not exec action '"+ mclass.getName() +"."+ method +"'");
         }
 
         // 从注解中提取动作
@@ -88,7 +88,7 @@ public class ActionRunner {
     throws HongsException {
         Mathod mt = getActions().get(action);
         if ( null == mt ) {
-            throw new HongsException(0x1104, "Can not find action '"+ action +"'");
+            throw new HongsException(1104, "Can not find action '"+ action +"'");
         }
 
         this.action = action;
@@ -284,9 +284,9 @@ public class ActionRunner {
         try {
             method.invoke(object, helper);
         } catch (   IllegalAccessException e) {
-            throw new HongsException(0x110f, "Illegal access for method '"+mclass.getName()+"."+method.getName()+"(ActionHelper).");
+            throw new HongsException(1108, "Illegal access for method '"+mclass.getName()+"."+method.getName()+"(ActionHelper).");
         } catch ( IllegalArgumentException e) {
-            throw new HongsException(0x110f, "Illegal params for method '"+mclass.getName()+"."+method.getName()+"(ActionHelper).");
+            throw new HongsException(1108, "Illegal params for method '"+mclass.getName()+"."+method.getName()+"(ActionHelper).");
         } catch (InvocationTargetException e) {
             Throwable  ex = e.getCause( );
             if (ex instanceof HongsExemption) {
@@ -295,7 +295,7 @@ public class ActionRunner {
             if (ex instanceof HongsException) {
                 throw (HongsException) ex;
             } else {
-                throw new HongsException(0x110e, ex);
+                throw new HongsException(1106, ex);
             }
         }
     }

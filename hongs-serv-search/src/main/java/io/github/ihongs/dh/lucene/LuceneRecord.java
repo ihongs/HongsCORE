@@ -328,7 +328,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
     @Override
     public int update(Map rd) throws HongsException {
         Set<String> ids = Synt.asSet(rd.get(Cnst.ID_KEY));
-        permit (rd, ids , 0x1096);
+        permit (rd, ids , 1096);
         int c = 0;
         for(String  id  : ids) {
             c+= put(id  , rd );
@@ -345,7 +345,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
     @Override
     public int delete(Map rd) throws HongsException {
         Set<String> ids = Synt.asSet(rd.get(Cnst.ID_KEY));
-        permit (rd, ids , 0x1097);
+        permit (rd, ids , 1097);
         int c = 0;
         for(String  id  : ids) {
             c+= del(id  /**/ );
@@ -394,10 +394,10 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             Set    zd = new HashSet(ids);
                    zd . removeAll  (idz);
             String er = zd.toString(  );
-            if (ern == 0x1096) {
+            if (ern == 1096) {
                 throw new HongsException(ern, "Can not update by id: " + er);
             } else
-            if (ern == 0x1097) {
+            if (ern == 1097) {
                 throw new HongsException(ern, "Can not delete by id: " + er);
             } else
             {
@@ -1557,7 +1557,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         try {
             writer.commit ( );
         } catch (IOException ex) {
-            throw new HongsExemption(0x102c, ex);
+            throw new HongsExemption(1055, ex);
         }
     }
 
@@ -1573,7 +1573,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         try {
             writer.rollback();
         } catch (IOException ex) {
-            throw new HongsExemption(0x102d, ex);
+            throw new HongsExemption(1056, ex);
         }
     }
 

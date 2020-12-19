@@ -132,7 +132,7 @@ public final class FetchPage
     {
       Link link  = this.caze.linker( );
       if ( link != null ) return link ;
-      throw new HongsException(0x10b6);
+      throw new HongsException( 1163 );
     }
   }
 

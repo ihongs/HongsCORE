@@ -21,13 +21,13 @@ import java.util.regex.Pattern;
  *
  * <h3>异常代码:</h3>
  * <pre>
- * 区间: 0x10c2~0x10cf
- * 0x10c2 无法识别的关联方式(LINK)
- * 0x10c4 无法识别的关联类型(JOIN)
- * 0x10c6 找不到指定的关联表(LINK)
- * 0x10c8 找不到指定的关联表(JOIN)
- * 0x10ca 关联数据类型必须为Map
- * 0x10cc 关联数据类型必须为Map或List
+ * 区间: 1170~1179
+ * 1171  无法识别的关联方式(LINK)
+ * 1172  无法识别的关联类型(JOIN)
+ * 1173  找不到指定的关联表(LINK)
+ * 1174  找不到指定的关联表(JOIN)
+ * 1175  关联数据类型必须为Map
+ * 1176  关联数据类型必须为Map或List
  * </pre>
  *
  * @author Hongs
@@ -221,10 +221,10 @@ public class AssocMore {
             fk = "`"+an+"`.`"+fk+"`";
         } else
         if ("HAS_MANY".equals(tp) || "HAS_MORE".equals(tp)) {
-            throw new HongsException(0x10c2,  "Unsupported assoc type '"+tp+"'");
+            throw new HongsException(1171,  "Unsupported assoc type '"+tp+"'");
         }
         else {
-            throw new HongsException(0x10c2, "Unrecognized assoc type '"+tp+"'");
+            throw new HongsException(1171, "Unrecognized assoc type '"+tp+"'");
         }
         caze2.on( pk +"="+ fk );
 
@@ -243,10 +243,10 @@ public class AssocMore {
             ji = FetchCase.INNER;
         } else
         if ("CROSS".equals(jn)) {
-            throw new HongsException(0x10c4,  "Unsupported assoc join '"+jn+"'");
+            throw new HongsException(1172,  "Unsupported assoc join '"+jn+"'");
         }
         else {
-            throw new HongsException(0x10c4, "Unrecognized assoc join '"+jn+"'");
+            throw new HongsException(1172, "Unrecognized assoc join '"+jn+"'");
         }
         caze2.by(ji);
 
@@ -325,7 +325,7 @@ public class AssocMore {
             }
         }
         else {
-            throw new HongsException(0x10c2, "Unrecognized assoc type '"+tp+"'");
+            throw new HongsException(1171, "Unrecognized assoc type '"+tp+"'");
         }
 
         caze2.setOption("ASSOC_MERGE", "MERGE".equals(jn));
@@ -400,7 +400,7 @@ public class AssocMore {
         }
         else
         {
-          throw new HongsException(0x10ca,
+          throw new HongsException(1175,
           "Sub data type for table '"+tb.name+"' must be Map");
         }
       }
@@ -417,7 +417,7 @@ public class AssocMore {
         }
         else
         {
-          throw new HongsException(0x10cc,
+          throw new HongsException(1176,
           "Sub data type for table '"+tb.name+"' must be Map or List");
         }
       }

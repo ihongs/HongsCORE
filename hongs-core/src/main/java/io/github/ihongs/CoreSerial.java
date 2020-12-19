@@ -30,16 +30,16 @@ import java.util.Map;
  * 详见: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4756277
  * </pre>
  *
- * <h3>异常代码:</h3>
+ * <h3>错误代码:</h3>
  * <pre>
- * 区间: 0x10d0~0x10df
- * 0x10d0 创建临时文件失败
- * 0x10d2 写入临时文件失败
- * 0x10d4 读取临时文件失败
- * 0x10d6 找不到临时文件
- * 0x10d8 找不到对应的类
- * 0x10da 无法读取属性
- * 0x10dc 无法写入属性
+ * 区间: 900~909
+ * 900 创建临时文件失败
+ * 901 写入临时文件失败
+ * 902 读取临时文件失败
+ * 903 找不到临时文件
+ * 904 找不到对应的类
+ * 905 无法读取属性
+ * 906 无法写入属性
  * </pre>
  *
  * @author Hongs
@@ -149,15 +149,15 @@ public abstract class CoreSerial
     }
     catch (ClassNotFoundException ex)
     {
-      throw new HongsException(0x10d8, ex);
+      throw new HongsException(904, ex);
     }
     catch (FileNotFoundException ex)
     {
-      throw new HongsException(0x10d6, ex);
+      throw new HongsException(903, ex);
     }
     catch (IOException ex)
     {
-      throw new HongsException(0x10d4, ex);
+      throw new HongsException(902, ex);
     }
   }
 
@@ -171,14 +171,14 @@ public abstract class CoreSerial
   {
     // 文件不存在则创建
     if (!file.exists()) {
-      File dn = file.getParentFile(  );
+      File dn = file.getParentFile();
       if (!dn.exists()) {
            dn.mkdirs();
       }
       try {
         file.createNewFile( );
       } catch (IOException e) {
-        throw new HongsException(0x10d0,e);
+        throw new HongsException(900, e);
       }
     }
 
@@ -201,11 +201,11 @@ public abstract class CoreSerial
     }
     catch (FileNotFoundException ex)
     {
-      throw new HongsException(0x10d6, ex);
+      throw new HongsException(903, ex);
     }
     catch (IOException ex)
     {
-      throw new HongsException(0x10d2, ex);
+      throw new HongsException(901, ex);
     }
   }
 
@@ -241,11 +241,11 @@ public abstract class CoreSerial
       }
       catch (IllegalAccessException e)
       {
-        throw new HongsException(0x10da, e);
+        throw new HongsException(905, e);
       }
       catch (IllegalArgumentException e)
       {
-        throw new HongsException(0x10da, e);
+        throw new HongsException(905, e);
       }
     }
 
@@ -271,11 +271,11 @@ public abstract class CoreSerial
       }
       catch (IllegalAccessException e)
       {
-        throw new HongsException(0x10da, e);
+        throw new HongsException(905, e);
       }
       catch (IllegalArgumentException e)
       {
-        throw new HongsException(0x10da, e);
+        throw new HongsException(905, e);
       }
     }
   }
@@ -312,11 +312,11 @@ public abstract class CoreSerial
       }
       catch (IllegalAccessException e)
       {
-        throw new HongsException(0x10da, e);
+        throw new HongsException(905, e);
       }
       catch (IllegalArgumentException e)
       {
-        throw new HongsException(0x10da, e);
+        throw new HongsException(905, e);
       }
     }
 
@@ -342,11 +342,11 @@ public abstract class CoreSerial
       }
       catch (IllegalAccessException e)
       {
-        throw new HongsException(0x10dc, e);
+        throw new HongsException(906, e);
       }
       catch (IllegalArgumentException e)
       {
-        throw new HongsException(0x10dc, e);
+        throw new HongsException(906, e);
       }
     }
 

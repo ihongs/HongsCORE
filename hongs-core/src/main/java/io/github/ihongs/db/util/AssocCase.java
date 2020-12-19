@@ -945,7 +945,7 @@ public class AssocCase {
                 throw e.toExemption(  );
             }
             if (null == assoc) {
-                throw new HongsExemption(0x1039,
+                throw new HongsExemption(1026,
                     "Can not get table '"+ rn +"' in DB '"+ table.db.name +"'"
                 );
             }

@@ -52,7 +52,7 @@ public class Source extends Link {
 
             return connection;
         } catch (SQLException ex) {
-            throw new HongsException(0x1024, ex);
+            throw new HongsException(1024, ex);
         }
     }
 

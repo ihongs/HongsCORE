@@ -85,7 +85,7 @@
                     try {
                         enumData  = FormSet.getInstance(enumConf).getEnum(enumName);
                     } catch ( HongsException ex) {
-                    if (ex.getErrno() != 0x10eb) {
+                    if (ex.getErrno() != 913 ) {
                         throw ex;
                     }}
 

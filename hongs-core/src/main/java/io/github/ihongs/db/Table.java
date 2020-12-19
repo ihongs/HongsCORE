@@ -31,18 +31,18 @@ import java.util.Set;
  *
  * <h3>错误代码:</h3>
  * <pre>
- * 区间: 0x1080~0x108f
+ * 区间: 1070~1084
  *
- * 0x1081 缺少数据库对象
- * 0x1082 配置不能为空
- * 0x1083 缺少表名
+ * 1071 缺少数据库对象
+ * 1072 配置不能为空
+ * 1073 缺少表名
  *
- * 0x108a 不能为空
- * 0x108b 字符串超长
- * 0x108c 小数位超出
- * 0x108d 不是数值类型
- * 0x108e 不可以为负值
- * 0x108f 无法识别的日期或时间格式
+ * 1074 不能为空
+ * 1075 字符串超长
+ * 1076 小数位超出
+ * 1077 不是数值类型
+ * 1078 不可以为负值
+ * 1079 无法识别的日期或时间格式
  * </pre>
  *
  * <h3>配置选项:</h3>
@@ -92,17 +92,17 @@ public class Table
   {
     if (db == null)
     {
-      throw new HongsException(0x1081, "Param db can not be null");
+      throw new HongsException(1071, "Param db can not be null");
     }
 
     if (conf == null)
     {
-      throw new HongsException(0x1082, "Param conf can not be null");
+      throw new HongsException(1072, "Param conf can not be null");
     }
 
     if (!conf.containsKey("name"))
     {
-      throw new HongsException(0x1083, "Table name in conf required.");
+      throw new HongsException(1073, "Table name in conf required.");
     }
 
     this.db   =  db ;
@@ -858,32 +858,32 @@ public class Table
 
   private HongsException nullException(String name) {
     String error = "Value for column '"+name+"' can not be NULL";
-    return valiException(0x108a, error, name);
+    return valiException(1074, error, name);
   }
 
   private HongsException sizeException(String name, String value, int size) {
     String error = "Value for column '"+name+"'("+value+") must be a less than "+size;
-    return valiException(0x108b, error, name, value, String.valueOf(size));
+    return valiException(1075, error, name, value, String.valueOf(size));
   }
 
   private HongsException scleException(String name, String value, int scle) {
     String error = "Scale for column '"+name+"'("+value+") must be a less than "+scle;
-    return valiException(0x108c, error, name, value, String.valueOf(scle));
+    return valiException(1076, error, name, value, String.valueOf(scle));
   }
 
   private HongsException numeException(String name, String value) {
     String error = "Value for column '"+name+"'("+value+") must be a standard number";
-    return valiException(0x108d, error, name, value);
+    return valiException(1077, error, name, value);
   }
 
   private HongsException unsiException(String name, String value) {
     String error = "Value for column '"+name+"'("+value+") must be a unsigned number";
-    return valiException(0x108e, error, name, value);
+    return valiException(1078, error, name, value);
   }
 
   private HongsException dateException(String name, String value, String format) {
     String error = "Value for column '"+name+"'("+value+") must like '"+ format + "'";
-    return valiException(0x108f, error, name, value, format);
+    return valiException(1079, error, name, value, format);
   }
 
   private HongsException valiException(int code, String error, String fieldName, String... otherParams)

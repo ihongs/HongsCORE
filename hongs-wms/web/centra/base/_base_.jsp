@@ -56,7 +56,7 @@
             }
         } catch (HongsException ex) {
             // 忽略配置文件缺失的异常情况
-            if (ex.getErrno() != 0x10e0) {
+            if (ex.getErrno() != 920) {
                 throw ex ;
             }
         }

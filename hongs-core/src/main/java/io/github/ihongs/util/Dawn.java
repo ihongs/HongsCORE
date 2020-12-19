@@ -31,17 +31,17 @@ import java.util.LinkedHashMap;
  * </p>
  *
  * <p>
- 顺便说说为什么不采用第3方的 JSON 库:
- 最开始用 org.json, 还不错, 可惜在解析 JSON 时会解析成他自身的对象而不是 Java 集合框架对象;
- 后来采用 org.json.simple , 也很好, 但是不支持 Set , 需要修改其源码将 List 改成 Collection;
- 考虑到我有一个 Dump 类, 用于调试输出基础类型和集合对象, 其实现与 JSON 大同小异,
- 故将其修改成该 Dawn 类; 但是 JSON 的解析太麻烦, 就还是调 org.json.simple 好了 ;
- </p>
+ * 顺便说说为什么不采用第3方的 JSON 库:
+ * 最开始用 org.json, 还不错, 可惜在解析 JSON 时会解析成他自身的对象而不是 Java 集合框架对象;
+ * 后来采用 org.json.simple , 也很好, 但是不支持 Set , 需要修改其源码将 List 改成 Collection;
+ * 考虑到我有一个 Dump 类, 用于调试输出基础类型和集合对象, 其实现与 JSON 大同小异,
+ * 故将其修改成该 Dawn 类; 但是 JSON 的解析太麻烦, 就还是调 org.json.simple 好了 ;
+ * </p>
  *
  * <h3>异常代码</h3>
  * <pre>
- * 0x1150 解析JSON数据失败
- * 0x1151 写入JSON数据失败
+ * 850 解析JSON数据失败
+ * 851 写入JSON数据失败
  * </pre>
  *
  * @author Hongs
@@ -62,7 +62,7 @@ public final class Dawn
     }
     catch (ParseException | IOException ex)
     {
-      throw new HongsExemption(0x1150, "Can not parse data by json", ex);
+      throw new HongsExemption(850, "Can not parse data by json", ex);
     }
   }
 
@@ -79,7 +79,7 @@ public final class Dawn
     }
     catch (ParseException ex)
     {
-      throw new HongsExemption(0x1150, "Can not parse data by json", ex);
+      throw new HongsExemption(850, "Can not parse data by json", ex);
     }
   }
 
@@ -145,7 +145,7 @@ public final class Dawn
     }
     catch (IOException ex)
     {
-      throw new HongsExemption(0x1151, "Can not write data for json", ex);
+      throw new HongsExemption(851, "Can not write data for json", ex);
     }
   }
 
@@ -474,7 +474,7 @@ public final class Dawn
             }
         }
         catch (IOException e)  {
-            throw new HongsExemption(0x1151, "Can not write data for json", e);
+            throw new HongsExemption(851, "Can not write data for json", e);
         }
     }
 

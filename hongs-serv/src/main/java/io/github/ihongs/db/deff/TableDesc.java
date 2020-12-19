@@ -94,9 +94,9 @@ public class TableDesc {
                 }
             }
         } catch (HongsException ex) {
-            if (ex.getErrno() == 0x1047) {
+            if (ex.getErrno() == 1143) {
                 String msg = ex.getMessage();
-                if (msg.startsWith("Ex1047: Table ") && msg.endsWith(" doesn't exist")) {
+                if (msg.startsWith("Ex1143: Table ") && msg.endsWith(" doesn't exist")) {
                     return desc;
                 }
             }

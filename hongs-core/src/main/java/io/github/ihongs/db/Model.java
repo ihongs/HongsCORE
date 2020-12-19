@@ -41,17 +41,17 @@ import java.util.Set;
  *
  * <h3>异常代码:</h3>
  * <pre>
- * 区间: 0x1090~0x109f
- * 0x1091 创建时不得含有id
- * 0x1092 更新时必须含有id
- * 0x1093 删除时必须含有id
- * 0x1094 获取时必须含有id
- * 0x1096 无权更新该资源
- * 0x1097 无权删除该资源
- * 0x1098 无权获取该资源
- * 0x109a 参数n和v不能为空(检查存在)
- * 0x109b 指定的字段不存在(检查存在)
- * 0x109c 不支持的运算符: $0
+ * 区间: 1085~1099
+ * 1091 创建时不得含有id
+ * 1092 更新时必须含有id
+ * 1093 删除时必须含有id
+ * 1094 获取时必须含有id
+ * 1096 无权更新该资源
+ * 1097 无权删除该资源
+ * 1098 无权获取该资源
+ * 1085 参数n和v不能为空(检查存在)
+ * 1086 指定的字段不存在(检查存在)
+ * 1087 不支持的运算符: $0
  * </pre>
  *
  * @author Hongs
@@ -332,7 +332,7 @@ implements IEntity
     // 是否缺少n或v参数
     if (!rd.containsKey("n") || !rd.containsKey("v"))
     {
-      throw new HongsException(0x109a, "Param n or v can not be empty" );
+      throw new HongsException(1085, "Param n or v can not be empty" );
     }
 
     String n = (String) rd.get("n");
@@ -343,7 +343,7 @@ implements IEntity
     // 是否缺少n对应的字段
     if (!columns.containsKey(n))
     {
-      throw new HongsException(0x109b, "Column " + n + " is not exists");
+      throw new HongsException(1086, "Column " + n + " is not exists");
     }
 
     caze.filter("`"+this.table.name+"`.`"+n+"` = ?", v);
@@ -442,7 +442,7 @@ implements IEntity
   {
     if (id == null || id.length() == 0)
     {
-      throw new HongsException (0x1091, "ID can not be empty for add");
+      throw new HongsException (1091, "ID can not be empty for add");
     }
 
     // 存入主数据
@@ -469,7 +469,7 @@ implements IEntity
   {
     if (id == null || id.length() == 0)
     {
-      throw new HongsException (0x1092, "ID can not be empty for put");
+      throw new HongsException (1092, "ID can not be empty for put");
     }
 
     // 更新主数据
@@ -513,7 +513,7 @@ implements IEntity
   {
     if (id == null || id.length() == 0)
     {
-      throw new HongsException (0x1093, "ID can not be empty for del");
+      throw new HongsException (1093, "ID can not be empty for del");
     }
 
     // 删除主数据, 默认可使用逻辑删除
@@ -547,7 +547,7 @@ implements IEntity
   {
     if (id == null || id.length() == 0)
     {
-      throw new HongsException(0x1094, "ID can not be empty for get");
+      throw new HongsException (1094, "ID can not be empty for get");
     }
 
     Map rd = new HashMap();
@@ -826,9 +826,9 @@ implements IEntity
    *
    * 如需添加过滤条件, 请重写此方法;
    * 有不可操作的行时, 通过 caze 上的 MODEL_START 来区分异常:
-   * update 对应 0x1096
-   * delete 对应 0x1097
-   * 其他的 对应 0x1098
+   * update 对应 1096
+   * delete 对应 1097
+   * 其他的 对应 1098
    * 描述为 Can not update|delete|search by id: ID1, ID2, IDn
    * </pre>
    *
@@ -869,13 +869,13 @@ implements IEntity
         String er = zd.toString(  );
         String mm = caze.getOption("MODEL_START", "");
         if ("update".equals(mm)) {
-            throw new HongsException(0x1096, "Can not update by id: " + er);
+            throw new HongsException(1096, "Can not update by id: " + er);
         } else
         if ("delete".equals(mm)) {
-            throw new HongsException(0x1097, "Can not delete by id: " + er);
+            throw new HongsException(1097, "Can not delete by id: " + er);
         } else
         {
-            throw new HongsException(0x1098, "Can not search by id: " + er);
+            throw new HongsException(1098, "Can not search by id: " + er);
         }
     }
   }
@@ -1205,7 +1205,7 @@ implements IEntity
                 throw e.toExemption(  );
             }
             if (null == assoc) {
-                throw new HongsExemption(0x1039,
+                throw new HongsExemption(1026,
                     "Can not get table '"+ rn +"' in DB '"+ table.db.name +"'"
                 );
             }

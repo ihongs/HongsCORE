@@ -35,12 +35,6 @@ import static io.github.ihongs.util.verify.Rule.STAND;
  *      .verify(values, false, false);
  * </pre>
  * <p>但当前并不打算全面支持 Java 8, 如升级会增加 Optional 的函数式支持.</p>
- *
- * <h3>异常代码</h3>
- * <pre>
- * 代码区间 0x10f0~0x10ff
- * Ex10f0=规则格式错误
- * </pre>
  */
 public class Verify {
 

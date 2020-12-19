@@ -150,7 +150,7 @@ abstract public class Link
             this.connection.setAutoCommit(  !  this.REFLUX_MODE);
         }
     } catch (SQLException ex) {
-        throw new HongsException(0x102a, ex);
+        throw new HongsException(1053, ex);
     }
   }
 
@@ -167,7 +167,7 @@ abstract public class Link
             connection.setAutoCommit(false);
         }
     } catch (SQLException ex) {
-        throw new HongsExemption(0x102b, ex);
+        throw new HongsExemption(1054, ex);
     }
   }
 
@@ -185,7 +185,7 @@ abstract public class Link
             connection.commit(  );
         }
     } catch (SQLException ex) {
-        throw new HongsExemption(0x102c, ex);
+        throw new HongsExemption(1055, ex);
     }
   }
 
@@ -203,7 +203,7 @@ abstract public class Link
             connection.rollback();
         }
     } catch (SQLException ex) {
-        throw new HongsExemption(0x102d, ex);
+        throw new HongsExemption(1056, ex);
     }
   }
 
@@ -245,7 +245,7 @@ abstract public class Link
     }
     catch ( SQLException ex )
     {
-      throw new HongsException(0x1042, ex);
+      throw new HongsException(1042, ex);
     }
 
     return ps;
@@ -253,7 +253,7 @@ abstract public class Link
 
   /**
    * 当需要在prepareStatement时设定参数, 可重载该方法
-   * 异常代码为: 0x1041
+   * 异常代码为: 1041
    * @param sql
    * @return PreparedStatement对象
    * @throws HongsException
@@ -269,7 +269,7 @@ abstract public class Link
     }
     catch (SQLException ex)
     {
-      throw new HongsException(0x1041, ex);
+      throw new HongsException(1041, ex);
     }
 
     return ps;
@@ -291,7 +291,7 @@ abstract public class Link
     }
     catch (SQLException ex)
     {
-      throw new HongsException(0x1041, ex);
+      throw new HongsException(1041, ex);
     }
 
     return ps;
@@ -312,7 +312,7 @@ abstract public class Link
     }
     catch (SQLException ex)
     {
-      throw new HongsException(0x1034, ex);
+      throw new HongsException(1034, ex);
     }
   }
 
@@ -331,7 +331,7 @@ abstract public class Link
     }
     catch (SQLException ex)
     {
-      throw new HongsException(0x1035, ex);
+      throw new HongsException(1035, ex);
     }
   }
 
@@ -403,7 +403,7 @@ abstract public class Link
     }
     catch (SQLException ex )
     {
-      throw new HongsException(0x1043, ex);
+      throw new HongsException(1043, ex);
     }
 
     Loop loop = new Loop( rs, ps );
@@ -511,7 +511,7 @@ abstract public class Link
     }
     catch (  SQLException  ex )
     {
-      throw new HongsException(0x104a, ex);
+      throw new HongsException(1044, ex);
     }
     finally
     {
@@ -548,7 +548,7 @@ abstract public class Link
     }
     catch (  SQLException  ex )
     {
-      throw new HongsException(0x104e, ex);
+      throw new HongsException(1045, ex);
     }
     finally
     {
@@ -569,7 +569,7 @@ abstract public class Link
   {
     if (values == null || values.isEmpty())
     {
-      throw new HongsException(0x104b, "Insert value can not be empty.");
+      throw new HongsException(1046, "Insert value can not be empty.");
     }
 
     table = quoteField(table);
@@ -615,11 +615,11 @@ abstract public class Link
   {
     if (values == null || values.isEmpty())
     {
-      throw new HongsException(0x104d, "Update value can not be empty.");
+      throw new HongsException(1047, "Update value can not be empty.");
     }
     if ( where == null ||  where.isEmpty())
     {
-      throw new HongsException(0x1052, "Update where can not be empty.");
+      throw new HongsException(1048, "Update where can not be empty.");
     }
 
     table = quoteField(table);
@@ -666,7 +666,7 @@ abstract public class Link
   {
     if ( where == null ||  where.isEmpty())
     {
-      throw new HongsException(0x1052, "Delete where can not be empty.");
+      throw new HongsException(1048, "Delete where can not be empty.");
     }
 
     table = quoteField(table);
@@ -783,7 +783,7 @@ abstract public class Link
 
     if (num != params.size())
     {
-      throw new HongsException(0x1051,
+      throw new HongsException(1049,
         "The number of '?' and the number of parameters are inconsistent."
         + " ?s: " + num + " params: " + params.size() + " SQL: " + sql);
     }
@@ -851,7 +851,7 @@ abstract public class Link
 
     if (num != params.size())
     {
-      throw new HongsException(0x1051,
+      throw new HongsException(1049,
         "The number of '?' and the number of parameters are inconsistent."
         + " ?s: " + num + " params: " + params.size() + " SQL: " + sql);
     }

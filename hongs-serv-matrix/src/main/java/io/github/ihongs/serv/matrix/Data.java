@@ -89,11 +89,11 @@ public class Data extends SearchEntity {
      *
      * <pre>
      * 错误代码:
-     * 0x10e8  配置文件不存在
-     * 0x10ea  表单信息不存在
-     * 0x825   找不到对应的类
-     * 0x826   构建方法不可用
-     * 0x827   构建实例不成功
+     * 821  找不到对应的类
+     * 822  构建方法不可用
+     * 823  构建实例不成功
+     * 910  配置文件不存在
+     * 912  表单信息不存在
      * </pre>
      *
      * @param conf
@@ -112,7 +112,7 @@ public class Data extends SearchEntity {
             try {
                   klass = Class.forName (name);
             } catch (ClassNotFoundException e) {
-                throw new HongsExemption(0x825,"Can not find class by name '"+name+"'.");
+                throw new HongsExemption(821,"Can not find class by name '"+name+"'.");
             }
 
             try {
@@ -127,13 +127,13 @@ public class Data extends SearchEntity {
                 if (ta instanceof StackOverflowError) {
                     throw (StackOverflowError) ta;
                 }
-                throw new HongsExemption(0x827,"Can not call '"+name+".getInstance'",ta);
+                throw new HongsExemption(823,"Can not call '"+name+".getInstance'",ta);
             } catch ( IllegalArgumentException ex) {
-                throw new HongsExemption(0x827,"Can not call '"+name+".getInstance'",ex);
+                throw new HongsExemption(823,"Can not call '"+name+".getInstance'",ex);
             } catch (   IllegalAccessException ex) {
-                throw new HongsExemption(0x827,"Can not call '"+name+".getInstance'",ex);
+                throw new HongsExemption(823,"Can not call '"+name+".getInstance'",ex);
             } catch (        SecurityException se) {
-                throw new HongsExemption(0x826,"Can not call '"+name+".getInstance'",se);
+                throw new HongsExemption(822,"Can not call '"+name+".getInstance'",se);
             }
         }
 
@@ -235,8 +235,8 @@ public class Data extends SearchEntity {
             try {
                 fields = FormSet.getInstance(cnf).getForm(form);
             } catch (HongsException ex) {
-                if (ex.getErrno() != 0x10e8
-                &&  ex.getErrno() != 0x10ea) {
+                if (ex.getErrno() != 910
+                &&  ex.getErrno() != 912) {
                     throw ex.toExemption();
                 }
                 break;
@@ -253,8 +253,8 @@ public class Data extends SearchEntity {
             try {
                 fieldx = FormSet.getInstance(cnf).getForm(form);
             } catch (HongsException ex) {
-                if (ex.getErrno() != 0x10e8
-                &&  ex.getErrno() != 0x10ea) {
+                if (ex.getErrno() != 910
+                &&  ex.getErrno() != 912) {
                     throw ex.toExemption();
                 }
                 break;
@@ -280,8 +280,9 @@ public class Data extends SearchEntity {
         }   while  ( false );
 
         if ( null == fields) {
-            throw new HongsExemption(0x1160, "Data form '"+conf+"."+form+"' is not exists")
-                .setLocalizedOptions("matrix");
+            throw new HongsExemption(910, "Data form '"+conf+"."+form+"' is not exists")
+                .setLocalizedContent("matrix.form.not.exists")
+                .setLocalizedContext("matrix");
         }
 
         setFields(fields);
@@ -408,7 +409,7 @@ public class Data extends SearchEntity {
     @Override
     public int delete(Map rd) throws HongsException {
         Set<String> ids = Synt.declare(rd.get(Cnst.ID_KEY), new HashSet());
-        permit(rd , ids , 0x1096);
+        permit(rd , ids , 1096);
 
         int c = 0;
         for(String  id  : ids) {
@@ -425,7 +426,7 @@ public class Data extends SearchEntity {
      */
     public int revert(Map rd) throws HongsException {
         Set<String> ids = Synt.declare(rd.get(Cnst.ID_KEY), new HashSet());
-    //  permit(rd , ids , 0x1096);
+    //  permit(rd , ids , 1096);
 
         int c = 0;
         for(String  id  : ids) {

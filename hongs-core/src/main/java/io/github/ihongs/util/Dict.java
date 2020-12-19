@@ -21,6 +21,12 @@ import java.util.Set;
  * 切记：keys
  * </p>
  *
+ * <h3>异常代码</h3>
+ * <pre>
+ * 855 解析JSON数据失败
+ * 856 写入JSON数据失败
+ * </pre>
+ *
  * @author Hongs
  */
 public final class Dict
@@ -215,11 +221,11 @@ public final class Dict
     }
     if (keys.length ==  0)
     {
-      throw new HongsExemption(0x1159, "Keys required, but empty gives");
+      throw new HongsExemption(856, "Keys required, but empty gives");
     }
     if (keys[0] == null || keys[0] instanceof Integer)
     {
-      throw new HongsExemption(0x1159, "First key can not be null or ints, but it is " + keys[0]);
+      throw new HongsExemption(856, "First key can not be null or ints, but it is " + keys[0]);
     }
 
     put(map, val, keys, 0);
@@ -457,7 +463,7 @@ public final class Dict
                 break;
             case '[' :
                 if (fkh) {
-                    throw new HongsExemption(0x1158, "Syntax error at " + end + " in " + path);
+                    throw new HongsExemption(855, "Syntax error at " + end + " in " + path);
                 }
                 if (beg != end) {
                     lst.add(path.substring(beg, end));
@@ -466,14 +472,14 @@ public final class Dict
                     lst.add( "" );
                 } else
                 if (']' != path.charAt(beg - 1)) { // 规避 a[b][c] 中的 ][
-                    throw new HongsExemption(0x1158, "Syntax error at " + end + " in " + path);
+                    throw new HongsExemption(855, "Syntax error at " + end + " in " + path);
                 }
                 beg  = end + 1;
                 fkh  = true;
                 break;
             case ']' :
                 if (! fkh) {
-                    throw new HongsExemption(0x1158, "Syntax error at " + end + " in " + path);
+                    throw new HongsExemption(855, "Syntax error at " + end + " in " + path);
                 }
                 if (beg != end) {
                     lst.add(path.substring(beg, end));
@@ -482,7 +488,7 @@ public final class Dict
                     lst.add(null);
                 } else
 //              if ('[' != path.charAt(beg - 1)) { // 这种情况其实并不存在
-                    throw new HongsExemption(0x1158, "Syntax error at " + end + " in " + path);
+                    throw new HongsExemption(855, "Syntax error at " + end + " in " + path);
 //              }
                 beg  = end + 1;
                 fkh  = false;

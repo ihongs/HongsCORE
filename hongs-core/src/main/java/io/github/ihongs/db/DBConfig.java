@@ -37,12 +37,12 @@ import org.xml.sax.SAXException;
  *
  * <h3>异常代码:</h3>
  * <pre>
- * 区间: 0x1060~0x106f
- * 0x1061  找不到数据库配置文件
- * 0x1063  无法解析数据库配置文档
- * 0x1065  在配置文档中找不到根节点
- * 0x1067  无法读取XML文件
- * 0x1069  无法读取XML流
+ * 区间: 1060~1067
+ * 1061  找不到数据库配置文件
+ * 1062  无法解析数据库配置文档
+ * 1063  在配置文档中找不到根节点
+ * 1064  无法读取XML文件
+ * 1065  无法读取XML流
  * </pre>
  *
  * @author Hongs
@@ -116,7 +116,7 @@ public class DBConfig
         is = this.getClass().getClassLoader().getResourceAsStream(fn);
         if (  is  ==  null )
         {
-            throw new HongsExemption(0x82a,
+            throw new HongsExemption(826,
                 "Can not find the config file '" + name + Cnst.DB_EXT + ".xml'.");
         }
     }
@@ -184,7 +184,7 @@ public class DBConfig
     Element root = doc.getDocumentElement();
     if (!root.hasChildNodes())
     {
-      throw new HongsException(0x1065, "Can not find root element in config document.");
+      throw new HongsException(1063, "Can not find root element in config document.");
     }
 
     String attr;
@@ -287,15 +287,15 @@ public class DBConfig
     }
     catch (ParserConfigurationException ex)
     {
-      throw new  HongsException(0x1063, ex);
+      throw new  HongsException(1062, ex);
     }
     catch (SAXException ex)
     {
-      throw new  HongsException(0x1063, ex);
+      throw new  HongsException(1062, ex);
     }
     catch ( IOException ex)
     {
-      throw new  HongsException(0x1067, ex);
+      throw new  HongsException(1064, ex);
     }
 
     return new DBConfig(doc);
@@ -320,15 +320,15 @@ public class DBConfig
     }
     catch (ParserConfigurationException ex)
     {
-      throw new  HongsException(0x1063, ex);
+      throw new  HongsException(1062, ex);
     }
     catch (SAXException ex)
     {
-      throw new  HongsException(0x1063, ex);
+      throw new  HongsException(1062, ex);
     }
     catch ( IOException ex)
     {
-      throw new  HongsException(0x1069, ex);
+      throw new  HongsException(1065, ex);
     }
 
     return new DBConfig(doc);
@@ -353,15 +353,15 @@ public class DBConfig
     }
     catch (ParserConfigurationException ex)
     {
-      throw new  HongsException(0x1063, ex);
+      throw new  HongsException(1062, ex);
     }
     catch (SAXException ex)
     {
-      throw new  HongsException(0x1063, ex);
+      throw new  HongsException(1062, ex);
     }
     catch ( IOException ex)
     {
-      throw new  HongsException(0x1069, ex);
+      throw new  HongsException(1065, ex);
     }
 
     return new DBConfig(doc);

@@ -104,7 +104,7 @@ public class TitlesHelper {
                 try {
                        fe = FormSet.getInstance(xc).getEnumTranslated(xn);
                 } catch ( HongsException ex) {
-                if (ex.getErrno() == 0x10eb) {
+                if (ex.getErrno() == 913 ) {
                     continue;
                 } else {
                     throw ex;
@@ -364,7 +364,7 @@ public class TitlesHelper {
                 sel.addTitle(enf , adds);
             } catch (HongsException ex ) {
                 int  ec  = ex.getErrno();
-                if  (ec != 0x10e8 && ec != 0x10e9 && ec != 0x10ea ) {
+                if  (ec != 910 && ec != 911 && ec != 912 ) {
                     throw  ex;
                 }
             }

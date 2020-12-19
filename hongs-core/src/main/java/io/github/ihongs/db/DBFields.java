@@ -96,7 +96,7 @@ public class DBFields
     }
     catch (SQLException ex)
     {
-      throw new HongsException(0x1071 , ex);
+      throw new HongsException(1068, ex);
     }
     finally
     {

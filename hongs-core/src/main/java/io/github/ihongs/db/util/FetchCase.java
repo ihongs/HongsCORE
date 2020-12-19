@@ -54,11 +54,11 @@ import java.util.regex.Pattern;
  *
  * <h3>异常代码:</h3>
  * <pre>
- * 区间: 0x10b0~0x10bf
- * 0x10b0 无法识别关联类型(JOIN)
- * 0x10b2 必须指定关联条件
- * 0x10b4 没有指定查询表名
- * 0x10b6 没有指定查询的库
+ * 区间: 1160~1169
+ * 1160 无法识别关联类型(JOIN)
+ * 1161 必须指定关联条件
+ * 1162 没有指定查询表名
+ * 1163 没有指定查询的库
  * </pre>
  *
  * @author Hongs
@@ -647,7 +647,7 @@ public class FetchCase
     if (this.tableName == null
     ||  this.tableName.length() < 1)
     {
-        throw new Error(new HongsException(0x10b4, "tableName can not be empty"));
+        throw new Error(new HongsException(1162, "tableName can not be empty"));
     }
 
     boolean hasJoins = pn != null || !joinSet.isEmpty(); // 有关联表
@@ -1367,7 +1367,7 @@ public class FetchCase
    */
   public Loop select() throws HongsException {
     if (_db_ == null) {
-      throw new HongsException(0x10b6);
+      throw new HongsException(1163);
     }
 
     Loop rs = _db_.query(getSQL(), getStart(), getLimit(), getParams());
@@ -1418,7 +1418,7 @@ public class FetchCase
    */
   public int delete() throws HongsException {
     if (_db_ == null) {
-      throw new HongsException(0x10b6);
+      throw new HongsException(1163);
     }
 
     // 删除条件中字段上的表名
@@ -1437,7 +1437,7 @@ public class FetchCase
    */
   public int update(Map<String, Object> dat) throws HongsException {
     if (_db_ == null) {
-      throw new HongsException(0x10b6);
+      throw new HongsException(1163);
     }
 
     // 删除条件中字段上的表名
@@ -1457,7 +1457,7 @@ public class FetchCase
    */
   public int insert(Map<String, Object> dat) throws HongsException {
     if (_db_ == null) {
-      throw new HongsException(0x10b6);
+      throw new HongsException(1163);
     }
 
     return _db_.insert(tableName, dat);

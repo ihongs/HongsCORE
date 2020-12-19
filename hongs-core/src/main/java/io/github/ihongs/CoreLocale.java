@@ -20,6 +20,11 @@ import java.io.File;
  * core.langauge.link.xx  语言链接, xx为语言, 如:link.zh=zh_CN
  * </pre>
  *
+ * <h3>错误代码:</h3>
+ * <pre>
+ * 828 没有指定语言区域
+ * </pre>
+ *
  * @author Hongs
  */
 public class CoreLocale
@@ -43,7 +48,7 @@ public class CoreLocale
 
     if (null == lang)
     {
-      throw new HongsExemption(0x82c, "Language is not specified for '" + name + "'.");
+      throw new HongsExemption(828, "Language is not specified for '" + name + "'.");
     }
 
     if (null != name)

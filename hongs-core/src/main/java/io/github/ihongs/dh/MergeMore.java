@@ -223,7 +223,7 @@ public class MergeMore
 
       if (lst == null)
       {
-        //throw new HongsException(0x10c0, "Line nums is null");
+        //throw new HongsException(1170, "Line nums is null");
         continue;
       }
 
@@ -280,7 +280,7 @@ public class MergeMore
 
       if (lst == null)
       {
-        //throw new HongsException(0x10c0, "Line nums is null");
+        //throw new HongsException(1170, "Line nums is null");
         continue;
       }
 

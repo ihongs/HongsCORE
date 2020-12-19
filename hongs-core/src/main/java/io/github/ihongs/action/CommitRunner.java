@@ -82,7 +82,7 @@ public final class CommitRunner {
                 }
 
                 // 其他异常需包裹
-                throw new  HongsException (0x110c, ex);
+                throw new  HongsException (1109, ex);
             }
         } finally {
             core.remove(Cnst.REFLUX_MODE);

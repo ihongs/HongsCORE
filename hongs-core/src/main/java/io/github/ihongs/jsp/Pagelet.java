@@ -101,7 +101,7 @@ abstract public class Pagelet extends ActionDriver implements HttpJspPage
 
       String er = ax.getLocalizedMessage();
       int eo  = ax instanceof HongsCause ? ( (HongsCause) ax).getState() : 0;
-      if (eo <= 400 || eo > 600)
+      if (eo <= 399 || eo > 599)
       {
           eo  = HttpServletResponse.SC_INTERNAL_SERVER_ERROR ;
       }

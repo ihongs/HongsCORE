@@ -237,7 +237,7 @@
     </error-page>
     <error-page>
         <error-code>405</error-code>
-        <location>/500.jsp</location>
+        <location>/404.jsp</location>
     </error-page>
     <error-page>
         <error-code>406</error-code>

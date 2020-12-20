@@ -128,7 +128,7 @@ public class DataCmdlet {
                 iw.deleteUnusedFiles();
                 iw.maybeMerge();
             } catch ( IOException ex ) {
-                throw new HongsException(0, ex);
+                throw new HongsException(ex);
             }
         }
 

@@ -693,7 +693,7 @@ public class AssocCase {
         if (fv instanceof Map
         ||  fv instanceof Collection
         ||  fv instanceof Object [] ) {
-            throw new HongsExemption(400, "Wrong value type for "+fn+rn);
+            throw new HongsExemption(1050, "Wrong value type for "+fn+rn);
         }
         return fv;
     }

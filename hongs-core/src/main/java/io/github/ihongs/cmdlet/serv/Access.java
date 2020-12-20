@@ -79,11 +79,11 @@ public class Access {
                 ps.print( ln );
             }   ps.println(  );
         } catch (UnsupportedEncodingException ex ) {
-            throw  new  HongsException(ex);
+            throw new HongsException(1111, ex);
         } catch (MalformedURLException ex) {
-            throw  new  HongsException(ex);
+            throw new HongsException(1111, ex);
         } catch (IOException ex) {
-            throw  new  HongsException(ex);
+            throw new HongsException(1110, ex);
         }
     }
 

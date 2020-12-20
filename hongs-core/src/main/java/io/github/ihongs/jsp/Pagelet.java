@@ -194,7 +194,7 @@ abstract public class Pagelet extends ActionDriver implements HttpJspPage
       try {
           return URLEncoder.encode(str, "UTF-8");
       } catch (UnsupportedEncodingException ex ) {
-          throw new HongsExemption(ex);
+          throw new HongsExemption(1111, ex);
       }
   }
 
@@ -208,7 +208,7 @@ abstract public class Pagelet extends ActionDriver implements HttpJspPage
       try {
           return URLDecoder.decode(str, "UTF-8");
       } catch (UnsupportedEncodingException ex ) {
-          throw new HongsExemption(ex);
+          throw new HongsExemption(1111, ex);
       }
   }
 

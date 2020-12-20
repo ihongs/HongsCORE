@@ -446,7 +446,8 @@ public class FormSet
         }
       }
 
-      throw new HongsException ( "Unrecognized type '" + type + "'" );
+      throw new HongsException(914, "Unrecognized type '"+ type +"'")
+          .setLocalizedOptions(type);
   }
   private static final Pattern SEXP = Pattern.compile ( "\\s*,\\s*" );
   private static final Pattern MEXP = Pattern.compile ( "\\s*:\\s*" );

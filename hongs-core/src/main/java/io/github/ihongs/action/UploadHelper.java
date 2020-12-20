@@ -30,6 +30,14 @@ import javax.servlet.http.Part;
 
 /**
  * 文件上传助手
+ * 
+ * <h3>异常代码</h3>
+ * <pre>
+ * 代码区间 1120~1124
+ * 1120=缺少命名摘要算法
+ * 1121=命名摘要处理失败
+ * </pre>
+ *
  * @author Hongs
  */
 public class UploadHelper {
@@ -246,11 +254,11 @@ public class UploadHelper {
                 m.update(bb);
             a = m.digest(  );
         }
-        catch (IOException e) {
-            throw new HongsExemption(e);
-        }
         catch (NoSuchAlgorithmException e) {
-            throw new HongsExemption(e);
+            throw new HongsExemption(1120, e);
+        }
+        catch (IOException e) {
+            throw new HongsExemption(1121, e);
         }
 
         // 转为 16 进制

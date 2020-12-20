@@ -425,7 +425,7 @@ public final class Remote {
             return new UrlEncodedFormEntity(pair, "UTF-8");
         }
         catch (UnsupportedEncodingException e) {
-            throw  new HongsException(e);
+            throw  new HongsException(1111, e);
         }
     }
 

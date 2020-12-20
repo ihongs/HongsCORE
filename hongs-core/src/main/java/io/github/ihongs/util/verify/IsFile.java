@@ -270,7 +270,7 @@ public class IsFile extends Rule {
                 Files.createSymbolicLink(Paths.get(path), Paths.get(dist));
             }
             catch (StringIndexOutOfBoundsException ex) {
-                throw new HongsExemption(500, "Wrong path/href setting");
+                throw new HongsExemption("Wrong path/href setting");
             }
             catch (IOException ex) {
                 throw new HongsExemption(ex);

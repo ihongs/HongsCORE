@@ -66,7 +66,7 @@ public abstract class Async<T> extends CoreSerial implements AutoCloseable {
 
         if (back == null) {
             if (!tasks.isEmpty()) {
-                CoreLogger.error("There has "+ tasks.size() +" task(s) not run.");
+                CoreLogger.error("There has {} task(s) not run.", tasks.size());
             }
             return;
         }
@@ -78,7 +78,7 @@ public abstract class Async<T> extends CoreSerial implements AutoCloseable {
         if (!tasks.isEmpty()) {
             try {
                 save( file );
-                CoreLogger.trace("There has "+ tasks.size() +" task(s) not run, save to '"+file.getPath()+"'.");
+                CoreLogger.trace("There has {} task(s) not run, save to '{}'.", tasks.size(), file.getPath());
             } catch (HongsException ex) {
                 CoreLogger.error(   ex);
             }
@@ -144,7 +144,7 @@ public abstract class Async<T> extends CoreSerial implements AutoCloseable {
                     async.run(data);
                 } catch (Throwable e) {
                     String n = async.getClass().getName();
-                    if (0 != Core.DEBUG && 8 != (8 & Core.DEBUG)) {
+                    if (4 == (4 & Core.DEBUG)) {
                         ByteArrayOutputStream b;
                            b = new  ByteArrayOutputStream(  );
                         e.printStackTrace(new PrintStream(b));

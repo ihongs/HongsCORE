@@ -378,13 +378,9 @@ public final class Block {
         public byte clean() {
             if (!ST_LOCKS.isEmpty() || !RW_LOCKS.isEmpty()) {
                 int n  =  cleans( );
-                if (0 != Core.DEBUG && 4 != (4 & Core.DEBUG)) {
-                    CoreLogger.trace("Cleared "+n+" lock(s)");
-                }
+                CoreLogger.trace("Cleared {} lock(s)", n);
             } else {
-                if (0 != Core.DEBUG && 4 != (4 & Core.DEBUG)) {
-                    CoreLogger.trace( "No locks be cleared" );
-                }
+                CoreLogger.trace( "No locks be cleared" );
             }
             return (byte) 0;
         }

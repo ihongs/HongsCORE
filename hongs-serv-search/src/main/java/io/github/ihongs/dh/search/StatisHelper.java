@@ -191,7 +191,7 @@ public class StatisHelper {
 
         Query q = that.padQry(rd);
 
-        if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG) ) {
+        if (4 == (4 & Core.DEBUG)) {
             CoreLogger.debug("StatisHelper.ecount: "+ q.toString());
         }
 
@@ -411,7 +411,7 @@ public class StatisHelper {
         try {
             Query q = that.padQry(rd);
 
-            if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
+            if (4 == (4 & Core.DEBUG)) {
                 CoreLogger.debug("StatisHelper.acount: " + q.toString());
             }
 
@@ -600,7 +600,7 @@ public class StatisHelper {
         try {
             Query q = that.padQry(rd);
 
-            if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
+            if (4 == (4 & Core.DEBUG)) {
                 CoreLogger.debug("StatisHelper.amount: " + q.toString());
             }
 
@@ -635,7 +635,7 @@ public class StatisHelper {
         try {
             Query q = that.padQry(rd);
 
-            if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
+            if (4 == (4 & Core.DEBUG)) {
                 CoreLogger.debug("StatisHelper.assort: " + q.toString());
             }
 
@@ -738,7 +738,7 @@ public class StatisHelper {
         try {
             Query q = that.padQry(rd);
 
-            if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
+            if (4 == (4 & Core.DEBUG)) {
                 CoreLogger.debug("StatisHelper.search: " + q.toString());
             }
 

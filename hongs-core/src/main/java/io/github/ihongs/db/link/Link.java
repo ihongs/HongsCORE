@@ -119,10 +119,7 @@ abstract public class Link
         {
           this.connection.close(  );
 
-          if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG))
-          {
-            CoreLogger.trace("DB: Connection '"+name+"' has been closed");
-          }
+          CoreLogger.trace("DB: Connection '{}' has been closed", name);
         }
       }
     }
@@ -376,7 +373,7 @@ abstract public class Link
         throw new HongsException(ex);
     }
 
-    if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG))
+    if (4 == (4 & Core.DEBUG))
     {
       StringBuilder sb = new StringBuilder(sql);
       List      paramz = new ArrayList(Arrays.asList(params));
@@ -494,7 +491,7 @@ abstract public class Link
   {
     this.ready();
 
-    if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG))
+    if (4 == (4 & Core.DEBUG))
     {
       StringBuilder sb = new StringBuilder(sql);
       List      paramz = new ArrayList(Arrays.asList(params));
@@ -531,7 +528,7 @@ abstract public class Link
   {
     this.ready();
 
-    if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG))
+    if (4 == (4 & Core.DEBUG))
     {
       StringBuilder sb = new StringBuilder(sql);
       List      paramz = new ArrayList(Arrays.asList(params));

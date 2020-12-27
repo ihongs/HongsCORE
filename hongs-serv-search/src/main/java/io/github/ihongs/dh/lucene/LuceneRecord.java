@@ -562,7 +562,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         Set   r = Synt.toTerms (rd.get(Cnst.RB_KEY));
         Loop  l = new Loop(this, q,s,r, begin,limit);
 
-        if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
+        if ( 4 == (4 & Core.DEBUG) ) {
             CoreLogger.debug("LuceneRecord.search: " + l.toString());
         }
 
@@ -1492,7 +1492,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 finder = null ;
             }
 
-            if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
+            if (4 == (4 & Core.DEBUG)) {
                 CoreLogger.trace("Close the lucene reader for " + getDbName());
             }
         }
@@ -1528,7 +1528,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 writer = null ;
             }
 
-            if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
+            if (4 == (4 & Core.DEBUG)) {
                 CoreLogger.trace("Close the lucene writer for " + getDbName());
             }
         } else {
@@ -1657,7 +1657,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 throw new HongsException(x);
             }
 
-            if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
+            if (4 == (4 & Core.DEBUG)) {
                 CoreLogger.trace("Start the lucene reader for "+getDbName());
             }
         }
@@ -1679,7 +1679,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 throw new HongsException(x);
             }
 
-            if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
+            if (4 == (4 & Core.DEBUG)) {
                 CoreLogger.trace("Start the lucene writer for "+getDbName());
             }
         }

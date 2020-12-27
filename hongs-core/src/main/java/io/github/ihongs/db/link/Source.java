@@ -45,9 +45,7 @@ public class Source extends Link {
             if (connection == null || connection.isClosed()) {
                 connection  = open( jdbc , path , info );
 
-                if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
-                    CoreLogger.trace("DB: Connect to '"+name+"' by source mode: "+jdbc+" "+path);
-                }
+                CoreLogger.trace("DB: Connect to '{}' by source mode: {} {}", name, jdbc, path);
             }
 
             return connection;

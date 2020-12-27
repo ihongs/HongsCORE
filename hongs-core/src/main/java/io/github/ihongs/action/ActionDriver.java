@@ -150,7 +150,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                 }
             }
 
-            if (0 != Core.DEBUG && 8 != (8 & Core.DEBUG)) {
+            if (4 == (4 & Core.DEBUG)) {
             // 调试系统属性
             for(Map.Entry et : cnf.entrySet()) {
                 String k = (String) et.getKey  ();
@@ -192,11 +192,11 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         // 设置全局清理的计划任务
         long time = Synt.declare( System.getProperty("core.gc.time") , 600000 );
         if ( time > 0 ) {
-            new Timer("core.gc" , true).schedule( new TimerTask() {
+            new Timer("core.gc", true).schedule(new TimerTask() {
                 @Override
                 public void run ( ) {
-                    if (0 != Core.DEBUG && 8 != (8 & Core.DEBUG)) {
-                        CoreLogger.debug( "CORE global object: "
+                    if (4 == (4 & Core.DEBUG)) {
+                        CoreLogger.debug("CORE global object: "
                       + Core.GLOBAL_CORE.toString());
                     }   Core.GLOBAL_CORE.clean(/**/);
                 }
@@ -218,17 +218,20 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             }
         }
 
-        CoreLogger.getLogger(2 == (2 & Core.DEBUG) ? "hongs.log" : "hongs.out")
-                  .info(new StringBuilder("Http server is starting.")
-            .append("\r\n\tDEBUG       : ").append(Core.DEBUG)
-            .append("\r\n\tSERVER_ID   : ").append(Core.SERVER_ID)
-            .append("\r\n\tCORE_PATH   : ").append(Core.CORE_PATH)
-            .append("\r\n\tCONF_PATH   : ").append(Core.CONF_PATH)
-            .append("\r\n\tDATA_PATH   : ").append(Core.DATA_PATH)
-            .append("\r\n\tBASE_PATH   : ").append(Core.BASE_PATH)
-            .append("\r\n\tSERV_HREF   : ").append(Core.SITE_HREF)
-                                           .append(Core.BASE_HREF)
-            .toString());
+        CoreLogger.info(
+            "HTTP server is starting."
+            + "\r\n\tDEBUG       : {}"
+            + "\r\n\tSERVER_ID   : {}"
+            + "\r\n\tCORE_PATH   : {}"
+            + "\r\n\tCONF_PATH   : {}"
+            + "\r\n\tDATA_PATH   : {}"
+            + "\r\n\tBASE_PATH   : {}"
+            + "\r\n\tSERV_HREF   : {}{}",
+            Core.DEBUG    , Core.SERVER_ID,
+            Core.CORE_PATH, Core.CONF_PATH,
+            Core.DATA_PATH, Core.BASE_PATH,
+            Core.SITE_HREF, Core.BASE_HREF
+        );
     }
 
     /**
@@ -240,14 +243,18 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             return;
         }
 
+        long time = System.currentTimeMillis()
+                  - Core.STARTS_TIME;
         Core core = Core.GLOBAL_CORE;
-        long time = System.currentTimeMillis() - Core.STARTS_TIME;
-        CoreLogger.getLogger(2 == (2 & Core.DEBUG) ? "hongs.log" : "hongs.out")
-                  .info(new StringBuilder("Http server has stopped.")
-            .append("\r\n\tSERVER_ID   : ").append(Core.SERVER_ID)
-            .append("\r\n\tObjects     : ").append(core.toString (    ))
-            .append("\r\n\tRuntime     : ").append(Syno.humanTime(time))
-            .toString());
+        CoreLogger.info(
+            "HTTP seRver has stopped."
+            + "\r\n\tSERVER_ID   : {}"
+            + "\r\n\tRuntime     : {}"
+            + "\r\n\tObjects     : {}",
+            Core.SERVER_ID,
+            Syno.humanTime(time),
+            core.toString (/**/)
+        );
 
         if (!SETUP) {
             return;
@@ -305,10 +312,10 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                 agt.doDriver ( core, hlpr);
                 doCommit(core, hlpr, req, rsq );
             } catch (IOException ex) {
-                // 忽略客户端中途断开
+                // 非调试模式忽略客户端中途断开
                 Throwable cx = ex.getCause();
                 if (cx != null && cx.getClass().getSimpleName().equalsIgnoreCase("EofException")
-                && ( 0 == Core.DEBUG || 4 == ( 4 & Core.DEBUG ) || 8 == ( 8 & Core.DEBUG ) ) ) {
+                &&  4  != (4 & Core.DEBUG) ) {
                     return;
                 }
 
@@ -429,36 +436,38 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
 
     private void doFinish(Core core, ActionHelper hlpr, HttpServletRequest req) {
         try {
-            if (0 != Core.DEBUG && 8 != (8 & Core.DEBUG)) {
+            if (4 == (4 & Core.DEBUG)) {
                 /**
                  * 提取必要的客户相关标识
                  * 以便判断用户和模拟登录
                  */
-                            req = hlpr.getRequest(/***/);
-                HttpSession ses = req .getSession(false);
-                Object      uid = hlpr.getSessibute(Cnst.UID_SES);
+                HttpSession ses;
+                Object      uid;
                 String      mem;
                 String      tim;
+                req = hlpr.getRequest(/***/);
+                ses = req .getSession(false);
+                tim = Syno.humanTime (System.currentTimeMillis() - Core.ACTION_TIME.get());
+                uid = hlpr.getSessibute(Cnst.UID_SES);
                 if (uid != null) {
-                    mem  =  uid.toString( );
+                    mem  =  uid.toString ( );
                 } else
                 if (ses != null) {
-                    mem  =  "$"+ses.getId();
+                    mem  =  "$"+ses.getId( );
                 } else {
                     mem  =  "-";
                 }
-                tim = Syno.humanTime ( System.currentTimeMillis() - Core.ACTION_TIME.get() );
 
                 StringBuilder sb = new StringBuilder("...");
-                  sb.append("\r\n\tACTION_NAME : ").append(Core.ACTION_NAME.get())
-                    .append("\r\n\tACTION_TIME : ").append(Core.ACTION_TIME.get())
-                    .append("\r\n\tACTION_LANG : ").append(Core.ACTION_LANG.get())
-                    .append("\r\n\tACTION_ZONE : ").append(Core.ACTION_ZONE.get())
-                    .append("\r\n\tMethod      : ").append(req.getMethod())
-                    .append("\r\n\tMember      : ").append(mem)
-                    .append("\r\n\tThread      : ").append(Thread.currentThread().getName())
-                    .append("\r\n\tRuntime     : ").append(tim)
-                    .append("\r\n\tObjects     : ").append(core.toString());
+                sb.append("\r\n\tACTION_NAME : ").append(Core.ACTION_NAME.get())
+                  .append("\r\n\tACTION_TIME : ").append(Core.ACTION_TIME.get())
+                  .append("\r\n\tACTION_LANG : ").append(Core.ACTION_LANG.get())
+                  .append("\r\n\tACTION_ZONE : ").append(Core.ACTION_ZONE.get())
+                  .append("\r\n\tThread      : ").append(Thread.currentThread().getName())
+                  .append("\r\n\tMethod      : ").append(req.getMethod())
+                  .append("\r\n\tMember      : ").append(mem)
+                  .append("\r\n\tRuntime     : ").append(tim)
+                  .append("\r\n\tObjects     : ").append(core.toString());
 
                 /**
                  * 显示请求报头及输入输出

@@ -369,11 +369,10 @@ public class CmdletHelper
    */
   public static void paintln(String text)
   {
-    if (ENV.get( ) == 0) {
-        OUT.get( ).println  (text);
+    if (ENV.get() == 0 ) {
+        OUT.get().println(text);
     } else {
-        CoreLogger.getLogger(CoreLogger.space("hongs.out"))
-                  .info     (CoreLogger.envir( text /**/ ));
+        CoreLogger. info (text);
     }
   }
 
@@ -385,11 +384,10 @@ public class CmdletHelper
    */
   public static void println(String text)
   {
-    if (ENV.get( ) == 0) {
-        ERR.get( ).println  (text);
+    if (ENV.get() == 0) {
+        ERR.get().println(text);
     } else {
-        CoreLogger.getLogger(CoreLogger.space("hongs.out"))
-                  .warn     (CoreLogger.envir( text /**/ ));
+        CoreLogger. warn (text);
     }
   }
 

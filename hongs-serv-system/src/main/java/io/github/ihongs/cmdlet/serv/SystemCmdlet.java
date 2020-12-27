@@ -240,7 +240,7 @@ public class SystemCmdlet {
                 CmdletHelper.progres(st, al, ++ok,er);
             } catch ( HongsException ex) {
                 CmdletHelper.progres(st, al, ok,++er);
-                if (Core.DEBUG > 0) {
+                if (0 < Core.DEBUG) {
                     CmdletHelper.progres( );
                     throw ex;
                 }
@@ -662,22 +662,16 @@ public class SystemCmdlet {
     }
 
     private static class Looker {
-        Logger lgr;
-        String env;
+        final Logger lgr;
 
         Looker() {
-            String spc;
+              String spc;
             spc = CoreLogger.space("hongs.out");
-            env = CoreLogger.envir( "" /*env*/);
             lgr = CoreLogger.getLogger(  spc  );
         }
 
         void print(String msg) {
             lgr.trace(msg);
-        }
-
-        void trace(String msg) {
-            lgr.trace(env+" "+msg);
         }
 
         void error(Throwable  err) {

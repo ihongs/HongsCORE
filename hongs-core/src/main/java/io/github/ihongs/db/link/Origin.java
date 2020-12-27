@@ -42,9 +42,7 @@ public class Origin extends Link {
             if (connection == null || connection.isClosed()) {
                 connection  = open( jndi , path , info );
                 
-                if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
-                    CoreLogger.trace("DB: Connect to '"+name+"' by origin mode: "+jndi+" "+path);
-                }
+                CoreLogger.trace("DB: Connect to '{}' by origin mode: {} {}", name, jndi, path);
             }
 
             return connection;

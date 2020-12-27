@@ -169,10 +169,7 @@ public class DB
     if (  this.link  != null)
     {
       this.connection = this.link.open();
-      if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG))
-      {
-        CoreLogger.trace("DB: Connect to '"+name+"' link '"+this.link.name+"'");
-      }
+      CoreLogger.trace("DB: Connect to '{}' link '{}'", name, this.link.name);
       break;
     }
 
@@ -213,10 +210,7 @@ public class DB
         ez = ex ; break ; // 没有对应的数据源, 尝试其他连接方式
       }
 
-      if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG))
-      {
-        CoreLogger.trace("DB: Connect to '"+name+"' by origin mode: "+mode+" "+namc);
-      }
+      CoreLogger.trace("DB: Connect to '{}' by origin mode: {} {}", name, mode, namc);
 
       break TOP;
     }
@@ -253,10 +247,7 @@ public class DB
         throw new HongsException(1024, ex );
       }
 
-      if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG))
-      {
-        CoreLogger.trace("DB: Connect to '"+name+"' by source mode: "+mode+" "+namc);
-      }
+      CoreLogger.trace("DB: Connect to '{}' by source mode: {} {} ", name, mode, namc);
 
       break TOP;
     }
@@ -455,10 +446,7 @@ public class DB
       return tobj;
     }
 
-    if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG))
-    {
-      CoreLogger.trace("DB: tableClass("+tcls+") for table("+this.name+"."+tableName+") has been defined, try to get it");
-    }
+    CoreLogger.trace("DB: tableClass({}) for table({}.{}) has been defined, try to get it", tcls, this.name, tableName);
 
     /**
      * 获取指定的Table类
@@ -577,10 +565,7 @@ public class DB
       return mobj;
     }
 
-    if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG))
-    {
-      CoreLogger.trace("DB: modelClass("+mcls+") for table("+this.name+"."+tableName+") has been defined, try to get it");
-    }
+    CoreLogger.trace("DB: modelClass({}) for table({}.{}) has been defined, try to get it", mcls, this.name, tableName);
 
     /**
      * 获取指定的Table类

@@ -2,10 +2,12 @@
 
 # Just for docker starts.
 
+DEBUG=2
+SPORT=8080
 PWD=$(cd `dirname $0`; pwd)
 CWD=`dirname $PWD`
 APP="$CWD/bin/hdo"
-PID="$CWD/var/server/8080.pid"
+PID="$CWD/var/server/$SPORT.pid"
 
 # Make sure the process is stoped, and pid file is removed
 if [ -f "$PID" ]
@@ -15,4 +17,4 @@ then
   sleep 3
 fi
 
-exec "$APP" server.start --DEBUG 2
+exec "$APP" server.start $SPORT --DEBUG $DEBUG

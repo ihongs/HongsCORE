@@ -69,19 +69,50 @@ public class CoreLogger
     }
 
     /**
+     * 信息
+     * @param text
+     * @param args 
+     */
+    public static void info (String text, Object... args) {
+        if (2 != (2 & Core.DEBUG)) {
+            return;
+        }
+        if (1 == (1 & Core.DEBUG)) {
+            getLogger(space("hongs.log")).info (envir(text), args);
+        } else {
+            getLogger(space("hongs.out")).info (envir(text), args);
+        }
+    }
+
+    /**
+     * 警告
+     * @param text
+     * @param args 
+     */
+    public static void warn (String text, Object... args) {
+        if (2 != (2 & Core.DEBUG)) {
+            return;
+        }
+        if (1 == (1 & Core.DEBUG)) {
+            getLogger(space("hongs.log")).warn (envir(text), args);
+        } else {
+            getLogger(space("hongs.out")).warn (envir(text), args);
+        }
+    }
+
+    /**
      * 跟踪
      * @param text
      * @param args
      */
     public static void trace(String text, Object... args) {
-        if (4 == (4 & Core.DEBUG)) {
-            return; // 禁止跟踪
+        if (4 != (4 & Core.DEBUG)) {
+            return;
         }
         if (1 == (1 & Core.DEBUG)) {
-            getLogger(space("hongs.out")).trace(envir(text), args);
-        }
-        if (2 == (2 & Core.DEBUG)) {
             getLogger(space("hongs.log")).trace(envir(text), args);
+        } else {
+            getLogger(space("hongs.out")).trace(envir(text), args);
         }
     }
 
@@ -91,52 +122,37 @@ public class CoreLogger
      * @param args
      */
     public static void debug(String text, Object... args) {
-        if (8 == (8 & Core.DEBUG)) {
-            return; // 禁止调试
+        if (4 != (4 & Core.DEBUG)) {
+            return;
         }
         if (1 == (1 & Core.DEBUG)) {
-            getLogger(space("hongs.out")).debug(envir(text), args);
-        }
-        if (2 == (2 & Core.DEBUG)) {
             getLogger(space("hongs.log")).debug(envir(text), args);
+        } else {
+            getLogger(space("hongs.out")).debug(envir(text), args);
         }
     }
 
     /**
-     * 错误
-     * 既不显示又不记录则输出错误
+     * 错误(总是记录)
      * @param text
      * @param args
      */
     public static void error(String text, Object... args) {
-        String flag = space("");
-
-        if (1 != (1 & Core.DEBUG )
-        &&  2 != (2 & Core.DEBUG)) {
-            getLogger("hongs.out" + flag).error(envir(text), args);
-            return;
-        }
-
         if (1 == (1 & Core.DEBUG)) {
-            getLogger("hongs.out" + flag).error(envir(text), args);
-        }
-        if (2 == (2 & Core.DEBUG)) {
-            getLogger("hongs.log" + flag).error(envir(text), args);
+            getLogger(space("hongs.out")).error(envir(text), args);
+        } else {
+            getLogger(space("hongs.log")).error(envir(text), args);
         }
     }
 
     /**
-     * 错误
-     * 既不显示又不记录则输出错误
+     * 错误(总是记录)
      * @param flaw
      */
     public static void error(Throwable flaw) {
-        String flag = space("");
+        // 调试模式下取完整错误栈
         String text ;
-
-        // 非调试模式取完整错误栈
-        if (4 != (4 & Core.DEBUG )
-        &&  8 != (8 & Core.DEBUG)) {
+        if (4 == (4 & Core.DEBUG)) {
             ByteArrayOutputStream buff = new ByteArrayOutputStream();
             flaw.printStackTrace( new PrintStream( buff ) ) ;
             text = buff.toString().replaceAll("(\r\n|\r|\n)","$1\t");
@@ -144,17 +160,10 @@ public class CoreLogger
             text = flaw.toString().replaceAll("(\r\n|\r|\n)","$1\t");
         }
 
-        if (1 != (1 & Core.DEBUG )
-        &&  2 != (2 & Core.DEBUG)) {
-            getLogger("hongs.out" + flag).error(envir(text));
-            return;
-        }
-
         if (1 == (1 & Core.DEBUG)) {
-            getLogger("hongs.out" + flag).error(envir(text));
-        }
-        if (2 == (2 & Core.DEBUG)) {
-            getLogger("hongs.log" + flag).error(envir(text));
+            getLogger(space("hongs.log")).error(envir(text));
+        } else {
+            getLogger(space("hongs.out")).error(envir(text));
         }
     }
 

@@ -128,7 +128,7 @@ public final class Dawn
    */
   public static void append(Appendable out, Object obj)
   {
-    Dawn.append(out, obj, 0 == Core.DEBUG);
+    Dawn.append(out, obj, 1 >= Core.DEBUG);
   }
 
   /**

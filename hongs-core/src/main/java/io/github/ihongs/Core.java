@@ -33,14 +33,14 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * <h3>静态属性:</h3>
  * <pre>
  * ENVIR     标识不同运行环境(0 cmd, 1 web)
- * DEBUG     标识不同调试模式(0 无 , 1 输出, 2 日志, 4 禁止跟踪 8 禁止调试; 可使用位运算例如 3 表示既输出又记录)
+ * DEBUG     标识不同调试模式(0 off, 1 log, 2 warn/info, 4 debug/trace ; 可以多个标识相加, 错误总是需要记录)
  * BASE_HREF 应用访问路径(Web应用中为ContextPath)
  * BASE_PATH 应用目录路径(Web应用中为RealPath(/))
  * CORE_PATH 应用目录路径(Web应用中为WEB-INF目录)
  * CONF_PATH 配置目录路径(CORE_PATH/etc)
  * DATA_PATH 数据目录路径(CORE_PATH/var)
  * SERVER_ID 服务器ID (依附于 Core.newIdentity())
- * 注意: 以上属性将在 Servlet/Filter/Cmdlet 等初始化时进行设置. 为保持简单, 整个容器是开放的 , 留意勿被恶意修改.
+ * 注意: 以上属性将在 Servlet/Filter/Cmdlet 等初始化时进行设置. 为保持简单, 整个容器是开放的, 留意勿被恶意修改.
  * </pre>
  *
  * <h3>错误代码:</h3>
@@ -58,13 +58,12 @@ abstract public class Core
   implements AutoCloseable
 {
   /**
-   * 运行环境(0 Cmd , 1 Web )
+   * 运行环境(0 Cmd, 1 Web)
    */
   public static byte ENVIR;
 
   /**
-   * 调试级别(0 静默, 1 输出, 2 日志, 4 禁止Trace, 8 禁止Debug)
-   * 注意: 错误总是会记录日志, 故生产环境中设为 0
+   * 调试级别(0 Off, 1 Log, 2 Warn/Info, 4 Debug/Trace)
    */
   public static byte DEBUG;
 

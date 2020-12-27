@@ -126,14 +126,7 @@ public class CmdletRunner implements Runnable
       {
         c = 5;
       }
-      if (0 == Core.DEBUG || 8 == (8 & Core.DEBUG))
-      {
-        System.err.println(e.getLocalizedMessage());
-      }
-      else
-      {
-        CoreLogger.error  (e);
-      }
+      CoreLogger.error(e);
     }
     finally
     {
@@ -258,7 +251,7 @@ public class CmdletRunner implements Runnable
         }
     }
 
-    if (0 != Core.DEBUG && 8 != (8 & Core.DEBUG)) {
+    if (4 == (4 & Core.DEBUG)) {
     // 调试系统属性
     for(Map.Entry et : cnf.entrySet()) {
         String k = (String) et.getKey  ();

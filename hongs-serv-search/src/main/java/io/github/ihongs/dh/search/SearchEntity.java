@@ -276,9 +276,7 @@ public class SearchEntity extends LuceneRecord {
 
             init();
 
-            if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
-                CoreLogger.trace("Start the lucene writer for " + dbname);
-            }
+            CoreLogger.trace("Start the lucene writer for {}", dbname);
         }
 
         private void init() {
@@ -339,9 +337,7 @@ public class SearchEntity extends LuceneRecord {
                 CoreLogger.error(x);
             }
 
-            if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
-                CoreLogger.trace("Close the lucene writer for " + dbname);
-            }
+            CoreLogger.trace("Close the lucene writer for {}", dbname);
         }
 
         @Override

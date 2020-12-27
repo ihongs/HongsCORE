@@ -40,9 +40,7 @@ public class Simple extends Link {
             if (connection == null || connection.isClosed()) {
                 connection  = open( jdbc , path , info );
 
-                if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
-                    CoreLogger.trace("DB: Connect to '"+name+"' by simple mode: "+jdbc+" "+path);
-                }
+                CoreLogger.trace("DB: Connect to '{}' by simple mode: {} {}", name, jdbc, path);
             }
 
             return connection;

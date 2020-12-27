@@ -81,7 +81,7 @@ public abstract class Batch<T> extends CoreSerial implements AutoCloseable {
 
         if (back == null) {
             if (!tasks.isEmpty()) {
-                CoreLogger.error("There has "+ tasks.size() +" task(s) not run.");
+                CoreLogger.error("There has {} task(s) not run.", tasks.size());
             }
             return;
         }
@@ -106,7 +106,7 @@ public abstract class Batch<T> extends CoreSerial implements AutoCloseable {
         if (!tasks.isEmpty()) {
             try {
                 save( file );
-                CoreLogger.trace("There has "+ tasks.size() +" task(s) not run, save to '"+back.getPath()+"'.");
+                CoreLogger.trace("There has {} task(s) not run, save to '{}'.", tasks.size(), back.getPath());
             } catch (HongsException ex) {
                 CoreLogger.error(   ex);
             }
@@ -202,7 +202,7 @@ public abstract class Batch<T> extends CoreSerial implements AutoCloseable {
                             batch.run(cache);
                         } catch (Throwable e) {
                             String n = batch.getClass().getName();
-                            if (0 != Core.DEBUG && 8 != (8 & Core.DEBUG)) {
+                            if (4 == (4 & Core.DEBUG)) {
                                 ByteArrayOutputStream b;
                                    b = new  ByteArrayOutputStream(  );
                                 e.printStackTrace(new PrintStream(b));
@@ -219,7 +219,7 @@ public abstract class Batch<T> extends CoreSerial implements AutoCloseable {
                             batch.run(cache);
                         } catch (Throwable e) {
                             String n = batch.getClass().getName();
-                            if (0 != Core.DEBUG && 8 != (8 & Core.DEBUG)) {
+                            if (4 == (4 & Core.DEBUG)) {
                                 ByteArrayOutputStream b;
                                    b = new  ByteArrayOutputStream(  );
                                 e.printStackTrace(new PrintStream(b));

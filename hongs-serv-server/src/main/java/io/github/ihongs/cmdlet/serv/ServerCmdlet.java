@@ -4,6 +4,7 @@ import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
+import io.github.ihongs.cmdlet.CmdletHelper;
 import io.github.ihongs.cmdlet.anno.Cmdlet;
 import io.github.ihongs.db.DBConfig;
 import io.github.ihongs.util.reflex.Classes;
@@ -143,6 +144,10 @@ public class ServerCmdlet {
         try {
             server.start();
 
+            if (Core.DEBUG == 0 ) {
+                System.err.println("HTTP server is started.");
+            }
+
             /**
              * URL 会话参数等同于对应的 Cookie, 总是小写
              * server.start_ 执行之前 web.xml 还没解析
@@ -153,7 +158,6 @@ public class ServerCmdlet {
                 x = x.toLowerCase( );
                     webapp.getSessionHandler().setSessionIdPathParameterName( x );
             }
-//          System.err.println("\tSESS_NAME   : " + x);
 
             server.join( );
         } catch (Exception e) {
@@ -175,19 +179,26 @@ public class ServerCmdlet {
 
         @Override
         public void run() {
-            System.out.println ("");
-            if (server.isStopped ()) {
-                System.err.println("Server is stopped !!!");
+            System.out.println( "" );
+            if (server.isStopping()) {
+                if (Core.DEBUG == 0) {
+                    System.err.println("HTTP server is stopping");
+                }
                 return;
             }
-            if (server.isStopping()) {
-                System.err.println("Server is stopping...");
+            if (server.isStopped ()) {
+                if (Core.DEBUG == 0) {
+                    System.err.println("HTTP server is stopped!");
+                }
                 return;
             }
             try {
                 server.stop();
-            } catch ( Exception ex) {
-                throw new Error(ex);
+                if (Core.DEBUG == 0) {
+                    System.err.println("HTTP server is stopped.");
+                }
+            } catch ( Exception  e ) {
+                throw new Error( e );
             } finally {
                 ppid.delete();
             }

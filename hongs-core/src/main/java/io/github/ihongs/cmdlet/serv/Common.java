@@ -170,9 +170,9 @@ public class Common {
     @Cmdlet("view-serial")
     public static void viewSerial(String[] args) throws HongsException {
         if (args.length == 0) {
-          CmdletHelper.paintln(
-                "Usage: common.view-serial serial/file/path\r\n\t"
-              + "Just for CoreSerial or Collection object.");
+          CmdletHelper.println(
+                "Usage: common.view-serial serial/file/path"
+              + "\r\n\tJust for CoreSerial or Collection object.");
           return;
         }
 

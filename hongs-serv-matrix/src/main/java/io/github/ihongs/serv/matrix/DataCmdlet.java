@@ -44,6 +44,7 @@ public class DataCmdlet {
             "user:s",
             "memo:s",
             "time:i",
+            "bufs:i",
             "drop:b",
             "!A",
             "?Usage: revert --conf CONF_NAME --form FORM_NAME [--time TIMESTAMP] ID0 ID1 ..."
@@ -53,8 +54,9 @@ public class DataCmdlet {
         String form = (String) opts.get("form");
         String user = (String) opts.get("user");
         String memo = (String) opts.get("memo");
-        long ct = Synt.declare(opts.get("time"), 0L);
-        Set<String> ds = Synt.asSet ( opts.get("") );
+        long ct = Synt.declare(opts.get("time"),  0L );
+        int  bn = Synt.declare(opts.get("bufs"), 1000);
+        Set<String> ds = Synt.asSet ( opts.get( "" ) );
 
         Data dr = df.getInstance (conf, form);
         dr.setUserId(Synt.defoult(user, Cnst.ADM_UID));
@@ -69,6 +71,7 @@ public class DataCmdlet {
         Loop   lp   ; // 查询迭代
         int  c  = 0 ; // 操作总数
         int  i  = 0 ; // 变更计数
+        int  j  = 0 ; // 事务计数
         if (ct == 0) {
             String fa = "`a`.*"  ;
             String fc = "COUNT(*) AS _cnt_" ;
@@ -109,8 +112,8 @@ public class DataCmdlet {
         }
 
         boolean pr = 0 == Core.DEBUG;
-        long tm = System.currentTimeMillis();
-        if (pr) CmdletHelper.progres(tm,c,i);
+        long tm = System.currentTimeMillis(  );
+        if ( pr ) CmdletHelper.progres(tm,c,i);
 
         /**
          * 清空全部数据
@@ -132,7 +135,7 @@ public class DataCmdlet {
             }
         }
 
-        dr.begin( );
+        dr.begin ( );
 
         for(Map od : lp ) {
             String id = ( String ) od.get( Cnst.ID_KEY );
@@ -146,31 +149,41 @@ public class DataCmdlet {
             if (Synt.declare(od.get("state"), 1 ) >= 1 ) {
                 od = Synt.toMap(od.get( "data") );
                 od.putAll(sd);
-                dr.setDoc(id,dr.padDoc( od ));
+                dr.setDoc(id , dr.padDoc ( od ) );
             }  else  {
                 dr.delDoc(id);
             }}
                 ds.remove(id);
                 i ++;
-            if (pr) CmdletHelper.progres(tm, c,i);
-//          if (i % 500 == 0) {
-//              dr.commit(  );
-//          }
+                j ++;
+            if (j == bn) {
+                j  =  0;
+                dr.commit(  );
+                dr.begin (  );
+                if ( pr) {
+                    CmdletHelper.progres(tm, c,i);
+                }
+            }
         }
 
-        // 不存在的直接删掉
+        dr.commit( );
+        dr.begin ( );
+        if ( pr) {
+            CmdletHelper.progres(tm, c,i);
+        }
+
+        /**
+         * 删掉多余数据
+         */
         for(String id:ds) {
             dr.delDoc(id);
-                i ++;
-            if (pr) CmdletHelper.progres(tm, c,i);
- //         if (i % 500 == 0) {
- //             dr.commit(  );
- //         }
         }
 
-        dr.commit();
+        dr.commit( );
+        if ( pr) {
+            CmdletHelper.progres( );
+        }
 
-        if (pr) CmdletHelper.progres();
         CmdletHelper.println("Revert "+i+" item(s) for "+form+" to "+dr.getDbName());
     }
 
@@ -207,14 +220,11 @@ public class DataCmdlet {
         for(String text : dats) {
             Map sd = data(text);
             String id = (String) sd.get(Cnst.ID_KEY);
-            if (id == null) { //
+            if (id == null) {
                 id = Core.newIdentity();
                 sd.put(Cnst.ID_KEY, id);
             }   sd.put( "memo" , memo );
             i+= dr.put( id, sd );
-//          if (i % 500 == 0) {
-//               dr.commit( );
-//          }
         }
 
         dr.commit( );
@@ -265,9 +275,6 @@ public class DataCmdlet {
         for(Map od : dr.search(rd, 0, 0)) {
             String id = (String) od.get(Cnst.ID_KEY);
             i+= dr.put( id, sd );
-//          if (i % 500 == 0) {
-//               dr.commit( );
-//          }
         }
 
         dr.commit( );
@@ -318,9 +325,6 @@ public class DataCmdlet {
         for(Map od : dr.search(rd, 0, 0)) {
             String id = (String) od.get(Cnst.ID_KEY);
             i+= dr.del( id, sd );
-//          if (i % 500 == 0) {
-//               dr.commit( );
-//          }
         }
 
         dr.commit( );
@@ -352,7 +356,7 @@ public class DataCmdlet {
         }
 
         Data dr = df.getInstance (conf, form);
-        Map  rd =       data     ( dats [0] );
+        Map  rd = data ( dats[0] );
 
         for(Map od : dr.search(rd, 0, 0)) {
             CmdletHelper.preview (  od  );

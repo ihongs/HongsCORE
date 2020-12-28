@@ -1,7 +1,6 @@
 package io.github.ihongs.cmdlet;
 
 import io.github.ihongs.Core;
-import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Syno;
@@ -362,33 +361,23 @@ public class CmdletHelper
   //** 输出相关 **/
 
   /**
-   * 输出过程信息, 如条目、日志、名单
-   * 此方法通过 CoreLogger 调用日志进行输出, 仅被用作辅助输出;
-   * 如果需要输出结构化的数据供其它程序处理, 请不要使用此方法.
-   * @param text 提示文本
-   */
-  public static void paintln(String text)
-  {
-    if (ENV.get() == 0 ) {
-        OUT.get().println(text);
-    } else {
-        CoreLogger. info (text);
-    }
-  }
-
-  /**
-   * 输出执行状态, 如错误、状态、进度
-   * 此方法通过 CoreLogger 调用日志进行输出, 仅被用作辅助输出;
-   * 如果需要输出结构化的数据供其它程序处理, 请不要使用此方法.
+   * 输出执行状态
+   * 此方法用于显示错误、状态、进度等
    * @param text 提示文本
    */
   public static void println(String text)
   {
-    if (ENV.get() == 0) {
-        ERR.get().println(text);
-    } else {
-        CoreLogger. warn (text);
-    }
+    ERR.get().println(text);
+  }
+
+  /**
+   * 输出过程信息
+   * 此方法用于显示条目、日志、名单等
+   * @param text 提示文本
+   */
+  public static void prateln(String text)
+  {
+    OUT.get().println(text);
   }
 
   /**

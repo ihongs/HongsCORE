@@ -282,7 +282,7 @@ id=ID 或 id.=ID1&id.=ID2...
                     <label class="control-label">返回</label>
                     <pre class="form-control-static">
 <b>计数:</b> {
-    "info": {
+    "enfo": {
         "字段名": [
             ["值", "文本", "数量"],
         ]
@@ -290,7 +290,7 @@ id=ID 或 id.=ID1&id.=ID2...
     // ...
 }
 <b>计算:</b> {
-    "info": {
+    "enfo": {
         "字段名": [
             ["值", "文本", "数量", "求和", "最小值", "最大值"],
         ]

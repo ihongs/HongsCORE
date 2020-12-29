@@ -364,7 +364,7 @@ public class TitlesHelper {
                 sel.addTitle(enf , adds);
             } catch (HongsException ex ) {
                 int  ec  = ex.getErrno();
-                if  (ec != 910 && ec != 911 && ec != 912 ) {
+                if  (ec != 910 && ec != 911 && ec != 912) { // 非表单缺失
                     throw  ex;
                 }
             }

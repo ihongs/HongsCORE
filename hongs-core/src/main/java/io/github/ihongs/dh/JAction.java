@@ -50,7 +50,7 @@ abstract public class JAction implements IActing, IAction {
                 break;
             } catch ( HongsException ex) {
             if (ex.getErrno() != 910
-            &&  ex.getErrno() != 912) {
+            &&  ex.getErrno() != 912) { // 非表单缺失
                 throw ex;
             }}
 
@@ -61,7 +61,7 @@ abstract public class JAction implements IActing, IAction {
                 runner.setModule ( mod );
             } catch ( HongsException ex) {
             if (ex.getErrno() != 910
-            &&  ex.getErrno() != 912) {
+            &&  ex.getErrno() != 912) { // 非表单缺失
                 throw ex;
             }}
         } while (false) ;

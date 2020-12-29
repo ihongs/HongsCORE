@@ -236,7 +236,7 @@ public class Data extends SearchEntity {
                 fields = FormSet.getInstance(cnf).getForm(form);
             } catch (HongsException ex) {
                 if (ex.getErrno() != 910
-                &&  ex.getErrno() != 912) {
+                &&  ex.getErrno() != 912) { // 非表单缺失
                     throw ex.toExemption();
                 }
                 break;
@@ -254,7 +254,7 @@ public class Data extends SearchEntity {
                 fieldx = FormSet.getInstance(cnf).getForm(form);
             } catch (HongsException ex) {
                 if (ex.getErrno() != 910
-                &&  ex.getErrno() != 912) {
+                &&  ex.getErrno() != 912) { // 非表单缺失
                     throw ex.toExemption();
                 }
                 break;

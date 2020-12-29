@@ -118,7 +118,7 @@ public class AuthAction
       s = Dawn.toString(datamap);
     }
     catch (HongsException | HongsExemption ex) {
-      if (ex.getErrno() == 920) {
+      if (ex.getErrno() == 920) { // 配置缺失
         helper.error404(ex.getMessage());
       } else {
         helper.error500(ex.getMessage());

@@ -157,7 +157,6 @@ abstract public class Link
   @Override
   public void begin( )
   {
-    REFLUX_MODE = true;
     try {
         if (connection != null
         && !connection.isClosed()) {
@@ -166,6 +165,7 @@ abstract public class Link
     } catch (SQLException ex) {
         throw new HongsExemption(1054, ex);
     }
+    REFLUX_MODE = true;
   }
 
   /**
@@ -174,16 +174,16 @@ abstract public class Link
   @Override
   public void commit()
   {
-    REFLUX_MODE = REFLUX_BASE;
     try {
         if (connection != null
         && !connection.isClosed()
         && !connection.getAutoCommit()) {
-            connection.commit(  );
+            connection.commit ( );
         }
     } catch (SQLException ex) {
         throw new HongsExemption(1055, ex);
     }
+    REFLUX_MODE = REFLUX_BASE;
   }
 
   /**
@@ -192,7 +192,6 @@ abstract public class Link
   @Override
   public void revert()
   {
-    REFLUX_MODE = REFLUX_BASE;
     try {
         if (connection != null
         && !connection.isClosed()
@@ -202,6 +201,7 @@ abstract public class Link
     } catch (SQLException ex) {
         throw new HongsExemption(1056, ex);
     }
+    REFLUX_MODE = REFLUX_BASE;
   }
 
   /** 查询辅助 **/

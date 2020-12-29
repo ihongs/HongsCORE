@@ -1542,6 +1542,11 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      */
     @Override
     public void begin() {
+        if (REFLUX_MODE
+        &&  writer != null
+        &&  writer.hasUncommittedChanges()) {
+            throw new HongsExemption(1054, "Uncommitted changes");
+        }
         REFLUX_MODE = true;
     }
 
@@ -1550,15 +1555,14 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      */
     @Override
     public void commit() {
-        REFLUX_MODE = REFLUX_BASE;
-        if (writer == null) {
-            return;
-        }
         try {
-            writer.commit ( );
-        } catch (IOException ex) {
+            if (writer !=  null ) {
+                writer.commit ( );
+            }
+        } catch (IOException ex ) {
             throw new HongsExemption(1055, ex);
         }
+        REFLUX_MODE = REFLUX_BASE;
     }
 
     /**
@@ -1566,15 +1570,14 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      */
     @Override
     public void revert() {
-        REFLUX_MODE = REFLUX_BASE;
-        if (writer == null) {
-            return;
-        }
         try {
-            writer.rollback();
-        } catch (IOException ex) {
+            if (writer !=  null ) {
+                writer.rollback();
+            }
+        } catch (IOException ex ) {
             throw new HongsExemption(1056, ex);
         }
+        REFLUX_MODE = REFLUX_BASE;
     }
 
     @Override

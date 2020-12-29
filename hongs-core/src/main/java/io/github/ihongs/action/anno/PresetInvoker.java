@@ -85,7 +85,7 @@ public class PresetInvoker implements FilterInvoker {
             pre.preset(req, helper );
         } catch (HongsException  ex) {
             int  ec  = ex.getErrno();
-            if  (ec != 910 && ec != 911 && ec != 913 ) {
+            if  (ec != 910 && ec != 911 && ec != 913 ) { // 非枚举缺失
                 throw ex ;
             }
         }

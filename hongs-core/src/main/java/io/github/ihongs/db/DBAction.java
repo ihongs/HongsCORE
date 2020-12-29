@@ -52,7 +52,7 @@ public class DBAction implements IAction, IActing {
                 break;
             } catch ( HongsException ex) {
             if (ex.getErrno() != 910
-            &&  ex.getErrno() != 912) {
+            &&  ex.getErrno() != 912) { // 非表单缺失
                 throw ex;
             }}
 
@@ -63,7 +63,7 @@ public class DBAction implements IAction, IActing {
                 runner.setModule ( mod );
             } catch ( HongsException ex) {
             if (ex.getErrno() != 910
-            &&  ex.getErrno() != 912) {
+            &&  ex.getErrno() != 912) { // 非表单缺失
                 throw ex;
             }}
         } while (false) ;

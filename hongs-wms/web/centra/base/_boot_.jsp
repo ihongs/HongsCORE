@@ -81,7 +81,7 @@
                     _fields = FormSet.getInstance(name).getFormTranslated(_entity);
                 } catch (HongsException ex) {
                     if (ex.getErrno() != 910
-                    &&  ex.getErrno() != 912) {
+                    &&  ex.getErrno() != 912) { // 非表单缺失
                         throw ex;
                     }
                     break;
@@ -97,7 +97,7 @@
                     _fieldx = FormSet.getInstance(name).getFormTranslated(_entity);
                 } catch (HongsException ex) {
                     if (ex.getErrno() != 910
-                    &&  ex.getErrno() != 912) {
+                    &&  ex.getErrno() != 912) { // 非表单缺失
                         throw ex ;
                     }
                     break;

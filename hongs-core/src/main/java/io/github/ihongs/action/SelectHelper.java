@@ -676,7 +676,7 @@ public class SelectHelper {
             _path  = Core.BASE_HREF;
         }
         if (_host == null) {
-            _host  = Core.SITE_HREF;
+            _host  = Core.SERVER_HREF.get ();
         }
 
         Iterator it = keys.iterator();

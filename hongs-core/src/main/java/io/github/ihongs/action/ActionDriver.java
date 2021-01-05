@@ -69,6 +69,9 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
      */
     private boolean SETUP = false;
 
+    private static final Pattern URL_REG = Pattern.compile("^\\w+://[^/]+");
+    private static final Pattern URI_REG = Pattern.compile("^\\w+://|^/"  );
+
     /**
      * 初始化 Filter
      * @param conf
@@ -166,8 +169,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             // 默认域名前缀
             String su = System.getProperty ("serv.url");
             if (null != su) {
-                Pattern pattern = Pattern.compile( "^[^/]*//[^/]+" );
-                Matcher matcher = pattern.matcher( su );
+                Matcher matcher = URL_REG.matcher( su );
                 if (matcher.find()) {
                     Core.BASE_HREF = su.substring(0 + matcher.end());
                     Core.SITE_HREF = su.substring(0 , matcher.end());
@@ -375,9 +377,9 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         Core.CLIENT_ADDR.set(getClientAddr(req));
         Core.SERVER_HREF.set(getServerHref(req));
         */
-
         // 外部没有指定网站域名则在首次请求时进行设置(非线程安全)
-        if (Core.SITE_HREF == null || Core.SITE_HREF.isEmpty()) {
+        if (Core.SITE_HREF == null
+        ||  Core.SITE_HREF.isEmpty(/**/)) {
             Core.SITE_HREF  = Core.SERVER_HREF.get();
         }
 
@@ -848,6 +850,39 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
 
         // 上级客户端真实网络地址
         return  req.getRemoteAddr( );
+    }
+
+    /**
+     * 补全URL, 增加域名前缀
+     * @param url
+     * @return
+     */
+    public static String fixUrl(String url) {
+        if (URL_REG.matcher(url).matches( ) == false) {
+        if (url.startsWith ("/")) {
+            url = Core.SERVER_HREF.get()
+                + url;
+        } else {
+            url = Core.SERVER_HREF.get()
+                + Core.BASE_HREF
+                + "/"
+                + url;
+        }}
+        return url;
+    }
+
+    /**
+     * 补全URI, 增加应用前缀
+     * @param uri
+     * @return
+     */
+    public static String fixUri(String uri) {
+        if (URI_REG.matcher(uri).matches( ) == false) {
+            uri = Core.BASE_HREF
+                + "/"
+                + uri;
+        }
+        return uri;
     }
 
     /**

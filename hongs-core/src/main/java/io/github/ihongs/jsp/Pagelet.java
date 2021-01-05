@@ -1,7 +1,6 @@
 package io.github.ihongs.jsp;
 
 import io.github.ihongs.Cnst;
-import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsCause;
 import io.github.ihongs.HongsException;
@@ -115,18 +114,6 @@ abstract public class Pagelet extends ActionDriver implements HttpJspPage
   }
 
   /**
-   * 补全URL, 增加应用前缀
-   * @param uri
-   * @return
-   */
-  public static String fixUri(String uri) {
-      if (! uri.matches( "^(\\w+:)?/" ) ) {
-          uri = Core.BASE_HREF +"/"+ uri;
-      }
-      return uri;
-  }
-
-  /**
    * @see escapeXML 的别名
    * @param str
    * @return
@@ -225,11 +212,12 @@ abstract public class Pagelet extends ActionDriver implements HttpJspPage
       }
 
       // Ajax
-      if (Synt.declare(req.getParameter(".ajax"), false)) {
-          return true; // 标识 iframe 内的 ajax 方法
-      }
       String x = req.getHeader("X-Requested-With");
       if (x != null && ! x.isEmpty()) {
+          return true;
+      }
+      // 标识 iframe 内的 ajax 方法
+      if (Synt.declare(req.getParameter(".ajax"), false)) {
           return true;
       }
 

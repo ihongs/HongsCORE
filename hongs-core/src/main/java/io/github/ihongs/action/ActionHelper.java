@@ -1101,6 +1101,7 @@ public class ActionHelper implements Cloneable
    */
   public void redirect(String url, String msg, int sta)
   {
+    url = ActionDriver.fixUrl(url);
     String p = CoreConfig.getInstance().getProperty("core.redirect", "/302.jsp");
     if ( ! p.isEmpty() && new File(Core.BASE_PATH + p).exists())
     {
@@ -1149,6 +1150,7 @@ public class ActionHelper implements Cloneable
   public void redirect(String url)
   {
     try {
+      url = ActionDriver.fixUrl (url);
       this.responseData = null;
       this.response.sendRedirect(url);
     } catch ( IOException e ) {

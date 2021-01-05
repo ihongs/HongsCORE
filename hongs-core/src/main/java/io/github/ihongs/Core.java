@@ -144,7 +144,7 @@ abstract public class Core
                  io.github.ihongs.action.ActionHelper.getInstance( )
                                                      .getRequest ( ) );
         } catch (NullPointerException|UnsupportedOperationException e) {
-          return null;
+          return SITE_HREF;
         }
       }
   };

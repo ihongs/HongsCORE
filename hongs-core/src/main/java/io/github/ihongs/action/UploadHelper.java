@@ -205,9 +205,10 @@ public class UploadHelper {
 
     private String getResultHref(String href) {
         Map m = new HashMap();
+        String CURR_SITE_HREF = Core.SERVER_HREF.get();
         m.put("BASE_HREF", Core.BASE_HREF);
-        m.put("SITE_HREF", Core.SITE_HREF);
-        m.put("SERV_HREF", Core.SITE_HREF
+        m.put("SITE_HREF", CURR_SITE_HREF);
+        m.put("SERV_HREF", CURR_SITE_HREF
                          + Core.BASE_HREF);
         href = Syno.inject(href, m );
         return href;

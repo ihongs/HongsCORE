@@ -82,14 +82,14 @@ public class IsFile extends Rule {
             do {
                 String x;
                 // 如果是本地路径则不再下载
-                x = Core.SITE_HREF + "/";
+                x = Core.SERVER_HREF.get()+"/";
                 if (x != null && !"".equals(x)) {
                     if (u.startsWith(x)) {
                         value = u;
                         break ;
                     }
                 }
-                x = (String) getParam("href");
+                x = (String) getParam ("href");
                 if (x != null && !"".equals(x)) {
                     if (u.startsWith(x)) {
                         value = u;
@@ -97,7 +97,7 @@ public class IsFile extends Rule {
                     }
                 }
                 // 如果有临时目录则下载到这
-                x = (String) getParam("temp");
+                x = (String) getParam ("temp");
                 if (x == null ||  "".equals(x)) {
                     x = Core.BASE_PATH + "/static/upload/tmp";
                 }

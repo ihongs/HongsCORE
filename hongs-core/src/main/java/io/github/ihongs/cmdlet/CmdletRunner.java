@@ -13,7 +13,6 @@ import io.github.ihongs.util.Synt;
 
 import java.io.File;
 import java.io.PrintWriter;
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 import java.util.TimeZone;
@@ -268,7 +267,7 @@ public class CmdletRunner implements Runnable
 
     String su = Synt.defoult((String) opts.get( "BASEHREF" ), System.getProperty("serv.url"));
     if (null != su) {
-        Pattern pattern = Pattern.compile( "^[^/]*//[^/]+" );
+        Pattern pattern = Pattern.compile( "^\\w+://[^/]+" );
         Matcher matcher = pattern.matcher( su );
         if (matcher.find()) {
             Core.BASE_HREF = su.substring(0 + matcher.end());

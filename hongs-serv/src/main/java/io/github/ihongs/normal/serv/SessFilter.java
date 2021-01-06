@@ -57,7 +57,7 @@ public class SessFilter implements Filter {
         if (fn != null) SSRX = Integer.parseInt(fn);
 
         if (! SSCP.startsWith("/")) {
-            SSCP = Core.BASE_HREF + "/" + SSCP;
+            SSCP = Core.SERV_PATH + "/" + SSCP;
         }
 
         inside = SessFilter.class.getName()+":"+fc.getFilterName()+":INSIDE";

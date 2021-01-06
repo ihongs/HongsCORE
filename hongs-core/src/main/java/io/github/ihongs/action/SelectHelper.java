@@ -47,7 +47,7 @@ public class SelectHelper {
     private final Set<String     > files;
     private final Set<String     > dates;
 
-    private String _host = null;
+    private String _href = null;
     private String _path = null;
     private Set    _cols = null;
 
@@ -125,21 +125,13 @@ public class SelectHelper {
     }
 
     /**
-     * 设置文件链接域名
-     * @param host 格式 scheme://domain[:port]
-     * @return
-     */
-    public SelectHelper setHost(String host) {
-        _host = host;
-        return  this;
-    }
-
-    /**
-     * 设置文件链接路径
+     * 设置文件链接前缀
+     * @param href 格式 scheme://domain[:port]
      * @param path 格式 /service/context/path
      * @return
      */
-    public SelectHelper setPath(String path) {
+    public SelectHelper setLink(String href, String path) {
+        _href = href;
         _path = path;
         return  this;
     }
@@ -672,11 +664,11 @@ public class SelectHelper {
     }
 
     private void injectLink(Map info, Set keys) {
-        if (_path == null) {
-            _path  = Core.BASE_HREF;
+        if (_href == null) {
+            _href  = Core.SERVER_HREF.get ();
         }
-        if (_host == null) {
-            _host  = Core.SERVER_HREF.get ();
+        if (_path == null) {
+            _path  = Core.SERVER_PATH.get ();
         }
 
         Iterator it = keys.iterator();
@@ -765,10 +757,10 @@ public class SelectHelper {
             return  val;
         } else
         if (url.startsWith("/")) {
-            return _host + url;
+            return _href + url;
         } else
         {
-            return _host +_path +"/"+ url;
+            return _href +_path +"/"+ url;
         }
     }
 

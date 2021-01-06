@@ -222,8 +222,8 @@ public class VersFilter extends ActionDriver {
                 ref  =  mat.group(2);
                 if (hst.equals(reh)) {
                     // 仅适配当前应用, 且去除应用路径
-                    if  (  ref.startsWith(Core.BASE_HREF + "/" ) )
-                    return ref.substring (Core.BASE_HREF.length());
+                    if  (  ref.startsWith(Core.SERV_PATH + "/" ) )
+                    return ref.substring (Core.SERV_PATH.length());
                 }
             }
         }

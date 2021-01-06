@@ -81,7 +81,7 @@ public class AuthKit {
                 }
             }
 
-            v = cc.getProperty("oauth2.bak.url", Core.BASE_HREF + "/");
+            v = cc.getProperty("oauth2.bak.url", Core.SERV_PATH + "/");
         } while (false);
 
         if ("_mine_info_".equals(r)) {
@@ -140,7 +140,7 @@ public class AuthKit {
                 }
             }
 
-            v = cc.getProperty("oauth2.bak.url" , Core.BASE_HREF+"/");
+            v = cc.getProperty("oauth2.bak.url" , Core.SERV_PATH+"/");
         } while (false);
 
         if ("_mine_info_".equals(r)

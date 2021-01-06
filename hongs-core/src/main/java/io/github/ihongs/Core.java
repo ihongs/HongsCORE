@@ -34,7 +34,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * <pre>
  * ENVIR     标识不同运行环境(0 cmd, 1 web)
  * DEBUG     标识不同调试模式(0 off, 1 log, 2 warn/info, 4 debug/trace ; 可以多个标识相加, 错误总是需要记录)
- * BASE_HREF 应用访问路径(Web应用中为ContextPath)
+ * SERV_PATH 应用访问路径(Web应用中为ContextPath)
  * BASE_PATH 应用目录路径(Web应用中为RealPath(/))
  * CORE_PATH 应用目录路径(Web应用中为WEB-INF目录)
  * CONF_PATH 配置目录路径(CORE_PATH/etc)
@@ -73,14 +73,14 @@ abstract public class Core
   public static String SERVER_ID = "0" ;
 
   /**
-   * WEB基础域名, 注意: 不以斜杠结尾, 协议域名端口
+   * WEB服务域名, 注意: 不以斜杠结尾, 协议域名端口
    */
-  public static String SITE_HREF = null;
+  public static String SERV_HREF = null;
 
   /**
-   * WEB基础链接, 注意: 不以斜杠结尾, 默认为空字串
+   * WEB服务路径, 注意: 不以斜杠结尾, 默认为空字串
    */
-  public static String BASE_HREF = null;
+  public static String SERV_PATH = null;
 
   /**
    * WEB顶级目录, 注意: 不以斜杠结尾, 其他同此规则
@@ -135,6 +135,17 @@ abstract public class Core
   /**
    * 服务路径标识
    */
+  public static final Supplier<String> SERVER_PATH
+                = new Supplier() {
+      @Override
+      public String get() {
+          return SERV_PATH;
+      }
+  };
+
+  /**
+   * 服务域名标识
+   */
   public static final ThreadLocal<String> SERVER_HREF
                 = new ThreadLocal() {
       @Override
@@ -144,7 +155,7 @@ abstract public class Core
                  io.github.ihongs.action.ActionHelper.getInstance( )
                                                      .getRequest ( ) );
         } catch (NullPointerException|UnsupportedOperationException e) {
-          return SITE_HREF;
+          return SERV_HREF;
         }
       }
   };

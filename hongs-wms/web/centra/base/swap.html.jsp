@@ -29,6 +29,8 @@
             sortable.append(",").append(name);
         }
     }
+    
+    String baseHref = Core.SERV_PATH;
 %>
 <h2><%=_locale.translate("fore.manual.title", _title)%></h2>
 <div id="<%=_pageId%>" class="lore-info row">
@@ -85,13 +87,13 @@
                 <div class="form-group">
                     <label class="control-label">接口</label>
                     <pre class="form-control-static">
-<b>列表: GET</b> <%=Core.BASE_HREF%>/api/<%=_module%>/<%=_entity%>
-或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/search<%=Cnst.API_EXT%>
-或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/search<%=Cnst.ACT_EXT%>
+<b>列表: GET</b> <%=baseHref%>/api/<%=_module%>/<%=_entity%>
+或 <%=baseHref%>/<%=_module%>/<%=_entity%>/search<%=Cnst.API_EXT%>
+或 <%=baseHref%>/<%=_module%>/<%=_entity%>/search<%=Cnst.ACT_EXT%>
 <br/>
-<b>详情: GET</b> <%=Core.BASE_HREF%>/api/<%=_module%>/<%=_entity%>=ID
-或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/search<%=Cnst.API_EXT%>?<%=Cnst.ID_KEY%>=ID
-或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/search<%=Cnst.ACT_EXT%>?<%=Cnst.ID_KEY%>=ID
+<b>详情: GET</b> <%=baseHref%>/api/<%=_module%>/<%=_entity%>=ID
+或 <%=baseHref%>/<%=_module%>/<%=_entity%>/search<%=Cnst.API_EXT%>?<%=Cnst.ID_KEY%>=ID
+或 <%=baseHref%>/<%=_module%>/<%=_entity%>/search<%=Cnst.ACT_EXT%>?<%=Cnst.ID_KEY%>=ID
                     </pre>
                 </div>
                 <div class="form-group">
@@ -146,9 +148,9 @@
                 <div class="form-group">
                     <label class="control-label">接口</label>
                     <pre class="form-control-static">
-<b>ADD|POST</b> <%=Core.BASE_HREF%>/api/<%=_module%>/<%=_entity%>
-或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/create<%=Cnst.API_EXT%>
-或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/create<%=Cnst.ACT_EXT%>
+<b>ADD|POST</b> <%=baseHref%>/api/<%=_module%>/<%=_entity%>
+或 <%=baseHref%>/<%=_module%>/<%=_entity%>/create<%=Cnst.API_EXT%>
+或 <%=baseHref%>/<%=_module%>/<%=_entity%>/create<%=Cnst.ACT_EXT%>
                     </pre>
                 </div>
                 <div class="form-group">
@@ -174,9 +176,9 @@
                 <div class="form-group">
                     <label class="control-label">接口</label>
                     <pre class="form-control-static">
-<b>PUT|PATCH</b> <%=Core.BASE_HREF%>/api/<%=_module%>/<%=_entity%>=ID
-或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/update<%=Cnst.API_EXT%>?<%=Cnst.ID_KEY%>=ID
-或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/update<%=Cnst.ACT_EXT%>?<%=Cnst.ID_KEY%>=ID
+<b>PUT|PATCH</b> <%=baseHref%>/api/<%=_module%>/<%=_entity%>=ID
+或 <%=baseHref%>/<%=_module%>/<%=_entity%>/update<%=Cnst.API_EXT%>?<%=Cnst.ID_KEY%>=ID
+或 <%=baseHref%>/<%=_module%>/<%=_entity%>/update<%=Cnst.ACT_EXT%>?<%=Cnst.ID_KEY%>=ID
                     </pre>
                 </div>
                 <div class="form-group">
@@ -203,9 +205,9 @@ id=ID 或 id.=ID1&id.=ID2...
                 <div class="form-group">
                     <label class="control-label">接口</label>
                     <pre class="form-control-static">
-<b>DELETE</b> <%=Core.BASE_HREF%>/api/<%=_module%>/<%=_entity%>=ID
-或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/delete<%=Cnst.API_EXT%>?<%=Cnst.ID_KEY%>=ID
-或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/delete<%=Cnst.ACT_EXT%>?<%=Cnst.ID_KEY%>=ID
+<b>DELETE</b> <%=baseHref%>/api/<%=_module%>/<%=_entity%>=ID
+或 <%=baseHref%>/<%=_module%>/<%=_entity%>/delete<%=Cnst.API_EXT%>?<%=Cnst.ID_KEY%>=ID
+或 <%=baseHref%>/<%=_module%>/<%=_entity%>/delete<%=Cnst.ACT_EXT%>?<%=Cnst.ID_KEY%>=ID
                     </pre>
                 </div>
                 <div class="form-group">
@@ -231,7 +233,7 @@ id=ID 或 id.=ID1&id.=ID2...
                 <div class="form-group">
                     <label class="control-label">接口</label>
                     <pre class="form-control-static">
-<%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/select<%=Cnst.ACT_EXT%>
+<%=baseHref%>/<%=_module%>/<%=_entity%>/select<%=Cnst.ACT_EXT%>
                     </pre>
                 </div>
                 <div class="form-group">
@@ -264,9 +266,9 @@ id=ID 或 id.=ID1&id.=ID2...
                 <div class="form-group">
                     <label class="control-label">接口</label>
                     <pre class="form-control-static">
-计数: <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/acount<%=Cnst.ACT_EXT%>
-计算: <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/amount<%=Cnst.ACT_EXT%>
-聚合: <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/assort<%=Cnst.ACT_EXT%>
+计数: <%=baseHref%>/<%=_module%>/<%=_entity%>/acount<%=Cnst.ACT_EXT%>
+计算: <%=baseHref%>/<%=_module%>/<%=_entity%>/amount<%=Cnst.ACT_EXT%>
+聚合: <%=baseHref%>/<%=_module%>/<%=_entity%>/assort<%=Cnst.ACT_EXT%>
                     </pre>
                 </div>
                 <div class="form-group">
@@ -328,7 +330,7 @@ id=ID 或 id.=ID1&id.=ID2...
                         fork/pick 表示关联, form/part 表示内联.
                     </p>
                     <p>
-                        如果已经开放公共访问, 则开放接口只需将上述路径的前缀 <%=Core.BASE_HREF%>/centra/ 更换为 <%=Core.BASE_HREF%>/centre/ 即可, 其他部分不变.
+                        如果已经开放公共访问, 则开放接口只需将上述路径的前缀 <%=baseHref%>/centra/ 更换为 <%=baseHref%>/centre/ 即可, 其他部分不变.
                         管理和开放接口可定制, 有作特殊处理则可能细节稍有不同.
                     </p>
                 </div>

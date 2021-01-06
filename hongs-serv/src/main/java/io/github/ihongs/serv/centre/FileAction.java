@@ -57,7 +57,8 @@ public class FileAction {
             File   file = uh.upload(part , name);
             String href = uh.getResultHref(/**/);
             String link = Core.SERVER_HREF.get()
-                        + Core.BASE_HREF + "/" + href;
+                        + Core.SERVER_PATH.get()
+                        + "/" + href;
             name = file.getName( ) + "|" + part.getSubmittedFileName();
 
             list.add(Synt.mapOf(

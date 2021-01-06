@@ -97,7 +97,7 @@ public class ServerCmdlet {
         webapp = new  WebAppContext();
         server = new  Server ( port );
         webapp.setDescriptor ( conf );
-        webapp.setContextPath (Core.BASE_HREF);
+        webapp.setContextPath (Core.SERV_PATH);
         webapp.setResourceBase(Core.BASE_PATH);
         webapp.setParentLoaderPriority              (true);
         webapp.setThrowUnavailableOnStartupException(true);

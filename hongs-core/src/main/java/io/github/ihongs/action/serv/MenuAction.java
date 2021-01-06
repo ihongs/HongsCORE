@@ -63,7 +63,7 @@ public class MenuAction {
             if (menu != null) {
                 href  = getRedirect(site, menu);
                 if (href != null) {
-                    helper.redirect(Core.BASE_HREF + "/" + href);
+                    helper.redirect(Core.SERV_PATH + "/" + href);
                     return;
                 }
             }
@@ -77,7 +77,7 @@ public class MenuAction {
                 n = "";
             }
         }
-        helper.redirect(Core.BASE_HREF + "/" + n);
+        helper.redirect(Core.SERV_PATH + "/" + n);
     }
 
     @Action("list")

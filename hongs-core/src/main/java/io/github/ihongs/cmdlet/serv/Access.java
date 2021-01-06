@@ -50,7 +50,7 @@ public class Access {
         String req = Dawn.toString (rep, true);
 
         // 命令接口
-        String url = Core.SITE_HREF+Core.BASE_HREF + "/common/more/exec" +Cnst.ACT_EXT;
+        String url = Core.SERV_HREF+Core.SERV_PATH + "/common/more/exec" +Cnst.ACT_EXT;
 
         try {
             HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
@@ -121,7 +121,7 @@ public class Access {
         String req = Dawn.toString (rep, true);
 
         // 动作接口
-        String url = Core.SITE_HREF+Core.BASE_HREF + "/common/more/call" +Cnst.ACT_EXT;
+        String url = Core.SERV_HREF+Core.SERV_PATH + "/common/more/call" +Cnst.ACT_EXT;
 
         try {
             HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();

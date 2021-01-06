@@ -59,8 +59,8 @@
                     case 2 : code = 2 ; actc = "active" ;
                 }
 
-                href = Core.BASE_HREF +"/"+ href;
-                hrel = Core.BASE_HREF +"/"+ hrel;
+                href = Core.SERV_PATH +"/"+ href;
+                hrel = Core.SERV_PATH +"/"+ hrel;
                 menu.append("<li class=\"").append(actc).append(" dropdown\">")
                     .append(  "<a href=\"").append(href).append("\" ")
                     .append("data-href=\"").append(hrel).append("\" ")
@@ -78,8 +78,8 @@
             } else
             if (!href.startsWith("common/menu.")) {
                 actc = "actual " + actc ;
-                href = Core.BASE_HREF +"/"+ href;
-                hrel = Core.BASE_HREF +"/"+ hrel;
+                href = Core.SERV_PATH +"/"+ href;
+                hrel = Core.SERV_PATH +"/"+ hrel;
                 menu.append("<li class=\"").append(actc).append("\">")
                     .append(  "<a href=\"").append(href).append("\" ")
                     .append("data-href=\"").append(hrel).append("\">")
@@ -120,7 +120,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a href="<%=Core.BASE_HREF%>/centre/" class="navbar-brand" style="font-size: 16px;"
+            <a href="<%=Core.SERV_PATH%>/centre/" class="navbar-brand" style="font-size: 16px;"
                 title="<%=CoreLocale.getInstance().translate("fore.centre.sub.title")%>">
                 <%=CoreLocale.getInstance().translate("fore.centre.title")%>
             </a>
@@ -249,10 +249,8 @@
         $("#sign-in" )
             .click(function() {
                 var r = location.pathname + location.search + location.hash;
-                <%if ( Core.BASE_HREF.length( ) != 0 ) {%>
-                    r = r.substring( <%=Core.BASE_HREF.length()%> );
-                <%} /*End if */%>
-                    r = encodeURIComponent( r );
+                    r = r.substr(<%=Core.SERV_PATH.length() + 1 %>);
+                    r = encodeURIComponent(r);
                 location.assign(hsFixUri("centre/login.html?r="+r));
             });
         $("#sign-out")

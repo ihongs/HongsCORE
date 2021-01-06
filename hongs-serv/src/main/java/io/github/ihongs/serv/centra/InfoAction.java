@@ -47,8 +47,8 @@ public class InfoAction {
             rsp.put("app_info", app);
 
             app.put("server_id", Core.SERVER_ID);
-            app.put("site_href", Core.SITE_HREF);
-            app.put("base_href", Core.BASE_HREF);
+            app.put("base_href", Core.SERV_HREF
+                               + Core.SERV_PATH);
             app.put("core_path", Core.CORE_PATH);
             app.put("starts_time", Core.STARTS_TIME);
         }

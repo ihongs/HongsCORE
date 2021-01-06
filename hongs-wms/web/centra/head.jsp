@@ -59,8 +59,8 @@
                     case 2 : code = 2 ; actc = "acting" ;
                 }
 
-                href = Core.BASE_HREF +"/"+ href;
-                hrel = Core.BASE_HREF +"/"+ hrel;
+                href = Core.SERV_PATH +"/"+ href;
+                hrel = Core.SERV_PATH +"/"+ hrel;
                 menu.append("<li class=\"").append(actc).append("\">")
                     .append(  "<a href=\"").append(href).append("\" ")
                     .append("data-href=\"").append(hrel).append("\">")
@@ -76,8 +76,8 @@
             } else
             if (!href.startsWith("common/menu.")) {
                 actc = "actual " + actc ;
-                href = Core.BASE_HREF +"/"+ href;
-                hrel = Core.BASE_HREF +"/"+ hrel;
+                href = Core.SERV_PATH +"/"+ href;
+                hrel = Core.SERV_PATH +"/"+ hrel;
                 menu.append("<li class=\"").append(actc).append("\">")
                     .append(  "<a href=\"").append(href).append("\" ")
                     .append("data-href=\"").append(hrel).append("\">")
@@ -145,7 +145,7 @@
     <p>
         <span>&copy;&nbsp;</span><span><%=CoreLocale.getInstance().translate("fore.copy.right")%></span>
     <!--<span>&nbsp;&nbsp;</span><span><%=CoreLocale.getInstance().translate("fore.site.links")%></span>-->
-        <span>&nbsp;&nbsp;</span><span>Powered by <a href="<%=Core.BASE_HREF%>/power.html" target="_blank">HongsCORE</a></span>
+        <span>&nbsp;&nbsp;</span><span>Powered by <a href="<%=request.getContextPath()%>/power.html" target="_blank">HongsCORE</a></span>
     </p>
 </div>
 

@@ -106,7 +106,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         }
 
         FIRST=true;
-        if (Core.BASE_HREF == null) {
+        if (Core.SERV_PATH == null) {
         SETUP=true;
 
             System.setProperty("file.encoding", "UTF-8");
@@ -115,7 +115,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
 
             Core.DEBUG = Synt.declare(cont.getInitParameter("debug"), (byte) 0);
 
-            Core.BASE_HREF = cont.getContextPath();
+            Core.SERV_PATH = cont.getContextPath();
             Core.BASE_PATH = cont.getRealPath("" );
 
             Core.BASE_PATH = Core.BASE_PATH.replaceFirst("[/\\\\]$", "");
@@ -171,11 +171,11 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             if (null != su) {
                 Matcher matcher = URL_REG.matcher( su );
                 if (matcher.find()) {
-                    Core.BASE_HREF = su.substring(0 + matcher.end());
-                    Core.SITE_HREF = su.substring(0 , matcher.end());
+                    Core.SERV_PATH = su.substring(0 + matcher.end());
+                    Core.SERV_HREF = su.substring(0 , matcher.end());
                 } else {
-                    Core.BASE_HREF = su;
-                    Core.SITE_HREF = "";
+                    Core.SERV_PATH = su;
+                    Core.SERV_HREF = "";
                 }
             }
 
@@ -220,8 +220,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             }
         }
 
-        CoreLogger.info(
-            "HTTP server is started."
+        CoreLogger.info("HTTP server is started."
             + "\r\n\tDEBUG       : {}"
             + "\r\n\tSERVER_ID   : {}"
             + "\r\n\tCORE_PATH   : {}"
@@ -232,7 +231,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             Core.DEBUG    , Core.SERVER_ID,
             Core.CORE_PATH, Core.CONF_PATH,
             Core.DATA_PATH, Core.BASE_PATH,
-            Core.SITE_HREF, Core.BASE_HREF
+            Core.SERV_HREF, Core.SERV_PATH
         );
     }
 
@@ -378,9 +377,9 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         Core.SERVER_HREF.set(getServerHref(req));
         */
         // 外部没有指定网站域名则在首次请求时进行设置(非线程安全)
-        if (Core.SITE_HREF == null
-        ||  Core.SITE_HREF.isEmpty(/**/)) {
-            Core.SITE_HREF  = Core.SERVER_HREF.get();
+        if (Core.SERV_HREF == null
+        ||  Core.SERV_HREF.isEmpty(/**/)) {
+            Core.SERV_HREF  = Core.SERVER_HREF.get();
         }
 
         CoreConfig conf = core.get(CoreConfig.class);
@@ -864,7 +863,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                 + url;
         } else {
             url = Core.SERVER_HREF.get()
-                + Core.BASE_HREF
+                + Core.SERV_PATH
                 + "/"
                 + url;
         }}
@@ -878,7 +877,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
      */
     public static String fixUri(String uri) {
         if (URI_REG.matcher(uri).matches( ) == false) {
-            uri = Core.BASE_HREF
+            uri = Core.SERV_PATH
                 + "/"
                 + uri;
         }

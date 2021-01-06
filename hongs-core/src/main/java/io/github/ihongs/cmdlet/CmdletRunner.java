@@ -270,15 +270,15 @@ public class CmdletRunner implements Runnable
         Pattern pattern = Pattern.compile( "^\\w+://[^/]+" );
         Matcher matcher = pattern.matcher( su );
         if (matcher.find()) {
-            Core.BASE_HREF = su.substring(0 + matcher.end());
-            Core.SITE_HREF = su.substring(0 , matcher.end());
+            Core.SERV_PATH = su.substring(0 + matcher.end());
+            Core.SERV_HREF = su.substring(0 , matcher.end());
         } else {
-            Core.BASE_HREF = su;
-            Core.SITE_HREF = "";
+            Core.SERV_PATH = su;
+            Core.SERV_HREF = "";
         }
     } else {
-            Core.BASE_HREF = "";
-            Core.SITE_HREF = "";
+            Core.SERV_PATH = "";
+            Core.SERV_HREF = "";
     }
 
     /** 实例属性配置 **/

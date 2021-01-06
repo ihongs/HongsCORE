@@ -130,7 +130,7 @@ public class AuthFilter
     s = config.getInitParameter("index-page");
     if (s != null)
     {
-      this.indexPage = Core.BASE_HREF + s;
+      this.indexPage = Core.SERV_PATH + s;
     }
 
     /**
@@ -139,7 +139,7 @@ public class AuthFilter
     s = config.getInitParameter("login-page");
     if (s != null)
     {
-      this.loginPage = Core.BASE_HREF + s;
+      this.loginPage = Core.SERV_PATH + s;
     }
 
     /**
@@ -381,7 +381,7 @@ public class AuthFilter
         if (uri == null || uri.length() == 0) {
             uri =  CoreConfig.getInstance().getProperty("fore.Er40"+type+".redirect");
         if (uri == null || uri.length() == 0) {
-            uri =  Core.BASE_HREF + "/";
+            uri =  Core.SERV_PATH + "/";
         }}
 
         // 跳转页面

@@ -175,8 +175,7 @@ public class ConfAction
         .append(Core.SERVER_ID)
         .append("\",\r\n")
         .append("\t\"BASE_HREF\":\"")
-        .append(Core.SERVER_HREF.get( )
-              + Core.SERVER_PATH.get())
+        .append(Core.SERV_PATH)
         .append("\",\r\n");
     }
 

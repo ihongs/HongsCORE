@@ -857,7 +857,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
      * @return
      */
     public static String fixUrl(String url) {
-        if (URL_REG.matcher(url).matches( ) == false) {
+        if (URL_REG.matcher(url).find( ) == false) {
         if (url.startsWith ("/")) {
             url = Core.SERVER_HREF.get()
                 + url;
@@ -876,7 +876,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
      * @return
      */
     public static String fixUri(String uri) {
-        if (URI_REG.matcher(uri).matches( ) == false) {
+        if (URI_REG.matcher(uri).find( ) == false) {
             uri = Core.SERV_PATH
                 + "/"
                 + uri;

@@ -29,7 +29,7 @@ public abstract class Rule implements Ruly {
      * @param params
      * @return
      */
-    public final Rule config(Map params) {
+    public Rule config(Map params) {
         this . params = params;
         return this;
     }
@@ -39,8 +39,10 @@ public abstract class Rule implements Ruly {
      * @param key
      * @return
      */
-    public final Object getParam(String key) {
-        return params != null ? params.get(key): null;
+    public Object getParam(String key) {
+        return params  !=  null
+             ? params.get (key)
+             : null;
     }
 
     /**

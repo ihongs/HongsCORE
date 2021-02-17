@@ -709,6 +709,7 @@ public class SelectHelper {
         }
 
         Object vxl;
+        val = Synt.asString(val); // 规避取值为非字串
         vxl = map.get(val);
         if (null != vxl) {
             return  vxl;

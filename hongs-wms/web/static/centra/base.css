@@ -309,6 +309,13 @@ html, body {
     color: #f00;
 }
 
+#main-context > .laps .home-crumb .glyphicon {
+    color: #fff;
+}
+#main-context > .laps .back-crumb .glyphicon {
+    color: #f55;
+}
+
 /* 主导航条默认吸顶 */
 #main-context > .laps.labs {
     margin-top: 20px;

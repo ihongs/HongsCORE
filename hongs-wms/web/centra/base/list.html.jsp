@@ -25,7 +25,7 @@
         <div class="col-xs-6">
             <div class="btn-group">
                 <%if ("select".equals(_action)) {%>
-                <button type="button" class="commit btn btn-primary"><%=_locale.translate("fore.select", _title)%></button>
+                <button type="button" class="commit for-checks btn btn-primary"><%=_locale.translate("fore.select", _title)%></button>
                 <%} // End If %>
                 <button type="button" class="create btn btn-default"><%=_locale.translate("fore.create", _title)%></button>
                 <%if ("browse".equals(_action)) {%>
@@ -475,8 +475,13 @@
             }
         });
         // 无行内菜单项则隐藏之
-        if (listbox.find("thead tr._amenu ul>li>a" ).size( ) == 0) {
-            listbox.find("thead tr._amenu").remove();
+        if (listbox.find("thead ._amenu ul>li>a").size() == 0) {
+            listbox.find("thead ._amenu").addClass( "hidden" );
+        }
+        // 无操作按钮则隐藏选择
+        if (findbox.find(".for-choose").size() == 0
+        &&  findbox.find(".for-checks").size() == 0) {
+            listbox.find("thead ._check").addClass( "hidden" );
         }
         // 无过滤或统计则隐藏之
         if (filtbox.find(".filt-group").size() == 0) {

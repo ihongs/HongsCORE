@@ -416,14 +416,19 @@
                     <%hint = null;%>
                 <%} /*End If */%>
                     <%
-                        String hiss = "";
-                    //  if  (  hiss == null) hiss = "";
-                        if  (  hint == null) hint = "";
-                        hiss = Synt.declare(info.get("hiss"), hiss);
+                        String hist = "";
+                        if (hint == null)
+                               hint = "";
+                        hist = Synt.declare(info.get("hist"), hist);
                         hint = Synt.declare(info.get("hint"), hint);
                     %>
-                    <div class="help-block text-error form-control-static"><%=hiss%></div>
+                    <div class="help-block text-error form-control-static"><%=hist%></div>
                     <div class="help-block text-muted form-control-static"><%=hint%></div>
+                </div>
+                <div class="col-md-2 hidden-sm hidden-xs">
+                    <div class="form-control-static">
+                        <%if (rqrd) {%><span class="glyphicon glyphicon-asterisk" style="color: #f55;" title="必填/必选字段"></span><%}%>
+                    </div>
                 </div>
             </div>
         <%} /*End If */%>

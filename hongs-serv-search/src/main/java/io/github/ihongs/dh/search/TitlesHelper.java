@@ -181,17 +181,17 @@ public class TitlesHelper {
      */
     protected void addEnums(List<Object[]> ls, Map es, String fn) {
         for (Object[] lx : ls) {
-            String lv = (String) lx[0];
-            if (lv != null) {
-                lv  = (String) es.get(lv ); // 得到标签
+            Object v = Synt.asString(lx[0]); // 规避取值为非字串
+            if (v != null) {
+                v  = es.get( v ); // 得到标签
             }
-            if (lv == null) {
-                lv  = (String) es.get("-"); // 未知选项
+            if (v == null) {
+                v  = es.get("-"); // 未知选项
             }
-            if (lv == null) {
+            if (v == null) {
                 continue;
             }
-            lx[1] = lv;
+            lx [1] = v;
         }
     }
 

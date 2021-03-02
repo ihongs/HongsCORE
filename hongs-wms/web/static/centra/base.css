@@ -316,7 +316,7 @@ html, body {
     color: #f55;
 }
 
-/* 主导航条默认吸顶 */
+/* 主导航条默认样式 */
 #main-context > .laps.labs {
     margin-top: 20px;
 }
@@ -325,6 +325,24 @@ html, body {
     border-radius: 0;
     border-color : #555;
     background-color: #555;
+}
+#main-context > .laps.tabs.breadcrumb ,
+#main-context > .laps.tabs.breadcrumb a {
+    color: #ccc;
+}
+#main-context > .laps.tabs.breadcrumb a:hover ,
+#main-context > .laps.tabs.breadcrumb a:focus ,
+#main-context > .laps.tabs.breadcrumb .active a {
+    color: #fff;
+}
+#main-context > .laps.tabs.breadcrumb .active a {
+    text-decoration: none;
+}
+#main-context > .laps.tabs.breadcrumb .home-crumb .glyphicon {
+    color: #fff;
+}
+#main-context > .laps.tabs.breadcrumb .back-crumb .glyphicon {
+    color: #f55;
 }
 
 /* 隐藏受限的搜索框 */

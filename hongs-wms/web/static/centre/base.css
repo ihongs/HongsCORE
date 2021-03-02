@@ -36,26 +36,21 @@
     display: inline-block;
 }
 
-/* 主导航条默认隐藏 */
-.container > .laps.breadcrumb.bread-home {
-    display: none;
-}
-
-/* 导航条默认不反色 */
-.laps.breadcrumb {
+/* 主导航条默认样式 */
+#main-context > .laps.tabs.breadcrumb {
     border: 0;
     border-radius: 0;
     border-bottom: 1px solid #ccc;
     background-color: transparent;
 }
-.laps.breadcrumb ,
-.laps.breadcrumb a {
-    color: #888;
+#main-context > .laps.tabs.bread-home {
+    display: none;
 }
-.laps.breadcrumb a:hover ,
-.laps.breadcrumb a:focus ,
-.laps.breadcrumb .active a {
-    color: #222;
+#main-context > .laps.tabs.breadcrumb .home-crumb .glyphicon {
+    color: #555;
+}
+#main-context > .laps.tabs.breadcrumb .back-crumb .glyphicon {
+    color: #f55;
 }
 
 /* 隐藏受限的搜索框 */

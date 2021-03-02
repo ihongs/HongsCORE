@@ -4,46 +4,62 @@
  * 版本: 2018/07/27 23:00
  */
 
+#context {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+#bodybox {
+    flex: 1;
+}
+#leadbox {
+    height : 20px; /* 顶部空隙高度 */
+}
+#headbox {
+    height : 71px; /* 顶部菜单高度 */
+}
+#footbox .navbar ,
+#footbox .navbar blockquote {
+    min-height: 0;
+    margin-bottom: 0;
+    font-size : 12px;
+}
+
 #headbox .uhead {
-    width : 29px;
-    height: 29px;
-    margin-top   : -6px;
-    margin-bottom: -9px;
-    border-radius: 50% ;
+    width :  36px;
+    height:  36px;
+    margin: -13px  4px;
+    border-radius: 4px;
     background-size  : 100% 100%;
     background-repeat: no-repeat;
     background-position:  center;
     display: inline-block;
 }
 
-#footbox.navbar ,
-#footbox blockquote {
-    background: #fcfcfc;
-    font-size : 10px;
-    min-height: 32px;
-    margin-top   : 0;
-    margin-bottom: 0;
+/* 主导航条默认样式 */
+#main-context > .laps.tabs.breadcrumb {
+    border: 0;
+    border-radius: 0;
+    border-bottom: 1px solid #ccc;
+    background-color: transparent;
 }
-
-#bodybox {
-    margin-top   : 59px; /* 菜单和间距 */
-    margin-bottom: 33px; /* 页尾的高度 */
+#main-context > .laps.tabs.bread-home {
+    display: none;
 }
-
-/* 主导航条样式微调 */
-.container > .breadcrumb.laps {
-    background: #fff;
-    border: 1px solid #ddd;
+#main-context > .laps.tabs.breadcrumb .home-crumb .glyphicon {
+    color: #555;
+}
+#main-context > .laps.tabs.breadcrumb .back-crumb .glyphicon {
+    color: #f55;
 }
 
 /* 隐藏受限的搜索框 */
 .input-group .input-search:disabled {
     visibility: hidden;
 }
-.input-group .input-search:disabled+.input-group-btn .glyphicon-search:before {
-    content : "\e031" ;
+.input-group .input-search:disabled+.input-group-btn>.btn:first-child {
+    border-radius: 4px 0 0 4px;
 }
-.input-group .input-search:disabled+.input-group-btn:last-child>.btn:first-child {
-    border-top-left-radius: 4px;
-    border-bottom-left-radius: 4px;
+.input-group .input-search:disabled+.input-group-btn .glyphicon-search:before {
+    content: "\e031";
 }

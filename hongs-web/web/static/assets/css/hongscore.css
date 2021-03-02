@@ -194,25 +194,6 @@ fieldset>.dropdown-list {
     content: "";
 }
 
-/* 反色 */
-.breadcrumb.laps {
-    border: 1px solid #222;
-    background: #535353;
-    margin-bottom: 20px;
-}
-.breadcrumb.laps ,
-.breadcrumb.laps a {
-    color: #ccc;
-}
-.breadcrumb.laps a:hover ,
-.breadcrumb.laps a:focus ,
-.breadcrumb.laps .active a {
-    color: #fff;
-}
-.breadcrumb.laps .active a {
-    text-decoration: none;
-}
-
 /** 其他组件调整 **/
 
 /* jquery-ui */
@@ -515,9 +496,10 @@ ol.repeated ,
 
 /* 横向菜单 */
 .listbox ._amenu .dropdown-menu {
-    top: -10px;
-    left : 1em;
+    white-space : nowrap;
     min-width: 0;
+    top  : -10px;
+    left : 1.0em;
     padding: 4px 4px;
 }
 .listbox ._amenu .dropdown-menu a  {

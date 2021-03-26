@@ -2685,11 +2685,20 @@ $.fn.hsBind = function(func, opts) {
     var name = func.name || /^function\s+(\w+)/.exec(func.toString())[1];
     var inst = this.data(name);
     if (! inst) {
-        inst =  new func(this , opts || this.hsData());
+        if (! opts) {
+            opts = this.hsData ( );
+        } else
+        if (typeof opts === "function") {
+            opts = opts.call(this);
+        }
+        inst = new func(this,opts);
         this.data(name , inst);
         this. addClass ( name);
     } else
     if (opts) {
+        if (typeof opts === "function") {
+            opts = opts.call(this);
+        }
         if (typeof inst.reset === "function") {
             inst.reset ( opts);
         } else

@@ -568,6 +568,7 @@ HsForm.prototype = {
             if (k && this._opt_group_start && k[0] == this._opt_group_start) {
                 if (inp.is("optgroup")) {
                     inp = inp.parent();
+                    if (! t) continue ;
                 }
                 inp = jQuery('<optgroup></optgroup>').appendTo(inp);
                 inp.attr(     "label", t)
@@ -593,6 +594,7 @@ HsForm.prototype = {
             if (k && this._opt_group_start && k[0] == this._opt_group_start) {
                 if (inp.is("fieldset")) {
                     inp = inp.parent();
+                    if (! t) continue ;
                 }
                 var leg;
                 inp = jQuery('<fieldset></fieldset>').appendTo(inp);
@@ -621,6 +623,7 @@ HsForm.prototype = {
             if (k && this._opt_group_start && k[0] == this._opt_group_start) {
                 if (inp.is("fieldset")) {
                     inp = inp.parent();
+                    if (! t) continue ;
                 }
                 var leg;
                 inp = jQuery('<fieldset></fieldset>').appendTo(inp);

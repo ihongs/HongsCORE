@@ -950,6 +950,69 @@ jQuery.fn.hsPops = function(opts) {
 };
 
 /**
+ * 交换占位节点对象
+ * 用于动态隐藏字段
+ * 规避隐藏后的校验
+ * @param {jQuery|Element} sup
+ * @param {jQuery|Element} sub
+ * @returns {HsSwap}
+ */
+function HsVeil (sup, sub) {
+    this.sup = jQuery(sup);
+    this.sub = jQuery(sub);
+}
+HsVeil.prototype = {
+    show: function() {
+        if (this.sup.parent().size() === 0) {
+            this.sup.insertBefore(this.sub);
+            this.sub.detach();
+        }
+    },
+    hide: function() {
+        if (this.sub.parent().size() === 0) {
+            this.sub.insertBefore(this.sup);
+            this.sup.detach();
+        }
+    },
+    toggle: function() {
+        if (this.sup.parent().size() === 0 ) {
+            this.show();
+        } else {
+            this.hide();
+        }
+    }
+};
+jQuery.fn.hsVeil = function(hide) {
+    $(this).each(function() {
+        var inst = $(this).hsBind(HsVeil, function() {
+            var sup = $(this);
+            var sub = $(this).data('hsVeilNode');
+            if (sub === undefined) {
+            var nam = $(this).data('hsVeilName');
+                // 默认为空值的 input hidden
+                sub = $('<input class="form-ignored" type="hidden"/>');
+                sub.attr ("name", nam
+                    || sup.attr( "data-fn" )
+                    || sup.attr( "name"    )
+                    || sup.find("[data-fn]").attr("data-fn")
+                    || sup.find("[name]"   ).attr("name"   )
+                );
+            }
+            return  sub;
+        });
+        if (hide === undefined) {
+            inst.toggle();
+        } else
+        if (hide) {
+            inst.hide();
+        } else {
+            inst.show();
+        }
+    });
+    return  this;
+};
+
+/**
  * 筛选列表填充数据
  */
 function hsListFillSele(x, v, n) {

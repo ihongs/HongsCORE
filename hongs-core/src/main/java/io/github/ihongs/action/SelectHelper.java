@@ -306,10 +306,13 @@ public class SelectHelper {
         }
 
         // 填充下级表单
-        // 为规避因循环依赖导致故障
-        // 限制填充规则为仅向下一层
         if (fallDown) {
-            inject( values , ( byte ) (action - FALL));
+            inject(values, action);
+
+            // 为规避因循环依赖导致故障
+            // 限制填充规则为仅向下一层
+            // 2021/03/27: 无需加此限制, 应该先验结构
+            // inject(values , (byte) (action - FALL));
         }
     }
 
@@ -683,14 +686,14 @@ public class SelectHelper {
             if (val instanceof Collection) {
                 Collection col = (Collection ) val;
                 Collection cxl = new ArrayList(col.size());
-                Dict.setValue( info, cxl, key +  "_text" );
+                Dict.setValue( info, cxl, key +  "_link" );
                 for (Object vxl : col) {
                     vxl = hrefToLink(vxl);
                     cxl.add(vxl);
                 }
             } else {
                     val = hrefToLink(val);
-                Dict.setValue( info, val, key +  "_text" );
+                Dict.setValue( info, val, key +  "_link" );
             }
         }
     }

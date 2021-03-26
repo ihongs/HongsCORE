@@ -192,8 +192,6 @@
 <script type="text/javascript">
 (function($) {
     var context = H$("#<%=_pageId%>");
-    var loadbox = context.closest(".loadbox");
-    var formbox = context.find("form");
 
     var formobj = context.hsForm({
         <%if ("reveal".equals(_action)) {%>
@@ -226,6 +224,7 @@
         }
     });
     context.on("click", ".newer,.older", function( ) {
+        var loadbox = formobj.loadBox;
         loadbox.hsLoad("<%=_module%>/<%=_entity%>/info_snap.html", $(this).data());
     });
     <%} /*End If */%>
@@ -236,11 +235,15 @@
             window["<%=_funcId%>"](context, formobj);
         }
 
+        var loadbox = formobj.loadBox;
+        var formbox = formobj.formBox;
+        var formurl = formobj._url;
+
         // 特殊控件
-        setInfoItems( formbox , loadbox);
+        setFormItems (formbox,loadbox);
 
         // 加载数据
-        formobj.load(undefined, loadbox);
+        formobj.load (formurl,loadbox);
     });
 })( jQuery );
 </script>

@@ -43,8 +43,7 @@
             if (roly) {
                 Object deforce = info.get("deforce");
                 if ("always".equals(deforce)
-                ||  "update".equals(deforce)
-                ||  "create".equals(deforce)) {
+                ||  _action .equals(deforce)) {
                     continue;
                 } else
                 if ("create".equals(_action)) {
@@ -55,7 +54,7 @@
         <%/****/ if ("hidden".equals(type)) {%>
             <input type="hidden" name="<%=name%>" />
         <%} else if ("legend".equals(type)) {%>
-            <legend class="text-center"><%=text%></legend>
+            <legend class="text-center" data-name="<%=name%>"><%=text%></legend>
         <%} else if ( roly ) {%>
             <%
                 //** 此部分来自 info.jsp **/
@@ -447,8 +446,6 @@
 <script type="text/javascript">
 (function($) {
     var context = H$("#<%=_pageId%>");
-    var loadbox = context.closest(".loadbox");
-    var formbox = context.find("form");
 
     var formobj = context.hsForm({
         <%if ("create".equals(_action)) {%>
@@ -469,11 +466,15 @@
             window["<%=_funcId%>"](context, formobj);
         }
 
+        var loadbox = formobj.loadBox;
+        var formbox = formobj.formBox;
+        var formurl = formobj._url;
+
         // 特殊控件
-        setFormItems( formbox , loadbox);
+        setFormItems (formbox,loadbox);
 
         // 加载数据
-        formobj.load(undefined, loadbox);
+        formobj.load (formurl,loadbox);
     });
 })( jQuery );
 </script>

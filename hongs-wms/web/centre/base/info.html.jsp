@@ -187,8 +187,6 @@
 <script type="text/javascript">
 (function($) {
     var context = H$("#<%=_pageId%>");
-    var loadbox = context.closest(".loadbox");
-    var formbox = context.find("form");
 
     var formobj = context.hsForm({
         _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.AB_KEY%>=_text,_fork,.fall",
@@ -203,11 +201,15 @@
             window["<%=_funcId%>"](context, formobj);
         }
 
+        var loadbox = formobj.loadBox;
+        var formbox = formobj.formBox;
+        var formurl = formobj._url;
+
         // 特殊控件
-        setInfoItems( formbox , loadbox);
+        setFormItems (formbox,loadbox);
 
         // 加载数据
-        formobj.load(undefined, loadbox);
+        formobj.load (formurl,loadbox);
     });
 })( jQuery );
 </script>

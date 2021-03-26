@@ -2,19 +2,24 @@
 <div id="master-user-pick"
      data-topple="hsList"
      data-load-url="centra/master/dept/list.act?rb=id,name,mtime,ctime"
-     data-load-data="(this.closest('.loadbox'))"
-     data--0="_fill__fork:(hsListFillFork)">
-    <div>
-        <div class="toolbox col-xs-9 btn-group">
-            <button type="button" class="commit btn btn-primary">确认选择</button>
+     data--0="loadData:(this.closest('.loadbox'))"
+     data--1="_fill__fork:(hsListFillFork)">
+    <form class="findbox toolbox board row" action="" method="POST">
+        <div class="col-xs-6">
+            <div class="btn-group">
+                <button type="button" class="commit btn btn-primary">确认选择</button>
+            </div>
         </div>
-        <form class="findbox col-xs-3 input-group" action="" method="POST">
-            <input type="search" name="wd" class="form-control input-search"/>
-            <span class="input-group-btn">
-                <button type="submit" class="btn btn-default">查找</button>
-            </span>
-        </form>
-    </div>
+        <div class="col-xs-6">
+            <div class="input-group">
+                <input type="search" name="wd" class="form-control input-search"/>
+                <span class="input-group-btn">
+                    <button type="submit" class="btn btn-default">查找</button>
+                </span>
+            </div>
+        </div>
+    </form>
+    <div class="table-responsive-revised">
     <div class="listbox table-responsive">
         <table class="table table-hover table-striped">
             <thead>
@@ -29,6 +34,7 @@
             </thead>
             <tbody></tbody>
         </table>
+    </div>
     </div>
     <div class="pagebox clearfix"></div>
 </div>

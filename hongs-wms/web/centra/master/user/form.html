@@ -118,36 +118,57 @@
                 context.find(".role-info").remove();
             } else {
                 context.removeClass( "hide-roles" );
+                // 重组名称, 加上路径
+                $.each(rd["enfo"]["roles..role"], function(i,r) {
+                    if (r.tabs && r.tabs.length) {
+                        r.text  = r.tabs.join(" / ") +" / "+ r.text;
+                    }
+                });
             }
             if (!rd["info"] ) {
                 var dp = hsGetSeria(loadpms, "dept_id");
-                $(this).find("[name='depts..dept_id']").val( dp );
+                $(this).find("[name='depts..dept_id']").val(dp );
             } else {
-                $(this).find("[name='depts..dept_id']").remove( );
-                $(this).find(":password" ).removeAttr("required");
-                $(this).find(".username" ).removeAttr("required");
+                $(this).find("[name='depts..dept_id']").remove();
+                $(this).find(":password").removeAttr("required");
+                $(this).find(".username").removeAttr("required");
             }
+            context.data("loading", true);
+        });
+        context.on("loadOver", function() {
+            context.removeData("loading");
         });
 
         // 选择与之关联的权限
         context.on("change", "[name='roles..role']", function() {
+            if (context.data("loading")) {
+                return; // 加载过程中避免频繁调用卡死页面
+            }
             var area = $(this).closest(".form-group");
             if ($(this).prop("checked")) {
-                var rels = $(this).data("rels");
-                if (rels) {
-                    for(var i = 0 ; i < rels.length ; i ++) {
-                        var r = rels[i];
-                        area.find("[value='"+r+"']:not(:checked)")
-                            .prop("checked", true).change();
-                    }
-                }
-            } else {
-                var r = $(this).val();
-                area.find(":checked:not(.checkall)" ).not(this)
+                    var r = $(this).data("rels");
+                    if (r && r.length )
+                area.find(":checkbox" )
+                    .not (":checked"  )
+                    .not (".checkall" )
+                    .not (this)
                     .each(function( ) {
-                    var rels = $(this).data( "rels" );
-                    if (rels && $.inArray( r, rels  ) !== -1  ) {
-                        $(this).prop("checked",false).change( );
+                    var v = $(this).val ( /**/ );
+                    if ($.inArray(v, r) !== -1 ) {
+                        $(this).prop("checked", true ).change();
+                    }
+                });
+            } else {
+                    var v = $(this).val ( /**/ );
+                area.find(":checkbox" )
+                  .filter(":checked"  )
+                    .not (".checkall" )
+                    .not (this)
+                    .each(function( ) {
+                    var r = $(this).data("rels");
+                    if (r && r.length )
+                    if ($.inArray(v, r) !== -1 ) {
+                        $(this).prop("checked", false).change();
                     }
                 });
             }

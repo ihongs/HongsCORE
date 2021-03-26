@@ -20,6 +20,7 @@
 
         for(Map item: list) {
             String text = (String) item.get("text");
+            String hint = (String) item.get("hint");
             String href = (String) item.get("href");
             String hrel = (String) item.get("hrel");
 //          String icon = (String) item.get("icon");
@@ -37,6 +38,9 @@
             ||  "HIDE".equals(hrel) ) {
                 continue;
             }
+
+            if (text == null) text = "";
+            if (hint == null) hint = "";
 
             String actc ;
             if (href.equals(acti)) {
@@ -62,7 +66,8 @@
                 href = Core.SERV_PATH +"/"+ href;
                 hrel = Core.SERV_PATH +"/"+ hrel;
                 menu.append("<li class=\"").append(actc).append(" dropdown\">")
-                    .append(  "<a href=\"").append(href).append("\" ")
+                    .append( "<a title=\"").append(hint).append("\" ")
+                    .append(     "href=\"").append(href).append("\" ")
                     .append("data-href=\"").append(hrel).append("\" ")
                     .append("data-toggle=\"dropdown\" " )
                     .append("class=\"dropdown-toggle\">")
@@ -81,7 +86,8 @@
                 href = Core.SERV_PATH +"/"+ href;
                 hrel = Core.SERV_PATH +"/"+ hrel;
                 menu.append("<li class=\"").append(actc).append("\">")
-                    .append(  "<a href=\"").append(href).append("\" ")
+                    .append( "<a title=\"").append(hint).append("\" ")
+                    .append(     "href=\"").append(href).append("\" ")
                     .append("data-href=\"").append(hrel).append("\">")
                     .append( text )
                     .append("</a>")

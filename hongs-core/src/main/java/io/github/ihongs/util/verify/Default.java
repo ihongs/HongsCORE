@@ -7,6 +7,7 @@ import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Synt;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -18,7 +19,7 @@ import java.util.regex.Pattern;
  * 规则参数:
  *  default 默认值, 可使用 =$会话属性, =#应用属性, =%now+-偏移毫秒, =%id 新唯一ID
  *  default 还可为 =@alias:别名字段, =@count:计数字段, =@merge:${其他字段}, =@abc.Def:param 自定方法
- *  deforce 强制写, 控制不同阶段, create 创建时, update 更新时, always 任何时, blanks 存 null 读用 SelectHelper 补全
+ *  deforce 强制写, 控制不同阶段, create 创建时, update 更新时, always 任何时, blanks 存 null 读补全
  * </pre>
  * @author Hongs
  */
@@ -72,14 +73,9 @@ public class Default extends Rule {
         }
         String def = ((String) val).trim();
 
-        // 起始转义
-        if (def.startsWith("\\=") ) {
+        // 需等号开头时, 用两个表一个
+        if (def.startsWith("==")) {
             return def.substring(1);
-        }
-
-        // 会话属性
-        if (def.startsWith("=$")) {
-            return Core.getInstance(ActionHelper.class).getSessibute(def.substring(2));
         }
 
         // 应用属性
@@ -87,38 +83,9 @@ public class Default extends Rule {
             return Core.getInstance(ActionHelper.class).getAttribute(def.substring(2));
         }
 
-        if (def.startsWith("=@")) {
-            // 别名字段, 通常用于截取字串, 清理 HTML
-            if (def.startsWith("=@alias:")) {
-                return alias(watch, def.substring(8));
-            }
-
-            // 计数字段
-            if (def.startsWith("=@count:")) {
-                return count(watch, def.substring(8));
-            }
-
-            // 组合字段
-            if (def.startsWith("=@merge:")) {
-                return merge(watch, def.substring(8));
-            }
-
-            // 自定方法
-            try {
-                String c, p ;
-                int i  = def.indexOf  (':');
-                if (i != -1) {
-                    c  = def.substring(1,i);
-                    p  = def.substring(1+i);
-                } else {
-                    c  = def.substring( 1 );
-                    p  = "" ;
-                }
-                return ((Def) Core.getInstance(c)).def(watch, p);
-            }
-            catch (HongsExemption | ClassCastException ex) {
-                throw new HongsExemption(500 , "Wrong default param", ex);
-            }
+        // 会话属性
+        if (def.startsWith("=$")) {
+            return Core.getInstance(ActionHelper.class).getSessibute(def.substring(2));
         }
 
         if (def.startsWith("=%")) {
@@ -167,13 +134,61 @@ public class Default extends Rule {
             }
         }
 
+        if (def.startsWith("=@")) {
+            // 别名字段, 通常用于截取字串, 清理 HTML
+            if (def.startsWith("=@alias:")) {
+                return alias(watch, def.substring(8));
+            }
+
+            // 组合字段
+            if (def.startsWith("=@merge:")) {
+                return merge(watch, def.substring(8));
+            }
+
+            // 计数字段
+            if (def.startsWith("=@count:")) {
+                return count(watch, def.substring(8));
+            }
+
+            // 其他计算
+            if (def.startsWith("=@max:"  )) {
+                return sum  (watch, def.substring(8));
+            }
+            if (def.startsWith("=@min:"  )) {
+                return sum  (watch, def.substring(8));
+            }
+            if (def.startsWith("=@sum:"  )) {
+                return sum  (watch, def.substring(8));
+            }
+            if (def.startsWith("=@avg:"  )) {
+                return sum  (watch, def.substring(8));
+            }
+
+            // 自定方法
+            try {
+                String c, p ;
+                int i  = def.indexOf  (':');
+                if (i != -1) {
+                    c  = def.substring(1,i);
+                    p  = def.substring(1+i);
+                } else {
+                    c  = def.substring( 1 );
+                    p  = "" ;
+                }
+                return ((Def) Core.getInstance(c)).def(watch, p);
+            }
+            catch (HongsExemption | ClassCastException e) {
+                throw new HongsExemption(500, "Wrong default param", e);
+            }
+        }
+
         return  val;
     }
 
     private static final Pattern NOW = Pattern.compile ("^=%(time|now)([+\\-]\\d+)?$");
     private static final Pattern INJ = Pattern.compile ("\\$(\\$|\\w+|\\{.+?\\})");
 
-    public Object alias(Value watch, String param) {
+    public static Object alias(Value watch, String param) {
         Object v = Dict.getParam(watch.getCleans(), BLANK, param);
         if (v == BLANK) {
             return BLANK;
@@ -184,7 +199,7 @@ public class Default extends Rule {
         return v;
     }
 
-    public Object count(Value watch, String param) {
+    public static Object count(Value watch, String param) {
         Object v = Dict.getParam(watch.getCleans(), BLANK, param);
         if (v == BLANK) {
             return BLANK;
@@ -204,7 +219,7 @@ public class Default extends Rule {
         return v.toString().length();
     }
 
-    public Object merge(Value watch, String param) throws Wrong {
+    public static Object merge(Value watch, String param) throws Wrong {
         Map vars = watch.getCleans();
         Set a = Synt.setOf(); // 缺失的键
         int i = 0; // 缺值数量
@@ -271,6 +286,92 @@ public class Default extends Rule {
 
         matcher.appendTail(sb);
         return sb.toString(  );
+    }
+
+    public static Object max(Value watch, String param) throws Wrong {
+        Object v = Dict.getParam(watch.getCleans(), BLANK, param);
+        if (v == BLANK) {
+            return BLANK;
+        }
+        List l = Synt.asList(v);
+        if (l == null || l.isEmpty( ) ) {
+            return null ;
+        }
+            Double c = null;
+        for(Object o : l ) {
+            Double n = Synt.asDouble(o);
+            if (n != null
+            && (c == null
+            ||  c  < n ) ) {
+                c  = n ;
+            }
+        }
+        return  c  ;
+    }
+
+    public static Object min(Value watch, String param) throws Wrong {
+        Object v = Dict.getParam(watch.getCleans(), BLANK, param);
+        if (v == BLANK) {
+            return BLANK;
+        }
+        List l = Synt.asList(v);
+        if (l == null || l.isEmpty( ) ) {
+            return null ;
+        }
+            Double c = null;
+        for(Object o : l ) {
+            Double n = Synt.asDouble(o);
+            if (n != null
+            && (c == null
+            ||  c  > n ) ) {
+                c  = n ;
+            }
+        }
+        return  c  ;
+    }
+
+    public static Object sum(Value watch, String param) throws Wrong {
+        Object v = Dict.getParam(watch.getCleans(), BLANK, param);
+        if (v == BLANK) {
+            return BLANK;
+        }
+        List l = Synt.asList(v);
+        if (l == null || l.isEmpty( ) ) {
+            return null ;
+        }
+            Double c = null;
+        for(Object o : l ) {
+            Double n = Synt.asDouble(o);
+            if (n != null) {
+            if (c != null) {
+                c += n;
+            } else {
+                c  = n;
+            }}
+        }
+        return  c  ;
+    }
+
+    public static Object avg(Value watch, String param) throws Wrong {
+        Object v = Dict.getParam(watch.getCleans(), BLANK, param);
+        if (v == BLANK) {
+            return BLANK;
+        }
+        List l = Synt.asList(v);
+        if (l == null || l.isEmpty( ) ) {
+            return null ;
+        }
+            Double c = null;
+        for(Object o : l ) {
+            Double n = Synt.asDouble(o);
+            if (n != null) {
+            if (c != null) {
+                c += n;
+            } else {
+                c  = n;
+            }}
+        }
+        return  c  / l.size();
     }
 
     /**

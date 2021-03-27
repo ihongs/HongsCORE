@@ -12,6 +12,7 @@ import io.github.ihongs.util.verify.Repeated;
 import io.github.ihongs.util.verify.Required;
 import io.github.ihongs.util.verify.Rule;
 import io.github.ihongs.util.verify.Verify;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.HashMap;
 import java.util.Map;
@@ -165,15 +166,24 @@ public class VerifyHelper extends Verify {
 
                 Rule rule;
                 try {
-                    rule = (Rule) (Class.forName(item).newInstance());
+                    rule = (Rule) (Class.forName(item).getDeclaredConstructor().newInstance());
                 }
                 catch (ClassNotFoundException ex) {
+                    throw new HongsException(1125, "Failed to get rule: "+item+" in "+conf+":"+form, ex);
+                }
+                catch ( NoSuchMethodException ex) {
                     throw new HongsException(1125, "Failed to get rule: "+item+" in "+conf+":"+form, ex);
                 }
                 catch (InstantiationException ex) {
                     throw new HongsException(1126, "Failed to get rule: "+item+" in "+conf+":"+form, ex);
                 }
                 catch (IllegalAccessException ex) {
+                    throw new HongsException(1126, "Failed to get rule: "+item+" in "+conf+":"+form, ex);
+                }
+                catch (IllegalArgumentException  ex) {
+                    throw new HongsException(1126, "Failed to get rule: "+item+" in "+conf+":"+form, ex);
+                }
+                catch (InvocationTargetException ex) {
                     throw new HongsException(1126, "Failed to get rule: "+item+" in "+conf+":"+form, ex);
                 }
                 catch (ClassCastException ex) {

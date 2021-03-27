@@ -10,6 +10,7 @@ import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.TimeZone;
@@ -210,12 +211,17 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         if (ss != null) for (String sn:ss.split(";")) {
             sn = sn.trim( ); if ( 0 != sn.length( ) )
             try {
-                ( (Runnable) Class.forName (sn).newInstance() ).run( );
+                ((Runnable) Class.forName(sn).getDeclaredConstructor().newInstance())
+                    .run( );
             } catch (ClassNotFoundException ex) {
+                throw new  ServletException(ex);
+            } catch ( NoSuchMethodException ex) {
+                throw new  ServletException(ex);
+            } catch (IllegalAccessException ex) {
                 throw new  ServletException(ex);
             } catch (InstantiationException ex) {
                 throw new  ServletException(ex);
-            } catch (IllegalAccessException ex) {
+            } catch (InvocationTargetException ex) {
                 throw new  ServletException(ex);
             }
         }

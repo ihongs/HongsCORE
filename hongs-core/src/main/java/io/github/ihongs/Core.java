@@ -1,5 +1,6 @@
 package io.github.ihongs;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Locale;
@@ -250,11 +251,11 @@ abstract public class Core
       {
         throw new HongsExemption(823, "Can not build "+clas.getName(), ex);
       }
-      catch (IllegalArgumentException ex)
+      catch (IllegalArgumentException  ex)
       {
         throw new HongsExemption(823, "Can not build "+clas.getName(), ex);
       }
-      catch (java.lang.reflect.InvocationTargetException  ex )
+      catch (InvocationTargetException ex)
       {
         Throwable ta = ex.getCause();
 
@@ -272,13 +273,21 @@ abstract public class Core
       // 获取标准对象
       try
       {
-        return clas.newInstance();
+        return clas.getDeclaredConstructor().newInstance();
+      }
+      catch ( NoSuchMethodException ex)
+      {
+        throw new HongsExemption(824, "Can not build "+clas.getName(), ex);
+      }
+      catch (InstantiationException ex)
+      {
+        throw new HongsExemption(824, "Can not build "+clas.getName(), ex);
       }
       catch (IllegalAccessException ex)
       {
         throw new HongsExemption(824, "Can not build "+clas.getName(), ex);
       }
-      catch (InstantiationException ex)
+      catch (InvocationTargetException ex)
       {
         Throwable ta = ex.getCause();
 

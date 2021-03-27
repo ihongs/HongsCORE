@@ -4,7 +4,6 @@ import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
-import io.github.ihongs.cmdlet.CmdletHelper;
 import io.github.ihongs.cmdlet.anno.Cmdlet;
 import io.github.ihongs.db.DBConfig;
 import io.github.ihongs.util.reflex.Classes;
@@ -13,6 +12,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
+import java.lang.reflect.InvocationTargetException;
 import java.util.EventListener;
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -116,7 +116,7 @@ public class ServerCmdlet {
          * 可能需要替换 JSP 解析器或 Session 容器
          * 可以设置 jetty.init 来注入 Initer 对象
          */
-        x = CoreConfig.getInstance("defines").getProperty( "jetty.init" );
+        x = CoreConfig.getInstance("defines").getProperty("jetty.init");
         if (null !=  x) {
             String[] a = x.split(";");
             for ( String n  : a ) {
@@ -126,12 +126,17 @@ public class ServerCmdlet {
                 }
 
                 try {
-                    ((Initer)Class.forName(n).newInstance()).init(webapp);
+                    ((Initer) Class.forName (n).getDeclaredConstructor().newInstance())
+                        .init(webapp);
                 } catch (ClassNotFoundException e) {
+                    throw new HongsExemption(e);
+                } catch ( NoSuchMethodException e) {
                     throw new HongsExemption(e);
                 } catch (InstantiationException e) {
                     throw new HongsExemption(e);
                 } catch (IllegalAccessException e) {
+                    throw new HongsExemption(e);
+                } catch (InvocationTargetException e) {
                     throw new HongsExemption(e);
                 }
             }

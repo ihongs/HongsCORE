@@ -150,16 +150,14 @@ HsForm.prototype = {
         fns = { }; fts = { }; fls = { };
         for(i = 0; i < fds.length; i ++) {
             v = jQuery(fds[i]);
-            n = v.attr("name");
-            if (! n) {
-                n  = v.data("fn");
-            }
-            if (! n) {
+            n = v.data( "fn" ) || v.attr("name");
+            t = v.data( "ft" );
+            f = v.data( "dl" );
+            if (! n || fns[n]) {
                 continue;
             }
             fns[n] = n;
-            fts[n] = v.data("ft");
-                f  = v.data("dl");
+            fts[n] = t;
 
             // 解析填充方法
             if (f && typeof f != "function") {
@@ -186,9 +184,12 @@ HsForm.prototype = {
 
             // 获取当前待填充的节点
             // 非表单项可能仅需显示
-                i = this.formBox.find('[name="'   +n+'"]').not(".form-ignored");
-            if (i.length === 0 ) {
                 i = this.formBox.find('[data-fn="'+n+'"]').not(".form-ignored");
+            if (i.length === 0 ) {
+                i = this.formBox.find('[name="'   +n+'"]').not(".form-ignored");
+            } else
+            if (t === undefined) {
+                t  =  "_review";
             }
 
             // 调节
@@ -222,16 +223,14 @@ HsForm.prototype = {
         fns = { }; fts = { }; fls = { };
         for(i = 0; i < fds.length; i ++) {
             v = jQuery(fds[i]);
-            n = v.attr("name");
-            if (! n) {
-                n  = v.data("fn");
-            }
-            if (! n) {
+            n = v.data( "fn" ) || v.attr("name");
+            t = v.data( "ft" );
+            f = v.data( "fl" );
+            if (! n || fns[n]) {
                 continue;
             }
             fns[n] = n;
-            fts[n] = v.data("ft");
-                f  = v.data("fl");
+            fts[n] = t;
 
             // 解析填充方法
             if (f && typeof f != "function") {
@@ -258,12 +257,12 @@ HsForm.prototype = {
 
             // 获取当前待填充的节点
             // 非表单项可能仅需显示
-                i = this.formBox.find('[name="'   +n+'"]').not(".form-ignored");
-            if (i.length === 0 ) {
                 i = this.formBox.find('[data-fn="'+n+'"]').not(".form-ignored");
-                if (t === undefined) {
-                    t  =  "_review";
-                }
+            if (i.length === 0 ) {
+                i = this.formBox.find('[name="'   +n+'"]').not(".form-ignored");
+            } else
+            if (t === undefined) {
+                t  =  "_review";
             }
 
             // 调节
@@ -282,16 +281,7 @@ HsForm.prototype = {
                 continue;
             }
 
-            if (i.attr("type") == "checkbox"
-            ||  i.attr("type") == "radio") {
-                jQuery.each(! jQuery.isArray(v) ? [v] : v ,
-                function(j, u) {
-                    i.filter ("[value='"+u+"']")
-                     .prop   ("checked" , true )
-                     .change ( );
-                });
-            } else
-            if (i.attr("type") == "file" ) {
+            if (i.attr("type") === "file") {
                 i.attr("data-value", v).change();
             } else
             if (i.is  ("input,select,textarea")) {
@@ -487,6 +477,10 @@ HsForm.prototype = {
         return jQuery.hsWarn.apply(window, arguments);
     },
 
+    _doll__review : function(inp, v, n) {
+        inp.data("data", v);
+        return  v ;
+    },
     _fill__review : function(inp, v, n) {
         if (v === undefined
         ||  v === null) {
@@ -553,10 +547,7 @@ HsForm.prototype = {
 
         return  v ;
     },
-    _doll__review : function(inp, v, n) {
-        inp.data("data", v);
-        return  v ;
-    },
+
     _doll__select : function(inp, v, n) {
         if (v === undefined) return ;
         var vk = inp.attr("data-vk"); if(!vk) vk = 0;
@@ -641,6 +632,7 @@ HsForm.prototype = {
             inp.find("input").first( ).change();
         }
     },
+
     _doll__checkset : function(inp, v, n) {
         if (v === undefined) return ;
         var vk = inp.attr("data-vk"); if(!vk) vk = 0;
@@ -682,6 +674,17 @@ HsForm.prototype = {
         }
 
         inp.hsReady();
+    },
+    _fill__checkset : function(inp, v, n) {
+        inp.find(":checkbox"). not(".checkall").val( v );
+        inp.find( "fieldset").each( function( ) {
+            var box = $(this);
+            var siz = box.find(":checkbox:not(.checkall)"        ).length;
+            var len = box.find(":checkbox:not(.checkall):checked").length;
+            var ckd = siz && siz === len ? true
+                  : ( len && siz !== len ? null : false);
+            box.find(".checkall").prop( "choosed", ckd );
+        });
     },
 
     _fill__htime : function(td, v, n) {

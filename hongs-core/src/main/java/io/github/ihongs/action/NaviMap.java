@@ -932,7 +932,7 @@ public class NaviMap
               && !rolez.contains(n)) {
                   continue; // 无权
               }
-              if (q.contains(n)) {
+              if (/**/q.contains(n)) {
                   continue; // 重复
               }
 
@@ -955,6 +955,8 @@ public class NaviMap
               role.put("hint", b);
               role.put("rels", x);
               rolz.add(role);
+
+              q.add(n);
           }
 
           if (! rolz.isEmpty()) {

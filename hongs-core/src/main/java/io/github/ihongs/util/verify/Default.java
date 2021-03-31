@@ -152,16 +152,16 @@ public class Default extends Rule {
 
             // 其他计算
             if (def.startsWith("=@max:"  )) {
-                return sum  (watch, def.substring(8));
+                return max  (watch, def.substring(6));
             }
             if (def.startsWith("=@min:"  )) {
-                return sum  (watch, def.substring(8));
+                return min  (watch, def.substring(6));
             }
             if (def.startsWith("=@sum:"  )) {
-                return sum  (watch, def.substring(8));
+                return sum  (watch, def.substring(6));
             }
             if (def.startsWith("=@avg:"  )) {
-                return sum  (watch, def.substring(8));
+                return avg  (watch, def.substring(6));
             }
 
             // 自定方法
@@ -169,16 +169,16 @@ public class Default extends Rule {
                 String c, p ;
                 int i  = def.indexOf  (':');
                 if (i != -1) {
-                    c  = def.substring(1,i);
+                    c  = def.substring(2,i);
                     p  = def.substring(1+i);
                 } else {
-                    c  = def.substring( 1 );
+                    c  = def.substring( 2 );
                     p  = "" ;
                 }
                 return ((Def) Core.getInstance(c)).def(watch, p);
             }
             catch (HongsExemption | ClassCastException e) {
-                throw new HongsExemption(500, "Wrong default param", e);
+                throw new HongsExemption(e);
             }
         }
 

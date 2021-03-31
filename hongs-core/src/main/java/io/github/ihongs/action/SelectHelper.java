@@ -175,7 +175,7 @@ public class SelectHelper {
                 continue ;
             }
 
-            Object  defo = (String) mt.get("default" );
+            Object  defo =          mt.get("default" );
             String  type = (String) mt.get("__type__");
                     type = (String) ts.get(   type   ); // 类型别名转换
 

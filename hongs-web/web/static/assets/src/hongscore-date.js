@@ -193,7 +193,7 @@
 
     function _makeAddons(txt) {
         var spn = $('<span class="input-group-addon"></span>');
-        spn.text ( txt );
+        spn.text(txt.replace(/^'|'$/g , ""));
         return spn ;
     }
 

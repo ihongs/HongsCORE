@@ -40,14 +40,14 @@
              * 新增时只读字段无默认值的,
              * 转为非只读字段供首次输入.
              */
-            if (roly) {
+            if (roly && "create".equals(_action)) {
+                Object defoult = info.get("default");
                 Object deforce = info.get("deforce");
-                if ("always".equals(deforce)
-                ||  _action .equals(deforce)) {
-                    continue;
-                } else
-                if ("create".equals(_action)) {
+                if ((null == defoult || "".equals(defoult) )
+                && ( null == deforce || "".equals(deforce))) {
                     roly = false;
+                } else {
+                    continue;
                 }
             }
         %>
@@ -59,23 +59,31 @@
             <%
                 //** 此部分来自 info.jsp **/
 
-                String  kind = "_review";
+                String kind = "_review";
 
                 if ("datetime".equals(type)
                 ||      "date".equals(type)
                 ||      "time".equals(type)) {
+                    kind = "_" + type;
                     // 日期类需注意 Unix 时间戳需要乘 1000
-                    String typa = (String) info.get("type");
-                    if (text == null || text.length() == 0) {
-                        continue;
-                    } else
-                    if (typa == null || typa.length() == 0
-                    ||  "date".equals(typa)
-                    ||  "time".equals(typa)) {
-                        kind  = "_" + type;
-                    } else {
-                        kind  = "_" + type;
-                        kind += "\" data-fl=\"!v?v:v*1000" ;
+                    Object typa = info.get("type");
+                    if ("timestamp".equals( typa )
+                    ||  "datestamp".equals( typa )) {
+                        kind += "\" data-fl=\"!v?v:v*1000";
+                    }
+                    // 自定义格式化
+                    String frmt = (String) info.get("format");
+                    if (frmt != null && frmt.length( ) != 0 ) {
+                        kind += "\" data-format=\"" + frmt;
+                    }
+                } else
+                if (  "number".equals(type)
+                ||     "range".equals(type)
+                ||     "color".equals(type)) {
+                    // 自定义格式化
+                    String frmt = (String) info.get("format");
+                    if (frmt != null && frmt.length( ) != 0 ) {
+                        kind += "\" data-format=\"" + frmt;
                     }
                 } else
                 if (  "select".equals(type)

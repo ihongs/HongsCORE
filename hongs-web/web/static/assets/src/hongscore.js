@@ -1301,20 +1301,135 @@ function hsFixPms(uri, pms) {
 };
 
 /**
+ * 格式文本
+ * 类似 rintf(FORMAT, ARG1, ARG2...)
+ * @returns {String}
+ */
+function hsFormat() {
+    if (!arguments && !arguments.length) {
+        throw new Error("hsFormat: params required");
+    }
+
+    function _al(s, l, b) {
+        var i = s.length;
+        for(; i < l; i ++) {
+            s = s + b;
+        }
+        return  s ;
+    }
+    function _ar(s, l, b) {
+        var i = s.length;
+        for(; i < l; i ++) {
+            s = b + s;
+        }
+        return  s ;
+    }
+
+    var i = 0;
+    var a = arguments;
+    return (a[i++]+"").replace(
+    /%%|%(\-?\+?#?0?)(\d+)?(?:\.(\d+))?([csdfiuoxX])/g,
+    function (s, f, l, d, t) {
+        if (s === '%%') {
+            return '%';
+        }
+
+        s = a[i++];
+        l = l ? parseInt(l) : -1;
+        d = d ? parseInt(d) : -1;
+
+        switch (t) {
+            case 'c':
+            case 's':
+                if (f.indexOf('-') !== -1) {
+                    s = _al(s, l, ' ');
+                } else {
+                    s = _ar(s, l, ' ');
+                }
+                break;
+            default:
+                var n, r, x, z;
+
+                // 进制
+                switch (t) {
+                    case 'o': r =  8; x = '0' ; break;
+                    case 'x': r = 16; x = '0x'; break;
+                    case 'X': r = 16; x = '0X'; break;
+                    default : r = 10; x = ''  ; break;
+                }
+
+                // 四舍五入
+                n = parseFloat(s);
+                if (d >= 0) {
+                    var p;
+                    p = Math.pow  (r, d);
+                    n = Math.round(n* p) / p;
+                }
+                s = n.toString(r);
+                if (t === 'X') {
+                    s = s.toUpperCase( );
+                }
+
+                // 小数补位
+                if (d >= 1) {
+                    var p, y;
+                    p = s.indexOf('.');
+                    if (p === -1) {
+                        p  = s.length ;
+                        s  = s  + '.' ;
+                    }
+                    y = f.indexOf('0') !== -1 ? '0' : ' ';
+                    for(var j = s.length - p; j < d; j ++) {
+                        s += y;
+                    }
+                }
+
+                // 补位
+                if (n < 0) {
+                    s = s.substring(1);
+                    z = "-";
+                } else
+                if (f.indexOf('+') !== -1) {
+                    z = "+";
+                } else {
+                    z = '' ;
+                }
+                if (f.indexOf('#') === -1) {
+                    x = '' ;
+                }
+                if (f.indexOf('0') !== -1) {
+                    s = _ar(s, l - z.length - x.length, '0');
+                    s = z + x + s;
+                } else {
+                    s = z + x + s;
+                    s = _ar(s, l - z.length - x.length, ' ');
+                }
+
+                break;
+        }
+        return  s;
+    });
+}
+
+/**
  * 格式数字
  * @param {Number} num
- * @param {Number} len 总长度(不含小数点)
+ * @param {Number} len 整数位
  * @param {Number} dec 小数位
- * @param {String} sep 千分符
+ * @param {Number} seg 分位长
+ * @param {String} sep 分位符
  * @param {String} dot 小数点
  * @return {String}
  */
-function hsFmtNum(num, len, dec, sep, dot) {
+function hsFmtNum(num, len, dec, seg, sep, dot) {
   if (typeof(len) === "undefined") {
-    len = 0;
+    len = -1 ;
   }
   if (typeof(dec) === "undefined") {
-    dec = 0;
+    dec = -1 ;
+  }
+  if (typeof(seg) === "undefined") {
+    seg =  0 ;
   }
   if (typeof(sep) === "undefined") {
     sep = ",";
@@ -1332,8 +1447,11 @@ function hsFmtNum(num, len, dec, sep, dot) {
   sym = sym < 0 ? "-" : "" ;
 
   // 四舍五入
-  var p = Math.pow(10, dec);
-  num = ( Math.round(num * p) / p).toString();
+  if ( dec !== -1 ) {
+    var p = Math.pow(10, dec);
+    num = Math.round(num*p)/p;
+  }
+  num = num.toString( );
 
   var a = num.split(".", 2);
   if (a.length < 2) {
@@ -1363,12 +1481,12 @@ function hsFmtNum(num, len, dec, sep, dot) {
   dec = "";
 
   // 添加分隔符
-  if (sep) {
+  if (seg && sep) {
     var k, s  = "";
     // 整数部分从右往左每3位分割
     while (n != "") {
-      k = (n.length - 3);
-      s = n.substring( k );
+      k = (n.length - seg);
+      s = n.substring(  k);
       n = n.substring(0,k);
       num = s + sep + num ;
     }
@@ -1379,13 +1497,15 @@ function hsFmtNum(num, len, dec, sep, dot) {
     }
     // 小数部分从左往右每3位分割
     while (d != "") {
-      s = d.substring(0,3);
-      d = d.substring( 3 );
+      k = seg;
+      s = d.substring(0,k);
+      d = d.substring(  k);
       dec = dec + sep + s ;
     }
     // 小数部分扔掉最左边一位
     if (dec) {
-      dec = dec.substring( 1 );
+      k = seg;
+      dec = dec.substring(  k);
     }
   }
   else {
@@ -1513,11 +1633,11 @@ function hsFmtDate(date, format) {
       case 'U':
         return U;
       default:
-        return mat;
+        return mat.substring(1, len - 1);
     }
   }
 
-  return format.replace(/M+|d+|y+|H+|k+|K+|h+|m+|s+|S+|a+|E+|u+|U+|'.*'/g, _replace);
+  return format.replace(/M+|d+|y+|H+|k+|K+|h+|m+|s+|S+|a+|E+|u+|U+|'.*?'/g, _replace);
 }
 
 /**

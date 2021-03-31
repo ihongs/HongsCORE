@@ -57,18 +57,26 @@
                 if ("datetime".equals(type)
                 ||      "date".equals(type)
                 ||      "time".equals(type)) {
+                    kind = "_" + type;
                     // 日期类需注意 Unix 时间戳需要乘 1000
-                    String typa = (String) info.get("type");
-                    if (text == null || text.length() == 0) {
-                        continue;
-                    } else
-                    if (typa == null || typa.length() == 0
-                    ||  "date".equals(typa)
-                    ||  "time".equals(typa)) {
-                        kind  = "_" + type;
-                    } else {
-                        kind  = "_" + type;
-                        kind += "\" data-fl=\"!v?v:v*1000" ;
+                    Object typa = info.get("type");
+                    if ("timestamp".equals( typa )
+                    ||  "datestamp".equals( typa )) {
+                        kind += "\" data-fl=\"!v?v:v*1000";
+                    }
+                    // 自定义格式化
+                    String frmt = (String) info.get("format");
+                    if (frmt != null && frmt.length( ) != 0 ) {
+                        kind += "\" data-format=\"" + frmt;
+                    }
+                } else
+                if (  "number".equals(type)
+                ||     "range".equals(type)
+                ||     "color".equals(type)) {
+                    // 自定义格式化
+                    String frmt = (String) info.get("format");
+                    if (frmt != null && frmt.length( ) != 0 ) {
+                        kind += "\" data-format=\"" + frmt;
                     }
                 } else
                 if (  "select".equals(type)

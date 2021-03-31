@@ -477,77 +477,6 @@ HsForm.prototype = {
         return jQuery.hsWarn.apply(window, arguments);
     },
 
-    _doll__review : function(inp, v, n) {
-        inp.data("data", v);
-        return  v ;
-    },
-    _fill__review : function(inp, v, n) {
-        if (v === undefined
-        ||  v === null) {
-            return;
-        }
-
-        // 链接,图片,视频,音频
-        if (inp.is("a,img,video,audio")) {
-            var u = ! v ? v : hsFixUri(  v );
-            inp.filter("a:empty").text(  v );
-            inp.filter("a").attr("href", u );
-            inp.filter("a.a-email").attr("href", "mailto:"+v);
-            inp.filter("a.a-tel").attr("href", "tel:"+v);
-            inp.filter("a.a-sms").attr("href", "sms:"+v);
-            inp.filter("img,video,audio").attr("src", u);
-            return;
-        }
-
-        // 枚举,列表,选项,标签
-        if (inp.is("ul,ol,.repeated,.multiple")) {
-            var k = inp.attr("data-vk") || 0;
-            var t = inp.attr("data-tk") || 1;
-            var a = inp.data("data")  ||  [];
-            var x = jQuery( inp.is("ul,ol") ? '<li></li>' : '<div></div>' );
-            var m = { };
-            var i, c, e;
-
-            x.attr("class", inp.attr("data-item-class"));
-            x.attr("style", inp.attr("data-item-style"));
-            inp.empty( );
-
-            if (! jQuery.isArray(v)) {
-                v =  [v];
-            }
-
-            // 构建枚举映射
-            for(i = 0; i < a.length; i ++) {
-                c = a[i];
-                m [ c[t] ]  =  c[k];
-            }
-
-            // 写入列表选项
-            for(i = 0; i < v.length; i ++) {
-                c = v[i];
-                if (jQuery.isPlainObject (c)
-                ||  jQuery.isArray (c) ) {
-                    e = c[t];
-                    c = c[k];
-                } else {
-                    e = m[c];
-                    if (e === undefined) {
-                        e = c;
-                    }
-                }
-
-                x.text(/* label */  e);
-                x.attr(  "title"  , e);
-                x.attr("data-code", c);
-                inp.append(x.clone( ));
-            }
-
-            return;
-        }
-
-        return  v ;
-    },
-
     _doll__select : function(inp, v, n) {
         if (v === undefined) return ;
         var vk = inp.attr("data-vk"); if(!vk) vk = 0;
@@ -574,6 +503,7 @@ HsForm.prototype = {
             inp.change();
         }
     },
+
     _doll__radio : function(inp, v, n) {
         if (v === undefined) return ;
         var vk = inp.attr("data-vk"); if(!vk) vk = 0;
@@ -603,6 +533,15 @@ HsForm.prototype = {
             inp.find("input").first( ).change();
         }
     },
+    _fill__radio : function(inp, v, n) {
+        if (v ===  undefined  ) {
+            return ;
+        }
+        if (!jQuery.isArray(v)) {
+            v = [v];
+        }
+        inp.find(":radio"   ).val(v).first().change();
+    },
     _doll__check : function(inp, v, n) {
         if (v === undefined) return ;
         var vk = inp.attr("data-vk"); if(!vk) vk = 0;
@@ -631,6 +570,15 @@ HsForm.prototype = {
         if (inp.closest(".form-group").hasClass("has-error")) {
             inp.find("input").first( ).change();
         }
+    },
+    _fill__check : function(inp, v, n) {
+        if (v ===  undefined  ) {
+            return ;
+        }
+        if (!jQuery.isArray(v)) {
+            v = [v];
+        }
+        inp.find(":checkbox").val(v).first().change();
     },
 
     _doll__checkset : function(inp, v, n) {
@@ -676,6 +624,7 @@ HsForm.prototype = {
         inp.hsReady();
     },
     _fill__checkset : function(inp, v, n) {
+        if (v === undefined ) return;
         inp.find(":checkbox"). not(".checkall").val( v );
         inp.find( "fieldset").each( function( ) {
             var box = $(this);
@@ -685,6 +634,102 @@ HsForm.prototype = {
                   : ( len && siz !== len ? null : false);
             box.find(".checkall").prop( "choosed", ckd );
         });
+    },
+
+    _doll__review : function(inp, v, n) {
+        inp.data("data" , v);
+    },
+    _fill__review : function(inp, v, n) {
+        if (v === undefined
+        ||  v === null) {
+            return;
+        }
+
+        // 链接,图片,视频,音频
+        if (inp.is("a,img,video,audio")) {
+            var u = ! v ? v : hsFixUri(  v );
+            inp.filter("a:empty").text(  v );
+            inp.filter("a").attr("href", u );
+            inp.filter("a.a-email").attr("href", "mailto:"+v);
+            inp.filter("a.a-tel").attr("href", "tel:"+v);
+            inp.filter("a.a-sms").attr("href", "sms:"+v);
+            inp.filter("img,video,audio").attr("src", u);
+            return;
+        }
+
+        // 枚举,列表,选项,标签
+        if (inp.is("ul,ol,.repeated,.multiple")) {
+            var a = inp.data("data") || [];
+            var k = inp.attr("data-vk") || 0;
+            var t = inp.attr("data-tk") || 1;
+            var x = jQuery( inp.is("ul,ol") ? '<li></li>' : '<div></div>' );
+            var m = { };
+            var i, c, e;
+
+            x.attr("class", inp.attr("data-item-class"));
+            x.attr("style", inp.attr("data-item-style"));
+            inp.empty( );
+
+            if (! jQuery.isArray(v)) {
+                v =  [v];
+            }
+
+            // 构建枚举映射
+            for(i = 0; i < a.length; i ++) {
+                c = a[i];
+                m [ c[t] ]  =  c[k];
+            }
+
+            // 写入列表选项
+            for(i = 0; i < v.length; i ++) {
+                c = v[i];
+                if (jQuery.isPlainObject (c)
+                ||  jQuery.isArray (c) ) {
+                    e = c[t];
+                    c = c[k];
+                } else {
+                    e = m[c];
+                    if (e === undefined) {
+                        e = c;
+                    }
+                }
+
+                x.text(/* label */  e);
+                x.attr(  "title"  , e);
+                x.attr("data-code", c);
+                inp.append(x.clone( ));
+            }
+
+            return;
+        }
+
+        // 格式化
+        v = this._fill__format(inp, v, n);
+
+        return  v ;
+    },
+
+    _fill__format : function(td, v, n) {
+        var f = td.data("format");
+        var t = td.data( "type" );
+        if (f) switch(t) {
+            case "datetime":
+            case "date":
+            case "time":
+                if (! f) {
+                    f = hsGetLang(t+".format");
+                }
+                return  hsFmtDate(v, f);
+            default:
+                if (! f) {
+                    f = "" ;
+                }
+                if (! jQuery.isArray(v)) {
+                    v = [v];
+                }
+                return  hsFormat (f, v);
+        }
+        return  v ;
     },
 
     _fill__htime : function(td, v, n) {
@@ -717,15 +762,15 @@ HsForm.prototype = {
     },
     _fill__datetime : function(td, v, n) {
         if (v === undefined) return v;
-        return hsFmtDate(v, hsGetLang("datetime.format"));
+        return hsFmtDate(v, td.data("format") || hsGetLang("datetime.format"));
     },
     _fill__date : function(td, v, n) {
         if (v === undefined) return v;
-        return hsFmtDate(v, hsGetLang("date.format"));
+        return hsFmtDate(v, td.data("format") || hsGetLang("date.format"));
     },
     _fill__time : function(td, v, n) {
         if (v === undefined) return v;
-        return hsFmtDate(v, hsGetLang("time.format"));
+        return hsFmtDate(v, td.data("format") || hsGetLang("time.format"));
     },
     _fill__html : function(td, v, n) {
         if (v === undefined) return v;

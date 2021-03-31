@@ -960,6 +960,8 @@ jQuery.fn.hsPops = function(opts) {
 function HsVeil (sup, sub) {
     this.sup = jQuery(sup);
     this.sub = jQuery(sub);
+    this.sup.data("sub", sub);
+    this.sub.data("sup", sup);
 }
 HsVeil.prototype = {
     show: function() {

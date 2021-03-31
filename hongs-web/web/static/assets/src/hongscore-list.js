@@ -586,6 +586,29 @@ HsList.prototype = {
 
     // /** 填充函数 **/
 
+    _fill__format : function(td, v, n) {
+        var f = td.data("format");
+        var t = td.data( "type" );
+        if (f) switch(t) {
+            case "datetime":
+            case "date":
+            case "time":
+                if (! f) {
+                    f = hsGetLang(t+".format");
+                }
+                return  hsFmtDate(v, f);
+            default:
+                if (! f) {
+                    f = "" ;
+                }
+                if (! jQuery.isArray(v)) {
+                    v = [v];
+                }
+                return  hsFormat (f, v);
+        }
+        return  v ;
+    },
+
     _fill__admin : function(td, v, n) {
         this.listBox.find( 'thead th,thead td' ).eq(td.index( ))
             .find(".invisible").clone().removeClass("invisible")

@@ -253,24 +253,45 @@
                     }
 
                     // Unix 时间戳类需乘 1000 以转换为毫秒
-                    if ( "datetime".equals(type)
-                    ||       "date".equals(type)
-                    ||       "time".equals(type)) {
-                        Object typa = info.get ( "type" );
-                    if ("timestamp".equals(typa)
-                    ||  "datestamp".equals(typa)) {
-                        ob += " data-fl=\"!v?v:v* 1000\"";
-                    }}
+                    if ("datetime".equals(type)
+                    ||      "date".equals(type)
+                    ||      "time".equals(type)) {
+                        Object typa = info.get("type");
+                        if ("timestamp".equals( typa )
+                        ||  "datestamp".equals( typa )) {
+                            ob += " data-fl=\"!v?v:v*1000\"";
+                        }
+                        // 自定义格式化
+                        String frmt = (String) info.get("format");
+                        if (frmt != null && frmt.length( ) != 0 ) {
+                            ob += "\" data-format=\"" + frmt;
+                        } else
+                        // 默认为短格式
+                        if ("datetime" .equals( type )) {
+                            type  = "htime";
+                        }
+                    } else
+                    if (  "number".equals(type)
+                    ||     "range".equals(type)
+                    ||     "color".equals(type)) {
+                        // 自定义格式化
+                        String frmt = (String) info.get("format");
+                        if (frmt != null && frmt.length( ) != 0 ) {
+                            ob += "\" data-format=\"" + frmt;
+                        }
+                    }
 
                     _rb.append(',').append(name);
                 %>
                 <%if ("number".equals(type) || "range".equals(type) || "color".equals(type)) {%>
                     <th data-fn="<%=name%>" <%=ob%> class="<%=oc%> numerial text-right"><%=text%></th>
+                <%} else if ("datetime".equals(type)) {%>
+                    <th data-fn="<%=name%>" data-ft="_datetime" <%=ob%> class="<%=oc%> numerial _htime"><%=text%></th>
                 <%} else if ("date".equals(type)) {%>
                     <th data-fn="<%=name%>" data-ft="_date"  <%=ob%> class="<%=oc%> numerial date"><%=text%></th>
                 <%} else if ("time".equals(type)) {%>
                     <th data-fn="<%=name%>" data-ft="_time"  <%=ob%> class="<%=oc%> numerial time"><%=text%></th>
-                <%} else if ("datetime".equals(type)) {%>
+                <%} else if ("htime".equals(type)) {%>
                     <th data-fn="<%=name%>" data-ft="_htime" <%=ob%> class="<%=oc%> numerial _htime"><%=text%></th>
                 <%} else if (  "url".equals(type)) {%>
                     <th data-fn="<%=name%>" data-ft="_ulink" <%=ob%> class="<%=oc%> text-center"><%=text%></th>

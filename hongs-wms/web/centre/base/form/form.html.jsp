@@ -42,10 +42,12 @@
              * 转为非只读字段供首次输入.
              */
             if (roly) {
+                Object defoult = info.get("default");
                 Object deforce = info.get("deforce");
-                if ("always".equals(deforce)
-                ||  "update".equals(deforce)
-                ||  "create".equals(deforce)) {
+                if ((null == defoult || "".equals(defoult) )
+                && ( null == deforce || "".equals(deforce))) {
+                    roly = false;
+                } else {
                     continue;
                 }
             }

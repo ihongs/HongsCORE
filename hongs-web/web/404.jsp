@@ -28,7 +28,6 @@
             text  = CoreLocale.getInstance().translate("core.error.no.thing");
         }
     }
-    String  link  = CoreLocale.getInstance().translate("core.error.to.index");
 %>
 <!--MSG: <%=escapeXML(text)%>-->
 <!doctype html>
@@ -61,9 +60,13 @@
                 <h1>: (</h1>
                 <p> &nbsp; </p>
                 <p> <%=escapeXML(text)%> </p>
-                <p> <a href="<%=request.getContextPath()%>/" class="btn btn-lg btn-primary">
-                    <%=escapeXML(link)%>
-                    </a>
+                <p>
+                    <a class="btn btn-lg btn-success" href="javascript:history.back();">
+                        <%=CoreLocale.getInstance().translate("core.error.go.back")%>
+                    </a> &nbsp;
+                    <a class="btn btn-lg btn-primary" href="<%=request.getContextPath()%>/">
+                        <%=CoreLocale.getInstance().translate("core.error.go.home")%>
+                    </a> &nbsp;
                 </p>
             </div>
         </div>

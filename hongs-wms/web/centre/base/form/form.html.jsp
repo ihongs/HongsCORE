@@ -65,8 +65,16 @@
         <%} else if ("legend".equals(type)) {%>
             <legend class="text-center"><%=text%></legend>
         <%} else {%>
-            <div class="<%=Synt.declare(info.get("page-form-class"), "")%>">
-            <div class="form-group" data-name="<%=name%>">
+            <%
+                String gfc = "";
+                if (rqrd) gfc += " is-required";
+                if (rptd) gfc += " is-repeated";
+                if (roly) gfc += " is-readonly";
+                if (gfc.length() > 0) gfc = gfc.substring(1);
+                String pfc = Synt.declare(info.get("page-form-class"), "");
+            %>
+            <div class="form-grade <%=pfc%>">
+            <div class="form-group <%=gfc%>" data-name="<%=name%>">
                 <label class="control-label">
                     <span class="control-order-txt"><%=++ii%></span><span class="control-order-end"></span>
                     <span class="control-label-txt"><%=text%></span><span class="control-label-end"></span>

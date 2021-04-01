@@ -113,15 +113,19 @@ input[type="time"].form-control {
 .form-group .text-muted:empty {
     display: none;
 }
-.help-block.text-muted,
-.has-error .help-block.text-muted ,
+.help-block.form-control-static {
+    margin-top   : 0;
+    margin-bottom: 0;
+}
+.help-block.text-muted ,
+.has-error   .help-block.text-muted ,
 .has-success .help-block.text-muted ,
 .has-warning .help-block.text-muted {
-    color  : #b7b7b7;
+    color: #777;
 }
-.help-block.form-control-static {
-    margin-bottom: 0;
-    margin-top   : 0;
+.form-icon-required ,
+.form-icon-requires {
+    color: #a44;
 }
 
 .center-block {

@@ -235,16 +235,21 @@ HsList.prototype = {
                 th = jQuery(ths[j]);
                 td = jQuery('<td></td>').appendTo(tr);
                 td.attr( "class" , th.attr("class") );
+                td.attr( "style" , th.attr("style") );
+                td.data(th.data( ));
 
                 n  = th.data("fn");
                 t  = th.data("ft");
                 f  = th.data("fl");
                 if (n !== undefined) {
-                v  = hsGetValue(list[i], n);
+                    v  =  hsGetValue ( list[i], n);
                 if (v === undefined) {
                     v  =  list[i][n];
                 }} else {
                     v  =  undefined ;
+                }
+                if (t === undefined) {
+                    t  =  "_review" ;
                 }
 
                 // 调节
@@ -263,12 +268,11 @@ HsList.prototype = {
                     continue;
                 }
 
-                // 默认数组转字串分隔逗号后无空格
-                if (jQuery.isArray(v)) {
-                    v = v.join( ", ");
+                if (td.is("input,select,textarea")) {
+                    td.val (v);
+                } else {
+                    td.text(v);
                 }
-
-                td.text( v );
             }
         }
 
@@ -586,27 +590,31 @@ HsList.prototype = {
 
     // /** 填充函数 **/
 
-    _fill__format : function(td, v, n) {
-        var f = td.data("format");
-        var t = td.data( "type" );
-        if (f) switch(t) {
-            case "datetime":
-            case "date":
-            case "time":
-                if (! f) {
-                    f = hsGetLang(t+".format");
-                }
-                return  hsFmtDate(v, f);
-            default:
-                if (! f) {
-                    f = "" ;
-                }
-                if (! jQuery.isArray(v)) {
-                    v = [v];
-                }
-                return  hsFormat (f, v);
+    _fill__review : function(td, v, n) {
+        if (v === undefined
+        ||  v === null) {
+            return;
         }
+
+        if (! td.is("input,select,textarea")) {
+            v = this._fill__format(td, v, n);
+            if (jQuery.isArray(v)) {
+                v = v.join( ", ");
+            }
+        }
+
         return  v ;
+    },
+    _fill__format : function(td, v, n) {
+        if (v === undefined) return v;
+        var f = td.data("format");
+        if (f === undefined) return v;
+        var a = [f] ;
+        if (! jQuery.isArray(v) ) {
+            v = [v] ;
+        }
+        Array.prototype.push.apply(a, v);
+        return hsFormat.apply(window, a);
     },
 
     _fill__admin : function(td, v, n) {
@@ -691,15 +699,15 @@ HsList.prototype = {
     },
     _fill__datetime : function(td, v, n) {
         if (v === undefined) return v;
-        return hsFmtDate(v, hsGetLang("datetime.format"));
+        return hsFmtDate(v, td.data("format") || hsGetLang("datetime.format"));
     },
     _fill__date : function(td, v, n) {
         if (v === undefined) return v;
-        return hsFmtDate(v, hsGetLang("date.format"));
+        return hsFmtDate(v, td.data("format") || hsGetLang("date.format"));
     },
     _fill__time : function(td, v, n) {
         if (v === undefined) return v;
-        return hsFmtDate(v, hsGetLang("time.format"));
+        return hsFmtDate(v, td.data("format") || hsGetLang("time.format"));
     },
     _fill__html : function(td, v, n) {
         if (v === undefined) return v;
@@ -940,13 +948,15 @@ jQuery.fn.hsList = function(opts) {
         if ($(this).children().not("a,b,i,sub,sup,span").size()) {
             return;
         }
-        // 配合 CSS, 当内容省略时鼠标悬浮可见更多
-        if (  this .offsetWidth
-           <  this .scrollWidth  ) {
-        if ($(this).attr("title" )
-        &&  $(this).data("title")) {
+        if (! $(this).is("._title")) {
+        if (! $(this).attr("title" )
+        &&  ! $(this).data("title")) {
+            $(this).addClass("_title");
+        } else {
             return;
-        }
+        }}
+        // 当内容省略时鼠标悬浮可见更多
+        if (this.offsetWidth < this.scrollWidth) {
             var tt = $( this ).text();
             $(this).attr("title", tt);
         } else {
@@ -958,7 +968,9 @@ jQuery.fn.hsList = function(opts) {
         if ($(this).children().not("a,b,i,sub,sup,span").size()) {
             return;
         }
+        if ($(this).is("._title")) {
             $(this).attr("title", "");
+        }
     })
     .on("click" , ".listbox tbody td",
     function(evt) {

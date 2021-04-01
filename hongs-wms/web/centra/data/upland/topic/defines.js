@@ -10,10 +10,10 @@ function in_centra_data_upland_topic_list(context, listobj) {
            .attr( "class" , "_rowid");
 
     // 点击标题打开
-    listobj._fill_name = function(td, v) {
-        $('< a href=" " class="review"></ a>')
+    listobj._fill_name = function(td, tt) {
+        $('<a href="javascript:;" class="review"></a>')
             .appendTo(td)
-            .text(v);
+            .text    (tt);
     }
 }
 
@@ -102,7 +102,7 @@ function in_centra_data_upland_topic_info(context, formobj) {
                       + '</button>'
                 )
                 .append('<button type="button" class="btn btn-default create ">'
-                      + '评论'
+                      + '发表评论'
                       + '</button>'
                 )
                 .append('<button type="button" class="btn btn-default manage2 dropdown-toggle" data-toggle="dropdown">'

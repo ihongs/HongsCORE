@@ -47,14 +47,14 @@ function in_centra_data_upland_theme_info(context, formobj) {
                 e.stopPropagation(); // 避免引起上级重载
             });
             box.on("click", ".cancel2", function() {
-                context.hsFind("@").hsClose();
+                context.hsFind("%").hsClose();
             });
             box.on("click", ".delete2", function() {
                 $.hsAjax({
-                    url : "centra/data/upland/theme/delete?id=" + tid,
+                    url : "centra/data/upland/theme/delete.act?id=" + tid,
                     success: function (sd) {
                         if (sd.ok) {
-                            context.hsFind("@").hsClose();
+                            context.hsFind("%").hsClose();
                         }
                     }
                 });

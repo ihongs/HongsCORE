@@ -9,11 +9,9 @@
     Integer code;
     String  text;
     String  href;
-    String  link;
     code = (Integer ) request.getAttribute("javax.servlet.error.status_code");
     text = (String  ) request.getAttribute("javax.servlet.error.message");
     href = (String  ) request.getAttribute("javax.servlet.location");
-    link = CoreLocale.getInstance().translate("core.error.redirect");
     if (href == null) {
         href  = request.getContextPath() + "/";
     }
@@ -61,8 +59,8 @@
                 <h1>: )</h1>
                 <p> &nbsp; </p>
                 <p> <%=escapeXML(text)%> </p>
-                <p> <a href="<%=escapeXML(href)%>" class="btn btn-lg btn-success">
-                    <%=escapeXML(link)%>
+                <p> <a class="btn btn-lg btn-success" href="<%=escapeXML(href)%>">
+                    <%=CoreLocale.getInstance().translate("core.error.redirect")%>
                     </a>
                 </p>
             </div>

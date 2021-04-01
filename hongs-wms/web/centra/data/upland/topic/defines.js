@@ -38,14 +38,14 @@ function in_centra_data_upland_topic_info(context, formobj) {
                 e.stopPropagation(); // 避免引起上级重载
             });
             box.on("click", ".cancel2", function() {
-                context.hsFind("@").hsClose();
+                context.hsFind("%").hsClose();
             });
             box.on("click", ".delete2", function() {
                 $.hsAjax({
-                    url : "centra/data/upland/topic/delete?id=" + tid,
+                    url : "centra/data/upland/topic/delete.act?id=" + tid,
                     success: function (sd) {
                         if (sd.ok) {
-                            context.hsFind("@").hsClose();
+                            context.hsFind("%").hsClose();
                         }
                     }
                 });

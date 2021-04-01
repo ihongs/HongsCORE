@@ -264,11 +264,14 @@
                         // 自定义格式化
                         String frmt = (String) info.get("format");
                         if (frmt != null && frmt.length( ) != 0 ) {
-                            ob += "\" data-format=\"" + frmt;
+                            ob += " data-format=\"" + frmt + "\"";
                         } else
                         // 默认为短格式
                         if ("datetime" .equals( type )) {
                             type  = "htime";
+                        } else
+                        if ("date"     .equals( type )) {
+                            type  = "hdate";
                         }
                     } else
                     if (  "number".equals(type)
@@ -277,7 +280,7 @@
                         // 自定义格式化
                         String frmt = (String) info.get("format");
                         if (frmt != null && frmt.length( ) != 0 ) {
-                            ob += "\" data-format=\"" + frmt;
+                            ob += " data-format=\"" + frmt + "\"";
                         }
                     }
 
@@ -286,11 +289,13 @@
                 <%if ("number".equals(type) || "range".equals(type) || "color".equals(type)) {%>
                     <th data-fn="<%=name%>" <%=ob%> class="<%=oc%> numerial text-right"><%=text%></th>
                 <%} else if ("datetime".equals(type)) {%>
-                    <th data-fn="<%=name%>" data-ft="_datetime" <%=ob%> class="<%=oc%> numerial _htime"><%=text%></th>
+                    <th data-fn="<%=name%>" data-ft="_datetime" <%=ob%> class="<%=oc%> numerial datetime"><%=text%></th>
                 <%} else if ("date".equals(type)) {%>
-                    <th data-fn="<%=name%>" data-ft="_date"  <%=ob%> class="<%=oc%> numerial date"><%=text%></th>
+                    <th data-fn="<%=name%>" data-ft="_date" <%=ob%> class="<%=oc%> numerial date"><%=text%></th>
                 <%} else if ("time".equals(type)) {%>
-                    <th data-fn="<%=name%>" data-ft="_time"  <%=ob%> class="<%=oc%> numerial time"><%=text%></th>
+                    <th data-fn="<%=name%>" data-ft="_time" <%=ob%> class="<%=oc%> numerial time"><%=text%></th>
+                <%} else if ("hdate".equals(type)) {%>
+                    <th data-fn="<%=name%>" data-ft="_hdate" <%=ob%> class="<%=oc%> numerial _hdate"><%=text%></th>
                 <%} else if ("htime".equals(type)) {%>
                     <th data-fn="<%=name%>" data-ft="_htime" <%=ob%> class="<%=oc%> numerial _htime"><%=text%></th>
                 <%} else if (  "url".equals(type)) {%>

@@ -76,6 +76,16 @@ textarea.form-control {
     cursor: default;
 }
 
+.form-control-static._text {
+    white-space: pre-wrap;
+}
+.form-control-static._html {
+    white-space: normal;
+}
+.form-control-static._html>:last-child {
+    margin-bottom: 0;
+}
+
 @media screen and (-webkit-min-device-pixel-ratio: 0) {
 input[type="datetime-local"].form-control,
 input[type="date"].form-control ,
@@ -94,18 +104,32 @@ input[type="time"].form-control {
     color : #b7b7b7;
 }
 
+/* 规避表单横向排版时小屏下左右错位问题 */
+.control-label.text-right {
+    padding-top: 7px;
+    padding-bottom: 7px;
+}
+.form-group-sm .control-label.text-right {
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+.form-group-lg .control-label.text-right {
+    padding-top:11px;
+    padding-bottom:11px;
+}
+
 /* 修正选择框在特殊表单组下不变化的问题 */
 .form-group-lg .checkbox,
 .form-group-lg .radio {
-    font-size : 18px;
+    font-size: 18px;
 }
 .form-group-sm .checkbox,
 .form-group-sm .radio {
-    font-size : 12px;
+    font-size: 12px;
 }
 .form-group-sm .checkbox input[type=checkbox],
 .form-group-sm .radio input[type=radio] {
-    margin-top:  2px;
+    margin-top: 2px;
 }
 
 .form-group .help-block:empty ,
@@ -117,7 +141,7 @@ input[type="time"].form-control {
     margin-top   : 0;
     margin-bottom: 0;
 }
-.help-block.text-muted ,
+             .help-block.text-muted ,
 .has-error   .help-block.text-muted ,
 .has-success .help-block.text-muted ,
 .has-warning .help-block.text-muted {

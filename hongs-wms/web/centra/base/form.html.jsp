@@ -108,11 +108,11 @@
                         String mode = (String) info.get("mode");
                     %>
                     <%  /**/ if ("code".equals(typa)) {%>
-                        <pre class="form-control-static" data-fn="<%=name%>" data-ft="_text" data-type="<%=typa%>" data-mode="<%=mode%>"></pre>
+                        <pre class="form-control-static _code" data-fn="<%=name%>" data-ft="_text" data-type="<%=typa%>" data-mode="<%=mode%>"></pre>
                     <%} else if ("html".equals(typa)) {%>
-                        <div class="form-control-static" data-fn="<%=name%>" data-ft="_html" style="white-space: normal ;"></div>
+                        <div class="form-control-static _html" data-fn="<%=name%>" data-ft="_html"></div>
                     <%} else {%>
-                        <div class="form-control-static" data-fn="<%=name%>" data-ft="_text" style="white-space:pre-wrap;"></div>
+                        <div class="form-control-static _text" data-fn="<%=name%>" data-ft="_text"></div>
                     <%}%>
                 <%} else if ("fork".equals(type) || "pick".equals(type)) {%>
                     <%

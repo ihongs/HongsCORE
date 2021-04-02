@@ -100,7 +100,9 @@
                 }
             %>
             <div class="form-group row">
-                <label class="col-xs-3 col-md-2 control-label text-right"><%=text != null ? text : ""%></label>
+                <label class="col-xs-3 col-md-2 text-right control-label form-control-static">
+                    <%=text != null ? text : ""%>
+                </label>
                 <div class="col-xs-9 col-md-8">
                 <%if ("textarea".equals(type) || "textview".equals(type)) {%>
                     <%
@@ -188,7 +190,9 @@
             </div>
         <%} else {%>
             <div class="form-group row">
-                <label class="col-xs-3 col-md-2 control-label text-right"><%=text != null ? text : ""%></label>
+                <label class="col-xs-3 col-md-2 text-right control-label form-control-static">
+                    <%=text != null ? text : ""%>
+                </label>
                 <div class="col-xs-9 col-md-8">
                 <%if ("textarea".equals(type) || "textview".equals(type)) {%>
                     <%

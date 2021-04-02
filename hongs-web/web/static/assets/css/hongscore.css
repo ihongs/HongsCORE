@@ -55,14 +55,9 @@ code, pre, var, dfn, kbd {
     color: #eee;
 }
 
-/*
-select.form-control {
-    height: 2.76923077em;
-}
-*/
-select.form-control[multiple],
-textarea.form-control {
-    height: 8.30769231em;
+textarea.form-control ,
+.form-control[multiple] {
+        height:  8.30769231em;
     min-height:  8.30769231em;
     max-height: 49.84615386em;
     resize: vertical;
@@ -76,6 +71,16 @@ textarea.form-control {
     cursor: default;
 }
 
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+input[type="datetime-local"].form-control,
+input[type="date"].form-control ,
+input[type="time"].form-control {
+    line-height   : 2.5;
+    padding-top   : 0;
+    padding-bottom: 0;
+}
+}
+
 .form-control-static._text {
     white-space: pre-wrap;
 }
@@ -86,36 +91,11 @@ textarea.form-control {
     margin-bottom: 0;
 }
 
-@media screen and (-webkit-min-device-pixel-ratio: 0) {
-input[type="datetime-local"].form-control,
-input[type="date"].form-control ,
-input[type="time"].form-control {
-    line-height: 2.5;
-    padding-top: 0px;
-    padding-bottom: 0px;
-}
-}
-
-/* 选择列表内使用分组不需要把组标签放大 */
 .checkbox legend,
 .radio legend {
     font-size: inherit;
+    color : #777;
     margin: 0;
-    color : #b7b7b7;
-}
-
-/* 规避表单横向排版时小屏下左右错位问题 */
-.control-label.text-right {
-    padding-top: 7px;
-    padding-bottom: 7px;
-}
-.form-group-sm .control-label.text-right {
-    padding-top: 6px;
-    padding-bottom: 6px;
-}
-.form-group-lg .control-label.text-right {
-    padding-top:11px;
-    padding-bottom:11px;
 }
 
 /* 修正选择框在特殊表单组下不变化的问题 */

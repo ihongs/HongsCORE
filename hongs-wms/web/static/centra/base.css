@@ -253,7 +253,7 @@ html, body {
 #main-menubar>ul>li>a[href="/centra/#manage"]:before {
     content: "\e021";
 }
-#main-menubar>ul>li>a[href="/common/menu.act?m=centra&x=base"]:before {
+#main-menubar>ul>li>a[href="/common/menu.act?m=centra&n=system"]:before {
     content: "\e019";
 }
 

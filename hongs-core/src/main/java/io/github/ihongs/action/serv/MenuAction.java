@@ -30,8 +30,8 @@ public class MenuAction {
     public void menu(ActionHelper helper)
     throws HongsException {
         String m = helper.getParameter("m"); // 配置名称
-        String n = helper.getParameter("n"); // 活动区域
-        String x = helper.getParameter("x"); // 附加标识
+        String n = helper.getParameter("n"); // 节点标识
+        String x = helper.getParameter("x"); // 附加标识(已废弃)
         String u = MENU_ACT_URI;
 
         if (m == null || "".equals(m)) {
@@ -44,40 +44,32 @@ public class MenuAction {
             u += "&x=" + x;
         }
 
-        /**
-         * Fixed in 2018/05/07
-         * 重要修正:
-         * 某些菜单可能根本就没规定权限,
-         * 如果对当前这级菜单做权限检查,
-         * 可能因其他菜单要权限而被阻止,
-         * 故必须放弃预判当前菜单的权限.
-         * 因此这种菜单下不得有设 roles.
-         */
-
-        // 检查是否有可以进入的下级菜单
-        NaviMap site  =  NaviMap.getInstance(m);
-        Map<String, Map> menu = site.getMenu(u);
-        String  href  ;
+        NaviMap site = NaviMap.getInstance(m);
+        Map menu  = (Map) site.getMenu( u );
         if (menu != null) {
-            menu  = menu.get("menus");
-            if (menu != null) {
-                href  = getRedirect(site, menu);
-                if (href != null) {
-                    helper.redirect(Core.SERV_PATH + "/" + href);
-                    return;
-                }
+        Map mens  = (Map) menu.get("menus");
+        if (mens != null) {
+            // 寻找其下有权限的菜单
+            u = getRedirect( site, mens );
+            if (u != null) {
+                helper.redirect(Core.SERV_PATH + "/" + u);
+                return;
+            }
+        }
+            // 找不到则转入后备地址
+            // 默认等同模块配置路径
+            u = (String) menu.get("hrel");
+            if (u != null) {
+                helper.redirect(Core.SERV_PATH + "/" + u);
+                return;
+            } else {
+                u = "default".equals(m) ? "" : m ;
+                helper.redirect(Core.SERV_PATH + "/" + u);
+                return;
             }
         }
 
-        // 没有权限则跳到指定目录或首页
-        if (n == null) {
-            if (!"default".equals(m)) {
-                n = m ;
-            } else {
-                n = "";
-            }
-        }
-        helper.redirect(Core.SERV_PATH + "/" + n);
+        throw new HongsException(404, "Can not find the menu " + m);
     }
 
     @Action("list")
@@ -108,9 +100,9 @@ public class MenuAction {
         helper.reply(data);
     }
 
-    private String getRedirect(NaviMap site, Map<String, Map> menu)
+    private String getRedirect(NaviMap site, Map<String, Map> mens)
     throws  HongsException {
-        for (Map.Entry<String, Map> et : menu.entrySet()) {
+        for (Map.Entry<String, Map> et : mens.entrySet()) {
             Map    item = et.getValue();
             String href = et.getKey  ();
             String hrel = (String) item.get("hrel");

@@ -60,6 +60,7 @@
                 <h1>: (</h1>
                 <p> &nbsp; </p>
                 <p> <%=escapeXML(text)%> </p>
+                <p> &nbsp; </p>
                 <p>
                     <a class="btn btn-lg btn-success" href="javascript:history.back();">
                         <%=CoreLocale.getInstance().translate("core.error.go.back")%>

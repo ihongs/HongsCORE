@@ -25,7 +25,7 @@
 <!doctype html>
 <html>
     <head>
-        <title><%=escapeXML(link)%></title>
+        <title>Redirect...</title>
         <meta http-equiv="Refresh" content="3; url=<%=escapeXML( href )%>">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -59,6 +59,7 @@
                 <h1>: )</h1>
                 <p> &nbsp; </p>
                 <p> <%=escapeXML(text)%> </p>
+                <p> &nbsp; </p>
                 <p> <a class="btn btn-lg btn-success" href="<%=escapeXML(href)%>">
                     <%=CoreLocale.getInstance().translate("core.error.redirect")%>
                     </a>

@@ -180,7 +180,7 @@ public class Unit extends Grade {
         centraDocm.appendChild(centraRoot);
 
         importNode = centraDocm.createElement("rsname");
-        importNode.appendChild(centraDocm.createTextNode("@centra"));
+        importNode.appendChild(centraDocm.createTextNode("#centra"));
         centraRoot.appendChild(importNode);
 
         //** 前端 **/
@@ -191,7 +191,7 @@ public class Unit extends Grade {
         centreDocm.appendChild(centreRoot);
 
         importNode = centreDocm.createElement("rsname");
-        importNode.appendChild(centreDocm.createTextNode("@centre"));
+        importNode.appendChild(centreDocm.createTextNode("#centre"));
         centreRoot.appendChild(importNode);
 
         //** 填充 **/
@@ -271,12 +271,12 @@ public class Unit extends Grade {
             String nam = row.get("name").toString();
 
             centraRoo2 = centraDocm.createElement("menu");
-            centraRoo2.setAttribute("href", "common/menu.act?m="+centra+"&x="+pid);
+            centraRoo2.setAttribute("href", "common/menu.act?m="+centra+"&n="+pid);
             centraRoo2.setAttribute("text",  nam  );
             centraRoot.appendChild (  centraRoo2  );
 
             centreRoo2 = centreDocm.createElement("menu");
-            centreRoo2.setAttribute("href", "common/menu.act?m="+centre+"&x="+pid);
+            centreRoo2.setAttribute("href", "common/menu.act?m="+centre+"&n="+pid);
             centreRoo2.setAttribute("text",  nam  );
             centreRoot.appendChild (  centreRoo2  );
 
@@ -314,13 +314,13 @@ public class Unit extends Grade {
             String nam = row.get("name").toString();
 
             centraHid2 = centraDocm.createElement("menu");
-            centraHid2.setAttribute("href","common/menu.act?m="+centra+"&x="+pid);
+            centraHid2.setAttribute("href","common/menu.act?m="+centra+"&n="+pid);
             centraHid2.setAttribute("hrel","!HIDE"); // 默认隐藏
             centraHid2.setAttribute("text",  nam  );
             centraRoot.appendChild (  centraHid2  );
 
             centreHid2 = centreDocm.createElement("menu");
-            centreHid2.setAttribute("href","common/menu.act?m="+centre+"&x="+pid);
+            centreHid2.setAttribute("href","common/menu.act?m="+centre+"&n="+pid);
             centraHid2.setAttribute("hrel","!HIDE"); // 默认隐藏
             centreHid2.setAttribute("text",  nam  );
             centreRoot.appendChild (  centreHid2  );

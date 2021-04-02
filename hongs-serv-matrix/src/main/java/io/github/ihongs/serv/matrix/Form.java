@@ -792,7 +792,7 @@ public class Form extends Model {
             // 会话
             role = docm.createElement("rsname");
             root.appendChild ( role );
-            role.appendChild ( docm.createTextNode("@centra"));
+            role.appendChild ( docm.createTextNode("#centra") );
 
             // 查看
             role = docm.createElement("role");
@@ -951,7 +951,7 @@ public class Form extends Model {
             // 会话
             role = docm.createElement("rsname");
             root.appendChild ( role );
-            role.appendChild ( docm.createTextNode("@centre"));
+            role.appendChild ( docm.createTextNode("#centre") );
 
             // 公共读取权限
             role = docm.createElement( "role" );

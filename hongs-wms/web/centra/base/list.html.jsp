@@ -77,7 +77,9 @@
             }
         %>
         <div class="filt-group form-group form-group-sm clearfix" data-name="<%=name%>">
-            <label class="col-xs-3 control-label text-right"><%=text%></label>
+            <label class="col-xs-3 text-right control-label form-control-static">
+                <%=text != null ? text : ""%>
+            </label>
             <div class="col-xs-6">
             <%if ("number".equals(type) || "range".equals(type) || "color".equals(type) || "sorted".equals(type)) {%>
                 <div class="input-group">

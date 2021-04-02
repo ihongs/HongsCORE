@@ -421,7 +421,7 @@ HsForm.prototype = {
                 this.warn(rst.msg, "warning" );
             } else
             if (!rst.errs) {
-                this.warn(hsGetLang('error.unkwn'));
+                this.warn(hsGetLang('error.undef'));
             }
         }
     },

@@ -21,7 +21,7 @@ if(!window.HsLANG)window.HsLANG={};$.extend(window.HsLANG,{
 	"lang":"zh_CN",
 	"zone":"GMT-8",
 	"error.label":"错误($0)",
-	"error.unkwn":"未知错误",
+	"error.undef":"未知错误",
 	"datetime.format":"yyyy/MM/dd HH:mm:ss",
 	"date.format":"yyyy/MM/dd",
 	"time.format":"HH:mm:ss",

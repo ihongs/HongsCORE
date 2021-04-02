@@ -367,7 +367,7 @@ HsTree.prototype = {
             if (rst.msg) {
                 this.warn(rst.msg, "warning");
             } else {
-                this.warn(hsGetLang('error.unkwn'));
+                this.warn(hsGetLang('error.undef'));
             }
             return;
         }

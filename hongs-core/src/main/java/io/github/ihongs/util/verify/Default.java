@@ -278,7 +278,7 @@ public class Default extends Rule {
         if (watch.isUpdate(  )
             &&  i != 0) {
             if (i != j) {
-                throw new Wrong("core.error.default.need.vars", a.toString());
+                throw new Wrong("Default merge need vars: "+a.toString());
             } else {
                 return  BLANK ;
             }

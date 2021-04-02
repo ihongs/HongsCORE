@@ -894,7 +894,7 @@ public class ActionHelper implements Cloneable
     }
     if (null == msg || msg.isEmpty())
     {
-      msg = CoreLocale.getInstance().translate("core.error.unkwn");
+      msg = CoreLocale.getInstance().translate("core.error.undef");
     }
 
     // 外部错误

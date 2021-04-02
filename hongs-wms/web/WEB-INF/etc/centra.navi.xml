@@ -10,7 +10,7 @@
         <!--
         <import>centra/data/upland</import>
         //-->
-        <menu text="系统" href="common/menu.act?m=centra&amp;x=base">
+        <menu text="系统" href="common/menu.act?m=centra&amp;n=system">
             <import>manage</import>
             <import>master</import>
             <import>matrix</import>

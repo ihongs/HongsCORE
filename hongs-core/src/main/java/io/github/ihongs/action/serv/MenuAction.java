@@ -15,8 +15,7 @@ import java.util.Map;
  *
  * 请求参数说明:
  * 参数 m 是导航配置名
- * 参数 n 是导航路径名
- * m 与 n 相同时省略 n
+ * 参数 n 是节点标识名
  * 对应的菜单节点的 href 写作 common/menu.act?m=XXX&n=XXX
  *
  * @author Hong

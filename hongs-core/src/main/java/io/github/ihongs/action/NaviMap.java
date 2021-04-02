@@ -603,7 +603,7 @@ public class NaviMap
    */
   public Set<String> getRoleSet() throws HongsException {
       if (session == null || session.length() == 0) {
-          CoreLogger.error("Can not get roles for menu "+ name);
+          CoreLogger.warn("Can not get roles for menu " + name);
           return null;
       }
       if (session.startsWith("#")) {

@@ -416,6 +416,12 @@ ol.repeated ,
         margin:  30px auto;
         border-radius: 6px;
     }
+    .modal-dialog.modal-lg {
+        width : 900px;
+    }
+    .modal-dialog.modal-sm {
+        width : 300px;
+    }
     .alert.dialog {
         width : 600px;
         margin:  30px auto;

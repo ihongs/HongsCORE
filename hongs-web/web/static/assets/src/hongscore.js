@@ -285,7 +285,7 @@ function hsResponse(rst, qut) {
                 if (rst.msg) {
                     jQuery.hsWarn(rst.msg, "warning");
                 } else {
-                    jQuery.hsWarn(hsGetLang('error.unkwn'), "danger");
+                    jQuery.hsWarn(hsGetLang('error.undef'), "danger");
                 }
             }
         }

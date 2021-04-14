@@ -970,7 +970,7 @@ public class StatisHelper {
             String m = null ;
 
             // 拆出统计方法
-            int j = n.indexOf  ('|');
+            int j = n.indexOf  ('!');
             if (j > -1) {
                 m = n.substring(1+j);
                 f = n.substring(0,j);
@@ -1131,6 +1131,8 @@ public class StatisHelper {
             return new StatisGather.First(type, field, alias);
         case "flock":
             return new StatisGather.Flock(type, field, alias);
+        case "crowd":
+            return new StatisGather.Crowd(type, field, alias);
         case "count":
             return new StatisGather.Count(type, field, alias);
         case "ratio":

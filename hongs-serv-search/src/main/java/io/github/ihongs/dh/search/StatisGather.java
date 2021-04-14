@@ -338,6 +338,30 @@ public class StatisGather {
     }
 
     /**
+     * 去重计数
+     */
+    public static class Crowd extends Index<Integer> {
+
+        private Set a;
+
+        public Crowd(TYPE type, String field, String alias) {
+            super(type, field, alias);
+        }
+
+        @Override
+        public Object collect(int i, Integer v) throws IOException {
+            if (v == null) {
+                a  = new LinkedHashSet();
+            }
+            for(Object o : getValues() ) {
+                a.add( o );
+            }
+            return a.size( );
+        }
+
+    }
+
+    /**
      * 计数
      */
     public static class Count extends Index<Long> {
@@ -365,7 +389,7 @@ public class StatisGather {
                 }
                 case STRING: {
                 //  SortedDocValues  strValues = ((SortedDocValues ) getDocValues());
-                //  if (!strValues.advanceExact(i)) {
+                //  if (! strValues.advanceExact(i)) {
                 //      break;
                 //  }
                     n += 1L;
@@ -379,19 +403,25 @@ public class StatisGather {
                 //  if (! numValues.advanceExact(i)) {
                 //      break;
                 //  }
-                    n += numValues.docValueCount();
+                    n += numValues.docValueCount( );
                     break;
                 }
                 case STRINGS: {
                     SortedSetDocValues     strValues = ((SortedSetDocValues    ) getDocValues());
-                //  if (!strValues.advanceExact(i)) {
+                //  if (! strValues.advanceExact(i)) {
                 //      break;
                 //  }
-                    while (strValues.nextOrd() != SortedSetDocValues.NO_MORE_ORDS) {
-                        n += 1L;
-                    }
+                    n += docValueCount( strValues );
                     break;
                 }
+            }
+            return  n ;
+        }
+
+        private long docValueCount(SortedSetDocValues strValues) throws IOException {
+            long n  = 1L;
+            while (SortedSetDocValues.NO_MORE_ORDS != strValues.nextOrd()) {
+                 n += 1L;
             }
             return  n ;
         }

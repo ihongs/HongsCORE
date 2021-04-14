@@ -108,6 +108,7 @@ public class FormSet
     File serFile = new File(Core.DATA_PATH
                  + File.separator + "serial"
                  + File.separator + name + Cnst.FORM_EXT + ".ser");
+    time = serFile.lastModified();
 
     //* 加锁读写 */
 
@@ -115,11 +116,10 @@ public class FormSet
 
     lock.lockr();
     try {
-      if (!expired(name)) {
-          load (serFile);
-          time =serFile.lastModified();
-          return;
-      }
+    if (! expired()) {
+      load(serFile );
+      return;
+    }
     } finally {
       lock.unlockr();
     }
@@ -127,11 +127,12 @@ public class FormSet
     lock.lockw();
     try {
       imports ();
-      save (serFile);
-      time =serFile.lastModified();
+      save(serFile );
     } finally {
       lock.unlockw();
     }
+
+    time = serFile.lastModified();
   }
 
   @Override
@@ -146,32 +147,39 @@ public class FormSet
     File serFile = new File(Core.DATA_PATH
                  + File.separator + "serial"
                  + File.separator + name + Cnst.FORM_EXT + ".ser");
-    return serFile.exists( ) ? serFile.lastModified( ) : 0L ;
+    File xmlFile = new File(Core.CONF_PATH
+                 + File.separator + name + Cnst.FORM_EXT + ".xml");
+    return  Math.max(serFile.lastModified(), xmlFile.lastModified());
   }
 
-  protected boolean expired(String namz)
+  static protected boolean expired(String namz , long timz)
   {
     File serFile = new File(Core.DATA_PATH
                  + File.separator + "serial"
                  + File.separator + namz + Cnst.FORM_EXT + ".ser");
-    if (!serFile.exists())
+    if (!serFile.exists() || serFile.lastModified() > timz )
     {
       return true;
     }
 
     File xmlFile = new File(Core.CONF_PATH
                  + File.separator + namz + Cnst.FORM_EXT + ".xml");
-    if ( xmlFile.exists())
+    if ( xmlFile.exists() )
     {
-      return xmlFile.lastModified() > serFile.lastModified();
+      return xmlFile.lastModified() > timz;
     }
 
     // 为减少判断逻辑对 jar 文件不做变更对比, 只要资源存在即可
-    return null == getClass().getClassLoader().getResource(
+    return null == FormSet.class.getClassLoader().getResource(
              namz.contains(".")
           || namz.contains("/") ? namz + Cnst.FORM_EXT + ".xml"
            : Cnst.CONF_PACK +"/"+ namz + Cnst.FORM_EXT + ".xml"
     );
+  }
+
+  public boolean expired()
+  {
+    return expired (name, time);
   }
 
   @Override

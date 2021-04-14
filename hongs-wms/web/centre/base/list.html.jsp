@@ -147,8 +147,8 @@
                     al = al.replace("centra", "centre");
                     // 选择时禁用创建
                     if ( ! al.isEmpty (   )) {
-                    if ( ! al.contains("?")) {
-                        al = al + "?_deny_=.create";
+                    if ( ! al.contains("#")) {
+                        al = al + "#_deny_=.create";
                     } else {
                         al = al + "&_deny_=.create";
                     }}

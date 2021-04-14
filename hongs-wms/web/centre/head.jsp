@@ -169,9 +169,6 @@
 </nav>
 </div>
 
-<style  type="text/css">
-    #footbox .site-links a {margin-right: 1em;}
-</style>
 <script type="text/javascript">
     (function($) {
         // 挪动页尾到外部

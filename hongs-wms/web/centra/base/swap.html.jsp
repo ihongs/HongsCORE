@@ -276,7 +276,7 @@ id=ID 或 id.=ID1&id.=ID2...
                     <pre class="form-control-static">
 <b><%=Cnst.RN_KEY%></b>=条数, 按统计数量从多到少排列, 默认取前
 <b><%=Cnst.RB_KEY%></b>=字段, 可用于统计的; acount 用于一般选项计数; amount 用于数值区间统计; assort 用于维度聚合计算.
-聚合计算中, 字段分维度和指标. 指标形式为: 字段|方法; 指标方法有: |count 计数, |sum 求和, |min 最小, |max 最大, |ratio 综合[sum,min,max], |first 首个值, |flock 所有值.
+聚合计算中, 字段分维度和指标. 指标形式为: 字段!方法; 指标方法有: !count 计数, !sum 求和, !min 最小, !max 最大, !ratio 综合[sum,min,max], !crowd 去重计数, !flock 所有值, !first 首个值.
 聚合计算还可以接受类似 search<%=Cnst.ACT_EXT%> 接口的分页(<%=Cnst.PN_KEY%>)和排序(<%=Cnst.OB_KEY%>)参数. 
                     </pre>
                 </div>

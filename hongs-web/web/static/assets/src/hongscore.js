@@ -50,8 +50,13 @@ function H$() {
             arguments[1] = location.href;
         }
         if (typeof(arguments[1]) !== "string") {
-          if ( ! jQuery.isArray(arguments[1])) {
-            arguments[1] = hsSerialArr(jQuery( arguments[1] ).closest( ".loadbox" ));
+          if (arguments[1] instanceof jQuery
+          ||  arguments[1] instanceof Element) {
+            var c = jQuery (arguments[1]).hsFind( "%" );
+            arguments[1] = c.data("href")
+                        || c.data("data")
+                         ? hsSerialObj(c)
+                         : location.href;
           }
           return hsGetSeria(arguments[1], arguments[0]);
         } else {
@@ -1246,41 +1251,33 @@ function hsFixUri(uri) {
 
 /**
  * 补充URI为其设置参数
+ * 当参数有多个值的时候, 需注意参数名加后缀点
  * @param {String} uri
  * @param {Object} pms 可为 hsSerialArr,HsSerialDic,HsSerialDat 或 .loadbox 对象
  * @return {String} 完整的URI
  */
 function hsSetPms(uri, pms) {
     if ( ! uri )  uri = "";
-    if (pms instanceof Element || pms instanceof jQuery) {
-        pms = jQuery(pms).closest(".loadbox");
-        pms = hsSerialArr(pms);
-    }   pms = hsSerialDic(pms);
+    pms = hsSerialDic(pms);
     var ums = hsSerialDic(uri);
-        ums = hsSerialMix(ums ,   pms );
-        ums = hsSerialArr(ums);
-        ums =jQuery.param(ums);
-        uri = uri.replace(/[?#].*/, '');
-    if (ums) {
-        uri = uri + "?" + ums ;
-    }
-    return uri;
+    ums = hsSerialMix(ums,pms);
+    ums = hsSerialArr(ums);
+    ums =jQuery.param(ums);
+    uri = uri.replace(/[?#].*/, '');
+    return ums ? uri+"?"+ums : uri ;
 }
 
 /**
  * 补全URI为其设置参数
- * 注意 : 参数须为单个, 多个参数如 ?a.=$a&a.=$a 会设相同值. 亦可作字符串参数注入
+ * 每个参数只能有一个值; 亦可作字符串参数注入
  * @param {String} uri
  * @param {Object} pms 可为 hsSerialArr,HsSerialDic,HsSerialDat 或 .loadbox 对象
  * @returns {String} 完整的URI
  */
 function hsFixPms(uri, pms) {
     if ( ! uri ) return "";
-    if (pms instanceof Element || pms instanceof jQuery) {
-        pms = jQuery(pms).closest(".loadbox");
-        pms = hsSerialArr(pms);
-    }   pms = hsSerialDic(pms);
-    return  uri.replace(/\$(\$|\w+|\{.+?\})/gm, function(w) {
+    pms = hsSerialDic(pms);
+    return uri.replace(/\$(\$|\w+|\{.+?\})/gm, function(w) {
         if ("$$" === w) {
             return   w;
         }
@@ -2441,13 +2438,13 @@ $.fn.hsReady = function() {
     // 加载前触发事件
     box.trigger("hsReady");
 
-    // 加载
-    box.find("[data-load]").each(function() {
-        $(this).hsLoad($(this).attr("data-load") , $(this).attr("data-data"));
-    });
     // 执行
     box.find("[data-eval]").each(function() {
         eval('(false||function(){'+$(this).attr("data-eval")+'})').call(this);
+    });
+    // 加载
+    box.find("[data-load]").each(function() {
+        $(this).hsLoad($(this).attr("data-load") , $(this).attr("data-data"));
     });
 
     return box;
@@ -2583,7 +2580,7 @@ $.fn.hsL10n = function(tit) {
     }
 
     // 针对共用的表单, 有 ID 即为更新
-    tit = hsGetSeria(hsSerialArr(box.closest(".loadbox")), "id")
+    tit = H$("?id", box)
         ? tit.replace('{DO}', hsGetLang("form.update"))
         : tit.replace('{DO}', hsGetLang("form.create"));
 

@@ -175,13 +175,16 @@ public class SearchAction extends JAction {
              * 判断前需要将其去除.
              */
             if (nb == 3) {
-                if ("*|count".equals (fn)) {
-                    continue; // 统计行数
-                }
-                int p  = fn. indexOf ('|');
+                int p  = fn.indexOf  ('!');
                 if (p != -1) {
                     fx = fn.substring(1+p);
                     fn = fn.substring(0,p);
+
+                    // 统计行数
+                    if (fx.equals("count")
+                    &&  fn.equals( "*" ) ) {
+                        continue;
+                    }
                 }
             }
 

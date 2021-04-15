@@ -52,7 +52,7 @@ abstract public class Proclet extends ActionDriver implements HttpJspPage
         if (ax instanceof HongsCause) {
             ah.fault((HongsCause) ax);
         } else {
-            ah.fault(new HongsException(500, ax));
+            ah.fault( new HongsException(ax));
         }
     }
   }

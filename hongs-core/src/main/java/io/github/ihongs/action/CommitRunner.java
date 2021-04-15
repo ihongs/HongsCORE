@@ -49,12 +49,12 @@ public final class CommitRunner {
 
         try {
             // 开启
-            core.put(Cnst.REFLUX_MODE, true);
             for(Object o : core.values()) {
                 if (o instanceof IReflux) {
                     ((IReflux) o).begin();
                 }
             }
+            core.put(Cnst.REFLUX_MODE, true);
 
             try {
                 // 执行

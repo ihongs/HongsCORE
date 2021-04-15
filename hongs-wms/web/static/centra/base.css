@@ -310,15 +310,14 @@ html, body {
 }
 
 /* 主导航条默认样式 */
-#main-context > .laps.labs {
-    margin-top: 20px;
-}
 #main-context > .laps.tabs.breadcrumb {
-    margin: 0  -15px;
+    margin:   0   -15px;
+    margin-bottom: 20px;
     border-radius: 0;
-    border-color : #555;
-    background-color: #555;
+    border-bottom: 1px solid #eee;
+    border-top   : 1px solid transparent;
 }
+/*
 #main-context > .laps.tabs.breadcrumb ,
 #main-context > .laps.tabs.breadcrumb a {
     color: #ccc;
@@ -328,11 +327,12 @@ html, body {
 #main-context > .laps.tabs.breadcrumb .active a {
     color: #fff;
 }
+*/
 #main-context > .laps.tabs.breadcrumb .active a {
     text-decoration: none;
 }
 #main-context > .laps.tabs.breadcrumb .home-crumb .glyphicon {
-    color: #fff;
+    color: #555;
 }
 #main-context > .laps.tabs.breadcrumb .back-crumb .glyphicon {
     color: #f55;

@@ -183,6 +183,11 @@
             a.closest("li").addClass("active")
              .parents("li").addClass("acting");
 
+            // 定位到当前菜单
+            if ($(window).height( ) < $("#main-menubar li.active").height() + $("#main-menubar li.active").offset().top) {
+                $("#headbox").scrollTop(0 - $("#main-menubar").offset().top + $("#main-menubar li.active").offset().top);
+            }
+
             /**
              * 容器不存在或容器已预载,
              * 则无需重复载入内容页面;

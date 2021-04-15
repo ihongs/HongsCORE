@@ -613,16 +613,16 @@ function hsAsFormData (data) {
         hsSetSeria ( data, name, value );
     };
     data["delete"] = function(name) {
-        hsSetSerias( data, name, [] );
+        hsSetSerias( data, name, [ ] );
     };
     data["get"   ] = function(name) {
-        return hsGetSeria (name);
+        return hsGetSeria (data, name);
     };
     data["getAll"] = function(name) {
-        return hsGetSerias(name);
+        return hsGetSerias(data, name);
     };
     data["has"   ] = function(name) {
-        return hsGetSerias(name).length ;
+        return hsGetSerias(data, name).length > 0;
     };
     data.entriez = data.entries ;
     data.entries = function() {

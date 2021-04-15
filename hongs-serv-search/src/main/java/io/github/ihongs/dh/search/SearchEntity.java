@@ -8,6 +8,7 @@ import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.FormSet;
 import io.github.ihongs.dh.lucene.LuceneRecord;
 import io.github.ihongs.util.Syno;
+import io.github.ihongs.util.Synt;
 import java.io.File;
 
 import java.io.IOException;
@@ -132,6 +133,21 @@ public class SearchEntity extends LuceneRecord {
         } else {
             return  WRITER.open( );
         }
+    }
+
+    @Override
+    public void begin( ) {
+        /**
+         * 有尚未提交的变更
+         * 又不在全局事务内
+         */
+        if (REFLUX_MODE
+        && !WRITES.isEmpty()
+        && !Synt.declare(Core.getInstance().got(Cnst.REFLUX_MODE), false)) {
+            throw new HongsExemption(1054, "Uncommitted changes");
+        }
+
+        super . begin( );
     }
 
     @Override

@@ -17,6 +17,7 @@ import io.github.ihongs.serv.auth.AuthKit;
 import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Synt;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -43,8 +44,21 @@ public class UserAction {
     throws HongsException {
         Map  rd = helper.getRequestData();
         byte wd =  Synt.declare(rd.get("with-depts") , (byte) 0);
-             rd = model.getList(rd);
+     boolean fd =  Synt.declare(rd.get("find-depth") ,  false  );
 
+        // With sub depts
+        if ( fd ) {
+            Dept depth = (Dept) DB.getInstance("master")
+                                  .getModel   ( "dept" );
+            String pid =  Synt.declare(rd.get("dept_id"),  ""  );
+            if (! "".equals( pid ) && ! "-".equals( pid ) ) {
+                Collection ids = depth.getChildIds( pid , true );
+                           ids.add(pid);
+                rd.put("dept_id" , ids);
+            }
+        }
+
+        rd = model.getList (rd);
         List<Map> list = (List) rd.get("list");
         if (list != null) {
 

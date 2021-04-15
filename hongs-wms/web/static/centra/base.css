@@ -19,7 +19,7 @@ html, body {
     width :  0  ;
     overflow: auto ;
     position: fixed;
-    background: #e0e2e2;
+    background: #101010;
     z-index: 1;
 }
 
@@ -66,17 +66,17 @@ html, body {
 }
 #user-menubar {
     bottom: 0;
-    background-color: rgba(204,204,204,0.9);
+    background-color: rgba(34,34,34,0.9);
 }
 #main-namebar {
     top   : 0;
-    background-color: rgba( 34, 34, 34,0.6);
+    background-color: rgba(34,34,34,0.9);
 }
 #main-namebar:after {
     content: "";
     display: block;
     position: absolute;
-    background-image: radial-gradient(rgba(22,22,22,0.1), rgba(34,34,34,0.8));
+    background-image: radial-gradient(rgba(17,17,17,0.1), rgba(34,34,34,0.9));
     height: 100%;
     width : 100%;
     left: 0;
@@ -102,6 +102,15 @@ html, body {
     color: #e22;
 }
 
+/*
+#headbox:hover #main-namebar {
+    box-shadow: 0  10px 10px -10px #442;
+}
+#headbox:hover #user-menubar {
+    box-shadow: 0 -10px 10px -10px #244;
+}
+*/
+
 /** 菜单 **/
 
 #main-menubar ul ,
@@ -109,11 +118,11 @@ html, body {
     padding: 0;
     margin : 0;
     list-style: none;
-    background: #e0e2e2;
+    background: #101010;
 }
 #main-menubar ul ul ,
 #user-menubar ul ul {
-    background: #f0f2f2;
+    background: #202020;
 }
 #main-menubar li a ,
 #user-menubar li a {
@@ -136,7 +145,7 @@ html, body {
 #main-menubar li.acting > a.dropup ,
 #user-menubar li a ,
 #user-menubar li.acting > a.dropup {
-    color: #336080;
+    color: #9d9d9d;
     background: transparent;
     border-left: 4px solid transparent;
 }
@@ -154,8 +163,8 @@ html, body {
 #user-menubar li.acting > a ,
 #user-menubar li.active > a ,
 #user-menubar li.active > a.dropup {
-    color: #bb0000;
-    background: #f0e0e0;
+    color: #dddddd;
+    background: #802020;
     border-left: 4px solid #bb0000;
 }
 
@@ -175,12 +184,12 @@ html, body {
 #main-menubar .caret ,
 #user-menubar .caret {
     float:  right ;
-    color: #e0e2e2;
+    color: #101010;
 }
 #main-menubar:hover .caret ,
 #user-menubar:hover .caret {
     float:  right ;
-    color: #336080;
+    color: #dddddd;
 }
 #main-menubar .caret {
     margin-right: -10px; /* 修正上层内补误差 */
@@ -208,7 +217,7 @@ html, body {
     white-space: nowrap;
     overflow   : hidden;
     text-overflow: ellipsis;
-    color: #666;
+    color: #ddd;
 }
 #user-menubar:hover .uname {
     color: #b00;

@@ -161,6 +161,7 @@
 
 <script type="text/javascript">
     (function($) {
+        var headbox = $("#headbox");
         var context = $("#main-context");
         var menubar = $("#main-menubar");
         var userbar = $("#user-menubar");
@@ -183,9 +184,13 @@
             a.closest("li").addClass("active")
              .parents("li").addClass("acting");
 
-            // 定位到当前菜单
-            if ($(window).height( ) < $("#main-menubar li.active").height() + $("#main-menubar li.active").offset().top) {
-                $("#headbox").scrollTop(0 - $("#main-menubar").offset().top + $("#main-menubar li.active").offset().top);
+            /**
+             * 滚动定位到当前选中菜单
+             * 以便点击相邻的功能菜单
+             */
+            b = a.closest("li");
+            if (b.size() && $(window).height() < b.height() + b.offset().top) {
+                headbox.scrollTop( 0 - menubar.offset().top + b.offset().top);
             }
 
             /**
@@ -193,16 +198,16 @@
              * 则无需重复载入内容页面;
              * 没有则最终转向首个链接.
              */
-            if (context .size() === 0
-            ||  context .data("load")
-            ||  context .children().size()) {
-                return;
+            if (context.size() === 0
+            ||  context.data("load")
+            ||  context.children().size()) {
+                return ;
             }
 
-            l = a.data("href");
-            if (l && l != '/') {
+            l = a.data ("href");
+            if (l && l !== '/') {
                 context .hsLoad(l);
-            } else if ( !  l ) {
+            } else {
                 location.assign(h);
             }
         });
@@ -214,13 +219,13 @@
             a = menubar .find("a[href='"+h+"']");
             b = menubar ;
 
-            b.find("li").removeClass( "acting" );
-            b.find("li").removeClass( "active" );
-            a.parents("li").addClass( "acting" );
-            a.closest("li").addClass( "active" );
+            b.find("li").removeClass("active")
+                        .removeClass("acting");
+            a.closest("li").addClass("active")
+             .parents("li").addClass("acting");
 
-            l = a.data("href");
-            if (l && l != '/') {
+            l = a.data ("href");
+            if (l && l !== '/') {
                 context .hsLoad(l);
             } else {
                 location.assign(h);

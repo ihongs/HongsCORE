@@ -78,8 +78,9 @@
         <![endif]-->
         <script type="text/javascript" src="<%=request.getContextPath()%>/static/assets/jquery.min.js"></script>
         <style type="text/css">
-            h1
+            h1, h2
                 { font-weight: bolder; }
+            #footbox .copy-right a,
             #footbox .site-links a
                 { margin-right: 1.0em; }
             #footbox blockquote

@@ -66,10 +66,12 @@ html, body {
 }
 #user-menubar {
     bottom: 0;
-    background-color: rgba(34,34,34,0.9);
+    box-shadow: 0 -4px 8px -2px #333;
+    background-color: rgba(17,17,17,0.9);
 }
 #main-namebar {
     top   : 0;
+    box-shadow: 0  4px 8px -2px #000;
     background-color: rgba(34,34,34,0.9);
 }
 #main-namebar:after {
@@ -98,18 +100,9 @@ html, body {
     line-height: 12px;
     font-weight: 500;
     text-shadow: 0 -1px 1px #200;
-    padding: 1px 0;
+    padding: 3px 0;
     color: #e22;
 }
-
-/*
-#headbox:hover #main-namebar {
-    box-shadow: 0  10px 10px -10px #442;
-}
-#headbox:hover #user-menubar {
-    box-shadow: 0 -10px 10px -10px #244;
-}
-*/
 
 /** 菜单 **/
 

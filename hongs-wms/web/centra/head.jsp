@@ -185,15 +185,6 @@
              .parents("li").addClass("acting");
 
             /**
-             * 滚动定位到当前选中菜单
-             * 以便点击相邻的功能菜单
-             */
-            b = a.closest("li");
-            if (b.size() && $(window).height() < b.height() + b.offset().top) {
-                headbox.scrollTop( 0 - menubar.offset().top + b.offset().top);
-            }
-
-            /**
              * 容器不存在或容器已预载,
              * 则无需重复载入内容页面;
              * 没有则最终转向首个链接.
@@ -232,6 +223,32 @@
             }
         });
 
+        // 菜单折叠和展开
+        userbar.children("ul").hide();
+        menubar.find("li> ul").hide();
+        menubar.find("li.acting> ul").toggle( );
+        menubar.find("li.acting> a ").toggleClass("dropup");
+        // 定位到当前菜单
+        var actived = menubar.find("li.active");
+        if (actived.size() && actived.offset().top + actived.height() > $(window).height( ) ) {
+            headbox.scrollTop(actived.offset().top - actived.height() - menubar.offset().top);
+        }
+        $().add(menubar).add(userbar)
+           .on ("click", "a", function() {
+            var la = $(this);
+            var ul = la.siblings( "ul" );
+            if (ul.size( ) ) {
+                ul.slideToggle( "fast" );
+                la.toggleClass("dropup");
+                return false;
+            }
+        });
+
+        // 边栏隐藏与显示
+        $("#head-handler").click(function() {
+            $(document.body).toggleClass("sider-open");
+        }); $(document.body).   addClass("sider-open");
+
         $("#sign-out")
             .click( function() {
                 $.hsWarn(
@@ -255,26 +272,5 @@
             .click( function() {
                 $.hsOpen("centra/manage/note.html");
             } );
-
-        // 菜单折叠和展开
-        userbar.children("ul").hide();
-        menubar.find("li> ul").hide();
-        menubar.find("li.acting> ul").show();
-        menubar.find("li.acting> a ").addClass("dropup");
-        $().add(menubar).add(userbar)
-           .on ("click", "a", function() {
-            var la = $(this);
-            var ul = la.siblings( "ul" );
-            if (ul.size( ) ) {
-                ul.slideToggle( "fast" );
-                la.toggleClass("dropup");
-                return false;
-            }
-        });
-
-        // 边栏隐藏与显示
-        $("#head-handler").click(function() {
-            $(document.body).toggleClass("sider-open");
-        }); $(document.body).   addClass("sider-open");
     })(jQuery);
 </script>

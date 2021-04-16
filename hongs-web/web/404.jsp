@@ -44,8 +44,9 @@
         <![endif]-->
         <script type="text/javascript" src="<%=request.getContextPath()%>/static/assets/jquery.min.js"></script>
         <style type="text/css">
-            h1
+            h1, h2
                 { font-weight: bolder; }
+            #footbox .copy-right a,
             #footbox .site-links a
                 { margin-right: 1.0em; }
             #footbox blockquote
@@ -61,13 +62,14 @@
                 <p> &nbsp; </p>
                 <p> <%=escapeXML(text)%> </p>
                 <p> &nbsp; </p>
-                <p>
-                    <a class="btn btn-lg btn-success" href="javascript:history.back();">
-                        <%=CoreLocale.getInstance().translate("core.error.go.back")%>
-                    </a> &nbsp;
-                    <a class="btn btn-lg btn-primary" href="<%=request.getContextPath()%>/">
-                        <%=CoreLocale.getInstance().translate("core.error.go.home")%>
-                    </a> &nbsp;
+                <p style="font-size: 1em;">
+                    <span>当前访问的资源并不存在, 可能已被清除或链接错误;</span>
+                    <a style="color: white;" href="javascript:history.back();">
+                        <b><%=CoreLocale.getInstance().translate("core.error.go.back")%></b>
+                    </a>,
+                    <a style="color: white;" href="<%=request.getContextPath()%>/">
+                        <b><%=CoreLocale.getInstance().translate("core.error.go.home")%></b>
+                    </a>.
                 </p>
             </div>
         </div>

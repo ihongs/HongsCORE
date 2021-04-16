@@ -17,7 +17,15 @@
         <script type="text/javascript" src="common/conf/default.js"></script>
         <script type="text/javascript" src="common/lang/default.js"></script>
         <style type="text/css">
-            @media (min-width: 768px) {
+            #footbox .copy-right a ,
+            #footbox .site-links a {
+                margin-right : 1em;
+            }
+            .jumbotron {
+                background: #222;
+                color     : #ccc;
+            }
+            @media ( min-width: 768px ) {
                 .jumbotron {
                     background: #202222 linear-gradient(
                         -45deg, #202222 15%, #20282f 40%, #202222 40%
@@ -27,7 +35,7 @@
         </style>
     </head>
     <body>
-        <div class="jumbotron" style="background-color: #222; color: #ccc;">
+        <div class="jumbotron">
             <div class="container">
                 <h1 data-i18n="welcome0">Hello!</h1>
                 <p> <span data-i18n="welcome1">Welcome to</span>
@@ -69,9 +77,6 @@
                 </p></blockquote>
             </div>
         </nav>
-        <style  type="text/css">
-            #footbox .site-links a {margin-right: 1em;}
-        </style>
         <script type="text/javascript">
             (function($) {
                 var context = $("#sign-in-form");

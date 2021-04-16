@@ -230,7 +230,7 @@
         menubar.find("li.acting> a ").toggleClass("dropup");
         // 定位到当前菜单
         var actived = menubar.find("li.active");
-        if (actived.size() && actived.offset().top + actived.height() + userbar.height() > $(windows).height()) {
+        if (actived.size() && actived.offset().top + actived.height() + userbar.height() > $(window).height()) {
             headbox.scrollTop(actived.offset().top - actived.height() - namebar.height());
         }
         $().add(menubar).add(userbar)

@@ -47,12 +47,22 @@ code, pre, var, dfn, kbd {
     margin-right: -0.30em;
     margin-top: -0.15em;
     opacity: 0.8;
-    color: #eee;
+    color: #777;
 }
 .btn .close:hover ,
 .btn .close:focus {
     opacity: 1.0;
-    color: #eee;
+    color: #a44;
+}
+
+.btn.form-control {
+    background-image : none;
+     box-shadow: none;
+    text-shadow: none;
+    text-align : left;
+}
+.btn-default.form-control {
+    color: #999;
 }
 
 textarea.form-control ,
@@ -483,6 +493,7 @@ ol.repeated ,
 }
 .pagebox .alert {
     text-align : center;
+    background-image: none;
 }
 
 .listbox ._amenu,
@@ -699,13 +710,10 @@ ul.pickbox {
 }
 ul.pickbox > li.btn {
     width        : 100%;
-    text-align   : left;
-    white-space  : nowrap;
     overflow     : hidden;
+    white-space  : nowrap;
     text-overflow: ellipsis;
-    background-image : none;
-     box-shadow: none;
-    text-shadow: none;
+    text-align   : left;
 }
 ul.pickrol > li.btn {
     box-shadow   : none;
@@ -717,8 +725,8 @@ ul.pickrol > li.btn {
     margin-bottom: 0px;
 }
 ul.pickbox > li.btn .glyphicon {
-    margin-right : 6px;
-    color   : #ddd;
+    margin-right : 9px;
+    display : inline;
 }
 ul.pickrol > li.btn .glyphicon {
     margin-right : 0px;
@@ -731,6 +739,10 @@ ul.pickrol > li.btn-text:focus {
     color   : inherit;
     user-select: text;
     font-weight: inherit;
+}
+ul.pickbox > li.btn-default.form-control ,
+ul.pickrol > li.btn-default.form-control {
+    color: #555;
 }
 
 .preview {

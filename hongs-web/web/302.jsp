@@ -37,19 +37,20 @@
         <![endif]-->
         <script type="text/javascript" src="<%=request.getContextPath()%>/static/assets/jquery.min.js"></script>
         <style type="text/css">
-            h1
-                { font-weight: bolder; }
-            #footbox .site-links a
-                { margin-right: 1.0em; }
-            #footbox blockquote
-                { color: #444; background-color: #ccc; }
-            #footbox.navbar, body, .jumbotron, .container
-                { color: #222; background-color: #eee; }
-            @media ( prefers-color-scheme: dark ) {
-            #footbox blockquote
-                { color: #ccc; background-color: #444; }
-            #footbox.navbar, body, .jumbotron, .container
-                { color: #eee; background-color: #222; }
+            #footbox .copy-right a ,
+            #footbox .site-links a {
+                margin-right : 1em;
+            }
+            .jumbotron {
+                background: #222;
+                color     : #ccc;
+            }
+            @media ( min-width: 768px ) {
+                .jumbotron {
+                    background: #202222 linear-gradient(
+                        -45deg, #202222 15%, #20282f 40%, #202222 40%
+                    );
+                }
             }
         </style>
     </head>
@@ -66,7 +67,7 @@
                 </p>
             </div>
         </div>
-        <nav id="footbox" class="navbar navbar-fixed-bottom">
+        <nav id="footbox" class="navbar">
             <div class="container">
                 <blockquote><p class="clearfix">
                     <span>&copy;&nbsp;</span><span class="copy-right"><%=CoreLocale.getInstance().translate("fore.copy.right")%></span>

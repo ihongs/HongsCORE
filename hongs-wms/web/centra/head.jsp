@@ -165,6 +165,7 @@
         var context = $("#main-context");
         var menubar = $("#main-menubar");
         var userbar = $("#user-menubar");
+        var namebar = $("#main-namebar");
 
         $(function() {
             if (menubar.find("li.active").size()) {

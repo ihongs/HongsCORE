@@ -1,6 +1,5 @@
 package io.github.ihongs.db.link;
 
-import io.github.ihongs.Core;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.db.DBConfig;
@@ -41,6 +40,10 @@ public class Simple extends Link {
                 connection  = open( jdbc , path , info );
 
                 CoreLogger.trace("DB: Connect to '{}' by simple mode: {} {}", name, jdbc, path);
+            }
+
+            if (REFLUX_MODE) {
+                this.begin();
             }
 
             return connection;

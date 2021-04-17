@@ -1,6 +1,5 @@
 package io.github.ihongs.db.link;
 
-import io.github.ihongs.Core;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsException;
 import java.sql.Connection;
@@ -43,6 +42,10 @@ public class Origin extends Link {
                 connection  = open( jndi , path , info );
                 
                 CoreLogger.trace("DB: Connect to '{}' by origin mode: {} {}", name, jndi, path);
+            }
+
+            if (REFLUX_MODE) {
+                this.begin();
             }
 
             return connection;

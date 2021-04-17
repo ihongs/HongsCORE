@@ -74,7 +74,6 @@ import org.apache.lucene.queryparser.classic.ParseException;
 public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoCloseable {
 
     protected boolean REFLUX_MODE = false;
-    protected final  boolean REFLUX_BASE ;
 
     private IndexSearcher finder  = null ;
     private IndexReader   reader  = null ;
@@ -92,17 +91,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      * @param name 存储名称, 可覆盖 getDbName
      */
     public LuceneRecord(Map form, String path, String name) {
-        // 必要参数
         setFields (form);
         setDbPath (path);
         setDbName (name);
-
-        // 环境模式
-        CoreConfig conf = CoreConfig.getInstance();
-        REFLUX_MODE = Synt.declare(
-            Core.getInstance().got(Cnst.REFLUX_MODE),
-            conf.getProperty("core.in.reflux.mode", false));
-        REFLUX_BASE = REFLUX_MODE;
     }
 
     /**
@@ -1535,14 +1526,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      */
     @Override
     public void begin() {
-        /**
-         * 有尚未提交的变更
-         * 又不在全局事务内
-         */
         if (REFLUX_MODE
         &&  writer != null
-        &&  writer.hasUncommittedChanges ()
-        && !Synt.declare(Core.getInstance().got(Cnst.REFLUX_MODE), false)) {
+        &&  writer.hasUncommittedChanges()) {
             throw new HongsExemption(1054, "Uncommitted changes");
         }
         REFLUX_MODE = true;
@@ -1560,7 +1546,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         } catch (IOException ex ) {
             throw new HongsExemption(1055, ex);
         }
-        REFLUX_MODE = REFLUX_BASE;
+        REFLUX_MODE = false;
     }
 
     /**
@@ -1575,7 +1561,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         } catch (IOException ex ) {
             throw new HongsExemption(1056, ex);
         }
-        REFLUX_MODE = REFLUX_BASE;
+        REFLUX_MODE = false;
     }
 
     @Override

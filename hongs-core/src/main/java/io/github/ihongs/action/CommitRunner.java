@@ -5,6 +5,8 @@ import io.github.ihongs.Core;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.dh.IReflux;
+import java.util.function.Supplier;
+import java.util.Map;
 
 /**
  * 事务提交包装
@@ -49,12 +51,13 @@ public final class CommitRunner {
 
         try {
             // 开启
+            core.put( Cnst.REFLUX_MODE , true );
+            Core.THREAD_CORE.set(new Hub(core));
             for(Object o : core.values()) {
                 if (o instanceof IReflux) {
                     ((IReflux) o).begin();
                 }
             }
-            core.put(Cnst.REFLUX_MODE, true);
 
             try {
                 // 执行
@@ -85,8 +88,49 @@ public final class CommitRunner {
                 throw new  HongsException (1109, ex);
             }
         } finally {
+            // 重置
             core.remove(Cnst.REFLUX_MODE);
+            Core.THREAD_CORE.set ( core );
         }
+    }
+
+    private static final class Hub extends Core {
+
+        private final Core CORE;
+
+        private Hub ( Core core) {
+            this.CORE = core;
+        }
+
+        @Override
+        protected Map sup() {
+            return this.CORE;
+        }
+
+        @Override
+        public Object put(String key, Object obj) {
+            // 代理登记, 预开启事务
+            if (obj instanceof IReflux) {
+                ((IReflux) obj).begin();
+            }
+            return sup().put(key , obj);
+        }
+
+        @Override
+        public Object get(String key) {
+            return ((Core) sup()).get(key);
+        }
+
+        @Override
+        public <T>T get(Class<T> cls) {
+            return ((Core) sup()).get(cls);
+        }
+
+        @Override
+        public <T>T get(String key, Supplier<T> fun) {
+            return ((Core) sup()).get(key, fun);
+        }
+
     }
 
 }

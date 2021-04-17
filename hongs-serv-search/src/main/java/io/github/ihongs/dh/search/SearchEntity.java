@@ -289,8 +289,6 @@ public class SearchEntity extends LuceneRecord {
             this.dbname = dbname;
 
             init();
-
-            CoreLogger.trace("Start the lucene writer for {}", dbname);
         }
 
         private void init() {
@@ -301,6 +299,8 @@ public class SearchEntity extends LuceneRecord {
             } catch (IOException x) {
                 throw new HongsExemption(x);
             }
+
+            CoreLogger.trace("Start the lucene writer for {}", dbname);
         }
 
         synchronized public IndexWriter conn() {
@@ -322,12 +322,9 @@ public class SearchEntity extends LuceneRecord {
         }
 
         @Override
-        synchronized public byte clean() {
+        synchronized public void clean() {
             if (c <= 0) {
-                this . close( );
-                return (byte) 1;
-            } else {
-                return (byte) 0;
+                close();
             }
         }
 

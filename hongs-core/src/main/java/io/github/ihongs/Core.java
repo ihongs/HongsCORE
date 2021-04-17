@@ -1,8 +1,10 @@
 package io.github.ihongs;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Map;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.function.Supplier;
@@ -55,9 +57,10 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * @author Hongs
  */
 abstract public class Core
-     extends HashMap<String, Object>
-  implements AutoCloseable
+  implements AutoCloseable, Map<String, Object>
 {
+  private final Map<String, Object> SUPER = new HashMap();
+
   /**
    * 运行环境(0 Cmd, 1 Web)
    */
@@ -433,83 +436,109 @@ abstract public class Core
    */
   abstract public <T>T get(String key, Supplier<T> fun);
 
-  /**
-   * 写入实例, 过程加锁
-   * @param <T>
-   * @param key
-   * @param fun
-   * @return 不同于 put 返回旧的, 这里返回新的
-   */
-  abstract public <T>T set(String key, Supplier<T> fun);
+  //** 读写方法 **/
 
-  /**
-   * 调用原始 get 方法
-   *
-   * @param name
-   * @return 唯一对象, 不存在则返回空
-   */
-  public Object got(String name)
+  protected Map<String, Object> sup()
   {
-    return super.get(name);
+    return SUPER;
   }
 
   /**
    * 弃用 get(Object), 请用 got(String),get(String|Class)
    *
-   * @param name
+   * @param key
    * @return 抛出异常, 为避歧义禁用之
    * @throws UnsupportedOperationException
    * @deprecated
    */
   @Override
-  public Object get(Object name)
+  public Object get(Object key)
   {
+    if (key instanceof String) {
+      return get((String) key);
+    } else
+    if (key instanceof Class ) {
+      return get((Class ) key);
+    }
     throw new UnsupportedOperationException(
-      "May cause an error on 'get(Object)', use 'got(String)' or 'get(String|Class)'");
+      "Please change 'get(Object)' to 'got(Object)' or 'get(String|Class)'"
+    );
   }
 
-  /**
-   * 可关闭清理
-   */
-  public void clean()
+  public Object got(Object key)
   {
-    if (this.isEmpty())
-    {
-      return;
-    }
-
-    /**
-     * 为规避 ConcurrentModificationException,
-     * 只能采用遍历数组而非迭代循环的方式进行.
-     */
-
-    Object[] a = this.keySet().toArray();
-    for (int i = 0; i < a.length; i ++ )
-    {
-      Object k = a [i];
-      Object o = super.get( k );
-      try
-      {
-        if ((o instanceof Cleanable/**/)
-        && ((Cleanable) o ).clean() > 0)
-        {
-           this.remove( k );
-        }
-      }
-      catch ( Throwable x )
-      {
-        x.printStackTrace ( System.err );
-      }
-    }
+    return sup().get(key);
   }
 
-  /**
-   * 关闭后清空
-   */
+  @Override
+  public Object put(String key, Object obj)
+  {
+    return sup().put(key, obj);
+  }
+
+  @Override
+  public Object remove(Object key)
+  {
+    return sup().remove(key);
+  }
+
+  @Override
+  public boolean containsKey(Object key)
+  {
+    return sup().containsKey(key);
+  }
+
+  @Override
+  public boolean containsValue(Object obj)
+  {
+    return sup().containsValue(obj);
+  }
+
+  @Override
+  public boolean isEmpty()
+  {
+    return sup().isEmpty();
+  }
+
+  @Override
+  public int size()
+  {
+    return sup().size();
+  }
+
+  @Override
+  public Set<String> keySet()
+  {
+    return sup().keySet();
+  }
+
+  @Override
+  public Collection<Object> values()
+  {
+    return sup().values();
+  }
+
+  @Override
+  public Set<Map.Entry<String, Object>> entrySet()
+  {
+    return sup().entrySet();
+  }
+
+  @Override
+  public void putAll(Map<? extends String, ? extends Object> map)
+  {
+    sup().putAll(map);
+  }
+
   @Override
   public void clear()
   {
-    if (this.isEmpty())
+    sup().clear();
+  }
+
+  public void clean()
+  {
+    if (sup().isEmpty())
     {
       return;
     }
@@ -520,9 +549,38 @@ abstract public class Core
      */
 
     Object[] a = this.values().toArray();
-    for (int i = 0; i < a.length; i ++ )
+    for (Object o : a)
     {
-      Object o = a [i];
+      try
+      {
+        if ( o instanceof Cleanable)
+        {
+           ((Cleanable) o ).clean( );
+        }
+      }
+      catch ( Throwable x )
+      {
+        x.printStackTrace ( System.err );
+      }
+    }
+  }
+
+  @Override
+  public void close()
+  {
+    if (sup().isEmpty())
+    {
+      return;
+    }
+
+    /**
+     * 为规避 ConcurrentModificationException,
+     * 只能采用遍历数组而非迭代循环的方式进行.
+     */
+
+    Object[] a = this.values().toArray();
+    for (Object o : a)
+    {
       try
       {
         if ( o instanceof AutoCloseable)
@@ -535,21 +593,12 @@ abstract public class Core
         x.printStackTrace ( System.err );
       }
     }
-
-    super.clear();
   }
 
   @Override
-  public void close()
-  {
-      clear();
-  }
-
-  @Override
-  protected void finalize() throws Throwable
-  {
+  protected void finalize() throws Throwable {
     try {
-      close();
+      this.close();
     } finally {
       super.finalize();
     }
@@ -559,7 +608,7 @@ abstract public class Core
   public String toString()
   {
     StringBuilder sb = new StringBuilder();
-    for(Map.Entry<String, Object> et : entrySet())
+    for(Map.Entry<String, Object> et : this.entrySet())
     {
         sb.append('[');
       int ln = sb.length();
@@ -675,14 +724,6 @@ abstract public class Core
       return  obj;
     }
 
-    @Override
-    public <T>T set(String key, Supplier<T> fun)
-    {
-      T obj = fun.get( );
-      super.put(key,obj);
-      return  obj;
-    }
-
   }
 
   /**
@@ -692,17 +733,6 @@ abstract public class Core
   private static final class Global extends Core
   {
   private final ReadWriteLock LOCK = new ReentrantReadWriteLock();
-
-    @Override
-    public Object got(String key)
-    {
-      LOCK.readLock( ).lock();
-      try {
-        return super.got(key);
-      } finally {
-        LOCK.readLock( ).unlock();
-      }
-    }
 
     @Override
     public Object get(String key)
@@ -773,15 +803,13 @@ abstract public class Core
     }
 
     @Override
-    public <T>T set(String key, Supplier<T> fun)
+    public Object got(Object key)
     {
-      LOCK.writeLock().lock();
+      LOCK.readLock( ).lock();
       try {
-        T obj = fun.get( );
-        super.put(key,obj);
-        return  obj;
+        return super.got(key);
       } finally {
-        LOCK.writeLock().unlock();
+        LOCK.readLock( ).unlock();
       }
     }
 
@@ -797,11 +825,32 @@ abstract public class Core
     }
 
     @Override
+    public Object remove(Object key)
+    {
+      LOCK.writeLock().lock();
+      try {
+        return super.remove(key );
+      } finally {
+        LOCK.writeLock().unlock();
+      }
+    }
+
+    public void putAll(Map<? extends String, ? extends Object> map)
+    {
+      LOCK.writeLock().lock();
+      try {
+        super.putAll(  map  );
+      } finally {
+        LOCK.writeLock().unlock();
+      }
+    }
+
+    @Override
     public void clear()
     {
       LOCK.writeLock().lock();
       try {
-        super.clear();
+        super.clear( );
       } finally {
         LOCK.writeLock().unlock();
       }
@@ -812,7 +861,18 @@ abstract public class Core
     {
       LOCK.writeLock().lock();
       try {
-        super.clean();
+        super.clean( );
+      } finally {
+        LOCK.writeLock().unlock();
+      }
+    }
+
+    @Override
+    public void close()
+    {
+      LOCK.writeLock().lock();
+      try {
+        super.close( );
       } finally {
         LOCK.writeLock().unlock();
       }
@@ -830,9 +890,8 @@ abstract public class Core
   {
     /**
      * 清理方法
-     * @return 0 继续留用, 1 可以回收
      */
-    public byte clean();
+    public void clean();
   }
 
   /**

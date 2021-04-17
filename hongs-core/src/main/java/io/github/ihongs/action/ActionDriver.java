@@ -190,6 +190,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         ActionRunner.getActions();
 
         // 清空全局好准备重新开始
+        Core.GLOBAL_CORE.close ();
         Core.GLOBAL_CORE.clear ();
 
         // 设置全局清理的计划任务

@@ -375,14 +375,13 @@ public final class Block {
 
     private static class Cleans implements Core.Cleanable, Core.Singleton {
         @Override
-        public byte clean() {
+        public void clean() {
             if (!ST_LOCKS.isEmpty() || !RW_LOCKS.isEmpty()) {
                 int n  =  cleans( );
                 CoreLogger.trace("Cleared {} lock(s)", n);
             } else {
                 CoreLogger.trace( "No locks be cleared" );
             }
-            return (byte) 0;
         }
     }
 

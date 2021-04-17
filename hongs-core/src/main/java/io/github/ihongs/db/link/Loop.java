@@ -124,12 +124,12 @@ public class Loop implements Iterable<Map>, Iterator<Map>, AutoCloseable {
             if (ib) {
                 for (Map.Entry<String,Class> et : td.entrySet()) {
                     // row.put(et.getKey() , rs.getString(++ i /* No Type */ ));
-                    Dict.put(row, rs.getString(++ i /* No Type */ ), (Object[]) et.getKey().split("\\."));
+                    Dict.put(row, rs.getString(++ i), (Object[]) et.getKey().split("\\."));
                 }
             } else {
                 for (Map.Entry<String,Class> et : td.entrySet()) {
                     // row.put(et.getKey() , rs.getObject(++ i, et.getState()));
-                    Dict.put(row, rs.getObject(++ i, et.getValue()), (Object[]) et.getKey().split("\\."));
+                    Dict.put(row, rs.getObject(++ i), (Object[]) et.getKey().split("\\."));
                 }
             }
             return  row ;

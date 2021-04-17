@@ -42,10 +42,6 @@ public class Simple extends Link {
                 CoreLogger.trace("DB: Connect to '{}' by simple mode: {} {}", name, jdbc, path);
             }
 
-            if (REFLUX_MODE) {
-                this.begin();
-            }
-
             return connection;
         } catch (SQLException ex) {
             throw new HongsException(1024, ex);

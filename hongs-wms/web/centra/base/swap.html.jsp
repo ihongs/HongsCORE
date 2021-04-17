@@ -163,7 +163,7 @@
                     <label class="control-label">响应</label>
                     <pre class="form-control-static">
 {
-    "nid": "新的记录ID",
+    "<%=Cnst.ID_KEY%>": "新的记录ID",
     // ...
 }
                     </pre>
@@ -192,7 +192,7 @@ id=ID 或 id.=ID1&id.=ID2...
                     <label class="control-label">响应</label>
                     <pre class="form-control-static">
 {
-    "cnt": "更新的条数",
+    "<%=Cnst.RN_KEY%>": "更新的条数",
     // ...
 }
                     </pre>
@@ -220,7 +220,7 @@ id=ID 或 id.=ID1&id.=ID2...
                     <label class="control-label">响应</label>
                     <pre class="form-control-static">
 {
-    "cnt": "删除的条数",
+    "<%=Cnst.RN_KEY%>": "删除的条数",
     // ...
 }
                     </pre>

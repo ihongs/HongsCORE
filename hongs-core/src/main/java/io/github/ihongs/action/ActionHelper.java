@@ -798,7 +798,7 @@ public class ActionHelper implements Cloneable
    * 针对 create 等
    * @param msg
    * @param info
-   * @deprecated 新的 create 返回 nid
+   * @deprecated 新的 create 返回 id
    */
   public void reply(String msg, Map info)
   {
@@ -814,15 +814,15 @@ public class ActionHelper implements Cloneable
    * 返回新的编号
    * 针对 create 等
    * @param msg
-   * @param cnt
+   * @param id 新的编号
    */
-  public void reply(String msg, String nid)
+  public void reply(String msg, String id)
   {
     Map map = new HashMap();
     if (null !=  msg) {
         map.put("msg", msg);
     }
-    map.put("nid", nid );
+    map.put(Cnst.ID_KEY, id);
     reply(map);
   }
 
@@ -830,15 +830,15 @@ public class ActionHelper implements Cloneable
    * 返回影响行数
    * 针对 delete 等
    * @param msg
-   * @param cnt
+   * @param rn 影响数量
    */
-  public void reply(String msg, Number cnt)
+  public void reply(String msg, Number rn)
   {
     Map map = new HashMap();
     if (null !=  msg) {
         map.put("msg", msg);
     }
-    map.put("cnt", cnt );
+    map.put(Cnst.RN_KEY, rn);
     reply(map);
   }
 

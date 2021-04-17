@@ -1,8 +1,6 @@
 package io.github.ihongs.db.link;
 
-import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
-import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
@@ -32,16 +30,6 @@ abstract public class Link
 {
 
   /**
-   * 是否为事务模式(即不会自动提交)
-   */
-  protected boolean REFLUX_MODE;
-
-  /**
-   * 初始的事务模式
-   */
-  private final boolean REFLUX_BASE;
-
-  /**
    * 库名
    */
   public String name;
@@ -51,19 +39,15 @@ abstract public class Link
    */
   protected Connection connection;
 
+  /**
+   * 事务模式
+   */
+  protected  boolean  REFLUX_MODE;
+
   public Link(String name)
     throws HongsException
   {
     this.name = name;
-
-    // 是否要开启事务
-    Object tr  = Core.getInstance().got(Cnst.REFLUX_MODE);
-    if ( ( tr != null  &&  Synt.declare( tr , false  )  )
-    ||     CoreConfig.getInstance().getProperty("core.in.reflux.mode", false)) {
-        REFLUX_MODE = true;
-    }
-
-    REFLUX_BASE = REFLUX_MODE;
   }
 
   /**
@@ -171,7 +155,7 @@ abstract public class Link
     } catch (SQLException ex) {
         throw new HongsExemption(1055, ex);
     }
-    REFLUX_MODE = REFLUX_BASE;
+    REFLUX_MODE = false;
   }
 
   /**
@@ -189,7 +173,7 @@ abstract public class Link
     } catch (SQLException ex) {
         throw new HongsExemption(1056, ex);
     }
-    REFLUX_MODE = REFLUX_BASE;
+    REFLUX_MODE = false;
   }
 
   /** 查询辅助 **/

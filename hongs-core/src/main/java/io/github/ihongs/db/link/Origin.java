@@ -44,10 +44,6 @@ public class Origin extends Link {
                 CoreLogger.trace("DB: Connect to '{}' by origin mode: {} {}", name, jndi, path);
             }
 
-            if (REFLUX_MODE) {
-                this.begin();
-            }
-
             return connection;
         } catch (SQLException ex) {
             throw new HongsException(1022, ex);

@@ -126,9 +126,7 @@ public final class Cnst {
 
     public static final String RESPON_ATTR = "__RESPON_DATA__"; // 响应数据
 
-    //** 数据模式 **/
-
-    public static final String STRING_MODE = "__STRING_MODE__"; // 字串模式
+    //** 全局模式 **/
 
     public static final String REFLUX_MODE = "__REFLUX_MODE__"; // 事务模式
 

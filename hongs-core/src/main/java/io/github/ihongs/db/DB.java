@@ -632,7 +632,6 @@ public class DB
    * 获取指定数据库对象
    * <b>注意:</b>
    * <p>
-   * 会根据当前运行环境自动设置 STRING_MODE,REFLUX_MODE;
    * 数据库配置中有指定 dbClass, 请务必添加 getInstance:
    * </p>
    * <pre>
@@ -675,14 +674,14 @@ public class DB
    * 获取默认数据库对象
    * <b>注意:</b>
    * <p>
-   * 如果指定数据库配置中有指定dbClass, 务必添加方法:
+   * 数据库配置中有指定 dbClass, 请务必添加 getInstance:
    * </p>
    * <pre>
-  public static XxxDB getInstance()
-    throws HongsException
-  {
-    return new  XxxDB();
-  }
+    public static XxxDB getInstance()
+      throws HongsException
+    {
+      return new  XxxDB();
+    }
    * </pre>
    * @return 默认DB对象
    * @throws io.github.ihongs.HongsException

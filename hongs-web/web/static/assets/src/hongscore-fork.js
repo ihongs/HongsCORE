@@ -219,13 +219,13 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
         if (rst.info) {
             rst = rst.info ;
         } else
-        if (rst.nid && at) {
+        if (rst.id && at) {
             /**
              * 新方案创建接口仅返回id
              * 需调用详情接口获取数据
              */
             $.hsAjax({
-                url : hsSetParam(at, vk, rst.nid),
+                url : hsSetParam(at, vk, rst.id),
                 cache : false,
                 rsync : false,
                 dataType:  "json"  ,

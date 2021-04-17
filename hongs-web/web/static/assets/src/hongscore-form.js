@@ -1209,8 +1209,9 @@ HsForm.prototype = {
                             ? rst["page"].count  == 0
                             : rst["page"].count  != 0;
                     } else
-                    if (rst["cnt" ] !== undefined) {
-                        ret = parseInt(rst["cnt"]) ? true
+                    if (rst[ "rn" ] !== undefined) {
+                        rst[ "rn" ]  =  parseInt( rst[ "rn" ] );
+                        ret = rst["rn" ] ? true
                           : ( rst["msg"] ? rst["msg"] : false );
                     } else {
                         ret = rst["ok" ] ? true

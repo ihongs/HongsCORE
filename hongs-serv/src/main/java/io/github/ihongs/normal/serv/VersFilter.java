@@ -167,10 +167,10 @@ public class VersFilter extends ActionDriver {
                     ab.add(".enfo");
                     rf = 2;
                 }
-                if (ab.contains(".nid" )) {
+                if (ab.contains(".id")) {
                     nf+= 1;
                 }
-                if (ab.contains(".cnt" )) {
+                if (ab.contains(".rn")) {
                     nf+= 2;
                 }
             }
@@ -195,17 +195,17 @@ public class VersFilter extends ActionDriver {
                     }
                 }
                 if (1 != (1 & nf)
-                &&  sd.containsKey("nid" )
-                && !sd.containsKey("info")) {
-                    Object id = sd.get("nid");
-                    rd.put(Cnst.ID_KEY , id );
-                    sd.put("info", rd );
+                && !sd.containsKey("info")
+                &&  sd.containsKey(Cnst.ID_KEY)) {
+                    Object id = sd.get(Cnst.ID_KEY);
+                    rd.put(Cnst.ID_KEY, id);
+                    sd.put("info", rd);
                 }
                 if (2 != (2 & nf)
-                &&  sd.containsKey("cnt" )
-                && !sd.containsKey("size")) {
-                    Object ct = sd.get("cnt");
-                    sd.put("size", ct );
+                && !sd.containsKey("size")
+                &&  sd.containsKey(Cnst.RN_KEY)) {
+                    Object ct = sd.get(Cnst.RN_KEY);
+                    sd.put("size", ct);
                 }
             }
         }

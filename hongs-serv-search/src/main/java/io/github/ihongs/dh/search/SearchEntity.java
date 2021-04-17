@@ -8,14 +8,16 @@ import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.FormSet;
 import io.github.ihongs.dh.lucene.LuceneRecord;
 import io.github.ihongs.util.Syno;
-import java.io.File;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path ;
 import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
+import org.apache.lucene.analysis.Analyzer;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexWriter;
@@ -113,10 +115,8 @@ public class SearchEntity extends LuceneRecord {
                     b[ 0 ]  = true;
 
                     try {
-                        IndexWriterConfig iwc = new IndexWriterConfig(getAnalyzer());
-                        iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
-
-                        return new Writer(iwc, path, name);
+                        Analyzer  ana  =  getAnalyzer (  );
+                        return new Writer(path, name, ana);
                     } catch (HongsException x) {
                         throw x.toExemption( );
                     }
@@ -279,23 +279,28 @@ public class SearchEntity extends LuceneRecord {
 
         private final String            dbpath;
         private final String            dbname;
-        private final IndexWriterConfig config;
+        private final Analyzer          alyzer;
         private       IndexWriter       writer;
         private       int               c = 1 ;
 
-        public Writer(IndexWriterConfig config, String dbpath, String dbname) {
-            this.config = config;
+        public Writer(String dbpath, String dbname, Analyzer alyzer) {
             this.dbpath = dbpath;
             this.dbname = dbname;
+            this.alyzer = alyzer;
 
             init();
         }
 
         private void init() {
             try {
-                Directory direct;
-                direct = FSDirectory.open(Paths.get(dbpath));
-                writer = new IndexWriter ( direct , config );
+                Path      path;
+                Directory dire;
+                IndexWriterConfig config ;
+                path = Paths.get (dbpath);
+                dire = FSDirectory.open (path);
+                config = new IndexWriterConfig(alyzer);
+                config.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
+                writer = new IndexWriter(dire, config);
             } catch (IOException x) {
                 throw new HongsExemption(x);
             }

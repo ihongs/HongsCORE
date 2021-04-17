@@ -128,7 +128,7 @@ public final class Cnst {
 
     //** 数据模式 **/
 
-    public static final String OBJECT_MODE = "__OBJECT_MODE__"; // 对象模式
+    public static final String STRING_MODE = "__STRING_MODE__"; // 字串模式
 
     public static final String REFLUX_MODE = "__REFLUX_MODE__"; // 事务模式
 

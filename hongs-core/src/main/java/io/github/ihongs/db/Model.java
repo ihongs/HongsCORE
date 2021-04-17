@@ -855,7 +855,7 @@ implements IEntity
     wh.put(table.primaryKey, id);
     wh.put(Cnst.RB_KEY, Synt.setOf(table.primaryKey));
     caze.use(db).from ( table.tableName, table.name );
-    caze.setOption("OBJECT_MODE", false);
+    caze.setOption("STRING_MODE", true);
     this.filter(caze , wh);
     Set xd = new HashSet();
     for(Map row : caze.select()) {

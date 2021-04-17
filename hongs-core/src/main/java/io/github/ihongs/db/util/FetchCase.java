@@ -39,7 +39,7 @@ import java.util.regex.Pattern;
  * <h3>系统已知 options:</h3>
  * <pre>
  * CLEVER_MODE  : boolean     聪明模式, 设为 true 则自动根据关联层级补全表名和别名
- * OBJECT_MODE  : boolean     对象模式, 设为 true 则获取的结果为字段类型对应的对象
+ * STRING_MODE  : boolean     字串模式, 设为 true 则获取结果中的字段值全部转为字串
  * ASSOC_MULTI  : boolean     对多关联(使用IN方式关联); 作用域: FetchMore
  * ASSOC_MERGE  : boolean     归并关联(仅限非对多关联); 作用域: FetchMore
  * ASSOC_FILLS  : boolean     给缺失的关联补全空白数据; 作用域: FetchMore
@@ -97,7 +97,7 @@ public class FetchCase
 
   public static final byte STRICT = 2;
   public static final byte CLEVER = 3;
-  public static final byte OBJECT = 4;
+  public static final byte STRING = 4;
 
   /**
    * 字段可能的前导字符
@@ -181,7 +181,7 @@ public class FetchCase
     this.joinName   = null;
 
     if (4 == (4 & mode)) {
-      this.options.put("OBJECT_MODE", true);
+      this.options.put("STRING_MODE", true);
     }
     if (3 == (3 & mode)) {
       this.options.put("CLEVER_MODE", true);
@@ -1371,8 +1371,8 @@ public class FetchCase
     }
 
     Loop rs = _db_.query(getSQL(), getStart(), getLimit(), getParams());
-    if (hasOption("OBJECT_MODE")) {
-         rs.inObjectMode(getOption("OBJECT_MODE", false));
+    if (hasOption("STRING_MODE")) {
+         rs.inStringMode(getOption("STRING_MODE", false));
     }
 
     return  rs;

@@ -32,9 +32,9 @@ abstract public class Link
 {
 
   /**
-   * 是否为对象模式(即获取的是对象)
+   * 是否为字串模式(即全部转为字串)
    */
-  protected boolean OBJECT_MODE;
+  protected boolean STRING_MODE;
 
   /**
    * 是否为事务模式(即不会自动提交)
@@ -61,11 +61,11 @@ abstract public class Link
   {
     this.name = name;
 
-    // 是否为对象模式
-    Object ox  = Core.getInstance().got(Cnst.OBJECT_MODE);
+    // 是否为字串模式
+    Object ox  = Core.getInstance().got(Cnst.STRING_MODE);
     if ( ( ox != null  &&  Synt.declare( ox , false  )  )
-    ||     CoreConfig.getInstance().getProperty("core.in.object.mode", false)) {
-        OBJECT_MODE = true;
+    ||     CoreConfig.getInstance().getProperty("core.in.string.mode", false)) {
+        STRING_MODE = true;
     }
 
     // 是否要开启事务
@@ -404,7 +404,7 @@ abstract public class Link
     }
 
     Loop loop = new Loop( rs, ps );
-    loop.inObjectMode(OBJECT_MODE);
+    loop.inStringMode(STRING_MODE);
     return loop;
   }
 

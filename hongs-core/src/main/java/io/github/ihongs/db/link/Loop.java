@@ -35,11 +35,11 @@ public class Loop implements Iterable<Map>, Iterator<Map>, AutoCloseable {
         this.rs = rs;
     }
 
-    public void inObjectMode(boolean ib) {
+    public void inStringMode(boolean ib) {
         this.ib = ib;
     }
 
-    public boolean isObjectMode() {
+    public boolean isStringMode() {
         return ib;
     }
 
@@ -123,13 +123,13 @@ public class Loop implements Iterable<Map>, Iterator<Map>, AutoCloseable {
             Map<String,Object> row = new LinkedHashMap();
             if (ib) {
                 for (Map.Entry<String,Class> et : td.entrySet()) {
-                    // row.put(et.getKey() , rs.getObject(++ i, et.getState()));
-                    Dict.put(row, rs.getObject(++ i, et.getValue()), (Object[]) et.getKey().split("\\."));
+                    // row.put(et.getKey() , rs.getString(++ i /* No Type */ ));
+                    Dict.put(row, rs.getString(++ i /* No Type */ ), (Object[]) et.getKey().split("\\."));
                 }
             } else {
                 for (Map.Entry<String,Class> et : td.entrySet()) {
-                    // row.put(et.getKey() , rs.getString(++ i /* No Type */ ));
-                    Dict.put(row, rs.getString(++ i /* No Type */ ), (Object[]) et.getKey().split("\\."));
+                    // row.put(et.getKey() , rs.getObject(++ i, et.getState()));
+                    Dict.put(row, rs.getObject(++ i, et.getValue()), (Object[]) et.getKey().split("\\."));
                 }
             }
             return  row ;

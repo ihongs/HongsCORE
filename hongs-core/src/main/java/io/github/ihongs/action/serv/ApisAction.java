@@ -102,7 +102,7 @@ public class ApisAction
             hlpr.getRequestData().putAll(data);
         }
         if (mode != null && !mode.isEmpty()) {
-            Core.getInstance().put(Cnst.OBJECT_MODE, true);
+            Core.getInstance().put(Cnst.STRING_MODE,false);
         }
 
         // 转发动作处理, 获取响应数据

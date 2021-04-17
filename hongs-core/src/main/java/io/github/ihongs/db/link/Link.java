@@ -32,11 +32,6 @@ abstract public class Link
 {
 
   /**
-   * 是否为字串模式(即全部转为字串)
-   */
-  protected boolean STRING_MODE;
-
-  /**
    * 是否为事务模式(即不会自动提交)
    */
   protected boolean REFLUX_MODE;
@@ -60,13 +55,6 @@ abstract public class Link
     throws HongsException
   {
     this.name = name;
-
-    // 是否为字串模式
-    Object ox  = Core.getInstance().got(Cnst.STRING_MODE);
-    if ( ( ox != null  &&  Synt.declare( ox , false  )  )
-    ||     CoreConfig.getInstance().getProperty("core.in.string.mode", false)) {
-        STRING_MODE = true;
-    }
 
     // 是否要开启事务
     Object tr  = Core.getInstance().got(Cnst.REFLUX_MODE);
@@ -403,9 +391,7 @@ abstract public class Link
       throw new HongsException(1043, ex);
     }
 
-    Loop loop = new Loop( rs, ps );
-    loop.inStringMode(STRING_MODE);
-    return loop;
+    return  new Loop(rs, ps);
   }
 
   /**

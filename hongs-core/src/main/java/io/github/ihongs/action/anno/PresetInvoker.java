@@ -45,12 +45,18 @@ public class PresetInvoker implements FilterInvoker {
             Set<String> used = new LinkedHashSet ();
             if (null != uzed && ! uzed.isEmpty ( )) {
                 for(String item : uzed) {
+                    /*
+                    // 2021/04/17
+                    // 废弃返回数据模式
+                    // 规避内部不确定性
+                    // 总是返回原始对象
                     if (item.equals("_str_")) {
                         Core.getInstance().put(Cnst.STRING_MODE, true );
                     } else
                     if (item.equals("_obj_")) {
                         Core.getInstance().put(Cnst.STRING_MODE, false);
                     } else
+                    */
                     if (item.startsWith("_") == false
                     && !item.startsWith(".")
                     && !item.startsWith(":")

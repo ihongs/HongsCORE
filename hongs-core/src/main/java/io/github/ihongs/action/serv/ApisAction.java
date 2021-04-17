@@ -101,9 +101,11 @@ public class ApisAction
         if (data != null && !data.isEmpty()) {
             hlpr.getRequestData().putAll(data);
         }
+        /*
         if (mode != null && !mode.isEmpty()) {
             Core.getInstance().put(Cnst.STRING_MODE,false);
         }
+        */
 
         // 转发动作处理, 获取响应数据
         req.getRequestDispatcher(act).include( req , rsp );

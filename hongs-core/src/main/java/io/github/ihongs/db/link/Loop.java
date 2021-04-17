@@ -128,7 +128,7 @@ public class Loop implements Iterable<Map>, Iterator<Map>, AutoCloseable {
                 }
             } else {
                 for (Map.Entry<String,Class> et : td.entrySet()) {
-                    // row.put(et.getKey() , rs.getObject(++ i, et.getState()));
+                    // row.put(et.getKey() , rs.getObject(++ i, et.getValue()));
                     Dict.put(row, rs.getObject(++ i), (Object[]) et.getKey().split("\\."));
                 }
             }

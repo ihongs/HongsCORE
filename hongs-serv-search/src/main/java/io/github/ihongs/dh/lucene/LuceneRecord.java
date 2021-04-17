@@ -73,7 +73,6 @@ import org.apache.lucene.queryparser.classic.ParseException;
  */
 public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoCloseable {
 
-    protected boolean STRING_MODE = false;
     protected boolean REFLUX_MODE = false;
     protected final  boolean REFLUX_BASE ;
 
@@ -100,9 +99,6 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
         // 环境模式
         CoreConfig conf = CoreConfig.getInstance();
-        STRING_MODE = Synt.declare(
-            Core.getInstance().got(Cnst.STRING_MODE),
-            conf.getProperty("core.in.string.mode", false));
         REFLUX_MODE = Synt.declare(
             Core.getInstance().got(Cnst.REFLUX_MODE),
             conf.getProperty("core.in.reflux.mode", false));
@@ -901,20 +897,21 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             case "sorted":
                 continue; // 纯功能字段无可见值
             case "date":
-                // 时间戳转 Date 对象时需要乘以 1000
-                String  y = Synt.declare(m.get("type"), "");
-                if (STRING_MODE) {
-                    if ("time".equals(y) || "timestamp".equals(y)) {
-                        v = new NumeraValue( );
-                    } else {
-                        v = new DatextValue(m);
-                    }
+                /**
+                 * 有格式则返回时间字串
+                 * 没格式则返回时间对象
+                 * 时间戳类型则返回数值
+                 */
+                String y = Synt.declare( m.get( "type" ), "");
+                if ("date".equals(y) || "datestamp".equals(y)) {
+                String f = Synt.declare( m.get("format"), "");
+                if (f != null && !f.isEmpty()) {
+                    v  = new DatextValue(m);
                 } else {
-                    if ("time".equals(y) || "timestamp".equals(y)) {
-                        v = new NumberValue( );
-                    } else {
-                        v = new DatimeValue(m);
-                    }
+                    v  = new DatimeValue(m);
+                }
+                } else {
+                    v  = new NumberValue( );
                 }
                 break;
             case "int":
@@ -922,11 +919,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             case "float":
             case "double":
             case "number":
-                if (STRING_MODE) {
-                    v = new NumeraValue();
-                } else {
-                    v = new NumberValue();
-                }
+                v = new NumberValue();
                 break;
             case "object":
                 v = new ObjectValue();

@@ -855,11 +855,10 @@ implements IEntity
     wh.put(table.primaryKey, id);
     wh.put(Cnst.RB_KEY, Synt.setOf(table.primaryKey));
     caze.use(db).from ( table.tableName, table.name );
-    caze.setOption("STRING_MODE", true);
-    this.filter(caze , wh);
-    Set xd = new HashSet();
+    this.filter (caze , wh);
+    Set xd = new HashSet( );
     for(Map row : caze.select()) {
-        xd.add(row.get(table.primaryKey).toString( ));
+        xd.add(Synt.asString(row.get(table.primaryKey)));
     }
 
     // 对比数量, 取出多余的部分作为错误消息抛出

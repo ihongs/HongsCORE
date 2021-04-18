@@ -68,6 +68,19 @@ import org.apache.lucene.queryparser.classic.ParseException;
  *  lucene-token-filter 存储时使用的 TokenFilter 类
  *  lucene-find-filter  查询时使用的 CharFilter  类
  *  lucene-query-filter 查询时使用的 TokenFilter 类
+ *  lucene-smart-parse  为 true 可解析查询语句
+ *  lucene-light-match  为 true 则词间用或关系
+ *  lucene-phrase-slop  短语搜索斜率, 整数
+ *  lucene-fuzzy-pre-len  模糊查询前缀长度, 整数
+ *  lucene-fuzzy-min-sim  最小的相似匹配度, 小数
+ * 另外还有:
+ *  lucene-parser-split-on-whitespace
+ *  lucene-parser-analyze-range-terms
+ *  lucene-parser-allow-leading-wildcard
+ *  lucene-parser-lowercase-expanded-terms
+ *  lucene-parser-enable-position-increments
+ *  lucene-parser-auto-generate-phrase-queries
+ * 可以参阅 QueryParserBase 对应方法.
  *
  * @author Hongs
  */

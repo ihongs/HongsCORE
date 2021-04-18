@@ -54,10 +54,10 @@ public class SearchQuery extends StringQuery {
         if (obj != null) fpl = Synt.asInt  (obj);
         obj = m.get("lucene-fuzzy-min-sim");
         if (obj != null) fms = Synt.asFloat(obj);
-//      obj = m.whr("lucene-parser-analyze-range-terms");
-//      if (obj != null) art = Synt.asBool (obj);
         obj = m.get("lucene-parser-split-on-whitespace");
         if (obj != null) sow = Synt.asBool (obj);
+//      obj = m.whr("lucene-parser-analyze-range-terms");
+//      if (obj != null) art = Synt.asBool (obj);
         obj = m.get("lucene-parser-allow-leading-wildcard");
         if (obj != null) alw = Synt.asBool (obj);
 //      obj = m.whr("lucene-parser-lowercase-expanded-terms");
@@ -97,8 +97,8 @@ public class SearchQuery extends StringQuery {
         if (phr != null) qp.setPhraseSlop       (phr);
         if (fms != null) qp.setFuzzyMinSim      (fms);
         if (fpl != null) qp.setFuzzyPrefixLength(fpl);
-//      if (art != null) qp.setAnalyzeRangeTerms(art);
         if (sow != null) qp.setSplitOnWhitespace(sow);
+//      if (art != null) qp.setAnalyzeRangeTerms(art);
         if (alw != null) qp.setAllowLeadingWildcard     (alw);
 //      if (let != null) qp.setLowercaseExpandedTerms   (let);
         if (epi != null) qp.setEnablePositionIncrements (epi);

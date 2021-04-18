@@ -2,6 +2,7 @@ package io.github.ihongs.dh.search;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
+import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
@@ -11,13 +12,11 @@ import io.github.ihongs.util.Syno;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path ;
 import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
-import org.apache.lucene.analysis.Analyzer;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexWriter;
@@ -114,12 +113,7 @@ public class SearchEntity extends LuceneRecord {
                 public Writer get() {
                     b[ 0 ]  = true;
 
-                    try {
-                        Analyzer  ana  =  getAnalyzer (  );
-                        return new Writer(path, name, ana);
-                    } catch (HongsException x) {
-                        throw x.toExemption( );
-                    }
+                    return new Writer(path, name);
                 }
             });
         } catch (HongsExemption x) {
@@ -277,30 +271,29 @@ public class SearchEntity extends LuceneRecord {
 
     private static class Writer implements AutoCloseable, Core.Cleanable, Core.Singleton {
 
-        private final String            dbpath;
-        private final String            dbname;
-        private final Analyzer          alyzer;
-        private       IndexWriter       writer;
-        private       int               c = 1 ;
+        private final String dbpath;
+        private final String dbname;
+        private  IndexWriter writer;
+        private  int         c = 1 ;
 
-        public Writer(String dbpath, String dbname, Analyzer alyzer) {
+        public Writer(String dbpath, String dbname) {
             this.dbpath = dbpath;
             this.dbname = dbname;
-            this.alyzer = alyzer;
 
-            init();
+            start();
         }
 
-        private void init() {
+        private void start() {
             try {
-                Path      path;
-                Directory dire;
-                IndexWriterConfig config ;
-                path = Paths.get (dbpath);
-                dire = FSDirectory.open (path);
-                config = new IndexWriterConfig(alyzer);
-                config.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
-                writer = new IndexWriter(dire, config);
+                CoreConfig cc = CoreConfig.getInstance();
+                IndexWriterConfig iwc = new IndexWriterConfig();
+                iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
+                iwc.setMaxBufferedDocs(cc.getProperty("core.lucene.max.buf.docs", -1 ));
+                iwc.setRAMBufferSizeMB(cc.getProperty("core.lucene.ram.buf.size", 16D));
+
+                Directory dir = FSDirectory.open(Paths.get(dbpath));
+
+                writer = new IndexWriter(dir, iwc);
             } catch (IOException x) {
                 throw new HongsExemption(x);
             }
@@ -310,13 +303,13 @@ public class SearchEntity extends LuceneRecord {
 
         synchronized public IndexWriter conn() {
             //  c += 0;
-            if ( ! writer.isOpen() ) init(); // 重连
+            if ( ! writer.isOpen() ) start(); // 重连
             return writer;
         }
 
         synchronized public IndexWriter open() {
                 c += 1;
-            if ( ! writer.isOpen() ) init(); // 重连
+            if ( ! writer.isOpen() ) start(); // 重连
             return writer;
         }
 

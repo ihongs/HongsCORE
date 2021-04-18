@@ -777,6 +777,21 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 f = new StringFiald();
             }
 
+            /**
+             * 2021/04/18
+             * 为在一个库里存多个表
+             * 不在开始时预设分析器
+             * 改为存字段时直接写入 TokenStream
+             */
+            if (p && f instanceof StringFiald) {
+                try {
+                    ( ( StringFiald ) f).analyser(getAnalyzer(m));
+                }
+                catch (HongsException x) {
+                    throw x.toExemption( );
+                }
+            }
+
             if (r) {
                 if (g) {
                     if (v instanceof Object [ ]) {
@@ -1656,8 +1671,18 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             String path = getDbPath();
 
             try {
-                IndexWriterConfig iwc = new IndexWriterConfig(getAnalyzer());
+                /**
+                 * 2021/04/18
+                 * 为在一个库里存多个表
+                 * 不在开始时预设分析器
+                 * 改为存字段时直接写入 TokenStream
+                 */
+                CoreConfig cc = CoreConfig.getInstance();
+                IndexWriterConfig iwc = new IndexWriterConfig();
+            //  IndexWriterConfig iwc = new IndexWriterConfig(getAnalyzer());
                 iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
+                iwc.setMaxBufferedDocs(cc.getProperty("core.lucene.max.buf.docs", -1 ));
+                iwc.setRAMBufferSizeMB(cc.getProperty("core.lucene.ram.buf.size", 16D));
 
                 Directory dir = FSDirectory.open(Paths.get(path));
 
@@ -1679,6 +1704,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      * 存储分析器
      * @return
      * @throws HongsException
+     * @deprecated 不再需要提前预设, 改为写入值时构建 TokenStream
      */
     protected Analyzer getAnalyzer() throws HongsException {
         /*Default*/ Analyzer  ad = new StandardAnalyzer();

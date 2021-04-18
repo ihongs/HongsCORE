@@ -780,7 +780,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             /**
              * 2021/04/18
              * 为在一个库里存多个表
-             * 不在开始时预设分析器
+             * 不再在开始预设分析器
              * 改为存字段时直接写入 TokenStream
              */
             if (p && f instanceof StringFiald) {
@@ -1674,7 +1674,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 /**
                  * 2021/04/18
                  * 为在一个库里存多个表
-                 * 不在开始时预设分析器
+                 * 不再在开始预设分析器
                  * 改为存字段时直接写入 TokenStream
                  */
                 CoreConfig cc = CoreConfig.getInstance();

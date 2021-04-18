@@ -443,6 +443,16 @@ abstract public class Core
     return SUPER;
   }
 
+  public Object got(String key)
+  {
+    return sup().get(key);
+  }
+
+  public Object got(Object key)
+  {
+    return sup().get(key);
+  }
+
   /**
    * 弃用 get(Object), 请用 got(String),get(String|Class)
    *
@@ -463,11 +473,6 @@ abstract public class Core
     throw new UnsupportedOperationException(
       "Please change 'get(Object)' to 'got(Object)' or 'get(String|Class)'"
     );
-  }
-
-  public Object got(Object key)
-  {
-    return sup().get(key);
   }
 
   @Override

@@ -196,15 +196,15 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         // 设置全局清理的计划任务
         long time = Synt.declare( System.getProperty("core.gc.time") , 600000 );
         if ( time > 0 ) {
-            new Timer("core.gc", true).schedule(new TimerTask() {
+            new Timer ( "Hongs-GC" , true ).schedule(new TimerTask() {
                 @Override
-                public void run ( ) {
+                public void run () {
                     if (4 == (4 & Core.DEBUG)) {
                         CoreLogger.debug("CORE global object: "
                       + Core.GLOBAL_CORE.toString());
                     }   Core.GLOBAL_CORE.clean(/**/);
                 }
-            } , time , time );
+            } , time, time);
         }
 
         // 启动后需立即执行的任务

@@ -94,9 +94,7 @@ public class CmdletRunner implements Runnable
     } catch (InvocationTargetException ex) {
         CoreLogger.error( ex.getCause( ) );
     } finally {
-        Core core = Core.THREAD_CORE.get();
-        core.close();
-        core.clear();
+        Core.THREAD_CORE.get( ).destroy( );
     }
   }
 

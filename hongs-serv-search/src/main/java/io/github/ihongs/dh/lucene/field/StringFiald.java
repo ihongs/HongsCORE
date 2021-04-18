@@ -1,5 +1,6 @@
 package io.github.ihongs.dh.lucene.field;
 
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.SortedDocValuesField;
 import org.apache.lucene.document.SortedSetDocValuesField;
@@ -13,6 +14,10 @@ import org.apache.lucene.util.BytesRef;
  * @author Hongs
  */
 public class StringFiald implements IField {
+    private Analyzer ana = null;
+    public void  analyser(Analyzer a) {
+        this.ana = a;
+    }
     @Override
     public Field get(String k, Object v) {
         return new StoredField(/**/k, v != null ? v.toString() : "");
@@ -23,7 +28,9 @@ public class StringFiald implements IField {
     }
     @Override
     public Field wdr(String k, Object v) {
-        return new   TextField("$"+k, v != null ? v.toString() : "", Field.Store.NO);
+        return ( ana == null )
+               ? new TextField("$"+k, v != null ? v.toString() : "", Field.Store.NO)
+               : new TextField("$"+k,ana.tokenStream("$"+k, v != null ? v.toString() : ""));
     }
     @Override
     public Field odr(String k, Object v) {

@@ -269,7 +269,7 @@ public class SearchEntity extends LuceneRecord {
         DOCK = doc;
     }
 
-    private static class Writer implements AutoCloseable, Core.Cleanable, Core.Singleton {
+    private static class Writer implements AutoCloseable, Core.Clozeable, Core.Singleton {
 
         private final String dbpath;
         private final String dbname;
@@ -320,7 +320,7 @@ public class SearchEntity extends LuceneRecord {
         }
 
         @Override
-        synchronized public void clean() {
+        synchronized public void cloze() {
             if (c <= 0) {
                 close();
             }

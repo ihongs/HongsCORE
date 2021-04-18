@@ -413,10 +413,10 @@ abstract public class Core
   /**
    * 获取名对应的唯一对象
    *
-   * @param key [包路径.]类名
+   * @param cls [包路径.]类名
    * @return 唯一对象
    */
-  abstract public Object get(String key);
+  abstract public Object get(String cls);
 
   /**
    * 获取类对应的唯一对象
@@ -823,6 +823,17 @@ abstract public class Core
         return  obj;
       } finally {
         LOCK.writeLock().unlock();
+      }
+    }
+
+    @Override
+    public Object got(String key)
+    {
+      LOCK.readLock( ).lock();
+      try {
+        return super.got(key);
+      } finally {
+        LOCK.readLock( ).unlock();
       }
     }
 

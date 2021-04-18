@@ -202,7 +202,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                     if (4 == (4 & Core.DEBUG)) {
                         CoreLogger.debug("CORE global object: "
                       + Core.GLOBAL_CORE.toString());
-                    }   Core.GLOBAL_CORE.clean(/**/);
+                    }   Core.GLOBAL_CORE.cloze(/**/);
                 }
             } , time, time);
         }
@@ -270,6 +270,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
 
         try {
             Core.GLOBAL_CORE.close();
+            Core.GLOBAL_CORE.clear();
         } catch ( Throwable  e) {
             CoreLogger.error(e);
         }
@@ -577,6 +578,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             // 销毁此周期内的对象
             try {
                 core.close( );
+                core.clear( );
             } catch (Error e) {
                 CoreLogger.error( e );
             } catch (Exception e) {

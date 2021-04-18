@@ -541,35 +541,9 @@ abstract public class Core
     sup().clear();
   }
 
-  public void clean()
-  {
-    if (sup().isEmpty())
-    {
-      return;
-    }
-
-    /**
-     * 为规避 ConcurrentModificationException,
-     * 只能采用遍历数组而非迭代循环的方式进行.
-     */
-
-    Object[] a = this.values().toArray();
-    for (Object o : a)
-    {
-      try
-      {
-        if ( o instanceof Cleanable)
-        {
-           ((Cleanable) o ).clean( );
-        }
-      }
-      catch ( Throwable x )
-      {
-        x.printStackTrace ( System.err );
-      }
-    }
-  }
-
+  /**
+   * 关闭资源
+   */
   @Override
   public void close()
   {
@@ -600,10 +574,44 @@ abstract public class Core
     }
   }
 
+  /**
+   * 清理资源
+   * 用于定时清理, 不一定会关闭
+   */
+  public void cloze()
+  {
+    if (sup().isEmpty())
+    {
+      return;
+    }
+
+    /**
+     * 为规避 ConcurrentModificationException,
+     * 只能采用遍历数组而非迭代循环的方式进行.
+     */
+
+    Object[] a = this.values().toArray();
+    for (Object o : a)
+    {
+      try
+      {
+        if ( o instanceof Clozeable)
+        {
+           ((Clozeable) o ).cloze( );
+        }
+      }
+      catch ( Throwable x )
+      {
+        x.printStackTrace ( System.err );
+      }
+    }
+  }
+
   @Override
   protected void finalize() throws Throwable {
     try {
       this.close();
+      this.clear();
     } finally {
       super.finalize();
     }
@@ -622,7 +630,7 @@ abstract public class Core
       {
         sb.append('A');
       }
-      if (ob instanceof Cleanable)
+      if (ob instanceof Clozeable)
       {
         sb.append('C');
       }
@@ -862,22 +870,22 @@ abstract public class Core
     }
 
     @Override
-    public void clean()
+    public void close()
     {
       LOCK.writeLock().lock();
       try {
-        super.clean( );
+        super.close( );
       } finally {
         LOCK.writeLock().unlock();
       }
     }
 
     @Override
-    public void close()
+    public void cloze()
     {
       LOCK.writeLock().lock();
       try {
-        super.close( );
+        super.cloze( );
       } finally {
         LOCK.writeLock().unlock();
       }
@@ -891,12 +899,12 @@ abstract public class Core
    * 可关闭的
    * 实现此接口, 会询问是否可清理, 许可则会被删除掉
    */
-  static public interface Cleanable
+  static public interface Clozeable
   {
     /**
      * 清理方法
      */
-    public void clean();
+    public void cloze();
   }
 
   /**

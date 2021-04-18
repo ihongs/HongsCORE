@@ -607,11 +607,22 @@ abstract public class Core
     }
   }
 
+  /**
+   * 销毁内容
+   * 先 close 后 clear
+   */
+  public void destroy()
+  {
+    this.close();
+    this.clear();
+  }
+
   @Override
-  protected void finalize() throws Throwable {
+  protected void finalize()
+  throws Throwable
+  {
     try {
-      this.close();
-      this.clear();
+      this .destroy ();
     } finally {
       super.finalize();
     }

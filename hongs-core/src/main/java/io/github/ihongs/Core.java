@@ -427,18 +427,18 @@ abstract public class Core
    * 获取类对应的唯一对象
    *
    * @param <T>
-   * @param cls [包.]类.class
+   * @param clas [包.]类.class
    * @return 唯一对象
    */
-  abstract public <T>T got(Class<T> cls);
+  abstract public <T>T got(Class<T> clas);
 
   /**
    * 获取名对应的唯一对象
    *
-   * @param cls 包路径.类名称
+   * @param name 包路径.类名称
    * @return 唯一对象
    */
-  abstract public Object got(String cls);
+  abstract public Object got(String name);
 
   //** 读写方法 **/
 

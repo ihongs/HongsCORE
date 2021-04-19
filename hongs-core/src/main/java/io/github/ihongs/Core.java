@@ -675,7 +675,7 @@ abstract public class Core
     @Override
     public Object got(String name)
     {
-      Core   core = Core.GLOBAL_CORE;
+      Core   core = Core.GLOBAL_CORE ;
       if (this.containsKey(name))
       {
         return    this.get(name);
@@ -685,7 +685,7 @@ abstract public class Core
         return    core.get(name);
       }
 
-      Object inst = newInstance( name );
+      Object inst = newInstance(name);
       if (inst instanceof Soliloquy)
       {
           // Do not keep it-self.
@@ -703,7 +703,7 @@ abstract public class Core
     @Override
     public <T>T got(Class<T> clas)
     {
-      String name = clas.getName(  );
+      String name = clas.getName ( );
       Core   core = Core.GLOBAL_CORE;
       if (this.containsKey(name))
       {

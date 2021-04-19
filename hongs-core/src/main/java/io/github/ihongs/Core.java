@@ -411,6 +411,7 @@ abstract public class Core
   /**
    * 获取或设置全局单例
    * 缺失时调供应器写入
+   * 过程将会使用读写锁
    * @param <T>
    * @param key
    * @param sup

@@ -10,8 +10,8 @@
         throw new HongsException(404, "Unsupported action!");
     }
 
-    ActionHelper ah = Core.getInstance(ActionHelper.class);
     VerifyHelper vh = new VerifyHelper();
-    vh.addRulesByForm ("centre/data/upload", "image");
-    ah.reply(vh.verify(ah.getRequestData() , true , true));
+    ActionHelper ah = ActionHelper.getInstance();
+    vh.addRulesByForm("centre/data/upload", "image");
+    ah.reply(vh.verify(ah.getRequestData(), true, true));
 %>

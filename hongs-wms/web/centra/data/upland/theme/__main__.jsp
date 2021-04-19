@@ -36,7 +36,7 @@
     }
 %>
 <%
-    ActionHelper helper = Core.getInstance(ActionHelper.class);
+    ActionHelper helper = ActionHelper.getInstance( );
     Map    req = helper.getRequestData();
     String act = Core.ACTION_NAME.get();
     String met = act.substring(act.lastIndexOf('/')+1,

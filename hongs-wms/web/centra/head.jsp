@@ -97,7 +97,7 @@
     }
 %>
 <%
-    ActionHelper helper = (ActionHelper) Core.getInstance(ActionHelper.class);
+    ActionHelper helper = ActionHelper.getInstance();
 
     NaviMap curr = NaviMap.getInstance("centra");
     Set     role = curr.getRoleSet();

@@ -31,6 +31,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * GLOBAL_CORE 用于存放全局对象和参数,
  * 对读写等过程有加锁, 但仍需小心对待.
  * Cleanable,Singleton 类别放入非全局.
+ * 需注意, put,putAll,remove,clear 方法并不会对其中存储的 AutoCloseable 对象调用 close 方法, 请自行小心处理.
  * </p>
  *
  * <h3>静态属性:</h3>

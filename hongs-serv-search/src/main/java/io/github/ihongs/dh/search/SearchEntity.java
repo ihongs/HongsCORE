@@ -107,15 +107,17 @@ public class SearchEntity extends LuceneRecord {
         if (WRITER != null) {
             b[ 0 ]  = true;
         } else try {
-            WRITER  = Core.GLOBAL_CORE.get(Writer.class.getName() + ":" + name,
-            new Supplier<Writer> () {
-                @Override
-                public Writer get() {
-                    b[ 0 ]  = true;
+            WRITER  = Core.getOrPutInGlobal(
+                Writer.class.getName () + ":" + name ,
+                new Supplier<Writer> () {
+                    @Override
+                    public Writer get() {
+                        b[ 0 ]  = true;
 
-                    return new Writer(path, name);
+                        return new Writer(path, name);
+                    }
                 }
-            });
+            );
         } catch (HongsExemption x) {
             throw x.toException( );
         }

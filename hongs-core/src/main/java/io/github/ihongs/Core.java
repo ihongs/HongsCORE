@@ -426,7 +426,7 @@ abstract public class Core
   /**
    * 获取类对应的唯一对象
    *
-   * @param <T> 返回类型同请求类型
+   * @param <T>
    * @param cls [包.]类.class
    * @return 唯一对象
    */
@@ -435,7 +435,7 @@ abstract public class Core
   /**
    * 获取名对应的唯一对象
    *
-   * @param cls [包路径.]类名
+   * @param cls 包路径.类名称
    * @return 唯一对象
    */
   abstract public Object got(String cls);

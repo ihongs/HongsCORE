@@ -108,12 +108,8 @@ public final class CommitRunner {
         }
 
         @Override
-        public Object put(String key, Object obj) {
-            // 代理登记, 预开启事务
-            if (obj instanceof IReflux) {
-                ((IReflux) obj).begin();
-            }
-            return sup().put(key , obj);
+        public <T>T get(Class<T> cls) {
+            return ((Core) sup()).get(cls);
         }
 
         @Override
@@ -122,13 +118,12 @@ public final class CommitRunner {
         }
 
         @Override
-        public <T>T get(Class<T> cls) {
-            return ((Core) sup()).get(cls);
-        }
-
-        @Override
-        public <T>T get(String key, Supplier<T> fun) {
-            return ((Core) sup()).get(key, fun);
+        public Object put(String key, Object obj) {
+            // 代理登记, 预开启事务
+            if (obj instanceof IReflux) {
+                ((IReflux) obj).begin();
+            }
+            return sup().put(key , obj);
         }
 
     }

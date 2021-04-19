@@ -215,6 +215,18 @@ abstract public class Core
   }
 
   /**
+   * 获取或设置全局单例
+   * @param <T>
+   * @param key
+   * @param sup
+   * @return
+   */
+  public static final <T>T getOrPutInGlobal(String key, Supplier<T> sup)
+  {
+    return ((Global) GLOBAL_CORE).get(key, sup);
+  }
+
+  /**
    * 按类获取单例
    *
    * @param <T>
@@ -426,15 +438,6 @@ abstract public class Core
    * @return 唯一对象
    */
   abstract public <T>T get(Class<T> cls);
-
-  /**
-   * 获取实例, 无则构建
-   * @param <T>
-   * @param key
-   * @param fun
-   * @return 会执行 fun 进行构建, 当没有对象时
-   */
-  abstract public <T>T get(String key, Supplier<T> fun);
 
   //** 读写方法 **/
 
@@ -736,18 +739,6 @@ abstract public class Core
       return inst;
     }
 
-    @Override
-    public <T>T get(String key, Supplier<T> fun)
-    {
-      Object abj=super.got(key);
-      if (null != abj)
-      return  (T) abj;
-
-      T obj = fun.get( );
-      super.put(key,obj);
-      return  obj;
-    }
-
   }
 
   /**
@@ -804,7 +795,6 @@ abstract public class Core
       }
     }
 
-    @Override
     public <T>T get(String key, Supplier<T> fun)
     {
       LOCK.readLock( ).lock();

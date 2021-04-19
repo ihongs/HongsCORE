@@ -454,6 +454,7 @@ abstract public class Core
     return SUPER;
   }
 
+  @Override
   public Object get(Object key)
   {
     return sup().get(key);

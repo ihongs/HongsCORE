@@ -840,6 +840,7 @@ abstract public class Core
       }
     }
 
+    @Override
     public void putAll(Map<? extends String, ? extends Object> map)
     {
       LOCK.writeLock().lock();

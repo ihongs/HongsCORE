@@ -51,7 +51,7 @@ public class ConfAction
     throws ServletException, IOException
   {
     Core core = ActionDriver.getActualCore(req);
-    ActionHelper helper = core.get(ActionHelper.class);
+    ActionHelper helper = core.got(ActionHelper.class);
 
     String name = req.getPathInfo();
     if (name == null || name.length() == 0) {

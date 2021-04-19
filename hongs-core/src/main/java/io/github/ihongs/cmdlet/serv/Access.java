@@ -190,7 +190,7 @@ public class Access {
         // 将新动作助手对象放入全局以便跨层读取
         String cn = ActionHelper.class.getName();
         Core   co = Core.getInstance();
-        Object ah = co.got(cn);
+        Object ah = co.get(cn);
 
         try {
             co.put(cn, helper);

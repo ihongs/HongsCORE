@@ -444,7 +444,9 @@ abstract public class Core
 
   /**
    * 存储支持方法
-   * 代理只需重写此方法指向旧 core
+   * 代理只要重写此方法指向旧 core
+   * 然后仅重载所需方法
+   * 不必重写所有的方法
    * @return 
    */
   protected Map<String, Object> sup()

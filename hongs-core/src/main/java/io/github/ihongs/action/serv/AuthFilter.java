@@ -259,7 +259,7 @@ public class AuthFilter
   {
     HttpServletResponse rsp = hlpr.getResponse();
     HttpServletRequest  req = hlpr.getRequest( );
-    CoreLocale lang = core.get(CoreLocale.class);
+    CoreLocale lang = core.got(CoreLocale.class);
     String  uri ;
     String  msg ;
 

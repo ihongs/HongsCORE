@@ -87,7 +87,7 @@ public class SearchEntity extends LuceneRecord {
             SearchEntity inst = new SearchEntity(fxrm, path,name);
             core.put( code, inst ) ; return inst ;
         } else {
-            return  (SearchEntity) core.got(code);
+            return  (SearchEntity) core.get(code);
         }
     }
 

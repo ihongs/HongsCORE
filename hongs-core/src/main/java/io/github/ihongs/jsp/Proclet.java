@@ -46,7 +46,7 @@ abstract public class Proclet extends ActionDriver implements HttpJspPage
     }
     catch (ServletException ex )
     {
-        ActionHelper ah = ActionDriver.getActualCore(req).get(ActionHelper.class);
+        ActionHelper ah = ActionDriver.getActualCore(req).got(ActionHelper.class);
         Throwable ax = ex.getCause( );
         if (ax == null) { ax = ex ; }
         if (ax instanceof HongsCause) {

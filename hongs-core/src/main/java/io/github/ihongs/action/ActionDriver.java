@@ -341,7 +341,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
              * 内层调用
              */
             Core.THREAD_CORE.set(core);
-            hlpr = core.get(ActionHelper.class);
+            hlpr = core.got(ActionHelper.class);
             hlpr.updateHelper( req, rsq );
             /**/ agt.doDriver(core, hlpr);
         }
@@ -354,7 +354,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
          */
         if (rsp.isCommitted( ) == false) {
             String pb;
-            CoreConfig cc = core.get(CoreConfig.class);
+            CoreConfig cc = core.got(CoreConfig.class);
             pb = cc.getProperty("core.service.by");
             if ( pb != null && pb.length( ) != 0 ) {
                 rsp.setHeader(  "Server"    , pb );
@@ -388,7 +388,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             Core.SERV_HREF  = Core.SERVER_HREF.get();
         }
 
-        CoreConfig conf = core.get(CoreConfig.class);
+        CoreConfig conf = core.got(CoreConfig.class);
 
         Core.ACTION_ZONE.set(conf.getProperty("core.timezone.default","GMT+8"));
         if (conf.getProperty("core.timezone.probing", false)) {

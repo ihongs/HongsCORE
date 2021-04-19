@@ -108,13 +108,13 @@ public final class CommitRunner {
         }
 
         @Override
-        public <T>T get(Class<T> cls) {
-            return ((Core) sup()).get(cls);
+        public <T>T got(Class<T> cls) {
+            return ((Core) sup()).got(cls);
         }
 
         @Override
-        public Object get(String key) {
-            return ((Core) sup()).get(key);
+        public Object got(String key) {
+            return ((Core) sup()).got(key);
         }
 
         @Override

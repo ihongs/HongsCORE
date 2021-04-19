@@ -71,7 +71,7 @@ public class ApisAction
         dot  = act.lastIndexOf( "." );
         act  = act.subSequence(0,dot)+Cnst.ACT_EXT;
 
-        ActionHelper  hlpr = ActionDriver.getActualCore(req).get(ActionHelper.class);
+        ActionHelper  hlpr = ActionDriver.getActualCore(req).got(ActionHelper.class);
         Object _dat = Dict.getParam( hlpr.getRequestData(), dataKey );
         Object _mod = Dict.getParam( hlpr.getRequestData(), modeKey );
 

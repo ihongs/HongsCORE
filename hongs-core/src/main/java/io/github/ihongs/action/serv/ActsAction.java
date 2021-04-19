@@ -53,7 +53,7 @@ public class ActsAction
   {
     String act  = ActionDriver.getRecentPath(req);
     Core   core = ActionDriver.getActualCore(req);
-    ActionHelper helper = core.get(ActionHelper.class);
+    ActionHelper helper = core.got(ActionHelper.class);
     Core.THREAD_CORE.set( core );
 
     if (act == null || act.length() == 0)

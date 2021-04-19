@@ -215,18 +215,6 @@ abstract public class Core
   }
 
   /**
-   * 获取或设置全局单例
-   * @param <T>
-   * @param key
-   * @param sup
-   * @return
-   */
-  public static final <T>T getOrPutInGlobal(String key, Supplier<T> sup)
-  {
-    return ((Global) GLOBAL_CORE).get(key, sup);
-  }
-
-  /**
    * 按类获取单例
    *
    * @param <T>
@@ -235,7 +223,7 @@ abstract public class Core
    */
   public static final <T>T getInstance(Class<T> clas)
   {
-    return getInstance().get(clas);
+    return getInstance().got(clas);
   }
 
   /**
@@ -246,7 +234,7 @@ abstract public class Core
    */
   public static final Object getInstance(String name)
   {
-    return getInstance().get(name);
+    return getInstance().got(name);
   }
 
   public static final <T>T newInstance(Class<T> clas)
@@ -385,7 +373,7 @@ abstract public class Core
   {
     Core     core = Core.getInstance();
     String   name = Locale.class.getName();
-    Locale   inst = (Locale)core.got(name);
+    Locale   inst = (Locale)core.get(name);
     if (null != inst) {
         return  inst;
     }
@@ -409,7 +397,7 @@ abstract public class Core
   {
     Core     core = Core.getInstance();
     String   name = TimeZone.class.getName();
-    TimeZone inst = (TimeZone)core.got(name);
+    TimeZone inst = (TimeZone)core.get(name);
     if (null != inst) {
         return  inst;
     }
@@ -418,6 +406,18 @@ abstract public class Core
 
     core.put(name, inst);
     return inst;
+  }
+
+  /**
+   * 获取或设置全局单例
+   * @param <T>
+   * @param key
+   * @param sup
+   * @return
+   */
+  public static final <T>T getOrPutInGlobal(String key, Supplier<T> sup)
+  {
+    return ((Global) GLOBAL_CORE).get(key, sup);
   }
 
   //** 核心方法 **/
@@ -429,7 +429,7 @@ abstract public class Core
    * @param cls [包.]类.class
    * @return 唯一对象
    */
-  abstract public <T>T get(Class<T> cls);
+  abstract public <T>T got(Class<T> cls);
 
   /**
    * 获取名对应的唯一对象
@@ -437,7 +437,7 @@ abstract public class Core
    * @param cls [包路径.]类名
    * @return 唯一对象
    */
-  abstract public Object get(String cls);
+  abstract public Object got(String cls);
 
   //** 读写方法 **/
 
@@ -451,31 +451,9 @@ abstract public class Core
     return SUPER;
   }
 
-  public Object got(Object key)
-  {
-    return sup().get(key);
-  }
-
-  /**
-   * 弃用 get(Object), 请用 got(String),get(String|Class)
-   *
-   * @param key
-   * @return 抛出异常, 为避歧义禁用之
-   * @throws UnsupportedOperationException
-   * @deprecated
-   */
-  @Override
   public Object get(Object key)
   {
-    if (key instanceof String) {
-      return get((String) key);
-    } else
-    if (key instanceof Class ) {
-      return get((Class ) key);
-    }
-    throw new UnsupportedOperationException(
-      "Please change 'get(Object)' to 'got(Object)' or 'get(String|Class)'"
-    );
+    return sup().get(key);
   }
 
   @Override
@@ -558,6 +536,7 @@ abstract public class Core
     /**
      * 为规避 ConcurrentModificationException,
      * 只能采用遍历数组而非迭代循环的方式进行.
+     * 不用迭代中的 Entry.remove 是因为实例的 close 中也可能变更 core.
      */
 
     Object[] a = this.values().toArray();
@@ -591,6 +570,7 @@ abstract public class Core
     /**
      * 为规避 ConcurrentModificationException,
      * 只能采用遍历数组而非迭代循环的方式进行.
+     * 不用迭代中的 Entry.remove 是因为实例的 cloze 中也可能变更 core.
      */
 
     Object[] a = this.values().toArray();
@@ -683,16 +663,16 @@ abstract public class Core
   {
 
     @Override
-    public Object get(String name)
+    public Object got(String name)
     {
       Core   core = Core.GLOBAL_CORE;
       if (this.containsKey(name))
       {
-        return    this.got(name);
+        return    this.get(name);
       }
       if (core.containsKey(name))
       {
-        return    core.got(name);
+        return    core.get(name);
       }
 
       Object inst = newInstance( name );
@@ -711,17 +691,17 @@ abstract public class Core
     }
 
     @Override
-    public <T>T get(Class<T> clas)
+    public <T>T got(Class<T> clas)
     {
       String name = clas.getName(  );
       Core   core = Core.GLOBAL_CORE;
       if (this.containsKey(name))
       {
-        return (T)this.got(name);
+        return (T)this.get(name);
       }
       if (core.containsKey(name))
       {
-        return (T)core.got(name);
+        return (T)core.get(name);
       }
 
       T   inst = newInstance( clas );
@@ -750,12 +730,12 @@ abstract public class Core
   private final ReadWriteLock LOCK = new ReentrantReadWriteLock();
 
     @Override
-    public Object get(String key)
+    public Object got(String key)
     {
       LOCK.readLock( ).lock();
       try {
       if  (super.containsKey(key)) {
-        return     super.got(key);
+        return     super.get(key);
       }
       } finally {
         LOCK.readLock( ).unlock();
@@ -772,14 +752,14 @@ abstract public class Core
     }
 
     @Override
-    public <T>T get(Class<T> cls)
+    public <T>T got(Class<T> cls)
     {
       String key = cls.getName( );
 
       LOCK.readLock( ).lock();
       try {
       if  (super.containsKey(key)) {
-        return (T) super.got(key);
+        return (T) super.get(key);
       }
       } finally {
         LOCK.readLock( ).unlock();
@@ -799,7 +779,7 @@ abstract public class Core
     {
       LOCK.readLock( ).lock();
       try {
-        Object obj=super.got(key);
+        Object obj=super.get(key);
         if (null != obj)
         return  (T) obj;
       } finally {
@@ -817,11 +797,11 @@ abstract public class Core
     }
 
     @Override
-    public Object got(Object key)
+    public Object get(Object key)
     {
       LOCK.readLock( ).lock();
       try {
-        return super.got(key);
+        return super.get(key);
       } finally {
         LOCK.readLock( ).unlock();
       }

@@ -408,20 +408,6 @@ abstract public class Core
     return inst;
   }
 
-  /**
-   * 获取或设置全局单例
-   * 缺失时调供应器写入
-   * 过程将会使用读写锁
-   * @param <T>
-   * @param key
-   * @param sup
-   * @return
-   */
-  public static final <T>T getOrPutInGlobal(String key, Supplier<T> sup)
-  {
-    return ((Global) GLOBAL_CORE).get(key, sup);
-  }
-
   //** 核心方法 **/
 
   /**
@@ -448,11 +434,30 @@ abstract public class Core
    * 代理只要重写此方法指向旧 core
    * 然后仅重载所需方法
    * 不必重写所有的方法
-   * @return 
+   * @return
    */
   protected Map<String, Object> sup()
   {
     return SUPER;
+  }
+
+  /**
+   * 获取指定对象
+   * 缺失则在构建后存入
+   * @param <T>
+   * @param key 存储键名
+   * @param sup 供应方法
+   * @return
+   */
+  public <T>T get(String key, Supplier<T> sup)
+  {
+    Object abj= get(key);
+    if (null != abj)
+    return  (T) abj;
+
+    T obj = sup.get();
+    put(key,obj);
+    return  obj ;
   }
 
   @Override
@@ -780,6 +785,7 @@ abstract public class Core
       }
     }
 
+    @Override
     public <T>T get(String key, Supplier<T> fun)
     {
       LOCK.readLock( ).lock();

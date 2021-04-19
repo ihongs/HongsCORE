@@ -423,14 +423,6 @@ abstract public class Core
   //** 核心方法 **/
 
   /**
-   * 获取名对应的唯一对象
-   *
-   * @param cls [包路径.]类名
-   * @return 唯一对象
-   */
-  abstract public Object get(String cls);
-
-  /**
    * 获取类对应的唯一对象
    *
    * @param <T> 返回类型同请求类型
@@ -438,6 +430,14 @@ abstract public class Core
    * @return 唯一对象
    */
   abstract public <T>T get(Class<T> cls);
+
+  /**
+   * 获取名对应的唯一对象
+   *
+   * @param cls [包路径.]类名
+   * @return 唯一对象
+   */
+  abstract public Object get(String cls);
 
   //** 读写方法 **/
 

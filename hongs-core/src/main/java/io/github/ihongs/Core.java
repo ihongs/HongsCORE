@@ -410,6 +410,7 @@ abstract public class Core
 
   /**
    * 获取或设置全局单例
+   * 缺失时调供应器写入
    * @param <T>
    * @param key
    * @param sup

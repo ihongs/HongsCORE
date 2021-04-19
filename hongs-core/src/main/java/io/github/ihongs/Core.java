@@ -441,14 +441,14 @@ abstract public class Core
 
   //** 读写方法 **/
 
+  /**
+   * 存储支持方法
+   * 代理只需重写此方法指向旧 core
+   * @return 
+   */
   protected Map<String, Object> sup()
   {
     return SUPER;
-  }
-
-  public Object got(String key)
-  {
-    return sup().get(key);
   }
 
   public Object got(Object key)
@@ -813,17 +813,6 @@ abstract public class Core
         return  obj;
       } finally {
         LOCK.writeLock().unlock();
-      }
-    }
-
-    @Override
-    public Object got(String key)
-    {
-      LOCK.readLock( ).lock();
-      try {
-        return super.got(key);
-      } finally {
-        LOCK.readLock( ).unlock();
       }
     }
 

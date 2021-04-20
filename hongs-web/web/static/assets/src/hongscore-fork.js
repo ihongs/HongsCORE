@@ -336,6 +336,8 @@ function hsFormFillPick(box, v, n) {
 
     box.toggleClass ("pickmul", mul);
 
+    if (! jQuery.isPlainObject(v)) {
+
     // 表单初始化载入时需从关联数据提取选项对象
     if (this._info) {
         var ak = box.attr("data-ak") || "data";
@@ -363,8 +365,10 @@ function hsFormFillPick(box, v, n) {
             }
         }
         v = v2;
-    } else if (! jQuery.isPlainObject(v)) {
+    } else {
         v = {};
+    }
+    
     }
 
     function reset(btn, box) {

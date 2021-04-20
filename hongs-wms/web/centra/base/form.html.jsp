@@ -337,19 +337,21 @@
                         al = al.replace("centre", "centra");
                         at = at.replace("centre", "centra");
                         /**
-                         * 关联路径: base/search!data/xxxx/search?rb=a,b,c
+                         * 关联路径: base/search|data/xxxx/search?rb=a,b,c
                          * 需转换为: data/xxxx/search.act?rb=a,b,c
                          */
                         if (!at.isEmpty()) {
-                            int p  = at.indexOf  ('!');
+                            int p  = at.indexOf  ('|');
                             if (p != -1) {
                                 at = at.substring(1+p);
-                                p  = at.indexOf  ('?');
+                            }   p  = at.indexOf  ('?');
                             if (p != -1) {
                                 at = at.substring(0,p)
-                                   + Cnst.ACT_EXT
+                                   +      Cnst.ACT_EXT
                                    + at.substring(0+p);
-                            }}
+                            } else {
+                                at = at + Cnst.ACT_EXT;
+                            }
                         }
                         kind += "\" data-ak=\""+ak+"\" data-tk=\""+tk+"\" data-vk=\""+vk+"\" data-at=\""+at
                              +  "\" data-href=\""+rl+"\" data-target=\"@";

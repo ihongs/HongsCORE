@@ -125,7 +125,7 @@ public class ActionRunner {
             aq = at.substring(1 + ps).trim();
             at = at.substring(0 , ps).trim();
         }
-        ps = at.indexOf('!');
+        ps = at.indexOf('|');
         if (ps > -1) {
             ap = at.substring(1 + ps).trim();
             at = at.substring(0 , ps).trim();

@@ -31,7 +31,7 @@ public final class Block {
      * 加入全局定时清理
      */
     static {
-        Core.GLOBAL_CORE.put( Cleans.class.getName( ) , new Cleans());
+        Core.GLOBAL_CORE.set( Cleans.class.getName( ) , new Cleans());
     }
 
     /**

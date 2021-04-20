@@ -665,7 +665,7 @@ public class DB
     else
     {
       DB db = new DB(cc);
-      core.put( cn , db);
+      core.set( cn , db);
       return  db ;
     }
   }

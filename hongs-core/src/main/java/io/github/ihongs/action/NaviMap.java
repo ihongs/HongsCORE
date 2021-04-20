@@ -1030,7 +1030,7 @@ public class NaviMap
           inst = (NaviMap) core.get( cn );
       } else {
           inst = new NaviMap( name );
-          core.put( cn , inst );
+          core.set( cn , inst );
       }
       return inst;
   }

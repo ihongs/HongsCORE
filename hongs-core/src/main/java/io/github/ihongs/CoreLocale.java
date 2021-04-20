@@ -227,11 +227,11 @@ public class CoreLocale
     CoreConfig conf = CoreConfig.getInstance(  );
     if (conf.getProperty("core.load.locale.once", false))
     {
-      gore.put(ck, inst);
+      gore.set(ck, inst);
     }
     else
     {
-      core.put(ck, inst);
+      core.set(ck, inst);
     }
 
     // 默认语言实例

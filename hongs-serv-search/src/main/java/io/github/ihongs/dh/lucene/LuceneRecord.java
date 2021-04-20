@@ -151,7 +151,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             path = Core.DATA_PATH + "/lucene/" + path;
 
             LuceneRecord inst = new LuceneRecord(fxrm, path,name);
-            core.put( code, inst ) ; return inst ;
+            core.set( code, inst ) ; return inst ;
         } else {
             return  (LuceneRecord) core.get(code);
         }

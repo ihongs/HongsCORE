@@ -187,10 +187,10 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         }
 
         // 调用一下可预加载动作类
-        ActionRunner.getActions ();
+        ActionRunner.getActions();
 
         // 清空全局好准备重新开始
-        Core.GLOBAL_CORE.destroy();
+        Core.GLOBAL_CORE.reset( );
 
         // 设置全局清理的计划任务
         long time = Synt.declare( System.getProperty("core.gc.time") , 600000 );
@@ -268,7 +268,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         }
 
         try {
-            Core.GLOBAL_CORE.destroy();
+            Core.GLOBAL_CORE.reset( );
         } catch ( Throwable  e) {
             CoreLogger.error(e);
         }
@@ -575,8 +575,8 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         } finally {
             // 销毁此周期内的对象
             try {
-                core.destroy();
-            } catch (Error e ) {
+                core.reset( );
+            } catch (Error e) {
                 CoreLogger.error( e );
             } catch (Exception e) {
                 CoreLogger.error( e );

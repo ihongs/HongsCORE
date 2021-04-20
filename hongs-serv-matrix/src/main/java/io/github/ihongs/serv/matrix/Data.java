@@ -145,7 +145,7 @@ public class Data extends SearchEntity {
             inst = (Data) core.get(name);
         } else {
             inst = new Data (conf, form);
-            core.put ( name, inst );
+            core.set ( name, inst );
         }
         return inst;
     }

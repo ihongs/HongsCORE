@@ -85,7 +85,7 @@ public class SearchEntity extends LuceneRecord {
             path = Core.DATA_PATH + "/lucene/" + path;
 
             SearchEntity inst = new SearchEntity(fxrm, path,name);
-            core.put( code, inst ) ; return inst ;
+            core.set( code, inst ) ; return inst ;
         } else {
             return  (SearchEntity) core.get(code);
         }

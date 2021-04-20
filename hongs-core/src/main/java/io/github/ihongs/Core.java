@@ -428,19 +428,7 @@ abstract public class Core
    */
   abstract public Object got(String name);
 
-  //** 读写方法 **/
-
-  /**
-   * 存储支持方法
-   * 代理只要重写此方法指向旧 core
-   * 然后仅重载所需方法
-   * 不必重写所有的方法
-   * @return
-   */
-  protected Map<String, Object> sup()
-  {
-    return SUPER;
-  }
+  //** 扩展方法 **/
 
   /**
    * 获取指定对象
@@ -459,6 +447,149 @@ abstract public class Core
     T obj = sup.get();
     put(key,obj);
     return  obj ;
+  }
+
+  /**
+   * 设置指定对象
+   * 会关闭旧对象(如果是 AutoCloseable)
+   * @param key
+   * @param val 
+   */
+  public void set(String key, Object val)
+  {
+    Object  old = put(key, val);
+    if (old != null
+    &&  old instanceof AutoCloseable) {
+      try
+      {
+        ((AutoCloseable) old).close();
+      }
+      catch (Throwable x )
+      {
+        x.printStackTrace(System.err);
+      }
+    }
+  }
+
+  /**
+   * 清除指定对象
+   * 会关闭旧对象(如果是 AutoCloseable)
+   * @param key 
+   */
+  public void unset(String key)
+  {
+    Object  old = remove ( key);
+    if (old != null
+    &&  old instanceof AutoCloseable)
+    {
+      try
+      {
+        ((AutoCloseable) old).close();
+      }
+      catch (Throwable x )
+      {
+        x.printStackTrace(System.err);
+      }
+    }
+  }
+
+  /**
+   * 重置整个环境
+   * 先 close 后 clear
+   */
+  public void reset()
+  {
+    try
+    {
+      close();
+      clear();
+    }
+    catch (Throwable x)
+    {
+      x.printStackTrace(System.err);
+    }
+  }
+
+  /**
+   * 关闭资源
+   */
+  @Override
+  public void close()
+  {
+    if (sup().isEmpty())
+    {
+      return;
+    }
+
+    /**
+     * 为规避 ConcurrentModificationException,
+     * 只能采用遍历数组而非迭代循环的方式进行.
+     * 不用迭代中的 Entry.remove 是因为实例的 close 中也可能变更 core.
+     */
+
+    Object[] a = this.values().toArray();
+    for (Object o : a)
+    {
+      try
+      {
+        if ( o instanceof AutoCloseable)
+        {
+           ((AutoCloseable) o ).close( );
+        }
+      }
+      catch ( Throwable x )
+      {
+        x.printStackTrace ( System.err );
+      }
+    }
+  }
+
+  /**
+   * 清理资源
+   * 用于定时清理, 不一定会关闭
+   */
+  public void cloze()
+  {
+    if (sup().isEmpty())
+    {
+      return;
+    }
+
+    /**
+     * 为规避 ConcurrentModificationException,
+     * 只能采用遍历数组而非迭代循环的方式进行.
+     * 不用迭代中的 Entry.remove 是因为实例的 cloze 中也可能变更 core.
+     */
+
+    Object[] a = this.values().toArray();
+    for (Object o : a)
+    {
+      try
+      {
+        if ( o instanceof Clozeable)
+        {
+           ((Clozeable) o ).cloze( );
+        }
+      }
+      catch ( Throwable x )
+      {
+        x.printStackTrace ( System.err );
+      }
+    }
+  }
+
+  //** 读写方法 **/
+
+  /**
+   * 存储支持方法
+   * 代理只要重写此方法指向旧 core
+   * 然后仅重载所需方法
+   * 不必重写所有的方法
+   * @return
+   */
+  protected Map<String, Object> sup()
+  {
+    return SUPER;
   }
 
   @Override
@@ -533,90 +664,12 @@ abstract public class Core
     sup().clear();
   }
 
-  /**
-   * 关闭资源
-   */
-  @Override
-  public void close()
-  {
-    if (sup().isEmpty())
-    {
-      return;
-    }
-
-    /**
-     * 为规避 ConcurrentModificationException,
-     * 只能采用遍历数组而非迭代循环的方式进行.
-     * 不用迭代中的 Entry.remove 是因为实例的 close 中也可能变更 core.
-     */
-
-    Object[] a = this.values().toArray();
-    for (Object o : a)
-    {
-      try
-      {
-        if ( o instanceof AutoCloseable)
-        {
-           ((AutoCloseable) o ).close( );
-        }
-      }
-      catch ( Throwable x )
-      {
-        x.printStackTrace ( System.err );
-      }
-    }
-  }
-
-  /**
-   * 清理资源
-   * 用于定时清理, 不一定会关闭
-   */
-  public void cloze()
-  {
-    if (sup().isEmpty())
-    {
-      return;
-    }
-
-    /**
-     * 为规避 ConcurrentModificationException,
-     * 只能采用遍历数组而非迭代循环的方式进行.
-     * 不用迭代中的 Entry.remove 是因为实例的 cloze 中也可能变更 core.
-     */
-
-    Object[] a = this.values().toArray();
-    for (Object o : a)
-    {
-      try
-      {
-        if ( o instanceof Clozeable)
-        {
-           ((Clozeable) o ).cloze( );
-        }
-      }
-      catch ( Throwable x )
-      {
-        x.printStackTrace ( System.err );
-      }
-    }
-  }
-
-  /**
-   * 销毁内容
-   * 先 close 后 clear
-   */
-  public void destroy()
-  {
-    this.close();
-    this.clear();
-  }
-
   @Override
   protected void finalize()
   throws Throwable
   {
     try {
-      this .destroy ();
+      this . reset  ();
     } finally {
       super.finalize();
     }

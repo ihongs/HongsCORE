@@ -583,7 +583,7 @@ public class FormSet
       }
       else {
           inst = new FormSet( name );
-          core.put( cn , inst );
+          core.set( cn , inst );
       }
       return inst;
   }

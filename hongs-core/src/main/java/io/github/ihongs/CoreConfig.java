@@ -295,11 +295,11 @@ public class CoreConfig
     CoreConfig gonf = "default".equals(name) ? conf : getInstance();
     if (gonf.getProperty("core.load.config.once", false))
     {
-      gore.put(ck, conf);
+      gore.set(ck, conf);
     }
     else
     {
-      core.put(ck, conf);
+      core.set(ck, conf);
     }
 
     return conf;

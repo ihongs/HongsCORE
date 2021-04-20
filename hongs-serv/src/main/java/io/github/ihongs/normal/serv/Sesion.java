@@ -313,7 +313,7 @@ public class Sesion implements HttpSession, AutoCloseable, Serializable {
             Core core = Core.getInstance();
             if (!core.containsKey(cls)) {
                 Recs rec = new Recs();
-                core.put ( cls, rec );
+                core.set ( cls, rec );
                 return rec;
             }
         }

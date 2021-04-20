@@ -386,7 +386,7 @@ abstract public class Core
         inst = new Locale(lang[0]);
     }
 
-    core.put(name, inst);
+    core.set(name, inst);
     return inst;
   }
 
@@ -405,7 +405,7 @@ abstract public class Core
 
     inst = TimeZone.getTimeZone(Core.ACTION_ZONE.get());
 
-    core.put(name, inst);
+    core.set(name, inst);
     return inst;
   }
 
@@ -746,10 +746,10 @@ abstract public class Core
       } else
       if (inst instanceof Singleton)
       {
-          core.put( name, inst );
+          core.set( name, inst );
       } else
       {
-          this.put( name, inst );
+          this.set( name, inst );
       }
       return inst;
     }
@@ -775,10 +775,10 @@ abstract public class Core
       } else
       if (inst instanceof Singleton)
       {
-          core.put( name, inst );
+          core.set( name, inst );
       } else
       {
-          this.put( name, inst );
+          this.set( name, inst );
       }
       return inst;
     }

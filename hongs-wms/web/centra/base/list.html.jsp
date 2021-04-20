@@ -61,7 +61,7 @@
         </div>
     </form>
     <!-- 筛选 -->
-    <form class="findbox filtbox invisible panel panel-default panel-body form-horizontal">
+    <form class="findbox filtbox invisible row form-horizontal">
         <%
         Iterator it2 = _fields.entrySet().iterator();
         while (it2.hasNext()) {

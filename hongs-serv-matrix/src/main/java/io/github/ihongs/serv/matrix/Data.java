@@ -561,6 +561,7 @@ public class Data extends SearchEntity {
             }
 
             // 数据快照和日志标题
+            nd.put("__data__", dd);
             nd.put("data", Dawn.toString(dd, true));
             nd.put("name",     cutText(dd, "name"));
 
@@ -699,6 +700,7 @@ public class Data extends SearchEntity {
             nd.put("user_id", uid);
 
             // 数据快照和日志标题
+            nd.put("__data__", dd);
             nd.put("data", Dawn.toString(dd, true));
             nd.put("name",     cutText(dd, "name"));
 

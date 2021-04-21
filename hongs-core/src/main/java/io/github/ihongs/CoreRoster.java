@@ -133,7 +133,7 @@ public class CoreRoster {
 
             // 检查方法是否合法
             Class[] prms = mtdo.getParameterTypes();
-            if (prms == null || prms.length != 1 || !prms[0].isAssignableFrom(ActionHelper.class)) {
+            if (prms == null || prms.length != 1 || !ActionHelper.class.isAssignableFrom(prms[0])) {
                 throw new HongsExemption(832, "Can not find action method '"+clsn+"."+mtdn+"(ActionHelper)'.");
             }
 
@@ -171,7 +171,7 @@ public class CoreRoster {
 
             // 检查方法是否合法
             Class[] prms = mtdo.getParameterTypes();
-            if (prms == null || prms.length != 1 || !prms[0].isAssignableFrom(String[].class)) {
+            if (prms == null || prms.length != 1 || !String[].class.isAssignableFrom(prms[0])) {
                 throw new HongsExemption(832, "Can not find cmdlet method '"+clsn+"."+mtdn+"(String[])'.");
             }
 

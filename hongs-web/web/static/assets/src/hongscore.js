@@ -1647,7 +1647,7 @@ function hsFmtDate(date, format) {
  */
 function hsPrsDate(text, format) {
   if (! text) {
-      return new Date( 0  );
+      return new Date(1970, 0, 1, 0, 0, 0, 0); // 本地时间零点
   }
   if (typeof(text) === "number") {
       return new Date(text);

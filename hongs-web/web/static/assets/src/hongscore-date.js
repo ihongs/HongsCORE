@@ -298,11 +298,13 @@
             return; // 跳过已初始化
         }
 
+        var that = this;
         var type = this.attr("type"   );
         var kind = this.data("type"   );
         var frmt = this.data("format" );
         var patt = this.attr("pattern");
-        var that = this;
+        var fset = this.data("offset" );
+            fset = parseInt (fset || 0);
 
         // 没指定则按类型的标准处理
         if (!frmt || !patt) {
@@ -362,8 +364,8 @@
             // 可选择精确到秒
             if (kind == "timestamp"
             ||  kind == "datestamp") {
-                t = Math.round(t/1000);
-            }
+                t = Math.floor(t/1000);
+            }   t = fset + t; // 偏移
 
             hide.val(t);
 
@@ -440,12 +442,25 @@
             return; // 跳过未初始化
         }
 
+        var val , dat;
         var box = $(this);
         var inp = box.data("linked");
         var fmt = inp.data("format");
         var typ = inp.data( "type" );
-        var dat = _getdate(box, new Date(0));
-        var val ;
+        var off = inp.data("offset");
+        var dat = new Date(1970, 0, 1, 0, 0, 0, 0);
+            dat = _getdate(box, dat);
+            off = parseInt(off || 0);
+
+        /**
+         * 偏移以便补充精度
+         * 如在选日期需要到 23:59:59
+         */
+        if (typ == "timestamp"
+        ||  typ == "datestamp") {
+            off = off * 1000;
+        }
+        dat.setTime(dat.getTime() + off);
 
         switch (fmt) {
             case "time":
@@ -463,10 +478,13 @@
 
         switch (typ) {
             case "time":
+            case "date":
                 val = dat.getTime();
                 break;
             case "timestamp":
+            case "datestamp":
                 val = dat.getTime() / 1000;
+                val = Math.floor (  val  );
                 break;
             default:
                 val = hsFmtDate(dat , fmt);
@@ -531,16 +549,9 @@
 
     // 设为当前时间
     $(document).on("click", ".datebox .today", function() {
-        var inp = $(this).closest(".datebox").data("linked");
-        var typ = inp.data("type");
-        var now = new Date( );
-        if (typ == "timestamp"
-        ||  typ == "datestamp" ) {
-            inp.val(now.getTime( ) / 1000);
-        } else {
-            inp.val(now.getTime());
-        }
-        inp.change();
+        var box = $(this).closest(".datebox");
+        _setdate(box, new Date());
+        box.change();
     });
 
     // 清除所有选项

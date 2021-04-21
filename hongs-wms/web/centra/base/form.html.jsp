@@ -252,9 +252,10 @@
                     <%hint = null;%>
                 <%} else if ("date".equals(type) || "time".equals(type) || "datetime".equals(type)) {%>
                     <%
-                        String fomt = Synt.declare(info.get("format"),  type );
                         String typa = Synt.declare(info.get( "type" ), "date");
-                        String extr = " data-type=\""+typa +"\" data-format=\""+fomt+"\" data-toggle=\"hsDate\"";
+                        String fomt = Synt.declare(info.get("format"),  type );
+                        String fset = Synt.declare(info.get("offset"),   ""  );
+                        String extr = " data-type=\""+typa +"\" data-format=\""+fomt+"\" data-offset=\""+fset+"\" data-toggle=\"hsDate\"";
                         if (rqrd) {
                         if ("time".equals(typa)
                         ||  "date".equals(typa)) {

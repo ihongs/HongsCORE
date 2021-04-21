@@ -141,7 +141,7 @@ public class Data extends SearchEntity {
         Data   inst;
         Core   core = Core.getInstance();
         name = Data.class.getName() +":"+ conf +"."+ form;
-        if (core.containsKey(name)) {
+        if (core.isset(name)) {
             inst = (Data) core.get(name);
         } else {
             inst = new Data (conf, form);

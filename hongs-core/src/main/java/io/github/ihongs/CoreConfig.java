@@ -280,13 +280,13 @@ public class CoreConfig
     String ck = CoreConfig.class.getName() + ":" + name;
 
     Core core = Core.getInstance();
-    if (core.containsKey(ck))
+    if (core.isset(ck))
     {
       return (CoreConfig)core.get(ck);
     }
 
     Core gore = Core.GLOBAL_CORE;
-    if (gore.containsKey(ck))
+    if (gore.isset(ck))
     {
       return (CoreConfig)gore.get(ck);
     }

@@ -353,7 +353,7 @@ public class CmdletRunner implements Runnable
     /** 初始化动作助手, 可复用动作组件 **/
 
     ActionHelper hlpr = new ActionHelper(null, null, null, null);
-    Core.getInstance( ).put(ActionHelper.class.getName( ), hlpr);
+    Core.getInstance( ).set(ActionHelper.class.getName( ), hlpr);
     hlpr.updateOutput (System.out , new PrintWriter(System.out));
 
     return args;

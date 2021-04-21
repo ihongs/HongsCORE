@@ -1026,7 +1026,7 @@ public class NaviMap
       String cn = NaviMap.class.getName() + ":" + name;
       Core core = Core.getInstance();
       NaviMap inst;
-      if (core.containsKey(cn)) {
+      if (core.isset(cn)) {
           inst = (NaviMap) core.get( cn );
       } else {
           inst = new NaviMap( name );

@@ -7,6 +7,7 @@ import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
+import io.github.ihongs.util.reflex.Block;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
@@ -104,13 +105,13 @@ public class InfoAction {
          * 公共核心情况和锁情况
          */
         if ( rb != null && rb.contains("core_info")) {
-            rsp.put("core_set", Core.GLOBAL_CORE.keySet());
+            rsp.put("core_set", new CoreToKeys(Core.GLOBAL_CORE));
         }
         if ( rb != null && rb.contains("lock_info")) {
-            rsp.put("lock_map", io.github.ihongs.util.reflex.Block.counts());
+            rsp.put("lock_map", Block.counts());
         }
 
-        helper.reply(Synt.mapOf("info", rsp));
+        helper.reply(Synt.mapOf( "info", rsp ));
     }
 
     private static Map  getAllSize(File d) {
@@ -165,7 +166,7 @@ public class InfoAction {
         /*
         // 排序
         List<Map.Entry> a = new ArrayList(map.entrySet());
-        Collections.sort(a, new sortBySize());
+        Collections.sort(a, new SortBySize());
         map.clear();
         for (Map.Entry  n : a) {
             map.put(n.getKey(), n.getValue());
@@ -188,7 +189,7 @@ public class InfoAction {
         return s;
     }
 
-    private static class sortBySize implements Comparator<Map.Entry> {
+    private static class SortBySize implements Comparator<Map.Entry> {
         @Override
         public int compare(Map.Entry s1, Map.Entry s2) {
             Object[] a1 = (Object[]) s1.getValue();
@@ -199,4 +200,13 @@ public class InfoAction {
         }
     }
     */
+    
+    private static class CoreToKeys extends Core {
+        public CoreToKeys(Core core) {
+            super(core);
+        }
+        public Set<String> keySet() {
+            return sup ( ).keySet();
+        }
+    }
 }

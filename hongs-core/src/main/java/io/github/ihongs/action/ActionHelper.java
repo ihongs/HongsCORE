@@ -736,7 +736,7 @@ public class ActionHelper implements Cloneable
   {
     Core   core = Core.getInstance();
     String inst = ActionHelper.class.getName();
-    if (core.containsKey(inst)) {
+    if (core.isset(inst)) {
         return ((ActionHelper) core.get(inst));
     } else {
         throw new UnsupportedOperationException("Please use the ActionHelper in the coverage of the ActionDriver or CmdletRunner inside");
@@ -752,7 +752,7 @@ public class ActionHelper implements Cloneable
   public static ActionHelper newInstance() {
     Core   core = Core.getInstance();
     String inst = ActionHelper.class.getName();
-    if (core.containsKey(inst)) {
+    if (core.isset(inst)) {
         return ((ActionHelper) core.get(inst)).clone( );
     } else {
         return new ActionHelper(null, null, null, null);

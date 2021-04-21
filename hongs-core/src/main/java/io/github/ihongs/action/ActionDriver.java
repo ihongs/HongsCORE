@@ -312,7 +312,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             core = Core.getInstance( );
             req.setAttribute ( Core.class.getName(), core );
             hlpr = new ActionHelper( req, rsq );
-            core.put ( ActionHelper.class.getName(), hlpr );
+            core.set ( ActionHelper.class.getName(), hlpr );
 
             try {
                 doLaunch(core, hlpr, req );

@@ -651,7 +651,7 @@ public class DB
     String cn = DB.class.getName() +":"+ name;
 
     Core core = Core.getInstance();
-    if ( core.containsKey(cn))
+    if ( core.isset(cn))
     {
       return (DB)core.get(cn);
     }

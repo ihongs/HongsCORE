@@ -5,8 +5,7 @@ import io.github.ihongs.Core;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.dh.IReflux;
-import java.util.function.Supplier;
-import java.util.Map;
+import java.util.Collection;
 
 /**
  * 事务提交包装
@@ -32,7 +31,7 @@ public final class CommitRunner {
     throws HongsException, HongsExemption {
         // 全局中标识为事务模式
         // 外部已指定则不再处理
-        if (core.containsKey(Cnst.REFLUX_MODE)) {
+        if (core.isset(Cnst.REFLUX_MODE)) {
             try {
                 // 执行
                 run.run();
@@ -51,9 +50,10 @@ public final class CommitRunner {
 
         try {
             // 开启
-            core.put( Cnst.REFLUX_MODE , true );
-            Core.THREAD_CORE.set(new Hub(core));
-            for(Object o : core.values()) {
+            core.set( Cnst.REFLUX_MODE , true );
+            Hub  crux  = new Hub(core);
+            Core.THREAD_CORE.set(crux);
+            for(Object o : crux.values()) {
                 if (o instanceof IReflux) {
                     ((IReflux) o).begin();
                 }
@@ -64,14 +64,14 @@ public final class CommitRunner {
                 run.run();
 
                 // 提交
-                for(Object o : core.values().toArray()) {
+                for(Object o : crux.values().toArray()) {
                     if (o instanceof IReflux) {
                         ((IReflux) o).commit();
                     }
                 }
             } catch (Throwable ex) {
                 // 回滚
-                for(Object o : core.values().toArray()) {
+                for(Object o : crux.values().toArray()) {
                     if (o instanceof IReflux) {
                         ((IReflux) o).revert();
                     }
@@ -89,41 +89,28 @@ public final class CommitRunner {
             }
         } finally {
             // 重置
-            core.remove(Cnst.REFLUX_MODE);
-            Core.THREAD_CORE.set ( core );
+            core.unset(Cnst.REFLUX_MODE);
+            Core.THREAD_CORE.set( core );
         }
     }
 
     private static final class Hub extends Core {
 
-        private final Core CORE;
-
-        private Hub ( Core core) {
-            this.CORE = core;
+        private Hub (Core core) {
+            super(core);
         }
 
         @Override
-        protected Map sup() {
-            return this.CORE;
-        }
-
-        @Override
-        public <T>T got(Class<T> cls) {
-            return ((Core) sup()).got(cls);
-        }
-
-        @Override
-        public Object got(String key) {
-            return ((Core) sup()).got(key);
-        }
-
-        @Override
-        public Object put(String key, Object obj) {
+        public void set(String key, Object obj) {
             // 代理登记, 预开启事务
             if (obj instanceof IReflux) {
                 ((IReflux) obj).begin();
             }
-            return sup().put(key , obj);
+            super.set(key , obj);
+        }
+        
+        public Collection<Object> values() {
+            return sup().values();
         }
 
     }

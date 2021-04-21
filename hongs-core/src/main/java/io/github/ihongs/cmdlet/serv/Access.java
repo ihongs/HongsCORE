@@ -193,15 +193,15 @@ public class Access {
         Object ah = co.get(cn);
 
         try {
-            co.put(cn, helper);
+            co.set(cn, helper);
             ActionRunner.newInstance(helper, args[0]).doActing();
             helper.responed( );
             ps.println( );
         } finally {
             if ( null  !=  ah) {
-                co.put(cn, ah);
+                co.set(cn, ah);
             } else {
-                co.remove (cn);
+                co.unset( cn );
             }
         }
     }

@@ -106,9 +106,9 @@ public final class CommitRunner {
             if (obj instanceof IReflux) {
                 ((IReflux) obj).begin();
             }
-            super.set(key , obj);
+            super.set(key, obj);
         }
-        
+
         public Collection<Object> values() {
             return sup().values();
         }

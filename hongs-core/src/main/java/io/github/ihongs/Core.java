@@ -611,14 +611,14 @@ public class Core
     {
       try
       {
-        if ( o instanceof AutoCloseable)
+        if (o instanceof AutoCloseable)
         {
-           ((AutoCloseable) o ).close( );
+           ((AutoCloseable) o ).close();
         }
       }
       catch ( Throwable x )
       {
-        x.printStackTrace ( System.err );
+        x.printStackTrace(System.err);
       }
     }
   }
@@ -645,14 +645,14 @@ public class Core
     {
       try
       {
-        if ( o instanceof Clozeable)
+        if (o instanceof Clozeable)
         {
-           ((Clozeable) o ).cloze( );
+           ((Clozeable) o ).cloze();
         }
       }
       catch ( Throwable x )
       {
-        x.printStackTrace ( System.err );
+        x.printStackTrace(System.err);
       }
     }
   }

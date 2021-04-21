@@ -212,13 +212,13 @@ public class CoreLocale
     String ck = CoreLocale.class.getName() + ":" + name + ":" + lang;
 
     Core core = Core.getInstance();
-    if (core.containsKey(ck))
+    if (core.isset(ck))
     {
       return (CoreLocale)core.get(ck);
     }
 
     Core gore = Core.GLOBAL_CORE;
-    if (gore.containsKey(ck))
+    if (gore.isset(ck))
     {
       return (CoreLocale)gore.get(ck);
     }

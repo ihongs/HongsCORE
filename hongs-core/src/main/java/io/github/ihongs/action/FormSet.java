@@ -578,7 +578,7 @@ public class FormSet
       String cn = FormSet.class.getName() + ":" + name;
       Core core = Core.getInstance();
       FormSet inst;
-      if (core.containsKey(cn)) {
+      if (core.isset(cn)) {
           inst = (FormSet) core.get( cn );
       }
       else {

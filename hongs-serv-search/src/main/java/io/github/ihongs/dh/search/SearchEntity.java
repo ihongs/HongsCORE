@@ -56,7 +56,7 @@ public class SearchEntity extends LuceneRecord {
     public static SearchEntity getInstance(String conf, String form) throws HongsException {
         String code = SearchEntity.class.getName() +":"+ conf +"."+ form;
         Core   core = Core.getInstance( );
-        if ( ! core.containsKey( code ) ) {
+        if ( ! core.isset(code) ) {
             String path = conf +"/"+ form;
             String name = conf +"."+ form;
             Map    fxrm = FormSet.getInstance(conf).getForm(form);

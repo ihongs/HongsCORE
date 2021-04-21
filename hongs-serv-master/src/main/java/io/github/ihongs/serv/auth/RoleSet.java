@@ -161,14 +161,14 @@ public class RoleSet extends CoreSerial implements CoreSerial.Mtimes, Set<String
     throws HongsException {
         String  k = RoleSet.class.getName() +":"+ userId ;
         Core    c = Core.getInstance( );
-        if (c.containsKey(k)) {
+        if (c.isset(k)) {
             return (RoleSet) c.get( k );
         }
         RoleSet s = new RoleSet(userId);
         if (s.roles == null ) {
             s = null; // 状态不对
         }
-        c.put(k , s); // 缓存对象
+        c.set(k , s); // 缓存对象
         return s;
     }
 

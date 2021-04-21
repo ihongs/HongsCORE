@@ -311,7 +311,7 @@ public class Sesion implements HttpSession, AutoCloseable, Serializable {
 
             // 缺失则用私有类构造一个
             Core core = Core.getInstance();
-            if (!core.containsKey(cls)) {
+            if (!core.isset(cls)) {
                 Recs rec = new Recs();
                 core.set ( cls, rec );
                 return rec;

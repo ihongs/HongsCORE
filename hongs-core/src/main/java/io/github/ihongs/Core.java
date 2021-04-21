@@ -1,10 +1,8 @@
 package io.github.ihongs;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.function.Supplier;
@@ -57,10 +55,10 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  *
  * @author Hongs
  */
-abstract public class Core
-  implements AutoCloseable, Map<String, Object>
+public class Core
+  implements AutoCloseable
 {
-  private final Map<String, Object> SUPER = new HashMap();
+  private final Map<String, Object> SUPER;
 
   /**
    * 运行环境(0 Cmd, 1 Web)
@@ -124,7 +122,7 @@ abstract public class Core
                 = new ThreadLocal() {
       @Override
       protected Core initialValue() {
-          return new Simple();
+          return new Core();
       }
       @Override
       public void remove() {
@@ -411,14 +409,30 @@ abstract public class Core
 
   //** 核心方法 **/
 
-  /**
-   * 获取类对应的唯一对象
-   *
-   * @param <T>
-   * @param clas [包.]类.class
-   * @return 唯一对象
-   */
-  abstract public <T>T got(Class<T> clas);
+  protected Core ()
+  {
+    this(new HashMap());
+  }
+
+  protected Core (Core core)
+  {
+    this(core . SUPER );
+  }
+
+  protected Core (Map  sup )
+  {
+    SUPER = sup ;
+  }
+
+  protected Map<String, Object> sup()
+  {
+    return SUPER;
+  }
+
+  public Object get(String key)
+  {
+    return sup( ).get(key);
+  }
 
   /**
    * 获取名对应的唯一对象
@@ -426,9 +440,59 @@ abstract public class Core
    * @param name 包路径.类名称
    * @return 唯一对象
    */
-  abstract public Object got(String name);
+  public Object got(String name)
+  {
+    Class clas;
+    try {
+      clas = Class.forName(name);
+    } catch (ClassNotFoundException x) {
+      throw new HongsExemption(821, x);
+    }
 
-  //** 扩展方法 **/
+    return got(name, clas);
+  }
+
+  /**
+   * 获取类对应的唯一对象
+   *
+   * @param <T>
+   * @param clas [包.]类.class
+   * @return 唯一对象
+   */
+  public <T>T got(Class<T> clas)
+  {
+    String name = clas.getName();
+
+    return got(name, clas);
+  }
+
+  /**
+   * 获取指定对象
+   * 缺失则在构建后存入
+   * @param <T>
+   * @param cln 存储键名
+   * @param cls 对应的类
+   * @return
+   */
+  protected <T>T got(String cln, Class<T> cls)
+  {
+    if (isset(cln))
+    {
+      return (T) get(cln);
+    }
+    if (Singleton.class.isAssignableFrom(cls))
+    {
+      return Core.GLOBAL_CORE.got (cln , cls);
+    }
+    if (Soliloquy.class.isAssignableFrom(cls))
+    {
+      return newInstance(cls);
+    }
+
+    T obj  = newInstance(cls);
+    set(cln, obj);
+    return   obj ;
+  }
 
   /**
    * 获取指定对象
@@ -440,25 +504,35 @@ abstract public class Core
    */
   public <T>T get(String key, Supplier<T> sup)
   {
-    Object abj= get(key);
-    if (null != abj)
-    return  (T) abj;
+    if (isset(key))
+    {
+      return (T) get(key);
+    }
+    if (Singleton.class.isAssignableFrom(sup.getClass()))
+    {
+      return Core.GLOBAL_CORE.get (key , sup);
+    }
+    if (Soliloquy.class.isAssignableFrom(sup.getClass()))
+    {
+      return sup.get();
+    }
 
-    T obj = sup.get();
-    put(key,obj);
-    return  obj ;
+    T obj  = sup.get();
+    set(key, obj);
+    return   obj ;
   }
 
   /**
    * 设置指定对象
    * 会关闭旧对象(如果是 AutoCloseable)
    * @param key
-   * @param val 
+   * @param val
    */
   public void set(String key, Object val)
   {
-    Object  old = put(key, val);
-    if (old != null
+    Object  old = sup().put(key, val);
+    if (old != val
+    &&  old != null
     &&  old instanceof AutoCloseable) {
       try
       {
@@ -474,11 +548,11 @@ abstract public class Core
   /**
    * 清除指定对象
    * 会关闭旧对象(如果是 AutoCloseable)
-   * @param key 
+   * @param key
    */
   public void unset(String key)
   {
-    Object  old = remove ( key);
+    Object  old = sup().remove( key );
     if (old != null
     &&  old instanceof AutoCloseable)
     {
@@ -493,6 +567,11 @@ abstract public class Core
     }
   }
 
+  public boolean isset(String key)
+  {
+    return sup( ).containsKey(key);
+  }
+
   /**
    * 重置整个环境
    * 先 close 后 clear
@@ -501,10 +580,10 @@ abstract public class Core
   {
     try
     {
-      close();
-      clear();
+      /* */ close();
+      sup().clear();
     }
-    catch (Throwable x)
+    catch (Throwable x )
     {
       x.printStackTrace(System.err);
     }
@@ -527,7 +606,7 @@ abstract public class Core
      * 不用迭代中的 Entry.remove 是因为实例的 close 中也可能变更 core.
      */
 
-    Object[] a = this.values().toArray();
+    Object[] a = sup().values().toArray();
     for (Object o : a)
     {
       try
@@ -561,7 +640,7 @@ abstract public class Core
      * 不用迭代中的 Entry.remove 是因为实例的 cloze 中也可能变更 core.
      */
 
-    Object[] a = this.values().toArray();
+    Object[] a = sup().values().toArray();
     for (Object o : a)
     {
       try
@@ -576,92 +655,6 @@ abstract public class Core
         x.printStackTrace ( System.err );
       }
     }
-  }
-
-  //** 读写方法 **/
-
-  /**
-   * 存储支持方法
-   * 代理只要重写此方法指向旧 core
-   * 然后仅重载所需方法
-   * 不必重写所有的方法
-   * @return
-   */
-  protected Map<String, Object> sup()
-  {
-    return SUPER;
-  }
-
-  @Override
-  public Object get(Object key)
-  {
-    return sup().get(key);
-  }
-
-  @Override
-  public Object put(String key, Object obj)
-  {
-    return sup().put(key, obj);
-  }
-
-  @Override
-  public Object remove(Object key)
-  {
-    return sup().remove(key);
-  }
-
-  @Override
-  public boolean containsKey(Object key)
-  {
-    return sup().containsKey(key);
-  }
-
-  @Override
-  public boolean containsValue(Object obj)
-  {
-    return sup().containsValue(obj);
-  }
-
-  @Override
-  public boolean isEmpty()
-  {
-    return sup().isEmpty();
-  }
-
-  @Override
-  public int size()
-  {
-    return sup().size();
-  }
-
-  @Override
-  public Set<String> keySet()
-  {
-    return sup().keySet();
-  }
-
-  @Override
-  public Collection<Object> values()
-  {
-    return sup().values();
-  }
-
-  @Override
-  public Set<Map.Entry<String, Object>> entrySet()
-  {
-    return sup().entrySet();
-  }
-
-  @Override
-  public void putAll(Map<? extends String, ? extends Object> map)
-  {
-    sup().putAll(map);
-  }
-
-  @Override
-  public void clear()
-  {
-    sup().clear();
   }
 
   @Override
@@ -679,7 +672,7 @@ abstract public class Core
   public String toString()
   {
     StringBuilder sb = new StringBuilder();
-    for(Map.Entry<String, Object> et : this.entrySet())
+    for(Map.Entry<String, Object> et : sup().entrySet())
     {
         sb.append('[');
       int ln = sb.length();
@@ -720,110 +713,21 @@ abstract public class Core
   }
 
   /**
-   * 简单容器
-   * 非线程安全, 未对任何过程加锁, 作线程内共享对象
-   */
-  private static final class Simple extends Core
-  {
-
-    @Override
-    public Object got(String name)
-    {
-      Core   core = Core.GLOBAL_CORE ;
-      if (this.containsKey(name))
-      {
-        return    this.get(name);
-      }
-      if (core.containsKey(name))
-      {
-        return    core.get(name);
-      }
-
-      Object inst = newInstance(name);
-      if (inst instanceof Soliloquy)
-      {
-          // Do not keep it-self.
-      } else
-      if (inst instanceof Singleton)
-      {
-          core.set( name, inst );
-      } else
-      {
-          this.set( name, inst );
-      }
-      return inst;
-    }
-
-    @Override
-    public <T>T got(Class<T> clas)
-    {
-      String name = clas.getName ( );
-      Core   core = Core.GLOBAL_CORE;
-      if (this.containsKey(name))
-      {
-        return (T)this.get(name);
-      }
-      if (core.containsKey(name))
-      {
-        return (T)core.get(name);
-      }
-
-      T   inst = newInstance( clas );
-      if (inst instanceof Soliloquy)
-      {
-          // Do not keep it-self.
-      } else
-      if (inst instanceof Singleton)
-      {
-          core.set( name, inst );
-      } else
-      {
-          this.set( name, inst );
-      }
-      return inst;
-    }
-
-  }
-
-  /**
    * 全局容器
    * 带锁的容器, 内部采用了读写锁, 并对写过程可包裹
    */
   private static final class Global extends Core
   {
-  private final ReadWriteLock LOCK = new ReentrantReadWriteLock();
+
+    private final ReadWriteLock LOCK = new ReentrantReadWriteLock();
 
     @Override
-    public Object got(String key)
+    protected <T>T got(String cln, Class<T> cls)
     {
       LOCK.readLock( ).lock();
       try {
-      if  (super.containsKey(key)) {
-        return     super.get(key);
-      }
-      } finally {
-        LOCK.readLock( ).unlock();
-      }
-
-      LOCK.writeLock().lock();
-      try {
-        Object obj = newInstance(key);
-        super.put( key, obj );
-        return obj;
-      } finally {
-        LOCK.writeLock().unlock();
-      }
-    }
-
-    @Override
-    public <T>T got(Class<T> cls)
-    {
-      String key = cls.getName( );
-
-      LOCK.readLock( ).lock();
-      try {
-      if  (super.containsKey(key)) {
-        return (T) super.get(key);
+      if  ( super.isset (cln)) {
+        return (T) super.get(cln);
       }
       } finally {
         LOCK.readLock( ).unlock();
@@ -832,7 +736,7 @@ abstract public class Core
       LOCK.writeLock().lock();
       try {
         T  obj = newInstance(cls);
-        super.put( key, obj );
+        super.set( cln, obj );
         return obj;
       } finally {
         LOCK.writeLock().unlock();
@@ -840,29 +744,29 @@ abstract public class Core
     }
 
     @Override
-    public <T>T get(String key, Supplier<T> fun)
+    public <T>T get(String key, Supplier<T> sup)
     {
       LOCK.readLock( ).lock();
       try {
-        Object obj=super.get(key);
-        if (null != obj)
-        return  (T) obj;
+      if  ( super.isset (key)) {
+        return (T) super.get(key);
+      }
       } finally {
         LOCK.readLock( ).unlock();
       }
 
       LOCK.writeLock().lock();
       try {
-        T obj = fun.get( );
-        super.put(key,obj);
-        return  obj;
+        T  obj = sup. get ( );
+        super.set( key, obj );
+        return obj;
       } finally {
         LOCK.writeLock().unlock();
       }
     }
 
     @Override
-    public Object get(Object key)
+    public Object get(String key)
     {
       LOCK.readLock( ).lock();
       try {
@@ -873,44 +777,22 @@ abstract public class Core
     }
 
     @Override
-    public Object put(String key, Object obj)
+    public void set(String key, Object obj)
     {
       LOCK.writeLock().lock();
       try {
-        return super.put(key,obj);
+        super.set(key,obj);
       } finally {
         LOCK.writeLock().unlock();
       }
     }
 
     @Override
-    public Object remove(Object key)
+    public void unset(String key)
     {
       LOCK.writeLock().lock();
       try {
-        return super.remove(key );
-      } finally {
-        LOCK.writeLock().unlock();
-      }
-    }
-
-    @Override
-    public void putAll(Map<? extends String, ? extends Object> map)
-    {
-      LOCK.writeLock().lock();
-      try {
-        super.putAll(  map  );
-      } finally {
-        LOCK.writeLock().unlock();
-      }
-    }
-
-    @Override
-    public void clear()
-    {
-      LOCK.writeLock().lock();
-      try {
-        super.clear( );
+        super.unset( key );
       } finally {
         LOCK.writeLock().unlock();
       }

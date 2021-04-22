@@ -101,12 +101,12 @@ public final class CommitRunner {
         }
 
         @Override
-        public void set(String key, Object obj) {
+        public Object put(String key, Object obj) {
             // 代理登记, 预开启事务
             if (obj instanceof IReflux) {
                 ((IReflux) obj).begin();
             }
-            super.set(key, obj);
+            return super.put(key , obj);
         }
 
         public Collection<Object> values() {

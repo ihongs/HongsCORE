@@ -152,7 +152,7 @@ public class StatisGather {
             for(int i = 0; i < indics.length; i ++) {
                 String n = indics[i].alias;
                 Object v = entry.get ( n );
-                v = indics[i].collecs(i,v);
+                v = indics[i].collecs(id, v);
                 entry.put(n, v);
             }
         }

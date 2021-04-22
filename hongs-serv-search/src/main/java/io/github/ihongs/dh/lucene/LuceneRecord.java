@@ -829,19 +829,20 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 Set a  = Synt.asSet( v );
                 if (a != null && ! a.isEmpty( )) {
                 if (s) {
+                    boolean   b = true ;
                     for (Object w: a) {
+                    if  (b) { b = false;
                         doc.add(f.odr(k, w));
-                        break ; // 多个值的普通排序只能用其中一个
+                    }   doc.add(f.ods(k, w));
                     }
+                }
+                if (q) {
                     for (Object w: a) {
-                        doc.add(f.ods(k, w));
+                        doc.add(f.whr(k, w));
                     }
                 }
-                if (q) for (Object w: a) {
-                    doc.add(f.whr(k, w));
-                }
-                if (p) for (Object w: a) {
-                    doc.add(f.wdr(k, getSrchText(m, w)));
+                if (p) {
+                    doc.add(f.wdr(k, getSrchText(m, a)));
                 }
                 if (!q && !p) { // 不可过滤时仍可判断空/非空/空串
                     doc.add(f.whr(k, v.equals("") ? "" : "0"));
@@ -1891,9 +1892,21 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      * @return
      */
     protected Object getSrchText(Map fc, Object v) {
+        // 合并多组值
+        if (v instanceof Collection) {
+            StringBuilder s = new StringBuilder( );
+            for ( Object  o : ( (Collection) v ) ) {
+                s.append( o )
+                 .append(" ");
+            }
+            v = s;
+        }
+
+        // 清理富文本
         if ("textview".equals(fc.get("__type__"))) {
             return Syno.stripEnds(Syno.stripTags(Syno.stripCros(v.toString())));
         }
+
         return v;
     }
 

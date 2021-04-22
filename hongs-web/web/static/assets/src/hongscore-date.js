@@ -550,7 +550,8 @@
     // 设为当前时间
     $(document).on("click", ".datebox .today", function() {
         var box = $(this).closest(".datebox");
-        _setdate(box, new Date());
+        var dat = new Date();
+        _setdate( box, dat );
         box.change();
     });
 

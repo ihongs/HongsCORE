@@ -584,7 +584,7 @@ public class Core
   }
 
   /**
-   * 是否存在且非 null
+   * 存在并且非空
    * @param key
    * @return
    */

@@ -122,7 +122,8 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
     public static LuceneRecord getInstance(String conf, String form) throws HongsException {
         String code = LuceneRecord.class.getName() +":"+ conf +"."+ form;
         Core   core = Core.getInstance( );
-        if ( ! core.isset(code) ) {
+        LuceneRecord  inst = (LuceneRecord) core.get(code);
+        if (inst == null) {
             String path = conf +"/"+ form;
             String name = conf +"."+ form;
             Map    fxrm = FormSet.getInstance(conf).getForm(form);
@@ -148,13 +149,12 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             m.put("DATA_PATH", Core.DATA_PATH);
             path = Syno.inject(path, m);
             if ( ! new File(path).isAbsolute())
-            path = Core.DATA_PATH + "/lucene/" + path;
+            path = Core.DATA_PATH+ "/lucene/" + path ;
 
-            LuceneRecord inst = new LuceneRecord(fxrm, path,name);
-            core.set( code, inst ) ; return inst ;
-        } else {
-            return  (LuceneRecord) core.get(code);
+            inst = new LuceneRecord(fxrm, path, name);
+            core.set(code , inst);
         }
+        return inst;
     }
 
     //** 实体方法 **/

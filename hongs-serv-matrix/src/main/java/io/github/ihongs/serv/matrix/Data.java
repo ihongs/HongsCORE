@@ -138,13 +138,11 @@ public class Data extends SearchEntity {
         }
 
         // 默认构造
-        Data   inst;
-        Core   core = Core.getInstance();
         name = Data.class.getName() +":"+ conf +"."+ form;
-        if (core.isset(name)) {
-            inst = (Data) core.get(name);
-        } else {
-            inst = new Data (conf, form);
+        Core core =  Core.getInstance(  );
+        Data inst = (Data) core.get(name);
+        if (inst == null) {
+            inst = new Data (conf , form);
             core.set ( name, inst );
         }
         return inst;

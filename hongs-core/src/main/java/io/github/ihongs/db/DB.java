@@ -649,11 +649,11 @@ public class DB
     throws HongsException
   {
     String cn = DB.class.getName() +":"+ name;
-
     Core core = Core.getInstance();
-    if ( core.isset(cn))
+    DB  db  =  (DB) core.get( cn );
+    if (db != null)
     {
-      return (DB)core.get(cn);
+      return db;
     }
 
     DBConfig cc = new DBConfig(name);
@@ -664,9 +664,9 @@ public class DB
     }
     else
     {
-      DB db = new DB(cc);
-      core.set( cn , db);
-      return  db ;
+      db = new DB(cc);
+      core.set(cn,db);
+      return db;
     }
   }
 

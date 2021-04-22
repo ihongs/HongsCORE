@@ -1023,14 +1023,12 @@ public class NaviMap
   }
 
   public static NaviMap getInstance(String name) throws HongsException {
-      String cn = NaviMap.class.getName() + ":" + name;
-      Core core = Core.getInstance();
-      NaviMap inst;
-      if (core.isset(cn)) {
-          inst = (NaviMap) core.get( cn );
-      } else {
-          inst = new NaviMap( name );
-          core.set( cn , inst );
+      Core    core =  Core.getInstance ();
+      String  code =  NaviMap.class.getName() + ":" + name;
+      NaviMap inst = (NaviMap) core.get(code);
+      if (inst == null) {
+          inst  = new NaviMap( name );
+          core.set(code, inst);
       }
       return inst;
   }

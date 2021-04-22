@@ -29,7 +29,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * GLOBAL_CORE 用于存放全局对象和参数,
  * 对读写等过程有加锁, 但仍需小心对待.
  * Cleanable,Singleton 类别放入非全局.
- * 需注意, put,putAll,remove,clear 方法并不会对其中存储的 AutoCloseable 对象调用 close 方法, 请自行小心处理.
  * </p>
  *
  * <h3>静态属性:</h3>
@@ -429,9 +428,24 @@ public class Core
     return SUPER;
   }
 
-  public Object get(String key)
+  public Object  get(String key)
   {
-    return sup( ).get(key);
+    return sup().get(key);
+  }
+
+  public Object  put(String key, Object obj)
+  {
+    return sup().put(key, obj);
+  }
+
+  public Object  remove(String key)
+  {
+    return sup().remove( key );
+  }
+
+  public boolean exists(String key)
+  {
+    return sup().containsKey ( key);
   }
 
   /**
@@ -476,9 +490,10 @@ public class Core
    */
   protected <T>T got(String cln, Class<T> cls)
   {
-    if (isset(cln))
+    Object val = get(cln);
+    if (null  != val)
     {
-      return (T) get(cln);
+      return (T) val;
     }
     if (Singleton.class.isAssignableFrom(cls))
     {
@@ -504,9 +519,10 @@ public class Core
    */
   public <T>T get(String key, Supplier<T> sup)
   {
-    if (isset(key))
+    Object val = get(key);
+    if (null  != val)
     {
-      return (T) get(key);
+      return (T) val;
     }
     if (Singleton.class.isAssignableFrom(sup.getClass()))
     {
@@ -530,7 +546,7 @@ public class Core
    */
   public void set(String key, Object val)
   {
-    Object  old = sup().put(key, val);
+    Object  old = put(key, val);
     if (old != val
     &&  old != null
     &&  old instanceof AutoCloseable) {
@@ -552,7 +568,7 @@ public class Core
    */
   public void unset(String key)
   {
-    Object  old = sup().remove( key );
+    Object  old = remove ( key);
     if (old != null
     &&  old instanceof AutoCloseable)
     {
@@ -567,9 +583,14 @@ public class Core
     }
   }
 
+  /**
+   * 是否存在且非 null
+   * @param key
+   * @return
+   */
   public boolean isset(String key)
   {
-    return sup( ).containsKey(key);
+    return null != get( key );
   }
 
   /**
@@ -677,6 +698,10 @@ public class Core
         sb.append('[');
       int ln = sb.length();
       Object ob = et.getValue();
+      if (ob == null )
+      {
+        sb.append('N');
+      } else {
       if (ob instanceof AutoCloseable)
       {
         sb.append('A');
@@ -692,7 +717,7 @@ public class Core
       if (ob instanceof Soliloquy)
       {
         sb.append('O');
-      }
+      }}
       if (ln < sb.length() )
       {
         sb.append(']');
@@ -719,104 +744,106 @@ public class Core
   private static final class Global extends Core
   {
 
-    private final ReadWriteLock LOCK = new ReentrantReadWriteLock();
+    private final ReadWriteLock RWL = new ReentrantReadWriteLock();
 
     @Override
     protected <T>T got(String cln, Class<T> cls)
     {
-      LOCK.readLock( ).lock();
+      RWL.readLock( ).lock();
       try {
-      if  ( super.isset (cln)) {
-        return (T) super.get(cln);
-      }
+        Object obj = super.get(cln);
+        if ( null != obj ) {
+            return (T) obj;
+        }
       } finally {
-        LOCK.readLock( ).unlock();
+        RWL.readLock( ).unlock();
       }
 
-      LOCK.writeLock().lock();
+      RWL.writeLock().lock();
       try {
-        T  obj = newInstance(cls);
-        super.set( cln, obj );
+        T obj = newInstance(cls);
+        super.set(cln, obj);
         return obj;
       } finally {
-        LOCK.writeLock().unlock();
+        RWL.writeLock().unlock();
       }
     }
 
     @Override
     public <T>T get(String key, Supplier<T> sup)
     {
-      LOCK.readLock( ).lock();
+      RWL.readLock( ).lock();
       try {
-      if  ( super.isset (key)) {
-        return (T) super.get(key);
-      }
+        Object obj = super.get(key);
+        if ( null != obj ) {
+            return (T) obj;
+        }
       } finally {
-        LOCK.readLock( ).unlock();
+        RWL.readLock( ).unlock();
       }
 
-      LOCK.writeLock().lock();
+      RWL.writeLock().lock();
       try {
-        T  obj = sup. get ( );
-        super.set( key, obj );
+        T obj  =  sup. get();
+        super.set(key, obj );
         return obj;
       } finally {
-        LOCK.writeLock().unlock();
+        RWL.writeLock().unlock();
       }
     }
 
     @Override
     public Object get(String key)
     {
-      LOCK.readLock( ).lock();
+      RWL.readLock( ).lock();
       try {
         return super.get(key);
       } finally {
-        LOCK.readLock( ).unlock();
+        RWL.readLock( ).unlock();
       }
     }
 
     @Override
     public void set(String key, Object obj)
     {
-      LOCK.writeLock().lock();
+      RWL.writeLock().lock();
       try {
         super.set(key,obj);
       } finally {
-        LOCK.writeLock().unlock();
+        RWL.writeLock().unlock();
       }
     }
 
     @Override
     public void unset(String key)
     {
-      LOCK.writeLock().lock();
+      RWL.writeLock().lock();
       try {
         super.unset( key );
       } finally {
-        LOCK.writeLock().unlock();
+        RWL.writeLock().unlock();
       }
     }
 
     @Override
     public void close()
     {
-      LOCK.writeLock().lock();
+      RWL.writeLock().lock();
       try {
-        super.close( );
+        super.close();
       } finally {
-        LOCK.writeLock().unlock();
+        RWL.writeLock().unlock();
       }
     }
 
     @Override
     public void cloze()
     {
-      LOCK.writeLock().lock();
+      RWL.writeLock().lock();
       try {
-        super.cloze( );
+        super.cloze();
       } finally {
-        LOCK.writeLock().unlock();
+        RWL.writeLock().unlock();
       }
     }
 
@@ -825,8 +852,8 @@ public class Core
   //** 核心接口 **/
 
   /**
-   * 可关闭的
-   * 实现此接口, 会询问是否可清理, 许可则会被删除掉
+   * 尝试关闭
+   * 实现此接口, 并且放入全局托管, 会定时轮询关闭之
    */
   static public interface Clozeable
   {

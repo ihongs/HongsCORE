@@ -241,7 +241,7 @@ public class CoreConfig
 
   /**
    * 用默认值填充
-   * @return 
+   * @return
    */
   public CoreConfig padDefaults()
   {
@@ -279,29 +279,32 @@ public class CoreConfig
   {
     String ck = CoreConfig.class.getName() + ":" + name;
 
+    CoreConfig  inst;
     Core core = Core.getInstance();
-    if (core.isset(ck))
+    inst = (CoreConfig) core.get(ck);
+    if (inst != null)
     {
-      return (CoreConfig)core.get(ck);
+      return inst;
     }
-
     Core gore = Core.GLOBAL_CORE;
-    if (gore.isset(ck))
+    inst = (CoreConfig) gore.get(ck);
+    if (inst != null)
     {
-      return (CoreConfig)gore.get(ck);
+      return inst;
     }
 
-    CoreConfig conf =  new  CoreConfig(name);
-    CoreConfig gonf = "default".equals(name) ? conf : getInstance();
-    if (gonf.getProperty("core.load.config.once", false))
+    CoreConfig conf;
+    inst =  new  CoreConfig(name);
+    conf = "default".equals(name) ? inst : getInstance();
+    if (conf.getProperty("core.load.config.once", false))
     {
-      gore.set(ck, conf);
+      gore.set(ck, inst);
     }
     else
     {
-      core.set(ck, conf);
+      core.set(ck, inst);
     }
 
-    return conf;
+    return inst;
   }
 }

@@ -735,12 +735,12 @@ public class ActionHelper implements Cloneable
   public static ActionHelper getInstance()
   {
     Core   core = Core.getInstance();
-    String inst = ActionHelper.class.getName();
-    if (core.isset(inst)) {
-        return ((ActionHelper) core.get(inst));
-    } else {
-        throw new UnsupportedOperationException("Please use the ActionHelper in the coverage of the ActionDriver or CmdletRunner inside");
+    String name = ActionHelper.class.getName();
+    ActionHelper  inst = (ActionHelper) core.get(name);
+    if (null != inst) {
+        return  inst;
     }
+    throw new UnsupportedOperationException("Please use the ActionHelper in the coverage of the ActionDriver or CmdletRunner inside");
   }
 
   /**
@@ -751,12 +751,12 @@ public class ActionHelper implements Cloneable
    */
   public static ActionHelper newInstance() {
     Core   core = Core.getInstance();
-    String inst = ActionHelper.class.getName();
-    if (core.isset(inst)) {
-        return ((ActionHelper) core.get(inst)).clone( );
-    } else {
-        return new ActionHelper(null, null, null, null);
+    String name = ActionHelper.class.getName();
+    ActionHelper  inst = (ActionHelper) core.get(name);
+    if (null != inst) {
+        return  inst.clone();
     }
+    return new  ActionHelper  (null, null, null, null);
   }
 
   /**

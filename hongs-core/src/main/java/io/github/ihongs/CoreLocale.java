@@ -211,20 +211,23 @@ public class CoreLocale
   {
     String ck = CoreLocale.class.getName() + ":" + name + ":" + lang;
 
+    CoreLocale  inst;
     Core core = Core.getInstance();
-    if (core.isset(ck))
+    inst = (CoreLocale) core.get(ck);
+    if (inst != null)
     {
-      return (CoreLocale)core.get(ck);
+      return inst;
     }
-
     Core gore = Core.GLOBAL_CORE;
-    if (gore.isset(ck))
+    inst = (CoreLocale) gore.get(ck);
+    if (inst != null)
     {
-      return (CoreLocale)gore.get(ck);
+      return inst;
     }
 
-    CoreLocale inst = new CoreLocale(name, lang);
-    CoreConfig conf = CoreConfig.getInstance(  );
+    CoreConfig conf;
+    inst = new CoreLocale(name, lang);
+    conf = CoreConfig.getInstance(  );
     if (conf.getProperty("core.load.locale.once", false))
     {
       gore.set(ck, inst);

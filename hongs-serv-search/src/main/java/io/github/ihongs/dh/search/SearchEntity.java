@@ -56,7 +56,8 @@ public class SearchEntity extends LuceneRecord {
     public static SearchEntity getInstance(String conf, String form) throws HongsException {
         String code = SearchEntity.class.getName() +":"+ conf +"."+ form;
         Core   core = Core.getInstance( );
-        if ( ! core.isset(code) ) {
+        SearchEntity  inst = (SearchEntity) core.get(code);
+        if (inst == null) {
             String path = conf +"/"+ form;
             String name = conf +"."+ form;
             Map    fxrm = FormSet.getInstance(conf).getForm(form);
@@ -82,13 +83,12 @@ public class SearchEntity extends LuceneRecord {
             m.put("DATA_PATH", Core.DATA_PATH);
             path = Syno.inject(path, m);
             if ( ! new File(path).isAbsolute())
-            path = Core.DATA_PATH + "/lucene/" + path;
+            path = Core.DATA_PATH+ "/lucene/" + path ;
 
-            SearchEntity inst = new SearchEntity(fxrm, path,name);
-            core.set( code, inst ) ; return inst ;
-        } else {
-            return  (SearchEntity) core.get(code);
+            inst = new SearchEntity(fxrm, path, name);
+            core.set(code , inst);
         }
+        return inst;
     }
 
     @Override

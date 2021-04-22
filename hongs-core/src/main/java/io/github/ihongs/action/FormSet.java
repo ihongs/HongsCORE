@@ -575,15 +575,12 @@ public class FormSet
   }
 
   public static FormSet getInstance(String name) throws HongsException {
-      String cn = FormSet.class.getName() + ":" + name;
-      Core core = Core.getInstance();
-      FormSet inst;
-      if (core.isset(cn)) {
-          inst = (FormSet) core.get( cn );
-      }
-      else {
-          inst = new FormSet( name );
-          core.set( cn , inst );
+      Core    core =  Core.getInstance ();
+      String  code =  FormSet.class.getName() + ":" + name;
+      FormSet inst = (FormSet) core.get(code);
+      if (inst == null) {
+          inst  = new FormSet( name );
+          core.set(code, inst);
       }
       return inst;
   }

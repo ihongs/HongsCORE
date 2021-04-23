@@ -105,7 +105,7 @@ public class InfoAction {
          * 公共核心情况和锁情况
          */
         if ( rb != null && rb.contains("core_info")) {
-            rsp.put("core_set", new CoreToKeys(Core.GLOBAL_CORE));
+            rsp.put("core_set", new CoreToKeys(Core.GLOBAL_CORE).keySet());
         }
         if ( rb != null && rb.contains("lock_info")) {
             rsp.put("lock_map", Block.counts());

@@ -232,7 +232,7 @@
         // 定位到当前菜单
         var actived = menubar.find("li.active");
         if (actived.size() && actived.offset().top + actived.height() + userbar.height() > $(window).height()) {
-            headbox.scrollTop(actived.offset().top - actived.height() - namebar.height());
+            headbox.scrollTop(actived.offset().top - actived.height() - namebar.height() - 36);
         }
         $().add(menubar).add(userbar)
            .on ("click", "a", function() {

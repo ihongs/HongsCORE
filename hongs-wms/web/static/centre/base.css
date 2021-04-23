@@ -68,3 +68,16 @@
 .input-group .input-search:disabled+.input-group-btn .glyphicon-search:before {
     content: "\e031";
 }
+
+/* 列表筛选样式微调 */
+.statbox ,
+.filtbox {
+    background: #f5f5f5;
+    padding-top: 15px;
+    padding-bottom: 0;
+}
+.statbox.invisible ,
+.filtbox.invisible {
+    padding-top: 0;
+     margin-top: 0;
+}

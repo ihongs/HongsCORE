@@ -40,14 +40,12 @@ public final class Synt {
      * LOOP.LAST 跳出循环
      */
     public  static enum LOOP {
-
-        NEXT, LAST;
-
+        NEXT,
+        LAST;
         @Override
         public String toString() {
             return "";
         }
-
     };
 
     /**

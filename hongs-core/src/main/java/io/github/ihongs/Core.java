@@ -55,8 +55,11 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * @author Hongs
  */
 public class Core
-  implements AutoCloseable
 {
+
+  /**
+   * 对象容器
+   */
   private final Map<String, Object> SUPER;
 
   /**
@@ -511,6 +514,39 @@ public class Core
 
   /**
    * 获取指定对象
+   * 用函数式构造 core.got(xxx, () -> new Yyy(zzz))
+   * 可在构建时抛出异常
+   * @param <T>
+   * @param key 存储键名
+   * @param sup 供应方法
+   * @return
+   * @throws HongsException
+   */
+  public <T>T got(String key, Provider<T> sup)
+  throws HongsException, HongsExemption
+  {
+    Object val = get(key);
+    if (null  != val)
+    {
+      return (T) val;
+    }
+    if (Singleton.class.isAssignableFrom(sup.getClass()))
+    {
+      return Core.GLOBAL_CORE.got (key , sup);
+    }
+    if (Soliloquy.class.isAssignableFrom(sup.getClass()))
+    {
+      return sup.get();
+    }
+
+    T obj  = sup.get();
+    set(key, obj);
+    return   obj ;
+  }
+
+  /**
+   * 获取指定对象
+   * 用函数式构造 core.get(xxx, () -> new Yyy(zzz))
    * 缺失则在构建后存入
    * @param <T>
    * @param key 存储键名
@@ -612,8 +648,8 @@ public class Core
 
   /**
    * 关闭资源
+   * 规避托管自身后递归调用, Core 未标示 AutoCloseable
    */
-  @Override
   public void close()
   {
     if (sup().isEmpty())
@@ -646,7 +682,7 @@ public class Core
 
   /**
    * 清理资源
-   * 用于定时清理, 不一定会关闭
+   * 规避托管自身后递归调用, Core 不标示 Clozeable
    */
   public void cloze()
   {
@@ -695,9 +731,12 @@ public class Core
     StringBuilder sb = new StringBuilder();
     for(Map.Entry<String, Object> et : sup().entrySet())
     {
+      Object ob = et.getValue();
+        sb.append(et.getKey( ));
+        sb.append(' ');
         sb.append('[');
       int ln = sb.length();
-      Object ob = et.getValue();
+
       if (ob == null )
       {
         sb.append('N');
@@ -718,13 +757,17 @@ public class Core
       {
         sb.append('O');
       }}
-      if (ln < sb.length() )
+
+      if (ln == sb.length())
+      {
+        sb.setLength(ln - 2);
+      }
+      else
       {
         sb.append(']');
-      } else {
-        sb.setLength(ln - 1);
       }
-      sb.append(et.getKey()).append(", ");
+        sb.append(',');
+        sb.append(' ');
     }
 
     // 去掉尾巴上多的逗号
@@ -763,6 +806,30 @@ public class Core
       try {
         T obj = newInstance(cls);
         super.set(cln, obj);
+        return obj;
+      } finally {
+        RWL.writeLock().unlock();
+      }
+    }
+
+    @Override
+    public <T>T got(String key, Provider<T> sup)
+    throws HongsException, HongsExemption
+    {
+      RWL.readLock( ).lock();
+      try {
+        Object obj = super.get(key);
+        if ( null != obj ) {
+            return (T) obj;
+        }
+      } finally {
+        RWL.readLock( ).unlock();
+      }
+
+      RWL.writeLock().lock();
+      try {
+        T obj  =  sup. get();
+        super.set(key, obj );
         return obj;
       } finally {
         RWL.writeLock().unlock();
@@ -850,6 +917,16 @@ public class Core
   }
 
   //** 核心接口 **/
+
+  /**
+   * 构造工厂
+   * @param <T>
+   */
+  @FunctionalInterface
+  static public interface Provider<T>
+  {
+    public T get() throws HongsException, HongsExemption;
+  }
 
   /**
    * 尝试关闭

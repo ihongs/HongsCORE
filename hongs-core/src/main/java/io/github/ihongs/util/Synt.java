@@ -51,22 +51,6 @@ public final class Synt {
     };
 
     /**
-     * 数字转换工具
-     */
-    private static final ThreadLocal<NumberFormat> DIGI = new ThreadLocal() {
-        @Override
-        protected NumberFormat initialValue() {
-            NumberFormat nf;
-            nf  = NumberFormat.getInstance ();
-            nf  . setGroupingUsed (  false  );
-            return nf;
-        }
-    };
-
-    private static final Number  ZERO = 0 ;
-    private static final String  VOID = "";
-
-    /**
      * 视为真的字符串有: True , Yes, On, T, Y, I, 1
      */
     public  static final Pattern TRUE = Pattern.compile( "(1|I|Y|T|ON|YES|TRUE)" , Pattern.CASE_INSENSITIVE);
@@ -97,6 +81,25 @@ public final class Synt {
      */
     private static final Pattern RNGQ = Pattern.compile(  "[\\[\\(,\\)\\]]"  );
     private static final Pattern RNGP = Pattern.compile("^([\\(\\[])?(.*?),(.*?)([\\]\\)])?$");
+
+    /**
+     * 空值对象, 默认跳过
+     */
+    private static final String  EMPT = "";
+    private static final Number  ZERO = 0 ;
+
+    /**
+     * 数字转换工具
+     */
+    private static final ThreadLocal<NumberFormat> DIGI = new ThreadLocal() {
+        @Override
+        protected NumberFormat initialValue() {
+            NumberFormat nf;
+            nf  = NumberFormat.getInstance ();
+            nf  . setGroupingUsed (  false  );
+            return nf;
+        }
+    };
 
     /**
      * 快速构建 List
@@ -666,7 +669,7 @@ public final class Synt {
         }
 
         // 空串视为未取值
-        if (VOID.equals(val)) {
+        if (EMPT.equals(val)) {
             return null;
         }
 
@@ -964,7 +967,7 @@ public final class Synt {
      */
     public static <T extends String> T defxult(T... vals) {
         for (T  val :  vals) {
-            if (val != null && ! VOID.equals(val)) {
+            if (val != null && ! EMPT.equals(val)) {
                 return val ;
             }
         }

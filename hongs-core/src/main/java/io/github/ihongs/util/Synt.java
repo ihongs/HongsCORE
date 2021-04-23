@@ -943,24 +943,6 @@ public final class Synt {
 
     /**
      * 取默认值(null 视为无值)
-     * Java8 环境的函数式支持
-     * 可以更好的做到惰性计算
-     * @param <T>
-     * @param vals 由于在 java7 下编译, 无法使用 Supplier
-     * @return
-     */
-    public static <T> T defoult(Defn<T>... vals) {
-        for (Defn <T> def : vals) {
-            T   val = def.get();
-            if (val != null) {
-                return val ;
-            }
-        }
-        return  null;
-    }
-
-    /**
-     * 取默认值(null 视为无值)
      * @param <T>
      * @param vals
      * @return
@@ -1134,14 +1116,6 @@ public final class Synt {
     }
 
     //** 内部工具类 **/
-
-    /**
-     * 用于提供默认取值
-     * @param <T>
-     */
-    public static interface Defn<T> {
-        public T get();
-    }
 
     /**
      * 用于遍历每个节点

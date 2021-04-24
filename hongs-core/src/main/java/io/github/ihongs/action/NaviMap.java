@@ -7,7 +7,6 @@ import io.github.ihongs.CoreLogger;
 import io.github.ihongs.CoreSerial;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
-import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.reflex.Block;
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,6 +14,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -528,7 +529,7 @@ public class NaviMap
    * @param names
    * @return 角色字典
    */
-  public Map<String, Map> getMenuRoles(Set<String> names)
+  public Map<String, Map> getMenuRoles(Collection<String> names)
   {
     Map<String, Map> rolez = new HashMap();
 
@@ -562,7 +563,7 @@ public class NaviMap
   }
   public Map<String, Map> getMenuRoles(String... names)
   {
-    return this.getMenuRoles ( Synt.setOf(names));
+    return  this.getMenuRoles(Arrays.asList(names));
   }
 
   /**
@@ -570,15 +571,15 @@ public class NaviMap
    * @param names
    * @return 单元字典
    */
-  public Map<String, Map> getMoreRoles(Set<String> names)
+  public Map<String, Map> getMoreRoles(Collection<String> names)
   {
     Map <String, Map> ds = new HashMap();
     this.getRoleAuths(ds , new HashSet(), names);
-    return ds;
+    return  ds;
   }
   public Map<String, Map> getMoreRoles(String... names)
   {
-    return this.getMoreRoles ( Synt.setOf(names));
+    return  this.getMoreRoles(Arrays.asList(names));
   }
 
   /**
@@ -586,18 +587,18 @@ public class NaviMap
    * @param names
    * @return 全部动作名
    */
-  public Set<String> getRoleAuths(Set<String> names)
+  public Set<String> getRoleAuths(Collection<String> names)
   {
     Set <String> as = new HashSet();
     this.getRoleAuths(new HashMap(), as , names);
-    return as;
+    return  as;
   }
   public Set<String> getRoleAuths(String... names)
   {
-    return this.getRoleAuths ( Synt.setOf(names));
+    return  this.getRoleAuths(Arrays.asList(names));
   }
 
-  protected void getRoleAuths(Map roles, Set<String> auths, Set<String> names)
+  protected void getRoleAuths(Map roles, Set auths, Collection<String> names)
   {
     for  (String n : names)
     {

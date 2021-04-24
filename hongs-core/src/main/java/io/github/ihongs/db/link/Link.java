@@ -543,7 +543,7 @@ abstract public class Link
 
     /** 组织语句 **/
 
-    List paramz = new ArrayList();
+    List paramz = new ArrayList(values.size());
     String   fs = "";
     String   vs = "";
     Iterator it = values.entrySet().iterator();
@@ -593,7 +593,7 @@ abstract public class Link
 
     /** 组织语言 **/
 
-    List paramz = new ArrayList();
+    List paramz = new ArrayList(values.size());
     String   vs = "";
     Iterator it = values.entrySet().iterator();
     while (it.hasNext())

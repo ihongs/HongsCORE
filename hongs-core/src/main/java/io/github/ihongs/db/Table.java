@@ -888,7 +888,7 @@ public class Table
 
   private HongsException valiException(int code, String error, String fieldName, String... otherParams)
   {
-    List<String> trans = new ArrayList(/**/);
+    List<String> trans = new ArrayList(otherParams.length + 2);
     trans.add(db.name+"."+name);
     trans.add(/*the*/fieldName);
     trans.addAll(Arrays.asList(otherParams));

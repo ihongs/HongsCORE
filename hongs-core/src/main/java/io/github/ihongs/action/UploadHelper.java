@@ -591,8 +591,8 @@ public class UploadHelper {
 
             //** 多个文件 **/
 
-            List s = new ArrayList();
-            List a = Synt.asList(v );
+            List a = Synt . asList(v);
+            List s = new ArrayList(a.size());
             n = n.replaceFirst("(\\.|\\[\\])$", "");
 
             for (Object x : a) {

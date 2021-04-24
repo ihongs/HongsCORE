@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Arrays;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
  * </p>
  *
  * <p>
- * 创建的 List,Set,Map 为 ArayList,LinkedHashSet,LinkedHashMap.
+ * 创建的 List,Set,Map 为 LinkedList,LinkedHashSet,LinkedHashMap.
  * listOf 与 Arrays.asList 并不相同, 后者生成后不允许增删.
  * </p>
  *
@@ -106,7 +106,7 @@ public final class Synt {
      * @return
      */
     public static List listOf(Object... objs) {
-        return new  ArrayList   (Arrays.asList(objs));
+        return new LinkedList   (Arrays.asList(objs));
     }
 
     /**
@@ -190,13 +190,13 @@ public final class Synt {
 
         if (val instanceof String) {
             if ("".equals(val)) {
-                return  new ArrayList();
+                return  new LinkedList();
             }
             String text = ( (String) val).trim(  );
             if (text.startsWith("[") && text.endsWith("]")) {
                 return (List) Dawn.toObject (text);
             } else {
-                return  new ArrayList(
+                return  new LinkedList(
                     Arrays.asList(SEXP.split(text))
                 );
             }
@@ -358,13 +358,13 @@ public final class Synt {
         if (val instanceof List) {
             return ( List) val ;
         } else if (val instanceof Set ) {
-            return new ArrayList(( Set ) val);
+            return new LinkedList(( Set ) val);
         } else if (val instanceof Map ) {
-            return new ArrayList(((Map ) val).values());
+            return new LinkedList(((Map ) val).values());
         } else if (val instanceof Object[]) {
-            return new ArrayList(Arrays.asList((Object[]) val));
+            return new LinkedList(Arrays.asList((Object[]) val));
         } else {
-            List lst = new ArrayList(1);
+            List lst = new LinkedList( );
             lst.add(val);
             return  lst ;
         }
@@ -1039,10 +1039,10 @@ public final class Synt {
      * @return
      */
     public static List filter(List data, Each conv) {
-        List dat = new ArrayList();
-        for (int i = 0; i < data.size(); i++) {
-            Object v = data.get(i);
-            v = conv.run(v, null, i);
+        List dat = new LinkedList();
+        int i = 0;
+        for (Object v : data) {
+            v = conv.run(v, null, i ++);
             if (v == LOOP.NEXT) {
                 continue;
             }
@@ -1061,10 +1061,10 @@ public final class Synt {
      * @return
      */
     public static Object[] filter(Object[] data, Each conv) {
-        List dat = new ArrayList();
-        for (int i = 0; i < data.length; i++) {
-            Object v = data[i];
-            v = conv.run(v, null, i);
+        List dat = new LinkedList();
+        int i = 0;
+        for (Object v : data) {
+            v = conv.run(v, null, i ++);
             if (v == LOOP.NEXT) {
                 continue;
             }
@@ -1138,13 +1138,13 @@ public final class Synt {
 
         public EachLeaf(Deep leaf) {
             this.deep = leaf;
-            this.path = new ArrayList( );
+            this.path = new LinkedList( );
         }
 
         @Override
         public Object run(Object v, Object k, int i) {
-            List p = new ArrayList(path);
-                 p.add(i != -1 ? i : k );
+            List p = new LinkedList(path);
+                 p.add(i != -1 ? i : k  );
             if (v instanceof Map ) {
                 return filter((Map ) v, this);
             } else

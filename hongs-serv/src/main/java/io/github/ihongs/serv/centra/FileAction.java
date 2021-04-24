@@ -39,7 +39,7 @@ public class FileAction implements IAction {
         TYPE_SORT.put("txt", (byte) 1);
         TYPE_SORT.put("bin", (byte) 2);
     }
-    private static final List ROOT_LIST = new ArrayList();
+    private static final List ROOT_LIST = new ArrayList(3);
     static {
         ROOT_LIST.add(Synt.mapOf(
             "path", "/BASE",

@@ -541,7 +541,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      */
     public List getAll(Map rd) throws HongsException {
         Loop roll = search(rd, 0, 0);
-        List list = new ArrayList( );
+        List list = new ArrayList(roll.size());
         while  (  roll.hasNext()) {
             list.add(roll.next());
         }

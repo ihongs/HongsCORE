@@ -8,10 +8,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -106,7 +107,7 @@ public final class Synt {
      * @return
      */
     public static List listOf(Object... objs) {
-        return new LinkedList   (Arrays.asList(objs));
+        return new  ArrayList   (Arrays.asList(objs));
     }
 
     /**
@@ -178,6 +179,34 @@ public final class Synt {
     }
 
     /**
+     * 尝试转为集合
+     * 与 asList 的不同在于当 val 是字符串时, 尝试通过 JSON 解析或逗号分隔
+     * @param val
+     * @return
+     */
+    public static Collection toColl(Object val) {
+        if (val == null) {
+            return null;
+        }
+
+        if (val instanceof String) {
+            if ("".equals(val)) {
+                return  new  ArrayList();
+            }
+            String text = ( (String) val).trim(  );
+            if (text.startsWith("[") && text.endsWith("]")) {
+                return (List) Dawn.toObject (text);
+            } else {
+                return  new  ArrayList(
+                    Arrays.asList(SEXP.split(text))
+                );
+            }
+        }
+
+        return asColl(val);
+    }
+
+    /**
      * 尝试转为 List
      * 与 asList 的不同在于当 val 是字符串时, 尝试通过 JSON 解析或逗号分隔
      * @param val
@@ -190,13 +219,13 @@ public final class Synt {
 
         if (val instanceof String) {
             if ("".equals(val)) {
-                return  new LinkedList();
+                return  new  ArrayList();
             }
             String text = ( (String) val).trim(  );
             if (text.startsWith("[") && text.endsWith("]")) {
                 return (List) Dawn.toObject (text);
             } else {
-                return  new LinkedList(
+                return  new  ArrayList(
                     Arrays.asList(SEXP.split(text))
                 );
             }
@@ -345,6 +374,32 @@ public final class Synt {
     }
 
     /**
+     * 尝试转为集合
+     * 可将 数组,Map 转为集合, 其他情况构建一个单一值的集合
+     * @param val
+     * @return 
+     */
+    public static Collection asColl(Object val) {
+        if (val == null) {
+            return null;
+        }
+
+        if (val instanceof List) {
+            return ( List) val ;
+        } else if (val instanceof Set ) {
+            return ( Set ) val ;
+        } else if (val instanceof Map ) {
+            return new  ArrayList(((Map ) val).values());
+        } else if (val instanceof Object[]) {
+            return new  ArrayList(Arrays.asList((Object[]) val));
+        } else {
+            List lst = new ArrayList(1);
+            lst.add(val);
+            return  lst ;
+        }
+    }
+
+    /**
      * 尝试转为 List
      * 可将 数组,Set,Map 转为 List, 其他情况构建一个单一值的 List
      * @param val
@@ -358,13 +413,13 @@ public final class Synt {
         if (val instanceof List) {
             return ( List) val ;
         } else if (val instanceof Set ) {
-            return new LinkedList(( Set ) val);
+            return new  ArrayList(( Set ) val);
         } else if (val instanceof Map ) {
-            return new LinkedList(((Map ) val).values());
+            return new  ArrayList(((Map ) val).values());
         } else if (val instanceof Object[]) {
-            return new LinkedList(Arrays.asList((Object[]) val));
+            return new  ArrayList(Arrays.asList((Object[]) val));
         } else {
-            List lst = new LinkedList( );
+            List lst = new ArrayList(1);
             lst.add(val);
             return  lst ;
         }
@@ -1138,13 +1193,13 @@ public final class Synt {
 
         public EachLeaf(Deep leaf) {
             this.deep = leaf;
-            this.path = new LinkedList( );
+            this.path = new ArrayList();
         }
 
         @Override
         public Object run(Object v, Object k, int i) {
-            List p = new LinkedList(path);
-                 p.add(i != -1 ? i : k  );
+            List p = new ArrayList(path.size() + 1 );
+            p.addAll(path) ; p.add(i != -1 ? i : k );
             if (v instanceof Map ) {
                 return filter((Map ) v, this);
             } else

@@ -112,7 +112,7 @@ public class Data extends SearchEntity {
             try {
                   klass = Class.forName (name);
             } catch (ClassNotFoundException e) {
-                throw new HongsExemption(821,"Can not find class by name '"+name+"'.");
+                throw new HongsExemption(821, "Can not find class by name '"+name+"'." );
             }
 
             try {
@@ -127,13 +127,13 @@ public class Data extends SearchEntity {
                 if (ta instanceof StackOverflowError) {
                     throw (StackOverflowError) ta;
                 }
-                throw new HongsExemption(823,"Can not call '"+name+".getInstance'",ta);
+                throw new HongsExemption(823, "Can not call '"+name+".getInstance'", ta);
             } catch ( IllegalArgumentException ex) {
-                throw new HongsExemption(823,"Can not call '"+name+".getInstance'",ex);
+                throw new HongsExemption(823, "Can not call '"+name+".getInstance'", ex);
             } catch (   IllegalAccessException ex) {
-                throw new HongsExemption(823,"Can not call '"+name+".getInstance'",ex);
+                throw new HongsExemption(823, "Can not call '"+name+".getInstance'", ex);
             } catch (        SecurityException se) {
-                throw new HongsExemption(822,"Can not call '"+name+".getInstance'",se);
+                throw new HongsExemption(822, "Can not call '"+name+".getInstance'", se);
             }
         }
 

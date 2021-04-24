@@ -466,22 +466,22 @@ public class Data extends SearchEntity {
 
             // 数据快照和日志标题
             nd.put("data", Dawn.toString(dd, true));
-            nd.put("name",     cutText(dd, "name"));
+            nd.put("name",     getText(dd, "name"));
 
             // 操作备注和终端代码
             if (rd.containsKey("memo")) {
-                nd.put("memo", cutText(rd, "memo"));
+                nd.put("memo", getText(rd, "memo"));
             }
             if (rd.containsKey("meno")) {
-                nd.put("meno", cutText(rd, "meno"));
+                nd.put("meno", getText(rd, "meno"));
             }
 
             table.insert(nd);
         }
 
         // 保存到索引库
-        setDoc(id, dc);
-        return id;
+        addDoc(dc);
+        return id ;
     }
 
     /**
@@ -545,14 +545,14 @@ public class Data extends SearchEntity {
 
             // 数据快照和日志标题
             nd.put("data", Dawn.toString(dd, true));
-            nd.put("name",     cutText(dd, "name"));
+            nd.put("name",     getText(dd, "name"));
 
             // 操作备注和终端代码
             if (rd.containsKey("memo")) {
-                nd.put("memo", cutText(rd, "memo"));
+                nd.put("memo", getText(rd, "memo"));
             }
             if (rd.containsKey("meno")) {
-                nd.put("meno", cutText(rd, "meno"));
+                nd.put("meno", getText(rd, "meno"));
             }
 
             if (nd.containsKey("etime") == false ) {
@@ -564,7 +564,7 @@ public class Data extends SearchEntity {
 
         // 保存到索引库
         setDoc(id, dc);
-        return 1;
+        return 1 ;
     }
 
     /**
@@ -636,14 +636,14 @@ public class Data extends SearchEntity {
 
             // 数据快照和日志标题
             nd.put("data", Dawn.toString(dd, true));
-            nd.put("name",     cutText(dd, "name"));
+            nd.put("name",     getText(dd, "name"));
 
             // 操作备注和终端代码
             if (rd.containsKey("memo")) {
-                nd.put("memo", cutText(rd, "memo"));
+                nd.put("memo", getText(rd, "memo"));
             }
             if (rd.containsKey("meno")) {
-                nd.put("meno", cutText(rd, "meno"));
+                nd.put("meno", getText(rd, "meno"));
             }
 
             table.update(ud, where, param);
@@ -652,7 +652,7 @@ public class Data extends SearchEntity {
 
         // 保存到索引库
         setDoc(id, dc);
-        return 1;
+        return 1 ;
     }
 
     /**
@@ -727,10 +727,10 @@ public class Data extends SearchEntity {
 
         // 操作备注和终端代码
         if (rd.containsKey("memo")) {
-            nd.put("memo", cutText(rd, "memo"));
+            nd.put("memo", getText(rd, "memo"));
         }
         if (rd.containsKey("meno")) {
-            nd.put("meno", cutText(rd, "meno"));
+            nd.put("meno", getText(rd, "meno"));
         }
 
         table.update(ud, where, param);
@@ -738,8 +738,8 @@ public class Data extends SearchEntity {
 
         //** 从索引库删除 **/
 
-        delDoc(id);
-        return 1;
+        delDoc(id/**/);
+        return 1 ;
     }
 
     /**
@@ -813,10 +813,10 @@ public class Data extends SearchEntity {
 
         // 操作备注和终端代码
         if (rd.containsKey("memo")) {
-            nd.put("memo", cutText(rd, "memo"));
+            nd.put("memo", getText(rd, "memo"));
         }
         if (rd.containsKey("meno")) {
-            nd.put("meno", cutText(rd, "meno"));
+            nd.put("meno", getText(rd, "meno"));
         }
 
         table.update(ud, where, param);
@@ -830,7 +830,7 @@ public class Data extends SearchEntity {
         Document dc = padDoc(dd);
 
         setDoc(id, dc);
-        return 1;
+        return 1 ;
     }
 
     @Override
@@ -939,19 +939,29 @@ public class Data extends SearchEntity {
     }
 
     /**
-     * 切割字段值, 防止数据库报错
+     * 获取记录文本
+     * 会按记录字段容量进行切割
      * @param dd
      * @param fn
      * @return
      * @throws HongsException
      */
-    protected String cutText(Map dd, String fn)
+    protected String getText(Map dd, String fn)
     throws HongsException {
-        String s = Synt.asString(dd.get(fn));
+        String s;
+        if (dd.containsKey(fn)) {
+            s  = Synt.asString(dd.get (fn));
+        } else
+        if ("name".equals (fn)) {
+            s  = Synt.asString(getName(dd));
+        } else {
+            s  = null;
+        }
+
         if (s == null) return null;
         Map m  = (Map) getTable().getFields().get(fn);
         if (m == null) return null;
-        int k  = Synt.defxult((Integer) m.get("size"), 255); // 默认字段宽 255
+        int k  = Synt.defxult((Integer) m.get("size"), 255);
         if (k >= s.length()) return s;
 
         // 宽字符按长度为 2 进行切割
@@ -979,6 +989,11 @@ public class Data extends SearchEntity {
      * @return
      */
     protected String getName(Map dd) {
+        String fl = Synt.asString(getParams().get("nameless"));
+        if (fl != null && ! fl.isEmpty()) {
+            return Syno.inject( fl , dd );
+        }
+
         StringBuilder nn = new StringBuilder();
         Set < String> ns = getNameable( );
         for ( String  fn : ns  ) {
@@ -995,7 +1010,7 @@ public class Data extends SearchEntity {
 
         if (! ns.contains("name")
         &&  255 <  nm.length( ) ) {
-            return nm.substring( 0, 254 ) + "…";
+            return nm.substring(0, 254) + "…" ;
         } else {
             return nm;
         }
@@ -1007,6 +1022,11 @@ public class Data extends SearchEntity {
      * @return
      */
     protected String getWord(Map dd) {
+        String fl = Synt.asString(getParams().get("wordless"));
+        if (fl != null && ! fl.isEmpty()) {
+            return Syno.inject( fl , dd );
+        }
+
         StringBuilder nn = new StringBuilder();
         Set < String> ns = getWordable( );
         for ( String  fn : ns ) {

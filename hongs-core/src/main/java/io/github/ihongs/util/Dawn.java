@@ -16,10 +16,10 @@ import java.util.Map;
 import java.util.List;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Dictionary;
 import java.util.Enumeration;
-import java.util.LinkedList;
 import java.util.LinkedHashMap;
 
 /**
@@ -531,7 +531,7 @@ public final class Dawn
         }
         @Override
         public List creatArrayContainer() {
-            return new LinkedList();
+            return new  ArrayList ();
         }
     };
 

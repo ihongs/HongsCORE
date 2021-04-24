@@ -46,7 +46,7 @@ public abstract class Batch<T> extends CoreSerial implements AutoCloseable {
     protected Batch(String name, int maxTasks, int maxServs, int timeout, int sizeout, boolean diverse) throws HongsException {
         servs = Executors.newCachedThreadPool(  );
         tasks = new LinkedBlockingQueue(maxTasks);
-        cache = new ArrayList();
+        cache = new ArrayList ( maxServs );
 
         for(int i = 0; i < maxServs; i ++) {
             cache.add(diverse ? new LinkedHashSet() : new ArrayList());

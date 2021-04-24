@@ -398,8 +398,8 @@ public final class Remote {
      */
     public static HttpEntity buildPost(Map<String, Object> data)
             throws HongsException {
-        List<NameValuePair> pair = new ArrayList();
-        for (Map.Entry<String, Object> et : data.entrySet()) {
+        List<NameValuePair> pair = new ArrayList(data.size());
+        for (Map.Entry<String, Object> et : data.entrySet ()) {
             String n = et.getKey(  );
             Object o = et.getValue();
             if (o == null) {

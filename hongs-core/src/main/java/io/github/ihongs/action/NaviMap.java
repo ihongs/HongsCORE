@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -808,7 +809,7 @@ public class NaviMap
   }
 
   protected List<Map> getMenuTranslated(Map<String, Map> menus, Set<String> rolez, CoreLocale lang, int j, int i) {
-      List<Map> list = new ArrayList( );
+      List<Map> list = new LinkedList();
 
       if (null == menus||(j != 0 && j <= i)) {
           return  list;
@@ -934,10 +935,10 @@ public class NaviMap
   }
 
   protected List<Map> getRoleTranslated(Map<String, Map> menus, Set<String> rolez, CoreLocale lang, int j, int i) {
-      return getRoleTranslated(menus, rolez, lang, j, i, new HashSet(), new ArrayList() );
+      return getRoleTranslated(menus, rolez, lang, j, i, new HashSet(), new ArrayList(0));
   }
   protected List<Map> getRoleTranslated(Map<String, Map> menus, Set<String> rolez, CoreLocale lang, int j, int i, Set q, List p) {
-      List<Map> list = new ArrayList( );
+      List<Map> list = new LinkedList();
 
       if (null == menus||(j != 0 && j <= i)) {
           return  list;
@@ -954,7 +955,7 @@ public class NaviMap
           d = d != null ? lang.translate(d) : "";
 
           if (r != null) {
-          List<Map> rolz = new ArrayList( );
+          List<Map> rolz = new LinkedList();
           for(String n : ( Set<String> ) r) {
               if (rolez != null
               && !rolez.contains(n)) {

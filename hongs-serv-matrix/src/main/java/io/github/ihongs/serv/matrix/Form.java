@@ -100,11 +100,11 @@ public class Form extends Model {
             }
 
             // 更新配置文件
-            if (conf != null || stat != null) {
-                updateFormConf(id, stat,conf);
-            }
             if (name != null || stat != null) {
                 updateFormMenu(id, stat,name);
+            }
+            if (conf != null || stat != null) {
+                updateFormConf(id, stat,conf);
             }
 
             // 更新单元菜单
@@ -127,8 +127,8 @@ public class Form extends Model {
             storeConf(id , rd.get("conf"));
 
             // 更新配置文件
-            updateFormConf(id, stat, conf);
             updateFormMenu(id, stat, name);
+            updateFormConf(id, stat, conf);
 
             // 更新单元菜单
             updateUnitMenu(id);
@@ -552,6 +552,8 @@ public class Form extends Model {
 
         Map types = FormSet.getInstance().getEnum("__types__");
 
+        Set<String> ats = new HashSet(conf.size());
+
         for (Map fiel: conf) {
             item = docm.createElement("field");
             form.appendChild ( item );
@@ -683,6 +685,23 @@ public class Form extends Model {
                     }
                 }
             }
+
+            //** 提取关联动作 **/
+
+            if ("fork".equals(t)) {
+                String  at = Synt.asString(fiel.get("data-at"));
+                if (at != null && ! at.isEmpty()) {
+                    // 清理代理前缀和参数后缀
+                    int p  = at.indexOf  ('|');
+                    if (p != -1 ) {
+                        at = at.substring(1+p);
+                    }   p  = at.indexOf  ('?');
+                    if (p != -1 ) {
+                        at = at.substring(0,p);
+                    }
+                    ats.add( at );
+                }
+            }
         }
 
         saveDocument(file , docm);
@@ -762,6 +781,58 @@ public class Form extends Model {
         }
 
         saveDocument(file , docm);
+
+        //** 关联权限 **/
+
+        NodeList list;
+
+        R0: {
+            file = new File(Core.CONF_PATH +"/"+ centra +"/"+ id + Cnst.NAVI_EXT +".xml");
+            docm = readDocument(file);
+            root = docm.getDocumentElement();
+            if (root == null) break R0 ;
+            root = getNodeByTagNameAndAttr(root, "menu", "href", centra +"/"+id+"/"     );
+            if (root == null) break R0 ;
+            root = getNodeByTagNameAndAttr(root, "role", "name", centra +"/"+id+"/fork" );
+            if (root == null) break R0 ;
+            list = root.getChildNodes();
+            for(int i = list.getLength() - 1; i > -1; i --) {
+                root.removeChild(list.item(i));
+            }
+            for(String at : ats) {
+                item = docm.createElement("action");
+                root.appendChild(item);
+                if (at.startsWith(centre+"/")) { // 更换分区前缀
+                    at = centra + "/" + at.substring(centre.length( ));
+                }
+                item.appendChild(docm.createTextNode(at+Cnst.ACT_EXT));
+            }
+            saveDocument(file, docm);
+        }
+
+        R1: {
+            file = new File(Core.CONF_PATH +"/"+ centre +"/"+ id + Cnst.NAVI_EXT +".xml");
+            docm = readDocument(file);
+            root = docm.getDocumentElement();
+            if (root == null) break R1 ;
+            root = getNodeByTagNameAndAttr(root, "menu", "href", centre +"/"+id+"/"     );
+            if (root == null) break R1 ;
+            root = getNodeByTagNameAndAttr(root, "role", "name", centre     +   "/fork" );
+            if (root == null) break R1 ;
+            list = root.getChildNodes();
+            for(int i = list.getLength() - 1; i > -1; i --) {
+                root.removeChild(list.item(i));
+            }
+            for(String at : ats) {
+                item = docm.createElement("action");
+                root.appendChild(item);
+                if (at.startsWith(centra+"/")) { // 更换分区前缀
+                    at = centre + "/" + at.substring(centra.length( ));
+                }
+                item.appendChild(docm.createTextNode(at+Cnst.ACT_EXT));
+            }
+            saveDocument(file, docm);
+        }
     }
 
     protected void updateFormMenu(String id, String stat, String name) throws HongsException {
@@ -818,7 +889,7 @@ public class Form extends Model {
             role.appendChild ( depn );
             depn.appendChild ( docm.createTextNode("centra") );
 
-            // 添加
+            // 添加 2019/08/10, 添加不再依赖查看权限
             role = docm.createElement("role");
             menu.appendChild ( role );
             role.setAttribute("name", href +"create");
@@ -829,13 +900,15 @@ public class Form extends Model {
             actn = docm.createElement("action");
             role.appendChild ( actn );
             actn.appendChild ( docm.createTextNode(href +"select"+ Cnst.ACT_EXT) );
-            // 2019/08/10, 添加不再依赖查看权限
             depn = docm.createElement("depend");
             role.appendChild ( depn );
             depn.appendChild ( docm.createTextNode("centra") );
 //          depn = docm.createElement("depend");
 //          role.appendChild ( depn );
 //          depn.appendChild ( docm.createTextNode(href +"search") );
+            depn = docm.createElement("depend");
+            role.appendChild ( depn );
+            depn.appendChild ( docm.createTextNode(href + "fork" ) );
 
             // 修改
             role = docm.createElement("role");
@@ -848,6 +921,9 @@ public class Form extends Model {
             depn = docm.createElement("depend");
             role.appendChild ( depn );
             depn.appendChild ( docm.createTextNode(href +"search") );
+            depn = docm.createElement("depend");
+            role.appendChild ( depn );
+            depn.appendChild ( docm.createTextNode(href + "fork" ) );
 
             // 删除
             role = docm.createElement("role");
@@ -884,6 +960,11 @@ public class Form extends Model {
             depn = docm.createElement("depend");
             role.appendChild ( depn );
             depn.appendChild ( docm.createTextNode(href +"reveal") );
+
+            // 关联
+            role = docm.createElement("role");
+            menu.appendChild ( role );
+            role.setAttribute("name", href + "fork" );
         }
 
         saveDocument(file , docm);
@@ -956,12 +1037,12 @@ public class Form extends Model {
             // 公共读取权限
             role = docm.createElement( "role" );
             menu.appendChild ( role );
-            role.setAttribute("name", "public");
+            role.setAttribute("name" , centre + "/open");
 
             // 增删改须登录
             role = docm.createElement( "role" );
             menu.appendChild ( role );
-            role.setAttribute("name", "centre");
+            role.setAttribute("name" , centre + "/edit");
             actn = docm.createElement("action");
             role.appendChild ( actn );
             actn.appendChild ( docm.createTextNode(href +"create"+ Cnst.ACT_EXT) );
@@ -975,10 +1056,15 @@ public class Form extends Model {
             // 聚合统计接口, 默认禁止访问 (较耗资源)
             role = docm.createElement( "role" );
             menu.appendChild ( role );
-            role.setAttribute("name", "_deny_");
+            role.setAttribute("name" , centre + "/deny");
             actn = docm.createElement("action");
             role.appendChild ( actn );
             actn.appendChild ( docm.createTextNode(href +"assort"+ Cnst.ACT_EXT) );
+
+            // 关联查询接口, 默认登录可用 (增改依赖)
+            role = docm.createElement( "role" );
+            menu.appendChild ( role );
+            role.setAttribute("name" , centre + "/fork");
         }
 
         saveDocument(file , docm);

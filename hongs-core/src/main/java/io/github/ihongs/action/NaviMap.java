@@ -7,6 +7,7 @@ import io.github.ihongs.CoreLogger;
 import io.github.ihongs.CoreSerial;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
+import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.reflex.Block;
 import java.io.File;
 import java.io.FileInputStream;
@@ -527,7 +528,7 @@ public class NaviMap
    * @param names
    * @return 角色字典
    */
-  public Map<String, Map> getMenuRoles(String... names)
+  public Map<String, Map> getMenuRoles(Set<String> names)
   {
     Map<String, Map> rolez = new HashMap();
 
@@ -544,19 +545,24 @@ public class NaviMap
         // 例如所有管理后台角色均依赖基础管理
         Set set = (Set) menu.get("roles");
         if (set != null && !set.isEmpty()) {
-            for (Object name : set) {
-                rolez.put( (String) name, roles.get(name));
+            for(Object nam1 : set) {
+                String nam2 = ( String ) nam1  ;
+                rolez.put(nam2, getRole (nam2));
             }
-//          rolez.putAll(getMoreRoles((String[]) set.toArray(new String[0])));
+        //  rolez.putAll(getMoreRoles(set) /* * */ );
         }
 
         Map map = (Map) menu.get("menus");
         if (map != null && !map.isEmpty()) {
-            rolez.putAll(getMenuRoles((String[]) map.keySet().toArray(new String[0])));
+            rolez.putAll(getMenuRoles(map.keySet()));
         }
     }
 
     return  rolez;
+  }
+  public Map<String, Map> getMenuRoles(String... names)
+  {
+    return this.getMenuRoles ( Synt.setOf(names));
   }
 
   /**
@@ -564,11 +570,15 @@ public class NaviMap
    * @param names
    * @return 单元字典
    */
-  public Map<String, Map> getMoreRoles(String... names)
+  public Map<String, Map> getMoreRoles(Set<String> names)
   {
-    Map<String, Map>  ds = new HashMap();
+    Map <String, Map> ds = new HashMap();
     this.getRoleAuths(ds , new HashSet(), names);
     return ds;
+  }
+  public Map<String, Map> getMoreRoles(String... names)
+  {
+    return this.getMoreRoles ( Synt.setOf(names));
   }
 
   /**
@@ -576,19 +586,23 @@ public class NaviMap
    * @param names
    * @return 全部动作名
    */
-  public Set<String> getRoleAuths(String... names)
+  public Set<String> getRoleAuths(Set<String> names)
   {
-    Set<String>  as = new HashSet();
+    Set <String> as = new HashSet();
     this.getRoleAuths(new HashMap(), as , names);
     return as;
   }
+  public Set<String> getRoleAuths(String... names)
+  {
+    return this.getRoleAuths ( Synt.setOf(names));
+  }
 
-  protected void getRoleAuths(Map roles, Set auths, String... names)
+  protected void getRoleAuths(Map roles, Set<String> auths, Set<String> names)
   {
     for  (String n : names)
     {
       Map role = getRole(n);
-      if (role == null || roles.containsKey(n))
+      if (role == null || roles.containsKey(n)) // 后者防循环依赖
       {
         continue;
       }
@@ -597,15 +611,14 @@ public class NaviMap
 
       if (role.containsKey("actions"))
       {
-        Set<String> actionsSet = (Set<String>) role.get("actions");
+        Set <String> actionsSet = (Set<String>) role.get("actions");
         auths.addAll(actionsSet);
       }
 
       if (role.containsKey("depends"))
       {
-        Set<String> dependsSet = (Set<String>) role.get("depends");
-        String[ ]   dependsArr = dependsSet.toArray(new String[0]);
-        this.getRoleAuths(roles, auths, dependsArr);
+        Set <String> dependsSet = (Set<String>) role.get("depends");
+        getRoleAuths(roles, auths, dependsSet );
       }
     }
   }
@@ -639,7 +652,7 @@ public class NaviMap
   public Set<String> getAuthSet() throws HongsException {
       Set<String> roleset = getRoleSet();
       if (null == roleset)  return null ;
-      return getRoleAuths(roleset.toArray(new String[0]));
+      return getRoleAuths(roleset);
   }
 
   /**
@@ -806,7 +819,7 @@ public class NaviMap
           Map    m = (Map) v.get( "menus" );
           List<Map> subz = getMenuTranslated(m, rolez, lang, j, i + 1);
 
-          // 页面下的任意一个动作有权限即认为是可访问的
+          // 拥有页面下任意一个角色都认为是可访问的
           if (null != rolez && subz.isEmpty()) {
               Set<String> z  = getMenuRoles(h).keySet();
               if ( ! z.isEmpty( ) ) {

@@ -7,6 +7,12 @@
             <action>centre/mine/info.act</action>
             <action>centre/mine/same.act</action>
             <action>centre/mine/save.act</action>
+            <depend>centre/data/open</depend>
+            <depend>centre/data/edit</depend>
+            <depend>centre/data/fork</depend>
+        </role>
+        <role name="public">
+            <depend>centre/data/open</depend>
         </role>
         <menu text="首页" href="centre/#manage" hrel="centre/manage/main.html"></menu>
         <import>centra/data/upload</import>

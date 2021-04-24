@@ -101,8 +101,10 @@
 
     NaviMap curr = NaviMap.getInstance("centra");
     Set     role = curr.getRoleSet();
-    if (role == null)role = Synt.setOf("public");
-    List    menu = curr.getMenuTranslated("common/menu.act?m=centra",2, role);
+            role = role != null
+                 ? curr.getMoreRoles(  role  ).keySet()
+                 : curr.getMoreRoles("public").keySet();
+    List    menu = curr.getMenuTranslated("common/menu.act?m=centra", 2, role);
 
     String  acti = helper.getParameter("active");
     String  name = (String) helper.getSessibute("uname");

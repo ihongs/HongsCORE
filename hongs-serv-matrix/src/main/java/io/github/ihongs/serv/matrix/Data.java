@@ -148,20 +148,20 @@ public class Data extends SearchEntity {
         return inst;
     }
 
-    public Model getModel() throws HongsException {
-        String tn = Synt.declare(getParams().get("db-model"), "matrix.data");
-        if ("".equals(tn) || "none".equals(tn)) {
-            return null;
-        }
-        return DB.getInstance("matrix").getModel(tn);
-    }
-
     public Table getTable() throws HongsException {
         String tn = Synt.declare(getParams().get("db-table"), "matrix.data");
         if ("".equals(tn) || "none".equals(tn)) {
             return null;
         }
         return DB.getInstance("matrix").getTable(tn);
+    }
+
+    public Model getModel() throws HongsException {
+        String tn = Synt.declare(getParams().get("db-model"), "matrix.data");
+        if ("".equals(tn) || "none".equals(tn)) {
+            return null;
+        }
+        return DB.getInstance("matrix").getModel(tn);
     }
 
     /**

@@ -3,11 +3,9 @@ package io.github.ihongs.util;
 import io.github.ihongs.HongsExemption;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -239,9 +237,8 @@ public final class Dict
    * @param oth
    */
   public static void putAll(Map map, Map oth) {
-    Iterator i = oth.entrySet().iterator();
-    while (i.hasNext()) {
-        Map.Entry e = (Map.Entry) i.next();
+    for(Object o : map.entrySet()) {
+        Map.Entry e = (Map.Entry) o;
         Object k2 = e.getKey(  );
         Object v2 = e.getValue();
         Object v1 =  map.get(k2);

@@ -732,6 +732,7 @@ $.fn.hsCols = function() {
             }
             for(var k in items) {
                 var v  = items[k];
+                if (k === "_hs_data_") continue; // hsData 遗留标识
                 var tr = tb
                    .find   ("[name=param_name]")
                    .filter (function() {return $(this).val() == k;})

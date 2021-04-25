@@ -265,8 +265,8 @@ public class StatisGrader {
     public static class Range implements Comparable {
         public double min = Double.NEGATIVE_INFINITY;
         public double max = Double.POSITIVE_INFINITY;
-        public boolean le = true;
         public boolean ge = true;
+        public boolean le = true;
 
         public Range(double n) {
             min = max = n;
@@ -287,8 +287,8 @@ public class StatisGrader {
             if (a[1] != null) {
                 max = Synt.declare(a[1], max);
             }
-            le = (boolean) a[2];
-            ge = (boolean) a[3];
+            ge = (boolean) a[2];
+            le = (boolean) a[3];
         }
 
         public boolean covers(Number n) {
@@ -297,21 +297,21 @@ public class StatisGrader {
         }
 
         public boolean covers(double n) {
-            if (le) { if (n >  max) {
-                return false;
-            }} else { if (n >= max) {
-                return false;
-            }}
             if (ge) { if (n <  min) {
                 return false;
             }} else { if (n <= min) {
+                return false;
+            }}
+            if (le) { if (n >  max) {
+                return false;
+            }} else { if (n >= max) {
                 return false;
             }}
             return true;
         }
 
         public boolean covers() {
-            return le && ge
+            return ge && le
             && min == Double.NEGATIVE_INFINITY
             && max == Double.POSITIVE_INFINITY;
         }
@@ -319,16 +319,16 @@ public class StatisGrader {
         @Override
         public String toString() {
             // 不限则为空
-            if (le && min == Double.NEGATIVE_INFINITY
-            &&  ge && max == Double.POSITIVE_INFINITY) {
+            if (ge && min == Double.NEGATIVE_INFINITY
+            &&  le && max == Double.POSITIVE_INFINITY) {
                 return "";
             }
             StringBuilder sb = new StringBuilder();
-            sb.append(le ? "[" : "(");
+            sb.append(ge ? "[" : "(");
             sb.append(min != Double.NEGATIVE_INFINITY ? Synt.asString(min) : "");
             sb.append(",");
             sb.append(max != Double.POSITIVE_INFINITY ? Synt.asString(max) : "");
-            sb.append(ge ? "]" : ")");
+            sb.append(le ? "]" : ")");
             return sb.toString();
         }
 
@@ -343,7 +343,7 @@ public class StatisGrader {
                 return false;
             }
             Range  m = (Range ) o;
-            return m.le  == le  && m.ge  == ge
+            return m.ge  == ge  && m.le  == le
                 && m.min == min && m.max == max;
         }
 
@@ -359,10 +359,10 @@ public class StatisGrader {
                     return  1;
                 }
 
-                if (this.le && !that.le) {
+                if (this.ge && !that.ge) {
                     return -1;
                 }
-                if (that.le && !this.le) {
+                if (that.ge && !this.ge) {
                     return  1;
                 }
 
@@ -373,10 +373,10 @@ public class StatisGrader {
                     return  1;
                 }
 
-                if (!this.ge && that.ge) {
+                if (that.le && !this.le) {
                     return -1;
                 }
-                if (!that.ge && this.ge) {
+                if (this.le && !that.le) {
                     return  1;
                 }
             }

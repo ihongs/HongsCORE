@@ -899,17 +899,17 @@ public final class Synt {
 
         switch (arr.length) {
             case 4:
-                Boolean lte, gte;
+                Boolean gt_e, lt_e;
                 try {
-                    lte = defoult(asBool(arr[2]), false);
-                    gte = defoult(asBool(arr[3]), false);
+                    gt_e = defoult(asBool(arr[2]), false);
+                    lt_e = defoult(asBool(arr[3]), false);
                 }
                 catch (ClassCastException e) {
                     throw new ClassCastException("Range index 2,3 must be boolean: "+arr);
                 }
 
                 return new Object[] {
-                    arr[0], arr[1], lte , gte
+                    arr[0], arr[1], gt_e, lt_e
                 };
             case 2:
                 return new Object[] {

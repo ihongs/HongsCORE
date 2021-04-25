@@ -19,6 +19,33 @@
         return num;
     }
 
+    function _fixdate(box, dat) {
+        var m = dat.getMonth( ) + 1;
+        var y = dat.getFullYear ( );
+        var b = box.find("[data-date=d]");
+        var d = b.val( );
+        if (m == 2 ) {
+            if ((y % 4 == 0 && y % 100 != 0) || (y % 400 == 0)) {
+                if (d > 29) b.val(29).change();
+                b.find("option:gt(28)")
+                 .hide();
+            } else {
+                if (d > 28) b.val(28).change();
+                b.find("option:gt(27)")
+                 .hide();
+            }
+        } else {
+            if ((m < 7 && m % 2 == 0) || (m > 7 && m % 2 == 1)) {
+                if (d > 30) b.val(30).change();
+                b.find("option:gt(29)")
+                 .hide();
+            } else {
+                b.find("option:gt(27)")
+                 .show();
+            }
+        }
+    }
+
     function _setdate(box, dat) {
         box.find("[data-date]").each(function() {
             var flg = $( this ).data( "date" );
@@ -405,32 +432,21 @@
 
     // 处理大小月及闰年时日期的变化
     $(document).on("change", "[data-date=M],[data-date=SM],[data-date=LM]", function() {
-        var y = $(this).closest(".input-group")
-                .find("[data-date=y],[data-date=Sy]").val();
-        var d = $(this).closest(".input-group")
-                .find("[data-date=d]");
-        var m = $(this).val( );
-        if (y < 100) y += 2000;
-        if (m == 2) {
-            if ((y % 4 == 0 && y % 100 != 0) || (y % 400 == 0)) {
-                d.find("option:gt(28)")
-                 .prop("selected", false)
-                 .hide();
-            } else {
-                d.find("option:gt(27)")
-                 .prop("selected", false)
-                 .hide();
-            }
+        var box = $(this).closest(".datebox");
+        var dat = new Date();
+
+        // 不用 _getdate, 因 04/31 是 05/01
+        var y = box.find(".datebox-y" ).val();
+        if (y !== undefined) {
+            dat.setFullYear( y );
         } else {
-            if ((m < 7 && m % 2 == 0) || (m > 7 && m % 2 == 1)) {
-                d.find("option:gt(29)")
-                 .prop("selected", false)
-                 .hide();
-            } else {
-                d.find("option:gt(27)")
-                 .show();
-            }
+            y = box.find(".datebox-Sy").val();
+        if (y !== undefined) {
+            dat.setFullYear( y + 2000 );
         }
+        }   dat.setMonth($(this).val( ) - 1 );
+
+        _fixdate(box, dat);
     });
 
     // 控件组的值更新后联动日期输入
@@ -544,7 +560,9 @@
             return;
         }
 
-        _setdate(box, hsPrsDate(val, fmt));
+        var dat = hsPrsDate(val, fmt);
+        _setdate( box, dat );
+        _fixdate( box, dat );
     });
 
     // 设为当前时间
@@ -552,6 +570,7 @@
         var box = $(this).closest(".datebox");
         var dat = new Date();
         _setdate( box, dat );
+        _fixdate( box, dat );
         box.change();
     });
 

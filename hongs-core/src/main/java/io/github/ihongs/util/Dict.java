@@ -237,7 +237,7 @@ public final class Dict
    * @param oth
    */
   public static void putAll(Map map, Map oth) {
-    for(Object o : map.entrySet()) {
+    for(Object o : oth.entrySet()) {
         Map.Entry e = (Map.Entry) o;
         Object k2 = e.getKey(  );
         Object v2 = e.getValue();

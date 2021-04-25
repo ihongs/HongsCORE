@@ -85,7 +85,7 @@ public class SystemCmdlet {
      */
     @Cmdlet( "serve" )
     public static void serve(String[] args) throws HongsException {
-        List<String> argz = Synt.listOf((Object[]) args);
+        List<String> argz = Synt.listOf(args);
                      argz.add( 0, "serve" );
         exec( argz.toArray(new String[0]) );
     }
@@ -97,7 +97,7 @@ public class SystemCmdlet {
      */
     @Cmdlet( "setup" )
     public static void setup(String[] args) throws HongsException {
-        List<String> argz = Synt.listOf((Object[]) args);
+        List<String> argz = Synt.listOf(args);
                      argz.add( 0, "setup" );
         exec( argz.toArray(new String[0]) );
     }

@@ -109,6 +109,9 @@ public final class Synt {
     public static List listOf(Object... objs) {
         return new  ArrayList   (Arrays.asList(objs));
     }
+    public static List listOf(String... objs) {
+        return listOf((Object[]) objs);
+    }
 
     /**
      * 快捷构建 Set
@@ -118,6 +121,9 @@ public final class Synt {
      */
     public static Set  setOf (Object... objs) {
         return new LinkedHashSet(Arrays.asList(objs));
+    }
+    public static Set  setOf (String... objs) {
+        return setOf ((Object[]) objs);
     }
 
     /**
@@ -137,6 +143,9 @@ public final class Synt {
             map.put ( objs [idx ++] , objs [idx ++] );
         }
         return  map;
+    }
+    public static Map  mapOf (String... objs) {
+        return mapOf ((Object[]) objs);
     }
 
     /**

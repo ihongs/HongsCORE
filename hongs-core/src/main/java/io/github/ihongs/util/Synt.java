@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
  * </p>
  *
  * <p>
- * 创建的 List,Set,Map 为 LinkedList,LinkedHashSet,LinkedHashMap.
+ * 创建的 List,Set,Map 为 ArrayList,LinkedHashSet,LinkedHashMap.
  * listOf 与 Arrays.asList 并不相同, 后者生成后不允许增删.
  * </p>
  *

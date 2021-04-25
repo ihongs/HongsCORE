@@ -323,7 +323,7 @@ public class SelectHelper {
      * @param action 填充规则, 使用常量 ENUM,TEXT 等, 可用或运算传多个值
      */
     public void inject(Map values, byte action) {
-        List<Map> list = new LinkedList();
+        List<Map> list = new ArrayList(1);
         if (values.containsKey("info")) {
             list.add   ((Map ) values.get("info"));
         }
@@ -345,7 +345,7 @@ public class SelectHelper {
         // 数据映射整理
         Map<String, List> maps = new HashMap();
         for(String fn : forms.keySet()) {
-            /**/maps.put(fn, new LinkedList());
+            maps.put( fn, new LinkedList(  ) );
         }
         for( Map info : list ) {
         for(String fn : forms.keySet()) {

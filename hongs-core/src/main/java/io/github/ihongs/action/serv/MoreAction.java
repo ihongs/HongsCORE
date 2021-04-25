@@ -66,12 +66,12 @@ public class MoreAction {
 
         try {
             act = Core.ACTION_NAME.get();
-            core.set(ActionHelper.class.getName(),  wrap );
+            core.put(ActionHelper.class.getName(),  wrap );
 
             more(wrap, null, req, rsp, re0, rs0, null, 0 );
         } finally {
             Core.ACTION_NAME.set ( act );
-            core.set(ActionHelper.class.getName(), helper);
+            core.put(ActionHelper.class.getName(), helper);
         }
 
         helper.reply(rs0);

@@ -44,8 +44,9 @@ code, pre, var, dfn, kbd {
 }
 
 .btn .close {
-    margin-right: -0.30em;
-    margin-top: -0.05em;
+    margin-right: -0.3em;
+    margin-top: -0.1em;
+    font-size: 1.5em;
     opacity: 0.8;
     color: #777;
 }

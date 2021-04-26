@@ -87,15 +87,18 @@ public class IsFork extends Rule {
         }
 
         // 对比结果
-        Map  sd =  ah.getResponseData();
-        if ( sd == null || sd.isEmpty()) {
-            throw  new Wrong("fore.form.is.not.exists");
-        }
-        List ls = (List) sd.get("list");
-        if ( ls == null || ls.isEmpty()) {
-            throw  new Wrong("fore.form.is.not.exists");
+        Map  sd  = ah.getResponseData();
+        if ( sd != null ) {
+            Map  nf  = (Map ) sd.get ("info");
+            if ( nf != null && ! nf.isEmpty()) {
+                return value;
+            }
+            List ls  = (List) sd.get ("list");
+            if ( ls != null && ! ls.isEmpty()) {
+                return value;
+            }
         }
 
-        return value;
+        throw new Wrong("fore.form.is.not.exists");
     }
 }

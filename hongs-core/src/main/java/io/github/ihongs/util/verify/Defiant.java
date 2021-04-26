@@ -1,6 +1,11 @@
 package io.github.ihongs.util.verify;
 
 import io.github.ihongs.util.Synt;
+/*
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
+*/
 import java.util.Set;
 
 /**
@@ -31,10 +36,39 @@ public class Defiant extends Rule {
         } else {
             def = Synt.toSet(fiant);
         }
-        if (def.contains(value)) {
-            return null ;
-        } else {
+
+        /*
+        // 多值校验中会处理
+        if (getParam("__repeated__", false)) {
+            if (value instanceof Collection) {
+                Collection vs = (Collection) value;
+                Iterator   it = vs.iterator( );
+                while (it.hasNext()) {
+                    Object v  = it.next( );
+                    if (def.contains(v)) {
+                        it.remove();
+                    }
+                }
+            } else
+            if (value instanceof Map) {
+                Map        vs = (Map) value;
+                Set        vz = vs.entrySet( );
+                Iterator   it = vz.iterator( );
+                while (it.hasNext()) {
+                    Map.Entry et = (Map.Entry) it.next();
+                    Object v  = et.getValue( );
+                    if (def.contains(v)) {
+                        it.remove();
+                    }
+                }
+            }
+        }
+        */
+
+        if (! def.contains(value)) {
             return value;
+        } else {
+            return null ;
         }
     }
 }

@@ -5,7 +5,7 @@ import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.verify.Default;
 import io.github.ihongs.util.verify.Defiant;
-import io.github.ihongs.util.verify.Diverse;
+import io.github.ihongs.util.verify.IsUnique;
 import io.github.ihongs.util.verify.Ordinary;
 import io.github.ihongs.util.verify.Optional;
 import io.github.ihongs.util.verify.Repeated;
@@ -224,7 +224,7 @@ public class VerifyHelper extends Verify {
                 }
 
                 uk = e.getValue();
-                Rule fr = new Diverse (true)
+                Rule fr = new IsUnique (true)
                     .config(Synt.mapOf(
                       "__name__" , fn,
                         "data-ut", ut,

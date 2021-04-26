@@ -1,13 +1,15 @@
 package io.github.ihongs.util.verify;
 
 import io.github.ihongs.util.Synt;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,9 +54,9 @@ public class Repeated extends Rule implements Rulx {
             // 正则拆分
             s = Synt.asString(getParam("split"));
             if (s != null) {
-                List<String> a = new ArrayList();
-                Matcher m = Pattern.compile( s )
-                                   .matcher( v );
+                List<String> a = new LinkedList( );
+                Matcher m = Pattern.compile(  s  )
+                                   .matcher(  v  );
                 int e , b = 0;
                 while ( m.find ()) {
                     e = m.start();
@@ -67,7 +69,7 @@ public class Repeated extends Rule implements Rulx {
             // 普通拆分
             s = Synt.asString(getParam("slice"));
             if (s != null) {
-                List<String> a = new ArrayList();
+                List<String> a = new LinkedList( );
                 int e , b = 0;
                 while ((e = v.indexOf(s, b))>-1) {
                     a.add(v.substring(b, e));
@@ -142,13 +144,22 @@ public class Repeated extends Rule implements Rulx {
     @Override
     public Collection getContext() {
         // 是否必须不同的值
-        Collection context;
-        if (Synt.declare(getParam("diverse"), false )) {
-            context =  new LinkedHashSet(  );
-        } else {
-            context =  new ArrayList();
+        String div = Synt.declare(getParam("diverse"), "");
+        if (Synt.TRUE.matcher(div).matches()) {
+            return new LinkedHashSet();
         }
-        return context;
+        switch (div.toLowerCase()) {
+        case "set":
+            return new LinkedHashSet();
+        case "hashset":
+            return new HashSet(   );
+        case "treeset": // 正序
+            return new TreeSet(ASC);
+        case "descset": // 逆序
+            return new TreeSet(DSC);
+        default:
+            return new LinkedList();
+        }
     }
 
     /**
@@ -169,4 +180,48 @@ public class Repeated extends Rule implements Rulx {
         }
         return ignores;
     }
+    
+    private static Comparator ASC = new Comparator() {
+        @Override
+        public int compare(Object obj1, Object obj2) {
+            if (obj1 == obj2) {
+                return  0;
+            }
+            if (obj1 == null) {
+                return -1;
+            }
+            if (obj2 == null) {
+                return  1;
+            }
+            if (obj1 instanceof Comparable) {
+                return  0 + ((Comparable) obj1).compareTo(obj2);
+            }
+            if (obj2 instanceof Comparable) {
+                return  0 - ((Comparable) obj1).compareTo(obj2);
+            }
+            return 0;
+        }
+    };
+    
+    private static Comparator DSC = new Comparator() {
+        @Override
+        public int compare(Object obj1, Object obj2) {
+            if (obj1 == obj2) {
+                return  0;
+            }
+            if (obj1 == null) {
+                return  1;
+            }
+            if (obj2 == null) {
+                return -1;
+            }
+            if (obj1 instanceof Comparable) {
+                return  0 - ((Comparable) obj1).compareTo(obj2);
+            }
+            if (obj2 instanceof Comparable) {
+                return  0 + ((Comparable) obj1).compareTo(obj2);
+            }
+            return 0;
+        }
+    };
 }

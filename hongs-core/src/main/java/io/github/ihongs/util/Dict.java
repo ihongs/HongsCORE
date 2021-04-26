@@ -1,11 +1,13 @@
 package io.github.ihongs.util;
 
 import io.github.ihongs.HongsExemption;
+import io.github.ihongs.util.Synt.LOOP;
 
 import java.util.Arrays;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -87,7 +89,7 @@ public final class Dict
   private static Object gat(Collection lst, Object def, Object[] keys, int pos)
   {
     // 获取下面所有的节点的值
-    List col = new ArrayList();
+    List col = new LinkedList();
     for(Object sub : lst) {
         Object obj = get(sub, def, keys, pos);
         if (obj !=  null) {
@@ -112,10 +114,10 @@ public final class Dict
     if (key == null) {
         Collection lst = asColl(obj);
 
-        if (keys.length == pos + 1) {
+        if (keys.length == pos + 1 ) {
             return lst;
         } else {
-            return gat(lst, def, keys, pos + 1);
+            return gat (lst, def, keys, pos + 1);
         }
     } else
     if (key instanceof Integer) {
@@ -123,22 +125,28 @@ public final class Dict
 
         // 如果列表长度不够, 则直接返回默认值
         int  idx = ( Integer ) key ;
-        if ( idx > lst.size( ) - 1) {
+        if ( idx > lst.size( ) - 1 ) {
             return def;
         }
 
-        if (keys.length == pos + 1) {
+        if (keys.length == pos + 1 ) {
             return Synt.defoult(lst.get(idx), def);
         } else {
-            return get(lst.get(idx), def, keys, pos + 1);
+            return get (lst.get(idx), def, keys, pos + 1);
         }
     } else {
         Map  map = asMap (obj);
 
-        if (keys.length == pos + 1) {
+        // 必要时可区分无值、有值、有值但为空
+        if (keys.length == pos + 1 ) {
+            if (map.containsKey(key)
+            &&  def instanceof LOOP) {
+                return  map.get(key);
+            }
+
             return Synt.defoult(map.get(key), def);
         } else {
-            return get(map.get(key), def, keys, pos + 1);
+            return get (map.get(key), def, keys, pos + 1);
         }
     }
   }

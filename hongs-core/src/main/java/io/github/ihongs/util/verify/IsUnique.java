@@ -19,22 +19,18 @@ import java.util.Set;
  * 规则参数:
  *  data-ut 查询动作名
  *  data-uk 唯一字段名, 缺省为当前字段
- *  diverse 并非用在这, 而是被用于 Repeated 中去除重复
  * 注意事项:
  *  对于可以存储多个值的字段请慎重使用
+ *  字段类型设为 unique 时会忽略取值
  * </pre>
  *
  * @author Hongs
  */
-public class Diverse extends Rule {
+public class IsUnique extends Rule {
 
-    private  final  Object FORCE;
+    private  final  Object  FORCE;
 
-    /**
-     * 全局唯一校验
-     * @param force
-     */
-    public Diverse(boolean force) {
+    public IsUnique(boolean force) {
         if (force) {
             FORCE = BLANK;
         } else {
@@ -42,8 +38,12 @@ public class Diverse extends Rule {
         }
     }
 
-    public Diverse() {
-        this (false);
+    public IsUnique() {
+        if ("unique".equals(getParam("__type__"))) {
+            FORCE = BLANK;
+        } else {
+            FORCE = STAND;
+        }
     }
 
     @Override
@@ -201,12 +201,12 @@ public class Diverse extends Rule {
             if (page == null || page.isEmpty()) {
                 return FORCE;
             } else
-            if (page.containsKey("count")
-            &&  Synt.declare(page.get("count"), 0) == 0) {
+            if (page.containsKey("state")
+            &&  Synt.declare(page.get("pages"), 0) <= 0) {
                 return FORCE;
             } else
-            if (page.containsKey("pages")
-            &&  Synt.declare(page.get("pages"), 0) == 0) {
+            if (page.containsKey("count")
+            &&  Synt.declare(page.get("count"), 0) == 0) {
                 return FORCE;
             }
         }

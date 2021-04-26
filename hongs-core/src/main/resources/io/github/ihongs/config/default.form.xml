@@ -144,6 +144,11 @@
             <param name="default">=%now,=%uid</param>
             <param name="deforce">create,update,always,blanks</param>
         </field>
+        <field name="uniq" text="唯一" type="unique">
+            <param name="data-ut">search/action</param>
+            <param name="data-uk">filed1,field2</param>
+            <param name="unstated">yes</param>
+        </field>
     </form>
     <enum name="demo-enum">
         <value code="1">名称1</value>

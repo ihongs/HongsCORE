@@ -590,11 +590,11 @@ public final class Synt {
             return ((Number) val ).intValue( ) != 0;
         } else if (val instanceof String) {
             String str = ((String) val).trim();
-            if (TRUE.matcher(str).matches( ) ) {
-                return true ;
-            } else
             if (FAKE.matcher(str).matches( ) ) {
                 return false;
+            } else
+            if (TRUE.matcher(str).matches( ) ) {
+                return true ;
             } else {
                 throw new ClassCastException("'" + str + "' can not be cast to boolean");
             }

@@ -137,14 +137,16 @@ public class DataCmdlet {
 
         dr.begin ( );
 
+        long tc = System.currentTimeMillis() / 1000;
+
         for(Map od : lp ) {
-            String id = ( String ) od.get( Cnst.ID_KEY );
+            String id = ( String ) od.get( Cnst.ID_KEY ) ;
             if (Synt.declare(od.get("etime"), 0L) != 0L) {
             if (Synt.declare(od.get("state"), 1 ) >= 1 ) {
                 sd.put("rtime", od.get("ctime") );
-                dr.rev(id,sd);
+                dr.rev(id,sd,tc);
             }  else  {
-                dr.del(id,sd);
+                dr.del(id,sd,tc);
             }} else  {
             if (Synt.declare(od.get("state"), 1 ) >= 1 ) {
                 od = Synt.toMap(od.get( "data") );
@@ -321,10 +323,11 @@ public class DataCmdlet {
 
         dr.begin();
 
-        int i = 0 ;
+        int  i = 0;
+        long t = System.currentTimeMillis( ) / 1000 ;
         for(Map od : dr.search(rd, 0, 0)) {
             String id = (String) od.get(Cnst.ID_KEY);
-            i+= dr.del( id, sd );
+            i+= dr.del( id, sd, t );
         }
 
         dr.commit( );

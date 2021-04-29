@@ -73,10 +73,8 @@ public final class Dict
 
   private static Collection asColl(Object val) {
     if (val != null) {
-        if (val instanceof List) {
-            return ( List) val ;
-        } else if (val instanceof Set ) {
-            return ( Set ) val ;
+        if (val instanceof Collection ) {
+            return ( Collection ) val ;
         } else if (val instanceof Map ) {
             return new ArrayList(((Map ) val).values( ) );
         } else if (val instanceof Object[]) {
@@ -88,14 +86,45 @@ public final class Dict
 
   private static Object gat(Collection lst, Object def, Object[] keys, int pos)
   {
-    // 获取下面所有的节点的值
-    List col = new LinkedList();
-    for(Object sub : lst) {
-        Object obj = get(sub, def, keys, pos);
-        if (obj !=  null) {
-            col.add( obj);
+    /**
+     * 获取下面所有的节点的值
+     * 下面也要列表则向上合并
+     */
+    boolean one = true ;
+    for ( int j = pos; j < keys.length; j ++ ) {
+        if (keys[j] == null) {
+            one = false;
+            break;
         }
     }
+
+    /**
+     * 当默认值也是集合类型时
+     * 直接将获取的值放入其中
+     */
+    Collection col;
+    if (def != null && def instanceof Collection) {
+        col  = (Collection) def;
+    } else {
+        col  = new LinkedList();
+    }
+
+    if (one) {
+        for(Object sub : lst) {
+            Object obj = get(sub, LOOP.NEXT, keys, pos);
+            if (obj != LOOP.NEXT) {
+                col.add (obj);
+            }
+        }
+    } else {
+        for(Object sub : lst) {
+            Object obj = get(sub, LOOP.NEXT, keys, pos);
+            if (obj != LOOP.NEXT) {
+                col.addAll(asColl(obj));
+            }
+        }
+    }
+
     if (! col.isEmpty( )) {
         return col;
     } else {
@@ -112,41 +141,40 @@ public final class Dict
 
     // 按键类型来决定容器类型
     if (key == null) {
-        Collection lst = asColl(obj);
+        Collection lst = asColl (obj);
 
-        if (keys.length == pos + 1 ) {
+        if (keys.length == pos + 1) {
             return lst;
         } else {
-            return gat (lst, def, keys, pos + 1);
+            return gat(lst, def, keys, pos + 1);
         }
     } else
     if (key instanceof Integer) {
         List lst = asList(obj);
 
         // 如果列表长度不够, 则直接返回默认值
-        int  idx = ( Integer ) key ;
-        if ( idx > lst.size( ) - 1 ) {
+        int  idx = ( Integer ) key;
+        if ( idx > lst.size( ) - 1) {
             return def;
         }
 
-        if (keys.length == pos + 1 ) {
-            return Synt.defoult(lst.get(idx), def);
+        if (keys.length == pos + 1) {
+            return lst.get(idx);
         } else {
-            return get (lst.get(idx), def, keys, pos + 1);
+            return get(lst.get(idx), def, keys, pos + 1);
         }
     } else {
         Map  map = asMap (obj);
 
-        // 必要时可区分无值、有值、有值但为空
-        if (keys.length == pos + 1 ) {
-            if (map.containsKey(key)
-            &&  def instanceof LOOP) {
-                return  map.get(key);
-            }
+        // 如果没有对应的键, 则直接返回默认值
+        if (!map.containsKey(key) ) {
+            return def;
+        }
 
-            return Synt.defoult(map.get(key), def);
+        if (keys.length == pos + 1) {
+            return map.get(key);
         } else {
-            return get (map.get(key), def, keys, pos + 1);
+            return get(map.get(key), def, keys, pos + 1);
         }
     }
   }
@@ -370,34 +398,6 @@ public final class Dict
   public static void setParam(Map map, Object val, String path)
   {
     put(map, val, splitKeys(path));
-  }
-
-  /**
-   * 将 oth 追加到 map.keys 中
-   * 与 Map.putAll 的不同在于: 本函数会将其子级的 Map 也进行合并
-   * @param map
-   * @param oth
-   * @param keys
-   */
-  public static void setValues(Map map, Map oth, Object... keys) {
-      Object sub = get ( map , null , keys );
-      if (sub != null && sub instanceof Map) {
-        putAll((Map) sub, oth );
-      } else {
-        put   ( map, oth, keys);
-      }
-  }
-
-  /**
-   * 将 oth 追加到 map.path 中(path会按 .|[] 拆分)
-   * 与 Map.putAll 的不同在于: 本函数会将其子级的 Map 也进行合并
-   * @see splitKeys
-   * @param map
-   * @param oth
-   * @param path
-   */
-  public static void setParams(Map map, Map oth, String path) {
-    setValues(map, oth, splitKeys(path));
   }
 
   /**

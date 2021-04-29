@@ -62,7 +62,7 @@ public class TestUtilDict extends TestCase {
          *      "sub1": {
          *          "key1": "xx",
          *          "sub2": [
-         *              "sub2,
+         *              "sub2",
          *              [ // Set
          *                  "sub4"
          *              ]
@@ -133,6 +133,13 @@ public class TestUtilDict extends TestCase {
         y = new ArrayList(); y.add(1); y.add(2); y.add(3);
         Dict.put(dict, 3, "sub1", "sub3", null, "a");
         x = Dict.get(dict, null, "sub1", "sub3", null, "a");
+        assertEquals(y, x);
+
+        // 设置多层列表, 获取归并结果
+        y = new ArrayList(); y.add(4); y.add(5);
+        Dict.put(dict, 4, "sub1", "sub3", null, "c", null);
+        Dict.put(dict, 5, "sub1", "sub3", null, "c", null);
+        x = Dict.get(dict, null, "sub1", "sub3", null, "c", null);
         assertEquals(y, x);
 
         //io.github.ihongs.cmdlet.CmdletHelper.preview(dict);

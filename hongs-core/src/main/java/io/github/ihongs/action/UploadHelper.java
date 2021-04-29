@@ -112,7 +112,11 @@ public class UploadHelper {
      * @param type
      * @return
      */
-    public UploadHelper setAllowTypes(String... type) {
+    public UploadHelper setAllowTypes(Set<String> type) {
+        this.allowTypes = type;
+        return this;
+    }
+    public UploadHelper setAllowTypes(String ...  type) {
         this.allowTypes = new HashSet(Arrays.asList(type));
         return this;
     }
@@ -122,7 +126,11 @@ public class UploadHelper {
      * @param extn
      * @return
      */
-    public UploadHelper setAllowExtns(String... extn) {
+    public UploadHelper setAllowExtns(Set<String> extn) {
+        this.allowExtns = extn;
+        return this;
+    }
+    public UploadHelper setAllowExtns(String ...  extn) {
         this.allowExtns = new HashSet(Arrays.asList(extn));
         return this;
     }

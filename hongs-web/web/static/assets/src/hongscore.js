@@ -1077,17 +1077,37 @@ function _hsGetDepth(obj, keys, def, pos) {
 }
 
 function _hsGetDapth(lst, keys, def, pos) {
-    var col = [];
-    for(var i = 0; i < lst.length; i ++) {
-        var obj  = _hsGetDepth(lst[i], keys, def, pos);
-        if (obj !=  null) {
-            col.push(obj);
+    /**
+     * 获取下面所有的节点的值
+     * 下面也要列表则向上合并
+     */
+    var col = [  ] ;
+    var one = true ;
+    for(var j = pos; j < keys.length; j ++) {
+        if (keys[j] == null) {
+            one = false;
+            break;
         }
     }
-    if (!jQuery.isEmptyObject(col)) {
-        return col;
+    if (one) {
+        for(var i = 0; i < lst.length; i ++) {
+            var obj  = _hsGetDepth(lst[i], keys, null, pos);
+            if (obj !=  null) {
+                col.push(obj);
+            }
+        }
     } else {
-        return def;
+        for(var i = 0; i < lst.length; i ++) {
+            var arr  = _hsGetDepth(lst[i], keys, null, pos);
+            if (arr !=  null) {
+                col.push.apply(col , arr);
+            }
+        }
+    }
+    if (! jQuery.isEmptyObject(col)) {
+        return  col;
+    } else {
+        return  def;
     }
 }
 

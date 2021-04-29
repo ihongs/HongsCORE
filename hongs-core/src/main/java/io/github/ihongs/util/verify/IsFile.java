@@ -118,16 +118,16 @@ public class IsFile extends Rule {
         String name;
         long   size;
 
+        para = getParam("type");
+        if (para != null && !"".equals(para)) hlpr.setAllowTypes(Synt.toSet(para));
+        para = getParam("extn");
+        if (para != null && !"".equals(para)) hlpr.setAllowExtns(Synt.toSet(para));
         para = getParam("temp");
         if (para != null && !"".equals(para)) hlpr.setUploadTemp(Synt.declare(para, String.class));
         para = getParam("path");
         if (para != null && !"".equals(para)) hlpr.setUploadPath(Synt.declare(para, String.class));
         para = getParam("href");
         if (para != null && !"".equals(para)) hlpr.setUploadHref(Synt.declare(para, String.class));
-        para = getParam("type");
-        if (para != null && !"".equals(para)) hlpr.setAllowTypes(Synt.toArray(para, String.class));
-        para = getParam("extn");
-        if (para != null && !"".equals(para)) hlpr.setAllowExtns(Synt.toArray(para, String.class));
         para = getParam("name-digest");
         if (para != null && !"".equals(para)) hlpr.setDigestType(Synt.declare(para, String.class));
 

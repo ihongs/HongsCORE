@@ -1,6 +1,5 @@
 package io.github.ihongs.util;
 
-import java.lang.reflect.Array;
 import java.text.NumberFormat;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -149,47 +148,8 @@ public final class Synt {
     }
 
     /**
-     * 尝试转为数组
-     * 与 asArray 的不同在于当 val 是字符串时, 尝试通过 JSON 解析或逗号分隔
-     * @param <T> 返回数组的值的类型
-     * @param val
-     * @param cls
-     * @return
-     */
-    public static <T> T [] toArray(Object val, Class<T> cls) {
-        return asArray(toArray(val), cls);
-    }
-
-    /**
-     * 尝试转为数组
-     * 与 asArray 的不同在于当 val 是字符串时, 尝试通过 JSON 解析或逗号分隔
-     * @param val
-     * @return
-     */
-    public static Object[] toArray(Object val) {
-        if (val == null) {
-            return null;
-        }
-
-        if (val instanceof String) {
-            if ("".equals(val)) {
-                return new Object[0];
-            }
-            String text = ( (String) val).trim(  );
-            if (text.startsWith("[") && text.endsWith("]")) {
-                return ((List) Dawn.toObject(text))
-                                   .toArray (    );
-            } else {
-                return SEXP.split(text);
-            }
-        }
-
-        return asArray(val);
-    }
-
-    /**
-     * 尝试转为集合
-     * 与 asList 的不同在于当 val 是字符串时, 尝试通过 JSON 解析或逗号分隔
+     * 尝试转为 Collection
+     * 与 asColl 的不同在于当 val 是字符串时, 尝试通过 JSON 解析或逗号分隔
      * @param val
      * @return
      */
@@ -309,94 +269,18 @@ public final class Synt {
     }
 
     /**
-     * 尝试转为数组
-     * 可将 List,Set,Map 转为数组, 其他情况构建一个单一值的数组
-     * @param <T> 返回数组的值的类型
-     * @param val
-     * @param cls
-     * @return
-     */
-    public static <T> T [] asArray(Object val, Class<T> cls) {
-        if (cls == null) {
-            throw  new NullPointerException("asArray cls can not be null");
-        }
-        if (val == null) {
-            return null;
-        }
-
-        if (val instanceof Object[]) {
-            Object[] axx;
-            T     [] arr;
-
-            /**
-             * 尝试直接转换
-             * 不行则拷贝之
-             */
-            try {
-                arr = (T[]) val;
-            } catch ( ClassCastException e) {
-            try {
-                axx = (Object [] ) val;
-                arr = (T[]) Array.newInstance(cls, axx.length);
-                System.arraycopy ( axx, 0, arr, 0, axx.length);
-            } catch (ArrayStoreException x) {
-                Class clx = val.getClass( );
-                throw new ClassCastException("Can not cast " + clx.getName() + "[] to " + cls.getName() + "[]");
-            }}
-
-            return arr;
-        } else if (val instanceof List) {
-            return (T[]) ((List)val).toArray((T[]) Array.newInstance(cls, 0));
-        } else if (val instanceof Set ) {
-            return (T[]) ((Set) val).toArray((T[]) Array.newInstance(cls, 0));
-        } else if (val instanceof Map ) {
-            return (T[]) ((Map) val).values ().toArray((T[]) Array.newInstance(cls, 0));
-        } else {
-            T[] arr = (T[]) Array.newInstance(cls, 1);
-            arr [0] = (T  ) val;
-            return arr;
-        }
-    }
-
-    /**
-     * 尝试转为数组
-     * 可将 List,Set,Map 转为数组, 其他情况构建一个单一值的数组
+     * 尝试转为 Collection
+     * 可将 数组,Map 转为 Collection, 其他情况构建一个单一值 List
      * @param val
      * @return
      */
-    public static Object[] asArray(Object val) {
+    public static Collection asColl (Object val) {
         if (val == null) {
             return null;
         }
 
-        if (val instanceof Object[]) {
-            return (Object[]) val;
-        } else if (val instanceof List) {
-            return ((List)val).toArray();
-        } else if (val instanceof Set ) {
-            return ((Set) val).toArray();
-        } else if (val instanceof Map ) {
-            return ((Map) val).values ().toArray();
-        } else {
-            return new Object[ ] { val };
-        }
-    }
-
-    /**
-     * 尝试转为集合
-     * 可将 数组,Map 转为集合, 其他情况构建一个单一值的集合
-     * @param val
-     * @return 
-     */
-    public static Collection asColl(Object val) {
-        if (val == null) {
-            return null;
-        }
-
-        if (val instanceof List) {
-            return ( List) val ;
-        } else if (val instanceof Set ) {
-            return ( Set ) val ;
+        if (val instanceof Collection ) {
+            return ( Collection ) val ;
         } else if (val instanceof Map ) {
             return new  ArrayList(((Map ) val).values());
         } else if (val instanceof Object[]) {
@@ -978,9 +862,6 @@ public final class Synt {
         } else
         if (Map.class.isAssignableFrom(cls)) {
             val = asMap(val);
-        } else
-        if (Object[].class.isAssignableFrom(cls)) {
-            val = asArray(val);
         }
 
         return (T) val;

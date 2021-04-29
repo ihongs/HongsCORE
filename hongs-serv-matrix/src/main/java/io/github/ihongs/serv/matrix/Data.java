@@ -399,42 +399,64 @@ public class Data extends SearchEntity {
     }
 
     /**
+     * 更新记录
+     * 调用 put(String, Map, long)
+     * @param rd
+     * @return
+     * @throws HongsException
+     */
+    @Override
+    public int update(Map rd) throws HongsException {
+        Set<String> ids = Synt.asSet(rd.get(Cnst.ID_KEY));
+        permit (rd, ids , 1096);
+        int  c = 0;
+        long t = System.currentTimeMillis() / 1000;
+        for(String id : ids) {
+            c += put(id, rd, t);
+        }
+        return c;
+    }
+
+    /**
      * 删除记录
+     * 调用 del(String, Map, long)
      * @param rd
      * @return
      * @throws HongsException
      */
     @Override
     public int delete(Map rd) throws HongsException {
-        Set<String> ids = Synt.declare(rd.get(Cnst.ID_KEY), new HashSet());
-        permit(rd , ids , 1096);
-
-        int c = 0;
-        for(String  id  : ids) {
-            c+= del(id  , rd );
+        Set<String> ids = Synt.asSet(rd.get(Cnst.ID_KEY));
+        permit(rd , ids , 1097);
+        int  c = 0;
+        long t = System.currentTimeMillis() / 1000;
+        for(String id : ids) {
+            c += del(id, rd, t);
         }
-        return  c;
+        return c;
     }
 
     /**
      * 恢复记录
+     * 调用 rev(String, Map, long)
      * @param rd
      * @return
      * @throws HongsException
      */
     public int revert(Map rd) throws HongsException {
-        Set<String> ids = Synt.declare(rd.get(Cnst.ID_KEY), new HashSet());
+        Set<String> ids = Synt.asSet(rd.get(Cnst.ID_KEY));
     //  permit(rd , ids , 1096);
-
-        int c = 0;
-        for(String  id  : ids) {
-            c+= rev(id  , rd );
+        int  c = 0;
+        long t = System.currentTimeMillis() / 1000;
+        for(String id : ids) {
+            c += rev(id, rd, t);
         }
         return  c;
     }
 
     /**
      * 添加记录
+     * 调用 add(String, Map, long)
      * @param rd
      * @return
      * @throws HongsException
@@ -442,6 +464,57 @@ public class Data extends SearchEntity {
     @Override
     public String add(Map rd) throws HongsException {
         String id = Core.newIdentity();
+        return add(id, rd, System.currentTimeMillis() / 1000);
+    }
+
+    /**
+     * 删除记录
+     * 调用 del(String, Map, long)
+     * @param id
+     * @return
+     * @throws HongsException
+     */
+    @Override
+    public int del(String id) throws HongsException {
+        Map rd = new HashMap( );
+        return del(id, rd, System.currentTimeMillis() / 1000);
+    }
+
+    /**
+     * 保存记录
+     * 调用 set(String, Map, long)
+     * @param id
+     * @param rd
+     * @return 有更新为 1, 无更新为 0
+     * @throws HongsException
+     */
+    @Override
+    public int set(String id, Map rd) throws HongsException {
+        return set(id, rd, System.currentTimeMillis() / 1000);
+    }
+
+    /**
+     * 更新记录
+     * 调用 put(String, Map, long)
+     * @param id
+     * @param rd
+     * @return 有更新为 1, 无更新为 0
+     * @throws HongsException
+     */
+    @Override
+    public int put(String id, Map rd) throws HongsException {
+        return put(id, rd, System.currentTimeMillis() / 1000);
+    }
+
+    /**
+     * 添加记录
+     * @param id
+     * @param rd
+     * @param ctime
+     * @return
+     * @throws HongsException
+     */
+    public String add(String id, Map rd, long ctime) throws HongsException {
         Map    dd = new HashMap();
         padInf(dd , rd);
 
@@ -454,7 +527,6 @@ public class Data extends SearchEntity {
         if (table != null) {
             String   fid   = getFormId();
             String   uid   = getUserId();
-            long     ctime = System.currentTimeMillis() / 1000;
 
             Map nd = new HashMap();
             nd.put("ctime", ctime);
@@ -493,11 +565,11 @@ public class Data extends SearchEntity {
      *
      * @param id
      * @param rd
-     * @return
+     * @param ctime
+     * @return 有更新为 1, 无更新为 0
      * @throws HongsException
      */
-    @Override
-    public int set(String id, Map rd) throws HongsException {
+    public int set(String id, Map rd, long ctime) throws HongsException {
         Map dd = get(id);
         int t  = dd.isEmpty()? 1:2 ;
         int i  = padInf ( dd , rd );
@@ -515,7 +587,6 @@ public class Data extends SearchEntity {
         if (table != null) {
             String   fid   = getFormId();
             String   uid   = getUserId();
-            long     ctime = System.currentTimeMillis() / 1000;
             Object[] param = new String[] {id, fid, "0"};
             String   where = "`id`=? AND `form_id`=? AND `etime`=?";
 
@@ -568,7 +639,7 @@ public class Data extends SearchEntity {
     }
 
     /**
-     * 保存记录
+     * 更新记录
      *
      * 注意:
      * 每次都产生新节点,
@@ -576,11 +647,11 @@ public class Data extends SearchEntity {
      *
      * @param id
      * @param rd
+     * @param ctime
      * @return 有更新为 1, 无更新为 0
      * @throws HongsException
      */
-    @Override
-    public int put(String id, Map rd) throws HongsException {
+    public int put(String id, Map rd, long ctime) throws HongsException {
         Map dd = get(id);
         int t  = dd.isEmpty()? 1:2 ;
         int i  = padInf ( dd , rd );
@@ -598,7 +669,6 @@ public class Data extends SearchEntity {
         if (table != null) {
             String   fid   = getFormId();
             String   uid   = getUserId();
-            long     ctime = System.currentTimeMillis() / 1000;
             Object[] param = new String[] {id, fid, "0"};
             String   where = "`id`=? AND `form_id`=? AND `etime`=?";
 
@@ -657,28 +727,13 @@ public class Data extends SearchEntity {
 
     /**
      * 删除记录
-     *
-     * 注意:
-     * 此方法不被 delete 调用,
-     * 重写请覆盖 del(id, rd).
-     *
-     * @param id
-     * @return 有更新为 1, 无更新为 0
-     * @throws HongsException
-     */
-    @Override
-    public int del(String id) throws HongsException {
-        return del(id, new HashMap());
-    }
-
-    /**
-     * 删除记录
      * @param id
      * @param rd
+     * @param ctime
      * @return 有更新为 1, 无更新为 0
      * @throws HongsException
      */
-    public int del(String id, Map rd) throws HongsException {
+    public int del(String id, Map rd, long ctime) throws HongsException {
         Table table = getTable();
         if (table == null) {
             delDoc(id);
@@ -687,7 +742,6 @@ public class Data extends SearchEntity {
 
         String   fid   = getFormId();
         String   uid   = getUserId();
-        long     ctime = System.currentTimeMillis() / 1000;
         Object[] param = new String[] {id, fid, "0"};
         String   where = "`id`=? AND `form_id`=? AND `etime`=?";
 
@@ -746,10 +800,11 @@ public class Data extends SearchEntity {
      * 恢复记录
      * @param id
      * @param rd
+     * @param ctime
      * @return 有更新为 1, 无更新为 0
      * @throws HongsException
      */
-    public int rev(String id, Map rd) throws HongsException {
+    public int rev(String id, Map rd, long ctime) throws HongsException {
         Table table = getTable();
         if (table == null) {
             throw new HongsException(405, "Data table for '"+getDbName()+"' is not exists")
@@ -759,7 +814,6 @@ public class Data extends SearchEntity {
 
         String   fid   = getFormId();
         String   uid   = getUserId();
-        long     ctime = System.currentTimeMillis() / 1000 ;
         long     rtime = Synt.declare (rd.get("rtime"), 0L);
         Object[] param = new String[] {id, fid, "0" };
         String   where = "`id`=? AND `form_id`=? AND `etime`=?";
@@ -770,6 +824,7 @@ public class Data extends SearchEntity {
 
         Map od = table.fetchCase()
             .filter( where, param)
+        //  .assort("etime  DESC")
             .select("ctime")
             .getOne( );
         if (od.isEmpty()) {

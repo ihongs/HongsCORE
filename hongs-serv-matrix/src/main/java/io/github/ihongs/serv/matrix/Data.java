@@ -792,8 +792,8 @@ public class Data extends SearchEntity {
 
         //** 从索引库删除 **/
 
-        delDoc(id/**/);
-        return 1 ;
+        delDoc(id);
+        return 01 ;
     }
 
     /**

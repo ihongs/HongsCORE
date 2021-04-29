@@ -5,6 +5,8 @@ import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.db.Model;
 import io.github.ihongs.db.Table;
+import io.github.ihongs.dh.IFigure;
+import io.github.ihongs.dh.JFigure;
 import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
@@ -73,14 +75,6 @@ public class AssocCase {
      * 可存储字段, 用于 FetchCase 的 Option, 未设置则取 LISTABLE
      */
     public  static final String  SAVEABLE = "SAVEABLE";
-    /**
-     * 禁止某项 allow 设置
-     */
-    public  static final String  DENY = "__DENY__";
-    /**
-     * 清空某项 allow 设置
-     */
-    public  static final String  WIPE = "__WIPE__";
 
     private static final Pattern ANPT = Pattern.compile("^[\\w\\.]+\\s*(:|$)");
     private static final Pattern CNPT = Pattern.compile("^[\\w]+$");
@@ -103,6 +97,97 @@ public class AssocCase {
     }
 
     /**
+     * 清除许可
+     * @param an
+     * @return
+     */
+    public AssocCase wipe(String an) {
+        bufs.remove(an);
+        opts.remove(an);
+        return this;
+    }
+
+    /**
+     * 禁用许可
+     * @param an
+     * @return
+     */
+    public AssocCase deny(String an) {
+        Map em = new LinkedHashMap();
+        bufs.remove(an);
+        opts.put(an,em);
+        return this;
+    }
+
+    private void allow(String f, Map af) {
+        f = f.trim();
+        if (f.isEmpty()) {
+            return;
+        }
+
+        String kp = null; // 别名前缀
+        String fp = null; // 字段前缀
+
+        /**
+         * #别名前缀:当前表名
+         * 发现此行时即当设置
+         * 后面遇到的干净别名、字段均会附加上设置的前缀
+         * 别名前缀可以用点或下划线结尾, 没有的自动补点
+         * 表名前缀可以用点结尾, 没有则补点，下划线转点
+         */
+        if (f.startsWith("#")) {
+            f = f.substring(1);
+            int p = f.indexOf(":");
+            if (p > -1) {
+                kp = f.substring(0, p).trim();
+                fp = f.substring(1+ p).trim();
+            } else {
+                kp = fp = f.trim();
+            }
+
+            if ( fp.endsWith("_")) {
+                 fp = fp.substring(0, fp.length() - 1);
+                 fp = "`" + fp +"`.";
+            } else
+            if (!fp.endsWith(".")) {
+                 fp = "`" + fp +"`.";
+            }
+
+            if (!kp.endsWith("." )
+            &&  !kp.endsWith("_")) {
+                 kp = kp + ".";
+            }
+
+            return;
+        }
+
+        Matcher m;
+        String  k;
+
+        m = ANPT.matcher(f);
+        if (m.find()) {
+            if (":".equals(m.group(1))) {
+                k = f.substring(0, m.end() -1).trim();
+                f = f.substring(   m.end()   ).trim();
+            } else {
+                k = f;
+            }
+
+            // 补全前缀
+            if (kp != null && CNPT.matcher(k).matches()) {
+                k = kp +/**/ k /**/;
+            }
+            if (fp != null && CNPT.matcher(f).matches()) {
+                f = fp +"`"+ f +"`";
+            }
+
+            af.put( k, f);
+        } else {
+            af.put( f, f);
+        }
+    }
+
+    /**
      * 自定义许可字段
      * <pre>
      * fs 仅给一个常量 WIPE 表示清除 an 的 allow 设置,
@@ -122,89 +207,24 @@ public class AssocCase {
      * @param fs
      * @return
      */
-    public AssocCase allow(String an, String... fs) {
-        if (fs.length == 1) {
-            if (WIPE.equals(fs[0])) {
-                bufs.remove(an);
-                opts.remove(an);
-                return this;
-            } else
-            if (DENY.equals(fs[0])) {
-                bufs.remove(an);
-                opts.put(an, new LinkedHashMap( ) );
-                return this;
-            }
-        }
-
-        Map af = new LinkedHashMap( );
+    public AssocCase allow(String an, Set<String> fs) {
+        Map af = new LinkedHashMap();
         opts.put(an,af);
         bufs.remove(an);
 
-        Matcher m;
-        String  k;
-        String  kp = null; // 别名前缀
-        String  fp = null; // 字段前缀
+        for(String f : fs) {
+            allow( f , af);
+        }
 
-        for( String f : fs ) {
-            f = f.trim();
-            if (f.isEmpty()) {
-                continue;
-            }
+        return this;
+    }
+    public AssocCase allow(String an, String ...  fs) {
+        Map af = new LinkedHashMap();
+        opts.put(an,af);
+        bufs.remove(an);
 
-            /**
-             * #别名前缀:当前表名
-             * 发现此行时即当设置
-             * 后面遇到的干净别名、字段均会附加上设置的前缀
-             * 别名前缀可以用点或下划线结尾, 没有的自动补点
-             * 表名前缀可以用点结尾, 没有则补点，下划线转点
-             */
-            if (f.startsWith("#")) {
-                f = f.substring(1);
-                int p = f.indexOf(":");
-                if (p > -1) {
-                    kp = f.substring(0, p).trim();
-                    fp = f.substring(1+ p).trim();
-                } else {
-                    kp = fp = f.trim();
-                }
-
-                if ( fp.endsWith("_")) {
-                     fp = fp.substring(0, fp.length() - 1);
-                     fp = "`" + fp +"`.";
-                } else
-                if (!fp.endsWith(".")) {
-                     fp = "`" + fp +"`.";
-                }
-
-                if (!kp.endsWith("." )
-                &&  !kp.endsWith("_")) {
-                     kp = kp + ".";
-                }
-
-                continue;
-            }
-
-            m = ANPT.matcher(f);
-            if (m.find()) {
-                if (":".equals(m.group(1))) {
-                    k = f.substring(0, m.end() -1).trim();
-                    f = f.substring(   m.end()   ).trim();
-                } else {
-                    k = f;
-                }
-
-                // 补全前缀
-                if (kp != null && CNPT.matcher(k).matches()) {
-                    k = kp +/**/ k /**/;
-                }
-                if (fp != null && CNPT.matcher(f).matches()) {
-                    f = fp +"`"+ f +"`";
-                }
-
-                af.put( k, f);
-            } else {
-                af.put( f, f);
-            }
+        for(String f : fs) {
+            allow( f , af);
         }
 
         return this;
@@ -218,14 +238,30 @@ public class AssocCase {
      * @return
      */
     public AssocCase allow(Map fc) {
-        String[] ks = new String[] {"listable", "findable", "sortable", "srchable", "rschable", "rankable"};
+        String[] ks = new String[] {LISTABLE, FINDABLE, SORTABLE, SRCHABLE, RSCHABLE, RANKABLE};
         for(String k : ks) {
-            Object s = fc.get( k );
+            k = k.toLowerCase( );
+            Object s = fc.get(k);
             if (null == s) {
                 continue ;
             }
-            allow(k.toUpperCase( ), (String[]) Synt.toArray(s));
+            allow( k , Synt.toSet(s) );
         }
+        return this;
+    }
+    public AssocCase allow(JFigure fc) {
+        allow(LISTABLE, fc.getListable());
+        allow(FINDABLE, fc.getFindable());
+        allow(SORTABLE, fc.getSortable());
+        allow(SRCHABLE, fc.getSrchable());
+        allow(RSCHABLE, fc.getRschable());
+        allow(RANKABLE, fc.getRankable());
+        return this;
+    }
+    public AssocCase allow(IFigure fc) {
+        allow(LISTABLE, fc.getListable());
+        allow(FINDABLE, fc.getFindable());
+        allow(SORTABLE, fc.getSortable());
         return this;
     }
 

@@ -576,12 +576,12 @@ public final class Synt {
 
     /**
      * 尝试转为布尔型
-     * 数组和集合仅取第一个, 日期类型取毫秒时间戳, 数字非零为 true
+     * 数组和集合仅取第一个, 数字零为 false 非零则为 true, 字符串按 TRUE,FAKE 正则判断
      * @param val
      * @return
      */
     public static Boolean asBool(Object val) {
-        val = asNumber(val);
+        val = asSingle(val);
         if (val == null) {
             return null;
         }

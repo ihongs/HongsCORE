@@ -2,6 +2,7 @@ package io.github.ihongs.util;
 
 import java.text.NumberFormat;
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -615,13 +616,16 @@ public final class Synt {
         }
 
         // 空串视为未取值
-        if (EMPT.equals(val)) {
+        if ("".equals(val)) {
             return null;
         }
 
         // 日期转为时间戳
         if (val instanceof Date) {
             val = ( (Date) val ).getTime();
+        } else
+        if (val instanceof Calendar) {
+            val = ( (Calendar) val ).getTimeInMillis();
         }
 
         return val;

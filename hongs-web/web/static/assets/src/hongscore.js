@@ -3026,12 +3026,16 @@ function() {
     var box = btn.data("target");
     var url = btn.data("href");
     var dat = btn.data("data");
+    var siz = btn.data("size");
     if (box) {
         box = btn.hsFind(box);
         box.hsOpen(url , dat);
-    } else {
-          $.hsOpen(url , dat);
-    }
+    } else { var b;
+        b=$.hsOpen(url , dat);
+    if (siz) {
+        b.closest ("modal-dialog")
+         .addClass("modal-"+ siz );
+    }}
 })
 .on("cilck", "[data-toggle=hsExit]",
 function() {

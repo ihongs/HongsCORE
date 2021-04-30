@@ -4,6 +4,14 @@
  * 版本: 2018/07/27 23:00
  */
 
+html, body {
+    background: #eee;
+}
+.container ,
+.container-fluid {
+    background: #fff;
+}
+
 #context {
     display: flex;
     min-height: 100vh;

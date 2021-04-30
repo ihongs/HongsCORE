@@ -13,7 +13,7 @@
     String _funcId = "in_"+(_module + "_" + _entity + "_info").replace('/', '_');
 %>
 <h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
-<div id="<%=_pageId%>" class="<%=_action%>-info">
+<div id="<%=_pageId%>" class="<%=_action%>-info lowerfix">
     <form action="" onsubmit="return false"
           method="POST" enctype="multipart/form-data" class="form-horizontal">
         <%

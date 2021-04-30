@@ -5,7 +5,7 @@
     String _pageId = ($module + "-" + $entity + "-snap").replace('/', '-');
 %>
 <h2><%=$locale.translate("fore.record.title", $title)%></h2>
-<div id="<%=_pageId%>" class="snap-list">
+<div id="<%=_pageId%>" class="snap-list lowerfix">
     <form class="findbox">
         <ul class="nav nav-tabs board clearfix">
             <li class="active">

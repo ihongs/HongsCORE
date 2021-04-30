@@ -704,17 +704,23 @@ ol.repeated ,
     margin-top: 15px;
 }
 
+.gap {
+    background: #eee;
+    height: 20px;
+}
+.gap.board ,
+.gap.board-top {
+    height: 20px;
+}
+.gap.group ,
+.gap.group-top {
+    height: 15px;
+}
+
 /* 修正 panel 和 modal 中内容下部多余的空隙 */
 .panel-body>.lowerfix ,
 .modal-body>.lowerfix {
     margin-bottom: -15px;
-}
-
-hr.hem {
-    border-top-width: 15px;
-}
-hr.hem.row {
-    border-top-width: 20px;
 }
 
 ul.pickbox {

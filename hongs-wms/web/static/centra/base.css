@@ -5,14 +5,6 @@
  */
 
 html, body {
-    background: #eee;
-}
-.container ,
-.container-fluid {
-    background: #fff;
-}
-
-html, body {
     height: 100%;
     width : 100%;
     min-width: 992px;
@@ -389,20 +381,4 @@ html, body {
 .statbox .alertbox>div {
     width   : 100%;
      text-align: center;
-}
-.statbox ,
-.filtbox {
-    background: #f5f5f5;
-    margin-bottom: 20px;
-}
-.statbox {
-    padding-top: 20px;
-}
-.filtbox {
-    padding-top: 15px;
-}
-.statbox.invisible ,
-.filtbox.invisible {
-    padding-top: 0;
-     margin-top: 0;
 }

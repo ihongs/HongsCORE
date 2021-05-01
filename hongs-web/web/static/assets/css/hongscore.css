@@ -19,6 +19,14 @@ code, pre, var, dfn, kbd {
 }
 */
 
+html, body {
+    background: #eee;
+}
+.container ,
+.container-fluid {
+    background: #fff;
+}
+
 /** Bootstrap 调整 **/
 
 .invisible ,
@@ -704,22 +712,23 @@ ol.repeated ,
     margin-top: 15px;
 }
 
-.gap {
+.board-gap {
     background: #eee;
-    height: 20px;
+    padding-top: 20px;
 }
-.gap.board ,
-.gap.board-top {
-    height: 20px;
+.group-gap {
+    background: #eee;
+    padding-top: 15px;
 }
-.gap.group ,
-.gap.group-top {
-    height: 15px;
+.board-gap.invisible ,
+.group-gap.invisible {
+    padding: 0;
+    margin : 0;
 }
 
 /* 修正 panel 和 modal 中内容下部多余的空隙 */
-.panel-body>.lowerfix ,
-.modal-body>.lowerfix {
+.panel-body>.frame-fix ,
+.modal-body>.frame-fix {
     margin-bottom: -15px;
 }
 

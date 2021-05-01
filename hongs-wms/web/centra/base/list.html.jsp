@@ -20,7 +20,7 @@
     Set<String>   _sd = getSrchable (_fields);
 %>
 <h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
-<div id="<%=_pageId%>" class="<%=_action%>-list lowerfix">
+<div id="<%=_pageId%>" class="<%=_action%>-list frame-fix">
     <form class="findbox toolbox board row">
         <div class="col-xs-6">
             <div class="btn-group">
@@ -61,7 +61,7 @@
         </div>
     </form>
     <!-- 筛选 -->
-    <form class="findbox filtbox invisible row form-horizontal">
+    <form class="findbox filtbox invisible board board-gap row form-horizontal">
         <%
         Iterator it2 = _fields.entrySet().iterator();
         while (it2.hasNext()) {
@@ -150,7 +150,7 @@
         </div>
     </form>
     <!-- 统计 -->
-    <form class="findbox statbox invisible row">
+    <form class="findbox statbox invisible board board-gap row">
         <%
         Iterator it3 = _fields.entrySet().iterator();
         while (it3.hasNext()) {

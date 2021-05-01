@@ -2591,12 +2591,16 @@ $.fn.hsL10n = function(tit) {
 
     // 从其下标题提取
     if (! tit) {
-        var hea = box.children("h1,h2,h3,h4,h5,h6");
+        var hea = box.children("[data-l10n]");
+        if ( 1 <= hea.size()) {
+            tit = hea.data("l10n");
+        } else {
+            hea = box.children("h1,h2,h3,h4");
         if ( 1 <= hea.size()) {
             tit = hea.text();
         } else {
             return;
-        }
+        }}
     }
 
     // 针对共用的表单, 有 ID 即为更新
@@ -2635,6 +2639,11 @@ $.fn.hsI18n = function(rep) {
         rep = box.hsData( ).reps ;
     }
 
+    if (box.data("l10n")) {
+        lng = box.data("l10n");
+        lng = hsGetLang(lng, rep);
+        box.data("l10n", lng );
+    } else
     if (box.data("i18n")) {
         lng = box.data("i18n");
         lng = hsGetLang(lng, rep);

@@ -25,7 +25,7 @@
     Set<String>   _sd = getSrchable (_fields);
 %>
 <h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
-<div id="<%=_pageId%>" class="<%=_action%>-list frame-fix">
+<div id="<%=_pageId%>" class="<%=_action%>-list board board-end">
     <form class="findbox toolbox board row">
         <div class="col-md-6 col-sm-8 center-block">
             <div style="display: table; width: 100%;">
@@ -58,7 +58,7 @@
         </div>
     </form>
     <!-- 筛选 -->
-    <form class="findbox filtbox statbox invisible board board-gap row form-horizontal">
+    <form class="findbox filtbox statbox invisible well form-horizontal">
         <%
         Iterator it2 = _fields.entrySet().iterator();
         while (it2.hasNext()) {
@@ -74,7 +74,7 @@
             }
         %>
         <% /***/ if (Synt.declare(info.get("statable"), false)) {%>
-        <div class="stat-group form-group form-group-sm clearfix" data-name="<%=name%>">
+        <div class="stat-group form-group form-group-sm row" data-name="<%=name%>">
             <label class="col-md-3 col-sm-2 control-label text-right"><%=text%></label>
             <div class="col-md-6 col-sm-8">
                 <%
@@ -109,7 +109,7 @@
             </div>
         </div>
         <%} else if (Synt.declare(info.get("filtable"), false)) {%>
-        <div class="filt-group form-group form-group-sm clearfix" data-name="<%=name%>">
+        <div class="filt-group form-group form-group-sm row" data-name="<%=name%>">
             <label class="col-md-3 col-sm-2 control-label text-right"><%=text%></label>
             <div class="col-md-6 col-sm-8">
             <%if ("number".equals(type) || "range".equals(type) || "color".equals(type) || "sorted".equals(type)) {%>
@@ -173,7 +173,7 @@
         </div>
         <%} /*End If */%>
         <%} /*End For*/%>
-        <div class="mine-group form-group form-group-sm clearfix" data-name="cuser">
+        <div class="mine-group form-group form-group-sm row" data-name="cuser">
             <label class="col-md-3 col-sm-2 control-label text-right">属主</label>
             <div class="col-md-6 col-sm-8">
                 <input type="hidden" name="cuser" value="" data-ft="_mine"/>
@@ -193,7 +193,7 @@
                 </div>
             </div>
         </div>
-        <div class="sort-group form-group form-group-sm clearfix" data-name="ob">
+        <div class="sort-group form-group form-group-sm row" data-name="ob">
             <label class="col-md-3 col-sm-2 control-label text-right">排序</label>
             <div class="col-md-6 col-sm-8">
                 <input type="hidden" name="ob" value="<%=_ob%>" data-ft="_sort"/>
@@ -224,7 +224,9 @@
                 </div>
             </div>
         </div>
-        <input type="submit" class="invisible"/>
+        <div class="group-end">
+            <input type="submit" class="invisible"/>
+        </div>
     </form>
     <!-- 列表 -->
     <div class="itembox col-md-4 col-sm-6 col-xs-12" style="display: none; padding: 0 7.5px 15px 7.5px;">

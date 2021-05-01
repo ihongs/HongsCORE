@@ -20,7 +20,7 @@
     Set<String>   _sd = getSrchable (_fields);
 %>
 <h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
-<div id="<%=_pageId%>" class="<%=_action%>-list frame-fix">
+<div id="<%=_pageId%>" class="<%=_action%>-list board board-end">
     <form class="findbox toolbox board row">
         <div class="col-xs-6">
             <div class="btn-group">
@@ -61,7 +61,7 @@
         </div>
     </form>
     <!-- 筛选 -->
-    <form class="findbox filtbox invisible board board-gap row form-horizontal">
+    <form class="findbox filtbox invisible well group-end form-horizontal">
         <%
         Iterator it2 = _fields.entrySet().iterator();
         while (it2.hasNext()) {
@@ -76,7 +76,7 @@
                 continue;
             }
         %>
-        <div class="filt-group form-group form-group-sm clearfix" data-name="<%=name%>">
+        <div class="filt-group form-group form-group-sm row" data-name="<%=name%>">
             <label class="col-xs-3 text-right control-label form-control-static">
                 <%=text != null ? text : ""%>
             </label>
@@ -141,7 +141,7 @@
             </div>
         </div>
         <%} /*End For*/%>
-        <div class="form-group form-group-sm clearfix">
+        <div class="form-group form-group-sm row">
             <div class="col-xs-6 col-xs-offset-3">
                 <button type="submit" class="btn btn-primary">过滤</button>
                 <span style="padding: 0.1em;"></span>
@@ -150,7 +150,8 @@
         </div>
     </form>
     <!-- 统计 -->
-    <form class="findbox statbox invisible board board-gap row">
+    <form class="findbox statbox invisible well board-end">
+        <div class="row">
         <%
         Iterator it3 = _fields.entrySet().iterator();
         while (it3.hasNext()) {
@@ -206,6 +207,7 @@
             </div>
         </div>
         <%} /*End For*/%>
+        </div>
     </form>
     <!-- 列表 -->
     <div class="table-responsive-revised">

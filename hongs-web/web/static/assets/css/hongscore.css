@@ -19,14 +19,6 @@ code, pre, var, dfn, kbd {
 }
 */
 
-html, body {
-    background: #eee;
-}
-.container ,
-.container-fluid {
-    background: #fff;
-}
-
 /** Bootstrap 调整 **/
 
 .invisible ,
@@ -53,7 +45,7 @@ html, body {
 
 .btn .close {
     margin-right: -0.3em;
-    margin-top: -0.1em;
+    line-height: 1.0em;
     font-size: 1.5em;
     opacity: 0.8;
     color: #777;
@@ -705,31 +697,34 @@ ol.repeated ,
 .board-top {
     margin-top: 20px;
 }
-.group {
-    margin-bottom: 15px;
+.board-pad {
+   padding-top: 20px;
 }
-.group-top {
-    margin-top: 15px;
+.board-end:after {
+    margin-bottom: -20px;
+    display: table;
+    content: "";
+}
+.group-end:after {
+    margin-bottom: -15px;
+    display: table;
+    content: "";
 }
 
-.board-gap {
-    background: #eee;
-    padding-top: 20px;
+/* 修正 panel 和 modal 中内容底部多余的空隙 */
+.panel-body>.board ,
+.modal-body>.board ,
+.well>.board {
+    margin-bottom: 0;
 }
-.group-gap {
-    background: #eee;
-    padding-top: 15px;
+.well.row {
+    border-radius: 0;
+    border-right : 0;
+    border-left  : 0;
 }
-.board-gap.invisible ,
-.group-gap.invisible {
+.well.invisible {
     padding: 0;
     margin : 0;
-}
-
-/* 修正 panel 和 modal 中内容下部多余的空隙 */
-.panel-body>.frame-fix ,
-.modal-body>.frame-fix {
-    margin-bottom: -15px;
 }
 
 ul.pickbox {

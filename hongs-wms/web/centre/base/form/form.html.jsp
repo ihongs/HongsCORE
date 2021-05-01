@@ -332,7 +332,9 @@
         <br/>
         <div class="btns-group">
             <div>
-                <button type="submit" class="commit btn btn-success form-control"><%=Synt.defxult((String) _params.get("page-form-commit"), _locale.translate("fore.commit"))%></button>
+                <button type="submit" class="commit btn btn-success form-control text-center">
+                    <%=Synt.defxult((String) _params.get("page-form-commit"), _locale.translate("fore.commit"))%>
+                </button>
             </div>
         </div>
         <br/>

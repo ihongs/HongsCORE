@@ -85,7 +85,7 @@
                 { margin-right: 1.0em; }
             #footbox blockquote
                 { color: #ddd; background-color: #600; }
-            #footbox.navbar, body, .jumbotron, .container
+            #footbox.navbar, html, body, .jumbotron, .container
                 { color: #fff; background-color: #800; }
             pre
                 { color: #ddd; background-color: transparent; border-color: transparent; }

@@ -33,7 +33,8 @@
     String baseHref = Core.SERV_PATH;
 %>
 <h2><%=_locale.translate("fore.manual.title", _title)%></h2>
-<div id="<%=_pageId%>" class="swap-info frame-fix row">
+<div id="<%=_pageId%>" class="swap-info board board-end">
+    <div class="row">
     <div class="col-xs-6">
         <div class="table-responsive-revised">
         <div class="table-responsive listbox">
@@ -336,6 +337,7 @@ id=ID 或 id.=ID1&id.=ID2...
                 </div>
             </div>
         </fieldset>
+    </div>
     </div>
 </div>
 <style type="text/css">

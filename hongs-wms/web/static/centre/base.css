@@ -4,14 +4,6 @@
  * 版本: 2018/07/27 23:00
  */
 
-html, body {
-    background: #eee;
-}
-.container ,
-.container-fluid {
-    background: #fff;
-}
-
 #context {
     display: flex;
     min-height: 100vh;
@@ -75,17 +67,4 @@ html, body {
 }
 .input-group .input-search:disabled+.input-group-btn .glyphicon-search:before {
     content: "\e031";
-}
-
-/* 列表筛选样式微调 */
-.statbox ,
-.filtbox {
-    background: #f5f5f5;
-    padding-top: 15px;
-    padding-bottom: 0;
-}
-.statbox.invisible ,
-.filtbox.invisible {
-    padding-top: 0;
-     margin-top: 0;
 }

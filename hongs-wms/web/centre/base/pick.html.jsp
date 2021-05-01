@@ -13,7 +13,7 @@
     StringBuilder _rb = new StringBuilder("id,name,note,logo,mtime");
 %>
 <h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
-<div id="<%=_pageId%>" class="<%=_action%>-list lowerfix">
+<div id="<%=_pageId%>" class="<%=_action%>-list frame-fix">
     <div style="display: table; width: 100%;">
         <div style="display: table-cell; width: 15px; vertical-align: middle;">
             <div class="pagebox btn-group" style="white-space: nowrap; padding-right: 15px;">

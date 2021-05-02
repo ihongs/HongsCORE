@@ -718,10 +718,9 @@ ol.repeated ,
     margin-bottom: 0;
 }
 
-hr.gap {
-    border-top-color: #ddd;
-    border-top-width: 20px;
-    margin-top: 0;
+hr.gapebar {
+    border-top: 20px solid #ddd;
+    margin : 0 -15px 20px -15px;
 }
 
 ul.pickbox {

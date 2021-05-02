@@ -712,10 +712,14 @@ ol.repeated ,
 }
 
 /* 修正 panel 和 modal 中内容底部多余的空隙 */
+.well>.board ,
 .panel-body>.board ,
-.modal-body>.board ,
-.well>.board {
-    margin-bottom: 0;
+.modal-body>.board {
+    margin-bottom: 0px;
+}
+.panel-body>.board-end ,
+.modal-body>.board-end {
+    margin-bottom: 5px;
 }
 
 hr.gap {

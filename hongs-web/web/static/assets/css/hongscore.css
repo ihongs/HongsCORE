@@ -56,16 +56,25 @@ fieldset>.dropdown-list {
 }
 
 .btn .close {
-    margin-right: -0.3em;
-    line-height: 1.0em;
-    font-size: 1.5em;
+     box-shadow: none;
+    text-shadow: none;
+    line-height: 20px;
+    margin-right:-4px;
     opacity: 0.8;
-    color: #777;
+    color: #ccc;
 }
 .btn .close:hover ,
 .btn .close:focus {
     opacity: 1.0;
-    color: #d00;
+    color: #666
+}
+.btn-sm .close ,
+.form-group-sm .btn .close {
+    line-height: 18px;
+}
+.btn-lg .close ,
+.form-group-lg .btn .close {
+    line-height: 24px;
 }
 
 .btn.form-control {

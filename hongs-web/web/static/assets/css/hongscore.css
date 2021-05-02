@@ -144,7 +144,6 @@ input[type="time"].form-control {
 .form-icon-requires:before {
     color: #a44;
     content: '\2731';
-    font-size: 0.8em;
 }
 
 .center-block {

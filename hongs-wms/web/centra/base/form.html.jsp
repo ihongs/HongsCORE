@@ -441,7 +441,7 @@
                 </div>
                 <div class="col-md-2 hidden-sm hidden-xs">
                     <div class="form-control-static">
-                        <%if (rqrd) {%><span class="glyphicon glyphicon-asterisk form-icon-required" title="必填/必选字段"></span><%}%>
+                        <%if (rqrd) {%><span class="form-icon-required" title="必填/必选字段"></span><%}%>
                     </div>
                 </div>
             </div>

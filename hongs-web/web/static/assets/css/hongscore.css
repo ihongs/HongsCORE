@@ -65,7 +65,7 @@ fieldset>.dropdown-list {
 .btn .close:hover ,
 .btn .close:focus {
     opacity: 1.0;
-    color: #f55;
+    color: #d00;
 }
 
 .btn.form-control {

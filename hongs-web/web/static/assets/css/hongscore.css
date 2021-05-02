@@ -700,9 +700,6 @@ ol.repeated ,
 .board-pad {
    padding-top: 20px;
 }
-.board-gap {
-    border-top: 20px solid #ddd;
-}
 .board-end:after {
     margin-bottom: -20px;
     display: table;
@@ -719,6 +716,12 @@ ol.repeated ,
 .modal-body>.board ,
 .well>.board {
     margin-bottom: 0;
+}
+
+hr.gap {
+    border-top-color: #ddd;
+    border-top-width: 20px;
+    margin-top: 0;
 }
 
 ul.pickbox {

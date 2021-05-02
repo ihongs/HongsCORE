@@ -237,26 +237,30 @@ html, body {
 /* 图标 */
 
 #main-menubar ul li a:before {
-    display    : inline-block;
-    position   : relative;
-    top        :  2px; /* 修正字体符号偏上的问题 */
-    width      : 26px;
-    margin-left:-26px;
-    text-align : center;
-    font-family: "Glyphicons Halflings";
-    content: "";
+    width       :  26px;
+    margin-left : -26px;
+    display     : inline-block;
+    font-family : bootstrap-icons !important;
+    font-weight : normal !important;
+    font-style  : normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    vertical-align: -.125em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 #main-menubar>ul>li>a:before {
-    content: "\e165";
+    content: "\f3fb";
 }
 #main-menubar>ul>li.actual>a:before {
-    content: "\e124";
+    content: "\f2ef";
 }
 #main-menubar>ul>li>a[href="/centra/#manage"]:before {
-    content: "\e021";
+    content: "\f424";
 }
 #main-menubar>ul>li>a[href="/common/menu.act?m=centra&n=system"]:before {
-    content: "\e019";
+    content: "\f3e2";
 }
 
 /* 其他 */

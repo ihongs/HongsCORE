@@ -861,8 +861,8 @@ ul.pickrol > li.btn-default.form-control {
     width : auto;
     height: 32px;
     border: 0;
-    padding-right: 4px;
-    padding-left : 4px;
+    padding-right: 8px;
+    padding-left : 8px;
 }
 /** 修复 firefox 中 select 内总有 4px 的问题 **/
 @-moz-document url-prefix() {

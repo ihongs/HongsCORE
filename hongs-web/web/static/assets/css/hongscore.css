@@ -140,8 +140,8 @@ input[type="time"].form-control {
 }
 
 /* 必填必选标识 */
-.form-icon-required ,
-.form-icon-requires {
+.form-icon-required:before ,
+.form-icon-requires:before {
     color: #a44;
     content: '\2731';
     font-size: 0.8em;

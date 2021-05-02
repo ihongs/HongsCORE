@@ -43,6 +43,18 @@ code, pre, var, dfn, kbd {
     top: 2px;
 }
 
+.center-block {
+    float: none;
+}
+
+.dropdown-toggle {
+    cursor: pointer;
+}
+fieldset>.dropdown-body ,
+fieldset>.dropdown-list {
+    margin-top: -10px;
+}
+
 .btn .close {
     margin-right: -0.3em;
     line-height: 1.0em;
@@ -102,24 +114,24 @@ input[type="time"].form-control {
     margin-bottom: 0;
 }
 
-.checkbox legend,
-.radio legend {
+.radio legend ,
+.checkbox legend {
     font-size: inherit;
     color : #777;
     margin: 0;
 }
 
 /* 修正选择框在特殊表单组下不变化的问题 */
-.form-group-lg .checkbox,
-.form-group-lg .radio {
+.form-group-lg .radio ,
+.form-group-lg .checkbox {
     font-size: 18px;
 }
-.form-group-sm .checkbox,
-.form-group-sm .radio {
+.form-group-sm .radio ,
+.form-group-sm .checkbox {
     font-size: 12px;
 }
-.form-group-sm .checkbox input[type=checkbox],
-.form-group-sm .radio input[type=radio] {
+.form-group-sm .radio input[type=radio] ,
+.form-group-sm .checkbox input[type=checkbox] {
     margin-top: 2px;
 }
 
@@ -139,28 +151,11 @@ input[type="time"].form-control {
     color: #777;
 }
 
-/* 必填必选标识 */
+/* 必填标识 */
 .form-icon-required:before ,
 .form-icon-requires:before {
     color: #a44;
     content: '\2731';
-}
-
-.center-block {
-    float: none;
-}
-
-.navbar-default
-.navbar-toggle ,
-.navbar-toggle {
-    border-color: transparent;
-}
-.dropdown-toggle {
-    cursor: pointer;
-}
-fieldset>.dropdown-body ,
-fieldset>.dropdown-list {
-    margin-top: -10px;
 }
 
 /** 响应式表格区 **/

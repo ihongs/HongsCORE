@@ -554,11 +554,11 @@ ol.repeated ,
     cursor: pointer;
 }
 .listbox thead .sort-ico {
+    color  : #aaa;
     display: inline-block;
-    color: #aaa;
-    font-size: 0.8em;
-    font-weight: 400;
-    font-style: normal;
+    font-size  : 0.8em ;
+    font-style : normal;
+    font-weight: normal;
     font-family: 'Glyphicons Halflings';
     -webkit-font-smoothing: antialiased;
 }
@@ -700,6 +700,9 @@ ol.repeated ,
 .board-pad {
    padding-top: 20px;
 }
+.board-gap {
+    border-top: 20px solid #ddd;
+}
 .board-end:after {
     margin-bottom: -20px;
     display: table;
@@ -716,11 +719,6 @@ ol.repeated ,
 .modal-body>.board ,
 .well>.board {
     margin-bottom: 0;
-}
-
-hr.gap {
-    border-top-width: 20px;
-    border-top-color: #ddd;
 }
 
 ul.pickbox {

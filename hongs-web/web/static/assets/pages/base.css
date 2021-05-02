@@ -36,6 +36,11 @@
     display: inline-block;
 }
 
+#footbox .copy-right a ,
+#footbox .site-links a {
+    margin-right : 1em;
+}
+
 /* 主导航条默认样式 */
 #main-context > .laps.tabs.breadcrumb {
     border: 0;

@@ -53,7 +53,7 @@ code, pre, var, dfn, kbd {
 .btn .close:hover ,
 .btn .close:focus {
     opacity: 1.0;
-    color: #a44;
+    color: #f55;
 }
 
 .btn.form-control {
@@ -138,9 +138,13 @@ input[type="time"].form-control {
 .has-warning .help-block.text-muted {
     color: #777;
 }
+
+/* 必填必选标识 */
 .form-icon-required ,
 .form-icon-requires {
     color: #a44;
+    content: '\2731';
+    font-size: 0.8em;
 }
 
 .center-block {

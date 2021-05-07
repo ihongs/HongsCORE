@@ -231,7 +231,6 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
                 dataType:  "json"  ,
                 complete:  function (rst) {
                     rst = hsResponse(rst);
-                    delete rst .nid;
                     create.call(btn[0], evt, rst);
                 }
             });

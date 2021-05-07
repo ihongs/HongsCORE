@@ -299,26 +299,6 @@ div.bootstrap-tagsinput .tag [data-role="remove"]:after {
     justify-content: center;
 }
 
-.radio     label ,
-.checkbox  label {
-    margin-right: 1.0em;
-}
-.labelbox .label ,
-.repeated .label {
-    margin-right: 0.5em;
-    font-weight: normal;
-    font-size: 100%;
-    display: inline-block;
-}
-ul.repeated ,
-ol.repeated ,
- p.repeated {
-    padding: 0;
-    margin: -0.3em 0;
-    line-height: 2em;
-    list-style: none;
-}
-
 .labs>*>h1,
 .labs>*>h2,
 .labs>*>.loadbox>h1,
@@ -462,6 +442,48 @@ ol.repeated ,
     .alert-modal {
         padding-right: 0 !important;
     }
+}
+
+/** 标签 **/
+
+.labelbox {
+    vertical-align: middle;
+    padding: 3px 0px 3px 0px;
+}
+.labelbox.form-control {
+    height : auto;
+    padding: 2px 4px 2px 4px;
+}
+.form-group-sm .form-control.labelbox {
+    padding: 2px 4px 2px 4px;
+}
+.form-group-lg .form-control.labelbox {
+    padding: 4px 8px 4px 8px;
+}
+
+.radio     label ,
+.checkbox  label {
+    margin-right: 1em;
+}
+.labelbox .label ,
+.repeated .label {
+    margin-right: 6px;
+    line-height : 2em;
+    font-weight : inherit;
+    font-size   : inherit;
+}
+.labelbox .label .remove ,
+.repeated .label .remove {
+    margin-left : 8px;
+}
+
+ul.repeated ,
+ol.repeated ,
+ p.repeated {
+    padding: 0;
+    margin: -0.3em 0;
+    line-height: 2em;
+    list-style: none;
 }
 
 /** 列表 **/

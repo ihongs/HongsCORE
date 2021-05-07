@@ -388,3 +388,17 @@ html, body {
     width   : 100%;
      text-align: center;
 }
+
+/* 筛选表单紧凑布局 */
+@media (min-width : 992px) {
+.row.form-group.filt-group {
+    float: left;
+    width: 50% ;
+    margin-left : 0;
+    margin-right: 0;
+}
+.well.filtbox {
+    padding-left : 5px;
+    padding-right: 5px;
+}
+}

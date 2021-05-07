@@ -21,7 +21,9 @@
         response.setStatus(code);
     }
 %>
-<!--MSG: <%=escapeXML(text)%>-->
+<!--MSG: <%=escapeXML( text.trim( ) )%>-->
+<!--ERR: <%=escapeXML("Goto " + href)%>-->
+<!--ERN: <%=code != null ? code : 302%>-->
 <!doctype html>
 <html>
     <head>

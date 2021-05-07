@@ -29,7 +29,8 @@
         }
     }
 %>
-<!--MSG: <%=escapeXML(text)%>-->
+<!--MSG: <%=escapeXML( text.trim( ) )%>-->
+<!--ERN: <%=code != null ? code : 403%>-->
 <!doctype html>
 <html>
     <head>
@@ -63,7 +64,7 @@
                 <p> <%=escapeXML(text)%> </p>
                 <p> &nbsp; </p>
                 <p style="font-size: 1em;">
-                    <span>当前访问的资源禁止访问, 可能缺少权限或链接错误;</span>
+                    <span> <%=CoreLocale.getInstance().translate("core.error.500.txt")%> </span>
                     <a style="color: white;" href="javascript:history.back();">
                         <b><%=CoreLocale.getInstance().translate("core.error.go.back")%></b>
                     </a>,

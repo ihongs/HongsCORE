@@ -80,7 +80,7 @@
             <label class="col-xs-3 text-right control-label form-control-static">
                 <%=text != null ? text : ""%>
             </label>
-            <div class="col-xs-6">
+            <div class="col-xs-9">
             <%if ("number".equals(type) || "range".equals(type) || "color".equals(type) || "sorted".equals(type)) {%>
                 <div class="input-group">
                     <input type="<%=type%>" class="form-control" name="ar.0.<%=name%>.<%=Cnst.GE_REL%>" />
@@ -141,8 +141,9 @@
             </div>
         </div>
         <%} /*End For*/%>
-        <div class="form-group form-group-sm row">
-            <div class="col-xs-6 col-xs-offset-3">
+        <hr  style="border-color: #ddd; clear: both;"/>
+        <div class="btns-group form-group form-group-sm row">
+            <div class="col-xs-12 text-center">
                 <button type="submit" class="btn btn-primary">过滤</button>
                 <span style="padding: 0.1em;"></span>
                 <button type="reset"  class="btn btn-default">重置</button>

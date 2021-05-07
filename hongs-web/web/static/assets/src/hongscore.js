@@ -220,16 +220,16 @@ function hsResponse(rst, qut) {
                 .replace( /[ ]{2,}/g, " ")       // 清理空白
                 .replace( /^\s*$/gm , "" );      // 清除空行
             rst = {
-                "msg": msg ,
-                "err": err ,
-                "ern": ern ,
+                "msg": msg,
+                "err": err,
+                "ern": ern,
                 "ok" : false
             };
         } else {
             rst = {
-                "msg": rst ,
-                "err":  "" ,
-                "ern":  "" ,
+                "msg": rst,
+                "err": "" ,
+                "ern": "" ,
                 "ok" : false
             };
         }

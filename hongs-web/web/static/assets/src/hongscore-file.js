@@ -24,17 +24,18 @@
         if (! src ) {
             return;
         }
-        $(this).before($(this).clone().val(''));
             box = $(box );
         var txt = /^data:/.test (src)  ?  ''
                 : decodeURIComponent(src.replace(/^.*[\/\\]/, ''));
         var cls = box.is(".pickrol" )  ?  "btn-link" : "btn-info" ;
+        var clz = "glyphicon-open-file";
+        var inp = $(this).after(
+                  $(this).clone(    ).val (''));
         var lab = $('<span></span>' ).text(txt);
-        var inp = $(this);
-        var div = $('<li class="btn '+cls+' form-control" ></li>')
-           .attr  ("title", txt)
-           .append('<span class="close pull-right"      >&times;</span>')
-           .append('<span class="glyphicon glyphicon-open-file"></span>')
+        var div = $('<li class="btn '+ cls +' form-control"></li>')
+                  .attr("title", txt)
+           .append('<span class="close pull-right">&times;</span>')
+           .append('<span class="glyphicon '  + clz +  '"></span>')
            .append(lab)
            .append(inp);
         box.append(div);
@@ -55,13 +56,14 @@
         var txt = /^data:/.test (src)  ?  ''
                 : decodeURIComponent(src.replace(/^.*[\/\\]/, ''));
         var cls = box.is(".pickrol" )  ?  "btn-link" : "btn-info" ;
-        var lab = $('<span></span>' ).text(txt);
+        var clz = "glyphicon-save-file";
         var inp = $('<input  type="hidden" />')
-                   .attr('name', nam).val (src);
-        var div = $('<li class="btn '+cls+' form-control" ></li>')
-           .attr  ("title", txt)
-           .append('<span class="close pull-right"      >&times;</span>')
-           .append('<span class="glyphicon glyphicon-save-file"></span>')
+                  .attr('name' , nam). val(src);
+        var lab = $('<span></span>' ).text(txt);
+        var div = $('<li class="btn '+ cls +' form-control"></li>')
+                  .attr("title", txt)
+           .append('<span class="close pull-right">&times;</span>')
+           .append('<span class="glyphicon '  + clz +  '"></span>')
            .append(lab)
            .append(inp);
         box.append(div);

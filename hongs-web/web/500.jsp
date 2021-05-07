@@ -63,7 +63,8 @@
         }   trac  = null ;
     }
 %>
-<!--MSG: <%=escapeXML(text.trim())%>-->
+<!--MSG: <%=escapeXML( text.trim( ) )%>-->
+<!--ERN: <%=code != null ? code : 500%>-->
 <!doctype html>
 <html>
     <head>
@@ -96,8 +97,19 @@
             <div class="container">
                 <h1>: (</h1>
                 <p> &nbsp; </p>
-                <p>  <%=escapeXML(text.trim())%>  </p>
+                <p> <%=escapeXML(text.trim())%> </p>
+                <p> &nbsp; </p>
+                <p style="font-size: 1em;">
+                    <span> <%=CoreLocale.getInstance().translate("core.error.500.txt")%> </span>
+                    <a style="color: white;" href="javascript:history.back();">
+                        <b><%=CoreLocale.getInstance().translate("core.error.go.back")%></b>
+                    </a>,
+                    <a style="color: white;" href="<%=request.getContextPath()%>/">
+                        <b><%=CoreLocale.getInstance().translate("core.error.go.home")%></b>
+                    </a>.
+                </p>
                 <%if (trac != null) {%>
+                <p> &nbsp; </p>
                 <pre><%=escapePRE(trac.trim())%></pre>
                 <%}%>
             </div>

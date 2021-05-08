@@ -114,7 +114,7 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
         .on("saveBack", ".create"  , create);
 
         var ids = Object.keys( v );
-        var num = ids.length || "";
+        var num = ids.length ;
         bin.data( "pickData" , v );
         bin.find(".checkone").val ( ids );
         bin.find(".picknum" ).text( num );

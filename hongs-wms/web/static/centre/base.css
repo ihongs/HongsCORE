@@ -66,6 +66,6 @@
     border-radius: 4px 0 0 4px;
 }
 .input-group .input-search:disabled+.input-group-btn>.search>.glyphicon:before ,
-.input-group .input-search:disabled+.input-group-btn>:submit>.glyphicon:before {
+.input-group .input-search:disabled+.input-group-btn>.submit>.glyphicon:before {
     content: "\e031";
 }

@@ -321,6 +321,17 @@ html, body {
     color: #f00;
 }
 
+/* 主导航条悬浮固定 */
+#main-context > .laps.tabs {
+    position: fixed;
+    z-index : 1000 ;
+      width : 100% ;
+       left : 0 ;
+}
+#main-context > .laps.labs {
+    padding-top : 58px;
+}
+
 /* 主导航条默认样式 */
 #main-context > .laps.tabs.breadcrumb {
     border       : 0;
@@ -349,17 +360,6 @@ html, body {
     color: #d00;
 }
 
-/* 主导航条悬浮固定 */
-#main-context > .laps.tabs {
-    position: fixed;
-    z-index : 1000 ;
-      width : 100% ;
-       left : 0 ;
-}
-#main-context > .laps.labs {
-    padding-top : 58px;
-}
-
 /* 隐藏受限的搜索框 */
 .input-group .input-search:disabled {
     visibility: hidden;
@@ -367,7 +367,8 @@ html, body {
 .input-group .input-search:disabled+.input-group-btn>.btn:first-child {
     border-radius: 4px 0 0 4px;
 }
-.input-group .input-search:disabled+.input-group-btn .glyphicon-search:before {
+.input-group .input-search:disabled+.input-group-btn>.search>.glyphicon:before ,
+.input-group .input-search:disabled+.input-group-btn>:submit>.glyphicon:before {
     content: "\e031";
 }
 

@@ -38,6 +38,7 @@
             </div>
             <%if ("select".equals(_action)) {%>
             <div class="btn btn-text text-muted picksum"><%=_locale.translate("fore.selected", _title)%> <b class="picknum"></b></div>
+            <div class="for-checks for-choose invisible"></div>
             <%} // End If %>
         </div>
         <div class="col-xs-6">
@@ -513,8 +514,7 @@
             listbox.find("thead ._amenu").addClass( "hidden" );
         }
         // 无操作按钮则隐藏选择
-        if (! loadbox.is(".picksel")
-        &&  findbox.find(".for-choose").size() == 0
+        if (findbox.find(".for-choose").size() == 0
         &&  findbox.find(".for-checks").size() == 0) {
             listbox.find("thead ._check").addClass( "hidden" );
         }

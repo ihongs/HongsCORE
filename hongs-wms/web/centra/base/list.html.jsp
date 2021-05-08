@@ -36,7 +36,7 @@
                 <button type="button" class="delete for-checks btn btn-danger " title="<%=_locale.translate("fore.delete", _title)%>"><span class="glyphicon glyphicon-trash"></span></button>
                 <%} // End If %>
                 <%if ("select".equals(_action)) {%>
-                <span class="btn btn-text text-muted picknuw"><%=_locale.translate("fore.selected", _title)%> <b class="picknum">0</b></span>
+                <span class="btn btn-text text-muted picksum"><%=_locale.translate("fore.selected", _title)%> <b class="picknum">0</b></span>
                 <%} // End If %>
             </div>
         </div>

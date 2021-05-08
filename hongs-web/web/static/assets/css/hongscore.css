@@ -868,10 +868,10 @@ ul.pickrol > li.btn-default.form-control {
     display: none;
 }
 /* 已选数量 */
-.picksel .picknuw {
+.picksel .picksum {
     display: none;
 }
-.pickmul .picknuw {
+.pickmul .picksum {
     display: inline;
 }
 

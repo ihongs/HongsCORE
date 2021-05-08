@@ -338,6 +338,7 @@ html, body {
     border-radius: 0;
     border-bottom: 1px solid #eee;
     border-top   : 1px solid transparent;
+    box-shadow   : 0px 4px 8px -2px #ccc;
 }
 /*
 #main-context > .laps.tabs.breadcrumb ,

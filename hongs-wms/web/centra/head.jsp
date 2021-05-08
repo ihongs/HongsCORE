@@ -247,14 +247,14 @@
             }
         });
 
-        // 回退恢复滚动条
+        // 回退复位滚动条
         context
-            .on("hsRetir", ">.labs.laps>div", function(ev) {console.log(ev)
+            .on("hsRetir", ">.labs.laps>div", function ( ) {
                 if ($(this).data("top") === undefined) {
                     $(this).data("top", $(window).scrollTop());
                 }
             })
-            .on("hsRecur", ">.labs.laps>div", function(ev) {console.log(ev)
+            .on("hsRecur", ">.labs.laps>div", function ( ) {
                 if ($(this).data("top") !== undefined) {
                     $(window).scrollTop( $(this).data("top") );
                     $(this).removeData ( "top" );

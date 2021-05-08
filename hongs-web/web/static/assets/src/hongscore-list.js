@@ -1010,6 +1010,10 @@ jQuery.fn.hsList = function(opts) {
         box.find( ".checkall" ).prop("choosed" ,    chd);
         box.find(".for-choose").prop("disabled", 1!=min);
         box.find(".for-checks").prop("disabled", 0==min);
+        if ($(this).is (":radio") && ckd) {
+            $(this).closest("tr").siblings()
+                   .removeClass ( "active" );
+        }
     })
     .on("change", ".HsList .checkall",
     function() {

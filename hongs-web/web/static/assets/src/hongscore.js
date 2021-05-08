@@ -2412,18 +2412,20 @@ $.fn.hsOpen = function(url, data, complete) {
         tab.show( ).find("a").click();
         tab.find("a:empty,b:empty,.title")
            .text("...");
-        // 关闭关联的 tab
+        // 关闭关联的页签
         if (prt.children().size( ) ) {
             prt.children().hsCloze();
             prt.empty();
         }
     } else {
+        // 触发其隐退事件
+        prt.trigger("hsRetir");
         bak = $('<div class="openbak"></div>').hide()
             .append(prt.contents( )).appendTo ( prt );
     }
 
     box = $('<div class="openbox"></div>')
-          .appendTo(prt).data("hrev", bak);
+        .appendTo(prt).data("hrev" , bak );
     box.hsLoad(url , data, complete);
     return box;
 };
@@ -3105,13 +3107,13 @@ function() {
     var nav = tab.parent();
     var pns = nav.data("labs");
     var pne = pns ? pns.children().eq(tab.index()) : $();
-    if (tab.is(".dont-close,.back-crumb")) {
+    if (tab.is(".active,.dont-close,.back-crumb")) {
         return;
     }
     // 联动关闭
     if (nav.is(".breadcrumb")
     && !tab.is(".hook-crumb,.hold-crumb")) {
-        tab.nextAll( ).find("a").each( function() {
+        tab.nextAll( ).find("a").each( function( ) {
             $(this).hsClose();
         });
     }
@@ -3127,6 +3129,7 @@ function() {
     tab.addClass("active")
        .css("display", "");
     pne.siblings()
+       .trigger("hsRetir")
        .hide();
     pne.show()
        .trigger("hsRecur");
@@ -3135,7 +3138,7 @@ function() {
 function() {
     var nav = $(this).closest ('.breadcrumb');
     nav.find('li:last a').hsClose();
-//  nav.find('li:last a').  click(); // 会致 hook-crumb,hold-crumb 打开的回不去
+//  nav.find('li:last a').  click();
 })
 .on("hsReady hsRecur", ".labs.laps",
 function() {

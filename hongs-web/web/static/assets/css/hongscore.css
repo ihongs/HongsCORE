@@ -240,6 +240,12 @@ div.bootstrap-tagsinput.form-control input {
 div.bootstrap-tagsinput .tag [data-role="remove"]:after {
     content: "\00d7";
 }
+.form-group-sm div.bootstrap-tagsinput.form-control {
+    padding: 2px 4px;
+}
+.form-group-lg div.bootstrap-tagsinput.form-control {
+    padding: 4px 6px;
+}
 
 /* bootstrap-fileinput */
 .file-preview-frame .file-preview-image,
@@ -442,48 +448,6 @@ div.bootstrap-tagsinput .tag [data-role="remove"]:after {
     .alert-modal {
         padding-right: 0 !important;
     }
-}
-
-/** 标签 **/
-
-.labelbox {
-    vertical-align: middle;
-    padding: 3px 0px 3px 0px;
-}
-.labelbox.form-control {
-    height : auto;
-    padding: 2px 4px 2px 4px;
-}
-.form-group-sm .form-control.labelbox {
-    padding: 2px 4px 2px 4px;
-}
-.form-group-lg .form-control.labelbox {
-    padding: 4px 8px 4px 8px;
-}
-
-.radio     label ,
-.checkbox  label {
-    margin-right: 1em;
-}
-.labelbox .label ,
-.repeated .label {
-    margin-right: 6px;
-    line-height : 2em;
-    font-weight : inherit;
-    font-size   : inherit;
-}
-.labelbox .label .remove ,
-.repeated .label .remove {
-    margin-left : 8px;
-}
-
-ul.repeated ,
-ol.repeated ,
- p.repeated {
-    padding: 0;
-    margin: -0.3em 0;
-    line-height: 2em;
-    list-style: none;
 }
 
 /** 列表 **/
@@ -715,6 +679,53 @@ ol.repeated ,
 
 .tree-cnum {
     display: none;
+}
+
+/** 标签 **/
+
+.radio     label ,
+.checkbox  label {
+    margin-right: 1em;
+}
+.repeated .label ,
+.labelbox .label {
+    margin-right: 6px;
+    line-height : 2em;
+    font-weight : inherit;
+    font-size   : inherit;
+}
+.repeated .label .remove ,
+.labelbox .label .remove {
+    margin-left : 8px;
+}
+
+ul.repeated ,
+ol.repeated ,
+ p.repeated {
+    padding: 0;
+    margin: -0.3em 0;
+    line-height: 2em;
+    list-style: none;
+}
+.repeated:empty {
+    display: none;
+}
+.repeated.pickmul {
+    margin-bottom: 2px;
+}
+.repeated.pickrol {
+    margin-bottom: 0px;
+}
+
+.form-control.labelbox {
+    height : auto;
+    padding: 2px 4px;
+}
+.form-group-sm .form-control.labelbox {
+    padding: 2px 4px;
+}
+.form-group-lg .form-control.labelbox {
+    padding: 4px 6px;
 }
 
 /** 其他 **/

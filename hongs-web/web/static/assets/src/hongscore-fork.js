@@ -88,17 +88,6 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
     }
 
     function pickBack() {
-        // 未选警告
-        if (jQuery.isEmptyObject(v)) {
-            var msg = box.data("unpickedError");
-            if (msg != "!") {
-                msg = msg?msg: "fork.unpicked" ;
-                if (! confirm (hsGetLang(msg))) {
-                    return;
-                }
-            }
-        }
-
         var evt = jQuery.Event("pickBack");
         evt.target = bin;
         box.trigger( evt, [v, n, t] );
@@ -106,9 +95,9 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
             return false;
         }
 
-        // 填充数据
-        fil.call   ( foo, box, v, n );
-        box.trigger(    "change"    );
+        bin.hsClose( );
+        fil. call  ( foo, box, v, n );
+        box.trigger("change", [v, n]);
         return true;
     }
 
@@ -117,7 +106,7 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
         evt.target = bin;
         box.trigger( evt, [v, n, t] );
 
-        bin.addClass("pickbox")
+        bin.addClass("picksel")
         .toggleClass("pickmul", mul )
         .on("change"  , ".checkone", select)
         .on("click"   , ".commit"  , commit)
@@ -183,23 +172,6 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
            .text( num || "");
     }
 
-    function commit () {
-        var btn = jQuery(this);
-        if (btn.closest(".HsList" ).data("HsList")._info) {
-            return;
-        }
-        if (btn.closest(".openbox"). is ( bin ) !== true) {
-            return;
-        }
-
-        if (pickBack( ) === false ) {
-            return false;
-        }
-
-        bin.hsClose();
-        return false ;
-    }
-
     function create () {
         var btn = jQuery(this);
         if (btn.closest(".HsList" ).data("HsList")._info) {
@@ -245,12 +217,22 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
             return false;
         }
 
-        if (pickBack( ) === false ) {
-            return false;
+        if ( ! mul )
+        pickBack ( );
+        return false;
+    }
+
+    function commit () {
+        var btn = jQuery(this);
+        if (btn.closest(".HsList" ).data("HsList")._info) {
+            return;
+        }
+        if (btn.closest(".openbox"). is ( bin ) !== true) {
+            return;
         }
 
-        bin.hsClose();
-        return false ;
+        pickBack ( );
+        return false;
     }
 
     if (bin) {
@@ -498,7 +480,7 @@ function hsFormFillPick(box, v, n) {
  * @param {String} n
  */
 function hsListFillPick(cel, v, n) {
-    var box = cel. closest (".pickbox,.openbox,.loadbox");
+    var box = cel. closest (".picksel" );
     var mul = box.hasClass ( "pickmul" );
     var val = box.data("pickData") || {};
 

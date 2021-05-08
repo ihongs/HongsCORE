@@ -20,7 +20,10 @@ html, body {
     overflow: auto ;
     position: fixed;
     background: #101010;
-    z-index: 1;
+    z-index: 1010;
+}
+#bodybox {
+    z-index: 1000;
 }
 
 #main-namebar ,
@@ -41,6 +44,9 @@ html, body {
 }
 .sider-open #bodybox {
     padding-left: 200px;
+}
+.sider-open #bodybox > * > .laps.tabs {
+    padding-left: 215px;
 }
 
 /** 标题 **/
@@ -317,9 +323,6 @@ html, body {
 
 /* 主导航条默认样式 */
 #main-context > .laps.tabs.breadcrumb {
-    margin-left : -15px;
-    margin-right: -15px;
-    margin-bottom: 20px;
     border       : 0;
     border-radius: 0;
     border-bottom: 1px solid #eee;
@@ -344,6 +347,17 @@ html, body {
 }
 #main-context > .laps.tabs.breadcrumb .back-crumb .glyphicon {
     color: #d00;
+}
+
+/* 主导航条悬浮固定 */
+#main-context > .laps.tabs {
+    position: fixed;
+    z-index : 1000 ;
+      width : 100% ;
+       left : 0 ;
+}
+#main-context > .laps.labs {
+    padding-top : 58px;
 }
 
 /* 隐藏受限的搜索框 */

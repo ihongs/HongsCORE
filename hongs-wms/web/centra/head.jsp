@@ -247,6 +247,20 @@
             }
         });
 
+        // 回退恢复滚动条
+        context
+            .on("hsRetir", ">.labs.laps>div", function(ev) {console.log(ev)
+                if ($(this).data("top") === undefined) {
+                    $(this).data("top", $(window).scrollTop());
+                }
+            })
+            .on("hsRecur", ">.labs.laps>div", function(ev) {console.log(ev)
+                if ($(this).data("top") !== undefined) {
+                    $(window).scrollTop( $(this).data("top") );
+                    $(this).removeData ( "top" );
+                }
+            });
+
         // 边栏隐藏与显示
         $("#head-handler").click(function() {
             $(document.body).toggleClass("sider-open");

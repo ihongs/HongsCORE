@@ -25,7 +25,7 @@
         <div class="col-xs-6">
             <div class="btn-group">
                 <%if ("select".equals(_action)) {%>
-                <button type="button" class="commit for-checks btn btn-primary"><%=_locale.translate("fore.select", _title)%></button>
+                <button type="button" class="commit btn btn-primary"><%=_locale.translate("fore.select", _title)%></button>
                 <%} // End If %>
                 <button type="button" class="create btn btn-default"><%=_locale.translate("fore.create", _title)%></button>
                 <%if ("browse".equals(_action)) {%>
@@ -34,6 +34,9 @@
                 <button type="button" class="reveal for-choose btn btn-default" title="<%=_locale.translate("fore.reveal", _title)%>"><span class="glyphicon glyphicon-time "></span></button>
                 <button type="button" class="copies for-checks btn btn-default" title="<%=_locale.translate("fore.copies", _title)%>"><span class="glyphicon glyphicon-share"></span></button>
                 <button type="button" class="delete for-checks btn btn-danger " title="<%=_locale.translate("fore.delete", _title)%>"><span class="glyphicon glyphicon-trash"></span></button>
+                <%} // End If %>
+                <%if ("select".equals(_action)) {%>
+                <span class="btn btn-text text-muted picknuw"><%=_locale.translate("fore.selected", _title)%> <b class="picknum">0</b></span>
                 <%} // End If %>
             </div>
         </div>

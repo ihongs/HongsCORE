@@ -862,21 +862,17 @@ ul.pickrol > li.btn-default.form-control {
     margin-bottom: 2px;
 }
 
-.pickbox:empty  {
-    display: none ;
+.pickbox:empty  ,
+.pickrol .close ,
+.pickrol  input {
+    display: none;
 }
-.picknum:empty  {
-    display: none ;
+/* 已选数量 */
+.picksel .picknuw {
+    display: none;
 }
-.picknum:after  {
-    content: ") " ;
-}
-.picknum:before {
-    content: " (" ;
-}
-.pickrol  input ,
-.pickrol .close {
-    display: none ;
+.pickmul .picknuw {
+    display: inline;
 }
 
 .datebox.input-group {

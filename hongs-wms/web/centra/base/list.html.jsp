@@ -35,10 +35,10 @@
                 <button type="button" class="copies for-checks btn btn-default" title="<%=_locale.translate("fore.copies", _title)%>"><span class="glyphicon glyphicon-share"></span></button>
                 <button type="button" class="delete for-checks btn btn-danger " title="<%=_locale.translate("fore.delete", _title)%>"><span class="glyphicon glyphicon-trash"></span></button>
                 <%} // End If %>
-                <%if ("select".equals(_action)) {%>
-                <span class="btn btn-text text-muted picksum"><%=_locale.translate("fore.selected", _title)%> <b class="picknum">0</b></span>
-                <%} // End If %>
             </div>
+            <%if ("select".equals(_action)) {%>
+            <div class="btn btn-text text-muted picksum"><%=_locale.translate("fore.selected", _title)%> <b class="picknum"></b></div>
+            <%} // End If %>
         </div>
         <div class="col-xs-6">
             <div class="input-group">
@@ -513,7 +513,8 @@
             listbox.find("thead ._amenu").addClass( "hidden" );
         }
         // 无操作按钮则隐藏选择
-        if (findbox.find(".for-choose").size() == 0
+        if (! loadbox.is(".picksel")
+        &&  findbox.find(".for-choose").size() == 0
         &&  findbox.find(".for-checks").size() == 0) {
             listbox.find("thead ._check").addClass( "hidden" );
         }

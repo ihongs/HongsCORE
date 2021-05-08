@@ -868,6 +868,9 @@ ul.pickrol > li.btn-default.form-control {
     display: none;
 }
 /* 已选数量 */
+.picknum:empty  {
+    content: "0" ;
+}
 .picksel .picksum {
     display: none;
 }

@@ -52,7 +52,7 @@
             <div class="toolbox" style="margin-bottom: 0;">
                 <button type="button" class="commit btn btn-primary"><%=_locale.translate("fore.select")%></button>
                 <button type="button" class="cancel btn btn-link   "><%=_locale.translate("fore.cancel")%></button>
-                <span class="btn btn-text text-muted picksum"><%=_locale.translate("fore.selected")%> <b class="picknum">0</b></span>
+                <span class="btn btn-text text-muted picksum"><%=_locale.translate("fore.selected")%> <b class="picknum"></b></span>
             </div>
         </div>
         <div style="display: table-cell; width: 15px; vertical-align: middle;">

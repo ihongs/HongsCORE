@@ -31,6 +31,7 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
     var t    = box.attr("data-ft" ) || box.attr("type");
     var vk   = box.attr("data-vk" ) || "id"  ;
     var tk   = box.attr("data-tk" ) || "name";
+    var at   = box.attr("data-at" );
     var mul  = box.is  (".pickmul")
          || !! box.data("repeated")
          || !! box.data("multiple")
@@ -181,7 +182,6 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
             return;
         }
 
-        var at  = box.attr("data-at");
         var evt = arguments[0];
         var rst = arguments[1];
 

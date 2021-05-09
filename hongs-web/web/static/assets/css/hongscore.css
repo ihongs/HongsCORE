@@ -772,6 +772,16 @@ hr.gap {
     border-top: 20px solid #ccc;
     margin : 0 -15px 20px -15px;
 }
+hr.double {
+    border-width: 3px;
+    border-style: double;
+}
+hr.dashed {
+    border-style: dashed;
+}
+hr.dotted {
+    border-style: dotted;
+}
 
 ul.pickbox {
     margin : 0;

@@ -15,7 +15,7 @@ import java.util.Set;
  */
 public class Casc {
 
-    private static Async QUEUE = new Async<Casc> (
+    private static final Async QUEUE = new Async<Casc> (
         "matrix.cascade" , Integer.MAX_VALUE , 1
     ) {
         @Override

@@ -222,9 +222,8 @@ public class SearchEntity extends LuceneRecord {
     }
 
     @Override
-    public void addDoc(Document doc)
+    public void addDoc(String id, Document doc)
     throws HongsException {
-        String  id  =  doc . get( Cnst.ID_KEY );
         WRITES.put(id, doc);
         if (!REFLUX_MODE) {
             commit();

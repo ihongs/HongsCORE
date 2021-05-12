@@ -420,7 +420,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             id  =  Core.newIdentity();
             rd.put(Cnst.ID_KEY , id );
         }
-        addDoc(padDoc(rd));
+        addDoc(id, padDoc(rd) );
         return id;
     }
 
@@ -571,7 +571,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
     //** 组件方法 **/
 
-    public void addDoc(Document doc) throws HongsException {
+    public void addDoc(String id, Document doc) throws HongsException {
         IndexWriter iw = getWriter();
         try {
             iw.addDocument (doc);

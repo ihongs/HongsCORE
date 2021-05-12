@@ -58,18 +58,14 @@ public class Data extends SearchEntity {
      */
     public static final String  PART_ID_KEY  =  "pd";
 
-    /**
-     * 级联操作集
-     */
-    protected     final Set<String> DELETE_CASCADE = new LinkedHashSet();
-    protected     final Set<String> UPDATE_CASCADE = new LinkedHashSet();
-    
     protected     final String  conf   ;
     protected     final String  form   ;
     private             String  userId = null;
     private         Set<String> nmCols = null;
     private         Set<String> wdCols = null;
     private         Set<String> skCols = null;
+    protected final Set<String> delIds = new LinkedHashSet();
+    protected final Set<String> setIds = new LinkedHashSet();
 
     /**
      * 数据实例基础构造方法
@@ -955,14 +951,14 @@ public class Data extends SearchEntity {
     public void setDoc(String id, Document doc)
     throws HongsException {
         super.setDoc(id , doc);
-        UPDATE_CASCADE.add(id);
+        setIds.add(id);
     }
 
     @Override
     public void delDoc(String id)
     throws HongsException {
         super.delDoc(id /**/ );
-        DELETE_CASCADE.add(id);
+        delIds.add(id);
     }
 
     @Override
@@ -1273,6 +1269,20 @@ public class Data extends SearchEntity {
 
     //** 级联操作 **/
 
+    protected void cascades() {
+        Set<String> ats = Synt.toSet(getParams().get("cascades"));
+        if (ats == null || ats.isEmpty()) {
+            return;
+        }
+        if (setIds.isEmpty( )
+        &&  delIds.isEmpty()) {
+            return;
+        }
+
+        // 放入队列, 异步处理
+        Casc.add(conf, form, setIds, delIds);
+    }
+
     protected void includes(Map dd) throws HongsException {
         Set<String> ats = Synt.toSet(getParams().get("includes"));
         if (ats == null || ats.isEmpty()) {
@@ -1335,70 +1345,6 @@ public class Data extends SearchEntity {
                     dd.put(et.getKey(), fd.get(et.getValue()));
                 }
             }
-        }
-    }
-
-    protected void cascades() {
-        Set<String> ats = Synt.toSet(getParams().get("cascades"));
-        if (ats == null || ats.isEmpty()) {
-            return;
-        }
-        if (UPDATE_CASCADE.isEmpty( )
-        &&  DELETE_CASCADE.isEmpty()) {
-            return;
-        }
-        for(String at : ats) {
-            // 格式: conf.form?fk#DELETE#UPDATE
-            int p ;
-            p = at.indexOf("#");
-            String tk = at.substring(0+p);
-                   at = at.substring(0,p);
-            p = at.indexOf("?");
-            String fk = at.substring(1+p);
-                   at = at.substring(0,p);
-            p = at.lastIndexOf(".");
-            String c  = at.substring(0,p);
-            String f  = at.substring(1+p);
-
-            // 放入队列, 异步处理
-            if (!UPDATE_CASCADE.isEmpty()
-            &&  tk.contains( "#UPDATE" )) {
-                Casc.update(c, f, fk, UPDATE_CASCADE);
-            }
-            if (!DELETE_CASCADE.isEmpty()
-            &&  tk.contains( "#DELETE" )) {
-                Casc.delete(c, f, fk, DELETE_CASCADE);
-            }
-        }
-    }
-
-    protected void updateCascade(String fk, String fv, long ct) throws HongsException {
-        Loop loop = search(Synt.mapOf(
-            Cnst.RB_KEY, Synt.setOf(Cnst.ID_KEY),
-            fk, fv
-        ), 0, 0);
-        String  fn = getFormId();
-        for (Map info : loop) {
-            String id = (String) info.get(Cnst.ID_KEY);
-            set(id, Synt.mapOf(
-                "__meno__", "system.cascade",
-                "__memo__", "Update cascade " + fn + ":" + id
-            ) , ct);
-        }
-    }
-
-    protected void deleteCascade(String fk, String fv, long ct) throws HongsException {
-        Loop loop = search(Synt.mapOf(
-            Cnst.RB_KEY, Synt.setOf(Cnst.ID_KEY),
-            fk, fv
-        ), 0, 0);
-        String  fn = getFormId();
-        for (Map info : loop) {
-            String id = (String) info.get(Cnst.ID_KEY);
-            cut(id, Synt.mapOf(
-                "__meno__", "system.cascade",
-                "__memo__", "Delete cascade " + fn + ":" + id
-            ) , ct);
         }
     }
 

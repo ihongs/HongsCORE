@@ -22,12 +22,12 @@ public class Casc {
         public void run(Casc casc) { casc.run(); }
     };
 
-    public  final  String conf;
-    public  final  String form;
-    public  final  Set<String> setIds;
-    public  final  Set<String> delIds;
+    public final String conf;
+    public final String form;
+    public final Set<String> setIds;
+    public final Set<String> delIds;
 
-    private Casc (String conf, String form, Set<String> setIds, Set<String> delIds) {
+    private Casc(String conf, String form, Set<String> setIds, Set<String> delIds) {
         this.conf = conf;
         this.form = form;
         this.setIds = setIds;

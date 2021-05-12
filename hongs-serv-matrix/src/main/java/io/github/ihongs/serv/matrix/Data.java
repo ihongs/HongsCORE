@@ -1381,7 +1381,8 @@ public class Data extends SearchEntity {
         for (Map info : loop) {
             String id = (String) info.get(Cnst.ID_KEY);
             set(id, Synt.mapOf(
-                "__meno__", "update.cascade." + fn + ":" + id
+                "__meno__", "system.cascade",
+                "__memo__", "Update cascade " + fn + ":" + id
             ) , ct);
         }
     }
@@ -1395,7 +1396,8 @@ public class Data extends SearchEntity {
         for (Map info : loop) {
             String id = (String) info.get(Cnst.ID_KEY);
             cut(id, Synt.mapOf(
-                "__meno__", "delete.cascade." + fn + ":" + id
+                "__meno__", "system.cascade",
+                "__memo__", "Delete cascade " + fn + ":" + id
             ) , ct);
         }
     }

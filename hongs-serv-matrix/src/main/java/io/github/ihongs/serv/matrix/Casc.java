@@ -48,7 +48,7 @@ public class Casc {
     }
     
     public static void add(String conf, String form, Set<String> setIds, Set<String> delIds) {
-        QUEUE.add(new Casc( conf, form, setIds, delIds ) );
+        QUEUE.add(new Casc( conf, form, setIds, delIds ));
     }
     
     public static void cascade(Data inst, Set<String> setIds, Set<String> delIds) throws HongsException {

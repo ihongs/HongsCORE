@@ -1308,7 +1308,7 @@ public class Data extends SearchEntity {
             Map fc = (Map) getFields().get(k);
 
             Object v = dd.get(k);
-            if (!Synt.declare(fc.get("__repeated__"), false)) {
+            if (Synt.declare(fc.get("__repeated__"), false) == false) {
                 /**/  Map  fd = Data.getInstance(c, f).getOne(Synt.mapOf(
                     Cnst.RB_KEY , fs,
                     Cnst.ID_KEY , v

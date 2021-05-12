@@ -7,7 +7,7 @@ import io.github.ihongs.util.reflex.Async;
 import java.util.Set;
 
 /**
- * 级联操作容器
+ * 级联操作队列
  * @author Kevin
  */
 public class Casc {

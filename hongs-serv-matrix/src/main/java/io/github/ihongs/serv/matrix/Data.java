@@ -525,8 +525,8 @@ public class Data extends SearchEntity {
 
         Table table = getTable();
         if (table == null) {
-            addDoc(dc);
-            return 01 ;
+            addDoc(id, dc);
+            return 1 ;
         }
 
         String   fid   = getFormId();
@@ -556,8 +556,8 @@ public class Data extends SearchEntity {
         table.insert(nd);
 
         // 保存到索引库
-        addDoc(dc);
-        return 01 ;
+        addDoc(id, dc);
+        return 1 ;
     }
 
     /**

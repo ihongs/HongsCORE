@@ -47,15 +47,16 @@ public class Casc {
             Core core = Core.getInstance();
             long time = System.currentTimeMillis() / 1000;
             try {
+                Data inst = Data.getInstance(data.conf, data.form);
                 switch (data.proc) {
                     case UPDATE:
                         for (String fv : data.fv ) {
-                            Data.getInstance(data.conf, data.form).updateCascade(data.fk, fv, time);
+                            inst.updateCascade(data.fk, fv , time);
                         }
                         break;
                     case DELETE:
                         for (String fv : data.fv ) {
-                            Data.getInstance(data.conf, data.form).deleteCascade(data.fk, fv, time);
+                            inst.deleteCascade(data.fk, fv , time);
                         }
                         break;
                 }

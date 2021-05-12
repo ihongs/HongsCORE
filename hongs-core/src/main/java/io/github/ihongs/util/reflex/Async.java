@@ -31,9 +31,8 @@ public abstract class Async<T> extends CoreSerial implements AutoCloseable {
      * @param name      任务集名称, 退出时保存现有任务待下次启动时执行, 为 null 则不保存
      * @param maxTasks  最多容纳的任务数量
      * @param maxServs  最多可用的线程数量
-     * @throws io.github.ihongs.HongsException
      */
-    protected Async(String name, int maxTasks, int maxServs) throws HongsException {
+    protected Async(String name, int maxTasks, int maxServs) {
         servs = Executors.newCachedThreadPool(  );
         tasks = new LinkedBlockingQueue(maxTasks);
 
@@ -42,7 +41,12 @@ public abstract class Async<T> extends CoreSerial implements AutoCloseable {
                   + File.separator + "serial"
                   + File.separator + name + ".async.ser");
             if (back.exists()) {
-                load ( back );
+                try {
+                    load(back);
+                }
+                catch (HongsException ex ) {
+                    throw ex.toExemption();
+                }
             }
         }
 
@@ -162,9 +166,8 @@ public abstract class Async<T> extends CoreSerial implements AutoCloseable {
      * 测试方法
      * @param args
      * @throws java.io.IOException
-     * @throws io.github.ihongs.HongsException
      */
-    public static void main(String[] args) throws IOException, HongsException {
+    public static void main(String[] args) throws IOException {
         io.github.ihongs.cmdlet.CmdletRunner.init(args);
 
         Async a = new Async<String>("test", Integer.MAX_VALUE, 2) {

@@ -41,9 +41,8 @@ public abstract class Batch<T> extends CoreSerial implements AutoCloseable {
      * @param timeout   间隔此毫秒时间后开始执行
      * @param sizeout   缓冲区长度达此数量后执行
      * @param diverse   是否去重(缓冲类型): true 为 Set, false 为 List
-     * @throws io.github.ihongs.HongsException
      */
-    protected Batch(String name, int maxTasks, int maxServs, int timeout, int sizeout, boolean diverse) throws HongsException {
+    protected Batch(String name, int maxTasks, int maxServs, int timeout, int sizeout, boolean diverse) {
         servs = Executors.newCachedThreadPool(  );
         tasks = new LinkedBlockingQueue(maxTasks);
         cache = new ArrayList ( maxServs );
@@ -57,7 +56,12 @@ public abstract class Batch<T> extends CoreSerial implements AutoCloseable {
                   + File.separator + "serial"
                   + File.separator + name + ".batch.ser");
             if (back.exists()) {
-                load ( back );
+                try {
+                    load(back);
+                }
+                catch (HongsException ex ) {
+                    throw ex.toExemption();
+                }
             }
         }
 
@@ -240,9 +244,8 @@ public abstract class Batch<T> extends CoreSerial implements AutoCloseable {
      * 测试方法
      * @param args
      * @throws java.io.IOException
-     * @throws io.github.ihongs.HongsException
      */
-    public static void main(String[] args) throws IOException, HongsException {
+    public static void main(String[] args) throws IOException {
         io.github.ihongs.cmdlet.CmdletRunner.init(args);
 
         Batch a = new Batch<String>("test", Integer.MAX_VALUE, 2, 10000, 5, false) {

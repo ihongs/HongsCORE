@@ -1377,10 +1377,11 @@ public class Data extends SearchEntity {
             Cnst.RB_KEY, Synt.setOf(Cnst.ID_KEY),
             fk, fv
         ), 0, 0);
+        String  fn = getFormId();
         for (Map info : loop) {
             String id = (String) info.get(Cnst.ID_KEY);
             set(id, Synt.mapOf(
-                "__meno__", "update.cascade." + getFormId() + ":" + id
+                "__meno__", "update.cascade." + fn + ":" + id
             ) , ct);
         }
     }
@@ -1390,10 +1391,11 @@ public class Data extends SearchEntity {
             Cnst.RB_KEY, Synt.setOf(Cnst.ID_KEY),
             fk, fv
         ), 0, 0);
+        String  fn = getFormId();
         for (Map info : loop) {
             String id = (String) info.get(Cnst.ID_KEY);
             cut(id, Synt.mapOf(
-                "__meno__", "delete.cascade." + getFormId() + ":" + id
+                "__meno__", "delete.cascade." + fn + ":" + id
             ) , ct);
         }
     }

@@ -43,7 +43,7 @@ public class Casc {
             CoreLogger.error ( e);
         }
         finally {
-            core.close( );
+            core.close();
         }
     }
     

@@ -1286,15 +1286,19 @@ public class Data extends SearchEntity {
 
     //** 级联操作 **/
 
-    protected void cascades(Set ss, Set rs) {
-        if (ss == null || ss.isEmpty()) {
-        if (rs == null || rs.isEmpty()) {
-            return;
-        }}
+    protected void cascades(Set sd, Set rd) {
         Set<String> aq = Synt.toSet(getParams().get("cascades"));
         if (aq == null || aq.isEmpty()) {
             return;
         }
+        if (sd == null || sd.isEmpty()) {
+        if (rd == null || rd.isEmpty()) {
+            return;
+        }}
+
+        Set sq  =  new LinkedHashSet();
+        Set rq  =  new LinkedHashSet();
+
         for(String at : aq) {
         if (at == null || at.isBlank()) {
             continue;
@@ -1303,26 +1307,25 @@ public class Data extends SearchEntity {
             // 格式: conf.form?fk#DELETE#UPDATE
             int     p = at.indexOf  ("#");
             String tk = at.substring(0+p);
-                   at = at.substring(0,p);
-                    p = at.indexOf  ("?");
-            String fk = at.substring(1+p);
-                   at = at.substring(0,p);
-                    p = at.indexOf  ("!");
-            String  c = at.substring(0,p);
-            String  f = at.substring(1+p);
+            //     at = at.substring(0,p);
 
-            // 放入队列, 异步处理
-            if (rs != null && ! rs.isEmpty()
-            &&  tk.contains( "#DELETE" )) {
-                for(Object fv : rs) {
-                    Casc.delete(c, f, fk, fv);
-                }
+            if (tk.contains( "#DELETE" )) {
+                rq.add(at);
             }
-            if (ss != null && ! ss.isEmpty()
-            &&  tk.contains( "#UPDATE" )) {
-                for(Object fv : ss) {
-                    Casc.update(c, f, fk, fv);
-                }
+            if (tk.contains( "#UPDATE" )) {
+                sq.add(at);
+            }
+        }
+
+        // 放入队列, 异步处理
+        if (rd != null && ! rd.isEmpty() && ! rq.isEmpty()) {
+            for(Object id : rd) {
+                Casc.delete(id, sq);
+            }
+        }
+        if (sd != null && ! sd.isEmpty() && ! sq.isEmpty()) {
+            for(Object id : sd) {
+                Casc.update(id, sq);
             }
         }
     }
@@ -1332,6 +1335,7 @@ public class Data extends SearchEntity {
         if (aq == null || aq.isEmpty()) {
             return;
         }
+
         for(String at : aq) {
         if (at == null || at.isBlank()) {
             continue;
@@ -1345,8 +1349,8 @@ public class Data extends SearchEntity {
             String fk = at.substring(1+p);
                    at = at.substring(0,p);
                     p = at.indexOf  ("!");
-            String  c = at.substring(0,p);
             String  f = at.substring(1+p);
+            String  c = at.substring(0,p);
             String  k = fk.trim ();
             String  s = tk.trim ();
 

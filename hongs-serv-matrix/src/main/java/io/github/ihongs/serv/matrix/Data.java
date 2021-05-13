@@ -1303,11 +1303,11 @@ public class Data extends SearchEntity {
         if (at == null || at.isBlank()) {
             continue;
         }
-            if (at.contains("#DELETE")) {
-                rq.add(at);
-            }
             if (at.contains("#UPDATE")) {
                 sq.add(at);
+            }
+            if (at.contains("#DELETE")) {
+                rq.add(at);
             }
         }
 

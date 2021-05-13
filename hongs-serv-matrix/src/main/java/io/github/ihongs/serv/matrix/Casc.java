@@ -7,13 +7,14 @@ import io.github.ihongs.HongsException;
 import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.reflex.Async;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 级联操作队列
  * @author Kevin
  */
 public class Casc {
-    
+
     private static final Async QUEUE = new Async<Casc> (
         "matrix.cascade" , Integer.MAX_VALUE , 1
     ) {
@@ -21,51 +22,59 @@ public class Casc {
         public void run(Casc casc) { casc.run(); }
     };
 
-    public enum  ACTS  {UPDATE, DELETE};
-    public final ACTS   type;
-    public final String conf;
-    public final String form;
-    public final String fk;
-    public final Object fv;
+    public enum  ACTION {UPDATE, DELETE};
+    public final     ACTION  ac;
+    public final     Object  id;
+    public final Set<String> aq;
 
-    private Casc(ACTS type, String conf, String form, String fk, Object fv) {
-        this.type = type;
-        this.conf = conf;
-        this.form = form;
-        this.fk = fk;
-        this.fv = fv;
+    private Casc(ACTION ac, Object id, Set<String> aq) {
+        this.aq = aq;
+        this.id = id;
+        this.ac = ac;
     }
-    
+
     private void run() {
         Core core = Core.getInstance();
-        long time = System.currentTimeMillis()/ 1000 ;
+        long time = System.currentTimeMillis() / 1000;
         try {
-            Data inst = Data.getInstance(conf , form);
-            switch (type) {
-                case UPDATE:
-                    update(inst, fk, fv, time);
-                    break;
-                case DELETE:
-                    delete(inst, fk, fv, time);
-                    break;
+            for(String at : aq) {
+                // 格式: conf.form?fk#DELETE#UPDATE
+                int     p = at.indexOf  ("#");
+                if( 0 < p ) {
+                       at = at.substring(0,p);
+                }       p = at.indexOf  ("?");
+                String fk = at.substring(1+p);
+                       at = at.substring(0,p);
+                        p = at.indexOf  ("!");
+                String  f = at.substring(1+p);
+                String  c = at.substring(0,p);
+
+                switch (ac) {
+                    case UPDATE:
+                        update(Data.getInstance(c, f), fk, id, time);
+                        break;
+                    case DELETE:
+                        delete(Data.getInstance(c, f), fk, id, time);
+                        break;
+                }
             }
         }
         catch (Exception|Error e) {
             CoreLogger.error ( e);
         }
         finally {
-            core.reset( );
+            core.reset();
         }
     }
-    
-    public static void update(String conf, String form, String fk, Object fv) {
-        QUEUE.add(new Casc(ACTS.UPDATE, conf, form, fk, fv));
+
+    public static void update(Object id, Set<String> aq) {
+        QUEUE.add(new Casc(ACTION.UPDATE, id, aq));
     }
-    
-    public static void delete(String conf, String form, String fk, Object fv) {
-        QUEUE.add(new Casc(ACTS.DELETE, conf, form, fk, fv));
+
+    public static void delete(Object id, Set<String> aq) {
+        QUEUE.add(new Casc(ACTION.DELETE, id, aq));
     }
-    
+
     public static void update(Data inst, String fk, Object fv, long ct) throws HongsException {
         Data.Loop loop = inst.search(Synt.mapOf(
             Cnst.RB_KEY, Synt.setOf(Cnst.ID_KEY),

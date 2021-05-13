@@ -1303,16 +1303,10 @@ public class Data extends SearchEntity {
         if (at == null || at.isBlank()) {
             continue;
         }
-
-            // 格式: conf.form?fk#DELETE#UPDATE
-            int     p = at.indexOf  ("#");
-            String tk = at.substring(0+p);
-            //     at = at.substring(0,p);
-
-            if (tk.contains( "#DELETE" )) {
+            if (at.contains("#DELETE")) {
                 rq.add(at);
             }
-            if (tk.contains( "#UPDATE" )) {
+            if (at.contains("#UPDATE")) {
                 sq.add(at);
             }
         }

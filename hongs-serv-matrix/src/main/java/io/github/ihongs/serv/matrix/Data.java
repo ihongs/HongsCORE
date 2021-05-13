@@ -1314,12 +1314,12 @@ public class Data extends SearchEntity {
         // 放入队列, 异步处理
         if (rd != null && ! rd.isEmpty() && ! rq.isEmpty()) {
             for(Object id : rd) {
-                Casc.delete(id, sq);
+                Casc.delete(rq, id);
             }
         }
         if (sd != null && ! sd.isEmpty() && ! sq.isEmpty()) {
             for(Object id : sd) {
-                Casc.update(id, sq);
+                Casc.update(sq, id);
             }
         }
     }

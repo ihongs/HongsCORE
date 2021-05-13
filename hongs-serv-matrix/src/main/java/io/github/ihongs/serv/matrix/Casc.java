@@ -27,36 +27,19 @@ public class Casc {
     public final     Object  id;
     public final Set<String> aq;
 
-    private Casc(ACTION ac, Object id, Set<String> aq) {
+    private Casc(Set<String> aq, Object id, ACTION ac) {
         this.aq = aq;
         this.id = id;
         this.ac = ac;
     }
 
-    private void run() {
+    private void run () {
         Core core = Core.getInstance();
         long time = System.currentTimeMillis() / 1000;
         try {
-            for(String at : aq) {
-                // 格式: conf.form?fk#DELETE#UPDATE
-                int     p = at.indexOf  ("#");
-                if( 0 < p ) {
-                       at = at.substring(0,p);
-                }       p = at.indexOf  ("?");
-                String fk = at.substring(1+p);
-                       at = at.substring(0,p);
-                        p = at.indexOf  ("!");
-                String  f = at.substring(1+p);
-                String  c = at.substring(0,p);
-
-                switch (ac) {
-                    case UPDATE:
-                        update(Data.getInstance(c, f), fk, id, time);
-                        break;
-                    case DELETE:
-                        delete(Data.getInstance(c, f), fk, id, time);
-                        break;
-                }
+            switch (ac) {
+                case UPDATE: update(aq, id, time); break;
+                case DELETE: delete(aq, id, time); break;
             }
         }
         catch (Exception|Error e) {
@@ -67,12 +50,62 @@ public class Casc {
         }
     }
 
-    public static void update(Object id, Set<String> aq) {
-        QUEUE.add(new Casc(ACTION.UPDATE, id, aq));
+    public static void update(Set<String> aq, Object id) {
+        QUEUE.add(new Casc(aq, id, ACTION.UPDATE));
     }
 
-    public static void delete(Object id, Set<String> aq) {
-        QUEUE.add(new Casc(ACTION.DELETE, id, aq));
+    public static void delete(Set<String> aq, Object id) {
+        QUEUE.add(new Casc(aq, id, ACTION.DELETE));
+    }
+
+    public static void update(Set<String> aq, Object id, long ct) throws HongsException {
+        for(String at : aq) {
+            if (at == null || at.isBlank()) {
+                continue;
+            }
+
+            // 格式: conf.form?fk#DELETE#UPDATE
+            int     p = at.indexOf  ("#");
+            if (0 < p ) {
+            String tk = at.substring(0+p);
+            if ( ! tk.contains("#UPDATE") ) {
+                continue;
+            }      at = at.substring(0,p);
+            }
+                    p = at.indexOf  ("?");
+            String fk = at.substring(1+p);
+                   at = at.substring(0,p);
+                    p = at.indexOf  ("!");
+            String  f = at.substring(1+p);
+            String  c = at.substring(0,p);
+
+            update(Data.getInstance(c, f), fk, id, ct);
+        }
+    }
+
+    public static void delete(Set<String> aq, Object id, long ct) throws HongsException {
+        for(String at : aq) {
+            if (at == null || at.isBlank()) {
+                continue;
+            }
+
+            // 格式: conf.form?fk#DELETE#UPDATE
+            int     p = at.indexOf  ("#");
+            if (0 < p ) {
+            String tk = at.substring(0+p);
+            if ( ! tk.contains("#DELETE") ) {
+                continue;
+            }      at = at.substring(0,p);
+            }
+                    p = at.indexOf  ("?");
+            String fk = at.substring(1+p);
+                   at = at.substring(0,p);
+                    p = at.indexOf  ("!");
+            String  f = at.substring(1+p);
+            String  c = at.substring(0,p);
+
+            delete(Data.getInstance(c, f), fk, id, ct);
+        }
     }
 
     public static void update(Data inst, String fk, Object fv, long ct) throws HongsException {

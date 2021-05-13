@@ -143,7 +143,7 @@ public class Data extends SearchEntity {
         }
 
         // 默认构造
-        name = Data.class.getName() +":"+ conf +"."+ form;
+        name = Data.class.getName() +":"+ conf +"!"+ form;
         Core core =  Core.getInstance(  );
         Data inst = (Data) core.get(name);
         if (inst == null) {
@@ -358,7 +358,7 @@ public class Data extends SearchEntity {
             ||  conf.startsWith("centre/")) {
                 name = "matrix/"+ conf.substring(7) +"."+ form ;
             } else {
-                name = conf +"."+ form;
+                name = conf +"!"+ form;
             }
         }
 

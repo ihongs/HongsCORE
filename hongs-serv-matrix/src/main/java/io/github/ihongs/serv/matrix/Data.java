@@ -974,7 +974,7 @@ public class Data extends SearchEntity {
     public void delDoc(String id)
     throws HongsException {
         super.delDoc(id);
-        setIds. add (id);
+        delIds. add (id);
     }
 
     @Override

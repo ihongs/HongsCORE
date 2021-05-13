@@ -64,8 +64,8 @@ public class Data extends SearchEntity {
     private         Set<String> nmCols = null;
     private         Set<String> wdCols = null;
     private         Set<String> skCols = null;
-    protected final Set<String> delIds = new LinkedHashSet();
-    protected final Set<String> setIds = new LinkedHashSet();
+    private  final  Set<String> setIds = new LinkedHashSet();
+    private  final  Set<String> delIds = new LinkedHashSet();
 
     /**
      * 数据实例基础构造方法
@@ -942,23 +942,39 @@ public class Data extends SearchEntity {
     }
 
     @Override
+    public void commit() {
+        super.commit();
+        cascades(setIds, delIds);
+        setIds.clear();
+        delIds.clear();
+    }
+
+    @Override
+    public void revert() {
+        super.revert();
+        setIds.clear();
+        delIds.clear();
+    }
+
+    @Override
     public void close () {
-        super.close();
-        cascades();
+        super. close();
+        setIds.clear();
+        delIds.clear();
     }
 
     @Override
     public void setDoc(String id, Document doc)
     throws HongsException {
         super.setDoc(id , doc);
-        setIds.add(id);
+        setIds. add (id);
     }
 
     @Override
     public void delDoc(String id)
     throws HongsException {
-        super.delDoc(id /**/ );
-        delIds.add(id);
+        super.delDoc(id);
+        setIds. add (id);
     }
 
     @Override
@@ -1269,45 +1285,69 @@ public class Data extends SearchEntity {
 
     //** 级联操作 **/
 
-    protected void cascades() {
-        if (setIds.isEmpty( )
-        &&  delIds.isEmpty()) {
+    protected void cascades(Set ss, Set rs) {
+        if (ss == null || ss.isEmpty()) {
+        if (rs == null || rs.isEmpty()) {
+            return;
+        }}
+        Set<String> aq = Synt.toSet(getParams().get("cascades"));
+        if (aq == null || aq.isEmpty()) {
             return;
         }
-        
-        Set<String> ats = Synt.toSet(getParams().get("cascades"));
-        if (ats == null || ats.isEmpty()) {
-            return;
+        for(String at : aq) {
+        if (at == null || at.isBlank()) {
+            continue;
         }
-        
-        // 放入队列, 异步处理
-        Casc.add(conf, form, setIds, delIds);
+
+            // 格式: conf.form?fk#DELETE#UPDATE
+            int     p = at.indexOf  ("#");
+            String tk = at.substring(0+p);
+                   at = at.substring(0,p);
+                    p = at.indexOf  ("?");
+            String fk = at.substring(1+p);
+                   at = at.substring(0,p);
+                    p = at.indexOf  ("!");
+            String  c = at.substring(0,p);
+            String  f = at.substring(1+p);
+
+            // 放入队列, 异步处理
+            if (rs != null && ! rs.isEmpty()
+            &&  tk.contains( "#DELETE" )) {
+                for(Object fv : rs) {
+                    Casc.delete(c, f, fk, fv);
+                }
+            }
+            if (ss != null && ! ss.isEmpty()
+            &&  tk.contains( "#UPDATE" )) {
+                for(Object fv : ss) {
+                    Casc.update(c, f, fk, fv);
+                }
+            }
+        }
     }
 
     protected void includes(Map dd) throws HongsException {
-        Set<String> ats = Synt.toSet(getParams().get("includes"));
-        if (ats == null || ats.isEmpty()) {
+        Set<String> aq = Synt.toSet(getParams().get("includes"));
+        if (aq == null || aq.isEmpty()) {
             return;
         }
-        
-        for(String at : ats) {
-        if (at  == null || at .isBlank()) {
+        for(String at : aq) {
+        if (at == null || at.isBlank()) {
             continue;
         }
 
             // 格式: conf.form?fk#f1=fa;f2=fb
-            int p ;
-            p = at.indexOf("#");
+            int     p = at.indexOf  ("#");
             String tk = at.substring(1+p);
                    at = at.substring(0,p);
-            p = at.indexOf("?");
+                    p = at.indexOf  ("?");
             String fk = at.substring(1+p);
                    at = at.substring(0,p);
-            p = at.lastIndexOf(".");
-            String c  = at.substring(0,p);
-            String f  = at.substring(1+p);
-            String k  = fk.trim ();
-            String s  = tk.trim ();
+                    p = at.indexOf  ("!");
+            String  c = at.substring(0,p);
+            String  f = at.substring(1+p);
+            String  k = fk.trim ();
+            String  s = tk.trim ();
 
             // 解析字段映射表
             Map fm = new HashMap();

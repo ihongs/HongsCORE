@@ -563,6 +563,89 @@ public class Data extends SearchEntity {
     }
 
     /**
+     * 保存记录
+     *
+     * 注意:
+     * 更新不产生新节点,
+     * 仅供内部持续补充.
+     *
+     * @param id
+     * @param rd
+     * @param ctime
+     * @return 有更新为 1, 无更新为 0
+     * @throws HongsException
+     */
+    public int set(String id, Map rd, long ctime) throws HongsException {
+        Map dd = get(id);
+        int t  = dd.isEmpty()? 1: 2;
+        int i  = padInf(dd , rd);
+        // 无更新不存储
+        if (i  ==  0) {
+            return 0;
+        }
+
+        // 保存到文档库
+        dd.put(Cnst.ID_KEY , id);
+        Document dc = padDoc(dd);
+        setDoc(id, dc);
+
+        Table table = getTable();
+        if (table == null) {
+            return 1;
+        }
+
+        String   uid   = getUserId();
+        String   fid   = getFormId();
+        Object[] param = new String[] {id, fid, "0"};
+        String   where = "`id`=? AND `form_id`=? AND `etime`=?";
+
+        Map nd = table.fetchCase()
+            .filter( where,param )
+            .select("ctime,state")
+            .getOne( );
+        if (! nd.isEmpty()) {
+            if (Synt.declare(nd.get("state"), 0 ) ==  0   ) {
+                throw new HongsException(404, "Data item '"+id+"' is removed in "+getDbName())
+                    .setLocalizedContent("matrix.item.is.removed")
+                    .setLocalizedContext("matrix");
+            } /* 没有新增, 不必限时
+            if (Synt.declare(nd.get("ctime"), 0L ) >= ctime) {
+                throw new HongsException(400, "Wait 1 second to put '"+id+"' in "+getDbName())
+                    .setLocalizedContent("matrix.wait.one.second")
+                    .setLocalizedContext("matrix");
+            } */
+        } else {
+            nd.put("ctime", ctime);
+            nd.put("etime",   0  );
+            nd.put("state",   t  );
+            nd.put(     "id", id );
+            nd.put("form_id", fid);
+            nd.put("user_id", uid);
+        }
+
+        // 数据快照和日志标题
+        nd.put("__data__", dd);
+        nd.put("data", Dawn.toString(dd, true));
+        nd.put("name",     getText(dd, "name"));
+
+        // 操作备注和终端代码
+        if (rd.containsKey("memo")) {
+            nd.put("memo", getText(rd, "memo"));
+        }
+        if (rd.containsKey("meno")) {
+            nd.put("meno", getText(rd, "meno"));
+        }
+
+        if (nd.containsKey("etime") == false ) {
+            table.update(nd, where, param);
+        } else {
+            table.insert(nd);
+        }
+
+        return 1 ;
+    }
+
+    /**
      * 更新记录
      *
      * 注意:
@@ -647,10 +730,10 @@ public class Data extends SearchEntity {
     }
 
     /**
-     * 保存记录
+     * 删除记录
      *
      * 注意:
-     * 更新不产生新节点,
+     * 用于终止当前节点,
      * 仅供内部持续补充.
      *
      * @param id
@@ -659,58 +742,34 @@ public class Data extends SearchEntity {
      * @return 有更新为 1, 无更新为 0
      * @throws HongsException
      */
-    public int set(String id, Map rd, long ctime) throws HongsException {
-        Map dd = get(id);
-        int t  = dd.isEmpty()? 1: 2;
-        int i  = padInf(dd , rd);
-        // 无更新不存储
-        if (i  ==  0) {
-            return 0;
-        }
-
-        // 保存到文档库
-        dd.put(Cnst.ID_KEY , id);
-        Document dc = padDoc(dd);
-        setDoc(id, dc);
+    public int cut(String id, Map rd, long ctime) throws HongsException {
+        delDoc(id);
 
         Table table = getTable();
         if (table == null) {
             return 1;
         }
 
-        String   uid   = getUserId();
+    //  String   uid   = getUserId();
         String   fid   = getFormId();
         Object[] param = new String[] {id, fid, "0"};
         String   where = "`id`=? AND `form_id`=? AND `etime`=?";
 
         Map nd = table.fetchCase()
             .filter( where,param )
-            .select("ctime,state")
+            .select("ctime,state,data,name")
             .getOne( );
-        if (! nd.isEmpty()) {
-            if (Synt.declare(nd.get("state"), 0 ) ==  0   ) {
-                throw new HongsException(404, "Data item '"+id+"' is removed in "+getDbName())
-                    .setLocalizedContent("matrix.item.is.removed")
-                    .setLocalizedContext("matrix");
-            } /* 没有新增, 不必限时
-            if (Synt.declare(nd.get("ctime"), 0L ) >= ctime) {
-                throw new HongsException(400, "Wait 1 second to put '"+id+"' in "+getDbName())
-                    .setLocalizedContent("matrix.wait.one.second")
-                    .setLocalizedContext("matrix");
-            } */
-        } else {
-            nd.put("ctime", ctime);
-            nd.put("etime",   0  );
-            nd.put("state",   t  );
-            nd.put(     "id", id );
-            nd.put("form_id", fid);
-            nd.put("user_id", uid);
+        if (nd.isEmpty()
+        ||  Synt.declare(nd.get("state"), 0  ) ==  0   ) { // 删除是幂等的可重复调用
+            return 0;
         }
+    //  if (Synt.declare(nd.get("ctime"), 0L ) >= ctime) { // 总是更新最终的记录状态
+    //      throw new HongsException(400, "Wait 1 second to del '"+id+"' in "+getDbName())
+    //          .setLocalizedContent("matrix.wait.one.second")
+    //          .setLocalizedContext("matrix");
+    //  }
 
-        // 数据快照和日志标题
-        nd.put("__data__", dd);
-        nd.put("data", Dawn.toString(dd, true));
-        nd.put("name",     getText(dd, "name"));
+        nd.put("state" ,  0  );
 
         // 操作备注和终端代码
         if (rd.containsKey("memo")) {
@@ -720,13 +779,9 @@ public class Data extends SearchEntity {
             nd.put("meno", getText(rd, "meno"));
         }
 
-        if (nd.containsKey("etime") == false ) {
-            table.update(nd, where, param);
-        } else {
-            table.insert(nd);
-        }
+        table.update(nd, where, param);
 
-        return 1 ;
+        return 1;
     }
 
     /**
@@ -794,61 +849,6 @@ public class Data extends SearchEntity {
 
         table.update(ud, where, param);
         table.insert(nd);
-
-        return 1;
-    }
-
-    /**
-     * 删除记录
-     *
-     * 注意:
-     * 用于终止当前节点,
-     * 仅供内部持续补充.
-     *
-     * @param id
-     * @param rd
-     * @param ctime
-     * @return 有更新为 1, 无更新为 0
-     * @throws HongsException
-     */
-    public int cut(String id, Map rd, long ctime) throws HongsException {
-        delDoc(id);
-
-        Table table = getTable();
-        if (table == null) {
-            return 1;
-        }
-
-    //  String   uid   = getUserId();
-        String   fid   = getFormId();
-        Object[] param = new String[] {id, fid, "0"};
-        String   where = "`id`=? AND `form_id`=? AND `etime`=?";
-
-        Map nd = table.fetchCase()
-            .filter( where,param )
-            .select("ctime,state,data,name")
-            .getOne( );
-        if (nd.isEmpty()
-        ||  Synt.declare(nd.get("state"), 0  ) ==  0   ) { // 删除是幂等的可重复调用
-            return 0;
-        }
-    //  if (Synt.declare(nd.get("ctime"), 0L ) >= ctime) { // 总是更新最终的记录状态
-    //      throw new HongsException(400, "Wait 1 second to del '"+id+"' in "+getDbName())
-    //          .setLocalizedContent("matrix.wait.one.second")
-    //          .setLocalizedContext("matrix");
-    //  }
-
-        nd.put("state" ,  0  );
-
-        // 操作备注和终端代码
-        if (rd.containsKey("memo")) {
-            nd.put("memo", getText(rd, "memo"));
-        }
-        if (rd.containsKey("meno")) {
-            nd.put("meno", getText(rd, "meno"));
-        }
-
-        table.update(nd, where, param);
 
         return 1;
     }
@@ -1270,15 +1270,16 @@ public class Data extends SearchEntity {
     //** 级联操作 **/
 
     protected void cascades() {
-        Set<String> ats = Synt.toSet(getParams().get("cascades"));
-        if (ats == null || ats.isEmpty()) {
-            return;
-        }
         if (setIds.isEmpty( )
         &&  delIds.isEmpty()) {
             return;
         }
-
+        
+        Set<String> ats = Synt.toSet(getParams().get("cascades"));
+        if (ats == null || ats.isEmpty()) {
+            return;
+        }
+        
         // 放入队列, 异步处理
         Casc.add(conf, form, setIds, delIds);
     }
@@ -1288,7 +1289,12 @@ public class Data extends SearchEntity {
         if (ats == null || ats.isEmpty()) {
             return;
         }
+        
         for(String at : ats) {
+        if (at  == null || at .isBlank()) {
+            continue;
+        }
+
             // 格式: conf.form?fk#f1=fa;f2=fb
             int p ;
             p = at.indexOf("#");
@@ -1317,6 +1323,7 @@ public class Data extends SearchEntity {
             Set fs = new HashSet(fm.values());
             Map fc = (Map) getFields().get(k);
 
+            // 写入当前信息表
             Object v = dd.get(k);
             if (Synt.declare(fc.get("__repeated__"), false) == false) {
                 /**/  Map  fd = Data.getInstance(c, f).getOne(Synt.mapOf(

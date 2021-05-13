@@ -33,11 +33,12 @@ public class Casc {
         this.setIds = setIds;
         this.delIds = delIds;
     }
-    
+
     private void run() {
         Core core = Core.getInstance();
         try {
-            cascade(Data.getInstance(conf, form), setIds, delIds);
+            long ct = System.currentTimeMillis() / 1000 ;
+            cascade(Data.getInstance(conf, form), setIds, delIds, ct);
         }
         catch (Exception|Error e) {
             CoreLogger.error ( e);
@@ -46,22 +47,27 @@ public class Casc {
             core.close();
         }
     }
-    
+
     public static void add(String conf, String form, Set<String> setIds, Set<String> delIds) {
         QUEUE.add(new Casc( conf, form, setIds, delIds ));
     }
-    
-    public static void cascade(Data inst, Set<String> setIds, Set<String> delIds) throws HongsException {
-        Set<String> ats = Synt.toSet(inst.getParams().get("cascades"));
-        if (ats == null || ats.isEmpty()) {
-            return;
-        }
+
+    public static void cascade(Data inst, Set<String> setIds, Set<String> delIds, long ct) throws HongsException {
         if (setIds.isEmpty( )
         &&  delIds.isEmpty()) {
             return;
         }
-        long ct = System.currentTimeMillis() / 1000;
+
+        Set<String> ats = Synt.toSet(inst.getParams().get("cascades"));
+        if (ats == null || ats.isEmpty()) {
+            return;
+        }
+
         for(String at : ats) {
+        if (at  == null || at .isBlank()) {
+            continue;
+        }
+
             // 格式: conf.form?fk#DELETE#UPDATE
             int p ;
             p = at.indexOf("#");

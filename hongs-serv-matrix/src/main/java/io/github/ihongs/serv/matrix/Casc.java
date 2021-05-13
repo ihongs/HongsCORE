@@ -7,14 +7,13 @@ import io.github.ihongs.HongsException;
 import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.reflex.Async;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * 级联操作队列
  * @author Kevin
  */
 public class Casc {
-
+    
     private static final Async QUEUE = new Async<Casc> (
         "matrix.cascade" , Integer.MAX_VALUE , 1
     ) {
@@ -22,78 +21,52 @@ public class Casc {
         public void run(Casc casc) { casc.run(); }
     };
 
+    public enum  ACTS  {UPDATE, DELETE};
+    public final ACTS   type;
     public final String conf;
     public final String form;
-    public final Set<String> setIds;
-    public final Set<String> delIds;
+    public final String fk;
+    public final Object fv;
 
-    private Casc(String conf, String form, Set<String> setIds, Set<String> delIds) {
+    private Casc(ACTS type, String conf, String form, String fk, Object fv) {
+        this.type = type;
         this.conf = conf;
         this.form = form;
-        this.setIds = setIds;
-        this.delIds = delIds;
+        this.fk = fk;
+        this.fv = fv;
     }
-
+    
     private void run() {
         Core core = Core.getInstance();
+        long time = System.currentTimeMillis()/ 1000 ;
         try {
-            long ct = System.currentTimeMillis() / 1000 ;
-            cascade(Data.getInstance(conf, form), setIds, delIds, ct);
+            Data inst = Data.getInstance(conf , form);
+            switch (type) {
+                case UPDATE:
+                    update(inst, fk, fv, time);
+                    break;
+                case DELETE:
+                    delete(inst, fk, fv, time);
+                    break;
+            }
         }
         catch (Exception|Error e) {
             CoreLogger.error ( e);
         }
         finally {
-            core.close();
+            core.reset( );
         }
     }
-
-    public static void add(String conf, String form, Set<String> setIds, Set<String> delIds) {
-        QUEUE.add(new Casc( conf, form, setIds, delIds ));
+    
+    public static void update(String conf, String form, String fk, Object fv) {
+        QUEUE.add(new Casc(ACTS.UPDATE, conf, form, fk, fv));
     }
-
-    public static void cascade(Data inst, Set<String> setIds, Set<String> delIds, long ct) throws HongsException {
-        if (setIds.isEmpty( )
-        &&  delIds.isEmpty()) {
-            return;
-        }
-
-        Set<String> ats = Synt.toSet(inst.getParams().get("cascades"));
-        if (ats == null || ats.isEmpty()) {
-            return;
-        }
-
-        for(String at : ats) {
-        if (at  == null || at .isBlank()) {
-            continue;
-        }
-
-            // 格式: conf.form?fk#DELETE#UPDATE
-            int p ;
-            p = at.indexOf("#");
-            String tk = at.substring(0+p);
-                   at = at.substring(0,p);
-            p = at.indexOf("?");
-            String fk = at.substring(1+p);
-                   at = at.substring(0,p);
-            p = at.lastIndexOf(".");
-            String c  = at.substring(0,p);
-            String f  = at.substring(1+p);
-
-            // 获取实例, 逐一处理
-            Data   md = Data.getInstance( c , f );
-            if (!delIds.isEmpty()
-            &&  tk.contains( "#DELETE" )) {
-                deleteCascade(md, fk, delIds, ct);
-            }
-            if (!setIds.isEmpty()
-            &&  tk.contains( "#UPDATE" )) {
-                updateCascade(md, fk, setIds, ct);
-            }
-        }
+    
+    public static void delete(String conf, String form, String fk, Object fv) {
+        QUEUE.add(new Casc(ACTS.DELETE, conf, form, fk, fv));
     }
-
-    public static void updateCascade(Data inst, String fk, Set<String> fv, long ct) throws HongsException {
+    
+    public static void update(Data inst, String fk, Object fv, long ct) throws HongsException {
         Data.Loop loop = inst.search(Synt.mapOf(
             Cnst.RB_KEY, Synt.setOf(Cnst.ID_KEY),
             fk, fv
@@ -109,7 +82,7 @@ public class Casc {
         }
     }
 
-    public static void deleteCascade(Data inst, String fk, Set<String> fv, long ct) throws HongsException {
+    public static void delete(Data inst, String fk, Object fv, long ct) throws HongsException {
         Data.Loop loop = inst.search(Synt.mapOf(
             Cnst.RB_KEY, Synt.setOf(Cnst.ID_KEY),
             fk, fv

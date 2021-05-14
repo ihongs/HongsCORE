@@ -15,47 +15,60 @@ import java.util.Set;
  */
 public class Casc {
 
-    private static final Async QUEUE = new Async<Casc> (
-        "matrix.cascade" , Integer.MAX_VALUE , 1
-    ) {
+    private enum ACTION {UPDATE, DELETE};
+
+    private static final Async QUEUE = new Queue();
+
+    private static final class Queue extends Async <Group> {
+
+        public Queue () {
+            super ("matrix.cascade", Integer.MAX_VALUE, 1);
+        }
+
         @Override
-        public void run(Casc casc) { casc.run(); }
-    };
-
-    public enum  ACTION {UPDATE, DELETE};
-    public final     ACTION  ac;
-    public final     Object  id;
-    public final Set<String> aq;
-
-    private Casc(Set<String> aq, Object id, ACTION ac) {
-        this.aq = aq;
-        this.id = id;
-        this.ac = ac;
+        public void run (Group group) {
+            group.run();
+        }
     }
 
-    private void run () {
-        Core core = Core.getInstance();
-        long time = System.currentTimeMillis() / 1000;
-        try {
-            switch (ac) {
-                case UPDATE: update(aq, id, time); break;
-                case DELETE: delete(aq, id, time); break;
+    private static final class Group implements  Runnable  {
+
+        public final     ACTION  ac;
+        public final     Object  id;
+        public final Set<String> aq;
+
+        public Group(Set<String> aq, Object id, ACTION ac) {
+            this.aq = aq;
+            this.id = id;
+            this.ac = ac;
+        }
+
+        @Override
+        public void run () {
+            Core core = Core.getInstance();
+            long time = System.currentTimeMillis() / 1000;
+            try {
+                switch (ac) {
+                    case UPDATE: update(aq, id, time); break;
+                    case DELETE: delete(aq, id, time); break;
+                }
+            }
+            catch (Exception|Error e) {
+                CoreLogger.error ( e);
+            }
+            finally {
+                core.reset();
             }
         }
-        catch (Exception|Error e) {
-            CoreLogger.error ( e);
-        }
-        finally {
-            core.reset();
-        }
+
     }
 
     public static void update(Set<String> aq, Object id) {
-        QUEUE.add(new Casc(aq, id, ACTION.UPDATE));
+        QUEUE.add(new Group(aq, id, ACTION.UPDATE));
     }
 
     public static void delete(Set<String> aq, Object id) {
-        QUEUE.add(new Casc(aq, id, ACTION.DELETE));
+        QUEUE.add(new Group(aq, id, ACTION.DELETE));
     }
 
     public static void update(Set<String> aq, Object id, long ct) throws HongsException {

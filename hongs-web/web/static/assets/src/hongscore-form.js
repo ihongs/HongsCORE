@@ -486,18 +486,6 @@ HsForm.prototype = {
             return;
         }
 
-        // 链接,图片,视频,音频
-        if (inp.is("a,img,video,audio")) {
-            var u = ! v ? v : hsFixUri(  v );
-            inp.filter("a:empty").text(  v );
-            inp.filter("a").attr("href", u );
-            inp.filter("a.a-email").attr("href", "mailto:"+v);
-            inp.filter("a.a-tel").attr("href", "tel:"+v);
-            inp.filter("a.a-sms").attr("href", "sms:"+v);
-            inp.filter("img,video,audio").attr("src", u);
-            return;
-        }
-
         // 枚举,列表,选项,标签
         if (inp.is("ul,ol,.repeated,.multiple")) {
             var a = inp.data("data") || [];
@@ -541,6 +529,18 @@ HsForm.prototype = {
                 inp.append(x.clone( ));
             }
 
+            return;
+        }
+
+        // 链接,图片,视频,音频
+        if (inp.is("a,img,video,audio")) {
+            var u = ! v ? v : hsFixUri(  v );
+            inp.filter("a:empty").text(  v );
+            inp.filter("a").attr("href", u );
+            inp.filter("a.a-email").attr("href", "mailto:"+v);
+            inp.filter("a.a-tel").attr("href", "tel:"+v);
+            inp.filter("a.a-sms").attr("href", "sms:"+v);
+            inp.filter("img,video,audio").attr("src", u);
             return;
         }
 

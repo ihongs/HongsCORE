@@ -144,6 +144,13 @@ input[type="time"].form-control {
     margin-top: 2px;
 }
 
+/* 修正横向布局表单内嵌模态框内样式问题 */
+.form-horizontal .alert-body>.form-group ,
+.form-horizontal .modal-body>.form-group {
+    margin-left : 0;
+    margin-right: 0;
+}
+
 .form-group .help-block:empty ,
 .form-group .text-error:empty ,
 .form-group .text-muted:empty {

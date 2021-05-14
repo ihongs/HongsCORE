@@ -146,7 +146,8 @@ input[type="time"].form-control {
 
 /* 修正横向布局表单内嵌模态框内样式问题 */
 .form-horizontal .alert-body>.form-group ,
-.form-horizontal .modal-body>.form-group {
+.form-horizontal .modal-body>.form-group ,
+.form-horizontal form:not(.form-horizontal) .form-group {
     margin-left : 0;
     margin-right: 0;
 }

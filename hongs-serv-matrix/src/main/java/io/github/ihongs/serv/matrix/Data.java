@@ -1009,7 +1009,7 @@ public class Data extends SearchEntity {
     protected int padInf(Map dd, Map rd) {
         // 填充关联冗余
         try {
-            includes(rd);
+            includes(dd, rd);
         }
         catch (HongsException ex ) {
             throw ex.toExemption();
@@ -1300,7 +1300,7 @@ public class Data extends SearchEntity {
         Set rq  =  new LinkedHashSet();
 
         for(String at : aq) {
-        if (at == null || at.isBlank()) {
+        if (at == null || at.isEmpty()) {
             continue;
         }
             if (at.contains("#UPDATE")) {
@@ -1324,14 +1324,14 @@ public class Data extends SearchEntity {
         }
     }
 
-    protected void includes(Map dd) throws HongsException {
+    protected void includes(Map dd, Map rd) throws HongsException {
         Set<String> aq = Synt.toSet(getParams().get("includes"));
         if (aq == null || aq.isEmpty()) {
             return;
         }
 
         for(String at : aq) {
-        if (at == null || at.isBlank()) {
+        if (at == null || at.isEmpty()) {
             continue;
         }
 
@@ -1361,9 +1361,28 @@ public class Data extends SearchEntity {
             }
             Set fs = new HashSet(fm.values());
             Map fc = (Map) getFields().get(k);
+            fs.add (Cnst.ID_KEY);
+
+            // 获取关联外键值
+            Object v = rd.get(k);
+            if (v == null) {
+                   v = dd.get(k);
+            if (v == null) {
+                for(Object ot : fm.entrySet()) {
+                    Map.Entry et = (Map.Entry) ot;
+                    rd.put(et.getKey(), null );
+                }
+                continue;
+            } else
+            if (v instanceof Collection && ((Collection)v).isEmpty()) {
+                for(Object ot : fm.entrySet()) {
+                    Map.Entry et = (Map.Entry) ot;
+                    rd.put(et.getKey(), new ArrayList(0) );
+                }
+                continue;
+            }}
 
             // 写入当前信息表
-            Object v = dd.get(k);
             if (Synt.declare(fc.get("__repeated__"), false) == false) {
                 /**/  Map  fd = Data.getInstance(c, f).getOne(Synt.mapOf(
                     Cnst.RB_KEY , fs,
@@ -1371,7 +1390,7 @@ public class Data extends SearchEntity {
                 ));
                 for(Object ot : fm.entrySet()) {
                     Map.Entry et = (Map.Entry) ot;
-                    dd.put(et.getKey(), fd.get(et.getValue()));
+                    rd.put(et.getKey(), fd.get(et.getValue()));
                 }
             } else {
                 Map<Object, List> fd = new HashMap();
@@ -1388,7 +1407,7 @@ public class Data extends SearchEntity {
                 }}
                 for(Object ot : fm.entrySet()) {
                     Map.Entry et = (Map.Entry) ot;
-                    dd.put(et.getKey(), fd.get(et.getValue()));
+                    rd.put(et.getKey(), fd.get(et.getValue()));
                 }
             }
         }

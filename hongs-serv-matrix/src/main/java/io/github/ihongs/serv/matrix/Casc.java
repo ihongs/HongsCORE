@@ -4,6 +4,7 @@ import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsException;
+import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.reflex.Async;
 import java.util.Map;
@@ -48,9 +49,14 @@ public class Casc {
             Core core = Core.getInstance();
             long time = System.currentTimeMillis() / 1000;
             try {
+                // 设置会话用户 ID, 规避更新错误
+                ActionHelper hlpr = ActionHelper.newInstance();
+                hlpr.setSessibute(Cnst.UID_SES, Cnst.ADM_UID );
+                core.set(ActionHelper.class.getName( ), hlpr );
+
                 switch (ac) {
-                    case UPDATE: update(aq, id, time); break;
-                    case DELETE: delete(aq, id, time); break;
+                    case UPDATE: update (aq, id, time); break ;
+                    case DELETE: delete (aq, id, time); break ;
                 }
             }
             catch (Exception|Error e) {
@@ -73,7 +79,7 @@ public class Casc {
 
     public static void update(Set<String> aq, Object id, long ct) throws HongsException {
         for(String at : aq) {
-            if (at == null || at.isBlank()) {
+            if (at == null || at.isEmpty()) {
                 continue;
             }
 
@@ -98,7 +104,7 @@ public class Casc {
 
     public static void delete(Set<String> aq, Object id, long ct) throws HongsException {
         for(String at : aq) {
-            if (at == null || at.isBlank()) {
+            if (at == null || at.isEmpty()) {
                 continue;
             }
 

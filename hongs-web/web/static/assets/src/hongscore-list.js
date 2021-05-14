@@ -596,6 +596,18 @@ HsList.prototype = {
             return;
         }
 
+        // 链接,图片,视频,音频
+        if (td.is("a,img,video,audio")) {
+            var u = ! v ? v : hsFixUri( v );
+            td.filter("a:empty").text ( v );
+            td.filter("a").attr("href", u );
+            td.filter("a.a-email").attr("href", "mailto:"+v);
+            td.filter("a.a-tel").attr("href", "tel:"+v);
+            td.filter("a.a-sms").attr("href", "sms:"+v);
+            td.filter("img,video,audio").attr("src", u);
+            return;
+        }
+
         if (! td.is("input,select,textarea")) {
             v = this._fill__format(td, v, n);
             if (jQuery.isArray(v)) {

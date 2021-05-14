@@ -87,8 +87,8 @@ fieldset>.dropdown-list {
     color: #999;
 }
 
-textarea.form-control ,
-.form-control[multiple] {
+textarea.form-control,
+select.form-control[multiple] {
         height:  8.30769231em;
     min-height:  8.30769231em;
     max-height: 49.84615386em;

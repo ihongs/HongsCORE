@@ -224,7 +224,7 @@ action 和 cmdlet 使用 @Action 和 @Cmdlet 注解来设置访问路径, 如果
      id     主键值
      wd     关键词
      pn     当前页码(page num)
-     gn     最多页数(pugs num)
+     gn     最多页数(gaps num)
      rn     额定行数(rows num)
      cb     响应回调(callback)
      ob     排序字段(order by)

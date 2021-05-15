@@ -32,7 +32,7 @@ public final class Cnst {
 
     public static final String PN_KEY =  "pn"; // 页码编号  (Page num)
 
-    public static final String GN_KEY =  "gn"; // 最多页数  (Pugs num)
+    public static final String GN_KEY =  "gn"; // 最多页数  (Gaps num)
 
     public static final String RN_KEY =  "rn"; // 每页行数  (Rows num)
 

@@ -26,7 +26,7 @@ public final class FetchPage
 
   private int page = 1;
 
-  private int gaps = 0;
+  private int ques = 0;
 
   private int rows = Cnst.RN_DEF;
 
@@ -81,9 +81,9 @@ public final class FetchPage
     this.page = page;
   }
 
-  public void setGaps(int gaps)
+  public void setQues(int ques)
   {
-    this.gaps = gaps;
+    this.ques = ques;
   }
 
   public void setRows(int rows)
@@ -105,10 +105,10 @@ public final class FetchPage
       this.setPage(Integer.parseInt(page2.toString()));
     }
 
-    Object lnks2 = caze.getOption(Cnst.GN_KEY);
+    Object lnks2 = caze.getOption(Cnst.QN_KEY);
     if (lnks2 != null && lnks2.equals(""))
     {
-      this.setGaps(Integer.parseInt(lnks2.toString()));
+      this.setQues(Integer.parseInt(lnks2.toString()));
     }
 
     Object rows2 = caze.getOption(Cnst.RN_KEY);
@@ -182,7 +182,7 @@ public final class FetchPage
     throws HongsException
   {
     this.info.put(Cnst.PN_KEY, this.page);
-    this.info.put(Cnst.GN_KEY, this.gaps);
+    this.info.put(Cnst.QN_KEY, this.ques);
     this.info.put(Cnst.RN_KEY, this.rows);
 
     // 列表为空则不用再计算了
@@ -192,14 +192,11 @@ public final class FetchPage
       return this.info;
     }
 
-    // 指定链数则不用查全部了
+    // 有探查数则不用查全部了
     int limit;
-    if (this.gaps > 0)
+    if (this.ques > 0)
     {
-      limit = page - (gaps / 2);
-      if (limit < 1) limit = 1 ;
-      limit = gaps + limit - 1 ;
-      limit = rows * limit + 1 ;
+      limit = rows * (ques + page - 1) + 1;
     }
     else
     {

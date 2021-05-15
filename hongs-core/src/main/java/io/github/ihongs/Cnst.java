@@ -18,8 +18,6 @@ public final class Cnst {
 
     //** 默认数值 **/
 
-    public static final int    GN_DEF =   10 ; // 分页默认数量
-
     public static final int    RN_DEF =   20 ; // 每页默认行数
 
     //** 查询参数 **/
@@ -32,7 +30,7 @@ public final class Cnst {
 
     public static final String PN_KEY =  "pn"; // 页码编号  (Page num)
 
-    public static final String GN_KEY =  "gn"; // 最多页数  (Gaps num)
+    public static final String QN_KEY =  "qn"; // 探查页数  (Ques num)
 
     public static final String RN_KEY =  "rn"; // 每页行数  (Rows num)
 

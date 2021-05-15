@@ -284,7 +284,7 @@
               '.review', '@' ]
         ],
         fillList    : hsListFillItem,
-        fillPage    : hsListFillMore,
+        fillPage    : hsListFillLess,
         _fill__logo : hsListFillLogo,
         _fill__edit : hsListShowEdit
     });

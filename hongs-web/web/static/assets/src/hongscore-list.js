@@ -19,10 +19,9 @@ function HsList(context, opts) {
     // 排序, 分页等参数
     this.sortKey = hsGetValue(opts, "sortKey", hsGetConf("ob.key", "ob"));
     this.pageKey = hsGetValue(opts, "pageKey", hsGetConf("pn.key", "pn"));
-    this.gapsKey = hsGetValue(opts, "gapsKey", hsGetConf("gn.key", "gn"));
     this.rowsKey = hsGetValue(opts, "rowsKey", hsGetConf("rn.key", "rn"));
-    this.gapsNum = hsGetValue(opts, "gapsNum", hsGetConf("gaps.for.page", 10));
     this.rowsNum = hsGetValue(opts, "rowsNum", hsGetConf("rows.per.page", 20));
+    this.pugsNum = hsGetValue(opts, "pugsNum", hsGetConf("pugs.for.page", 5 ));
 
     this.context = context;
     this.loadBox = loadBox;
@@ -314,11 +313,11 @@ HsList.prototype = {
         r = page[this.rowsKey] ? parseInt(page[this.rowsKey]) : this.rowsNum;
         p = page[this.pageKey] ? parseInt(page[this.pageKey]) : 1;
         t = page[this._pc_key] ? parseInt(page[this._pc_key]) : 1;
-        pmin = p - Math.floor(this.gapsNum / 2);
+        pmin = p - Math.floor(this.pugsNum / 2);
         if (pmin < 1) pmin = 1;
-        pmax = pmin + this.gapsNum - 1;
+        pmax = pmin + this.pugsNum - 1;
         if (pmax > t) pmax = t;
-        pmin = pmax - this.gapsNum + 1;
+        pmin = pmax - this.pugsNum + 1;
         if (pmin < 1) pmin = 1;
 
         var pbox = jQuery('<ul class="pagination pull-left"></ul>').appendTo(this.pageBox);
@@ -331,7 +330,7 @@ HsList.prototype = {
         } else {
             qbox.text(hsGetLang("list.page.info", page));
         }
-///     if (t >  this.gapsNum) {
+///     if (t >  this.pugsNum) {
             qbox.append(jQuery('<a href="javascript:;" class="glyphicon glyphicon-bookmark"></a>'));
 ///     }
 

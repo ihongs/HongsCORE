@@ -246,12 +246,10 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             rn = CoreConfig.getInstance().getProperty("fore.rows.per.page", Cnst.RN_DEF);
         }
 
-        // 获取链数, 默认依从配置
-        int gn;
-        if (rd.containsKey(Cnst.GN_KEY)) {
-            gn = Synt.declare(rd.get(Cnst.GN_KEY), 1); if ( gn < 0 ) gn = Math.abs( gn );
-        } else {
-            gn = CoreConfig.getInstance().getProperty("fore.gaps.for.page", Cnst.GN_DEF);
+        // 续探页数, 但这里用不到
+        int qn = 0;
+        if (rd.containsKey(Cnst.QN_KEY)) {
+            qn = Synt.declare(rd.get(Cnst.QN_KEY), 1); if ( qn < 0 ) qn = Math.abs( qn );
         }
 
         // 获取页码
@@ -260,7 +258,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             pn = Synt.declare(rd.get(Cnst.PN_KEY), 1); if ( pn < 0 ) pn = Math.abs( pn );
         }
 
-        if (rn < 0 || pn < 0 || gn < 1 ) {
+        if (rn < 0 || pn < 0 || qn < 0 ) {
             throw new HongsException(400 , "Wrong page parameter." );
         }
 
@@ -286,7 +284,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         Map  resp = new HashMap();
         Map  page = new HashMap();
         page.put(Cnst.RN_KEY, rn);
-        page.put(Cnst.GN_KEY, gn);
+        page.put(Cnst.QN_KEY, qn);
         page.put(Cnst.PN_KEY, pn);
         page.put("count", rc);
         page.put("pages", pc);

@@ -385,7 +385,7 @@ public class AuthFilter
         }}
 
         // 跳转页面
-        hlpr.redirect( uri, msg, type );
+        hlpr.redirect( uri, msg, 400 + type );
     }
   }
 

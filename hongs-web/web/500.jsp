@@ -63,8 +63,8 @@
         }   trac  = null ;
     }
 %>
-<!--MSG: <%=escapeXML( text.trim( ) )%>-->
-<!--ERN: <%=code != null ? code : 500%>-->
+<!--MSG: <%=escapeXML( text.trim( ) )%> -->
+<!--ERN: <%=code != null ? code : 500%> -->
 <!doctype html>
 <html>
     <head>

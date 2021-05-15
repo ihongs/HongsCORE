@@ -752,10 +752,10 @@ implements IEntity
     }
 
     // 获取分页, 默认查总页数
-    int pugs = 0;
+    int gaps = 0;
     if (rd.containsKey(Cnst.GN_KEY))
     {
-      pugs = Synt.declare(rd.get(Cnst.GN_KEY), 0);
+      gaps = Synt.declare(rd.get(Cnst.GN_KEY), 0);
     }
 
     // 获取行数, 默认依从配置
@@ -776,7 +776,7 @@ implements IEntity
       caze.from (table.tableName , table.name );
       FetchPage fp = new FetchPage(caze, table);
       fp.setPage(page);
-      fp.setPugs(Math.abs(pugs));
+      fp.setGaps(Math.abs(gaps));
       fp.setRows(Math.abs(rows));
 
       // 页码等于 0 则不要列表数据

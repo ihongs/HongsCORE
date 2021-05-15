@@ -251,7 +251,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         if (rd.containsKey(Cnst.GN_KEY)) {
             gn = Synt.declare(rd.get(Cnst.GN_KEY), 1); if ( gn < 0 ) gn = Math.abs( gn );
         } else {
-            gn = CoreConfig.getInstance().getProperty("fore.pugs.for.page", Cnst.GN_DEF);
+            gn = CoreConfig.getInstance().getProperty("fore.gaps.for.page", Cnst.GN_DEF);
         }
 
         // 获取页码

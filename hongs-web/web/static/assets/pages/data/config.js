@@ -8,7 +8,7 @@ if(!window.HsCONF)window.HsCONF={};$.extend(window.HsCONF,{
 	"rn.key":"rn",
 	"ob.key":"ob",
 	"rb.key":"rb",
-	"pugs.for.page":5,
+	"gaps.for.page":10,
 	"rows.per.page":20,
 	"tree.root.id":"0",
 	"tree.pid.key":"pid",

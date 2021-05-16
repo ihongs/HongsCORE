@@ -18,7 +18,9 @@ public final class Cnst {
 
     //** 默认数值 **/
 
-    public static final int    RN_DEF =   20 ; // 每页默认行数
+    public static final int    GC_DEF = 60000; // 默认清理时间
+
+    public static final int    RN_DEF =   20 ; // 默认每页行数
 
     //** 查询参数 **/
 
@@ -97,7 +99,7 @@ public final class Cnst {
     //** 会话参数 **/
 
     public static final String  SID_KEY =  "sid"; // 会话代号
-    
+
     public static final String  UID_SES =  "uid"; // 用户代号
 
     public static final String  UST_SES =  "ust"; // 登录时间

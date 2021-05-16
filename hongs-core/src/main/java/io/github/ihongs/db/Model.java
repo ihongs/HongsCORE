@@ -2,7 +2,6 @@ package io.github.ihongs.db;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
-import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.db.util.FetchCase;
@@ -744,6 +743,13 @@ implements IEntity
     caze.setOption("MODEL_START", "getList");
     this.filter(caze, rd);
 
+    // 获取行数, 默认依从配置
+    int rows = Cnst.RN_DEF ;
+    if (rd.containsKey(Cnst.RN_KEY))
+    {
+      rows = Synt.declare(rd.get(Cnst.RN_KEY), rows);
+    }
+
     // 获取页码, 默认为第一页
     int page = 1;
     if (rd.containsKey(Cnst.PN_KEY))
@@ -751,22 +757,11 @@ implements IEntity
       page = Synt.declare(rd.get(Cnst.PN_KEY), 1);
     }
 
-    // 获取分页, 默认查总页数
+    // 续查页数, 默认查总页数
     int ques = 0;
     if (rd.containsKey(Cnst.QN_KEY))
     {
       ques = Synt.declare(rd.get(Cnst.QN_KEY), 0);
-    }
-
-    // 获取行数, 默认依从配置
-    int rows;
-    if (rd.containsKey(Cnst.RN_KEY))
-    {
-      rows = Synt.declare(rd.get(Cnst.RN_KEY), 0);
-    }
-    else
-    {
-      rows = CoreConfig.getInstance().getProperty("fore.rows.per.page", Cnst.RN_DEF);
     }
 
     Map data = new HashMap();

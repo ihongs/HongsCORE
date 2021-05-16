@@ -238,12 +238,11 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             rd.put( Cnst.RB_KEY , getListable() );
         }
 
-        int rn = CoreConfig.getInstance().getProperty("fore.rows.per.page", Cnst.RN_DEF);
-            rn = Synt.declare(rd.get(Cnst.RN_KEY), rn);
+        int rn = Synt.declare(rd.get(Cnst.RN_KEY), Cnst.RN_DEF);
         if (rn < 0) {
             throw new HongsException(400 , "Wrong param " + Cnst.RN_KEY);
         }
-        int pn = Synt.declare(rd.get(Cnst.PN_KEY), 1 );
+        int pn = Synt.declare(rd.get(Cnst.PN_KEY), 1 /*first*/);
         if (pn < 0) {
             throw new HongsException(400 , "Wrong param " + Cnst.PN_KEY);
         }

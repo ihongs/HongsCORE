@@ -30,7 +30,7 @@ public final class FetchPage
 
   private int rows = Cnst.RN_DEF;
 
-  public FetchPage(FetchCase caze) throws HongsException
+  public FetchPage(FetchCase caze)
   {
     this.db   = null;
     this.tb   = null;
@@ -39,7 +39,7 @@ public final class FetchPage
     chkInit( );
   }
 
-  public FetchPage(FetchCase caze, DB db) throws HongsException
+  public FetchPage(FetchCase caze, DB db)
   {
     this.db   = db  ;
     this.tb   = null;
@@ -48,7 +48,7 @@ public final class FetchPage
     chkInit( );
   }
 
-  public FetchPage(FetchCase caze, Table tb) throws HongsException
+  public FetchPage(FetchCase caze, Table tb)
   {
     this.tb   = tb  ;
     this.db   = null;
@@ -57,27 +57,8 @@ public final class FetchPage
     chkInit( );
   }
 
-  /**
-   * 设置页码
-   * 1 为首页, 0 视为 1, 可用负数逆向推算,
-   * 如果可能为负数则建议先于其他参数设置.
-   * @param page
-   * @throws io.github.ihongs.HongsException
-   */
-  public void setPage(int page) throws HongsException
+  public void setPage(int page)
   {
-    if (page <  0) {
-        getPage( ); // 获取分页信息
-        Integer O = (Integer) this.info.get("pages");
-        if (O == null || O == 0) {
-            O = 1;
-        }
-        page += O;
-        page += 1;
-    }
-    if (page <= 0) {
-        page  = 1;
-    }
     this.page = page;
   }
 
@@ -92,7 +73,6 @@ public final class FetchPage
   }
 
   private void chkInit()
-    throws HongsException
   {
     if (caze == null)
     {

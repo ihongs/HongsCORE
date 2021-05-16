@@ -263,9 +263,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
         Loop roll = search(rd, bn, rn);
 
-        int rc = (int) roll.hits(/* total hits */);
-        int pc = (int) Math.ceil((double) rc / rn);
-        int st = rc > bn ? 1 : 0 ;
+        long rc = (long) roll.leng(/* total rows */);
+        long pc = (long) Math.ceil((double) rc / rn);
+        int  st = rc > bn ? 1 : 0;
 
         Map  resp = new HashMap();
         Map  page = new HashMap();
@@ -276,9 +276,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         page.put("state", st);
 
         if (! nl) {
-            List list = roll.toList( );
-            resp.put("list", list);
-        }   resp.put("page", page);
+            List list = roll.toList();
+            resp.put ( "list", list );
+        }   resp.put ( "page", page );
 
         return resp;
     }
@@ -2127,6 +2127,17 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             // 最多 2G
             return H < Integer.MAX_VALUE
             ?(int) H : Integer.MAX_VALUE;
+        }
+
+        /**
+         * 真实命中总数
+         * @return
+         */
+        public long leng() {
+            if (docs == null) {
+                hasNext();
+            }
+            return H ;
         }
 
         public List<Map> toList() {

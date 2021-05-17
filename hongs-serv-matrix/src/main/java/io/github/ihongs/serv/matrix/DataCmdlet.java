@@ -137,7 +137,7 @@ public class DataCmdlet {
          * 级联更新操作
          * 默认不作级联
          */
-        Doer da = new Doer(
+        Casc da = new Casc(
              dr ,
              Synt.declare (opts.get("includes") , false) ,
              Synt.declare (opts.get("cascades") , false)
@@ -593,13 +593,13 @@ public class DataCmdlet {
 
     }
 
-    public static class Doer {
+    public static class Casc {
 
         private final Data    that    ;
         private final boolean includes;
         private final boolean cascades;
 
-        public Doer (Data data, boolean includes, boolean cascades) {
+        public Casc (Data data, boolean includes, boolean cascades) {
             this.that  =  data;
             this.includes = includes;
             this.cascades = cascades;

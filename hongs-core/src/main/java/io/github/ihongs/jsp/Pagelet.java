@@ -1,6 +1,7 @@
 package io.github.ihongs.jsp;
 
 import io.github.ihongs.Cnst;
+import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsCause;
 import io.github.ihongs.HongsException;
@@ -48,9 +49,12 @@ abstract public class Pagelet extends ActionDriver implements HttpJspPage
   }
 
   @Override
-  public void /**/service(HttpServletRequest req, HttpServletResponse rsp)
+  public void doAction(Core core, ActionHelper ah)
     throws ServletException, IOException
   {
+    HttpServletRequest  req = ah.getRequest ();
+    HttpServletResponse rsp = ah.getResponse();
+      
     /**
      * 错误页但要的是 JSON
      * 则不必构建页面 HTML
@@ -61,7 +65,6 @@ abstract public class Pagelet extends ActionDriver implements HttpJspPage
         if (ern != null && inAjax(req)) {
             Object err = req.getAttribute("javax.servlet.error.exception");
             Object msg = req.getAttribute("javax.servlet.error.message"  );
-            ActionHelper ah = ActionHelper.getInstance();
 
             if (err != null) {
                 Throwable ex = (Throwable)err;
@@ -98,6 +101,21 @@ abstract public class Pagelet extends ActionDriver implements HttpJspPage
       Throwable ax = ex.getCause( );
       if (ax == null) { ax = ex ; }
 
+      String er = ax.getLocalizedMessage();
+      int eo  = ax instanceof HongsCause ? ( (HongsCause) ax).getState() : 0;
+      if (eo >= 600 || eo < 400)
+      {
+          eo  = HttpServletResponse.SC_INTERNAL_SERVER_ERROR ;
+      }
+
+      req.setAttribute("javax.servlet.error.status_code", eo);
+      req.setAttribute("javax.servlet.error.message"    , er);
+      req.setAttribute("javax.servlet.error.exception"  , ax);
+      req.setAttribute("javax.servlet.error.exception_type", ax.getClass().getName());
+      rsp.sendError(eo, er);
+    }
+    catch (RuntimeException ax )
+    {
       String er = ax.getLocalizedMessage();
       int eo  = ax instanceof HongsCause ? ( (HongsCause) ax).getState() : 0;
       if (eo >= 600 || eo < 400)

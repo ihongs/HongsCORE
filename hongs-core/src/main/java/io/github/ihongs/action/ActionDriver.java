@@ -327,12 +327,22 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                 }
 
                 CoreLogger.error(ex);
+                hlpr.error500(ex.getLocalizedMessage());
             } catch (ServletException ex ) {
+                // 内部异常可能会被包裹后再抛出
+                Throwable cx = ex.getCause();
+                if (cx == null) {
+                    cx  = ex ;
+                }
+
                 CoreLogger.error(ex);
+                hlpr.error500(cx.getLocalizedMessage());
             } catch (RuntimeException ex ) {
                 CoreLogger.error(ex);
+                hlpr.error500(ex.getLocalizedMessage());
             } catch (Error er) {
                 CoreLogger.error(er);
+                hlpr.error500(er.getLocalizedMessage());
             } finally {
                 doFinish(core, hlpr, req );
             }

@@ -1,5 +1,6 @@
 package io.github.ihongs.jsp;
 
+import io.github.ihongs.Core;
 import io.github.ihongs.HongsCause;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionDriver;
@@ -37,22 +38,32 @@ abstract public class Proclet extends ActionDriver implements HttpJspPage
   }
 
   @Override
-  public void service(HttpServletRequest req, HttpServletResponse rsp)
+  public void doAction(Core core, ActionHelper ah)
     throws ServletException, IOException
   {
+    HttpServletRequest  req = ah.getRequest ();
+    HttpServletResponse rsp = ah.getResponse();
+
     try
     {
-      this._jspService(new Request(req), rsp);
+      this._jspService (new Request(req), rsp);
     }
     catch (ServletException ex )
     {
-        ActionHelper ah = ActionDriver.getActualCore(req).got(ActionHelper.class);
         Throwable ax = ex.getCause( );
         if (ax == null) { ax = ex ; }
         if (ax instanceof HongsCause) {
             ah.fault((HongsCause) ax);
         } else {
-            ah.fault( new HongsException(ax));
+            ah.fault( new HongsException(ax) );
+        }
+    }
+    catch (RuntimeException ax )
+    {
+        if (ax instanceof HongsCause) {
+            ah.fault((HongsCause) ax);
+        } else {
+            ah.fault( new HongsException(ax) );
         }
     }
   }

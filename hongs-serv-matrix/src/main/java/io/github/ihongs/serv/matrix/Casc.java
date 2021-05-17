@@ -70,11 +70,15 @@ public class Casc {
     }
 
     public static void update(Set<String> aq, Object id) {
-        QUEUE.add(new Group(aq, id, ACTION.UPDATE));
+        if (id != null && aq != null && ! aq.isEmpty( )) {
+            QUEUE.add (new Group(aq, id, ACTION.UPDATE));
+        }
     }
 
     public static void delete(Set<String> aq, Object id) {
-        QUEUE.add(new Group(aq, id, ACTION.DELETE));
+        if (id != null && aq != null && ! aq.isEmpty( )) {
+            QUEUE.add (new Group(aq, id, ACTION.DELETE));
+        }
     }
 
     public static void update(Set<String> aq, Object id, long ct) throws HongsException {

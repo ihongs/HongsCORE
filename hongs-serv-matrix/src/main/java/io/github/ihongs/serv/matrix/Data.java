@@ -941,6 +941,15 @@ public class Data extends SearchEntity {
         return 1 ;
     }
 
+    /**
+     * 提交但不执行级联操作
+     */
+    public void submit() {
+        super.commit();
+        setIds.clear();
+        delIds.clear();
+    }
+
     @Override
     public void commit() {
         super.commit();
@@ -1298,26 +1307,36 @@ public class Data extends SearchEntity {
 
         Set sq  =  new LinkedHashSet();
         Set rq  =  new LinkedHashSet();
+        Set uq  =  new LinkedHashSet();
 
+        /**
+         * 若仅指定了级联更新
+         * 则删除时会更新数据
+         * 相关字段的值会置空
+         */
         for(String at : aq) {
         if (at == null || at.isEmpty()) {
             continue;
         }
-            if (at.contains("#UPDATE")) {
-                sq.add(at);
-            }
             if (at.contains("#DELETE")) {
                 rq.add(at);
+            if (at.contains("#UPDATE")) {
+                sq.add(at);
+            }} else 
+            if (at.contains("#UPDATE")) {
+                sq.add(at);
+                uq.add(at);
             }
         }
 
         // 放入队列, 异步处理
-        if (rd != null && ! rd.isEmpty() && ! rq.isEmpty()) {
+        if (rd != null && ! rd.isEmpty()) {
             for(Object id : rd) {
                 Casc.delete(rq, id);
+                Casc.update(uq, id);
             }
         }
-        if (sd != null && ! sd.isEmpty() && ! sq.isEmpty()) {
+        if (sd != null && ! sd.isEmpty()) {
             for(Object id : sd) {
                 Casc.update(sq, id);
             }

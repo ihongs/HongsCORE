@@ -46,6 +46,8 @@ public class DataCmdlet {
             "time:i",
             "bufs:i",
             "drop:b",
+            "includes:b",
+            "cascades:b",
             "!A",
             "?Usage: revert --conf CONF_NAME --form FORM_NAME [--time TIMESTAMP] ID0 ID1 ..."
         });
@@ -111,10 +113,6 @@ public class DataCmdlet {
             }
         }
 
-        boolean pr = 0 == Core.DEBUG;
-        long tm = System.currentTimeMillis(  );
-        if ( pr ) CmdletHelper.progres(tm,c,i);
-
         /**
          * 清空全部数据
          * 以便更新结构
@@ -135,24 +133,37 @@ public class DataCmdlet {
             }
         }
 
-        dr.begin ( );
+        /**
+         * 级联更新操作
+         * 默认不作级联
+         */
+        Doer da = new Doer(
+             dr ,
+             Synt.declare (opts.get("includes") , false) ,
+             Synt.declare (opts.get("cascades") , false)
+        );
+        
+        boolean pr = ( Core . DEBUG  ==  0 );
+        long tm = System.currentTimeMillis();
+        long tc = tm / 1000 ;
+        if (pr) CmdletHelper.progres(tm,c,i);
 
-        long tc = System.currentTimeMillis() / 1000;
+        dr.begin ( );
 
         for(Map od : lp ) {
             String id = ( String ) od.get( Cnst.ID_KEY ) ;
             if (Synt.declare(od.get("etime"), 0L) != 0L) {
             if (Synt.declare(od.get("state"), 1 ) >= 1 ) {
-                sd.put("rtime", od.get("ctime") );
+                sd.put("rtime" , od.get("ctime"));
                 dr.rev(id,sd,tc);
-            }  else  {
+            }  else {
                 dr.del(id,sd,tc);
-            }} else  {
+            }} else {
             if (Synt.declare(od.get("state"), 1 ) >= 1 ) {
-                od = Synt.toMap(od.get( "data") );
+                od = Synt.toMap( od.get("data") );
                 od.putAll(sd);
-                dr.setDoc(id , dr.padDoc ( od ) );
-            }  else  {
+                da.update(id , od);
+            }  else {
                 dr.delDoc(id);
             }}
                 ds.remove(id);
@@ -160,7 +171,7 @@ public class DataCmdlet {
                 j ++;
             if (j == bn) {
                 j  =  0;
-                dr.commit(  );
+                da.commit(  );
                 dr.begin (  );
                 if ( pr) {
                     CmdletHelper.progres(tm, c,i);
@@ -168,7 +179,7 @@ public class DataCmdlet {
             }
         }
 
-        dr.commit( );
+        da.commit( );
         dr.begin ( );
         if ( pr) {
             CmdletHelper.progres(tm, c,i);
@@ -181,7 +192,7 @@ public class DataCmdlet {
             dr.delDoc(id);
         }
 
-        dr.commit( );
+        da.commit( );
         if ( pr) {
             CmdletHelper.progres( );
         }
@@ -582,4 +593,28 @@ public class DataCmdlet {
 
     }
 
+    private static class Doer {
+        
+        private final Data    that    ;
+        private final boolean includes;
+        private final boolean cascades;
+        
+        public Doer (Data data, boolean includes, boolean cascades) {
+            this.that  =  data;
+            this.includes = includes;
+            this.cascades = cascades;
+        }
+        
+        public void update(String id, Map od) throws HongsException {
+            if ( includes ) that.padInf(od, od);
+            that.setDoc(id, that.padDoc(od  ) );
+        }
+        
+        public void commit( ) {
+            if ( cascades ) that.commit( );
+            else            that.submit( );
+        }
+        
+    }
+    
 }

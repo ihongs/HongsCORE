@@ -593,7 +593,7 @@ public class DataCmdlet {
 
     }
 
-    private static class Doer {
+    public static class Doer {
         
         private final Data    that    ;
         private final boolean includes;

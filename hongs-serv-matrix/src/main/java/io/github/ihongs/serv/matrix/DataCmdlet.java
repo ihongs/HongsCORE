@@ -142,7 +142,7 @@ public class DataCmdlet {
              Synt.declare (opts.get("includes") , false) ,
              Synt.declare (opts.get("cascades") , false)
         );
-        
+
         boolean pr = ( Core . DEBUG  ==  0 );
         long tm = System.currentTimeMillis();
         long tc = tm / 1000 ;
@@ -594,27 +594,27 @@ public class DataCmdlet {
     }
 
     public static class Doer {
-        
+
         private final Data    that    ;
         private final boolean includes;
         private final boolean cascades;
-        
+
         public Doer (Data data, boolean includes, boolean cascades) {
             this.that  =  data;
             this.includes = includes;
             this.cascades = cascades;
         }
-        
+
         public void update(String id, Map od) throws HongsException {
             if ( includes ) that.padInf(od, od);
             that.setDoc(id, that.padDoc(od  ) );
         }
-        
+
         public void commit( ) {
             if ( cascades ) that.commit( );
             else            that.submit( );
         }
-        
+
     }
-    
+
 }

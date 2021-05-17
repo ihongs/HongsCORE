@@ -54,7 +54,7 @@ abstract public class Pagelet extends ActionDriver implements HttpJspPage
   {
     HttpServletRequest  req = ah.getRequest ();
     HttpServletResponse rsp = ah.getResponse();
-      
+
     /**
      * 错误页但要的是 JSON
      * 则不必构建页面 HTML

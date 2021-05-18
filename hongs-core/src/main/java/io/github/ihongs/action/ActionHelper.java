@@ -953,7 +953,7 @@ public class ActionHelper implements Cloneable
   }
 
   /**
-   * 输出异常信息
+   * 返回异常信息
    * @param ex
    */
   public void fault(HongsCause ex)

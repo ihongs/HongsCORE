@@ -58,23 +58,23 @@ public class AuthAction
     rsp.setHeader("Cache-Control", "no-cache");
     */
 
-    Core core = ActionDriver.getActualCore(req );
+    Core core = ActionDriver.getActualCore(req);
     ActionHelper helper = core.got(ActionHelper.class);
 
     String name = req.getPathInfo();
     if (name == null || name.length() == 0) {
-      helper.error400("Path info required");
+      helper.indicate(400, "Path info required");
       return;
     }
     int p = name.lastIndexOf( '.' );
     if (p < 0) {
-      helper.error400("File type required");
+      helper.indicate(400, "File type required");
       return;
     }
     String type = name.substring(1 + p);
            name = name.substring(1 , p);
     if (!"js".equals(type) && !"json".equals(type)) {
-      helper.error400( "Wrong file type: " + type);
+      helper.indicate(400, "Wrong file type: " + type);
       return;
     }
 
@@ -86,7 +86,7 @@ public class AuthAction
 
       // 没有设置 rsname 的不公开
       if (null == sitemap.session) {
-        helper.error404("Auth data for '"+name+"' is not open to the public");
+        helper.indicate(403, "Auth data for '"+name+"' is not open to the public");
         return;
       }
 
@@ -117,16 +117,12 @@ public class AuthAction
 
       s = Dawn.toString(datamap);
     }
-    catch (HongsException | HongsExemption ex) {
-      if (ex.getErrno() == 920) { // 配置缺失
-        helper.error404(ex.getMessage());
-      } else {
-        helper.error500(ex.getMessage());
-      }
+    catch (IllegalArgumentException ex ) {
+      helper.indicate(500 , ex.getMessage());
       return;
     }
-    catch (IllegalArgumentException ex ) {
-      helper.error500(ex.getMessage(  ));
+    catch (HongsException|HongsExemption ex) {
+      helper.indicate(404 , ex.getMessage());
       return;
     }
 
@@ -137,10 +133,10 @@ public class AuthAction
       String c = req.getParameter("callback");
       if (c != null && c.length( ) != 0 ) {
         if (!c.matches("^[a-zA-Z_\\$][a-zA-Z0-9_]*$")) {
-          helper.error400("Illegal callback function name!");
+          helper.indicate(400, "Illegal callback function name!");
           return;
         }
-        helper.print(c+"("+s+");", "text/javascript" );
+        helper.print(c+"("+s+");", "text/javascript");
       } else {
         helper.print("if(!self.HsAUTH)self.HsAUTH={};Object.assign(self.HsAUTH,"+s+");", "text/javascript");
       }

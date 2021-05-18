@@ -81,7 +81,7 @@ public class ApisAction
             try {
                 data = trnsData(_dat);
             } catch (ClassCastException e) {
-                hlpr.error400( "Can not parse value for " + dataKey );
+                hlpr.indicate(400, "Can not parse value for " + dataKey);
                 return;
             }
         }
@@ -92,7 +92,7 @@ public class ApisAction
             try {
                 mode = trnsConv(_mod);
             } catch (ClassCastException e) {
-                hlpr.error400( "Can not parse value for " + modeKey );
+                hlpr.indicate(400, "Can not parse value for " + modeKey);
                 return;
             }
         }

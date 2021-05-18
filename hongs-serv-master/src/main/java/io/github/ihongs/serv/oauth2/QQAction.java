@@ -37,7 +37,7 @@ public class QQAction {
         String   code = helper.getParameter ("code");
 
         if (appId == null || appSk == null) {
-            helper.error500("Not support this mode");
+            helper.indicate(400,"Not support this mode");
         }
 
         try {
@@ -76,7 +76,7 @@ public class QQAction {
         String   code = helper.getParameter ("code");
 
         if (appId == null || appSk == null) {
-            helper.error500("Not support this mode");
+            helper.indicate(400,"Not support this mode");
         }
 
         try {

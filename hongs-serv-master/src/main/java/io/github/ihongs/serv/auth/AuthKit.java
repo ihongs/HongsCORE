@@ -157,7 +157,7 @@ public class AuthKit {
         } else {
             // 输出 HTML
             String m = err.getLocalizedMessage();
-            helper.redirect (v, m, 401);
+            helper.redirect (401, v, m);
         }
     }
 

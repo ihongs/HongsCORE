@@ -55,18 +55,18 @@ public class ConfAction
 
     String name = req.getPathInfo();
     if (name == null || name.length() == 0) {
-      helper.indicate(400, "Path info required");
+      helper.error(400, "Path info required");
       return;
     }
     int p = name.lastIndexOf( '.' );
     if (p < 0) {
-      helper.indicate(400, "File type required");
+      helper.error(400, "File type required");
       return;
     }
     String type = name.substring(1 + p);
            name = name.substring(1 , p);
     if (!"js".equals(type) && !"json".equals(type)) {
-      helper.indicate(400, "Wrong file type: " + type);
+      helper.error(400, "Wrong file type: "+ type);
       return;
     }
 
@@ -92,7 +92,7 @@ public class ConfAction
         s = this.makeConf(name);
       }
       catch (HongsExemption ex) {
-        helper.indicate(404,ex.getMessage());
+        helper.error(404,ex.getMessage());
         return;
       }
 
@@ -122,7 +122,7 @@ public class ConfAction
       {
         if (!c.matches("^[a-zA-Z_\\$][a-zA-Z0-9_]*$"))
         {
-          helper.indicate(400, "Illegal callback function name!");
+          helper.error(400, "Illegal callback function name!");
           return;
         }
         helper.print(c+"("+s+");", "text/javascript");

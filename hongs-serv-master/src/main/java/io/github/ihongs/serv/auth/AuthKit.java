@@ -94,9 +94,9 @@ public class AuthKit {
             helper.reply(Synt.mapOf("info", rst));
         } else
         if ("-".equals(r)) {
-            helper.reply( "" );
+            helper.reply("");
         } else {
-            helper.redirect(v);
+            helper.route(v );
         }
     }
 
@@ -157,7 +157,7 @@ public class AuthKit {
         } else {
             // 输出 HTML
             String m = err.getLocalizedMessage();
-            helper.redirect (401, v, m);
+            helper.route (401, v, m);
         }
     }
 

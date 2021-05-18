@@ -1091,76 +1091,13 @@ public class ActionHelper implements Cloneable
     this.print(str,"application/json");
   }
 
-  //** 错误跳转 **/
-
-  /**
-   * 中止错误
-   * @param msg
-   */
-  public void indicate(String msg)
-  {
-    this.indicate(500 , msg);
-  }
-
-  /**
-   * 中止错误
-   * @param sta 400,500 等
-   * @param msg
-   */
-  public void indicate(int sta, String msg)
-  {
-    try {
-      this.response.sendError(sta, msg);
-      this.responseData = null;
-    } catch ( IOException e ) {
-      throw new HongsExemption(1110, "Can not send to client.", e);
-    }
-  }
-
-  /**
-   * 跳转目标
-   * @param url
-   */
-  public void redirect(String url)
-  {
-    this.redirect(302 , url);
-  }
-
-  /**
-   * 跳转目标
-   * @param sta 301,302 等
-   * @param url
-   */
-  public void redirect(int sta, String url)
-  {
-    url = ActionDriver.fixUrl(url);
-    try {
-      this.response.setStatus(/** 30X **/ sta);
-      this.response.setHeader("Location", url);
-      this.response.flushBuffer( );
-      this.responseData = null;
-    } catch ( IOException e ) {
-      throw new HongsExemption(1110, "Can not send to client.", e);
-    }
-  }
-
-  /**
-   * 跳转页面
-   * @param url
-   * @param msg
-   */
-  public void redirect(String url, String msg)
-  {
-    this.redirect(302 , url , msg);
-  }
-
   /**
    * 跳转页面
    * @param sta 302,404 等
    * @param url
    * @param msg
    */
-  public void redirect(int sta, String url, String msg)
+  public void route(int sta, String url, String msg)
   {
     url = ActionDriver.fixUrl(url);
     String p = CoreConfig.getInstance().getProperty("core.redirect", "/302.jsp");
@@ -1191,6 +1128,67 @@ public class ActionHelper implements Cloneable
         throw new HongsExemption( 1110, "Can not send to client.", ex );
       }
     }
+  }
+
+  /**
+   * 跳转页面
+   * @param url
+   * @param msg
+   */
+  public void route(String url, String msg)
+  {
+    this.route(302 , url , msg);
+  }
+
+  /**
+   * 转入目标
+   * @param sta 301,302 等
+   * @param url
+   */
+  public void route(int sta, String url)
+  {
+    url = ActionDriver.fixUrl(url);
+    try {
+      this.response.setStatus(/** 30X **/ sta);
+      this.response.setHeader("Location", url);
+      this.response.flushBuffer( );
+      this.responseData = null;
+    } catch ( IOException e ) {
+      throw new HongsExemption(1110, "Can not send to client.", e);
+    }
+  }
+
+  /**
+   * 转入目标
+   * @param url
+   */
+  public void route(String url)
+  {
+    this.route(302 , url);
+  }
+
+  /**
+   * 错误通知
+   * @param sta 400,500 等
+   * @param msg
+   */
+  public void error(int sta, String msg)
+  {
+    try {
+      this.response.sendError(sta, msg);
+      this.responseData = null;
+    } catch ( IOException e ) {
+      throw new HongsExemption(1110, "Can not send to client.", e);
+    }
+  }
+
+  /**
+   * 错误通知
+   * @param msg
+   */
+  public void error(String msg)
+  {
+    this.error(500 , msg);
   }
 
   //** 工具方法 **/

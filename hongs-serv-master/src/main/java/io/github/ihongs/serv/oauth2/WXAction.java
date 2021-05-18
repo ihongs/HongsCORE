@@ -36,7 +36,7 @@ public class WXAction {
         String   code = helper.getParameter ("code");
 
         if (appId == null || appSk == null) {
-            helper.indicate(400,"Not support this mode");
+            helper.error(400, "Not support this mode");
             return;
         }
 
@@ -75,7 +75,7 @@ public class WXAction {
         String   code = helper.getParameter ("code");
 
         if (appId == null || appSk == null) {
-            helper.indicate(400,"Not support this mode");
+            helper.error(400, "Not support this mode");
             return;
         }
 

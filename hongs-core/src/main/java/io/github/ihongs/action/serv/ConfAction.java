@@ -113,7 +113,7 @@ public class ConfAction
     // 输出配置信息
     if ("json".equals(type))
     {
-      helper.print(s, "application/json");
+      helper.write(s, "application/json");
     }
     else
     {
@@ -125,11 +125,11 @@ public class ConfAction
           helper.error(400, "Illegal callback function name!");
           return;
         }
-        helper.print(c+"("+s+");", "text/javascript");
+        helper.write(c+"("+s+");", "text/javascript");
       }
       else
       {
-        helper.print("if(!self.HsCONF)self.HsCONF={};Object.assign(self.HsCONF,"+s+");", "text/javascript");
+        helper.write("if(!self.HsCONF)self.HsCONF={};Object.assign(self.HsCONF,"+s+");", "text/javascript");
       }
     }
   }

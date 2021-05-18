@@ -1056,7 +1056,7 @@ public class ActionHelper implements Cloneable
 
     try {
         out.write(txt);
-    } catch (IOException e ) {
+    } catch ( IOException e ) {
       throw new HongsExemption(1110, "Can not send to client.", e);
     }
   }
@@ -1108,8 +1108,8 @@ public class ActionHelper implements Cloneable
       this.request.setAttribute("javax.servlet.error.status_code", sta);
       try {
         this.request.getRequestDispatcher(p).forward(request, response);
-      } catch (IOException | ServletException ex) {
-        throw new HongsExemption( 1110, "Can not send to client.", ex );
+      } catch ( IOException|ServletException e ) {
+        throw new HongsExemption( 1110, "Can not send to client." , e );
       }
     }
     else
@@ -1124,8 +1124,9 @@ public class ActionHelper implements Cloneable
         );
         this.response.setStatus(sta);
         this.response.resetBuffer( );
-      } catch (IOException ex) {
-        throw new HongsExemption( 1110, "Can not send to client.", ex );
+        this.responseData = null;
+      } catch ( IOException e ) {
+        throw new HongsExemption( 1110, "Can not send to client." , e );
       }
     }
   }

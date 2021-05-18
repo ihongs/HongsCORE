@@ -1072,7 +1072,7 @@ public class ActionHelper implements Cloneable
   }
 
   /**
-   * 输出内容
+   * 输出网页
    * @param htm
    */
   public void write(String htm)

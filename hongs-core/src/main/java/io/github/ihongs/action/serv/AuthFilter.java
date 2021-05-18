@@ -381,11 +381,11 @@ public class AuthFilter
         if (uri == null || uri.length() == 0) {
             uri =  CoreConfig.getInstance().getProperty("fore.Er40"+type+".redirect");
         if (uri == null || uri.length() == 0) {
-            uri =  Core.SERV_PATH + "/";
+            uri =  Core.SERV_PATH + "/" ;
         }}
 
         // 跳转页面
-        hlpr.redirect( type + 400, uri, msg );
+        hlpr.route(type + 400, uri, msg);
     }
   }
 

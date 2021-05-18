@@ -327,7 +327,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                 }
 
                 CoreLogger.error(ex);
-                hlpr.indicate(ex.getLocalizedMessage());
+                hlpr.error(ex.getLocalizedMessage());
             } catch (ServletException ex ) {
                 // 内部异常可能会被包裹后再抛出
                 Throwable cx = ex.getCause();
@@ -336,13 +336,13 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                 }
 
                 CoreLogger.error(ex);
-                hlpr.indicate(cx.getLocalizedMessage());
+                hlpr.error(cx.getLocalizedMessage());
             } catch (RuntimeException ex ) {
                 CoreLogger.error(ex);
-                hlpr.indicate(ex.getLocalizedMessage());
+                hlpr.error(ex.getLocalizedMessage());
             } catch (Error er) {
                 CoreLogger.error(er);
-                hlpr.indicate(er.getLocalizedMessage());
+                hlpr.error(er.getLocalizedMessage());
             } finally {
                 doFinish(core, hlpr, req );
             }

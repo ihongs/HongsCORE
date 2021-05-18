@@ -117,7 +117,7 @@ public class LangAction
     // 输出语言信息
     if ("json".equals(type))
     {
-      helper.print(s, "application/json");
+      helper.write(s, "application/json");
     }
     else
     {
@@ -129,11 +129,11 @@ public class LangAction
           helper.error(400, "Illegal callback function name!");
           return;
         }
-        helper.print(c+"("+s+");", "text/javascript");
+        helper.write(c+"("+s+");", "text/javascript");
       }
       else
       {
-        helper.print("if(!self.HsLANG)self.HsLANG={};Object.assign(self.HsLANG,"+s+");", "text/javascript");
+        helper.write("if(!self.HsLANG)self.HsLANG={};Object.assign(self.HsLANG,"+s+");", "text/javascript");
       }
     }
   }

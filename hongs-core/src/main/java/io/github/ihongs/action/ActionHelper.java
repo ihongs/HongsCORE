@@ -1032,7 +1032,7 @@ public class ActionHelper implements Cloneable
    * @param ctt Content-Type 定义, 如 text/html
    * @param cst Content-Type 编码, 如 utf-8
    */
-  public void print(String txt, String ctt, String cst)
+  public void write(String txt, String ctt, String cst)
   {
     if (this.response != null && !this.response.isCommitted()) {
       if (cst != null) {
@@ -1066,29 +1066,18 @@ public class ActionHelper implements Cloneable
    * @param txt
    * @param ctt
    */
-  public void print(String txt, String ctt)
+  public void write(String txt, String ctt)
   {
-    this.print(txt,ctt,"UTF-8");
+    this.write(txt,ctt,"UTF-8");
   }
 
   /**
    * 输出内容
    * @param htm
    */
-  public void print(String htm)
+  public void write(String htm)
   {
-    this.print(htm,"text/html");
-  }
-
-  /**
-   * 输出数据
-   *
-   * @param dat
-   */
-  public void print(Object dat)
-  {
-    String str = Dawn.toString ( dat );
-    this.print(str,"application/json");
+    this.write(htm,"text/html");
   }
 
   /**

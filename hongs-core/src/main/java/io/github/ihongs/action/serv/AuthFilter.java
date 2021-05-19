@@ -317,7 +317,7 @@ public class AuthFilter
             String src = null;
             String oth ;
 
-            if (isAjax(req)) {
+            if (isAjax(req) || isJsop(req)) {
                 src =  req.getHeader("Referer");
                 oth =  req.getHeader("Host"   );
                 if (src != null && src.length() != 0
@@ -390,21 +390,19 @@ public class AuthFilter
   }
 
   private boolean inAjax(HttpServletRequest req) {
+      if (isJsop(req)) {
+          return true ;
+      }
       if (isJson(req)) {
           return true ;
       }
       if (isHtml(req)) {
           return false;
       }
-      return isAjax(req)
-          || isJsop(req);
+      return isAjax(req);
   }
 
   private boolean isAjax(HttpServletRequest req) {
-      if (Synt.declare(req.getParameter(".ajax") , false)) {
-          return  true ; // 标识 iframe 内的 ajax 方法
-      }
-
       String x  = req.getHeader("X-Requested-With");
       return x != null && 0 != x.length();
   }

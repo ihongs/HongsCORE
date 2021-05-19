@@ -429,7 +429,7 @@ HsForm.prototype = {
     swap : function(url, data) {
         if (! data.attr("target")) {
             var that  = this;
-            var href  = hsSetParam (url, ".ajax", "1"); // 显式申明 AJAX 方式
+            var href  = hsSetParam (url, "cb", "~"); // 显式申明 AJAX 方式
             var name  = "_" + ( (new Date()).getTime() % 86400000 ) + "_" + Math.floor( Math.random( ) * 1000 );
             var style = "width:0; height:0; border:0; margin:0; padding:0; overflow:hidden; visibility:hidden;";
             var frame = jQuery('<iframe src="about:blank" name="' + name + '" style="' + style + '"></iframe>');

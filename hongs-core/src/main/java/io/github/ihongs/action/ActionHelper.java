@@ -979,11 +979,11 @@ public class ActionHelper implements Cloneable
         }
     }
 
-    // 默认的数据输出为格式为 JSON
+    // 默认的数据输出的格式为 JSON
     // 有指定回调函数名则使用 JSONP
     // 特殊前缀则返回嵌 JS 的 XHTML
     try {
-        if (fun != null && fun.length() > 0) {
+        if (fun != null && !fun.isEmpty() && !fun.equals("~") ) {
             if (fun.startsWith(   "top.")
             ||  fun.startsWith("parent.")
             ||  fun.startsWith("opener.")

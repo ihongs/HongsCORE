@@ -1,9 +1,11 @@
 
 html, body {
     height: 100%;
+    background: #ccc;
 }
 .container {
     height: auto;
+    background: #fff;
     padding: 20px 15px 0 15px;
 }
 @media (min-width: 768px) {

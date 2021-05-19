@@ -218,6 +218,19 @@ abstract public class Pagelet extends ActionDriver implements HttpJspPage
   }
 
   private boolean inAjax(HttpServletRequest req) {
+      // JSONP
+      String c = Cnst.CB_KEY ;
+      c = req.getParameter(c);
+      if (c != null && ! c.isEmpty()) {
+          return true;
+      }
+      CoreConfig cnf = CoreConfig.getInstance("default");
+      c = cnf.getProperty ("core.callback" , "callback");
+      c = req.getParameter(c);
+      if (c != null && ! c.isEmpty()) {
+          return true;
+      }
+
       // Accept
       String a = req.getHeader("Accept");
       if (a != null) {
@@ -232,27 +245,10 @@ abstract public class Pagelet extends ActionDriver implements HttpJspPage
       // Ajax
       String x = req.getHeader("X-Requested-With");
       if (x != null && ! x.isEmpty()) {
-          return true;
+          return true ;
+      } else {
+          return false;
       }
-      // 标识 iframe 内的 ajax 方法
-      if (Synt.declare(req.getParameter(".ajax"), false)) {
-          return true;
-      }
-
-      // JSONP
-      String c = Cnst.CB_KEY ;
-      c = req.getParameter(c);
-      if (c != null && ! c.isEmpty()) {
-          return true;
-      }
-      CoreConfig cnf = CoreConfig.getInstance("default");
-      c = cnf.getProperty ("core.callback" , "callback");
-      c = req.getParameter(c);
-      if (c != null && ! c.isEmpty()) {
-          return true;
-      }
-
-      return false;
   }
 
   /**

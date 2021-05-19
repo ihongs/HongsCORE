@@ -77,6 +77,15 @@ fieldset>.dropdown-list {
     line-height: 24px;
 }
 
+.btn.text-left {
+    text-align : left;
+}
+.btn.text-right {
+    text-align : right;
+}
+.btn.text-center {
+    text-align : center;
+}
 .btn.form-control {
     background-image : none;
      box-shadow: none;

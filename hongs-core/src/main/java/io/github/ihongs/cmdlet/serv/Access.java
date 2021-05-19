@@ -195,7 +195,7 @@ public class Access {
         try {
             co.set(cn, helper);
             ActionRunner.newInstance(helper, args[0]).doActing();
-            helper.reply(/**/);
+            helper.flush(/**/);
             ps.println( );
         } finally {
             if ( null  !=  ah) {

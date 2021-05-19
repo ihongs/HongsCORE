@@ -371,7 +371,7 @@ public class AuthFilter
         // forward 后可能会失效
         // 必须立即输出错误信息
         hlpr.reply(rep);
-        hlpr.reply(   );
+        hlpr.flush(   );
     } else {
         /**
          * 如果从收藏或历史打开一个页面
@@ -385,7 +385,7 @@ public class AuthFilter
         }}
 
         // 跳转页面
-        hlpr.route(type + 400, uri, msg);
+        hlpr.ensue(type + 400, uri, msg);
     }
   }
 

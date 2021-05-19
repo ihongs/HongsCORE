@@ -96,7 +96,7 @@ public class AuthKit {
         if ("-".equals(r)) {
             helper.reply("");
         } else {
-            helper.route(v );
+            helper.ensue(v );
         }
     }
 
@@ -157,7 +157,7 @@ public class AuthKit {
         } else {
             // 输出 HTML
             String m = err.getLocalizedMessage();
-            helper.route (401, v, m);
+            helper.ensue(401, v, m);
         }
     }
 

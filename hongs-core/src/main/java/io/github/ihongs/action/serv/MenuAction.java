@@ -51,7 +51,7 @@ public class MenuAction {
             // 寻找其下有权限的菜单
             u = getRedirect( site, mens );
             if (u != null) {
-                helper.route(Core.SERV_PATH + "/" + u);
+                helper.ensue(Core.SERV_PATH + "/" + u);
                 return;
             }
         }
@@ -59,11 +59,11 @@ public class MenuAction {
             // 默认等同模块配置路径
             u = (String) menu.get("hrel");
             if (u != null) {
-                helper.route(Core.SERV_PATH + "/" + u);
+                helper.ensue(Core.SERV_PATH + "/" + u);
                 return;
             } else {
                 u = "default".equals(m) ? "" : m ;
-                helper.route(Core.SERV_PATH + "/" + u);
+                helper.ensue(Core.SERV_PATH + "/" + u);
                 return;
             }
         }

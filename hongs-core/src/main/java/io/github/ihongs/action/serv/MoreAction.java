@@ -401,7 +401,7 @@ public class MoreAction {
         }
 
         @Override
-        public void reply() {
+        public void flush() {
             // Nothing to do
         }
 

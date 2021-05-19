@@ -128,17 +128,18 @@ public class AuthAction
 
     // 输出权限信息
     if ("json".equals(type)) {
-      helper.write(s, "application/json");
+      helper.write("application/json", s);
     } else {
       String c = req.getParameter("callback");
-      if (c != null && c.length( ) != 0 ) {
+      if (c != null && !c.isEmpty()) {
         if (!c.matches("^[a-zA-Z_\\$][a-zA-Z0-9_]*$")) {
           helper.error(400, "Illegal callback function name!");
           return;
         }
-        helper.write(c+"("+s+");", "text/javascript");
+        helper.write("text/javascript", c +"("+ s +");");
       } else {
-        helper.write("if(!self.HsAUTH)self.HsAUTH={};Object.assign(self.HsAUTH,"+s+");", "text/javascript");
+        c = "self.HsAUTH=Object.assign(self.HsAUTH||{}" ;
+        helper.write("text/javascript", c +","+ s +");");
       }
     }
   }

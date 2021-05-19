@@ -379,7 +379,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         if (dat != null) {
             req .setAttribute( Cnst.RESPON_ATTR, dat );
             hlpr.updateHelper( req, rsp );
-            hlpr.reply();
+            hlpr.flush();
         }
     }
 

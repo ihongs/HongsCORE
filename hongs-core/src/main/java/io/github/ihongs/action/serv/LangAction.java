@@ -117,23 +117,24 @@ public class LangAction
     // 输出语言信息
     if ("json".equals(type))
     {
-      helper.write(s, "application/json");
+      helper.write("application/json", s);
     }
     else
     {
       String c = req.getParameter("callback");
-      if (c != null && c.length( ) != 0 )
+      if (c != null && !c.isEmpty())
       {
         if (!c.matches("^[a-zA-Z_\\$][a-zA-Z0-9_]*$"))
         {
           helper.error(400, "Illegal callback function name!");
           return;
         }
-        helper.write(c+"("+s+");", "text/javascript");
+        helper.write("text/javascript", c +"("+ s +");");
       }
       else
       {
-        helper.write("if(!self.HsLANG)self.HsLANG={};Object.assign(self.HsLANG,"+s+");", "text/javascript");
+        c = "self.HsLANG=Object.assign(self.HsLANG||{}" ;
+        helper.write("text/javascript", c +","+ s +");");
       }
     }
   }

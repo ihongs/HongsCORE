@@ -37,8 +37,10 @@ import javax.servlet.http.Part;
  * 动作助手类
  *
  * <p>
- * 通过 getRequestData, getParameter, getAttribute, getSessValue
- * 来获取请求/容器/会话, 通过 reply 来通知前端动作是成功还是失败
+ * 通过 getRequestData, getParameter, getAttribute, getSessibute, getCookibute
+ * 来获取请求/容器/会话, 通过 reply 来告知此次动作是成功还是失败.
+ * reply,fault 方法并不会将数据立即发往终端, flush 调用时才输出, 默认在一次动作结束后自动输出;
+ * error,ensue 方法会立即发往终端然后关闭流, write 并不会关闭流, 可以在一次动作中反复调用输出.
  * </p>
  *
  * @author Hongs
@@ -780,88 +782,6 @@ public class ActionHelper implements Cloneable
   //** 返回数据 **/
 
   /**
-   * 返回数据
-   * 将以 JSON/JSONP 格式输出, 编码 UTF-8
-   */
-  public void reply()
-  {
-    if (null == this.responseData) {
-        return;
-    }
-
-    // 动作调用了 forward 之后
-    // 这时再调用 getWriter 会抛 STREAM 异常
-    // 因容器调用 getOutputStream 来输出内容
-    // 所以必须将 OutputStream 包装成 Writer
-    Writer out;
-    try {
-        out = getOutputWriter();
-    } catch ( IllegalStateException e ) {
-        out = new OutputStreamWriter(getOutputStream());
-    }
-
-    // 检查是否有 JSONP 的回调函数
-    String  fun  = null;
-    if (request != null) {
-        fun = request.getParameter (Cnst.CB_KEY);
-        if (fun == null) {
-            fun  = request.getParameter (
-                CoreConfig.getInstance( )
-                          .getProperty("core.callback", "callback")
-            );
-        }
-    }
-
-    // 默认的数据输出为格式为 JSON
-    // 有指定回调函数名则使用 JSONP
-    // 特殊前缀则返回嵌 JS 的 XHTML
-    try {
-        if (fun != null && fun.length() > 0) {
-            if (fun.startsWith(   "top.")
-            ||  fun.startsWith("parent.")
-            ||  fun.startsWith("opener.")
-            ||  fun.startsWith("frames.")  ) {
-                if (this.response != null
-                && !this.response.isCommitted( )) {
-                    this.response.setCharacterEncoding("UTF-8");
-                    this.response.setContentType( "text/html" );
-                }
-
-                out.append("<script type=\"text/javascript\">");
-                out.append( fun);
-                out.append("(" );
-                Dawn.append(out, this.responseData);
-                out.append(");");
-                out.append("</script>");
-            } else {
-                if (this.response != null
-                && !this.response.isCommitted( )) {
-                    this.response.setCharacterEncoding("UTF-8");
-                    this.response.setContentType( "text/javascript");
-                }
-
-                out.append( fun);
-                out.append("(" );
-                Dawn.append(out, this.responseData);
-                out.append(");");
-            }
-        } else {
-                if (this.response != null
-                && !this.response.isCommitted( )) {
-                    this.response.setCharacterEncoding("UTF-8");
-                    this.response.setContentType("application/json");
-                }
-
-                Dawn.append(out, this.responseData);
-        }
-    } catch (IOException e ) {
-      throw new HongsExemption(1110, "Can not send to client.", e);
-    }
-
-    this.responseData = null;
-  }
-
-  /**
    * 返回响应数据
    * 针对 search 等
    * @param map
@@ -1027,20 +947,113 @@ public class ActionHelper implements Cloneable
   //** 输出内容 **/
 
   /**
-   * 输出内容
-   * @param txt
-   * @param ctt Content-Type 定义, 如 text/html
-   * @param cst Content-Type 编码, 如 utf-8
+   * 输出数据
+   * 按情况以 JSON/JSONP 格式输出
    */
-  public void write(String txt, String ctt, String cst)
+  public void flush()
   {
-    if (this.response != null && !this.response.isCommitted()) {
-      if (cst != null) {
-        this.response.setCharacterEncoding(cst);
-      }
-      if (ctt != null) {
-        this.response.setContentType(ctt);
-      }
+    if (null == this.responseData) {
+        return;
+    }
+
+    // 动作调用了 forward 之后
+    // 这时再调用 getWriter 会抛 STREAM 异常
+    // 因容器调用 getOutputStream 来输出内容
+    // 所以必须将 OutputStream 包装成 Writer
+    Writer out;
+    try {
+        out = getOutputWriter();
+    } catch ( IllegalStateException e ) {
+        out = new OutputStreamWriter(getOutputStream());
+    }
+
+    // 检查是否有 JSONP 的回调函数
+    String  fun  = null;
+    if (request != null) {
+        fun = request.getParameter (Cnst.CB_KEY);
+        if (fun == null) {
+            fun  = request.getParameter (
+                CoreConfig.getInstance( )
+                          .getProperty("core.callback", "callback")
+            );
+        }
+    }
+
+    // 默认的数据输出为格式为 JSON
+    // 有指定回调函数名则使用 JSONP
+    // 特殊前缀则返回嵌 JS 的 XHTML
+    try {
+        if (fun != null && fun.length() > 0) {
+            if (fun.startsWith(   "top.")
+            ||  fun.startsWith("parent.")
+            ||  fun.startsWith("opener.")
+            ||  fun.startsWith("frames.")  ) {
+                if (this.response != null
+                && !this.response.isCommitted( )) {
+                    this.response.setCharacterEncoding("UTF-8");
+                    this.response.setContentType( "text/html" );
+                }
+
+                out.append("<script type=\"text/javascript\">");
+                out.append( fun);
+                out.append("(" );
+                Dawn.append(out, this.responseData);
+                out.append(");");
+                out.append("</script>");
+            } else {
+                if (this.response != null
+                && !this.response.isCommitted( )) {
+                    this.response.setCharacterEncoding("UTF-8");
+                    this.response.setContentType( "text/javascript");
+                }
+
+                out.append( fun);
+                out.append("(" );
+                Dawn.append(out, this.responseData);
+                out.append(");");
+            }
+        } else {
+                if (this.response != null
+                && !this.response.isCommitted( )) {
+                    this.response.setCharacterEncoding("UTF-8");
+                    this.response.setContentType("application/json");
+                }
+
+                Dawn.append(out, this.responseData);
+        }
+
+        out.flush( );
+    } catch ( IOException e ) {
+      throw new HongsExemption(1110, "Can not send to client.", e);
+    }
+
+    this.responseData = null;
+  }
+
+  /**
+   * 输出网页
+   * @param htm
+   */
+  public void write(String htm)
+  {
+    this.write("text/html",htm);
+  }
+
+  /**
+   * 输出内容
+   * @param ct Content-Type
+   * @param txt
+   */
+  public void write(String ct, String txt)
+  {
+    if (null != this.response) {
+        if (null != ct ) {
+            this.response.setContentType(ct);
+        if (! ct.contains("charset=") ) {
+            this.response.setCharacterEncoding("utf-8");
+        } } else {
+            this.response.setCharacterEncoding("utf-8");
+        }
     }
 
     // 动作调用了 forward 之后
@@ -1056,117 +1069,7 @@ public class ActionHelper implements Cloneable
 
     try {
         out.write(txt);
-    } catch ( IOException e ) {
-      throw new HongsExemption(1110, "Can not send to client.", e);
-    }
-  }
-
-  /**
-   * 输出内容
-   * @param txt
-   * @param ctt
-   */
-  public void write(String txt, String ctt)
-  {
-    this.write(txt,ctt,"UTF-8");
-  }
-
-  /**
-   * 输出网页
-   * @param htm
-   */
-  public void write(String htm)
-  {
-    this.write(htm,"text/html");
-  }
-
-  /**
-   * 跳转页面
-   * @param sta 302,404 等
-   * @param url
-   * @param msg
-   */
-  public void route(int sta, String url, String msg)
-  {
-    url = ActionDriver.fixUrl(url);
-    String p = CoreConfig.getInstance().getProperty("core.redirect", "/302.jsp");
-    if ( ! p.isEmpty() && new File(Core.BASE_PATH + p).exists())
-    {
-      this.request.setAttribute("javax.servlet.location" , url);
-      this.request.setAttribute("javax.servlet.error.message", msg);
-      this.request.setAttribute("javax.servlet.error.status_code", sta);
-      try {
-        this.request.getRequestDispatcher(p).forward(request, response);
-      } catch ( IOException|ServletException e ) {
-        throw new HongsExemption( 1110, "Can not send to client." , e );
-      }
-    }
-    else
-    {
-      try {
-        this.response.getWriter().print(
-            "<html><head>"
-          + "<meta http-equiv=\"Expires\" content=\"0\">"
-          + "<meta http-equiv=\"Refresh\" content=\"3; url="+url+"\">"
-          + "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">"
-          + "<title>"+msg+"</title></head><body> <a href=\""+url+"\">"+msg+"</a> </body></html>"
-        );
-        this.response.setStatus(sta);
-        this.response.resetBuffer( );
-        this.responseData = null;
-      } catch ( IOException e ) {
-        throw new HongsExemption( 1110, "Can not send to client." , e );
-      }
-    }
-  }
-
-  /**
-   * 跳转页面
-   * @param url
-   * @param msg
-   */
-  public void route(String url, String msg)
-  {
-    this.route(302 , url , msg);
-  }
-
-  /**
-   * 转入目标
-   * @param sta 301,302 等
-   * @param url
-   */
-  public void route(int sta, String url)
-  {
-    url = ActionDriver.fixUrl(url);
-    try {
-      this.response.setStatus(/** 30X **/ sta);
-      this.response.setHeader("Location", url);
-      this.response.flushBuffer( );
-      this.responseData = null;
-    } catch ( IOException e ) {
-      throw new HongsExemption(1110, "Can not send to client.", e);
-    }
-  }
-
-  /**
-   * 转入目标
-   * @param url
-   */
-  public void route(String url)
-  {
-    this.route(302 , url);
-  }
-
-  /**
-   * 错误通知
-   * @param sta 400,500 等
-   * @param msg
-   */
-  public void error(int sta, String msg)
-  {
-    try {
-      this.response.sendError(sta, msg);
-      this.responseData = null;
+    //  out.flush(   ); // 不必立即输出, 可能反复调用
     } catch ( IOException e ) {
       throw new HongsExemption(1110, "Can not send to client.", e);
     }
@@ -1179,6 +1082,97 @@ public class ActionHelper implements Cloneable
   public void error(String msg)
   {
     this.error(500 , msg);
+  }
+
+  /**
+   * 错误通知
+   * @param sc 400,500 等
+   * @param msg
+   */
+  public void error(int sc, String msg)
+  {
+    try {
+      this.response.sendError(sc , msg);
+      this.responseData = null;
+    } catch ( IOException e ) {
+      throw new HongsExemption(1110, "Can not send to client.", e);
+    }
+  }
+
+  /**
+   * 转入目标
+   * @param url
+   */
+  public void ensue(String url)
+  {
+    this.ensue(302 , url);
+  }
+
+  /**
+   * 转入目标
+   * @param sc 301,302 等
+   * @param url
+   */
+  public void ensue(int sc, String url)
+  {
+    url = ActionDriver.fixUrl(url);
+    try {
+      this.response.setStatus(/** 30X **/ sc );
+      this.response.setHeader("Location", url);
+      this.response.flushBuffer( );
+      this.responseData = null;
+    } catch ( IOException e ) {
+      throw new HongsExemption(1110, "Can not send to client.", e);
+    }
+  }
+
+  /**
+   * 跳转页面
+   * @param url
+   * @param msg
+   */
+  public void ensue(String url, String msg)
+  {
+    this.ensue(302 , url , msg);
+  }
+
+  /**
+   * 跳转页面
+   * @param sc 302,404 等
+   * @param url
+   * @param msg
+   */
+  public void ensue(int sc, String url, String msg)
+  {
+    url = ActionDriver.fixUrl(url);
+    String p = CoreConfig.getInstance().getProperty("core.redirect", "/302.jsp");
+    if ( ! p.isEmpty() && new File(Core.BASE_PATH + p).exists())
+    {
+      this.request.setAttribute("javax.servlet.location" , url);
+      this.request.setAttribute("javax.servlet.error.message", msg);
+      this.request.setAttribute("javax.servlet.error.status_code", sc);
+      try {
+        this.request.getRequestDispatcher(p).forward(request, response);
+      } catch ( IOException|ServletException e ) {
+        throw new HongsExemption( 1110, "Can not send to client." , e );
+      }
+    }
+    else
+    {
+      try {
+        this.response.setStatus(sc);
+        this.response.getWriter().print(
+            "<html><head>"
+          + "<meta http-equiv=\"Expires\" content=\"0\">"
+          + "<meta http-equiv=\"Refresh\" content=\"3; url="+url+"\">"
+          + "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">"
+          + "<title>"+msg+"</title></head><body> <a href=\""+url+"\">"+msg+"</a> </body></html>"
+        );
+        this.responseData = null;
+      } catch ( IOException e ) {
+        throw new HongsExemption( 1110, "Can not send to client." , e );
+      }
+    }
   }
 
   //** 工具方法 **/

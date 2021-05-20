@@ -29,8 +29,8 @@
         }
     }
 %>
-<!--MSG: <%=escapeXML( text.trim( ) )%> -->
-<!--ERN: <%=code != null ? code : 404%> -->
+<!--MSG: <%=escapeXML(text)%> -->
+<!--ERN: Er<%=code != null ? code : 404%> -->
 <!doctype html>
 <html>
     <head>

@@ -24,6 +24,7 @@ import java.util.Comparator;
 import java.util.Collections;
 */
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 
 /**
  * 管理信息
@@ -47,11 +48,22 @@ public class InfoAction {
             Map  app = new HashMap();
             rsp.put("app_info", app);
 
-            app.put("server_id", Core.SERVER_ID);
-            app.put("base_href", Core.SERV_HREF
-                               + Core.SERV_PATH);
-            app.put("core_path", Core.CORE_PATH);
+            app.put("server_id"  , Core.SERVER_ID  );
+            app.put("base_href"  , Core.SERV_HREF
+                                 + Core.SERV_PATH  );
+            app.put("core_path"  , Core.CORE_PATH  );
             app.put("starts_time", Core.STARTS_TIME);
+        }
+
+        // 磁盘情况
+        if ( rb == null || rb.contains("dir_info") ) {
+            Map  inf = new HashMap();
+            rsp.put("dir_info", inf);
+
+            inf.put("base_dir", getAllSize(new File(Core.BASE_PATH)));
+            inf.put("data_dir", getAllSize(new File(Core.DATA_PATH)));
+            inf.put("conf_dir", getAllSize(new File(Core.CONF_PATH)));
+            inf.put("core_dir", getAllSize(new File(Core.CORE_PATH)));
         }
 
         // 系统信息
@@ -93,25 +105,20 @@ public class InfoAction {
             inf.put("uses", new Object[] {stk, Syno.humanSize(stk), "非堆"});
         }
 
-        // 磁盘情况
-        if ( rb == null || rb.contains("dir_info") ) {
-            rsp.put("base_dir", getAllSize(new File(Core.BASE_PATH)));
-            rsp.put("data_dir", getAllSize(new File(Core.DATA_PATH)));
-            rsp.put("conf_dir", getAllSize(new File(Core.CONF_PATH)));
-            rsp.put("core_dir", getAllSize(new File(Core.CORE_PATH)));
-        }
-
         /**
          * 公共核心情况和锁情况
          */
         if ( rb != null && rb.contains("core_info")) {
-            rsp.put("core_set", new CoreToKeys(Core.GLOBAL_CORE).keySet());
+            rsp.put("core_info", new CoreToKeys(Core.GLOBAL_CORE).keySet());
         }
         if ( rb != null && rb.contains("lock_info")) {
-            rsp.put("lock_map", Block.counts());
+            rsp.put("lock_info", Block.counts());
+        }
+        if ( rb != null && rb.contains("task_info")) {
+            rsp.put("task_info", getAllTasks( ));
         }
 
-        helper.reply(Synt.mapOf( "info", rsp ));
+        helper.reply(Synt.mapOf( "info" , rsp ));
     }
 
     private static Map  getAllSize(File d) {
@@ -200,7 +207,31 @@ public class InfoAction {
         }
     }
     */
-    
+
+    public static Set<String> getAllTasks() {
+        ThreadGroup subGroup = Thread.currentThread().getThreadGroup();
+        ThreadGroup topGroup = subGroup;
+
+        // 获取根线程组
+        while (null != subGroup) {
+            topGroup = subGroup;
+            subGroup = subGroup.getParent();
+        }
+
+        // 获取所有线程
+        int actCount = topGroup.activeCount( );
+        Thread[   ] tasks = new Thread /***/ [actCount];
+        Set<String> names = new LinkedHashSet(actCount);
+        topGroup.enumerate(tasks);
+
+        // 获取线程名称
+        for (Thread task : tasks) {
+            names.add(task.getName());
+        }
+
+        return names;
+    }
+
     private static class CoreToKeys extends Core {
         public CoreToKeys(Core core) {
             super(core);

@@ -417,15 +417,19 @@
         var formObj = new HsForm(context, {});
         
         formObj._fill_dir_info = function () {
-            var v = this._info ;
-            return "系统: " + v.core_dir["#"][1] + "/" + v.core_dir["@"][1] + "\r\n"
-                 + "配置: " + v.conf_dir["#"][1] + "/" + v.conf_dir["@"][1] + "\r\n"
-                 + "网站: " + v.base_dir["#"][1] + "/" + v.base_dir["@"][1] + "\r\n"
-                 + "数据: " + v.data_dir["#"][1] + "/" + v.data_dir["@"][1] ;
+            var v = this._info.dir_info ;
+            return "系统: " + v.core_dir["#"][1] + "/" + v.core_dir["@"][1] + " "
+                 + Math.round(v.core_dir["#"][0] / v.core_dir["@"][0] *100) + "%\r\n"
+                 + "配置: " + v.conf_dir["#"][1] + "/" + v.conf_dir["@"][1] + " "
+                 + Math.round(v.conf_dir["#"][0] / v.conf_dir["@"][0] *100) + "%\r\n"
+                 + "网站: " + v.base_dir["#"][1] + "/" + v.base_dir["@"][1] + " "
+                 + Math.round(v.base_dir["#"][0] / v.base_dir["@"][0] *100) + "%\r\n"
+                 + "数据: " + v.data_dir["#"][1] + "/" + v.data_dir["@"][1] + " "
+                 + Math.round(v.data_dir["#"][0] / v.data_dir["@"][0] *100) + "%";
         };
 
         $.hsAjax({
-            url: "centra/info/search.act?rb=app_info,sys_info,run_info,dir_info,core_info,lock_info",
+            url: "centra/info/search.act?rb=app_info,sys_info,run_info,dir_info,core_info,lock_info,task_info",
             dataType: "json",
             success: function(rst) {
                 var box;
@@ -499,38 +503,40 @@
                 // 应用信息
                 var a ;
                 a = [];
-                for (var k in rst.info.lock_map.Locker) {
-                    a.push(k+"("+rst.info.lock_map.Locker[k]+")");
+                for (var k in rst.info.lock_info.Locker) {
+                    a.push(k+"("+rst.info.lock_info.Locker[k]+")");
                 }
-                rst.info.lock_map.Locker = a.sort( ).join("\r\n");
+                rst.info.lock_info.Locker = a.sort( ).join("\r\n");
                 a = [];
-                for (var k in rst.info.lock_map.Larder) {
-                    a.push(k+"("+rst.info.lock_map.Larder[k]+")");
+                for (var k in rst.info.lock_info.Larder) {
+                    a.push(k+"("+rst.info.lock_info.Larder[k]+")");
                 }
-                rst.info.lock_map.Larder = a.sort( ).join("\r\n");
-                rst.info.core_set = rst.info.core_set.sort().join("\r\n");
+                rst.info.lock_info.Larder = a.sort( ).join("\r\n");
+                rst.info.core_info = rst.info.core_info.sort().join("\r\n");
+                rst.info.task_info = rst.info.task_info.sort().join("\r\n");
                 formObj.fillInfo(rst.info);
             }
         });
 
         context.find(".reload-core-and-lock").click(function() {
             $.hsAjax({
-                url: "centra/info/search.act?rb=core_info,lock_info",
+                url: "centra/info/search.act?rb=core_info,lock_info,task_info",
                 dataType: "json",
                 success: function(rst) {
                     // 应用信息
                     var a ;
                     a = [];
-                    for (var k in rst.info.lock_map.Locker) {
-                        a.push(k+"("+rst.info.lock_map.Locker[k]+")");
+                    for (var k in rst.info.lock_info.Locker) {
+                        a.push(k+"("+rst.info.lock_info.Locker[k]+")");
                     }
-                    rst.info.lock_map.Locker = a.sort( ).join("\r\n");
+                    rst.info.lock_info.Locker = a.sort( ).join("\r\n");
                     a = [];
-                    for (var k in rst.info.lock_map.Larder) {
-                        a.push(k+"("+rst.info.lock_map.Larder[k]+")");
+                    for (var k in rst.info.lock_info.Larder) {
+                        a.push(k+"("+rst.info.lock_info.Larder[k]+")");
                     }
-                    rst.info.lock_map.Larder = a.sort( ).join("\r\n");
-                    rst.info.core_set = rst.info.core_set.sort().join("\r\n");
+                    rst.info.lock_info.Larder = a.sort( ).join("\r\n");
+                    rst.info.core_info = rst.info.core_info.sort().join("\r\n");
+                    rst.info.task_info = rst.info.task_info.sort().join("\r\n");
                     formObj.fillInfo(rst.info);
                 }
             });

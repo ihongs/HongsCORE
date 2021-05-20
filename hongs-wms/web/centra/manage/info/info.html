@@ -1,4 +1,4 @@
-<div id="centra-info" class="board-top">
+<div id="centra-info" class="board board-top">
     <div class="row">
         <div class="col-lg-6">
             <div class="panel panel-default">
@@ -42,16 +42,20 @@
             <fieldset class="board-top form-horizontal">
                 <legend>运行信息</legend>
                 <div class="form-group row">
+                    <label class="col-xs-3 control-label form-control-static text-right">所有线程</label>
+                    <div class="col-xs-9"><pre class="form-control-static" data-fn="task_info" data-fl="v?v:'-'"></pre></div>
+                </div>
+                <div class="form-group row">
                     <label class="col-xs-3 control-label form-control-static text-right">全局对象</label>
-                    <div class="col-xs-9"><pre class="form-control-static" data-fn="core_set" data-fl="v?v:'-'"></pre></div>
+                    <div class="col-xs-9"><pre class="form-control-static" data-fn="core_info" data-fl="v?v:'-'"></pre></div>
                 </div>
                 <div class="form-group row">
                     <label class="col-xs-3 control-label form-control-static text-right">基础锁</label>
-                    <div class="col-xs-9"><pre class="form-control-static" data-fn="lock_map.Locker" data-fl="v?v:'-'"></pre></div>
+                    <div class="col-xs-9"><pre class="form-control-static" data-fn="lock_info.Locker" data-fl="v?v:'-'"></pre></div>
                 </div>
                 <div class="form-group row">
                     <label class="col-xs-3 control-label form-control-static text-right">读写锁</label>
-                    <div class="col-xs-9"><pre class="form-control-static" data-fn="lock_map.Larder" data-fl="v?v:'-'"></pre></div>
+                    <div class="col-xs-9"><pre class="form-control-static" data-fn="lock_info.Larder" data-fl="v?v:'-'"></pre></div>
                 </div>
                 <div class="row">
                     <div class="col-xs-9 col-xs-offset-3">

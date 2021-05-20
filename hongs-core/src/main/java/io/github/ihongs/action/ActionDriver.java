@@ -326,23 +326,22 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                     return;
                 }
 
+                /**
+                 * 异常抛到这层了就必须记入日志
+                 * 继续抛出将被登记的错误页处理
+                 * 下同
+                 */
                 CoreLogger.error(ex);
-                hlpr.error(ex.getLocalizedMessage());
+                throw ex;
             } catch (ServletException ex ) {
-                // 内部异常可能会被包裹后再抛出
-                Throwable cx = ex.getCause();
-                if (cx == null) {
-                    cx  = ex ;
-                }
-
                 CoreLogger.error(ex);
-                hlpr.error(cx.getLocalizedMessage());
+                throw ex;
             } catch (RuntimeException ex ) {
                 CoreLogger.error(ex);
-                hlpr.error(ex.getLocalizedMessage());
+                throw ex;
             } catch (Error er) {
                 CoreLogger.error(er);
-                hlpr.error(er.getLocalizedMessage());
+                throw er;
             } finally {
                 doFinish(core, hlpr, req );
             }

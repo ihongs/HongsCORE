@@ -15,15 +15,16 @@
     if (href == null) {
         href  = request.getContextPath() + "/";
     }
-    if (code != null
-    &&  code != 301
-    &&  code != 302 ) {
+    if (code == null) {
+        code  = 302 ;
+    } else
+    if (code >= 400 ) {
         response.setStatus(code);
     }
 %>
-<!--MSG: <%=escapeXML( text.trim( ) )%> -->
-<!--ERR: <%=escapeXML("Goto " + href)%> -->
-<!--ERN: <%=code != null ? code : 302%> -->
+<!--MSG: <%=escapeXML(text)%> -->
+<!--ERR: Goto <%=escapeXML(href)%> -->
+<!--ERN: Er<%=code != null ? code : 302%> -->
 <!doctype html>
 <html>
     <head>

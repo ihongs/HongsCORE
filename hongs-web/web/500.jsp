@@ -47,9 +47,7 @@
         }
         // 调试模式输出异常栈以便检测
         if (0 !=      Core.DEBUG
-        &&  1 == (1 & Core.DEBUG)
-        &&  2 != (2 & Core.DEBUG)
-        &&  8 != (8 & Core.DEBUG) ) {
+        &&  4 != (4 & Core.DEBUG) ) {
             ByteArrayOutputStream o = new ByteArrayOutputStream();
             exception.printStackTrace(new PrintStream(o));
             trac  = new  String(o.toByteArray(), "utf-8");
@@ -63,8 +61,8 @@
         }   trac  = null ;
     }
 %>
-<!--MSG: <%=escapeXML( text.trim( ) )%> -->
-<!--ERN: <%=code != null ? code : 500%> -->
+<!--MSG: <%=escapeXML(text)%> -->
+<!--ERN: Er<%=code != null ? code : 500%> -->
 <!doctype html>
 <html>
     <head>
@@ -89,7 +87,7 @@
             #footbox.navbar, html, body, .jumbotron, .container
                 { color: #fff; background-color: #800; }
             pre
-                { color: #ddd; background-color: transparent; border-color: transparent; }
+                { color: #bbb; background-color: #600; border-color: #666; }
         </style>
     </head>
     <body>
@@ -97,7 +95,7 @@
             <div class="container">
                 <h1> :( </h1>
                 <p>&nbsp;</p>
-                <p style="white-space: pre-line;"><%=escapeXML(text.trim())%></p>
+                <p style="white-space: pre-line;"><%=escapeXML(text)%></p>
                 <p>&nbsp;</p>
                 <p style="font-size: small;">
                     <%=CoreLocale.getInstance().translate("core.error.500.txt")%>
@@ -110,7 +108,7 @@
                 </p>
                 <%if (trac != null) {%>
                 <p>&nbsp;</p>
-                <pre><%=escapePRE(trac.trim())%></pre>
+                <pre><%=escapePRE(trac)%></pre>
                 <%}%>
             </div>
         </div>

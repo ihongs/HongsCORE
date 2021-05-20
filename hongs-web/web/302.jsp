@@ -59,11 +59,12 @@
     <body>
         <div class="jumbotron">
             <div class="container">
-                <h1>: )</h1>
-                <p> &nbsp; </p>
-                <p> <%=escapeXML(text)%> </p>
-                <p> &nbsp; </p>
-                <p> <a class="btn btn-lg btn-success" href="<%=escapeXML(href)%>">
+                <h1> :) </h1>
+                <p>&nbsp;</p>
+                <p style="white-space: pre-line;"><%=escapeXML(text)%></p>
+                <p>&nbsp;</p>
+                <p style="font-weight: initial ;">
+                    <a class="btn btn-lg btn-success" href="<%=escapeXML(href)%>">
                     <%=CoreLocale.getInstance().translate("core.error.redirect")%>
                     </a>
                 </p>

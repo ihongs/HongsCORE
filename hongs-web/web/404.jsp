@@ -59,12 +59,12 @@
     <body>
         <div class="jumbotron">
             <div class="container">
-                <h1>: (</h1>
-                <p> &nbsp; </p>
-                <p> <%=escapeXML(text)%> </p>
-                <p> &nbsp; </p>
-                <p style="font-size: 1em;">
-                    <span> <%=CoreLocale.getInstance().translate("core.error.500.txt")%> </span>
+                <h1> :( </h1>
+                <p>&nbsp;</p>
+                <p style="white-space: pre-line;"><%=escapeXML(text)%></p>
+                <p>&nbsp;</p>
+                <p style="font-size: small;">
+                    <%=CoreLocale.getInstance().translate("core.error.404.txt")%>
                     <a style="color: white;" href="javascript:history.back();">
                         <b><%=CoreLocale.getInstance().translate("core.error.go.back")%></b>
                     </a>,

@@ -148,7 +148,8 @@ implements IEntity
   public String create(Map rd, FetchCase caze)
     throws HongsException
   {
-    String id = (String) caze.getOption(Cnst.ID_KEY);
+    String id = caze == null ? null
+     : (String) caze.getOption(Cnst.ID_KEY);
     if (id == null || id.isEmpty( )) {
         id = Core.newIdentity();
     }

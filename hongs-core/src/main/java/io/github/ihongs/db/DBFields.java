@@ -64,7 +64,7 @@ public class DBFields
     try (
       Loop rs = db.query("SELECT * FROM `"+ tn +"`", 0, 1);
     ) {
-      ResultSetMetaData md = rs.getMetaData( );
+      ResultSetMetaData md = rs.getMetaData ();
 
       for (int i = 1; i <= md.getColumnCount(); i ++)
       {

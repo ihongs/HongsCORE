@@ -380,7 +380,7 @@ public class Table
     {
       this.fields = (new DBFields(this)).fields;
     }
-    return /**/ this.fields;
+    return this.fields;
   }
 
   /**

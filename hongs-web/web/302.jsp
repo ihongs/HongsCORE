@@ -15,10 +15,8 @@
     if (href == null) {
         href  = request.getContextPath() + "/";
     }
-    if (code == null) {
-        code  = 302 ;
-    } else
-    if (code >= 400 ) {
+    if (code != null
+    &&  code >= 400 ) {
         response.setStatus(code);
     }
 %>

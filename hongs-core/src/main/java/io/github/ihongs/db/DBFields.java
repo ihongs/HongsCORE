@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.sql.ResultSetMetaData;
+import java.sql.ResultSet;
+import java.sql.Types;
 import java.sql.SQLException;
 import java.io.Serializable;
 
@@ -59,25 +61,24 @@ public class DBFields
   {
     fields = new LinkedHashMap();
 
-    Loop rs = db.query("SELECT * FROM `"+ tn +"`", 0, 1);
-    try
-    {
+    try (
+      Loop rs = db.query("SELECT * FROM `"+ tn +"`", 0, 1);
+    ) {
       ResultSetMetaData md = rs.getMetaData( );
 
       for (int i = 1; i <= md.getColumnCount(); i ++)
       {
         Map field = new HashMap();
-        field.put("type",           md.getColumnType(i));
-        field.put("size",           md.getPrecision (i));
-        field.put("scale",          md.getScale(i));
-        field.put("unsigned",      !md.isSigned(i));
-        field.put("required",       md.isNullable(i)
-                == ResultSetMetaData.columnNoNulls );
-        field.put("autoIncrement",  md.isAutoIncrement(i));
-        field.put("caseSensitive",  md.isCaseSensitive(i));
+        field.put("type" ,          md.getColumnType(i));
+        field.put("size" ,          md.getPrecision (i));
+        field.put("scale",          md.getScale     (i));
+        field.put("unsigned",       md.isSigned     (i) != true);
+        field.put("required",       md.isNullable   (i) !=  1  );
 
         // 用处不大的的属性:
         /*
+        field.put("autoIncrement",  md.isAutoIncrement(i));
+        field.put("caseSensitive",  md.isCaseSensitive(i));
         field.put("currency",       md.isCurrency(i));
         field.put("readOnly",       md.isReadOnly(i));
         field.put("writable",       md.isWritable(i));
@@ -98,9 +99,28 @@ public class DBFields
     {
       throw new HongsException(1068, ex);
     }
-    finally
+
+    // 由于 ResultSetMetaData 缺少默认值, 通过 DatabaseMetaData 作补充检测
+    try (
+      ResultSet rs = db.open().getMetaData().getColumns(null, "%", tn, "%");
+    ) {
+      while (rs.next())
+      {
+        String  fn = rs.getString("COLUMN_NAME");
+        int     dt = rs.getInt   (  "DATA_TYPE");
+        Map     fd = fields.get(fn);
+        if ( null != fd ) continue ;
+        fd.put("required" , ( null == rs.getString("COLUMN_DEF"        ))
+                    && ! "YES".equals(rs.getString("IS_NULLABLE"       ))
+                    && ! "YES".equals(rs.getString("IS_AUTOINCREMENT"  ))
+                    && ! "YES".equals(rs.getString("IS_GENERATEDCOLUMN"))
+                    && dt != Types.TIMESTAMP && dt != Types.TIMESTAMP_WITH_TIMEZONE
+        );
+      }
+    }
+    catch (SQLException ex)
     {
-      rs.close();
+      throw new HongsException(1068, ex);
     }
   }
 

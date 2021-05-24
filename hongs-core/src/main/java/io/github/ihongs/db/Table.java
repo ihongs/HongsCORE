@@ -599,8 +599,8 @@ public class Table
        */
       if (values.containsKey(namc))
       {
-        if ((value == null || value.equals( "" ))
-        && (Boolean) column.get(   "required"  ))
+        if ( value == null
+        && (Boolean) column.get("required"))
         {
           throw nullException(namc);
         }
@@ -608,8 +608,7 @@ public class Table
       else
       {
         if ( isNew
-        && (Boolean) column.get(   "required"   )
-        &&!(Boolean) column.get("autoIncrement"))
+        && (Boolean) column.get("required"))
         {
           throw nullException(namc);
         }

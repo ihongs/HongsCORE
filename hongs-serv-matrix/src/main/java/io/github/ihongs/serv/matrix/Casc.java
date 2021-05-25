@@ -7,6 +7,8 @@ import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.reflex.Async;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -132,10 +134,18 @@ public class Casc {
     }
 
     public static void update(Data inst, String fk, Object fv, long ct) throws HongsException {
-        Data.Loop loop = inst.search(Synt.mapOf(
-            Cnst.RB_KEY, Synt.setOf(Cnst.ID_KEY),
-            fk, fv
-        ), 0, 0);
+        // 可能多个关联指向同一资源
+        Map  ar = new HashMap();
+        Set  or = new HashSet();
+        Set  rb = new HashSet();
+        ar.put(Cnst.OR_KEY, or);
+        ar.put(Cnst.RB_KEY, rb);
+        rb.add(Cnst.ID_KEY    );
+        for (String fn : fk.split(";")) {
+            or.add(Synt.mapOf(fn , fv));
+        }
+
+        Data.Loop loop = inst.search(ar, 0, 0);
         String  fn = inst.getFormId();
         for (Map info : loop) {
             String id = (String) info.get(Cnst.ID_KEY);
@@ -148,10 +158,18 @@ public class Casc {
     }
 
     public static void delete(Data inst, String fk, Object fv, long ct) throws HongsException {
-        Data.Loop loop = inst.search(Synt.mapOf(
-            Cnst.RB_KEY, Synt.setOf(Cnst.ID_KEY),
-            fk, fv
-        ), 0, 0);
+        // 可能多个关联指向同一资源
+        Map  ar = new HashMap();
+        Set  or = new HashSet();
+        Set  rb = new HashSet();
+        ar.put(Cnst.OR_KEY, or);
+        ar.put(Cnst.RB_KEY, rb);
+        rb.add(Cnst.ID_KEY    );
+        for (String fn : fk.split(";")) {
+            or.add(Synt.mapOf(fn , fv));
+        }
+
+        Data.Loop loop = inst.search(ar, 0, 0);
         String  fn = inst.getFormId();
         for (Map info : loop) {
             String id = (String) info.get(Cnst.ID_KEY);

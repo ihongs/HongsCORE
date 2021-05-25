@@ -986,6 +986,24 @@ public class Data extends SearchEntity {
         delIds. add (id);
     }
 
+    /**
+     * 确认操作
+     * 调用 deplets 判断是否被引用
+     * @param rd
+     * @param ds
+     * @param ec
+     * @throws HongsException
+     */
+    @Override
+    protected void permit(Map rd, Set ds, int ec) throws HongsException {
+        super.permit(rd, ds, ec);
+
+        // 检查被引用状况
+        if ( 1097 == ec) {
+            depletes(ds);
+        }
+    }
+
     @Override
     protected void padQry(BooleanQuery.Builder qr, Map rd) throws HongsException {
         // 限定分区范围
@@ -1295,13 +1313,13 @@ public class Data extends SearchEntity {
 
     //** 级联操作 **/
 
-    protected void cascades(Set sd, Set rd) {
+    protected void cascades(Set us, Set rs) {
         Set<String> aq = Synt.toSet(getParams().get("cascades"));
         if (aq == null || aq.isEmpty()) {
             return;
         }
-        if (sd == null || sd.isEmpty()) {
-        if (rd == null || rd.isEmpty()) {
+        if (us == null || us.isEmpty()) {
+        if (rs == null || rs.isEmpty()) {
             return;
         }}
 
@@ -1315,14 +1333,14 @@ public class Data extends SearchEntity {
          * 相关字段的值会置空
          */
         for(String at : aq) {
-        if (at == null || at.isEmpty()) {
-            continue;
-        }
+            if (at == null || at.isEmpty()) {
+                continue;
+            }
             if (at.contains("#DELETE")) {
                 rq.add(at);
             if (at.contains("#UPDATE")) {
                 sq.add(at);
-            }} else 
+            }} else
             if (at.contains("#UPDATE")) {
                 sq.add(at);
                 uq.add(at);
@@ -1330,14 +1348,14 @@ public class Data extends SearchEntity {
         }
 
         // 放入队列, 异步处理
-        if (rd != null && ! rd.isEmpty()) {
-            for(Object id : rd) {
+        if (rs != null && ! rs.isEmpty()) {
+            for(Object id : rs) {
                 Casc.delete(rq, id);
                 Casc.update(uq, id);
             }
         }
-        if (sd != null && ! sd.isEmpty()) {
-            for(Object id : sd) {
+        if (us != null && ! us.isEmpty()) {
+            for(Object id : us) {
                 Casc.update(sq, id);
             }
         }
@@ -1350,9 +1368,9 @@ public class Data extends SearchEntity {
         }
 
         for(String at : aq) {
-        if (at == null || at.isEmpty()) {
-            continue;
-        }
+            if (at == null || at.isEmpty()) {
+                continue;
+            }
 
             // 格式: conf.form?fk#f1=fa;f2=fb
             int     p = at.indexOf  ("#");
@@ -1429,6 +1447,71 @@ public class Data extends SearchEntity {
                     rd.put(et.getKey(), fd.get(et.getValue()));
                 }
             }
+        }
+    }
+
+    protected void depletes(Set rs) throws HongsException {
+        Set<String> aq = Synt.toSet(getParams().get("cascades"));
+        if (aq == null || aq.isEmpty()) {
+            return;
+        }
+        if (rs == null || rs.isEmpty()) {
+            return;
+        }
+
+        StringBuilder nb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
+
+        for(String at : aq) {
+            if (null == at || at.isEmpty()) {
+                continue;
+            }
+
+            // 格式: conf!form?fk#DEPEND
+            int     p = at.indexOf  ("#");
+            if (0 > p ) {
+                continue;
+            }
+            String tk = at.substring(0+p);
+            if ( ! tk.contains("#DEPEND") ) {
+                continue;
+            }
+                   at = at.substring(0,p);
+                    p = at.indexOf  ("?");
+            String fk = at.substring(1+p);
+                   at = at.substring(0,p);
+                    p = at.indexOf  ("!");
+            String  f = at.substring(1+p);
+            String  c = at.substring(0,p);
+
+            // 可能存在多个引用字段
+            Map    ar = new HashMap();
+            Set    or = new HashSet();
+            ar.put( Cnst.OR_KEY, or );
+            for(String fn : fk.split(";")) {
+                or.add(Synt.mapOf(fn, rs));
+            }
+
+            // 查询依赖当前表的资源
+            Data inst = Data.getInstance(c, f);
+            int  hits = inst.search( ar, 0, 1).hits( );
+            if ( hits > 0 ) {
+                String  l = (String) inst.getParams( ).get("__text__");
+                nb.append(l).append(" (").append(hits).append( "), " );
+                sb.append(f).append(" (").append(hits).append( "), " );
+            }
+        }
+
+        if (sb.length() > 0) {
+            sb.setLength(sb.length() - 2);
+            nb.setLength(nb.length() - 2);
+
+            // 抛出异常告知依赖情况
+            throw new HongsException(1097, "Being dependent on "
+                                    + sb.toString( ) )
+                .setLocalizedContent("core.delete.depend.error")
+                .setLocalizedOptions( nb.toString( ) )
+                .setLocalizedContext("matrix");
         }
     }
 

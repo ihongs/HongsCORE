@@ -771,12 +771,16 @@ function hsListFillMore(page) {
  */
 function hsListFillLess(page) {
     HsList.prototype.fillPage.call(this, page);
+    this.pageBox.find(".page-text" ).remove( );
+    this.pageBox.find(".page-link" ).remove( );
+    this.pageBox.find(".page-curr" ).remove( );
     this.pageBox.find(".pagination").removeClass("pull-left" )
                                     .removeClass("pagination")
-                                    .   addClass("pager" /**/);
-    this.pageBox.find(".page-text,.page-link,.page-curr").remove(/**/);
-    this.pageBox.find(".page-prev" ).text(hsGetLang('list.prev.page'));
-    this.pageBox.find(".page-next" ).text(hsGetLang('list.next.page'));
+                                    .   addClass("pager"     );
+    this.pageBox.find(".page-prev" ).addClass("previous")
+                .find( "a" ).text(hsGetLang('list.prev.page'));
+    this.pageBox.find(".page-next" ).addClass("next"    )
+                .find( "a" ).text(hsGetLang('list.next.page'));
 }
 
 /**

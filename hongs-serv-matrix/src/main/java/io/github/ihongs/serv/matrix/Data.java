@@ -1329,9 +1329,9 @@ public class Data extends SearchEntity {
             return;
         }}
 
-        Set sq  =  new LinkedHashSet();
-        Set rq  =  new LinkedHashSet();
         Set uq  =  new LinkedHashSet();
+        Set rq  =  new LinkedHashSet();
+        Set vq  =  new LinkedHashSet();
 
         /**
          * 若仅指定了级联更新
@@ -1345,11 +1345,11 @@ public class Data extends SearchEntity {
             if (at.contains("#DELETE")) {
                 rq.add(at);
             if (at.contains("#UPDATE")) {
-                sq.add(at);
+                uq.add(at);
             }} else
             if (at.contains("#UPDATE")) {
-                sq.add(at);
                 uq.add(at);
+                vq.add(at);
             }
         }
 
@@ -1357,12 +1357,12 @@ public class Data extends SearchEntity {
         if (rs != null && ! rs.isEmpty()) {
             for(Object id : rs) {
                 Casc.delete(rq, id);
-                Casc.update(uq, id);
+                Casc.update(vq, id);
             }
         }
         if (us != null && ! us.isEmpty()) {
             for(Object id : us) {
-                Casc.update(sq, id);
+                Casc.update(uq, id);
             }
         }
     }

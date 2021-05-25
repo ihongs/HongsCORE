@@ -1313,6 +1313,12 @@ public class Data extends SearchEntity {
 
     //** 级联操作 **/
 
+    /**
+     * 级联操作,
+     * 异步更新或删除引用资源
+     * @param us 已更新的
+     * @param rs 已删除的
+     */
     protected void cascades(Set us, Set rs) {
         Set<String> aq = Synt.toSet(getParams().get("cascades"));
         if (aq == null || aq.isEmpty()) {
@@ -1361,6 +1367,13 @@ public class Data extends SearchEntity {
         }
     }
 
+    /**
+     * 内联包含
+     * 将被引用的部分复制过来
+     * @param dd 旧的数据
+     * @param rd 新的数据
+     * @throws HongsException
+     */
     protected void includes(Map dd, Map rd) throws HongsException {
         Set<String> aq = Synt.toSet(getParams().get("includes"));
         if (aq == null || aq.isEmpty()) {
@@ -1450,6 +1463,12 @@ public class Data extends SearchEntity {
         }
     }
 
+    /**
+     * 引用检查
+     * 检查被哪选资源关联引用
+     * @param rs 将删除的
+     * @throws HongsException
+     */
     protected void depletes(Set rs) throws HongsException {
         Set<String> aq = Synt.toSet(getParams().get("cascades"));
         if (aq == null || aq.isEmpty()) {

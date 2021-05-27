@@ -13,12 +13,14 @@ CREATE TABLE `a_master_dept` (
   `ctime` INTEGER(10) DEFAULT NULL,
   `mtime` INTEGER(10) DEFAULT NULL,
   `rtime` INTEGER(10) DEFAULT NULL,
+  `boost` INTEGER DEFAULT '0',
   `state` TINYINT DEFAULT '1',
   PRIMARY KEY (`id`),
   FOREIGN KEY (`pid`) REFERENCES `a_master_dept` (`id`) ON DELETE CASCADE
 );
 
 CREATE INDEX `IK_a_master_dept_dept` ON `a_master_dept` (`pid`);
+CREATE INDEX `IK_a_master_dept_boost` ON `a_master_dept` (`boost`);
 CREATE INDEX `IK_a_master_dept_state` ON `a_master_dept` (`state`);
 CREATE INDEX `IK_a_master_dept_ctime` ON `a_master_dept` (`ctime`);
 CREATE INDEX `IK_a_master_dept_mtime` ON `a_master_dept` (`mtime`);

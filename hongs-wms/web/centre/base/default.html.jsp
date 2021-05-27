@@ -36,7 +36,7 @@
         <div id="context">
             <%if (!"!HIDE".equals($hrel) && !"HIDE".equals($hrel)) {%>
             <div id="headbox">
-                <div data-load="centre/head.jsp" data-active="<%=$module+"/"+$entity+"/"%>"></div>
+                <div id="menu-context" data-load="centre/head.jsp" data-active="<%=$module+"/"+$entity+"/"%>"></div>
             </div>
             <%} else {%>
             <div id="leadbox"></div>

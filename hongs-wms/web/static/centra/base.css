@@ -20,7 +20,7 @@ html, body {
     z-index : 1010 ;
     overflow: auto ;
     position: fixed;
-    background: #101010;
+    background: #efefef;
 }
 #bodybox {
     height: 100%;
@@ -38,7 +38,7 @@ body ::-webkit-scrollbar {
 }
 body ::-webkit-scrollbar-track {
     border-radius: 4px;
-    background-color: #fff;
+    background-color: #eee;
 }
 body ::-webkit-scrollbar-thumb {
     border-radius: 4px;
@@ -50,12 +50,6 @@ body ::-webkit-scrollbar-corner {
 }
 #headbox::-webkit-scrollbar {
     display: none;
-}
-#headbox::-webkit-scrollbar-track {
-    background-color: #111;
-}
-#headbox::-webkit-scrollbar-thumb {
-    background-color: #888;
 }
 #headbox:hover::-webkit-scrollbar {
     display: block;
@@ -107,19 +101,19 @@ body ::-webkit-scrollbar-corner {
 }
 #user-menubar {
     bottom: 0;
-    box-shadow: 0 -1px 5px -1px #222;
-    background-color: rgba(17,17,17,0.9);
+    box-shadow: 0 -1px 5px -1px #ccc;
+    background-color: rgba(237,237,237,0.9);
 }
 #main-namebar {
     top   : 0;
-    box-shadow: 0  1px 5px -1px #000;
-    background-color: rgba(34,34,34,0.9);
+    box-shadow: 0  1px 5px -1px #ccc;
+    background-color: rgba(213,213,213,0.9);
 }
 #main-namebar:after {
     content: "";
     display: block;
     position: absolute;
-    background-image: radial-gradient(rgba(17,17,17,0.1), rgba(34,34,34,0.9));
+    background-image: radial-gradient(rgba(237,237,237,0.1), rgba(213,213,213,0.9));
     height: 100%;
     width : 100%;
     left: 0;
@@ -132,17 +126,17 @@ body ::-webkit-scrollbar-corner {
     font-size: 18px;
     line-height: 22px;
     font-weight: 800;
-    text-shadow: 0 -2px 2px #400;
+    text-shadow: 0 1px 4px #fff;
     padding: 6px 0;
-    color: #fea;
+    color: #985;
 }
 #main-namebar>div:nth-child(2) {
     font-size: 12px;
     line-height: 12px;
     font-weight: 500;
-    text-shadow: 0 -1px 1px #200;
+    text-shadow: 0 1px 1px #fff;
     padding: 3px 0;
-    color: #e22;
+    color: #d22;
 }
 
 /** 菜单 **/
@@ -152,11 +146,11 @@ body ::-webkit-scrollbar-corner {
     padding: 0;
     margin : 0;
     list-style: none;
-    background: #101010;
+    background: #efefef;
 }
 #main-menubar ul ul ,
 #user-menubar ul ul {
-    background: #202020;
+    background: #dfdfdf;
 }
 #main-menubar li a ,
 #user-menubar li a {
@@ -179,7 +173,7 @@ body ::-webkit-scrollbar-corner {
 #main-menubar li.acting > a.dropup ,
 #user-menubar li a ,
 #user-menubar li.acting > a.dropup {
-    color: #9d9d9d;
+    color: #686868;
     background: transparent;
     border-left: 4px solid transparent;
 }
@@ -187,7 +181,7 @@ body ::-webkit-scrollbar-corner {
 #main-menubar li.acting > a.dropup:hover ,
 #user-menubar li a:hover,
 #user-menubar li.acting > a.dropup:hover {
-    color: #bb0000;
+    color: #dd2222;
     background: transparent;
     border-left: 4px solid transparent;
 }
@@ -197,9 +191,9 @@ body ::-webkit-scrollbar-corner {
 #user-menubar li.acting > a ,
 #user-menubar li.active > a ,
 #user-menubar li.active > a.dropup {
-    color: #dddddd;
-    background: #802020;
-    border-left: 4px solid #bb0000;
+    color: #eeeeee;
+    background: #dd2222;
+    border-left: 4px solid #880000;
 }
 
 #main-menubar>ul>li {
@@ -218,12 +212,12 @@ body ::-webkit-scrollbar-corner {
 #main-menubar .caret ,
 #user-menubar .caret {
     float:  right ;
-    color: #101010;
+    color: #efefef;
 }
 #main-menubar:hover .caret ,
 #user-menubar:hover .caret {
     float:  right ;
-    color: #dddddd;
+    color: #333333;
 }
 #main-menubar .caret {
     margin-right: -10px; /* 修正上层内补误差 */
@@ -232,10 +226,10 @@ body ::-webkit-scrollbar-corner {
 /* 头像 */
 
 #user-menubar a {
-    color: #ddd;
+    color: #333333;
 }
 #user-menubar a:hover {
-    color: #b00;
+    color: #bb0000;
 }
 #user-menubar .uhead {
     display: inline-block ;
@@ -462,25 +456,10 @@ html ,
 .img ,
 .deny-dark ,
 .modal>.alert ,
-#main-namebar ,
-#main-menubar ,
-#user-menubar ,
 [style*='background-image'] {
     filter: invert(100%) hue-rotate(180deg) !important;
 }
-#headbox {
-    background-color: #eee;
-}
-#bodybox {
-    background-color: #fff;
-}
 .modal-backdrop {
     background-color: #fff;
-}
-#headbox::-webkit-scrollbar-track {
-    background-color: #eee;
-}
-#headbox::-webkit-scrollbar-thumb {
-    background-color: #ddd;
 }
 }

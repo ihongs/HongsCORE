@@ -5,25 +5,60 @@
  */
 
 html, body {
-    height: 100%;
-    width : 100%;
     min-width: 992px;
+    width : 100%;
+    height: 100%;
 }
 #context {
-    height: 100%;
-    width : 100%;
     min-width: 970px;
+    width : 100%;
+    height: 100%;
 }
 #headbox {
-    height: 100%;
     width :  0  ;
+    height: 100%;
+    z-index : 1010 ;
     overflow: auto ;
     position: fixed;
     background: #101010;
-    z-index: 1010;
 }
 #bodybox {
-    z-index: 1000;
+    height: 100%;
+    z-index : 1000 ;
+    overflow: auto ;
+}
+
+/* 自定义滚动条样式 */
+html {
+    -ms-overflow-style: -ms-autohiding-scrollbar; /* IE */
+    scrollbar-width: thin; /* Firefox */
+}
+body ::-webkit-scrollbar {
+    width: 8px;
+}
+body ::-webkit-scrollbar-track {
+    border-radius: 4px;
+    background-color: #fff;
+}
+body ::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: #888;
+}
+body ::-webkit-scrollbar-button ,
+body ::-webkit-scrollbar-corner {
+    display: none;
+}
+#headbox::-webkit-scrollbar {
+    display: none;
+}
+#headbox::-webkit-scrollbar-track {
+    background-color: #111;
+}
+#headbox::-webkit-scrollbar-thumb {
+    background-color: #888;
+}
+#headbox:hover::-webkit-scrollbar {
+    display: block;
 }
 
 #main-namebar ,
@@ -37,16 +72,16 @@ html, body {
     display: block;
 }
 .sider-open #head-handler {
-    left : 200px;
+    left : 220px;
 }
 .sider-open #headbox {
-    width: 200px;
+    width: 220px;
 }
 .sider-open #bodybox {
-    padding-left: 200px;
+    padding-left: 220px;
 }
 .sider-open #bodybox > * > .laps.tabs {
-    padding-left: 215px;
+    padding-left: 235px;
 }
 
 /** 标题 **/
@@ -67,7 +102,7 @@ html, body {
 
 #user-menubar ,
 #main-namebar {
-    width: 200px;
+    width: 220px;
     position: fixed;
 }
 #user-menubar {
@@ -441,5 +476,11 @@ html ,
 }
 .modal-backdrop {
     background-color: #fff;
+}
+#headbox::-webkit-scrollbar-track {
+    background-color: #eee;
+}
+#headbox::-webkit-scrollbar-thumb {
+    background-color: #ddd;
 }
 }

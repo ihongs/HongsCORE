@@ -21,6 +21,7 @@ CREATE TABLE `a_matrix_unit` (
 
 CREATE INDEX `IK_a_matrix_unit_unit` ON `a_matrix_unit` (`pid`);
 CREATE INDEX `IK_a_matrix_unit_state` ON `a_matrix_unit` (`state`);
+CREATE INDEX `IK_a_matrix_unit_boost` ON `a_matrix_unit` (`boost`);
 CREATE INDEX `IK_a_matrix_unit_ctime` ON `a_matrix_unit` (`ctime`);
 CREATE INDEX `IK_a_matrix_unit_mtime` ON `a_matrix_unit` (`mtime`);
 CREATE UNIQUE INDEX `UK_a_matrix_unit_name` ON `a_matrix_unit` (`name`,`pid`);
@@ -47,6 +48,7 @@ CREATE TABLE `a_matrix_form` (
 
 CREATE INDEX `IK_a_matrix_form_unit` ON `a_matrix_form` (`unit_id`);
 CREATE INDEX `IK_a_matrix_form_state` ON `a_matrix_form` (`state`);
+CREATE INDEX `IK_a_matrix_form_boost` ON `a_matrix_form` (`boost`);
 CREATE INDEX `IK_a_matrix_form_ctime` ON `a_matrix_form` (`ctime`);
 CREATE INDEX `IK_a_matrix_form_mtime` ON `a_matrix_form` (`mtime`);
 CREATE UNIQUE INDEX `UK_a_matrix_form_name` ON `a_matrix_form` (`name`,`unit_id`);

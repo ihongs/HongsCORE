@@ -128,7 +128,7 @@ body ::-webkit-scrollbar-corner {
     font-weight: 800;
     text-shadow: 0 1px 4px #fff;
     padding: 6px 0;
-    color: #985;
+    color: #863;
 }
 #main-namebar>div:nth-child(2) {
     font-size: 12px;
@@ -136,7 +136,7 @@ body ::-webkit-scrollbar-corner {
     font-weight: 500;
     text-shadow: 0 1px 1px #fff;
     padding: 3px 0;
-    color: #d22;
+    color: #b43;
 }
 
 /** 菜单 **/
@@ -181,7 +181,7 @@ body ::-webkit-scrollbar-corner {
 #main-menubar li.acting > a.dropup:hover ,
 #user-menubar li a:hover,
 #user-menubar li.acting > a.dropup:hover {
-    color: #dd2222;
+    color: #bb4433;
     background: transparent;
     border-left: 4px solid transparent;
 }
@@ -192,7 +192,7 @@ body ::-webkit-scrollbar-corner {
 #user-menubar li.active > a ,
 #user-menubar li.active > a.dropup {
     color: #eeeeee;
-    background: #dd2222;
+    background: #bb4433;
     border-left: 4px solid #880000;
 }
 
@@ -229,7 +229,7 @@ body ::-webkit-scrollbar-corner {
     color: #333333;
 }
 #user-menubar a:hover {
-    color: #bb0000;
+    color: #bb4433;
 }
 #user-menubar .uhead {
     display: inline-block ;
@@ -255,7 +255,7 @@ body ::-webkit-scrollbar-corner {
 #user-menubar .badge {
     position  : absolute;
     display   : none;
-    background: #b00;
+    background: #b43;
     min-width : 0;
     min-height: 0;
     width  : 8px;

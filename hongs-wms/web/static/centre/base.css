@@ -69,3 +69,17 @@
 .input-group .input-search:disabled+.input-group-btn>.submit>.glyphicon:before {
     content: "\e031";
 }
+
+/* 深色模式适配样式 */
+@media (prefers-color-scheme: dark) {
+html ,
+.img , img ,
+.deny-dark ,
+.navbar-inverse ,
+.modal > .alert {
+    filter: invert(100%) hue-rotate(180deg) !important;
+}
+.modal-backdrop {
+    background-color: #fff;
+}
+}

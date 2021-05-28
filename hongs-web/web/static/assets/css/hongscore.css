@@ -786,8 +786,10 @@ ol.repeated ,
 }
 
 hr.gap {
-    border-top: 20px solid #ccc;
-    margin : 0 -15px 20px -15px;
+    border : 0;
+    height : 10px;
+    background-color: #ccc;
+    background-image: linear-gradient(to bottom, #ccc 0, #eee 50%, #fff 100%);
 }
 hr.double {
     border-width: 3px;

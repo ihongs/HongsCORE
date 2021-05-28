@@ -28,33 +28,6 @@ html, body {
     overflow: auto ;
 }
 
-/* 自定义滚动条样式 */
-html {
-    -ms-overflow-style: -ms-autohiding-scrollbar; /* IE */
-    scrollbar-width: thin; /* Firefox */
-}
-body ::-webkit-scrollbar {
-    width: 8px;
-}
-body ::-webkit-scrollbar-track {
-    border-radius: 4px;
-    background-color: #eee;
-}
-body ::-webkit-scrollbar-thumb {
-    border-radius: 4px;
-    background-color: #888;
-}
-body ::-webkit-scrollbar-button ,
-body ::-webkit-scrollbar-corner {
-    display: none;
-}
-#headbox::-webkit-scrollbar {
-    display: none;
-}
-#headbox:hover::-webkit-scrollbar {
-    display: block;
-}
-
 #main-namebar ,
 #main-menubar ,
 #user-menubar {
@@ -452,11 +425,10 @@ body ::-webkit-scrollbar-corner {
 /* 深色模式适配样式 */
 @media (prefers-color-scheme: dark) {
 html ,
- img ,
-.img ,
+.img , img ,
 .deny-dark ,
-.modal>.alert ,
-[style*='background-image'] {
+.navbar-inverse ,
+.modal > .alert {
     filter: invert(100%) hue-rotate(180deg) !important;
 }
 .modal-backdrop {

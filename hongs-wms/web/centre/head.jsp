@@ -119,7 +119,7 @@
     }
 %>
 
-<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
     <div class="container">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-collapse">
@@ -141,7 +141,7 @@
                 <li class="dropdown">
                     <%if (role.contains("centre")) {%>
                     <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
-                        <span class="uhead" style="background-image:url(<%=head%>);" title="<%=name%>"></span>
+                        <span class="uhead img" style="background-image:url(<%=head%>);" title="<%=name%>"></span>
                         <span class="badge"></span>
                         <span class="caret"></span>
                     </a>

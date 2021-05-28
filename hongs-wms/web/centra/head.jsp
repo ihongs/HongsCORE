@@ -139,7 +139,7 @@
     <a href="javascript:;" class="dropup" style="display: block;">
         <div class="caret"></div>
         <div class="badge"></div>
-        <div class="uhead" style="background-image: url(<%=head%>)"></div>
+        <div class="uhead img" style="background-image: url(<%=head%>)"></div>
         <div class="uname" title="<%=name%>"><%=name%></div>
     </a>
 </div>

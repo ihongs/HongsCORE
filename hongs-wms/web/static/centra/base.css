@@ -41,7 +41,9 @@ html, body {
 .sider-open #head-handler {
     left : 220px;
 }
-.sider-open #headbox {
+.sider-open #headbox ,
+.sider-open #user-menubar ,
+.sider-open #main-namebar {
     width: 220px;
 }
 .sider-open #bodybox {
@@ -75,22 +77,14 @@ html, body {
 #user-menubar {
     bottom: 0;
     box-shadow: 0 -1px 5px -1px #ccc;
-    background-color: rgba(237,237,237,0.9);
+    background-color: rgba(238,238,238,0.9);
+    background-image: linear-gradient(to bottom,rgba(221,221,221,0.5) 0,rgba(255,255,255,0.5) 100%);
 }
 #main-namebar {
     top   : 0;
     box-shadow: 0  1px 5px -1px #ccc;
-    background-color: rgba(213,213,213,0.9);
-}
-#main-namebar:after {
-    content: "";
-    display: block;
-    position: absolute;
-    background-image: radial-gradient(rgba(237,237,237,0.1), rgba(213,213,213,0.9));
-    height: 100%;
-    width : 100%;
-    left: 0;
-    top : 0;
+    background-color: rgba(238,238,238,0.9);
+    background-image: linear-gradient(to bottom,rgba(255,255,255,0.5) 0,rgba(221,221,221,0.5) 100%);
 }
 #main-namebar>div {
     text-align : center;
@@ -99,17 +93,15 @@ html, body {
     font-size: 18px;
     line-height: 22px;
     font-weight: 800;
-    text-shadow: 0 1px 4px #fff;
     padding: 6px 0;
-    color: #863;
+    color: #b43;
 }
 #main-namebar>div:nth-child(2) {
     font-size: 12px;
     line-height: 12px;
     font-weight: 500;
-    text-shadow: 0 1px 1px #fff;
     padding: 3px 0;
-    color: #b43;
+    color: #555;
 }
 
 /** 菜单 **/
@@ -337,31 +329,19 @@ html, body {
 
 /* 主导航条默认样式 */
 #main-context > .laps.tabs.breadcrumb {
-    border       : 0;
-    border-radius: 0;
-    border-bottom: 1px solid #eee;
-    border-top   : 1px solid transparent;
-    box-shadow   : 0px 1px 5px -1px #ccc;
+    box-shadow: 0 1px 5px -1px #ccc;
+    background-color: rgba(238,238,238,0.9);
+    background-image: linear-gradient(to bottom,rgba(255,255,255,0.5) 0,rgba(238,238,238,0.5) 100%)
 }
-/*
-#main-context > .laps.tabs.breadcrumb ,
-#main-context > .laps.tabs.breadcrumb a {
-    color: #ccc;
-}
-#main-context > .laps.tabs.breadcrumb a:hover ,
-#main-context > .laps.tabs.breadcrumb a:focus ,
-#main-context > .laps.tabs.breadcrumb .active a {
-    color: #fff;
-}
-*/
 #main-context > .laps.tabs.breadcrumb .active a {
     text-decoration: none;
+    color: #333;
 }
 #main-context > .laps.tabs.breadcrumb .home-crumb .glyphicon {
     color: #555;
 }
 #main-context > .laps.tabs.breadcrumb .back-crumb .glyphicon {
-    color: #d00;
+    color: #b43;
 }
 
 /* 隐藏受限的搜索框 */

@@ -77,6 +77,12 @@ fieldset>.dropdown-list {
     line-height: 24px;
 }
 
+.btn.form-control {
+    background-image : none;
+     box-shadow: none;
+    text-shadow: none;
+    text-align : left;
+}
 .btn.text-left {
     text-align : left;
 }
@@ -85,12 +91,6 @@ fieldset>.dropdown-list {
 }
 .btn.text-center {
     text-align : center;
-}
-.btn.form-control {
-    background-image : none;
-     box-shadow: none;
-    text-shadow: none;
-    text-align : left;
 }
 .btn-default.form-control {
     color: #999;
@@ -788,6 +788,8 @@ ol.repeated ,
 hr.gap {
     border : 0;
     height : 10px;
+    margin-left : -15px;
+    margin-right: -15px;
     background-color: #ccc;
     background-image: linear-gradient(to bottom, #ccc 0, #eee 50%, #fff 100%);
 }

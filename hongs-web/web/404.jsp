@@ -45,7 +45,9 @@
         <![endif]-->
         <script type="text/javascript" src="<%=request.getContextPath()%>/static/assets/jquery.min.js"></script>
         <style type="text/css">
-            h1, h2
+            html, body
+                { width: 100%; height: 100%; }
+            h1, h2, h3
                 { font-weight: bolder; }
             #footbox .copy-right a,
             #footbox .site-links a

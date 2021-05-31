@@ -42,9 +42,13 @@
             #footbox .site-links a {
                 margin-right : 1em;
             }
+            html, body {
+                height    : 100%;
+                width     : 100%;
+            }
             .jumbotron {
-                background: #222;
                 color     : #ccc;
+                background: #222;
             }
             @media ( min-width: 768px ) {
                 .jumbotron {

@@ -3,10 +3,13 @@
 <%@include file="_base_.jsp"%>
 <%
     // 仅开放接口则抛出资源缺失异常, 兼容旧版 NONE
-    if ("!DENY".equals($hrel) || "NONE".equals($hrel)) {
+    if ($hrel != null && ($hrel.startsWith("!") || $hrel.equals("NONE"))) {
         throw new HongsException(404, $locale.translate("core.error.no.thing"));
     }
     String $func = "in_"+($module+"_"+$entity).replace ('/', '_');
+    String $href = $hrel == null || $hrel.isEmpty()
+                 ? $module+"/"+$entity+"/list.html"
+                 : $hrel ;
 %>
 <!doctype html>
 <html>
@@ -38,8 +41,6 @@
             <div id="headbox">
                 <div id="menu-context" data-load="centre/head.jsp" data-active="<%=$module+"/"+$entity+"/"%>"></div>
             </div>
-            <%} else {%>
-            <div id="leadbox"></div>
             <%} /* End if */%>
             <div id="bodybox">
                 <div id="main-context" class="container">
@@ -58,7 +59,7 @@
                     </ol>
                     <div class="labs laps">
                         <div></div>
-                        <div><div data-load="<%=$module%>/<%=$entity%>/list.html"></div></div>
+                        <div><div data-load="<%=$href%>"></div></div>
                     </div>
                 </div>
             </div>

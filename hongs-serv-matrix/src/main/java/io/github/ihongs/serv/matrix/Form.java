@@ -358,7 +358,7 @@ public class Form extends Model {
                 flds.add(Synt.mapOf(
                     "__name__", "muser",
                     "__type__", "hidden",
-                    "readonly", "true",
+                    "disabled", "true",
                     "default" , "=$uid",
                     "deforce" , "always"
                 ));
@@ -367,7 +367,7 @@ public class Form extends Model {
                 flds.add(Synt.mapOf(
                     "__name__", "cuser",
                     "__type__", "hidden",
-                    "readonly", "true",
+                    "disabled", "true",
                     "default" , "=$uid",
                     "deforce" , "create"
                 ));
@@ -379,7 +379,7 @@ public class Form extends Model {
                     "__name__", "mtime",
                     "__type__", "datetime",
                       "type"  , "timestamp",
-                    "readonly", "true",
+                    "disabled", "true",
                     "default" , "=%now",
                     "deforce" , "always"
                 ));
@@ -389,7 +389,7 @@ public class Form extends Model {
                     "__name__", "ctime",
                     "__type__", "datetime",
                       "type"  , "timestamp",
-                    "readonly", "true",
+                    "disabled", "true",
                     "default" , "=%now",
                     "deforce" , "create"
                 ));

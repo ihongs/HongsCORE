@@ -4,6 +4,16 @@
  * 版本: 2018/07/27 23:00
  */
 
+html ,
+body {
+    background: #f5f5f5;
+}
+#bodybox>.container {
+    background: #ffffff;
+    padding-top  : 20px;
+    border-radius:  4px;
+}
+
 #context {
     display: flex;
     min-height: 100vh;
@@ -12,11 +22,8 @@
 #bodybox {
     flex: 1;
 }
-#leadbox {
-    height : 20px; /* 顶部空隙高度 */
-}
 #headbox {
-    height : 71px; /* 顶部菜单高度 */
+    height : 71px;
 }
 #footbox .navbar ,
 #footbox .navbar blockquote {
@@ -43,19 +50,21 @@
 
 /* 主导航条默认样式 */
 #main-context > .laps.tabs.breadcrumb {
-    border: 0;
-    border-radius: 0;
-    border-bottom: 1px solid #ccc;
-    background-color: transparent;
+    padding-left : 1px;
+    padding-right: 1px;
+    border-radius: 0px;
+    border-bottom: 3px double #ccc;
+    background-color : transparent;
 }
 #main-context > .laps.tabs.bread-home {
     display: none;
+    color: #333;
 }
 #main-context > .laps.tabs.breadcrumb .home-crumb .glyphicon {
     color: #555;
 }
 #main-context > .laps.tabs.breadcrumb .back-crumb .glyphicon {
-    color: #d00;
+    color: #d54;
 }
 
 /* 隐藏受限的搜索框 */

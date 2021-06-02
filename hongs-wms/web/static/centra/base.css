@@ -4,102 +4,89 @@
  * 版本: 2018/07/27 23:00
  */
 
-html, body {
-    min-width: 992px;
-    width : 100%;
-    height: 100%;
-}
+html ,
+body ,
 #context {
-    min-width: 970px;
-    width : 100%;
+    background: #f5f5f5;
+    min-width: 992px;
+    overflow: hidden;
+    clear : both;
     height: 100%;
 }
 #headbox {
-    width :  0  ;
+    position: relative;
+    overflow: hidden;
+    float : left;
     height: 100%;
-    z-index : 1010 ;
-    overflow: auto ;
-    position: fixed;
-    background: #efefef;
 }
 #bodybox {
+    position: relative;
+    overflow: hidden;
+    float :right;
     height: 100%;
-    z-index : 1000 ;
-    overflow: auto ;
+}
+#menu-context ,
+#main-context {
+    overflow: auto;
+    height: 100%;
+}
+#menu-context {
+    padding-top: 95px;
+}
+#main-context {
+    padding-top: 20px;
 }
 
-#main-namebar ,
-#main-menubar ,
-#user-menubar {
+#headbox {
+    border-right: 1px solid #c5c5c5;
     display: none ;
+    width  : auto ;
 }
-.sider-open #main-namebar ,
-.sider-open #main-menubar ,
-.sider-open #user-menubar {
+#bodybox {
     display: block;
+    width  : 100% ;
 }
-.sider-open #head-handler {
-    left : 220px;
-}
-.sider-open #headbox ,
-.sider-open #user-menubar ,
-.sider-open #main-namebar {
-    width: 220px;
+.sider-open #headbox {
+    display: block;
+    width  : 240px;
 }
 .sider-open #bodybox {
-    padding-left: 220px;
+    display: block;
+    width  : calc(100% - 240px);
 }
-.sider-open #bodybox > * > .laps.tabs {
-    padding-left: 235px;
+.sider-open #head-handler {
+    left   : 240px;
 }
 
 /** 标题 **/
 
-#user-menubar {
-    padding: 12px 0;
-}
-#main-menubar {
-    padding: 20px 0;
-}
 #main-namebar {
     padding: 20px 15px;
 }
-#main-menubar {
-    margin-top   : 90px;
-    margin-bottom: 60px;
+#main-menubar ,
+#user-menubar {
+    padding: 20px 0;
 }
 
-#user-menubar ,
 #main-namebar {
-    width: 220px;
-    position: fixed;
-}
-#user-menubar {
-    bottom: 0;
-    box-shadow: 0 -1px 5px -1px #ccc;
-    background-color: rgba(238,238,238,0.9);
-    background-image: linear-gradient(to bottom,rgba(221,221,221,0.5) 0,rgba(255,255,255,0.5) 100%);
-}
-#main-namebar {
-    top   : 0;
-    box-shadow: 0  1px 5px -1px #ccc;
-    background-color: rgba(238,238,238,0.9);
-    background-image: linear-gradient(to bottom,rgba(255,255,255,0.5) 0,rgba(221,221,221,0.5) 100%);
-}
-#main-namebar>div {
-    text-align : center;
+    background: rgba(245,245,245,0.9);
+    position: absolute;
+    z-index : 1;
+    width: 100%;
+    left: 0px;
+    top : 0px;
 }
 #main-namebar>div:nth-child(1) {
-    font-size: 18px;
-    line-height: 22px;
+    line-height: 24px;
+    font-size  : 18px;
     font-weight: 800;
     padding: 6px 0;
-    color: #b43;
+    color: #333;
 }
 #main-namebar>div:nth-child(2) {
-    font-size: 12px;
     line-height: 12px;
-    font-weight: 500;
+    font-size  : 12px;
+    font-weight: 400;
     padding: 3px 0;
     color: #555;
 }
@@ -111,11 +98,11 @@ html, body {
     padding: 0;
     margin : 0;
     list-style: none;
-    background: #efefef;
+    background: #f5f5f5;
 }
 #main-menubar ul ul ,
 #user-menubar ul ul {
-    background: #dfdfdf;
+    background: #f0f0f0;
 }
 #main-menubar li a ,
 #user-menubar li a {
@@ -138,17 +125,17 @@ html, body {
 #main-menubar li.acting > a.dropup ,
 #user-menubar li a ,
 #user-menubar li.acting > a.dropup {
-    color: #686868;
+    color: #555;
     background: transparent;
-    border-left: 4px solid transparent;
+    border-left: 5px solid transparent;
 }
 #main-menubar li a:hover,
 #main-menubar li.acting > a.dropup:hover ,
 #user-menubar li a:hover,
 #user-menubar li.acting > a.dropup:hover {
-    color: #bb4433;
+    color: #37b;
     background: transparent;
-    border-left: 4px solid transparent;
+    border-left: 5px solid transparent;
 }
 #main-menubar li.acting > a ,
 #main-menubar li.active > a ,
@@ -156,16 +143,14 @@ html, body {
 #user-menubar li.acting > a ,
 #user-menubar li.active > a ,
 #user-menubar li.active > a.dropup {
-    color: #eeeeee;
-    background: #bb4433;
-    border-left: 4px solid #880000;
+    color: #eee;
+    background: #37b;
+    border-left: 5px solid #149;
 }
 
-#main-menubar>ul>li {
-    margin:  1em 0px;
-}
+#main-menubar>ul>li ,
 #user-menubar>ul>li {
-    margin:  0px 0px;
+    margin:  5px 0px;
 }
 
 #main-menubar .caret {
@@ -177,7 +162,7 @@ html, body {
 #main-menubar .caret ,
 #user-menubar .caret {
     float:  right ;
-    color: #efefef;
+    color: #f5f5f5;
 }
 #main-menubar:hover .caret ,
 #user-menubar:hover .caret {
@@ -191,17 +176,17 @@ html, body {
 /* 头像 */
 
 #user-menubar a {
-    color: #333333;
+    color: #333;
 }
 #user-menubar a:hover {
-    color: #bb4433;
+    color: #37b;
 }
 #user-menubar .uhead {
     display: inline-block ;
     vertical-align: middle;
-    width : 48px;
-    height: 48px;
-    margin: -6px 6px;
+    width : 36px;
+    height: 36px;
+    margin: 0 17px;
     border-radius  : 4px;
     background-size: 100% 100%;
     background-repeat: no-repeat;
@@ -210,7 +195,7 @@ html, body {
 #user-menubar .uname {
     display: inline-block ;
     vertical-align: middle;
-    width: 120px;
+    width: 140px;
     height: 36px;
     line-height: 36px;
     white-space: nowrap;
@@ -220,7 +205,7 @@ html, body {
 #user-menubar .badge {
     position  : absolute;
     display   : none;
-    background: #b43;
+    background: #d54;
     min-width : 0;
     min-height: 0;
     width  : 8px;
@@ -231,8 +216,6 @@ html, body {
 #user-menubar .glyphicon {
     top  :  1px; /* 修正字体符号偏上的问题 */
     width: 26px;
-    margin-right: 17px;
-    text-align: center;
 }
 
 /* 图标 */
@@ -266,6 +249,22 @@ html, body {
 
 /* 其他 */
 
+#headbox blockquote ,
+#headbox q  , 
+#headbox p  {
+    color: #777 ;
+    border-color: #ccc;
+    font-size: inherit;
+    padding: 20px 15px;
+    margin : 20px 0;
+}
+#headbox hr {
+    margin : 0 15px;
+}
+#main-namebar hr {
+    margin : 20px 0 -20px 0;
+}
+
 #head-handler {
     position: fixed;
     top   :  50%;
@@ -296,42 +295,13 @@ html, body {
     border-color: transparent #fff transparent transparent;
 }
 
-#head-powered {
-    writing-mode: vertical-lr;
-    text-align: center;
-    font-size : 8px;
-    position: fixed;
-    bottom: 8px;
-    right : 0px;
-    color: #ccc;
-}
-#head-powered a {
-    text-decoration: none;
-    color: #fcc;
-}
-#head-powered:hover {
-    color: #000;
-}
-#head-powered:hover a {
-    color: #f00;
-}
-
-/* 主导航条悬浮固定 */
-#main-context > .laps.tabs {
-    position: fixed;
-    z-index : 1000 ;
-      width : 100% ;
-       left : 0 ;
-}
-#main-context > .laps.labs {
-    padding-top : 58px;
-}
-
 /* 主导航条默认样式 */
 #main-context > .laps.tabs.breadcrumb {
-    box-shadow: 0 1px 5px -1px #ccc;
-    background-color: rgba(238,238,238,0.9);
-    background-image: linear-gradient(to bottom,rgba(255,255,255,0.5) 0,rgba(238,238,238,0.5) 100%)
+    padding-left : 1px;
+    padding-right: 1px;
+    border-radius: 0px;
+    border-bottom: 3px double #c5c5c5;
+    background: transparent;
 }
 #main-context > .laps.tabs.breadcrumb .active a {
     text-decoration: none;
@@ -341,7 +311,7 @@ html, body {
     color: #555;
 }
 #main-context > .laps.tabs.breadcrumb .back-crumb .glyphicon {
-    color: #b43;
+    color: #d54;
 }
 
 /* 隐藏受限的搜索框 */

@@ -484,6 +484,12 @@ div.bootstrap-tagsinput .tag [data-role="remove"]:after {
     text-overflow: ellipsis;
 }
 
+.table-responsive.listbox {
+    background-color: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+}
+
 .listbox.invisible ,
 .pagebox.invisible ,
 .findbox.invisible ,
@@ -785,16 +791,16 @@ ol.repeated ,
     box-shadow: none;
 }
 
+hr {
+    border-color: #e5e5e5;
+}
 hr.gap {
-    border : 0;
-    height : 10px;
-    margin-left : -15px;
-    margin-right: -15px;
-    background-color: #ccc;
-    background-image: linear-gradient(to bottom, #ccc 0, #eee 50%, #fff 100%);
+    border-top-width: 3px;
+    border-color: #c5c5c5;
+    border-style: double;
 }
 hr.double {
-    border-width: 3px;
+    border-top-width: 3px;
     border-style: double;
 }
 hr.dashed {

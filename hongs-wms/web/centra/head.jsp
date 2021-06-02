@@ -117,56 +117,62 @@
     }
 %>
 
+<div id="head-handler">
+    <a href="javascript:;"></a>
+</div>
+
+<div id="main-namebar">
+    <div><%=CoreLocale.getInstance().translate("fore.centra.title"    )%></div>
+    <div><%=CoreLocale.getInstance().translate("fore.centra.sub.title")%></div>
+    <hr/>
+</div>
+
+<div id="user-menubar">
+    <a href="javascript:;" style="display: block;">
+        <div class="uhead img" style="background-image: url(<%=head%>);"></div>
+        <div class="uname" title="<%=name%>"><%=name%></div>
+        <div class="caret"></div>
+        <div class="badge"></div>
+    </a>
+    <ul>
+        <li>
+            <a href="javascript:;" id="user-set">
+                <span class="glyphicon glyphicon-user"></span>
+                <%=CoreLocale.getInstance().translate("fore.modify")%>
+            </a>
+        </li>
+        <li>
+            <a href="javascript:;" id="sign-out">
+                <span class="glyphicon glyphicon-off "></span>
+                <%=CoreLocale.getInstance().translate("fore.logout")%>
+            </a>
+        </li>
+    </ul>
+</div>
+
+<hr />
+
 <div id="main-menubar">
     <ul>
 <%=makeMenu(menu, acti)%>
     </ul>
 </div>
 
-<div id="user-menubar">
-    <ul>
-        <li>
-            <a href="javascript:;" id="user-set">
-                <span class="glyphicon glyphicon-user"></span><%=CoreLocale.getInstance().translate("fore.modify")%>
-            </a>
-        </li>
-        <li>
-            <a href="javascript:;" id="sign-out">
-                <span class="glyphicon glyphicon-off "></span><%=CoreLocale.getInstance().translate("fore.logout")%>
-            </a>
-        </li>
-    </ul>
-    <a href="javascript:;" class="dropup" style="display: block;">
-        <div class="caret"></div>
-        <div class="badge"></div>
-        <div class="uhead img" style="background-image: url(<%=head%>)"></div>
-        <div class="uname" title="<%=name%>"><%=name%></div>
-    </a>
-</div>
+<hr />
 
-<div id="main-namebar">
-    <div><%=CoreLocale.getInstance().translate("fore.centra.title"    )%></div>
-    <div><%=CoreLocale.getInstance().translate("fore.centra.sub.title")%></div>
-</div>
-
-<div id="head-powered">
-    <p>
-        <span>&copy;&nbsp;</span><span><%=CoreLocale.getInstance().translate("fore.copy.right")%></span>
-    <!--<span>&nbsp;&nbsp;</span><span><%=CoreLocale.getInstance().translate("fore.site.links")%></span>-->
-        <span>&nbsp;&nbsp;</span><span>Powered by <a href="<%=request.getContextPath()%>/power.html" target="_blank">HongsCORE</a></span>
-    </p>
-</div>
-
-<div id="head-handler">
-    <a href="javascript:;"></a>
-</div>
+<blockquote>
+    <span>&copy;&nbsp;</span>
+    <%=CoreLocale.getInstance().translate("fore.copy.right")%><br/>
+    <%=CoreLocale.getInstance().translate("fore.site.links")%><br/>
+    Powered by <a href="<%=request.getContextPath()%>/power.html" target="_blank">HongsCORE</a>
+</blockquote>
 
 <script type="text/javascript">
     (function($) {
-        var headbox = $("#headbox");
         var context = $("#main-context");
         var menubar = $("#main-menubar");
         var userbar = $("#user-menubar");
+        var menubox = $("#menu-context");
         var namebar = $("#main-namebar");
 
         $(function() {
@@ -226,6 +232,13 @@
             }
         });
 
+        // 边栏隐藏与显示
+        $("#head-handler")
+        .appendTo( document.body )
+        .click(function( ) {
+            $(document.body).toggleClass("sider-open");
+        }); $(document.body).   addClass("sider-open");
+
         // 菜单折叠和展开
         userbar.children("ul").hide();
         menubar.find("li> ul").hide();
@@ -233,8 +246,8 @@
         menubar.find("li.acting> a ").toggleClass("dropup");
         // 定位到当前菜单
         var actived = menubar.find("li.active");
-        if (actived.size() && actived.offset().top + actived.height() + userbar.height() > $(window).height()) {
-            headbox.scrollTop(actived.offset().top - actived.height() - namebar.height() - 36);
+        if (actived.size() && actived.offset().top + actived.height() > $( window ).height()) {
+            menubox.scrollTop(actived.offset().top - actived.height() * 2 - namebar.height());
         }
         $().add(menubar).add(userbar)
            .on ("click", "a", function() {
@@ -260,11 +273,6 @@
                     $(this).removeData ( "top" );
                 }
             });
-
-        // 边栏隐藏与显示
-        $("#head-handler").click(function() {
-            $(document.body).toggleClass("sider-open");
-        }); $(document.body).   addClass("sider-open");
 
         $("#sign-out")
             .click( function() {

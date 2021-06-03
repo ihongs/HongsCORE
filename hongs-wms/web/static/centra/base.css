@@ -80,6 +80,10 @@ body ,
 #main-namebar a {
     text-shadow: 0 1px 0 #fff, 0 3px 0 #ccc;
 }
+#main-namebar a:hover ,
+#main-namebar a:focus {
+    text-decoration: none;
+}
 #main-namebar>div:nth-child(1) {
     line-height: 24px;
     font-size  : 18px;

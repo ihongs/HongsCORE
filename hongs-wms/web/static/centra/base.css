@@ -340,6 +340,14 @@ body ,
     margin-left: 105px; /* sideMenuWidth / 2 - handWidth */
 }
 
+#headbox a#sign-out {
+    color: #a44;
+}
+#headbox a#sign-out:hover ,
+#headbox a#sign-out:hover {
+    color: #d54;
+}
+
 /* 主导航条默认样式 */
 #main-context > .laps.tabs.breadcrumb {
     padding-left : 1px;

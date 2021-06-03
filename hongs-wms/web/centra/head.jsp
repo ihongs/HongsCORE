@@ -125,7 +125,8 @@
 </div>
 
 <div id="main-namebar">
-    <div><a href="<%=Core.SERV_PATH%>/centra/"><%=CoreLocale.getInstance().translate("fore.centra.title")%></a></div>
+    <div><a href="<%=Core.SERV_PATH%>/centra/">
+         <%=CoreLocale.getInstance().translate("fore.centra.title")%></a></div>
     <div><%=CoreLocale.getInstance().translate("fore.centra.sub.title")%></div>
     <hr/>
 </div>

@@ -203,7 +203,7 @@ body ,
 #user-menubar .uname {
     display: inline-block ;
     vertical-align: middle;
-    width: 140px;
+    width: 128px;
     height: 36px;
     line-height: 36px;
     white-space: nowrap;
@@ -284,6 +284,7 @@ body ,
 
 #head-handler {
     position: fixed;
+    z-index : 99;
     top   :  50%;
     left  :  0px;
     width : 14px;
@@ -314,6 +315,7 @@ body ,
 
 #body-handler {
     position: fixed;
+    z-index : 99;
     top   :  0px;
     left  :  50%;
     width : 30px;

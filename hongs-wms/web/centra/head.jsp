@@ -139,18 +139,18 @@
         <div class="badge"></div>
     </a>
     <ul>
-        <li>
-            <a href="javascript:;" id="user-set">
-                <span class="glyphicon glyphicon-user"></span>
-                <%=CoreLocale.getInstance().translate("fore.modify")%>
-            </a>
-        </li>
-        <li>
-            <a href="javascript:;" id="sign-out">
-                <span class="glyphicon glyphicon-off "></span>
-                <%=CoreLocale.getInstance().translate("fore.logout")%>
-            </a>
-        </li>
+        <li><a href="javascript:;" id="user-set">
+            <span class="glyphicon glyphicon-user"></span>
+            <%=CoreLocale.getInstance().translate("fore.set.user")%>
+        </a></li>
+        <li><a href="javascript:;" id="pass-set">
+            <span class="glyphicon glyphicon-lock"></span>
+            <%=CoreLocale.getInstance().translate("fore.set.pass")%>
+        </a></li>
+        <li><a href="javascript:;" id="sign-out">
+            <span class="glyphicon glyphicon-off "></span>
+            <%=CoreLocale.getInstance().translate("fore.logout")%>
+        </a></li>
     </ul>
 </div>
 
@@ -287,6 +287,15 @@
                     context.scrollTop( $(this).data("top") );
                     $(this).removeData ( "top" );
                 }
+            })
+            .on( "click" , ">.tabs.laps>li" , function ( ) {
+                if ($(this).is(".dont-close,.dont-crumb")) {
+                    return;
+                }
+                // 直接点击导航不要自动滚动
+                var i = $(this).index ( );
+                var l = $(this).parent( ).data("labs");
+                if (l) l.children().eq(i).removeData ("top");
             });
 
         $("#sign-out")
@@ -303,14 +312,14 @@
                         // Nothing todo.
                     }
                 );
-            } );
+            });
         $("#user-set")
             .click( function() {
                 $.hsOpen("centra/manage/mine.html");
-            } );
-        $("#note-msg")
+            });
+        $("#pass-set")
             .click( function() {
-                $.hsOpen("centra/manage/note.html");
-            } );
+                $.hsOpen("centra/manage/mima.html");
+            });
     })(jQuery);
 </script>

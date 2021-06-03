@@ -146,7 +146,8 @@
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu" role="menu">
-                        <li><a href="javascript:;" id="user-set"><%=CoreLocale.getInstance().translate("fore.modify")%></a></li>
+                        <li><a href="javascript:;" id="user-set"><%=CoreLocale.getInstance().translate("fore.set.user")%></a></li>
+                        <li><a href="javascript:;" id="pass-set"><%=CoreLocale.getInstance().translate("fore.set.pass")%></a></li>
                         <li role="separator" class="divider"></li>
                         <li><a href="javascript:;" id="sign-out"><%=CoreLocale.getInstance().translate("fore.logout")%></a></li>
                     </ul>
@@ -268,9 +269,9 @@
             .click(function() {
                 $.hsOpen("centre/manage/mine.html");
             });
-        $("#note-msg")
+        $("#pass-set")
             .click(function() {
-                $.hsOpen("centre/manage/note.html");
+                $.hsOpen("centre/manage/mima.html");
             });
     })(jQuery);
 </script>

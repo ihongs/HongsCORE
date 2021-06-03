@@ -336,10 +336,10 @@ body ,
     margin-left: 11px;
 }
 .body-handler {
-    margin-left: -15px;
+    margin-left:-24px;
 }
 .sider-open #body-handler {
-    margin-left: 105px; /* sideMenuWidth / 2 - handWidth */
+    margin-left: 96px;
 }
 
 #headbox a#sign-out {

@@ -70,25 +70,27 @@ body ,
 
 #main-namebar {
     background: rgba(245,245,245,0.9);
+    background: linear-gradient(to top, rgba(245,245,245,0.9) 0, rgba(229,229,229,0.9) 100%);
     position: absolute;
     z-index : 1;
     width: 100%;
     left: 0px;
     top : 0px;
 }
+#main-namebar a {
+    text-shadow: 0 1px 0 #fff, 0 3px 0 #ccc;
+}
 #main-namebar>div:nth-child(1) {
     line-height: 24px;
     font-size  : 18px;
-    font-weight: 800;
-    padding: 6px 0;
-    color: #333;
+    font-weight: 800 ;
+    padding: 6px 10px;
 }
 #main-namebar>div:nth-child(2) {
     line-height: 12px;
     font-size  : 12px;
-    font-weight: 400;
-    padding: 3px 0;
-    color: #555;
+    font-weight: 400 ;
+    padding: 3px 10px;
 }
 
 /** 菜单 **/
@@ -103,6 +105,7 @@ body ,
 #main-menubar ul ul ,
 #user-menubar ul ul {
     background: #f0f0f0;
+    background: linear-gradient(to top, #f0f0f0 0, #e8e8e8 100%);
 }
 #main-menubar li a ,
 #user-menubar li a {
@@ -145,7 +148,8 @@ body ,
 #user-menubar li.active > a.dropup {
     color: #eee;
     background: #37b;
-    border-left: 5px solid #149;
+    background: linear-gradient(to top, #37b 10%, #26a 60%);
+    border-left: 5px solid #159;
 }
 
 #main-menubar>ul>li ,
@@ -215,7 +219,7 @@ body ,
 }
 #user-menubar .glyphicon {
     top  :  1px; /* 修正字体符号偏上的问题 */
-    width: 26px;
+    width: 23px;
 }
 
 /* 图标 */
@@ -249,13 +253,22 @@ body ,
 
 /* 其他 */
 
-#headbox blockquote ,
-#headbox q  , 
-#headbox p  {
-    color: #777 ;
-    border-color: #ccc;
-    font-size: inherit;
-    padding: 20px 15px;
+#headbox blockquote .copy-right {
+    white-space: inherit ;
+}
+#headbox blockquote .site-links {
+    white-space: pre-line;
+}
+#headbox blockquote .site-links a:after {
+    content: "\A";
+}
+#headbox blockquote a , 
+#headbox blockquote {
+    font-weight: inherit ;
+    font-size  : inherit ;
+    color  : #888;
+}
+#headbox blockquote {
     margin : 20px 0;
 }
 #headbox hr {
@@ -293,6 +306,34 @@ body ,
 .sider-open #head-handler a {
     margin-left : 0px;
     border-color: transparent #fff transparent transparent;
+}
+
+#body-handler {
+    position: fixed;
+    top   :  0px;
+    left  :  50%;
+    width : 30px;
+    height: 14px;
+    border-radius: 0 0 5px 5px;
+    background: rgba(210,210,210,0.5);
+}
+#body-handler:hover {
+    background: rgba(210,210,210,1.0);
+}
+#body-handler a {
+    width : 0;
+    height: 0;
+    display: block;
+    border-color: transparent transparent #fff transparent;
+    border-style: solid;
+    border-width: 4px;
+    margin-left: 11px;
+}
+.body-handler {
+    margin-left: -15px;
+}
+.sider-open #body-handler {
+    margin-left: 105px; /* sideMenuWidth / 2 - handWidth */
 }
 
 /* 主导航条默认样式 */

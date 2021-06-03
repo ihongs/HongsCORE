@@ -120,9 +120,12 @@
 <div id="head-handler">
     <a href="javascript:;"></a>
 </div>
+<div id="body-handler">
+    <a href="javascript:;"></a>
+</div>
 
 <div id="main-namebar">
-    <div><%=CoreLocale.getInstance().translate("fore.centra.title"    )%></div>
+    <div><a href="<%=Core.SERV_PATH%>/centra/"><%=CoreLocale.getInstance().translate("fore.centra.title")%></a></div>
     <div><%=CoreLocale.getInstance().translate("fore.centra.sub.title")%></div>
     <hr/>
 </div>
@@ -161,10 +164,13 @@
 <hr />
 
 <blockquote>
-    <span>&copy;&nbsp;</span>
-    <%=CoreLocale.getInstance().translate("fore.copy.right")%><br/>
-    <%=CoreLocale.getInstance().translate("fore.site.links")%><br/>
-    Powered by <a href="<%=request.getContextPath()%>/power.html" target="_blank">HongsCORE</a>
+    <p>
+        <span>&copy;&nbsp;</span>
+        <span class="copy-right"><%=CoreLocale.getInstance().translate("fore.copy.right")%></span>
+        <br/>
+        <span class="site-links"><%=CoreLocale.getInstance().translate("fore.site.links")%></span>
+    </p>
+    <p>Powered by <a href="<%=Core.SERV_PATH%>/power.html" target="_blank">HongsCORE</a></p>
 </blockquote>
 
 <script type="text/javascript">
@@ -232,9 +238,16 @@
             }
         });
 
+        // 页面滚动回顶部
+        $("#body-handler")
+        .appendTo(document.body)
+        .click(function( ) {
+            context.scrollTop(0);
+        });
+
         // 边栏隐藏与显示
         $("#head-handler")
-        .appendTo( document.body )
+        .appendTo(document.body)
         .click(function( ) {
             $(document.body).toggleClass("sider-open");
         }); $(document.body).   addClass("sider-open");
@@ -244,11 +257,6 @@
         menubar.find("li> ul").hide();
         menubar.find("li.acting> ul").toggle( );
         menubar.find("li.acting> a ").toggleClass("dropup");
-        // 定位到当前菜单
-        var actived = menubar.find("li.active");
-        if (actived.size() && actived.offset().top + actived.height() > $( window ).height()) {
-            menubox.scrollTop(actived.offset().top - actived.height() * 2 - namebar.height());
-        }
         $().add(menubar).add(userbar)
            .on ("click", "a", function() {
             var la = $(this);
@@ -260,16 +268,22 @@
             }
         });
 
+        // 定位到当前菜单
+        var actived = menubar.find("li.active");
+        if (actived.size() && actived.offset().top + actived.height() > $( window ).height()) {
+            menubox.scrollTop(actived.offset().top - actived.height() * 2 - namebar.height());
+        }
+
         // 回退复位滚动条
         context
             .on("hsRetir", ">.labs.laps>div", function ( ) {
                 if ($(this).data("top") === undefined) {
-                    $(this).data("top", $(window).scrollTop());
+                    $(this).data("top", context.scrollTop());
                 }
             })
             .on("hsRecur", ">.labs.laps>div", function ( ) {
                 if ($(this).data("top") !== undefined) {
-                    $(window).scrollTop( $(this).data("top") );
+                    context.scrollTop( $(this).data("top") );
                     $(this).removeData ( "top" );
                 }
             });

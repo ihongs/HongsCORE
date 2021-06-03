@@ -28,7 +28,7 @@
         <dependency>
             <artifactId>httpclient</artifactId>
             <groupId>org.apache.httpcomponents</groupId>
-            <version>4.5.9</version>
+            <version>4.5.13</version>
         </dependency>
         <dependency>
             <artifactId>thumbnailator</artifactId>

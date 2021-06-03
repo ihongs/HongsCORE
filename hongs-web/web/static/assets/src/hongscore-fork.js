@@ -316,15 +316,20 @@ function hsFormFillPick(box, v, n) {
     var btn = box.siblings("[data-toggle=hsPick],[data-toggle=hsFork]");
 
     box.toggleClass ("pickmul", mul);
-
-    if (! jQuery.isPlainObject(v)) {
-
+    
     // 表单初始化载入时需从关联数据提取选项对象
     if (this._info) {
         var ak = box.attr("data-ak") || "data";
-        v = this._info[ak] || hsGetValue(this._info, ak);
-        if (! v ) return ;
-        if (!mul) v = [v];
+        var av = this._info[ak] || hsGetValue(this._info, ak);
+        if (v == av && n == ak) { // 关联键同名
+            if (! v ) return ;
+            if (!mul) v = [v];
+        } else
+        if (! jQuery.isPlainObject(v) ) {
+            v  = av ;
+            if (! v ) return ;
+            if (!mul) v = [v];
+        }
     }
 
     // 对表单初始化数据转换为关联组件的字典格式
@@ -346,10 +351,9 @@ function hsFormFillPick(box, v, n) {
             }
         }
         v = v2;
-    } else {
+    } else
+    if (! v ) {
         v = {};
-    }
-    
     }
 
     function reset(btn, box) {

@@ -241,14 +241,14 @@
 
         // 页面滚动回顶部
         $("#body-handler")
-        .appendTo(document.body)
+        .insertAfter($("#bodybox"))
         .click(function( ) {
-            context.scrollTop(0);
+            context.scrollTop( 0 );
         });
 
         // 边栏隐藏与显示
         $("#head-handler")
-        .appendTo(document.body)
+        .insertAfter($("#headbox"))
         .click(function( ) {
             $(document.body).toggleClass("sider-open");
         }); $(document.body).   addClass("sider-open");

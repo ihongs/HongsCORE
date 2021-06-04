@@ -22,12 +22,16 @@ body {
     overflow: hidden;
     float : left;
     height: 100%;
+    border-right: 1px solid #c5c5c5;
+    border-left : 1px solid #f5f5f5;
 }
 #bodybox {
     position: relative;
     overflow: hidden;
     float :right;
     height: 100%;
+    border-right: 1px solid #f5f5f5;
+    border-left : 1px solid #f5f5f5;
 }
 #menu-context ,
 #main-context {
@@ -42,14 +46,10 @@ body {
 }
 
 #headbox {
-    border-right: 1px solid #c5c5c5;
-    border-left : 1px solid #f5f5f5;
     display: none ;
     width  : auto ;
 }
 #bodybox {
-    border-right: 1px solid #f5f5f5;
-    border-left : 1px solid #f5f5f5;
     display: block;
     width  : 100% ;
 }

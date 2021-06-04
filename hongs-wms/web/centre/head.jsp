@@ -234,6 +234,9 @@
             }
         });
 
+        // 标识顶部导航已开启, 悬浮组件需避免层叠
+        $(document.body).addClass("toper-open");
+
         /*
         var badge = userbar.find(".badge" );
         var timer = setInterval (function() {

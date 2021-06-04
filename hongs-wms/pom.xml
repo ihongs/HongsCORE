@@ -193,6 +193,20 @@
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>fixed-hongs-core-minify</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <!-- 修正 yuicompressor 将 css calc 内空格删掉的问题 -->
+                                <replace file="${basedir}/web/static/centra/base.min.css" token="%+" value="% + "/>
+                                <replace file="${basedir}/web/static/centre/base.min.css" token="%+" value="% + "/>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>build-hongs-core-system</id>
                         <phase>package</phase>
                         <goals>

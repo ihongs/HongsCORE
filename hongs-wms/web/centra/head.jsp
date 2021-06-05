@@ -128,8 +128,9 @@
     <div><a href="<%=Core.SERV_PATH%>/centra/">
          <%=CoreLocale.getInstance().translate("fore.centra.title")%></a></div>
     <div><%=CoreLocale.getInstance().translate("fore.centra.sub.title")%></div>
-    <hr/>
 </div>
+
+<hr />
 
 <div id="user-menubar">
     <a href="javascript:;" style="display: block;">

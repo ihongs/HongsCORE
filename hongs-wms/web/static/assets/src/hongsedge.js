@@ -1551,12 +1551,12 @@ function hsListInitSort(x, v, n) {
  */
 function darkModeCheck( ) {
     var h = new Date( ).getHours( );
-    if (h < 06 || h > 21) {
+    if (h > 05 || h < 20) {
         $(document.documentElement)
-             .addClass("dark-mode");
+        .removeClass( "dark-mode" );
     } else {
         $(document.documentElement)
-          .removeClass("dark-mode");
+           .addClass( "dark-mode" );
     }
 }           darkModeCheck( /****/ );
 setInterval(darkModeCheck, 600000 );

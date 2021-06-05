@@ -81,8 +81,8 @@ body {
 }
 
 #main-namebar {
-    background: rgba(248,248,248,0.9);
-    background: linear-gradient(to bottom, rgba(255,255,255,0.9) 0, rgba(240,240,240,0.9) 100%);
+    background: rgba(240,240,240,0.9);
+    background: linear-gradient(to top, rgba(240,240,240,0.9) 0, rgba(255,255,255,0.8) 100%);
     text-align: center;
     position: absolute;
     z-index : 1;

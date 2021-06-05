@@ -1544,17 +1544,22 @@ function hsListInitSort(x, v, n) {
     */
 }
 
-//** 一般事件功能 */
+(function($) {
 
 /**
- * 返回键联动导航条
+ * 自动暗黑模式
  */
-$(window).on("popstate", function(ev) {
-    ev = ev.originalEvent;
-    if (!ev || !ev.state || !ev.state.crumb) { return; }
-    $("#main-context>.breadcrumb>.back-crumb:visible>a").click();
-    history.pushState({crumb: true}, null, null);
-}); history.pushState({crumb: true}, null, null);
+function darkModeCheck( ) {
+    var h = new Date( ).getHours( );
+    if (h < 06 || h > 21) {
+        $(document.documentElement)
+             .addClass("dark-mode");
+    } else {
+        $(document.documentElement)
+          .removeClass("dark-mode");
+    }
+}           darkModeCheck( /****/ );
+setInterval(darkModeCheck, 600000 );
 
 /**
  * 筛选重置事件处理
@@ -1569,3 +1574,15 @@ $(document).on("reset", ".HsList .findbox", function() {
                .first().click();
     } , 500);
 });
+
+/**
+ * 返回键联动导航条
+ */
+$(window).on("popstate", function(ev) {
+    ev = ev.originalEvent;
+    if (!ev || !ev.state || !ev.state.crumb) { return; }
+    $("#main-context>.breadcrumb>.back-crumb:visible>a").click();
+    history.pushState({crumb: true}, null, null);
+}); history.pushState({crumb: true}, null, null);
+
+})(jQuery);

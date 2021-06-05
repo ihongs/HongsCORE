@@ -6,7 +6,7 @@
 
 html ,
 body {
-    background: #f5f5f5;
+    background: #f8f8f8;
 }
 #bodybox>.container {
     background: #ffffff;
@@ -88,6 +88,17 @@ body {
 }
 
 /* 深色模式适配样式 */
+.dark-mode ,
+.dark-mode  img ,
+.dark-mode .img ,
+.dark-mode .deny-dark ,
+.dark-mode .navbar-inverse ,
+.dark-mode .modal > .alert {
+    filter: invert(100%) hue-rotate(180deg) !important;
+}
+.dark-mode .modal-backdrop {
+    background-color: #fff;
+}
 @media (prefers-color-scheme: dark) {
 html ,
 .img , img ,

@@ -82,6 +82,7 @@ body {
 
 #main-namebar {
     background: rgba(248,248,248,0.9);
+    background: linear-gradient(to bottom, rgba(255,255,255,0.9) 0, rgba(240,240,240,0.9) 100%);
     text-align: center;
     position: absolute;
     z-index : 1;
@@ -291,7 +292,7 @@ body {
 }
 #main-namebar hr {
     margin : 20px 0 -20px 0;
-    border-color : #c5c5c5 ;
+    border-color : #d5d5d5 ;
 }
 
 #head-handler {

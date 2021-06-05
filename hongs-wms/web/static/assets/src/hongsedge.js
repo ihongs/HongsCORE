@@ -1547,7 +1547,7 @@ function hsListInitSort(x, v, n) {
 (function($) {
 
 /**
- * 自动暗黑模式
+ * 自动暗黑模式, 8:00 PM ~ 6:00 AM
  */
 function darkModeCheck( ) {
     var h = new Date( ).getHours( );

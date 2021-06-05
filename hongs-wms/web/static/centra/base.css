@@ -106,6 +106,11 @@ body {
     font-weight: 400 ;
     padding: 2px 0;
 }
+#main-namebar>div:nth-child(2) {
+    padding-bottom: 22px;
+    margin-bottom: -20px;
+    border-bottom: 1px solid #ccc;
+}
 
 /** 菜单 **/
 
@@ -117,8 +122,8 @@ body {
 }
 #main-menubar ul ul ,
 #user-menubar ul ul {
-    background: #f0f0f0;
-    background: linear-gradient(to top, #f0f0f0 0, #e8e8e8 100%);
+    background: #e8e8e8;
+    background: linear-gradient(to top, #e8e8e8 0, #e0e0e0 100%);
 }
 #main-menubar li a ,
 #user-menubar li a {
@@ -161,8 +166,8 @@ body {
 #user-menubar li.active > a.dropup {
     color: #eee;
     background: #37b;
-    background: linear-gradient(to top, #37b 10%, #26a 60%);
-    border-left: 5px solid #159;
+    background: linear-gradient(to bottom, #37b 0, #26a 100%);
+    border-left: 5px solid #048;
 }
 
 #main-menubar>ul>li ,
@@ -280,7 +285,7 @@ body {
     color  : #888;
 }
 #headbox blockquote {
-    border-color : #e5e5e5 ;
+    border-color : #d5d5d5;
     padding-left : 10px;
     padding-right: 15px;
     font-weight: normal;
@@ -288,11 +293,8 @@ body {
     margin : 20px 0;
 }
 #headbox hr {
+    border-color : #d5d5d5;
     margin : 0 15px;
-}
-#main-namebar hr {
-    margin : 20px 0 -20px 0;
-    border-color : #d5d5d5 ;
 }
 
 #head-handler {

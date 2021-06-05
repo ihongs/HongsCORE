@@ -23,17 +23,17 @@
         <dependency>
             <artifactId>httpmime</artifactId>
             <groupId>org.apache.httpcomponents</groupId>
-            <version>4.5.9</version>
+            <version>4.5.13</version>
         </dependency>
         <dependency>
             <artifactId>httpclient</artifactId>
             <groupId>org.apache.httpcomponents</groupId>
-            <version>4.5.9</version>
+            <version>4.5.13</version>
         </dependency>
         <dependency>
             <artifactId>thumbnailator</artifactId>
             <groupId>net.coobird</groupId>
-            <version>0.4.8</version>
+            <version>0.4.14</version>
         </dependency>
         <!-- 可以考虑用 MsgPack 来替代 Java 序列化, 但为最小依赖原则暂放弃
         <dependency>

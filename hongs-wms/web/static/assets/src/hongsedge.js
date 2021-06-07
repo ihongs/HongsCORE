@@ -1551,7 +1551,7 @@ function hsListInitSort(x, v, n) {
  */
 function darkModeCheck( ) {
     var h = new Date( ).getHours( );
-    if (h > 06 || h < 20) {
+    if (h > 06 && h < 20) {
         $(document.documentElement)
         .removeClass( "dark-mode" );
     } else {

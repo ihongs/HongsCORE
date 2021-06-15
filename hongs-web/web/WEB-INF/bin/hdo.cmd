@@ -1,5 +1,7 @@
 @echo off
 
+SETLOCAL
+
 set CURR_PATH=%~DP0
 set CORE_PATH=%CURR_PATH%..
 set JAVA_PATH=%JAVA_HOME%\bin\java
@@ -12,5 +14,7 @@ set KLASSPATH=%CLASSPATH%;%CORE_PATH%\lib\*;%CORE_PATH%\classes;%CORE_PATH%\lib\
   -Dtmps.dir="\\%CORE_PATH%\var\tmp"^
   io.github.ihongs.cmdlet.CmdletRunner %*^
   --COREPATH "%CORE_PATH%"
+
+ENDLOCAL
 
 @echo on

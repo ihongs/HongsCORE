@@ -356,7 +356,7 @@ public class Data extends SearchEntity {
         if (name == null || name.isEmpty()) {
             if (conf.startsWith("centra/")
             ||  conf.startsWith("centre/")) {
-                name = "matrix/"+ conf.substring(7) +"."+ form ;
+                name = "matrix/"+ conf.substring(7) +"!"+ form ;
             } else {
                 name = conf +"!"+ form;
             }

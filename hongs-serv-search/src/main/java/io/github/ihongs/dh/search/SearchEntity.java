@@ -333,14 +333,6 @@ public class SearchEntity extends LuceneRecord {
                 return;
             }
 
-            // 退出时合并索引
-            try {
-                writer.maybeMerge();
-            } catch (IOException x) {
-                CoreLogger.error(x);
-            }
-
-            // 关闭后外部移除
             try {
                 writer.close( );
             } catch (IOException x) {

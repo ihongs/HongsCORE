@@ -1508,13 +1508,6 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 }
             }
 
-            // 退出时合并索引
-            try {
-                writer.maybeMerge();
-            } catch (IOException x) {
-                CoreLogger.error(x);
-            }
-
             try {
                 writer.close();
             } catch (IOException x) {

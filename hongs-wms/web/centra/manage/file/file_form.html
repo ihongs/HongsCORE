@@ -38,12 +38,13 @@
             }
 
             setTimeout(function() {
+                var ch = $(window).height() - 50 - 80 - 95; // 文件名,顶部,底部
                 var cm = CodeMirror.fromTextArea(inp[0], {
                     lineNumbers : true,
                     mode : mode
                 });
-                cm.setSize(null , 600);
-                inp.data  ("CM" , cm );
+                cm.setSize(null , ch );
+                inp. data ("CM" , cm );
             }, 500);
 
             return val;

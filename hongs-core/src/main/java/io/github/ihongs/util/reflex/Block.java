@@ -373,9 +373,9 @@ public final class Block {
         }
     }
 
-    private static class Cleans implements Core.Clozeable, Core.Singleton {
+    private static class Cleans implements Core.Unuseable, Core.Singleton {
         @Override
-        public void cloze() {
+        public void unuse() {
             if (!ST_LOCKS.isEmpty() || !RW_LOCKS.isEmpty()) {
                 int n  =  cleans( );
                 CoreLogger.trace("Cleared {} lock(s)", n);

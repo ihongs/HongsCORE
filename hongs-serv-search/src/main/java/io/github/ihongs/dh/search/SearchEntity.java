@@ -270,7 +270,7 @@ public class SearchEntity extends LuceneRecord {
         DOCK = doc;
     }
 
-    private static class Writer implements AutoCloseable, Core.Clozeable, Core.Singleton {
+    private static class Writer implements AutoCloseable, Core.Unuseable, Core.Reuseable, Core.Singleton {
 
         private final String dbpath;
         private final String dbname;
@@ -321,10 +321,27 @@ public class SearchEntity extends LuceneRecord {
         }
 
         @Override
-        synchronized public void cloze() {
+        synchronized public void unuse() {
             if (c <= 0) {
                 close();
             }
+        }
+
+        @Override
+        synchronized public void reuse() {
+            conn( );
+            long t = System.currentTimeMillis();
+
+            synchronized ( writer ) {
+                try {
+                    writer.maybeMerge();
+                } catch (IOException x) {
+                    CoreLogger.error(x);
+                }
+            }
+
+            t = System.currentTimeMillis() - t ;
+            CoreLogger.trace("Merge the lucene for {}. {}", dbname, t);
         }
 
         @Override
@@ -333,10 +350,12 @@ public class SearchEntity extends LuceneRecord {
                 return;
             }
 
-            try {
-                writer.close( );
-            } catch (IOException x) {
-                CoreLogger.error(x);
+            synchronized ( writer ) {
+                try {
+                    writer.close( );
+                } catch (IOException x) {
+                    CoreLogger.error(x);
+                }
             }
 
             CoreLogger.trace("Close the lucene writer for {}", dbname);

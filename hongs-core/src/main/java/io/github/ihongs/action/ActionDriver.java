@@ -13,12 +13,11 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Enumeration;
 import java.util.Properties;
-import java.util.TimeZone;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.Filter;
@@ -106,6 +105,9 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             return;
         }
 
+        Properties def = CoreConfig.getInstance("default");
+        Properties cnf = CoreConfig.getInstance("defines");
+
         FIRST=true;
         if (Core.SERV_PATH == null) {
         SETUP=true;
@@ -132,7 +134,6 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
 
             //** 系统属性配置 **/
 
-            Properties cnf = CoreConfig.getInstance("defines");
             Core.SERVER_ID = cnf.getProperty("server.id", "0");
 
             // 用于替换下面系统属性中的变量
@@ -181,9 +182,10 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             }
 
             // 设置默认语言
-              cnf = CoreConfig.getInstance("default");
-            Core.ACTION_LANG.set(cnf.getProperty("core.language.default", "zh_CN"));
-            Core.ACTION_ZONE.set(cnf.getProperty("core.timezone.default", "GMT-8"));
+            Core.ACTION_LANG.set(def.getProperty("core.language.default", "zh_CN"));
+            Core.ACTION_ZONE.set(def.getProperty("core.timezone.default", "GMT+8"));
+            Locale  .setDefault(Core.getLocality());
+            TimeZone.setDefault(Core.getTimezone());
         }
 
         // 调用一下可预加载动作类
@@ -192,27 +194,14 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         // 清空全局好准备重新开始
         Core.GLOBAL_CORE.reset( );
 
-        // 设置全局清理的计划任务
-        long time = Synt.declare( System.getProperty("core.gc.time") , Cnst.GC_DEF);
-        if ( time > 0 ) {
-            new Timer ( "Hongs-GC" , true ).schedule(new TimerTask() {
-                @Override
-                public void run () {
-                    if (4 == (4 & Core.DEBUG)) {
-                        CoreLogger.debug("CORE global object: "
-                      + Core.GLOBAL_CORE.toString());
-                    }   Core.GLOBAL_CORE.cloze(/**/);
-                }
-            } , time, time);
-        }
-
         // 启动后需立即执行的任务
-        String ss = CoreConfig.getInstance("defines").getProperty("start.task");
-        if (ss != null) for (String sn:ss.split(";")) {
-            sn = sn.trim( ); if ( 0 != sn.length( ) )
-            try {
-                ((Runnable) Class.forName(sn).getDeclaredConstructor().newInstance())
-                    .run( );
+        String ss = cnf.getProperty( "start.task" );
+        if (ss != null) for (String sn : ss.split(";")) {
+            sn  = sn.trim();
+            if (! sn.isEmpty( ) ) try {
+               ( (Runnable) Class.forName(sn)
+                    .getDeclaredConstructor()
+                    .newInstance( ) ).run(  );
             } catch (ClassNotFoundException ex) {
                 throw new  ServletException(ex);
             } catch ( NoSuchMethodException ex) {

@@ -680,10 +680,10 @@ public class Core
   }
 
   /**
-   * 清理资源
-   * 规避托管自身后递归调用, Core 不标示 Clozeable
+   * 释放资源
+   * 规避托管自身后递归调用, Core 不标示 Unuseable
    */
-  public void cloze()
+  public void unuse()
   {
     if (sup().isEmpty())
     {
@@ -701,9 +701,43 @@ public class Core
     {
       try
       {
-        if (o instanceof Clozeable)
+        if (o instanceof Unuseable)
         {
-           ((Clozeable) o ).cloze();
+           ((Unuseable) o ).unuse();
+        }
+      }
+      catch ( Throwable x )
+      {
+        x.printStackTrace(System.err);
+      }
+    }
+  }
+
+  /**
+   * 维护资源
+   * 规避托管自身后递归调用, Core 不标示 Unuseable
+   */
+  public void reuse()
+  {
+    if (sup().isEmpty())
+    {
+      return;
+    }
+
+    /**
+     * 为规避 ConcurrentModificationException,
+     * 只能采用遍历数组而非迭代循环的方式进行.
+     * 不用迭代中的 Entry.remove 是因为实例的 cloze 中也可能变更 core.
+     */
+
+    Object[] a = sup().values().toArray();
+    for (Object o : a)
+    {
+      try
+      {
+        if (o instanceof Reuseable)
+        {
+           ((Reuseable) o ).reuse();
         }
       }
       catch ( Throwable x )
@@ -744,9 +778,13 @@ public class Core
       {
         sb.append('A');
       }
-      if (ob instanceof Clozeable)
+      if (ob instanceof Unuseable)
       {
-        sb.append('C');
+        sb.append('U');
+      }
+      if (ob instanceof Reuseable)
+      {
+        sb.append('R');
       }
       if (ob instanceof Singleton)
       {
@@ -903,11 +941,22 @@ public class Core
     }
 
     @Override
-    public void cloze()
+    public void unuse()
     {
       RWL.writeLock().lock();
       try {
-        super.cloze();
+        super.unuse();
+      } finally {
+        RWL.writeLock().unlock();
+      }
+    }
+
+    @Override
+    public void reuse()
+    {
+      RWL.writeLock().lock();
+      try {
+        super.reuse();
       } finally {
         RWL.writeLock().unlock();
       }
@@ -928,15 +977,21 @@ public class Core
   }
 
   /**
-   * 尝试关闭
-   * 实现此接口, 并且放入全局托管, 会定时轮询关闭之
+   * 清理资源
+   * 实现此接口, 并且放入全局托管, 将会间隔定时执行
    */
-  static public interface Clozeable
+  static public interface Unuseable
   {
-    /**
-     * 清理方法
-     */
-    public void cloze();
+    public void unuse();
+  }
+
+  /**
+   * 维护资源
+   * 实现此接口, 并且放入全局托管, 将会每天定时执行
+   */
+  static public interface Reuseable
+  {
+    public void reuse();
   }
 
   /**

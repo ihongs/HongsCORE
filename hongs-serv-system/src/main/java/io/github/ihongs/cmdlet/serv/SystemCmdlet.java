@@ -1,6 +1,7 @@
 package io.github.ihongs.cmdlet.serv;
 
 import io.github.ihongs.Core;
+import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
@@ -27,9 +28,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.Executors;
+import java.util.TimeZone;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,12 +56,12 @@ import org.xml.sax.SAXException;
  * 除了通过命令执行内部命令和 SQL,
  * 还可添加以下启动项启用计划任务:<br/>
  * io.github.ihongs.cmdlet.serv.SystemCmdlet.Schedu<br/>
- * bin/crond 下以下文件为任务设置:<br/>
+ * bin/serve 下以下文件为任务设置:<br/>
  * </p>
  * <pre>
- * min.cmd.xml 每分钟0秒执行
- * hur.cmd.xml 每小时0分执行
- * day.cmd.xml 每天的0时执行
+ * !m.cmd.xml 每分钟0秒执行
+ * !h.cmd.xml 每小时0分执行
+ * !d.cmd.xml 每天的0时执行
  * </pre>
  *
  * @author Hongs
@@ -139,9 +144,13 @@ public class SystemCmdlet {
         if (! fu.isFile()) {
             File[] fus = fu. listFiles();
             for (File fo : fus) {
-                if (! fo.isFile()
-                || fo.getName().startsWith(".")
-                || fo.getName().startsWith("!")) {
+                if (! fo.isFile()) {
+                    continue;
+                }
+                String fp = fo.getName();
+                if (fp.startsWith(".")
+                ||  fp.startsWith("!")
+                ||  fp.  endsWith("~")) {
                     continue;
                 }
                 fxs.add (fo);
@@ -157,13 +166,13 @@ public class SystemCmdlet {
 
         // 逐个执行
         for ( File fo : fxs ) {
-            String fm = fo.getName();
+            String fp = fo.getPath();
             try {
-                if (fm.endsWith(".sql"/**/)) {
-                    runSql(dt, fo /**/);
-                } else
-                if (fm.endsWith(".cmd.xml")) {
+                if (fp.endsWith(".cmd.xml")) {
                     runCmd(dt, fo, lgr);
+                }
+                if (fp.endsWith(".sql")) {
+                    runSql(dt, fo);
                 }
             } catch (Exception ex) {
                 lgr.error(ex);
@@ -620,45 +629,177 @@ public class SystemCmdlet {
         }
     }
 
-    public  static class Schedu implements Runnable {
+    public  static class Usuals implements Runnable {
 
         @Override
         public void run() {
-            ScheduledExecutorService ses = Executors.newScheduledThreadPool(3);
+            CoreConfig cnf  = new CoreConfig("defines");
+            String[]   tims = new String[2];
+            String     tim  ;
+            int        len  ;
+
+            len = 0;
+            tim = cnf.getProperty("core.unuse.time", "0:10");
+            if (!"".equals(tim) && !"-".equals(tim)) {
+                tims[0] = tim;
+                len ++;
+            }
+            tim = cnf.getProperty("core.reuse.time", "0:00");
+            if (!"".equals(tim) && !"-".equals(tim)) {
+                tims[1] = tim;
+                len ++;
+            }
+            if (len == 0) {
+                return;
+            }
+
+            ScheduledExecutorService ses = Executors.newScheduledThreadPool(len, new Factor("core-usual-"));
+
+            // 设置全局清理的计划任务
+                tim  = tims[0];
+            if (tim != null) {
+                SimpleDateFormat sdf = new SimpleDateFormat("H:m");
+                sdf.setTimeZone(TimeZone.getTimeZone("GMT+00:00"));
+                long time ;
+                try {
+                     time = sdf.parse(tim).getTime();
+                }
+                catch ( ParseException e ) {
+                    throw new Error("Wrong format for conserve time '"+tim+"'. It needs to be 'H:mm'");
+                }
+                long term = time;
+
+                ses.scheduleAtFixedRate(new TimerTask() {
+                    @Override
+                    public void run() {
+                        Core.GLOBAL_CORE.unuse();
+                    }
+                } , time, term, TimeUnit.MILLISECONDS );
+            }
+
+            // 设置每日维护的计划任务
+                tim  = tims[1];
+            if (tim != null) {
+                SimpleDateFormat sdf = new SimpleDateFormat("H:m");
+                sdf.setTimeZone(TimeZone.getDefault (/* Local */));
+                long time ;
+                try {
+                     time = sdf.parse(tim).getTime();
+                }
+                catch ( ParseException e ) {
+                    throw new Error("Wrong format for preserve time '"+tim+"'. It needs to be 'H:mm'");
+                }
+                long term = ( 24L * 60 * 60 * 1000 ); // 间隔 24 小时
+
+                // 计算首次执行的时间
+                Calendar cal0 = Calendar.getInstance();
+                Calendar cal1 = Calendar.getInstance();
+                cal1.setTimeInMillis(time);
+                cal1.set(Calendar.YEAR , cal0.get(Calendar.YEAR ));
+                cal1.set(Calendar.MONTH, cal0.get(Calendar.MONTH));
+                cal1.set(Calendar.DATE , cal0.get(Calendar.DATE ));
+                if (cal1.before(cal0)) {
+                    cal1.add(Calendar.HOUR , 24);
+                }
+                time = cal1.getTimeInMillis()-cal0.getTimeInMillis();
+
+                ses.scheduleAtFixedRate(new TimerTask() {
+                    @Override
+                    public void run() {
+                        Core.GLOBAL_CORE.reuse();
+                    }
+                } , time, term, TimeUnit.MILLISECONDS );
+            }
+        }
+
+    }
+
+    public  static class Serves implements Runnable {
+
+        @Override
+        public void run() {
+            CoreConfig cnf  = new CoreConfig("defines");
+            String[]   cmds = new String[3];
+            String     cmd  ;
+            int        len  ;
+
+            len = 0;
+            cmd = Core.CORE_PATH + "/bin/serve/!m.cmd.xml";
+            if (new File (cmd).exists()) {
+                cmds[0] = cmd;
+                len ++;
+            }
+            cmd = Core.CORE_PATH + "/bin/serve/!h.cmd.xml";
+            if (new File (cmd).exists()) {
+                cmds[1] = cmd;
+                len ++;
+            }
+            cmd = Core.CORE_PATH + "/bin/serve/!d.cmd.xml";
+            if (new File (cmd).exists()) {
+                cmds[2] = cmd;
+                len ++;
+            }
+            if (len == 0) {
+                return;
+            }
+
+            ScheduledExecutorService ses = Executors.newScheduledThreadPool(len, new Factor("core-spool-"));
+
             Calendar cal = Calendar.getInstance();
             long now = System.currentTimeMillis();
 
             cal.setTimeInMillis   (  now  );
-            cal.set(Calendar.MILLISECOND,1);
+            cal.set(Calendar.MILLISECOND,0);
 
             // 每分钟执行
-                cal.set(Calendar.SECOND, 0);
-            if (new File(Core.CONF_PATH+"/bin/crond/min.cmd.xml").exists()) {
+                cal.set(Calendar.SECOND, cnf.getProperty("core.serve.second", 0));
+                cmd  = cmds[0];
+            if (cmd != null) {
                 cal.add(Calendar.MINUTE, 1);
                 ses.scheduleAtFixedRate(new CmdletRunner(new String[] {
-                    "system", "crond/min.cmd.xml"
+                    "system", cmd
                 }), cal.getTimeInMillis() - now, 1000 * 60          , TimeUnit.MILLISECONDS);
             }
 
             // 每小时执行
-                cal.set(Calendar.MINUTE, 0);
-            if (new File(Core.CONF_PATH+"/bin/crond/hur.cmd.xml").exists()) {
+                cal.set(Calendar.MINUTE, cnf.getProperty("core.serve.minute", 0));
+                cmd  = cmds[1];
+            if (cmd != null) {
                 cal.add(Calendar.HOUR  , 1);
                 ses.scheduleAtFixedRate(new CmdletRunner(new String[] {
-                    "system", "crond/hur.cmd.xml"
+                    "system", cmd
                 }), cal.getTimeInMillis() - now, 1000 * 60 * 60     , TimeUnit.MILLISECONDS);
             }
 
             // 每天都执行
-                cal.set(Calendar.HOUR  , 0);
-            if (new File(Core.CONF_PATH+"/bin/crond/day.cmd.xml").exists()) {
+                cal.set(Calendar.HOUR  , cnf.getProperty("core.serve.hour"  , 0));
+                cmd  = cmds[2];
+            if (cmd != null) {
                 cal.add(Calendar.DATE  , 1);
                 ses.scheduleAtFixedRate(new CmdletRunner(new String[] {
-                    "system", "crond/day.cmd.xml"
+                    "system", cmd
                 }), cal.getTimeInMillis() - now, 1000 * 60 * 60 * 24, TimeUnit.MILLISECONDS);
             }
         }
 
+    }
+
+    private static class Factor implements ThreadFactory {
+        private final AtomicInteger a;
+        private final String n;
+
+        public Factor(String n) {
+            this.n = n ;
+            this.a = new AtomicInteger( 0 );
+        }
+
+        @Override
+        public Thread newThread(Runnable r) {
+            Thread t ;
+            t = new Thread(r , n + a.incrementAndGet());
+            t.setDaemon(true);
+            return t ;
+        }
     }
 
     private static class Looker {

@@ -418,6 +418,7 @@
         
         formObj._fill_dir_info = function () {
             var v = this._info.dir_info ;
+            if (v === undefined) return ;
             return "系统: " + v.core_dir["#"][1] + "/" + v.core_dir["@"][1] + " "
                  + Math.round(v.core_dir["#"][0] / v.core_dir["@"][0] *100) + "%\r\n"
                  + "配置: " + v.conf_dir["#"][1] + "/" + v.conf_dir["@"][1] + " "

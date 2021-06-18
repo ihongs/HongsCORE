@@ -46,9 +46,9 @@ public final class Block {
         loxk = ST_LOCKR.writeLock();
         loxk.lock();
         try {
-            Iterator<Map.Entry<String,Locker>> it = ST_LOCKS.entrySet().iterator();
+            Iterator<Map.Entry<String, Locker>> it = ST_LOCKS.entrySet().iterator();
             while (it.hasNext()) {
-                Map.Entry<String, Locker> et = it.next();
+                Map.Entry<String , Locker> et = it.next();
                 Locker lock = et.getValue();
                 if (lock.cite <= 0 && lock.time <= tt) {
                     it.remove( );
@@ -62,9 +62,9 @@ public final class Block {
         loxk = RW_LOCKR.writeLock();
         loxk.lock();
         try {
-            Iterator<Map.Entry<String,Larder>> it = RW_LOCKS.entrySet().iterator();
+            Iterator<Map.Entry<String, Larder>> it = RW_LOCKS.entrySet().iterator();
             while (it.hasNext()) {
-                Map.Entry<String, Larder> et = it.next();
+                Map.Entry<String , Larder> et = it.next();
                 Larder lock = et.getValue();
                 if (lock.cite <= 0 && lock.time <= tt) {
                     it.remove( );
@@ -87,22 +87,37 @@ public final class Block {
         Map st = new HashMap();
         Map rw = new HashMap();
 
-        rs.put("Locker", st);
-        Iterator<Map.Entry<String, Locker>> it = ST_LOCKS.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry<String , Locker> et = it.next();
-            Locker lock = et.getValue();
-            String key = et.getKey();
-            st.put(key , lock.cite );
+        rs.put( "Locker", st );
+        rs.put( "Larder", rw );
+
+        Lock loxk  ;
+
+        loxk = ST_LOCKR.readLock();
+        loxk.lock();
+        try {
+            Iterator<Map.Entry<String, Locker>> it = ST_LOCKS.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<String , Locker> et = it.next();
+                Locker lock = et.getValue();
+                String key = et.getKey();
+                st.put(key , lock.cite );
+            }
+        } finally {
+            loxk.unlock();
         }
 
-        rs.put("Larder", rw);
-        Iterator<Map.Entry<String, Larder>> jt = RW_LOCKS.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry<String , Larder> et = jt.next();
-            Larder lock = et.getValue();
-            String key = et.getKey();
-            rw.put(key , lock.cite );
+        loxk = RW_LOCKR.readLock();
+        loxk.lock();
+        try {
+            Iterator<Map.Entry<String, Larder>> it = RW_LOCKS.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<String , Larder> et = it.next();
+                Larder lock = et.getValue();
+                String key = et.getKey();
+                rw.put(key , lock.cite );
+            }
+        } finally {
+            loxk.unlock();
         }
 
         return rs;

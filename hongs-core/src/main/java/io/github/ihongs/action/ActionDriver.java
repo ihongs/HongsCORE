@@ -8,6 +8,7 @@ import io.github.ihongs.CoreLogger;
 import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
+import io.github.ihongs.util.reflex.Daemons;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -194,8 +195,13 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         // 清空全局好准备重新开始
         Core.GLOBAL_CORE.reset( );
 
+        // 设置全局对象维护的任务
+        Daemons ds = Daemons.getInstance();
+        ds.runTimed(() -> Core.GLOBAL_CORE.unuse());
+        ds.runDaily(() -> Core.GLOBAL_CORE.reuse());
+
         // 启动后需立即执行的任务
-        String ss = cnf.getProperty( "start.task" );
+        String ss = cnf.getProperty( "serve.init" );
         if (ss != null) for (String sn : ss.split(";")) {
             sn  = sn.trim();
             if (! sn.isEmpty( ) ) try {

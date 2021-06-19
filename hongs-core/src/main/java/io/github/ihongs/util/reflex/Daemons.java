@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 守护线程池
  *
  * 系统配置项(default.properties):
- *  core.daemon.pool.size=线程池的容量, 默认为处理器核数
+ *  core.daemon.pool.size=线程池的容量, 默认为处理器核数 / 2
  *  core.daemon.run.timed=常规定时间隔, 默认为十分钟(00:10)
  *  core.daemon.run.daily=日常维护时间, 默认每日零点(00:00)
  *
@@ -36,7 +36,8 @@ public final class Daemons implements Core.Singleton, AutoCloseable {
         CoreConfig  cc = CoreConfig.getInstance("default");
         String tt = cc.getProperty("core.daemon.run.timed", "00:10");
         String dt = cc.getProperty("core.daemon.run.daily", "00:00");
-        int    ps = cc.getProperty("core.daemon.pool.size", Runtime.getRuntime().availableProcessors());
+        int    ps = Runtime.getRuntime().availableProcessors() / 2  ;
+               ps = cc.getProperty("core.daemon.pool.size", ps > 1 ? ps : 1);
 
         SimpleDateFormat sdf = new SimpleDateFormat("H:m");
 
@@ -45,11 +46,11 @@ public final class Daemons implements Core.Singleton, AutoCloseable {
             DTT = (int) ( sdf.parse(tt).getTime() / 1000 );
         }
         catch (ParseException e) {
-            throw new Error("Wrong format for core.daemon.run.timed '"+ tt +"'. It needs to be 'H:mm'");
+            throw new Error("Wrong format for core.daemon.run.timed '"+tt+"'. It needs to be 'H:mm'");
         }
 
         if (DTT == 0) {
-            throw new Error("Wrong config for core.daemon.run.timed '"+ tt +"', must more than 00:00" );
+            throw new Error("Wrong config for core.daemon.run.timed '"+tt+"', must more than 00:00" );
         }
 
         sdf.setTimeZone(TimeZone.getDefault (/* Local */));
@@ -57,7 +58,7 @@ public final class Daemons implements Core.Singleton, AutoCloseable {
             DDT = (int) ( sdf.parse(dt).getTime() / 1000 );
         }
         catch ( ParseException e ) {
-            throw new Error("Wrong format for core.daemon.run.daily '"+ dt +"'. It needs to be 'H:mm'");
+            throw new Error("Wrong format for core.daemon.run.daily '"+dt+"'. It needs to be 'H:mm'");
         }
 
         SES = Executors.newScheduledThreadPool(ps, new ThreadFactory() {
@@ -84,9 +85,27 @@ public final class Daemons implements Core.Singleton, AutoCloseable {
         }
     }
 
+    public ScheduledExecutorService getExecutor() {
+        return SES;
+    }
+
+    /**
+     * 关闭容器
+     * 请勿执行
+     * @deprecated 特供 Core.close 联调
+     */
     @Override
     public void close() {
         SES.shutdown ();
+        try {
+            if (! SES.isTerminated()) {
+                System.err.println("Core daemons terminating...");
+            if (! SES.awaitTermination(1, TimeUnit.MINUTES)) {
+                System.err.println("Core daemons terminated incompletely!");
+            }}
+        } catch ( InterruptedException e) {
+            throw new RuntimeException(e) ;
+        }
     }
 
     /**

@@ -154,7 +154,7 @@ public final class Daemons implements Core.Singleton, AutoCloseable {
         if ( cal1.before(cal0) ) cal1.add(Calendar.HOUR, 24);
         int ddt = (int) (cal1.getTimeInMillis() - cal0.getTimeInMillis()) / 1000 + 1;
 
-        run(task, ddt, DDP);
+        run( task, ddt, DDP );
     }
 
     /**
@@ -164,7 +164,7 @@ public final class Daemons implements Core.Singleton, AutoCloseable {
      * @param task
      */
     public void runTimed(Runnable task) {
-        run(task, DTT, DTT);
+        run( task, DTT, DTT );
     }
 
 }

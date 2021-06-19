@@ -2,12 +2,11 @@ package io.github.ihongs;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.Locale;
+import java.util.HashMap;
 import java.util.TimeZone;
 import java.util.function.Supplier;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
@@ -813,7 +812,7 @@ public class Core
   private static final class Global extends Core
   {
 
-    private final ReadWriteLock RWL = new ReentrantReadWriteLock();
+    private final ReentrantReadWriteLock RWL = new ReentrantReadWriteLock();
 
     @Override
     protected <T>T got(String cln, Class<T> cls)

@@ -1568,15 +1568,6 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         REFLUX_MODE = false;
     }
 
-    @Override
-    protected void finalize() throws Throwable {
-        try {
-           this.close(   );
-        } finally {
-          super.finalize();
-        }
-    }
-
     //** 底层方法 **/
 
     protected final void setDbPath(String path) {

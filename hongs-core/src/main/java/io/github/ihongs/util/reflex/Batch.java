@@ -120,15 +120,6 @@ public abstract class Batch<T> extends CoreSerial implements AutoCloseable {
         }
     }
 
-    @Override
-    protected void finalize() throws Throwable {
-        try {
-           this.close(   );
-        } finally {
-          super.finalize();
-        }
-    }
-
     /**
      * 添加一个任务
      * @param data

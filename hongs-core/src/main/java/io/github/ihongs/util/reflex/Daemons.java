@@ -74,15 +74,11 @@ public final class Daemons implements Core.Singleton, AutoCloseable {
         });
     }
 
-    public static Daemons getInstance( ) {
-        try {
-            return Core.GLOBAL_CORE.got(
-                Daemons.class.getName( ),
-                ( )  ->  new  Daemons( )
-            );
-        } catch (HongsException e) {
-            throw e.toExemption( );
-        }
+    public static Daemons getInstance() {
+        return Core.GLOBAL_CORE.get(
+            Daemons.class.getName( ),
+            ( )  ->  new  Daemons( )
+        );
     }
 
     public ScheduledExecutorService getExecutor() {

@@ -341,7 +341,7 @@ public class SearchEntity extends LuceneRecord {
             }
 
             t = System.currentTimeMillis() - t ;
-            CoreLogger.trace("Merge the lucene for {}. {}", dbname, t);
+            CoreLogger.trace("Merge lucene indexes: {} {}", dbname, t);
         }
 
         @Override

@@ -109,8 +109,8 @@ public final class Daemons implements Core.Singleton, AutoCloseable {
      */
     public void run(Runnable task, int delay) {
         if (4 == (4 & Core.DEBUG)) {
-            Date   date = new Date(System.currentTimeMillis()+delay*1000L);
-            String time = new SimpleDateFormat("MM-dd HH:mm").format(date);
+            Date   date = new Date(System.currentTimeMillis()+ delay * 1000L);
+            String time = new SimpleDateFormat("MM-dd HH:mm:ss").format(date);
             String name = task.getClass().getName();
             CoreLogger.trace("Will run {} at {}", name, time);
         }
@@ -126,8 +126,8 @@ public final class Daemons implements Core.Singleton, AutoCloseable {
      */
     public void run(Runnable task, int delay, int perio) {
         if (4 == (4 & Core.DEBUG)) {
-            Date   date = new Date(System.currentTimeMillis()+delay*1000L);
-            String time = new SimpleDateFormat("MM-dd HH:mm").format(date);
+            Date   date = new Date(System.currentTimeMillis()+ delay * 1000L);
+            String time = new SimpleDateFormat("MM-dd HH:mm:ss").format(date);
             String name = task.getClass().getName();
             CoreLogger.trace("Will run {} at {}", name, time);
         }

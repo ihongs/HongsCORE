@@ -13,7 +13,8 @@
     </parent>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <endorsed.dirs>${project.build.directory}/endorsed</endorsed.dirs>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
         <released.name>HongsWMS</released.name>
     </properties>
     <dependencies>
@@ -125,87 +126,130 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <groupId>org.apache.maven.plugins</groupId>
-                <version>3.8.1</version>
-                <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                    <compilerArguments>
-                        <endorseddirs>${endorsed.dirs}</endorseddirs>
-                    </compilerArguments>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <groupId>org.apache.maven.plugins</groupId>
-                <version>2.22.2</version>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-            </plugin>
             <!-- Minify css and js -->
             <plugin>
-                <groupId>net.alchim31.maven</groupId>
                 <artifactId>yuicompressor-maven-plugin</artifactId>
+                <groupId>net.alchim31.maven</groupId>
                 <version>1.5.1</version>
                 <executions>
                     <execution>
+                        <id>build-hongs-edge</id>
                         <goals>
                             <goal>compress</goal>
                         </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <encoding>UTF-8</encoding>
-                    <force>true</force>
-                    <jswarn>false</jswarn>
-                    <suffix>.min</suffix>
-                    <sourceDirectory>web/static</sourceDirectory>
-                    <outputDirectory>web/static</outputDirectory>
-                    <includes>
-                        <include>assets/src/hongsedge.js</include>
-                        <include>assets/src/hongsedit.js</include>
-                        <include>centra/*.*</include>
-                        <include>centre/*.*</include>
-                    </includes>
-                    <excludes>
-                        <exclude>centra/*.min.*</exclude>
-                        <exclude>centre/*.min.*</exclude>
-                    </excludes>
-                    <aggregations>
-                        <aggregation>
-                            <insertNewLine>true</insertNewLine>
-                            <removeIncluded>true</removeIncluded>
-                            <output>web/static/assets/hongsedge.min.js</output>
-                            <inputDir>web/static/assets/src</inputDir>
+                        <configuration>
+                            <encoding>UTF-8</encoding>
+                            <force>true</force>
+                            <jswarn>false</jswarn>
+                            <suffix>.min</suffix>
+                            <sourceDirectory>web/static/assets</sourceDirectory>
+                            <outputDirectory>web/static/assets</outputDirectory>
+                            <excludes>
+                                <exclude>*/*.min.*</exclude>
+                            </excludes>
                             <includes>
-                                <include>hongsedge.min.js</include>
-                                <include>hongsedit.min.js</include>
+                                <include>*/hongsedge*.js</include>
+                                <include>*/hongsedit*.js</include>
                             </includes>
-                        </aggregation>
-                    </aggregations>
-                </configuration>
+                            <aggregations>
+                                <aggregation>
+                                    <insertNewLine>true</insertNewLine>
+                                    <removeIncluded>true</removeIncluded>
+                                    <output>web/static/assets/hongsedge.min.js</output>
+                                    <inputDir>web/static/assets/src</inputDir>
+                                    <includes>
+                                        <include>hongsedge.min.js</include>
+                                        <include>hongsedit.min.js</include>
+                                    </includes>
+                                </aggregation>
+                            </aggregations>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>build-hongs-fore</id>
+                        <goals>
+                            <goal>compress</goal>
+                        </goals>
+                        <configuration>
+                            <encoding>UTF-8</encoding>
+                            <force>true</force>
+                            <jswarn>false</jswarn>
+                            <suffix>.min</suffix>
+                            <sourceDirectory>web/static</sourceDirectory>
+                            <outputDirectory>web/static</outputDirectory>
+                            <excludes>
+                                <exclude>*/*.min.*</exclude>
+                            </excludes>
+                            <includes>
+                                <include>centra/*.*</include>
+                                <include>centre/*.*</include>
+                            </includes>
+                        </configuration>
+                    </execution>
+                    <!-- 示例, 将用户扩展追加到 base.min.css -->
+                    <!--
+                    <execution>
+                        <id>build-hongs-base</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>compress</goal>
+                        </goals>
+                        <configuration>
+                            <encoding>UTF-8</encoding>
+                            <force>true</force>
+                            <jswarn>false</jswarn>
+                            <suffix>.nim</suffix>
+                            <sourceDirectory>${project.build.directory}/${project.build.finalName}/static</sourceDirectory>
+                            <outputDirectory>${project.build.directory}/${project.build.finalName}/static</outputDirectory>
+                            <excludes>
+                                <exclude>**/*.min.*</exclude>
+                                <exclude>**/*.nim.*</exclude>
+                            </excludes>
+                            <includes>
+                                <include>centra/**/*.*</include>
+                                <include>centre/**/*.*</include>
+                            </includes>
+                            <aggregations>
+                                <aggregation>
+                                    <insertNewLine>true</insertNewLine>
+                                    <removeIncluded>true</removeIncluded>
+                                    <output>${project.build.directory}/${project.build.finalName}/static/centra/base.min.css</output>
+                                    <inputDir>${project.build.directory}/${project.build.finalName}/static/centra</inputDir>
+                                    <includes>
+                                        <include>base.nim.css</include>
+                                        <include>base/*.nim.css</include>
+                                    </includes>
+                                </aggregation>
+                                <aggregation>
+                                    <insertNewLine>true</insertNewLine>
+                                    <removeIncluded>true</removeIncluded>
+                                    <output>${project.build.directory}/${project.build.finalName}/static/centre/base.min.css</output>
+                                    <inputDir>${project.build.directory}/${project.build.finalName}/static/centre</inputDir>
+                                    <includes>
+                                        <include>base.nim.css</include>
+                                        <include>base/*.nim.css</include>
+                                    </includes>
+                                </aggregation>
+                                <aggregation>
+                                    <insertNewLine>true</insertNewLine>
+                                    <removeIncluded>true</removeIncluded>
+                                    <output>${project.build.directory}/${project.build.finalName}/static/centre/form.min.css</output>
+                                    <inputDir>${project.build.directory}/${project.build.finalName}/static/centre</inputDir>
+                                    <includes>
+                                        <include>form.nim.css</include>
+                                        <include>form/*.nim.css</include>
+                                    </includes>
+                                </aggregation>
+                            </aggregations>
+                        </configuration>
+                    </execution>
+                    //-->
+                </executions>
             </plugin>
             <!-- Build target system -->
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
-                    <execution>
-                        <id>fixed-hongs-core-minify</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <tasks>
-                                <!-- 修正 yuicompressor 将 css calc 内空格删掉的问题 -->
-                                <replace file="${basedir}/web/static/centra/base.min.css" token="%+" value="% + "/>
-                                <replace file="${basedir}/web/static/centre/base.min.css" token="%+" value="% + "/>
-                            </tasks>
-                        </configuration>
-                    </execution>
                     <execution>
                         <id>build-hongs-core-system</id>
                         <phase>package</phase>

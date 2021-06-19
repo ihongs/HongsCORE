@@ -67,8 +67,9 @@ body {
     left   : 240px;
 }
 .sider-open #body-handler {
-    left   : calc( 50% + 120px);
+    left   : calc(50% - -120px);
 }
+/*  等同 calc(50% + 120px), 规避 yuicompressor 会把 + 边空格去掉的问题  */
 
 /** 标题 **/
 

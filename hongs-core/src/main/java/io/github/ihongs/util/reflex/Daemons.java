@@ -99,9 +99,9 @@ public final class Daemons implements Core.Singleton, AutoCloseable {
         SES.shutdown ();
         try {
             if (! SES.isTerminated()) {
-                System.err.println("Core daemons terminating...");
+                System.err.println("Core daemons are terminating...");
             if (! SES.awaitTermination(1, TimeUnit.MINUTES)) {
-                System.err.println("Core daemons terminated incompletely!");
+                System.err.println("Core daemons terminated timeout");
             }}
         } catch ( InterruptedException e) {
             throw new RuntimeException(e) ;

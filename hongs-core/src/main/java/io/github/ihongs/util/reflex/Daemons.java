@@ -148,7 +148,7 @@ public final class Daemons implements Core.Singleton, AutoCloseable {
             Date   date = new Date(System.currentTimeMillis()+ delay * 1000L);
             String time = new SimpleDateFormat("MM-dd HH:mm:ss").format(date);
             String name = task.getClass().getName();
-            CoreLogger.trace("Will run {} on {}", name, time);
+            CoreLogger.trace("Will run {} at {}", name, time);
         }
 
         SES.scheduleAtFixedRate(task , delay, perio, TimeUnit.SECONDS);

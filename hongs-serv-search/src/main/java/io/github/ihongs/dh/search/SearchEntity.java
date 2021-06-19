@@ -361,15 +361,6 @@ public class SearchEntity extends LuceneRecord {
             CoreLogger.trace("Close the lucene writer for {}", dbname);
         }
 
-        @Override
-        protected void finalize() throws Throwable {
-            try {
-                this  .   close();
-            } finally {
-                super .finalize();
-            }
-        }
-
     }
 
 }

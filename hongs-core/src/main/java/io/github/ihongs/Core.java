@@ -123,7 +123,7 @@ public class Core
                 = new ThreadLocal() {
       @Override
       protected Core initialValue() {
-          return new Core();
+          return new Locals();
       }
       @Override
       public void remove() {
@@ -748,17 +748,6 @@ public class Core
   }
 
   @Override
-  protected void finalize()
-  throws Throwable
-  {
-    try {
-      this . reset  ();
-    } finally {
-      super.finalize();
-    }
-  }
-
-  @Override
   public String toString()
   {
     StringBuilder sb = new StringBuilder();
@@ -959,6 +948,27 @@ public class Core
         super.reuse();
       } finally {
         RWL.writeLock().unlock();
+      }
+    }
+
+  }
+
+  /**
+   * 局部容器
+   * 实现 finalize 以供 Finalizer 回收
+   */
+  private static final class Locals extends Core
+  {
+
+    @Override
+    protected void finalize()
+    throws Throwable
+    {
+      try {
+        CoreLogger.trace("Core will be finalized");
+        this . reset  ();
+      } finally {
+        super.finalize();
       }
     }
 

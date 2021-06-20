@@ -1,5 +1,6 @@
 package io.github.ihongs.cmdlet;
 
+import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLocale;
@@ -298,7 +299,7 @@ public class CmdletRunner implements Runnable
       }
       else
       {
-        zone = cnf.getProperty("core.timezone.default", "GMT+8");
+        zone = cnf.getProperty("core.timezone.default", Cnst.ZONE_DEF);
       }
     }
     Core.ACTION_ZONE.set(zone);
@@ -326,12 +327,12 @@ public class CmdletRunner implements Runnable
         lang = CoreLocale.getAcceptLanguage(lang);
         if (lang == null)
         {
-          lang = cnf.getProperty("core.language.default", "zh_CN");
+          lang = cnf.getProperty("core.language.default", Cnst.LANG_DEF);
         }
       }
       else
       {
-          lang = cnf.getProperty("core.language.default", "zh_CN");
+          lang = cnf.getProperty("core.language.default", Cnst.ZONE_DEF);
       }
     }
     else
@@ -344,7 +345,7 @@ public class CmdletRunner implements Runnable
       lang = CoreLocale.getAcceptLanguage(lang);
       if (lang ==null)
       {
-        CoreLogger.error("ERROR: Unsupported language: "+leng+".");
+        CoreLogger.error("ERROR: Unsupported language: " + leng + ".");
         System.exit(1);
       }
     }

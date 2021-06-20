@@ -1,5 +1,6 @@
 package io.github.ihongs.test;
 
+import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.cmdlet.CmdletRunner;
 import io.github.ihongs.util.Dawn;
@@ -67,7 +68,7 @@ public class TestVerify extends TestCase {
             System.out.println(Dawn.toString(cleans));
         }
         catch (Wrongs wr) {
-            Core.ACTION_LANG.set("zh_CN");
+            Core.ACTION_LANG.set(Cnst.LANG_DEF);
             fail(Dawn.toString(wr.getErrors()));
         }
     }

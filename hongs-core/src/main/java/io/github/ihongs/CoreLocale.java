@@ -383,7 +383,7 @@ public class CoreLocale
   public static String getAcceptLanguage(String lang)
   {
     CoreConfig conf = CoreConfig.getInstance();
-    String     sups = "," + conf.getProperty("core.language.support", "zh_CN") + ",";
+    String     sups = "," + conf.getProperty("core.language.support", Cnst.LANG_DEF) + ",";
     String[]   arr1 = lang.replace('-','_')
                           .split  (  ","  );
     String[]   arr2 ;

@@ -16,7 +16,11 @@ package io.github.ihongs;
  */
 public final class Cnst {
 
-    //** 默认数值 **/
+    //** 默认取值 **/
+
+    public static final String LANG_DEF = "zh_CN"; // 默认语言
+
+    public static final String ZONE_DEF = "GMT+8"; // 默认时区
 
     public static final int    RN_DEF =   20 ; // 默认每页行数
 
@@ -96,15 +100,19 @@ public final class Cnst {
 
     //** 会话参数 **/
 
-    public static final String  SID_KEY =  "sid"; // 会话代号
+    public static final String LANG_KEY =  "lang"; // 语言代号
 
-    public static final String  UID_SES =  "uid"; // 用户代号
+    public static final String ZONE_KEY =  "zone"; // 时区代号
 
-    public static final String  UST_SES =  "ust"; // 登录时间
+    public static final String  SID_KEY =  "sid";  // 会话代号
 
-    public static final String  ADM_UID =  "1";   // 超级管理员
+    public static final String  UID_SES =  "uid";  // 用户代号
 
-    public static final String  ADM_GID =  "0";   // 顶级管理组
+    public static final String  UST_SES =  "ust";  // 登录时间
+
+    public static final String  ADM_UID =  "1";    // 超级管理员
+
+    public static final String  ADM_GID =  "0";    // 顶级管理组
 
     //** 请求属性 **/
 

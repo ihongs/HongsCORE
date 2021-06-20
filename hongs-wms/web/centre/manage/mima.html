@@ -21,9 +21,76 @@
         <div class="form-group">
             <input type="password" name="passcode" class="form-control" required="required" data-repeat="password" data-error="请重复输入口令" placeholder="请重复输入口令"/>
         </div>
+        <div class="form-group form-control-static" style="padding-top: 0;">
+            <a href="javascript:;" class="new-password">生成密码</a>
+        </div>
         <div>
             <button type="submit" class="commit btn btn-primary">提交</button>
             <button type="button" class="cancel btn btn-link"   >取消</button>
         </div>
     </form>
 </div>
+<script type="text/javascript">
+    (function($) {
+        var context = H$("#centra-mima-form");
+
+        context.on("click", ".new-password", function() {
+            newPassword();
+        });
+        function newPassword() {
+            var pw = getPassword();
+            $.hsMask({
+                mode : "warn",
+                html : "请务必牢记新的密码, 提交后将以不可逆加密的形式进行存储."
+            }, {
+                label: "记住了",
+                glass: "btn-primary",
+                click: function() {
+                    context.find("[name=password],[name=passcode]").val(pw);
+                }
+            }, {
+                label: "换一个",
+                glass: "btn-default",
+                click: function() {
+                    setTimeout( function( ) { newPassword(); }, 0 );
+                }
+            }).find(".alert-title").html('新密码: <b style="font-family: monospace;">'+ pw +'</b>');
+        }
+        function getPassword() {
+            var cs = [
+                ['A', 'B', 'C', 'D', 'E', 'F', 'G',
+                 'H', 'I', 'G', 'K', 'M', 'N',
+                 'P', 'Q', 'R', 'S', 'T',
+                 'U', 'V', 'W', 'X', 'Y'],
+                ['a', 'b', 'c', 'd', 'e', 'f', 'g',
+                 'h', 'i', 'g', 'k', 'm', 'n',
+                 'p', 'q', 'r', 's', 't',
+                 'u', 'v', 'w', 'x', 'y'],
+                ['3', '4', '5', '6', '7', '8', '9'],
+                ['@', '#', '$', '%', '&']
+            ];
+            var ps = [];
+            var hasNum = false; // 至少含有一个数字
+            var hasSym = false; // 至少含有一个符号
+            for(var i = 0; i < 9; i ++) {
+                var j = Math.floor(Math.random() * 100);
+                var x = j % cs.length;
+                if (x === 2 && !hasNum) {
+                    hasNum = true;
+                } else
+                if (x === 3 && !hasSym) {
+                    hasSym = true;
+                }
+                if (i === 6 && !hasNum) {
+                    x = 2;
+                } else
+                if (i === 7 && !hasSym) {
+                    x = 3;
+                }
+                var y = j % cs[x].length;
+                ps.push (cs[x][y]);
+            }
+            return ps.join("");
+        }
+    })(jQuery);
+</script>

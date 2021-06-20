@@ -70,7 +70,8 @@ public class SignAction extends io.github.ihongs.serv.centra.SignAction {
 //      sd.put("role"   , cc.getProperty("core.public.regs.role", "centre"));
 //      uo.db.getTable("user_role").insert(sd);
 
-        ah.reply(AuthKit.userSign(ah, uuid, uname, uhead));
+        Map  ad = AuthKit.userSign( ah, "*", uuid, uname, uhead ); // * 表示密码登录
+        ah.reply(Synt.mapOf("info", ad));
     }
 
     /**

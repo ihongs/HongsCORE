@@ -164,13 +164,14 @@ public class AuthKit {
     /**
      * 自运营登录
      * @param ah
+     * @param unit
      * @param uuid
      * @param uname 名称
      * @param uhead 头像
      * @return
      * @throws HongsException
      */
-    public static Map userSign(ActionHelper ah, String uuid, String uname, String uhead)
+    public static Map userSign(ActionHelper ah, String unit, String uuid, String uname, String uhead)
     throws HongsException {
         long      time = System.currentTimeMillis() / 1000 ;
         HttpSession sd = ah.getRequest( ).getSession(false);
@@ -195,6 +196,7 @@ public class AuthKit {
 
         // 设置会话
         sd.setAttribute(Cnst.UID_SES, uuid);
+        sd.setAttribute(Cnst.USK_SES, unit);
         sd.setAttribute(Cnst.UST_SES, time);
         sd.setAttribute(NAME, uname);
         sd.setAttribute(HEAD, uhead);
@@ -203,6 +205,7 @@ public class AuthKit {
         Map rd = new HashMap();
         rd.put(Cnst.SID_KEY, ssid);
         rd.put(Cnst.UID_SES, uuid);
+        rd.put(Cnst.USK_SES, unit);
         rd.put(Cnst.UST_SES, time);
         rd.put(NAME, uname);
         rd.put(HEAD, uhead);
@@ -281,7 +284,7 @@ public class AuthKit {
 //          db.getTable("user_role").insert(ud);
         }
 
-        ud = userSign( ah , uuid, uname, uhead );
+        ud = userSign( ah , unit, uuid, uname, uhead );
         ud.put("unit", /**/ unit);
         ud.put("regs", 0 == stat);
         return ud;

@@ -129,8 +129,9 @@ public class HongsException
     @Override
     public HongsExemption toExemption() {
         return new HongsExemption(this.getErrno(), this.getError(), this)
-             .setLocalizedOptions(this.getLocalizedOptions())
-             .setLocalizedContext(this.getLocalizedContext());
+             .setLocalizedContext(this.getLocalizedContext())
+             .setLocalizedContent(this.getLocalizedContent())
+             .setLocalizedOptions(this.getLocalizedOptions());
     }
 
     /**

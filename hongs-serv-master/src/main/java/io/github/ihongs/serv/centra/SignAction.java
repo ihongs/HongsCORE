@@ -54,8 +54,8 @@ public class SignAction {
         // 检查账号
         fc = new FetchCase( )
             .from   ( tb.tableName )
-            .select ( "password, passcode, id, name, head, mtime, state" )
-            .filter ( "username = ?" , username );
+            .filter ( "username = ?" , username )
+            .select ( "password, passcode, id, name, head, state" );
         ud = db.fetchLess(fc);
         if ( ud.isEmpty() ) {
             ah.reply(AuthKit.getWrong("username", "core.username.invalid"));
@@ -119,6 +119,11 @@ public class SignAction {
             return;
         }
 
+        // 规避自定 RoleSet 附加判断
+        ah.setSessibute(Cnst.UID_SES, null);
+        ah.setSessibute(Cnst.USK_SES, null);
+        ah.setSessibute(Cnst.UST_SES, null);
+
         // 验证区域
         Set rs  = RoleSet.getInstance(uuid);
         if (rs != null && ! place.isEmpty() && ! rs.contains(place)) {
@@ -126,7 +131,7 @@ public class SignAction {
             return;
         }
 
-        Map sd  = AuthKit.userSign( ah, uuid, uname, uhead );
+        Map sd  = AuthKit.userSign( ah, "*", uuid, uname, uhead ); // * 表示密码登录
         ah.reply(Synt.mapOf("info", sd));
     }
 

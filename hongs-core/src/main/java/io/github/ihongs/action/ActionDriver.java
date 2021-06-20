@@ -394,7 +394,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
 
         CoreConfig conf = core.got(CoreConfig.class);
 
-//      Core.ACTION_LANG.set(conf.getProperty("core.language.default", Cnst.LANG_DEF));
+        Core.ACTION_LANG.set(conf.getProperty("core.language.default", Cnst.LANG_DEF));
         if (conf.getProperty("core.language.probing", false)) {
             /**
              * 语言可以记录到Session/Cookies里
@@ -419,7 +419,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             }
         }
 
-//      Core.ACTION_ZONE.set(conf.getProperty("core.timezone.default", Cnst.ZONE_DEF));
+        Core.ACTION_ZONE.set(conf.getProperty("core.timezone.default", Cnst.ZONE_DEF));
         if (conf.getProperty("core.timezone.probing", false)) {
             /**
              * 时区可以记录到Session/Cookies里

@@ -5,6 +5,7 @@ import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLocale;
 import io.github.ihongs.HongsException;
+import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.NaviMap;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -41,6 +43,8 @@ import javax.servlet.http.HttpServletResponse;
 public class AuthFilter
   extends  ActionDriver
 {
+
+  private static final Set EMP_SET = new HashSet(0);
 
   /**
    * 动作配置
@@ -179,7 +183,7 @@ public class AuthFilter
     /**
      * 检查当前动作是否可以忽略
      */
-    if (ignore != null && ignore.matches( act ) ) {
+    if (ignore != null && ignore.matches (act) ) {
         chain.doFilter(req, rsp);
         return;
     }
@@ -208,45 +212,58 @@ public class AuthFilter
      * 判断当前用户是否登录超时
      * 未超时且是调试模式
      * 对超级管理员无限制
+     * 自定义 RoleSet 中可抛出 401,403 异常
      */
     Set authset = null;
+    Set actions = siteMap.actions;
     long now = System.currentTimeMillis() / 1000;
     long ust = Synt.declare(hlpr.getSessibute(Cnst.UST_SES), 0L);
     if ( exp == 0 || exp > now - ust ) {
-        if ( 4 == (4 & Core.DEBUG) ) {
-               Object uid = hlpr.getSessibute(Cnst.UID_SES);
-            if ( Cnst.ADM_UID.equals(uid)) {
-                chain.doFilter( req, rsp );
-                return;
+        if ( 4 == ( 4 & Core.DEBUG ) ) {
+            Object  uid  =  hlpr.getSessibute(Cnst.UID_SES);
+            if (Cnst.ADM_UID.equals(uid)) {
+                actions  = EMP_SET;
             }
         }
 
         try {
             authset = siteMap.getAuthSet();
-        } catch (HongsException ex) {
-            throw new ServletException(ex);
+        } catch (HongsException e) {
+            int  c  = e.getState();
+            if ( c >= 401 && c <= 403 ) {
+                doFailed(core, hlpr, (byte) (c - 400), e.getLocalizedMessage(), null);
+                return;
+            }
+            throw e.toExemption( );
+        } catch (HongsExemption e) {
+            int  c  = e.getState();
+            if ( c >= 401 && c <= 403 ) {
+                doFailed(core, hlpr, (byte) (c - 400), e.getLocalizedMessage(), null);
+                return;
+            }
+            throw e.toExemption( );
         }
 
-        ust = 0;
+        ust = 0 ;
     }
 
     if (authset != null) {
-        if (siteMap.actions.contains(aut)
+        if (actions.contains(aut)
             &&  !   authset.contains(aut)) {
             doFailed(core, hlpr, (byte) 2);
             return;
         }
-        if (siteMap.actions.contains(act)
+        if (actions.contains(act)
             &&  !   authset.contains(act)) {
             doFailed(core, hlpr, (byte) 3);
             return;
         }
     } else {
-        if (siteMap.actions.contains(aut)) {
+        if (actions.contains(aut)) {
             doFailed(core, hlpr, (byte) (ust > 0 ? 0 : 1));
             return;
         }
-        if (siteMap.actions.contains(act)) {
+        if (actions.contains(act)) {
             doFailed(core, hlpr, (byte) (ust > 0 ? 0 : 1));
             return;
         }
@@ -256,6 +273,10 @@ public class AuthFilter
   }
 
   private void doFailed(Core core, ActionHelper hlpr, byte type)
+  {
+    doFailed(core, hlpr, type, null, null);
+  }
+  private void doFailed(Core core, ActionHelper hlpr, byte type, String esg, String erl)
   {
     HttpServletResponse rsp = hlpr.getResponse();
     HttpServletRequest  req = hlpr.getRequest( );
@@ -350,6 +371,13 @@ public class AuthFilter
                 }
             }
         }
+    }
+
+    if (esg != null) {
+        msg  = esg ;
+    }
+    if (erl != null) {
+        uri  = erl ;
     }
 
     if (inAjax(req)) {

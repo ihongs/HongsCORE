@@ -57,21 +57,46 @@ public class RoleSet extends CoreSerial implements CoreSerial.Mtimes, Set<String
         int       st;
         long      rt;
         long      ot;
+        long      pt;
 
         db = DB.getInstance("master");
 
         tb = db.getTable("user");
         fc = new FetchCase( FetchCase.STRICT )
                 .from  (tb.tableName, tb.name)
-                .select(tb.name+".state, "+tb.name+".rtime")
+                .select(tb.name+".state, "+tb.name+".rtime, "+tb.name+".ptime")
                 .filter(tb.name+".id = ?", userId);
         rs = db.fetchLess(fc);
         st = Synt.declare(rs.get("state"), 0 );
         rt = Synt.declare(rs.get("rtime"), 0L);
+        pt = Synt.declare(rs.get("ptime"), 0L);
         if (st <= 0) {
             return -1; // 用户不存在或已锁定，则删除
         }
 
+        /**
+         * 使用密码登录
+         * 当密码变更时(登录时间小于密码修改时间)
+         * 需要重新登录
+         */
+        USK: {
+            ActionHelper ah;
+            try {
+                ah = ActionHelper.getInstance();
+            } catch (UnsupportedOperationException e) {
+                break USK; // 不理会非动作环境
+            }
+            if ( ! "*".equals(ah.getSessibute(Cnst.USK_SES))) {
+                break USK; // 不理会非密码登录
+            }
+            ot = Synt.declare(ah.getSessibute(Cnst.UST_SES) , 0L);
+            if (ot < pt && 0 < ot && 0 < pt) {
+                throw new HongsException(401, "Password changed")
+                    .setLocalizedContent("core.password.changed")
+                    .setLocalizedContext("master");
+            }
+        }
+        
         tb = db.getTable("dept");
         td = db.getTable("dept_user");
         fc = new FetchCase( FetchCase.STRICT )
@@ -86,14 +111,14 @@ public class RoleSet extends CoreSerial implements CoreSerial.Mtimes, Set<String
         if (st <= 0) {
             return -1; // 所在的分组均已锁定，则删除
         }
-        if (rt < ot) {
-            rt = ot;
-        }
 
         /**
          * 比较文件修改时间和权限变更时间
          * 还没有过期则从缓存文件载入即可
          */
+        if (rt < ot) {
+            rt = ot;
+        }
         if (f.exists() && f.lastModified() >= rt * 1000L) {
             load(f);
             return  1;

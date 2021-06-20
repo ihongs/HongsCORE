@@ -264,7 +264,13 @@ public class Core
         // 调用层级过多, 最好直接抛出
         if (ta instanceof StackOverflowError)
         {
-            throw ( StackOverflowError ) ta ;
+          throw ( StackOverflowError ) ta;
+        }
+
+        // 框架常规异常, 可以直接抛出
+        if (ta instanceof HongsCause )
+        {
+          throw ((HongsCause) ta).toExemption();
         }
 
         throw new HongsExemption(823, "Can not build "+clas.getName(), ta);
@@ -296,7 +302,13 @@ public class Core
         // 调用层级过多, 最好直接抛出
         if (ta instanceof StackOverflowError)
         {
-            throw ( StackOverflowError ) ta ;
+          throw ( StackOverflowError ) ta;
+        }
+
+        // 框架常规异常, 可以直接抛出
+        if (ta instanceof HongsCause )
+        {
+          throw ((HongsCause) ta).toExemption();
         }
 
         throw new HongsExemption(824, "Can not build "+clas.getName(), ex);
@@ -964,7 +976,7 @@ public class Core
     throws Throwable
     {
       try {
-        CoreLogger.trace("Core will be finalized");
+        CoreLogger.trace("Core is finalized");
         this . reset  ();
       } finally {
         super.finalize();

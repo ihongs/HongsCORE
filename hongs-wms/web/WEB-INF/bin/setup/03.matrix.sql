@@ -88,7 +88,7 @@ CREATE INDEX `IK_a_matrix_data_rtime` ON `a_matrix_data` (`rtime`);
 
 INSERT INTO a_matrix_unit (`id`, `pid`, `name`, `icon`, `note`, `ctime`, `mtime`, `boost`, `state`)
 VALUES ('-', NULL, 'Base', '', '', 0, 0, 0, 1),
-VALUES ('0', NULL, 'Root', '', '', 0, 0, 0, 1);
+       ('0', NULL, 'Root', '', '', 0, 0, 0, 1);
 
 INSERT INTO a_matrix_form (`id`, `unit_id`, `name`, `icon`, `note`, `conf`, `ctime`, `mtime`, `boost`, `state`)
 VALUES ('user', '-', '用户', '', '', '{

@@ -394,32 +394,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
 
         CoreConfig conf = core.got(CoreConfig.class);
 
-        Core.ACTION_ZONE.set(conf.getProperty("core.timezone.default","GMT+8"));
-        if (conf.getProperty("core.timezone.probing", false)) {
-            /**
-             * 时区可以记录到Session/Cookies里
-             */
-            String sess = conf.getProperty("core.timezone.session", "zone");
-            String zone = (String) hlpr.getSessibute(sess);
-            if (zone == null || zone.length() == 0) {
-                   zone = (String) hlpr.getCookibute(sess);
-            if (zone == null || zone.length() == 0) {
-                   zone = req.getHeader( /***/ "Timezone");
-            }
-            }
-
-            /**
-             * 过滤一下避免错误时区
-             */
-            if (zone != null) {
-                zone  = TimeZone.getTimeZone(zone).getID();
-//          if (zone != null) {
-                Core.ACTION_ZONE.set(zone);
-//          }
-            }
-        }
-
-        Core.ACTION_LANG.set(conf.getProperty("core.language.default","zh_CN"));
+//      Core.ACTION_LANG.set(conf.getProperty("core.language.default", "zh_CN"));
         if (conf.getProperty("core.language.probing", false)) {
             /**
              * 语言可以记录到Session/Cookies里
@@ -441,6 +416,31 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             if (lang != null) {
                 Core.ACTION_LANG.set(lang);
             }
+            }
+        }
+
+//      Core.ACTION_ZONE.set(conf.getProperty("core.timezone.default", "GMT+8"));
+        if (conf.getProperty("core.timezone.probing", false)) {
+            /**
+             * 时区可以记录到Session/Cookies里
+             */
+            String sess = conf.getProperty("core.timezone.session", "zone");
+            String zone = (String) hlpr.getSessibute(sess);
+            if (zone == null || zone.length() == 0) {
+                   zone = (String) hlpr.getCookibute(sess);
+            if (zone == null || zone.length() == 0) {
+                   zone = req.getHeader(/**/ "X-Timezone");
+            }
+            }
+
+            /**
+             * 过滤一下避免错误时区
+             */
+            if (zone != null) {
+                zone  = TimeZone.getTimeZone(zone).getID();
+//          if (zone != null) {
+                Core.ACTION_ZONE.set(zone);
+//          }
             }
         }
     }

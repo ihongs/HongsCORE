@@ -183,8 +183,8 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             }
 
             // 设置默认语言
-            Core.ACTION_LANG.set(def.getProperty("core.language.default", "zh_CN"));
-            Core.ACTION_ZONE.set(def.getProperty("core.timezone.default", "GMT+8"));
+            Core.ACTION_LANG.set(def.getProperty("core.language.default", Cnst.LANG_DEF));
+            Core.ACTION_ZONE.set(def.getProperty("core.timezone.default", Cnst.ZONE_DEF));
             Locale  .setDefault(Core.getLocality());
             TimeZone.setDefault(Core.getTimezone());
         }
@@ -394,12 +394,12 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
 
         CoreConfig conf = core.got(CoreConfig.class);
 
-//      Core.ACTION_LANG.set(conf.getProperty("core.language.default", "zh_CN"));
+//      Core.ACTION_LANG.set(conf.getProperty("core.language.default", Cnst.LANG_DEF));
         if (conf.getProperty("core.language.probing", false)) {
             /**
              * 语言可以记录到Session/Cookies里
              */
-            String sess = conf.getProperty("core.language.session", "lang");
+            String sess = conf.getProperty("core.language.session", Cnst.LANG_KEY);
             String lang = (String) hlpr.getSessibute(sess);
             if (lang == null || lang.length() == 0) {
                    lang = (String) hlpr.getCookibute(sess);
@@ -419,12 +419,12 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             }
         }
 
-//      Core.ACTION_ZONE.set(conf.getProperty("core.timezone.default", "GMT+8"));
+//      Core.ACTION_ZONE.set(conf.getProperty("core.timezone.default", Cnst.ZONE_DEF));
         if (conf.getProperty("core.timezone.probing", false)) {
             /**
              * 时区可以记录到Session/Cookies里
              */
-            String sess = conf.getProperty("core.timezone.session", "zone");
+            String sess = conf.getProperty("core.timezone.session", Cnst.ZONE_KEY);
             String zone = (String) hlpr.getSessibute(sess);
             if (zone == null || zone.length() == 0) {
                    zone = (String) hlpr.getCookibute(sess);

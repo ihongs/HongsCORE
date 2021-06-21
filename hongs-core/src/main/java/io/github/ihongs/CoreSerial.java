@@ -1,6 +1,6 @@
 package io.github.ihongs;
 
-import io.github.ihongs.util.reflex.Latch;
+import io.github.ihongs.util.daemon.Latch;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

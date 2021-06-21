@@ -383,14 +383,16 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
     throws ServletException {
         Core.ACTION_TIME.set(System.currentTimeMillis(/***/));
         Core.ACTION_NAME.set(getOriginPath(req).substring(1));
+
         /*
         // 无需指定, 在需要时提取
         Core.CLIENT_ADDR.set(getClientAddr(req));
         Core.SERVER_HREF.set(getServerHref(req));
         */
+
         // 外部没有指定网站域名则在首次请求时进行设置(非线程安全)
         if (Core.SERV_HREF == null
-        ||  Core.SERV_HREF.isEmpty(/**/)) {
+        ||  Core.SERV_HREF.isEmpty()) {
             Core.SERV_HREF  = Core.SERVER_HREF.get();
         }
 

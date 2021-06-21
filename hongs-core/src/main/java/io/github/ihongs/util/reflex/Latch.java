@@ -288,21 +288,37 @@ public final class Latch {
             lock.unlock();
         }
 
+        /**
+         * @deprecated 不支持
+         * @throws UnsupportedOperationException
+         */
         @Override
         public boolean tryLock() {
             throw new UnsupportedOperationException("Not supported.");
         }
 
+        /**
+         * @deprecated 不支持
+         * @throws UnsupportedOperationException
+         */
         @Override
         public boolean tryLock(long time, TimeUnit unit) {
             throw new UnsupportedOperationException("Not supported.");
         }
 
+        /**
+         * @deprecated 不支持
+         * @throws UnsupportedOperationException
+         */
         @Override
         public void lockInterruptibly() {
             throw new UnsupportedOperationException("Not supported.");
         }
 
+        /**
+         * @deprecated 不支持
+         * @throws UnsupportedOperationException
+         */
         @Override
         public Condition newCondition() {
             throw new UnsupportedOperationException("Not supported.");
@@ -330,21 +346,37 @@ public final class Latch {
             lock.unlockr();
         }
 
+        /**
+         * @deprecated 不支持
+         * @throws UnsupportedOperationException
+         */
         @Override
         public boolean tryLock() {
             throw new UnsupportedOperationException("Not supported.");
         }
 
+        /**
+         * @deprecated 不支持
+         * @throws UnsupportedOperationException
+         */
         @Override
         public boolean tryLock(long time, TimeUnit unit) {
             throw new UnsupportedOperationException("Not supported.");
         }
 
+        /**
+         * @deprecated 不支持
+         * @throws UnsupportedOperationException
+         */
         @Override
         public void lockInterruptibly() {
             throw new UnsupportedOperationException("Not supported.");
         }
 
+        /**
+         * @deprecated 不支持
+         * @throws UnsupportedOperationException
+         */
         @Override
         public Condition newCondition() {
             throw new UnsupportedOperationException("Not supported.");
@@ -372,21 +404,37 @@ public final class Latch {
             lock.unlockw();
         }
 
+        /**
+         * @deprecated 不支持
+         * @throws UnsupportedOperationException
+         */
         @Override
         public boolean tryLock() {
             throw new UnsupportedOperationException("Not supported.");
         }
 
+        /**
+         * @deprecated 不支持
+         * @throws UnsupportedOperationException
+         */
         @Override
         public boolean tryLock(long time, TimeUnit unit) {
             throw new UnsupportedOperationException("Not supported.");
         }
 
+        /**
+         * @deprecated 不支持
+         * @throws UnsupportedOperationException
+         */
         @Override
         public void lockInterruptibly() {
             throw new UnsupportedOperationException("Not supported.");
         }
 
+        /**
+         * @deprecated 不支持
+         * @throws UnsupportedOperationException
+         */
         @Override
         public Condition newCondition() {
             throw new UnsupportedOperationException("Not supported.");

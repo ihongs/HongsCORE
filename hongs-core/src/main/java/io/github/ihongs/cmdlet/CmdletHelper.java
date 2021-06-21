@@ -29,8 +29,9 @@ public class CmdletHelper
   /**
    * 输入接口
    * 默认未 System.in
+   * 设置后务必在任务结束时 remove
    */
-  public static final ThreadLocal<InputStream> IN  = new InheritableThreadLocal() {
+  public static final ThreadLocal<InputStream> IN  = new ThreadLocal() {
     @Override
     protected InputStream initialValue() {
       return System.in ;
@@ -40,8 +41,9 @@ public class CmdletHelper
   /**
    * 输出接口
    * 默认为 System.out
+   * 设置后务必在任务结束时 remove
    */
-  public static final ThreadLocal<PrintStream> OUT = new InheritableThreadLocal() {
+  public static final ThreadLocal<PrintStream> OUT = new ThreadLocal() {
     @Override
     protected PrintStream initialValue() {
       return System.out;
@@ -51,8 +53,9 @@ public class CmdletHelper
   /**
    * 错误接口
    * 默认为 System.err
+   * 设置后务必在任务结束时 remove
    */
-  public static final ThreadLocal<PrintStream> ERR = new InheritableThreadLocal() {
+  public static final ThreadLocal<PrintStream> ERR = new ThreadLocal() {
     @Override
     protected PrintStream initialValue() {
       return System.err;
@@ -60,11 +63,11 @@ public class CmdletHelper
   };
 
   /**
-   * 运行环境代码
-   * 0 Cmd, 1 Web
+   * 运行环境代码: 0 Cmd, 1 Web
    * 默认同 Core.ENVIR
+   * 设置后务必在任务结束时 remove
    */
-  public static final ThreadLocal<Byte> ENV = new InheritableThreadLocal() {
+  public static final ThreadLocal<Byte> ENV = new ThreadLocal() {
     @Override
     protected Byte initialValue() {
       return Core.ENVIR;

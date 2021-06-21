@@ -1,7 +1,6 @@
 package io.github.ihongs;
 
-import io.github.ihongs.util.reflex.Block;
-import io.github.ihongs.util.reflex.Block.Larder;
+import io.github.ihongs.util.reflex.Latch;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -76,7 +75,7 @@ public abstract class CoreSerial
   protected final void init(File file)
     throws HongsException
   {
-    Larder lock = Block.getLarder(CoreSerial.class.getName() + ":" + file.getAbsolutePath());
+    Latch.Leader lock = Latch.getLeader(CoreSerial.class.getName() + ":" + file.getAbsolutePath());
 
     lock.lockr();
     try {

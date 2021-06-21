@@ -2,11 +2,11 @@ package io.github.ihongs.cmdlet.serv;
 
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
+import io.github.ihongs.CoreRoster;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.cmdlet.anno.Cmdlet;
 import io.github.ihongs.db.DBConfig;
-import io.github.ihongs.util.reflex.Classes;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -466,7 +466,7 @@ public class ServerCmdlet {
             if (pkgn.endsWith(".**")) {
                 pkgn = pkgn.substring(0, pkgn.length() - 3);
                 try {
-                    clss = Classes.getClassNames(pkgn, true );
+                    clss = CoreRoster.getClassNames(pkgn, true );
                 } catch (IOException ex) {
                     throw new HongsExemption("Can not load package '" + pkgn + "'.", ex);
                 }
@@ -477,7 +477,7 @@ public class ServerCmdlet {
             if (pkgn.endsWith(".*" )) {
                 pkgn = pkgn.substring(0, pkgn.length() - 2);
                 try {
-                    clss = Classes.getClassNames(pkgn, false);
+                    clss = CoreRoster.getClassNames(pkgn, false);
                 } catch (IOException ex) {
                     throw new HongsExemption("Can not load package '" + pkgn + "'.", ex);
                 }

@@ -364,7 +364,7 @@ public class MoreAction {
                 CmdletRunner.exec( args );
             }
             catch ( Error | Exception e ) {
-                out.print( "ERROR: "+ e.getMessage() );
+                out.print ("ERROR: "+ e.getMessage());
             }
             finally {
                 CmdletHelper.OUT.remove();

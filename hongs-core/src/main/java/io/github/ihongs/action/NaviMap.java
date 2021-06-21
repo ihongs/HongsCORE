@@ -7,7 +7,7 @@ import io.github.ihongs.CoreLogger;
 import io.github.ihongs.CoreSerial;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
-import io.github.ihongs.util.reflex.Latch;
+import io.github.ihongs.util.daemon.Latch;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

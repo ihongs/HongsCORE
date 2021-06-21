@@ -8,7 +8,7 @@ import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Synt;
-import io.github.ihongs.util.reflex.Latch;
+import io.github.ihongs.util.daemon.Latch;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

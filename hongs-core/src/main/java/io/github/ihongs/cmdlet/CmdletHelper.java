@@ -27,21 +27,32 @@ public class CmdletHelper
 {
 
   /**
-   * 输入输出接口
+   * 输入接口
+   * 默认未 System.in
    */
-  public static final ThreadLocal<InputStream> IN  = new ThreadLocal() {
+  public static final ThreadLocal<InputStream> IN  = new InheritableThreadLocal() {
     @Override
     protected InputStream initialValue() {
       return System.in ;
     }
   };
-  public static final ThreadLocal<PrintStream> OUT = new ThreadLocal() {
+
+  /**
+   * 输出接口
+   * 默认为 System.out
+   */
+  public static final ThreadLocal<PrintStream> OUT = new InheritableThreadLocal() {
     @Override
     protected PrintStream initialValue() {
       return System.out;
     }
   };
-  public static final ThreadLocal<PrintStream> ERR = new ThreadLocal() {
+
+  /**
+   * 错误接口
+   * 默认为 System.err
+   */
+  public static final ThreadLocal<PrintStream> ERR = new InheritableThreadLocal() {
     @Override
     protected PrintStream initialValue() {
       return System.err;
@@ -53,7 +64,7 @@ public class CmdletHelper
    * 0 Cmd, 1 Web
    * 默认同 Core.ENVIR
    */
-  public static final ThreadLocal<Byte> ENV = new ThreadLocal() {
+  public static final ThreadLocal<Byte> ENV = new InheritableThreadLocal() {
     @Override
     protected Byte initialValue() {
       return Core.ENVIR;

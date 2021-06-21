@@ -3,9 +3,11 @@ package io.github.ihongs;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.cmdlet.anno.Cmdlet;
-import io.github.ihongs.util.reflex.Classes;
 import java.io.IOException;
+import java.io.File;
+import java.net.URL;
 import java.lang.reflect.Method;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -13,6 +15,8 @@ import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 /**
  * 服务加载工具
@@ -67,6 +71,111 @@ public class CoreRoster {
 
         addServ();
         return CMDLETS;
+    }
+
+    /**
+     * 通过包名获取类名集合
+     * @param pkgn 包名
+     * @param recu 递归
+     * @return
+     * @throws IOException
+     */
+    public static Set<String> getClassNames(String pkgn, boolean recu) throws IOException {
+        ClassLoader      pload = Thread.currentThread().getContextClassLoader();
+        String           ppath = pkgn.replace( "." , "/" );
+        Enumeration<URL> links = pload.getResources(ppath);
+        Set<String>      names = new  HashSet();
+//      boolean          gotit = false;
+
+        while ( links.hasMoreElements(  )  ) {
+            URL plink = links.nextElement( );
+
+            String  proto = plink.getProtocol();
+            String  proot = plink.getPath( ).replaceFirst( "/$" , "")  // 去掉结尾的 /
+                                            .replaceFirst("^.+:", ""); // 去掉开头的 file:
+            proot = proot.substring(0, proot.length()-ppath.length()); // 去掉目标包的路径
+
+            if ( "jar".equals(proto)) {
+                // 路径类似 file:/xxx/xxx.jar!/zzz/zzz
+                // 上面已删 zzz/zzz 还需删掉 !/
+                proot = proot.substring(0 , proot.lastIndexOf( "!" ));
+                names.addAll(getClassNamesByJar( proot, ppath, recu));
+            } else
+            if ("file".equals(proto)){
+                // 路径类似 /xxx/xxx/ 有后缀 /
+                names.addAll(getClassNamesByDir( proot, ppath, recu));
+            }
+
+//          gotit = true;
+        }
+
+        // 上面找不到就找不到了, 没必要再用 URLClassLoader
+        /*
+        if (gotit) {
+            URL[] paurl = ((URLClassLoader) pload).getURLs();
+
+            if (  paurl != null  ) for ( URL pourl : paurl ) {
+                String proot = pourl.getPath( );
+
+                if (proot.endsWith(".jar")) {
+                    names.addAll(getClassNamesByJar( proot, ppath, recu));
+                } else
+                if (proot.endsWith(  "/" )) {
+                    names.addAll(getClassNamesByDir( proot, ppath, recu));
+                }
+            }
+        }
+        */
+
+        return  names;
+    }
+
+    private static Set<String> getClassNamesByDir(String root, String path, boolean recu) {
+        Set<String> names = new HashSet();
+        File[]      files = new File(root + path).listFiles();
+
+        for (File file : files) {
+            if (! file.isDirectory()) {
+                String name = file.getPath().substring(root.length());
+                if (name.endsWith(".class")) {
+                    name = name.substring(0, name.lastIndexOf( '.' ));
+                    name = name.replace(File.separator, "." );
+                    names.add(name);
+                }
+            } else if (recu) {
+                String name = path + File.separator + file.getName( );
+                names.addAll(getClassNamesByDir(root, name, recu));
+            }
+        }
+
+        return  names;
+    }
+
+    private static Set<String> getClassNamesByJar(String root, String path, boolean recu)
+            throws IOException {
+        Set<String> names = new HashSet();
+        int         pathl = 1 + path.length();
+        try(JarFile filej = new JarFile(root)) {
+            Enumeration<JarEntry> items  =  filej.entries();
+
+            while ( items.hasMoreElements( )) {
+                String name = items.nextElement().getName();
+                if (!name.startsWith( path )) {
+                    continue;
+                }
+                if (!name.endsWith(".class")) {
+                    continue;
+                }
+                name = name.substring(0, name.length() - 6);
+                if (!recu && name.indexOf("/", pathl ) > 0) {
+                    continue;
+                }
+                name = name.replace("/", ".");
+                names.add(name);
+            }
+        }
+
+        return  names;
     }
 
     private static void addServ() {
@@ -189,7 +298,7 @@ public class CoreRoster {
         if (pkgn.endsWith(".**")) {
             pkgn = pkgn.substring(0, pkgn.length() - 3);
             try {
-                clss = Classes.getClassNames(pkgn, true );
+                clss = getClassNames(pkgn, true );
             } catch (IOException ex) {
                 throw new HongsExemption(830, "Can not load package '" + pkgn + "'.", ex);
             }
@@ -200,7 +309,7 @@ public class CoreRoster {
         if (pkgn.endsWith(".*" )) {
             pkgn = pkgn.substring(0, pkgn.length() - 2);
             try {
-                clss = Classes.getClassNames(pkgn, false);
+                clss = getClassNames(pkgn, false);
             } catch (IOException ex) {
                 throw new HongsExemption(830, "Can not load package '" + pkgn + "'.", ex);
             }

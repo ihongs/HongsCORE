@@ -7,7 +7,7 @@ import io.github.ihongs.CoreLogger;
 import io.github.ihongs.CoreSerial;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
-import io.github.ihongs.util.reflex.Block;
+import io.github.ihongs.util.reflex.Latch;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -151,7 +151,7 @@ public class NaviMap
 
     //* 加锁读写 */
 
-    Block.Larder lock = Block.getLarder(NaviMap.class.getName() + ":" + name);
+    Latch.Leader lock = Latch.getLeader(NaviMap.class.getName() + ":" + name);
 
     lock.lockr();
     try {

@@ -3,7 +3,6 @@ package io.github.ihongs.util.reflex;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLogger;
-import io.github.ihongs.HongsException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -25,14 +24,14 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * @author hongs
  */
-public final class Daemons implements Core.Singleton, AutoCloseable {
+public final class Chore implements Core.Singleton, AutoCloseable {
 
     private final ScheduledExecutorService SES;
     private final int DDP = 86400; // 24 小时
     private final int DDT ;
     private final int DTT ;
 
-    private Daemons () {
+    private Chore () {
         CoreConfig  cc = CoreConfig.getInstance("default");
         String tt = cc.getProperty("core.daemon.run.timed", "00:10");
         String dt = cc.getProperty("core.daemon.run.daily", "00:00");
@@ -74,10 +73,9 @@ public final class Daemons implements Core.Singleton, AutoCloseable {
         });
     }
 
-    public static Daemons getInstance() {
-        return Core.GLOBAL_CORE.get(
-            Daemons.class.getName( ),
-            ( )  ->  new  Daemons( )
+    public static Chore getInstance() {
+        return Core.GLOBAL_CORE.get(Chore.class.getName( ),
+            ( )  ->  new  Chore( )
         );
     }
 

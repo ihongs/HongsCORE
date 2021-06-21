@@ -8,7 +8,8 @@ import io.github.ihongs.CoreLogger;
 import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
-import io.github.ihongs.util.reflex.Daemons;
+import io.github.ihongs.util.reflex.Chore;
+import io.github.ihongs.util.reflex.Latch;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -196,9 +197,10 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         Core.GLOBAL_CORE.reset( );
 
         // 设置全局对象维护的任务
-        Daemons ds = Daemons.getInstance();
-        ds.runTimed(() -> Core.GLOBAL_CORE.unuse());
-        ds.runDaily(() -> Core.GLOBAL_CORE.reuse());
+        Chore ch = Chore.getInstance ( );
+        ch.runTimed(() -> Latch.clean());
+        ch.runTimed(() -> Core.GLOBAL_CORE.unuse());
+        ch.runDaily(() -> Core.GLOBAL_CORE.reuse());
 
         // 启动后需立即执行的任务
         String ss = cnf.getProperty( "serve.init" );

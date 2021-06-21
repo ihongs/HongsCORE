@@ -1,6 +1,5 @@
 package io.github.ihongs.util.reflex;
 
-import io.github.ihongs.Core;
 import io.github.ihongs.CoreLogger;
 import java.util.Iterator;
 import java.util.HashMap;
@@ -20,18 +19,24 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  *
  * @author Hongs
  */
-public final class Block {
+public final class Latch {
 
     private static final ReadWriteLock ST_LOCKR = new ReentrantReadWriteLock();
     private static final ReadWriteLock RW_LOCKR = new ReentrantReadWriteLock();
     private static final Map<String, Locker> ST_LOCKS = new HashMap();
-    private static final Map<String, Larder> RW_LOCKS = new HashMap();
+    private static final Map<String, Leader> RW_LOCKS = new HashMap();
 
     /**
-     * 加入全局定时清理
+     * 清理, 仅供定时任务
      */
-    static {
-        Core.GLOBAL_CORE.set( Cleans.class.getName( ) , new Cleans());
+    public static void clean() {
+        if (! ST_LOCKS.isEmpty( )
+        ||  ! RW_LOCKS.isEmpty()) {
+            int  n  =  cleans ( );
+            CoreLogger.trace("Cleared {} lock(s)", n);
+        } else {
+            CoreLogger.trace( "No locks be cleared" );
+        }
     }
 
     /**
@@ -62,10 +67,10 @@ public final class Block {
         loxk = RW_LOCKR.writeLock();
         loxk.lock();
         try {
-            Iterator<Map.Entry<String, Larder>> it = RW_LOCKS.entrySet().iterator();
+            Iterator<Map.Entry<String, Leader>> it = RW_LOCKS.entrySet().iterator();
             while (it.hasNext()) {
-                Map.Entry<String , Larder> et = it.next();
-                Larder lock = et.getValue();
+                Map.Entry<String , Leader> et = it.next();
+                Leader lock = et.getValue();
                 if (lock.cite <= 0 && lock.time <= tt) {
                     it.remove( );
                     ct ++;
@@ -109,10 +114,10 @@ public final class Block {
         loxk = RW_LOCKR.readLock();
         loxk.lock();
         try {
-            Iterator<Map.Entry<String, Larder>> it = RW_LOCKS.entrySet().iterator();
+            Iterator<Map.Entry<String, Leader>> it = RW_LOCKS.entrySet().iterator();
             while (it.hasNext()) {
-                Map.Entry<String , Larder> et = it.next();
-                Larder lock = et.getValue();
+                Map.Entry<String , Leader> et = it.next();
+                Leader lock = et.getValue();
                 String key = et.getKey();
                 rw.put(key , lock.cite );
             }
@@ -159,9 +164,9 @@ public final class Block {
      * @param key
      * @return
      */
-    public static Larder getLarder(String key) {
+    public static Leader getLeader(String key) {
         Lock loxk;
-        Larder lock = null;
+        Leader lock = null;
 
         loxk = RW_LOCKR. readLock( );
         loxk.lock();
@@ -177,7 +182,7 @@ public final class Block {
         loxk = RW_LOCKR.writeLock( );
         loxk.lock();
         try {
-            lock = new Larder(/***/);
+            lock = new Leader(/***/);
             RW_LOCKS.put(key , lock);
         } finally {
             loxk.unlock();
@@ -191,7 +196,7 @@ public final class Block {
      * @return
      */
     public static Reader getReader(String key) {
-        return new Reader(getLarder(key));
+        return new Reader(getLeader(key));
     }
 
     /**
@@ -200,19 +205,19 @@ public final class Block {
      * @return
      */
     public static Writer getWriter(String key) {
-        return new Writer(getLarder(key));
+        return new Writer(getLeader(key));
     }
 
     /**
      * 读写锁
      * 对 ReadWriteLock 的封装
      */
-    public static final class Larder implements ReadWriteLock {
+    public static final class Leader implements ReadWriteLock {
         private final ReadWriteLock lock = new ReentrantReadWriteLock();
         private long  time = 0;
         private  int  cite = 0;
 
-        private Larder() {} // 避免外部 new
+        private Leader() {} // 避免外部 new
 
         public void lockr() {
             synchronized (this) {
@@ -309,9 +314,9 @@ public final class Block {
      * 对 ReadWriteLock.readLock 的封装
      */
     public static final class Reader implements Lock {
-        private final  Larder lock;
+        private final  Leader lock;
 
-        private Reader(Larder lock) {
+        private Reader(Leader lock) {
             this.lock = lock;
         }
 
@@ -351,9 +356,9 @@ public final class Block {
      * 对 ReadWriteLock.writeLock 的封装
      */
     public static final class Writer implements Lock {
-        private final  Larder lock;
+        private final  Leader lock;
 
-        private Writer(Larder lock) {
+        private Writer(Leader lock) {
             this.lock = lock;
         }
 
@@ -385,18 +390,6 @@ public final class Block {
         @Override
         public Condition newCondition() {
             throw new UnsupportedOperationException("Not supported.");
-        }
-    }
-
-    private static class Cleans implements Core.Unuseable, Core.Singleton {
-        @Override
-        public void unuse() {
-            if (!ST_LOCKS.isEmpty() || !RW_LOCKS.isEmpty()) {
-                int n  =  cleans( );
-                CoreLogger.trace("Cleared {} lock(s)", n);
-            } else {
-                CoreLogger.trace( "No locks be cleared" );
-            }
         }
     }
 

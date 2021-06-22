@@ -45,7 +45,7 @@ public class CoreLogger
 
         // add IP Address
         String a = Core.CLIENT_ADDR.get();
-        if (a != null) {
+        if (a != null && ! a.isEmpty()) {
             line.append( a )
                 .append(' ');
         } else {
@@ -56,7 +56,7 @@ public class CoreLogger
 
         // add Action Name
         String n = Core.ACTION_NAME.get();
-        if (n != null) {
+        if (n != null && ! n.isEmpty()) {
             line.append( n )
                 .append(' ');
         } else {

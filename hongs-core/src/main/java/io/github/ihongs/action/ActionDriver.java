@@ -584,18 +584,13 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             // 销毁此周期内的对象
             try {
                 core.reset( );
+                Core.THREAD_CORE.remove();
+                req.removeAttribute(Core.class.getName());
             } catch (Error e) {
-                CoreLogger.error( e );
+                CoreLogger.error(e);
             } catch (Exception e) {
-                CoreLogger.error( e );
+                CoreLogger.error(e);
             }
-            req.removeAttribute(Core.class.getName());
-            Core.THREAD_CORE.remove();
-            Core.CLIENT_ADDR.remove();
-            Core.ACTION_TIME.remove();
-            Core.ACTION_ZONE.remove();
-            Core.ACTION_LANG.remove();
-            Core.ACTION_NAME.remove();
         }
     }
 

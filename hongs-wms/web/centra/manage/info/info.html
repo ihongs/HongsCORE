@@ -39,28 +39,23 @@
         </div>
         // -->
         <div class="col-lg-6">
-            <fieldset class="board-top form-horizontal">
-                <legend>运行信息</legend>
-                <div class="form-group row">
-                    <label class="col-xs-3 control-label form-control-static text-right">所有线程</label>
-                    <div class="col-xs-9"><pre class="form-control-static" data-fn="task_info" data-fl="v?v:'-'"></pre></div>
+            <fieldset class="board-top">
+                <legend>运行信息 <a href=" " class="reload-core-and-lock" style="font-size: 0.8em;">刷新</a></legend>
+                <div class="form-group">
+                    <label class="control-label">所有线程</label>
+                    <div><pre class="form-control-static" data-fn="task_info" data-fl="v?v:'-'" style="max-height: 12em;"></pre></div>
                 </div>
-                <div class="form-group row">
-                    <label class="col-xs-3 control-label form-control-static text-right">全局对象</label>
-                    <div class="col-xs-9"><pre class="form-control-static" data-fn="core_info" data-fl="v?v:'-'"></pre></div>
+                <div class="form-group">
+                    <label class="control-label">全局对象</label>
+                    <div><pre class="form-control-static" data-fn="core_info" data-fl="v?v:'-'" style="max-height: 12em;"></pre></div>
                 </div>
-                <div class="form-group row">
-                    <label class="col-xs-3 control-label form-control-static text-right">基础锁</label>
-                    <div class="col-xs-9"><pre class="form-control-static" data-fn="lock_info.Locker" data-fl="v?v:'-'"></pre></div>
+                <div class="form-group">
+                    <label class="control-label">读写锁</label>
+                    <div><pre class="form-control-static" data-fn="lock_info.Larder" data-fl="v?v:'-'" style="max-height: 12em;"></pre></div>
                 </div>
-                <div class="form-group row">
-                    <label class="col-xs-3 control-label form-control-static text-right">读写锁</label>
-                    <div class="col-xs-9"><pre class="form-control-static" data-fn="lock_info.Larder" data-fl="v?v:'-'"></pre></div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-9 col-xs-offset-3">
-                        <a href="javascript:;" class="reload-core-and-lock btn btn-primary">刷新</a>
-                    </div>
+                <div class="form-group">
+                    <label class="control-label">基础锁</label>
+                    <div><pre class="form-control-static" data-fn="lock_info.Locker" data-fl="v?v:'-'" style="max-height: 12em;"></pre></div>
                 </div>
             </fieldset>
         </div>

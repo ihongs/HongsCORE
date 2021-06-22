@@ -7,7 +7,7 @@ import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
-import io.github.ihongs.util.daemon.Latch;
+import io.github.ihongs.util.daemon.Gate;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
@@ -112,13 +112,13 @@ public class InfoAction {
             rsp.put("core_info", new CoreToKeys(Core.GLOBAL_CORE).keySet());
         }
         if ( rb != null && rb.contains("lock_info")) {
-            rsp.put("lock_info", Latch.counts());
+            rsp.put("lock_info", Gate.counts());
         }
         if ( rb != null && rb.contains("task_info")) {
-            rsp.put("task_info", getAllTasks( ));
+            rsp.put("task_info", getAllTasks());
         }
 
-        helper.reply(Synt.mapOf( "info" , rsp ));
+        helper.reply(Synt.mapOf( "info", rsp ));
     }
 
     private static Map  getAllSize(File d) {

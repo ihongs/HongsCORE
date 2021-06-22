@@ -8,7 +8,7 @@ import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Synt;
-import io.github.ihongs.util.daemon.Latch;
+import io.github.ihongs.util.daemon.Gate;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -112,7 +112,7 @@ public class FormSet
 
     //* 加锁读写 */
 
-    Latch.Leader lock = Latch.getLeader(FormSet.class.getName() + ":" + name);
+    Gate.Leader lock = Gate.getLeader(FormSet.class.getName() + ":" + name);
 
     lock.lockr();
     try {

@@ -786,67 +786,19 @@ public class Core
   @Override
   public String toString()
   {
-    Set  <String> st = new TreeSet();
+    Set< String > st = new TreeSet(sup().keySet());
     StringBuilder sb = new StringBuilder();
-    for(Map.Entry<String, Object> et : sup().entrySet())
-    {
-      Object ob = et.getValue();
-      String nb = et.getKey(  );
-        sb.setLength ( 0 );
-        sb.append(nb );
-        sb.append(' ');
-        sb.append('[');
-      if (ob == null )
-      {
-        sb.append('N');
-      } else {
-      if (ob instanceof AutoCloseable)
-      {
-        sb.append('A');
-      }
-      if (ob instanceof Unuseable)
-      {
-        sb.append('U');
-      }
-      if (ob instanceof Reuseable)
-      {
-        sb.append('R');
-      }
-      if (ob instanceof Singleton)
-      {
-        sb.append('S');
-      }
-      if (ob instanceof Soliloquy)
-      {
-        sb.append('O');
-      }}
-      if (sb.length() > nb.length() + 2)
-      {
-        sb.append(']');
-        st.add(sb.toString());
-      }
-      else
-      {
-        st.add(nb.toString());
-      }
-    }
-
-    // 连接成为新的字串
-      sb.setLength ( 0 );
-    for( String ss : st)
+    for( String ss : st )
     {
       sb.append(ss )
         .append(',')
         .append(' ');
     }
-
-    // 去掉尾巴上的逗号
-    if ( sb.length() != 0 )
+    if ( sb.length() > 0)
     {
       sb.setLength(sb.length() - 2);
     }
-
-    return sb.toString();
+    return sb.toString( );
   }
 
   /**

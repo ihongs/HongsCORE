@@ -1,6 +1,6 @@
 package io.github.ihongs;
 
-import io.github.ihongs.util.daemon.Latch;
+import io.github.ihongs.util.daemon.Gate;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -75,7 +75,7 @@ public abstract class CoreSerial
   protected final void init(File file)
     throws HongsException
   {
-    Latch.Leader lock = Latch.getLeader(CoreSerial.class.getName() + ":" + file.getAbsolutePath());
+    Gate.Leader lock = Gate.getLeader(CoreSerial.class.getName() + ":" + file.getAbsolutePath());
 
     lock.lockr();
     try {

@@ -19,7 +19,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  *
  * @author Hongs
  */
-public final class Latch {
+public final class Gate {
 
     private static final ReadWriteLock ST_LOCKR = new ReentrantReadWriteLock();
     private static final ReadWriteLock RW_LOCKR = new ReentrantReadWriteLock();

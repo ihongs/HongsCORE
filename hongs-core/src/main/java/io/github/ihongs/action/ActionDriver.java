@@ -9,7 +9,7 @@ import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.daemon.Chore;
-import io.github.ihongs.util.daemon.Latch;
+import io.github.ihongs.util.daemon.Gate;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -197,8 +197,8 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         Core.GLOBAL_CORE.reset( );
 
         // 设置全局对象维护的任务
-        Chore ch = Chore.getInstance ( );
-        ch.runTimed(() -> Latch.clean());
+        Chore ch = Chore.getInstance( );
+        ch.runTimed(() -> Gate.clean());
         ch.runTimed(() -> Core.GLOBAL_CORE.unuse());
         ch.runDaily(() -> Core.GLOBAL_CORE.reuse());
 

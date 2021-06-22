@@ -4,7 +4,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.Locale;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.TimeZone;
+import java.util.TreeSet;
 import java.util.function.Supplier;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -127,16 +129,17 @@ public class Core
       @Override
       public void remove() {
         try {
-          ( (Core) get()).close();
+          ( (Core) get()).reset();
         } catch (Throwable e) {
           throw  new Error(e);
         }
-          super.remove();
+          super.remove( );
       }
   };
 
   /**
    * 服务路径标识
+   * 同 SERV_PATH
    */
   public static final Supplier<String> SERVER_PATH
                 = new Supplier() {
@@ -149,8 +152,8 @@ public class Core
   /**
    * 服务域名标识
    */
-  public static final ThreadLocal<String> SERVER_HREF
-                = new ThreadLocal() {
+  public static final Variable<String> SERVER_HREF
+                = new Variable("!SERVER_HREF") {
       @Override
       protected String initialValue() {
         try {
@@ -166,8 +169,8 @@ public class Core
   /**
    * 客户地址标识
    */
-  public static final ThreadLocal<String> CLIENT_ADDR
-                = new ThreadLocal() {
+  public static final Variable<String> CLIENT_ADDR
+                = new Variable("!CLIENT_ADDR") {
       @Override
       protected String initialValue() {
         try {
@@ -175,34 +178,56 @@ public class Core
                  io.github.ihongs.action.ActionHelper.getInstance( )
                                                      .getRequest ( ) );
         } catch (NullPointerException|UnsupportedOperationException e) {
-          return null;
+          return "";
         }
+      }
+  };
+
+  /**
+   * 动作路径标识
+   */
+  public static final Variable<String> ACTION_NAME
+                = new Variable("!ACTION_NAME") {
+      @Override
+      protected String initialValue() {
+          return "";
       }
   };
 
   /**
    * 动作开始时间
    */
-  public static final ThreadLocal< Long > ACTION_TIME
-                = new ThreadLocal();
+  public static final Variable< Long > ACTION_TIME
+                = new Variable("!ACTION_TIME") {
+      @Override
+      protected  Long  initialValue() {
+          return System.currentTimeMillis();
+      }
+  };
 
   /**
    * 动作时区标识
    */
-  public static final ThreadLocal<String> ACTION_ZONE
-                = new ThreadLocal();
+  public static final Variable<String> ACTION_ZONE
+                = new Variable("!ACTION_ZONE") {
+      @Override
+      protected String initialValue() {
+          return CoreConfig.getInstance()
+                           .getProperty("core.timezone.default", Cnst.ZONE_DEF);
+      }
+  };
 
   /**
    * 动作语言标识
    */
-  public static final ThreadLocal<String> ACTION_LANG
-                = new ThreadLocal();
-
-  /**
-   * 动作路径标识
-   */
-  public static final ThreadLocal<String> ACTION_NAME
-                = new ThreadLocal();
+  public static final Variable<String> ACTION_LANG
+                = new Variable("!ACTION_LANG") {
+      @Override
+      protected String initialValue() {
+          return CoreConfig.getInstance()
+                           .getProperty("core.language.default", Cnst.LANG_DEF);
+      }
+  };
 
   /**
    * 获取核心对象
@@ -761,15 +786,16 @@ public class Core
   @Override
   public String toString()
   {
+    Set  <String> st = new TreeSet();
     StringBuilder sb = new StringBuilder();
     for(Map.Entry<String, Object> et : sup().entrySet())
     {
       Object ob = et.getValue();
-        sb.append(et.getKey( ));
+      String nb = et.getKey(  );
+        sb.setLength ( 0 );
+        sb.append(nb );
         sb.append(' ');
         sb.append('[');
-      int ln = sb.length();
-
       if (ob == null )
       {
         sb.append('N');
@@ -794,24 +820,30 @@ public class Core
       {
         sb.append('O');
       }}
-
-      if (ln == sb.length())
+      if (sb.length() > nb.length() + 2)
       {
-        sb.setLength(ln - 2);
+        sb.append(']');
+        st.add(sb.toString());
       }
       else
       {
-        sb.append(']');
+        st.add(nb.toString());
       }
-        sb.append(',');
-        sb.append(' ');
     }
 
-    // 去掉尾巴上多的逗号
-    int sl = sb.length();
-    if (sl > 0 )
+    // 连接成为新的字串
+      sb.setLength ( 0 );
+    for( String ss : st)
     {
-      sb.setLength(sl-2);
+      sb.append(ss )
+        .append(',')
+        .append(' ');
+    }
+
+    // 去掉尾巴上的逗号
+    if ( sb.length() != 0 )
+    {
+      sb.setLength(sb.length() - 2);
     }
 
     return sb.toString();
@@ -976,7 +1008,7 @@ public class Core
     throws Throwable
     {
       try {
-        CoreLogger.trace("Core is finalized");
+        CoreLogger.trace("Core is finalized. {}", this);
         this . reset  ();
       } finally {
         super.finalize();
@@ -986,6 +1018,48 @@ public class Core
   }
 
   //** 核心接口 **/
+
+  /**
+   * 核心变量
+   * @param <T>
+   */
+  static public class Variable<T> implements Supplier
+  {
+    private  final  String k;
+
+    public Variable(String k)
+    {
+      this.k = k;
+    }
+
+    @Override
+    public T get()
+    {
+      Core c  = Core.getInstance();
+      T    v  = ( T ) c.get(k);
+      if ( v == null) {
+           v  = initialValue();
+      if ( v != null) {
+           c.put(k,v);
+      }}
+      return v;
+    }
+
+    public void set(T v)
+    {
+      Core.getInstance().put(k, v);
+    }
+
+    public void remove()
+    {
+      Core.getInstance().remove(k);
+    }
+
+    protected T initialValue()
+    {
+      return null;
+    }
+  }
 
   /**
    * 构造工厂

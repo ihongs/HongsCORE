@@ -21,6 +21,9 @@ import java.util.regex.Pattern;
 /**
  * 外壳程序助手类
  *
+ * 此处的静态变量 IN,OUT,ERR 等可以单独设置,
+ * 任务结束时执行 Core.close 会将其全部重置.
+ *
  * @author Hongs
  */
 public class CmdletHelper
@@ -28,10 +31,9 @@ public class CmdletHelper
 
   /**
    * 输入接口
-   * 默认未 System.in
-   * 设置后务必在任务结束时 remove
+   * 默认为 System.in
    */
-  public static final ThreadLocal<InputStream> IN  = new ThreadLocal() {
+  public static final Core.Variable<InputStream> IN  = new Core.Variable("!SYSTEM_IN" ) {
     @Override
     protected InputStream initialValue() {
       return System.in ;
@@ -41,9 +43,8 @@ public class CmdletHelper
   /**
    * 输出接口
    * 默认为 System.out
-   * 设置后务必在任务结束时 remove
    */
-  public static final ThreadLocal<PrintStream> OUT = new ThreadLocal() {
+  public static final Core.Variable<PrintStream> OUT = new Core.Variable("!SYSTEM_OUT") {
     @Override
     protected PrintStream initialValue() {
       return System.out;
@@ -53,9 +54,8 @@ public class CmdletHelper
   /**
    * 错误接口
    * 默认为 System.err
-   * 设置后务必在任务结束时 remove
    */
-  public static final ThreadLocal<PrintStream> ERR = new ThreadLocal() {
+  public static final Core.Variable<PrintStream> ERR = new Core.Variable("!SYSTEM_ERR") {
     @Override
     protected PrintStream initialValue() {
       return System.err;
@@ -63,11 +63,10 @@ public class CmdletHelper
   };
 
   /**
-   * 运行环境代码: 0 Cmd, 1 Web
+   * 运行环境: 0 Cmd, 1 Web
    * 默认同 Core.ENVIR
-   * 设置后务必在任务结束时 remove
    */
-  public static final ThreadLocal<Byte> ENV = new ThreadLocal() {
+  public static final Core.Variable<Byte> ENV = new Core.Variable("!SYSTEM_ENV") {
     @Override
     protected Byte initialValue() {
       return Core.ENVIR;
@@ -377,6 +376,7 @@ public class CmdletHelper
 
   /**
    * 输出过程信息
+   * 将输出到 OUT
    * 此方法用于显示条目、日志、名单等
    * @param text 提示文本
    */
@@ -391,6 +391,7 @@ public class CmdletHelper
 
   /**
    * 输出执行状态
+   * 将输出到 ERR
    * 此方法用于显示错误、状态、进度等
    * @param text 提示文本
    */
@@ -405,6 +406,7 @@ public class CmdletHelper
 
   /**
    * 输出数据预览
+   * 将输出到 OUT
    * 此方法会将对象(基础类型、集合框架)以 JSON 形式输出到终端.
    * @param data 预览数据
    */
@@ -417,6 +419,7 @@ public class CmdletHelper
 
   /**
    * 输出执行进度
+   * 将输出到 ERR
    * 由于大部分的终端(命令行)默认宽度普遍为 80 个字符,
    * 故请将 text 控制在 50 个字符以内, 一个中文占两位.
    * @param text 说明文本

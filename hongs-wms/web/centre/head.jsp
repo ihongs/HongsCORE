@@ -146,13 +146,14 @@
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu" role="menu">
-                        <li><a href="javascript:;" id="user-set"><%=CoreLocale.getInstance().translate("fore.set.user")%></a></li>
-                        <li><a href="javascript:;" id="pass-set"><%=CoreLocale.getInstance().translate("fore.set.pass")%></a></li>
+                        <li><a href="javascript:;" id="manage-morn"><%=CoreLocale.getInstance().translate("fore.manage.morn")%></a></li>
+                        <li><a href="javascript:;" id="manage-mine"><%=CoreLocale.getInstance().translate("fore.manage.mine")%></a></li>
+                        <li><a href="javascript:;" id="manage-mima"><%=CoreLocale.getInstance().translate("fore.manage.mima")%></a></li>
                         <li role="separator" class="divider"></li>
-                        <li><a href="javascript:;" id="sign-out"><%=CoreLocale.getInstance().translate("fore.logout")%></a></li>
+                        <li><a href="javascript:;" id="logout"><%=CoreLocale.getInstance().translate("fore.logout")%></a></li>
                     </ul>
                     <%} else {%>
-                    <a href="javascript:;" id="sign-in"><%=CoreLocale.getInstance().translate("fore.login")%></a>
+                    <a href="javascript:;" id="login"><%=CoreLocale.getInstance().translate("fore.login")%></a>
                     <%} /*End If*/%>
                 </li>
             </ul>
@@ -255,26 +256,30 @@
         }, 10000);
         */
 
-        $("#sign-in" )
+        $("#login" )
             .click(function() {
                 var r = location.pathname + location.search + location.hash;
                     r = r.substr(<%=Core.SERV_PATH.length() + 1 %>);
                     r = encodeURIComponent(r);
                 location.assign(hsFixUri("centre/login.html?r="+r));
             });
-        $("#sign-out")
+        $("#logout")
             .click(function() {
                 $.get(hsFixUri("centre/sign/delete.act"), function() {
                     location.reload();
                 });
             });
-        $("#user-set")
+        $("#manage-mima")
+            .click(function() {
+                $.hsOpen("centre/manage/mima.html");
+            });
+        $("#manage-mine")
             .click(function() {
                 $.hsOpen("centre/manage/mine.html");
             });
-        $("#pass-set")
+        $("#manage-morn")
             .click(function() {
-                $.hsOpen("centre/manage/mima.html");
+                $.hsOpen("centre/manage/morn.html");
             });
     })(jQuery);
 </script>

@@ -1544,22 +1544,79 @@ function hsListInitSort(x, v, n) {
     */
 }
 
+//** 其他 **/
+
+/**
+ * 暗黑模式
+ * @param mode 0:系统, 1:开启, 2:定时, 3:关闭
+ * @param time 开启时间范围, 格式为: HHmmHHmm
+ */
+function hsDarkMode(mode, time) {
+    var root = $(document.documentElement);
+    if (window._HsDarkTime) {
+        clearInterval (window._HsDarkTime);
+    }
+
+    switch (mode) {
+        case "2" :
+            if (! time || ! /^\d{8}$/.test(time)) {
+                throw new Error("hsDarkMode: Wrong dark time format: " + time);
+            }
+
+            root.removeClass("dusk-mode");
+
+            var b = time.substring(0 , 4);
+            var e = time.substring(4 , 8);
+            var c = b > e
+                ? function (t) {
+                    return (t >= b || t < e);
+                }
+                : function (t) {
+                    return (t >= b && t < e);
+                };
+
+            function change( ) {
+                var d = new  Date  ( );
+                var h = d.getHours ( );
+                var m = d.getMinutes();
+                if (c ((h * 100) + (m < 10 ? m * 10 : m)) ) {
+                    root.   addClass("dark-mode");
+                } else {
+                    root.removeClass("dark-mode");
+                }
+            }
+
+            change( );
+
+            // 模式定时器, 每分钟检测
+            window._HsDarkTime = setInterval(change, 60000);
+
+            break;
+        case "1" :
+            root.removeClass("dusk-mode")
+                   .addClass("dark-mode");
+            H$("%HsDarkTime", null);
+            break;
+        case "0" :
+            root.removeClass("dark-mode")
+                   .addClass("dusk-mode");
+            H$("%HsDarkTime", null);
+            break;
+        default  :
+            root.removeClass("dark-mode")
+                .removeClass("dusk-mode");
+            H$("%HsDarkMode", null);
+            H$("%HsDarkTime", null);
+            break;
+    }
+}
+
 (function($) {
 
 /**
- * 自动切换暗黑模式, 8:00 PM ~ 6:00 AM
+ * 自动暗黑模式, 默认跟随系统
  */
-function darkModeCheck( ) {
-    var h = new Date( ).getHours( );
-    if (h > 05 && h < 20) {
-        $(document.documentElement)
-        .removeClass( "dark-mode" );
-    } else {
-        $(document.documentElement)
-           .addClass( "dark-mode" );
-    }
-}           darkModeCheck( /****/ );
-setInterval(darkModeCheck, 600000 );
+hsDarkMode(H$("%HsDarkMode") || "0", H$("%HsDarkTime") || "18000600");
 
 /**
  * 筛选重置事件处理

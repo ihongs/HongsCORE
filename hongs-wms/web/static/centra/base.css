@@ -355,11 +355,11 @@ body {
     border-color: transparent transparent #fff transparent;
 }
 
-#headbox a#sign-out {
+#headbox a#logout {
     color: #a44;
 }
-#headbox a#sign-out:hover ,
-#headbox a#sign-out:hover {
+#headbox a#logout:hover ,
+#headbox a#logout:hover {
     color: #d54;
 }
 
@@ -452,16 +452,22 @@ body {
 .dark-mode .modal-backdrop {
     background-color: #fff;
 }
+.dark-mode .modal-content  {
+    box-shadow: 0 5px 15px #fff;
+}
 @media (prefers-color-scheme: dark) {
-html ,
- img ,
-.img ,
-.deny-dark ,
-.navbar-inverse ,
-.modal > .alert {
+.dusk-mode ,
+.dusk-mode img ,
+.dusk-mode .img ,
+.dusk-mode .deny-dark ,
+.dusk-mode .navbar-inverse ,
+.dusk-mode .modal > .alert {
     filter: invert(100%) hue-rotate(180deg) !important;
 }
-.modal-backdrop {
+.dusk-mode .modal-backdrop {
     background-color: #fff;
+}
+.dusk-mode .modal-content  {
+    box-shadow: 0 5px 15px #fff;
 }
 }

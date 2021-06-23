@@ -140,15 +140,19 @@
         <div class="badge"></div>
     </a>
     <ul>
-        <li><a href="javascript:;" id="user-set">
+        <li><a href="javascript:;" id="manage-morn">
+            <span class="glyphicon glyphicon-adjust"></span>
+            <%=CoreLocale.getInstance().translate("fore.manage.morn")%>
+        </a></li>
+        <li><a href="javascript:;" id="manage-mine">
             <span class="glyphicon glyphicon-user"></span>
-            <%=CoreLocale.getInstance().translate("fore.set.user")%>
+            <%=CoreLocale.getInstance().translate("fore.manage.mine")%>
         </a></li>
-        <li><a href="javascript:;" id="pass-set">
+        <li><a href="javascript:;" id="manage-mima">
             <span class="glyphicon glyphicon-lock"></span>
-            <%=CoreLocale.getInstance().translate("fore.set.pass")%>
+            <%=CoreLocale.getInstance().translate("fore.manage.mima")%>
         </a></li>
-        <li><a href="javascript:;" id="sign-out">
+        <li><a href="javascript:;" id="logout">
             <span class="glyphicon glyphicon-off "></span>
             <%=CoreLocale.getInstance().translate("fore.logout")%>
         </a></li>
@@ -299,7 +303,7 @@
                 if (l) l.children().eq(i).removeData ("top");
             });
 
-        $("#sign-out")
+        $("#logout")
             .click( function() {
                 $.hsWarn(
                     "您确定要退出登录吗?\r\n" +
@@ -314,13 +318,17 @@
                     }
                 );
             });
-        $("#user-set")
+        $("#manage-mima")
+            .click( function() {
+                $.hsOpen("centra/manage/mima.html");
+            });
+        $("#manage-mine")
             .click( function() {
                 $.hsOpen("centra/manage/mine.html");
             });
-        $("#pass-set")
+        $("#manage-morn")
             .click( function() {
-                $.hsOpen("centra/manage/mima.html");
+                $.hsOpen("centra/manage/morn.html");
             });
     })(jQuery);
 </script>

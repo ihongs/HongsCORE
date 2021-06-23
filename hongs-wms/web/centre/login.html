@@ -16,9 +16,26 @@
         <script type="text/javascript" src="static/assets/hongscore.min.js"></script>
         <script type="text/javascript" src="common/conf/default.js"></script>
         <script type="text/javascript" src="common/lang/default.js"></script>
+        <style type="text/css">
+            #footbox .copy-right a ,
+            #footbox .site-links a {
+                margin-right : 1em;
+            }
+            .jumbotron {
+                background: #222;
+                color     : #ccc;
+            }
+            @media ( min-width: 768px ) {
+                .jumbotron {
+                    background: #202222 linear-gradient(
+                        -45deg, #202222 15%, #20282f 40%, #202222 40%
+                    );
+                }
+            }
+        </style>
     </head>
     <body>
-        <div class="jumbotron" style="background-color: #fff; color: #444;">
+        <div class="jumbotron">
             <div class="container">
                 <h1>您好!</h1>
                 <p> 欢迎您的光临, 请登录或注册... </p>

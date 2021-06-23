@@ -2557,7 +2557,8 @@ $.fn.hsTabs = function(tar) {
     if (act.size() === 0) {
         act = box.children("li:first");
     }
-    act.children("a").click();
+    tar.children(/***/).hide()
+       .eq(act.index()).show();
 
     return [box, tar];
 };
@@ -3106,6 +3107,8 @@ function() {
     var tab = ths.parent();
     var nav = tab.parent();
     var pns = nav.data("labs");
+    var tao = nav.children(".active");
+    var pno = pns ? pns.children().eq(tao.index()) : $();
     var pne = pns ? pns.children().eq(tab.index()) : $();
     if (tab.is(".active,.dont-close,.back-crumb")) {
         return;
@@ -3117,19 +3120,24 @@ function() {
             $(this).hsClose();
         });
     }
-    // 延迟加载
-    if (ths.is("[data-href]")) {
-        var ref;
-        ref = ths.attr("data-href");
-        ths.removeAttr("data-href");
-        pne.hsOpen(ref);
-    }
     tab.siblings()
     .removeClass("active");
     tab.addClass("active")
        .css("display", "");
-    pne.siblings()
-       .trigger("hsRetir")
+    // 延迟加载
+    if (ths.is("[data-href]")) { // 加载一次
+        var ref;
+        ref = ths.attr("data-href");
+        ths.removeAttr("data-href");
+        ths.attr("data-hrel", ref );
+        pne.hsOpen(ref);
+    } else
+    if (ths.is("[data-link]")) { // 总时重载
+        var ref;
+        ref = ths.attr("data-link");
+        pne.hsOpen(ref);
+    }
+    pno.trigger("hsRetir")
        .hide();
     pne.show()
        .trigger("hsRecur");

@@ -1614,9 +1614,21 @@ function hsDarkMode(mode, time) {
 (function($) {
 
 /**
- * 自动暗黑模式, 默认跟随系统
+ * 自动启用暗黑模式
  */
-hsDarkMode(H$("%HsDarkMode") || "0", H$("%HsDarkTime") || "18000600");
+if (!$(document.documentElement).hasClass( "deny-dark" )) {
+    hsDarkMode(H$("%HsDarkMode")||"0", H$("%HsDarkTime")||"18000600");
+}
+
+/**
+ * 返回键联动导航条
+ */
+$(window).on("popstate", function(ev) {
+    ev = ev.originalEvent;
+    if (!ev || !ev.state || !ev.state.crumb) { return; }
+    $("#main-context>.breadcrumb>.back-crumb:visible>a").click();
+    history.pushState({crumb: true}, null, null);
+}); history.pushState({crumb: true}, null, null);
 
 /**
  * 筛选重置事件处理
@@ -1631,15 +1643,5 @@ $(document).on("reset", ".HsList .findbox", function() {
                .first().click();
     } , 500);
 });
-
-/**
- * 返回键联动导航条
- */
-$(window).on("popstate", function(ev) {
-    ev = ev.originalEvent;
-    if (!ev || !ev.state || !ev.state.crumb) { return; }
-    $("#main-context>.breadcrumb>.back-crumb:visible>a").click();
-    history.pushState({crumb: true}, null, null);
-}); history.pushState({crumb: true}, null, null);
 
 })(jQuery);

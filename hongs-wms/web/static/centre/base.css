@@ -61,8 +61,8 @@ body {
     padding-left : 1px;
     padding-right: 1px;
     border-radius: 0px;
-    border-bottom: 3px double #ccc;
-    background-color : transparent;
+    border-bottom: 1px solid #aaa;
+    background-color: transparent;
 }
 #main-context > .laps.tabs.bread-home {
     display: none;
@@ -85,30 +85,4 @@ body {
 .input-group .input-search:disabled+.input-group-btn>.search>.glyphicon:before ,
 .input-group .input-search:disabled+.input-group-btn>.submit>.glyphicon:before {
     content: "\e031";
-}
-
-/* 深色模式适配样式 */
-.dark-mode ,
-.dark-mode  img ,
-.dark-mode .img ,
-.dark-mode .deny-dark ,
-.dark-mode .navbar-inverse ,
-.dark-mode .modal > .alert {
-    filter: invert(100%) hue-rotate(180deg) !important;
-}
-.dark-mode .modal-backdrop {
-    background-color: #fff;
-}
-@media (prefers-color-scheme: dark) {
-.dusk-mode ,
-.dusk-mode img ,
-.dusk-mode .img ,
-.dusk-mode .deny-dark ,
-.dusk-mode .navbar-inverse ,
-.dusk-mode .modal > .alert {
-    filter: invert(100%) hue-rotate(180deg) !important;
-}
-.dusk-mode .modal-backdrop {
-    background-color: #fff;
-}
 }

@@ -467,6 +467,38 @@ div.bootstrap-tagsinput .tag [data-role="remove"]:after {
     }
 }
 
+/* 深色模式 */
+.dark-mode ,
+.dark-mode  img ,
+.dark-mode .img ,
+.dark-mode .deny-dark ,
+.dark-mode .navbar-inverse ,
+.dark-mode .modal > .alert {
+    filter: invert(100%) hue-rotate(180deg) !important;
+}
+.dark-mode .modal-backdrop {
+    background-color: #fff;
+}
+.dark-mode .modal-content  {
+    box-shadow: 0 5px 15px #fff;
+}
+@media (prefers-color-scheme: dark) {
+.dusk-mode ,
+.dusk-mode img ,
+.dusk-mode .img ,
+.dusk-mode .deny-dark ,
+.dusk-mode .navbar-inverse ,
+.dusk-mode .modal > .alert {
+    filter: invert(100%) hue-rotate(180deg) !important;
+}
+.dusk-mode .modal-backdrop {
+    background-color: #fff;
+}
+.dusk-mode .modal-content  {
+    box-shadow: 0 5px 15px #fff;
+}
+}
+
 /** 列表 **/
 
 /* 修正响应式表格在移动端不出滚动条的问题 */

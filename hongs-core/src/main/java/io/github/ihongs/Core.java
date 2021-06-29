@@ -955,12 +955,20 @@ public class Core
   private static final class Locals extends Core
   {
 
+    private final  long  ID  ;
+    private final String NAME;
+
+    public Locals ()
+    {
+      ID   = Thread.currentThread().getId  ();
+      NAME = Thread.currentThread().getName();
+    }
+
     @Override
-    protected void finalize()
-    throws Throwable
+    protected void finalize() throws Throwable
     {
       try {
-        CoreLogger.trace("Core is finalized. {}", this);
+        CoreLogger.trace("Core in thread {}:{} is finalized. {}", ID, NAME, this);
         this . reset  ();
       } finally {
         super.finalize();

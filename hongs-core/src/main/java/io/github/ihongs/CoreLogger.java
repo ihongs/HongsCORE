@@ -60,7 +60,7 @@ public class CoreLogger
             line.append( n )
                 .append(' ');
         } else {
-            line.append('@')
+            line.append('$')
                 .append(Thread.currentThread().getName())
                 .append(' ');
         }

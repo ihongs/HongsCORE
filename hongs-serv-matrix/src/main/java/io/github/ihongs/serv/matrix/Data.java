@@ -760,14 +760,14 @@ public class Data extends SearchEntity {
             .select("ctime,state,data,name")
             .getOne( );
         if (nd.isEmpty()
-        ||  Synt.declare(nd.get("state"), 0  ) ==  0   ) { // 删除是幂等的可重复调用
-            return 0;
-        }
-    //  if (Synt.declare(nd.get("ctime"), 0L ) >= ctime) { // 总是更新最终的记录状态
-    //      throw new HongsException(400, "Wait 1 second to del '"+id+"' in "+getDbName())
-    //          .setLocalizedContent("matrix.wait.one.second")
-    //          .setLocalizedContext("matrix");
-    //  }
+        ||  Synt.declare(nd.get("state"), 0  ) ==  0   ) {
+            return 0; // 删除是幂等的可重复调用
+        } /* 没有新增, 不必限时
+        if (Synt.declare(nd.get("ctime"), 0L ) >= ctime) {
+            throw new HongsException(400, "Wait 1 second to del '"+id+"' in "+getDbName())
+                .setLocalizedContent("matrix.wait.one.second")
+                .setLocalizedContext("matrix");
+        } */
 
         nd.put("state" ,  0  );
 
@@ -815,8 +815,8 @@ public class Data extends SearchEntity {
             .select("ctime,state,data,name")
             .getOne( );
         if (od.isEmpty()
-        ||  Synt.declare(od.get("state"), 0  ) ==  0   ) { // 删除是幂等的可重复调用
-            return 0;
+        ||  Synt.declare(od.get("state"), 0  ) ==  0   ) {
+            return 0; // 删除是幂等的可重复调用
         }
         if (Synt.declare(od.get("ctime"), 0L ) >= ctime) {
             throw new HongsException(400, "Wait 1 second to del '"+id+"' in "+getDbName())

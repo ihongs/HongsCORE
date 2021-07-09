@@ -1465,7 +1465,7 @@ public class Data extends SearchEntity {
 
     /**
      * 引用检查
-     * 检查被哪选资源关联引用
+     * 检查被哪些资源关联引用
      * @param rs 将删除的
      * @throws HongsException
      */

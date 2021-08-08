@@ -476,13 +476,13 @@ public class SelectHelper {
                     ak = fn + "_fork";
                 }
             } else {
-                    ak = fk ;
+                    ak = fn ;
             }}
             if (vk == null || vk.isEmpty()) {
                 vk =  Cnst.ID_KEY;
             }
             if (tk == null || tk.isEmpty()) {
-                tk = "name";
+                tk = "name" ;
             }
 
             rd.clear();
@@ -504,11 +504,8 @@ public class SelectHelper {
             }
 
             // 关联参数
-            rd.put(Cnst.RN_KEY, 0);
-            rd.put(Cnst.ID_KEY, ms.keySet());
-            if (vk.equals(Cnst.ID_KEY) == false ) {
-                rd.put(vk, ms.keySet());
-            }
+            rd.put(vk, ms.keySet());
+            rd.put(Cnst.RN_KEY, 0 );
             Set xb;
             xb = Synt.toTerms(rd.get(Cnst.RB_KEY));
             if (xb == null) {

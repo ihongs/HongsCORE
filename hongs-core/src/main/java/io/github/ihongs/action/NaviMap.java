@@ -526,59 +526,18 @@ public class NaviMap
   }
 
   /**
-   * 获取页面角色
-   * @param names
-   * @return 角色字典
-   */
-  public Map<String, Map> getMenuRoles(Collection<String> names)
-  {
-    Map<String, Map> rolez = new HashMap();
-
-    for (String namz : names) {
-        Map menu = getMenu(namz);
-        if (menu == null) {
-            throw new NullPointerException("Menu for href '"+name+"' is not in "+this.name);
-        }
-
-        // 此方法主要用在判断菜单能否可以进入
-        // 通常的是判断其拥有任一个角色即有效
-        // 如果取了依赖的角色
-        // 会导致因为依赖通用角色总是误认有效
-        // 例如所有管理后台角色均依赖基础管理
-        Set set = (Set) menu.get("roles");
-        if (set != null && !set.isEmpty()) {
-            for(Object nam1 : set) {
-                String nam2 = ( String ) nam1  ;
-                rolez.put(nam2, getRole (nam2));
-            }
-        //  rolez.putAll(getMoreRoles(set) /* * */ );
-        }
-
-        Map map = (Map) menu.get("menus");
-        if (map != null && !map.isEmpty()) {
-            rolez.putAll(getMenuRoles(map.keySet()));
-        }
-    }
-
-    return  rolez;
-  }
-  public Map<String, Map> getMenuRoles(String... names)
-  {
-    return  this.getMenuRoles(Arrays.asList(names));
-  }
-
-  /**
    * 获取更多单元
    * @param names
-   * @return 单元字典
+   * @return 全部角色名
    */
-  public Map<String, Map> getMoreRoles(Collection<String> names)
+  public Set<String> getMoreRoles(Collection<String> names)
   {
-    Map <String, Map> ds = new HashMap();
-    this.getRoleAuths(ds , new HashSet(), names);
-    return  ds;
+    Set <String> rolez = new HashSet();
+    Set <String> authz = new HashSet();
+    this.getRoleAuths(names, rolez, authz);
+    return  rolez;
   }
-  public Map<String, Map> getMoreRoles(String... names)
+  public Set<String> getMoreRoles(String... names)
   {
     return  this.getMoreRoles(Arrays.asList(names));
   }
@@ -590,26 +549,33 @@ public class NaviMap
    */
   public Set<String> getRoleAuths(Collection<String> names)
   {
-    Set <String> as = new HashSet();
-    this.getRoleAuths(new HashMap(), as , names);
-    return  as;
+    Set <String> rolez = new HashSet();
+    Set <String> authz = new HashSet();
+    this.getRoleAuths(names, rolez, authz);
+    return  authz;
   }
   public Set<String> getRoleAuths(String... names)
   {
     return  this.getRoleAuths(Arrays.asList(names));
   }
 
-  protected void getRoleAuths(Map roles, Set auths, Collection<String> names)
+  protected void getRoleAuths(Collection<String> names, Set roles, Set auths)
   {
-    for  (String n : names)
+    for(String n : names)
     {
-      Map role = getRole(n);
-      if (role == null || roles.containsKey(n)) // 后者防循环依赖
+      // 规避循环依赖
+      if (roles.contains(n))
       {
         continue;
       }
 
-      roles.put(n, role);
+      Map role = getRole(n);
+      if (role == null)
+      {
+        continue;
+      }
+
+      roles.add(n);
 
       if (role.containsKey("actions"))
       {
@@ -620,13 +586,16 @@ public class NaviMap
       if (role.containsKey("depends"))
       {
         Set <String> dependsSet = (Set<String>) role.get("depends");
-        getRoleAuths(roles, auths, dependsSet );
+        getRoleAuths(dependsSet , roles, auths);
       }
     }
   }
 
+  //** 用户权限 **/
+
   /**
    * 获取角色集合(与当前请求相关)
+   * 注意: 并不包含其依赖的角色
    * @return session 为空则返回 null
    * @throws io.github.ihongs.HongsException
    */
@@ -648,6 +617,7 @@ public class NaviMap
 
   /**
    * 获取权限集合(与当前请求相关)
+   * 注意: 包含依赖的角色的权限
    * @return session 为空则返回 null
    * @throws io.github.ihongs.HongsException
    */
@@ -659,6 +629,7 @@ public class NaviMap
 
   /**
    * 检查角色权限(与当前请求相关)
+   * 注意: 并不包含其依赖的角色
    * @param role
    * @return 可访问则为true
    * @throws io.github.ihongs.HongsException
@@ -673,6 +644,7 @@ public class NaviMap
 
   /**
    * 检查动作权限(与当前请求相关)
+   * 注意: 包含依赖的角色的权限
    * @param auth
    * @return 可访问则为true
    * @throws io.github.ihongs.HongsException
@@ -688,28 +660,47 @@ public class NaviMap
   /**
    * 检查页面权限(与当前请求相关)
    * @param name
-   * @return 有一个动作可访问即返回true
+   * @return 有一个配置角色即为true
    * @throws io.github.ihongs.HongsException
    */
-  public Boolean chkMenu(String name) throws HongsException {
-      Set<String> rolez = getMenuRoles(name).keySet();
-      if (null == rolez || rolez.isEmpty( )) {
-          return  true ;
+  public boolean chkMenu(String name) throws HongsException {
+      Map menu = getMenu(name);
+      if (menu == null) {
+          return false;
       }
 
-      Set<String> rolex = getRoleSet( /**/ );
-      if (null == rolex || rolex.isEmpty( )) {
-          return  false;
-      }
-
-      for(String  role : rolez) {
-      if (rolex.contains(role)) {
-          return  true ;
-      }
-      }
-
-      /**/return  false;
+      return chkMenu(menu,getRoleSet());
   }
+  private boolean chkMenu(Map menu, Set rolez) {
+      Set r  = (Set) menu.get("roles");
+      Map m  = (Map) menu.get("menus");
+
+      boolean h = true;
+
+      if (r != null && ! r.isEmpty( )) {
+          for(Object x : r ) {
+              if (rolez.contains((String) x)) {
+                  return true;
+              }
+          }
+          h  = false;
+      }
+
+      if (m != null && ! m.isEmpty( )) {
+          for(Object o : m.entrySet()) {
+              Map.Entry e = (Map.Entry) o;
+              Map n = (Map) e.getValue( );
+              if (chkMenu(n, rolez)) {
+                  return true;
+              }
+          }
+          h  = false;
+      }
+
+      return h;
+  }
+
+  //** 导航菜单及权限表单 **/
 
   /**
    * 获取翻译对象(与当前请求相关)
@@ -819,20 +810,29 @@ public class NaviMap
           String h = (String) item.getKey();
           Map    v = (Map) item.getValue( );
           Map    m = (Map) v.get( "menus" );
+          Set    r = (Set) v.get( "roles" );
+
           List<Map> subz = getMenuTranslated(m, rolez, lang, j, i + 1);
 
-          // 拥有页面下任意一个角色都认为是可访问的
-          if (null != rolez && subz.isEmpty()) {
-              Set<String> z  = getMenuRoles(h).keySet();
-              if ( ! z.isEmpty( ) ) {
-                  boolean e  = true ;
-                  for(String x : z) {
-                      if (rolez.contains( x )) {
-                          e  = false;
-                          /**/ break;
+          /**
+           * 下级菜单均无权限则跳过
+           * 当前菜单没有权限则跳过
+           */
+          if (null != rolez) {
+              if (null != m && !m.isEmpty()) {
+                  if (subz.isEmpty()) {
+                      continue;
+                  }
+              }
+              if (null != r && !r.isEmpty()) {
+                  boolean y = true  ;
+                  for( Object x : r ) {
+                      if (rolez.contains((String) x)) {
+                          y = false ;
+                              break ;
                       }
                   }
-                  if (e) {
+                  if (y) {
                       continue;
                   }
               }

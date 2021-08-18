@@ -35,7 +35,7 @@ public class AuthTag extends BodyTagSupport {
       NaviMap nav = NaviMap.getInstance(this.cnf);
       this.ebb = (this.act == null || nav.chkAuth(this.act))
               && (this.rol == null || nav.chkRole(this.rol))
-              && (this.men == null || nav.chkRole(this.men));
+              && (this.men == null || nav.chkMenu(this.men));
     } catch ( HongsException ex) {
       throw new JspException(ex);
     }

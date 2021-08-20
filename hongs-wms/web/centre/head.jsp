@@ -103,9 +103,9 @@
 
     NaviMap curr = NaviMap.getInstance("centre");
     Set     role = curr.getRoleSet();
-            role = role != null
-                 ? curr.getMoreRoles(  role  ).keySet()
-                 : curr.getMoreRoles("public").keySet();
+    if (role == null) {
+        role  = Synt.setOf("public");
+    }
     List    menu = curr.getMenuTranslated("common/menu.act?m=centre", 2, role);
 
     String  acti = helper.getParameter("active");

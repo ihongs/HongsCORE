@@ -815,24 +815,24 @@ public class NaviMap
           List<Map> subz = getMenuTranslated(m, rolez, lang, j, i + 1);
 
           /**
-           * 下级菜单均无权限则跳过
            * 当前菜单没有权限则跳过
+           * 下级菜单均无权限则跳过
            */
           if (null != rolez) {
-              if (null != m && !m.isEmpty()) {
-                  if (subz.isEmpty()) {
-                      continue;
-                  }
-              }
               if (null != r && !r.isEmpty()) {
-                  boolean y = true  ;
-                  for( Object x : r ) {
+                  boolean y = true ;
+                  for (Object x : r) {
                       if (rolez.contains((String) x)) {
-                          y = false ;
-                              break ;
+                          y = false;
+                              break;
                       }
                   }
                   if (y) {
+                      continue;
+                  }
+              } else
+              if (null != m && !m.isEmpty()) {
+                  if (subz.isEmpty()) {
                       continue;
                   }
               }

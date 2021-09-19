@@ -70,10 +70,10 @@ abstract public class Pagelet extends ActionDriver implements HttpJspPage
                 Throwable ex = (Throwable)err;
                 Throwable ax = ex.getCause( );
                 if (ex instanceof HongsCause) {
-                    ah.fault((HongsCause) ax);
+                    ah.fault((HongsCause) ex);
                 } else
                 if (ax instanceof HongsCause) {
-                    ah.fault((HongsCause) ex);
+                    ah.fault((HongsCause) ax);
                 } else {
                     ah.fault( new HongsException(
                         ern , ( String ) msg ,

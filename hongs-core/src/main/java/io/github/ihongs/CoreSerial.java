@@ -55,6 +55,18 @@ public abstract class CoreSerial
     throws HongsException;
 
   /**
+   * 检查缓存有效性
+   * @param file
+   * @return 0 重载, 1 有效, -1 失效(删除文件)
+   * @throws io.github.ihongs.HongsException
+   */
+  protected byte expires(File file)
+    throws HongsException
+  {
+    return (byte) 1;
+  }
+
+  /**
    * 加载或引入数据
    * @param name
    * @throws io.github.ihongs.HongsException
@@ -79,19 +91,19 @@ public abstract class CoreSerial
 
     lock.lockr();
     try {
-      switch (read(file)) {
+      if (file.exists()) {
+      switch (expires(file)) {
+        case -1 : // 缓存失效则文件是多余的
+          file.delete();
+          return;
+        case  1 : // 缓存有效则无需再次引入
+          load ( file );
+          return;
         case  0 : // 缓存过期则需要重新引入
           break ;
-        case  1 : // 缓存有效则无需再次引入
-          return;
-        case -1 : // 缓存失效则文件是多余的
-          if (file.exists()) {
-              file.delete();
-          }
-          return;
         default :
-          throw new UnsupportedOperationException("Return code for read(file) must be 1(valid),0(expired),-1(invalid)");
-      }
+          throw new UnsupportedOperationException("Return code for expires must be 1(valid),0(expired),-1(invalid)");
+      }}
     } finally {
       lock.unlockr();
     }
@@ -102,23 +114,6 @@ public abstract class CoreSerial
       save(file);
     } finally {
       lock.unlockw();
-    }
-  }
-
-  /**
-   * 从文件读取数据
-   * @param file
-   * @return 0 重载, 1 有效, -1 无效(删除文件)
-   * @throws io.github.ihongs.HongsException
-   */
-  protected byte read(File file)
-    throws HongsException
-  {
-    if (file.exists()) {
-      load(file);
-      return 1;
-    } else {
-      return 0;
     }
   }
 

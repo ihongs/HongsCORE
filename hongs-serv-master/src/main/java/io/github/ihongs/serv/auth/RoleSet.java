@@ -48,7 +48,7 @@ public class RoleSet extends CoreSerial implements CoreSerial.Mtimes, Set<String
     }
 
     @Override
-    protected byte read(File f) throws HongsException {
+    protected byte expires(File f) throws HongsException {
         DB        db;
         Table     tb;
         Table     td;
@@ -119,8 +119,7 @@ public class RoleSet extends CoreSerial implements CoreSerial.Mtimes, Set<String
         if (rt < ot) {
             rt = ot;
         }
-        if (f.exists() && f.lastModified() >= rt * 1000L) {
-            load(f);
+        if (f.lastModified() >= rt * 1000L) {
             return  1;
         } else {
             return  0;

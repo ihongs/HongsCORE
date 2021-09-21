@@ -67,14 +67,18 @@ public class DBConfig
   protected byte expires(File serFile)
     throws HongsException
   {
+    if (!serFile.exists()) {
+      return 0;
+    }
+
     File xmlFile = new File(
              Core.CONF_PATH +"/"+ name + Cnst.DB_EXT + ".xml"
     );
-    if ( xmlFile.exists( ) ) {
+    if ( xmlFile.exists()) {
     if ( xmlFile.lastModified() > serFile.lastModified() ) {
-      return  1;
+      return 1;
     } else {
-      return  0;
+      return 0;
     }}
 
     // 为减少判断逻辑对 jar 文件不做变更对比, 只要资源存在即可
@@ -83,9 +87,9 @@ public class DBConfig
           || name.contains("/") ? name + Cnst.DB_EXT + ".xml"
            : Cnst.CONF_PACK +"/"+ name + Cnst.DB_EXT + ".xml"
     )) {
-      return  1;
+      return 1;
     } else {
-      return -1;
+      return 0;
     }
   }
 

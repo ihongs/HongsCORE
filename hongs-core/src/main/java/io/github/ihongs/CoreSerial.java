@@ -63,7 +63,9 @@ public abstract class CoreSerial
   protected byte expires(File file)
     throws HongsException
   {
-    return (byte) 1;
+    return file.exists()
+        ? (byte) 1
+        : (byte) 0;
   }
 
   /**
@@ -91,7 +93,6 @@ public abstract class CoreSerial
 
     lock.lockr();
     try {
-      if (file.exists()) {
       switch (expires(file)) {
         case -1 : // 缓存失效则文件是多余的
           file.delete();
@@ -103,7 +104,7 @@ public abstract class CoreSerial
           break ;
         default :
           throw new UnsupportedOperationException("Return code for expires must be 1(valid),0(expired),-1(invalid)");
-      }}
+      }
     } finally {
       lock.unlockr();
     }

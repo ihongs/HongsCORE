@@ -90,17 +90,19 @@ public abstract class CoreSerial
     throws HongsException
   {
     Gate.Leader lock = Gate.getLeader(CoreSerial.class.getName() + ":" + file.getAbsolutePath());
+    boolean     drop ;
 
     lock.lockr();
     try {
       switch (expires(file)) {
-        case -1 : // 缓存失效则文件是多余的
-          file.delete();
-          return;
         case  1 : // 缓存有效则无需再次引入
-          load ( file );
+          load( file );
           return;
+        case -1 : // 缓存失效则文件是多余的
+          drop = true ;
+          break ;
         case  0 : // 缓存过期则需要重新引入
+          drop = false;
           break ;
         default :
           throw new UnsupportedOperationException("Return code for expires must be 1(valid),0(expired),-1(invalid)");
@@ -111,8 +113,12 @@ public abstract class CoreSerial
 
     lock.lockw();
     try {
-      imports ();
-      save(file);
+      if (!drop) {
+        imports  (  );
+        save ( file );
+      } else {
+        file.delete();
+      }
     } finally {
       lock.unlockw();
     }

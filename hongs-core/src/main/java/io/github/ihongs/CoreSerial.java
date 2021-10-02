@@ -96,13 +96,13 @@ public abstract class CoreSerial
     try {
       switch (expires(file)) {
         case  1 : // 缓存有效则无需再次引入
-          load( file );
+          load(file);
           return;
-        case -1 : // 缓存失效则文件是多余的
-          drop = true ;
-          break ;
         case  0 : // 缓存过期则需要重新引入
           drop = false;
+          break ;
+        case -1 : // 缓存失效则文件是多余的
+          drop = true ;
           break ;
         default :
           throw new UnsupportedOperationException("Return code for expires must be 1(valid),0(expired),-1(invalid)");

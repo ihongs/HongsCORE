@@ -1595,18 +1595,14 @@ function hsDarkMode(mode, time) {
         case "1" :
             root.removeClass("dusk-mode")
                    .addClass("dark-mode");
-            H$("%HsDarkTime", null);
             break;
         case "0" :
             root.removeClass("dark-mode")
                    .addClass("dusk-mode");
-            H$("%HsDarkTime", null);
             break;
         default  :
             root.removeClass("dark-mode")
                 .removeClass("dusk-mode");
-            H$("%HsDarkMode", null);
-            H$("%HsDarkTime", null);
             break;
     }
 }

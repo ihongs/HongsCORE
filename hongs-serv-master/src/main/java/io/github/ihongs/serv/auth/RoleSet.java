@@ -119,7 +119,7 @@ public class RoleSet extends CoreSerial implements CoreSerial.Mtimes, Set<String
         if (rt < ot) {
             rt = ot;
         }
-        if (f.lastModified() >= rt * 1000L) {
+        if (f.exists() && f.lastModified() >= rt * 1000L) {
             return  1;
         } else {
             return  0;

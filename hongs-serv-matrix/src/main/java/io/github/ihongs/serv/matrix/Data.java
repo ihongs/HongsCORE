@@ -1415,9 +1415,9 @@ public class Data extends SearchEntity {
 
             // 获取关联外键值
             Object v = rd.get(k);
-            if (v == null) {
+            if (v == null || "".equals(v)) {
                    v = dd.get(k);
-            if (v == null) {
+            if (v == null || "".equals(v)) {
                 for(Object ot : fm.entrySet()) {
                     Map.Entry et = (Map.Entry) ot;
                     rd.put(et.getKey(), null );

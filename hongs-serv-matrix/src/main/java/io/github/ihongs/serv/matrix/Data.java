@@ -1414,9 +1414,9 @@ public class Data extends SearchEntity {
             fs.add (Cnst.ID_KEY);
 
             // 获取关联外键值
-            Object v = rd.get(k);
-            if (v == null || "".equals(v)) {
-                   v = dd.get(k);
+            Object v = rd.containsKey (k)
+                     ? rd.get(k)
+                     : dd.get(k);
             if (v == null || "".equals(v)) {
                 for(Object ot : fm.entrySet()) {
                     Map.Entry et = (Map.Entry) ot;
@@ -1430,7 +1430,7 @@ public class Data extends SearchEntity {
                     rd.put(et.getKey(), new ArrayList(0) );
                 }
                 continue;
-            }}
+            }
 
             // 写入当前信息表
             if (Synt.declare(fc.get("__repeated__"), false) == false) {

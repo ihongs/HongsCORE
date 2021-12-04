@@ -3120,10 +3120,6 @@ function() {
             $(this).hsClose();
         });
     }
-    tab.siblings()
-    .removeClass("active");
-    tab.addClass("active")
-       .css("display", "");
     // 延迟加载
     if (ths.is("[data-href]")) { // 加载一次
         var ref;
@@ -3137,10 +3133,15 @@ function() {
         ref = ths.attr("data-link");
         pne.hsOpen(ref);
     }
-    pno.trigger("hsRetir")
-       .hide();
+    tab.siblings()
+    .removeClass("active");
+    tab.addClass("active")
+       .css("display", "");
+    pno.trigger("hsRetir");
     pne.show()
-       .trigger("hsRecur");
+       .siblings()
+       .hide();
+    pne.trigger("hsRecur");
 })
 .on("click", ".back-crumb  a",
 function() {

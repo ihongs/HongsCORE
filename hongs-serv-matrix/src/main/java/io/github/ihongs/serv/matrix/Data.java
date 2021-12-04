@@ -263,22 +263,28 @@ public class Data extends SearchEntity {
                 break;
             }
 
+            if (fieldx.isEmpty()) {
+                break;
+            }
+
             /**
              * 注意:
              * 1. 不可破坏原始配置
              * 2. 当前的覆盖后台的
              */
-            Map fieldz = new LinkedHashMap(fieldx);
-                fieldz.putAll (fields);
-                fields = /**/  fieldz ;
-
-            // 3. 表单参数可被重写, 2019/08/10
-            Map params = (Map) fields .get( "@"  );
-            Map paramx = (Map) fieldx .get( "@"  );
-            if ( null != params && null != paramx) {
-                paramx = new LinkedHashMap(paramx);
-                paramx.putAll (params);
-                fields.put("@",paramx);
+            fields = new LinkedHashMap(fields);
+            for(Object ot : fieldx.entrySet()) {
+                Map.Entry et = (Map.Entry) ot ;
+                String fn = (String) et.getKey();
+                Map    fx = (Map) et.getValue( );
+                Map    fc = (Map) fields.get(fn);
+                if (fc != null) {
+                    fc  = new LinkedHashMap (fc);
+                    fc.putAll (fx);
+                    fields.put(fn, fc);
+                } else {
+                    fields.put(fn, fx);
+                }
             }
         }   while  ( false );
 
@@ -1314,13 +1320,59 @@ public class Data extends SearchEntity {
     //** 级联操作 **/
 
     /**
+     * 获取级联动作配置
+     * 返回格式 {"conf!form?fk": ["UPDATE","DELETE","DEPEND"]}
+     * 值也可能是符合标准的字符串
+     * @return
+     */
+    protected Map<String, Object> getCascades() {
+        String canf = conf;
+        do {
+            try {
+                return FormSet.getInstance(canf).getEnum(form+":cascade");
+            }
+            catch (HongsException ex) {
+            if (910 != ex.getErrno( )
+            &&  913 != ex.getErrno()) {
+                throw  ex.toExemption();
+            }}
+            canf = getBgConf();
+        }
+        while ( canf != null );
+        return  new HashMap ();
+    }
+
+    /**
+     * 获取级联包含配置
+     * 返回格式 {"conf!form?fk": {"fn1":"fn_a", "fn2":"fn_x"}}
+     * 值也可能是符合标准的字符串
+     * @return
+     */
+    protected Map<String, Object> getIncludes() {
+        String canf = conf;
+        do {
+            try {
+                return FormSet.getInstance(canf).getEnum(form+":include");
+            }
+            catch (HongsException ex) {
+            if (910 != ex.getErrno( )
+            &&  913 != ex.getErrno()) {
+                throw  ex.toExemption();
+            }}
+            canf = getBgConf();
+        }
+        while ( canf != null );
+        return  new HashMap ();
+    }
+
+    /**
      * 级联操作,
      * 异步更新或删除引用资源
      * @param us 已更新的
      * @param rs 已删除的
      */
     protected void cascades(Set us, Set rs) {
-        Set<String> aq = Synt.toSet(getParams().get("cascades"));
+        Map<String, Object> aq = getCascades();
         if (aq == null || aq.isEmpty()) {
             return;
         }
@@ -1338,16 +1390,19 @@ public class Data extends SearchEntity {
          * 则删除时会更新数据
          * 相关字段的值会置空
          */
-        for(String at : aq) {
+        for(Map.Entry<String, Object> xt : aq.entrySet()) {
+            String at = xt.getKey  ();
+            Object av = xt.getValue();
             if (at == null || at.isEmpty()) {
                 continue;
             }
-            if (at.contains("#DELETE")) {
+            Set aa = Synt.toSet( av );
+            if (aa.contains("DELETE")) {
                 rq.add(at);
-            if (at.contains("#UPDATE")) {
+            if (aa.contains("UPDATE")) {
                 uq.add(at);
             }} else
-            if (at.contains("#UPDATE")) {
+            if (aa.contains("UPDATE")) {
                 uq.add(at);
                 vq.add(at);
             }
@@ -1375,48 +1430,37 @@ public class Data extends SearchEntity {
      * @throws HongsException
      */
     protected void includes(Map dd, Map rd) throws HongsException {
-        Set<String> aq = Synt.toSet(getParams().get("includes"));
+        Map<String, Object> aq = getIncludes();
         if (aq == null || aq.isEmpty()) {
             return;
         }
 
-        for(String at : aq) {
+        for(Map.Entry<String, Object> xt : aq.entrySet()) {
+            String at = xt.getKey  ();
+            Object av = xt.getValue();
             if (at == null || at.isEmpty()) {
                 continue;
             }
 
-            // 格式: conf.form?fk#f1=fa;f2=fb
-            int     p = at.indexOf  ("#");
-            String tk = at.substring(1+p);
-                   at = at.substring(0,p);
-                    p = at.indexOf  ("?");
-            String fk = at.substring(1+p);
-                   at = at.substring(0,p);
-                    p = at.indexOf  ("!");
-            String  f = at.substring(1+p);
+            // 解析关联描述串, 格式: conf!form?fk
+            int     p = at.indexOf  ("?");
+            String  k = at.substring(1+p);
             String  c = at.substring(0,p);
-            String  k = fk.trim ();
-            String  s = tk.trim ();
+                    p =  c.indexOf  ("!");
+            String  f =  c.substring(1+p);
+                    c =  c.substring(0,p);
 
-            // 解析字段映射表
-            Map fm = new HashMap();
-                String[] x = s.split("\\s*;\\s*", 0);
-            for(String   y : x) {
-                String[] z = y.split("\\s*=\\s*", 2);
-                if (z.length == 2) {
-                    fm.put(z[0].trim(), z[1].trim());
-                } else {
-                    fm.put(z[0].trim(), z[0].trim());
-                }
-            }
+            // 解析字段映射表, 格式: f1:fa,f2:fb,fn
+            Map fm = Synt.toMap(av);
             Set fs = new HashSet(fm.values());
             Map fc = (Map) getFields().get(k);
-            fs.add (Cnst.ID_KEY);
 
             // 获取关联外键值
             Object v = rd.containsKey (k)
                      ? rd.get(k)
                      : dd.get(k);
+
+            // 处理未关联情况
             if (v == null || "".equals(v)) {
                 for(Object ot : fm.entrySet()) {
                     Map.Entry et = (Map.Entry) ot;
@@ -1443,18 +1487,24 @@ public class Data extends SearchEntity {
                     rd.put(et.getKey(), fd.get(et.getValue()));
                 }
             } else {
-                Map<Object, List> fd = new HashMap();
                 List <Map> fl = Data.getInstance(c, f).getAll(Synt.mapOf(
                     Cnst.RB_KEY , fs,
                     Cnst.ID_KEY , v
                 ));
+
+                // 多值汇总
+                Map<Object, List> fd = new HashMap(fs.size());
                 for(Object fn : fs) {
-                    fd.put(fn , new ArrayList (fl.size(/**/)));
+                    fd.put(fn , new ArrayList(fl.size()));
                 }
                 for(  Map  fb : fl) {
                 for(Object fn : fs) {
-                    fd.get(fn).add(fb.get(fn));
+                    List fv = Synt.asList(fb.get(fn));
+                    if (fv != null) {
+                        fd.get(fn).addAll(fv);
+                    }
                 }}
+
                 for(Object ot : fm.entrySet()) {
                     Map.Entry et = (Map.Entry) ot;
                     rd.put(et.getKey(), fd.get(et.getValue()));
@@ -1470,7 +1520,7 @@ public class Data extends SearchEntity {
      * @throws HongsException
      */
     protected void depletes(Set rs) throws HongsException {
-        Set<String> aq = Synt.toSet(getParams().get("cascades"));
+        Map<String, Object> aq = getCascades();
         if (aq == null || aq.isEmpty()) {
             return;
         }
@@ -1481,34 +1531,31 @@ public class Data extends SearchEntity {
         StringBuilder nb = new StringBuilder();
         StringBuilder sb = new StringBuilder();
 
-        for(String at : aq) {
-            if (null == at || at.isEmpty()) {
+        for(Map.Entry<String, Object> xt : aq.entrySet()) {
+            String at = xt.getKey  ();
+            Object av = xt.getValue();
+            if (at == null || at.isEmpty()) {
+                continue;
+            }
+            Set aa = Synt.toSet( av );
+            if ( ! aa.contains ("DEPEND") ) {
                 continue;
             }
 
-            // 格式: conf!form?fk#DEPEND
-            int     p = at.indexOf  ("#");
-            if (0 > p ) {
-                continue;
-            }
-            String tk = at.substring(0+p);
-            if ( ! tk.contains("#DEPEND") ) {
-                continue;
-            }
-                   at = at.substring(0,p);
-                    p = at.indexOf  ("?");
-            String fk = at.substring(1+p);
-                   at = at.substring(0,p);
-                    p = at.indexOf  ("!");
-            String  f = at.substring(1+p);
+            // 解析关联描述串, 格式: conf!form?fk
+            int     p = at.indexOf  ("?");
+            String  k = at.substring(1+p);
             String  c = at.substring(0,p);
+                    p =  c.indexOf  ("!");
+            String  f =  c.substring(1+p);
+                    c =  c.substring(0,p);
 
             // 可能存在多个引用字段
             Map    ar = new HashMap();
             Set    or = new HashSet();
             ar.put( Cnst.OR_KEY, or );
-            for(String fn : fk.split(";")) {
-                or.add(Synt.mapOf(fn, rs));
+            for(String fn : k.split(";")) {
+                or.add(Synt.mapOf(fn,rs));
             }
 
             // 查询依赖当前表的资源

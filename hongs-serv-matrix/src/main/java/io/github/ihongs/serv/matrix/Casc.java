@@ -14,7 +14,26 @@ import java.util.Set;
 
 /**
  * 级联操作队列
- * @author Kevin
+ *
+ * <pre>
+ * 配置格式:
+ *  &lt;enum name="form:cascade"&gt;
+ *    &lt;value code="conf!form?thatForeignKey"&gt;UPDATE,DELETE,DEPEND&lt/value&gt;
+ *  &lt;/enum&gt;
+ *  &lt;enum name="form:include"&gt;
+ *    &lt;value name="conf!form?thisForeignKey"&gt;thisFn:thatFn,sameFn&lt/value&gt;
+ *  &lt;/enum&gt;
+ * cascade 中可用分号分隔相同表单的多个外键字段, 如 ?fk1;fk2
+ * </pre>
+ * <pre>
+ * 级联模式:
+ *  UPDATE 级联更新对应记录
+ *  DELETE 级联删除对应级联
+ *  DEPEND 删除时做关联检查, 有记录则报错中止
+ * 如果只有 UPDATE 没有 DELETE 则将关联字段设为空值
+ * </pre>
+ *
+ * @author Hongs
  */
 public class Casc {
 
@@ -71,25 +90,42 @@ public class Casc {
 
     }
 
+    /**
+     * 级联更新(仅放入队列,待异步执行)
+     * @param aq 关联代码
+     * @param id 主键取值
+     */
     public static void update(Set<String> aq, Object id) {
         if (id != null && aq != null && ! aq.isEmpty( )) {
             QUEUE.add (new Group(aq, id, ACTION.UPDATE));
         }
     }
 
+    /**
+     * 级联删除(仅放入队列,待异步执行)
+     * @param aq 关联代码
+     * @param id 主键取值
+     */
     public static void delete(Set<String> aq, Object id) {
         if (id != null && aq != null && ! aq.isEmpty( )) {
             QUEUE.add (new Group(aq, id, ACTION.DELETE));
         }
     }
 
+    /**
+     * 级联更新
+     * @param aq 关联代码
+     * @param id 主键取值
+     * @param ct 操作时间
+     * @throws HongsException
+     */
     public static void update(Set<String> aq, Object id, long ct) throws HongsException {
         for(String at : aq) {
             if (at == null || at.isEmpty()) {
                 continue;
             }
 
-            // 格式: conf.form?fk#DELETE#UPDATE
+            // 格式: conf!form?fk#DELETE#UPDATE
             int     p = at.indexOf  ("#");
             if (0 < p ) {
             String tk = at.substring(0+p);
@@ -108,13 +144,20 @@ public class Casc {
         }
     }
 
+    /**
+     * 级联删除
+     * @param aq 关联代码
+     * @param id 主键取值
+     * @param ct 操作时间
+     * @throws HongsException
+     */
     public static void delete(Set<String> aq, Object id, long ct) throws HongsException {
         for(String at : aq) {
             if (at == null || at.isEmpty()) {
                 continue;
             }
 
-            // 格式: conf.form?fk#DELETE#UPDATE
+            // 格式: conf!form?fk#DELETE#UPDATE
             int     p = at.indexOf  ("#");
             if (0 < p ) {
             String tk = at.substring(0+p);
@@ -133,6 +176,14 @@ public class Casc {
         }
     }
 
+    /**
+     * 级联更新
+     * @param inst
+     * @param fk 关联字段, 多个用分号分隔
+     * @param fv 关联取值
+     * @param ct 操作时间
+     * @throws HongsException
+     */
     public static void update(Data inst, String fk, Object fv, long ct) throws HongsException {
         // 可能多个关联指向同一资源
         Map  ar = new HashMap();
@@ -157,6 +208,14 @@ public class Casc {
         }
     }
 
+    /**
+     * 级联删除
+     * @param inst
+     * @param fk 关联字段, 多个用分号分隔
+     * @param fv 关联取值
+     * @param ct 操作时间
+     * @throws HongsException
+     */
     public static void delete(Data inst, String fk, Object fv, long ct) throws HongsException {
         // 可能多个关联指向同一资源
         Map  ar = new HashMap();

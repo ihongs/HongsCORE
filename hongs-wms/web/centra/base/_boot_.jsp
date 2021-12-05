@@ -45,6 +45,7 @@
 %>
 <%
     String     _title = "";
+    String     _config;
     String     _module;
     String     _entity;
     CoreLocale _locale;
@@ -54,6 +55,7 @@
     {
         // 拆解路径
         int i;
+        _config = "";
         _module = ActionDriver.getOriginPath(request);
         i = _module.lastIndexOf('/');
         _module = _module.substring( 1, i );
@@ -78,6 +80,7 @@
              */
             do {
                 try {
+                    _config = name;
                     _fields = FormSet.getInstance(name).getFormTranslated(_entity);
                 } catch (HongsException ex) {
                     if (ex.getErrno() != 910
@@ -94,6 +97,7 @@
                 }
 
                 try{
+                    _config = name;
                     _fieldx = FormSet.getInstance(name).getFormTranslated(_entity);
                 } catch (HongsException ex) {
                     if (ex.getErrno() != 910

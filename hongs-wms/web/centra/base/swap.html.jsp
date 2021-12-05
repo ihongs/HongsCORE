@@ -1,12 +1,19 @@
 <%@page import="io.github.ihongs.Cnst"%>
 <%@page import="io.github.ihongs.Core"%>
+<%@page import="io.github.ihongs.util.Dawn"%>
 <%@page import="io.github.ihongs.util.Synt"%>
+<%@page import="java.util.List"%>
+<%@page import="java.util.ArrayList"%>
 <%@page import="java.util.Iterator"%>
+<%@page import="java.util.regex.Matcher"%>
+<%@page import="java.util.regex.Pattern"%>
 <%@page extends="io.github.ihongs.jsp.Pagelet"%>
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@include file="_boot_.jsp"%>
 <%!
     private final int Cnst_PN_ONE = 1;
+    private final Pattern FORK_AT = Pattern.compile("^(.*)/[^/?&#]+");
+    private final Pattern FORK_RB = Pattern.compile("[\\?&]"+Cnst.RB_KEY+"=([^&#]+)");
 %>
 <%
     String _pageId = (_module + "-" + _entity + "-swap").replace('/', '-');
@@ -58,11 +65,51 @@
                 Map     info = (Map ) et.getValue();
                 String  name = (String) et.getKey();
                 if ( "@".equals(name) )  continue  ;
+                String  type = (String) ts.get(info.get("__type__"));
             %>
                 <tr>
                     <td>
-                    <%if ("enum".equals(ts.get(info.get("__type__")))) {%>
+                    <%if ("enum".equals(type)) {%>
                         <a href="javascript:;" class="view-enum"><%=name%></a>
+                    <%} else if ("form".equals(type)) {%>
+                        <%
+                            String conf = Synt.declare(info.get("conf"), _config);
+                            String form = Synt.declare(info.get("form"),  name  );
+                            Map fs = FormSet.getInstance(conf).getFormTranslated(form);
+                            List<Object[]> fl = new ArrayList(fs.size());
+                            for(Object ot : fs.entrySet()) {
+                                Map.Entry xt = (Map.Entry) ot;
+                                Map fc = (Map) xt.getValue( );
+                                Object n = xt.getKey();
+                                if ( "@".equals(n) ) continue;
+                                Object t = fc.get("__type__");
+                                Object l = fc.get("__text__");
+                                fl.add(new Object[]{n, t, l});
+                            }
+                        %>
+                        <a href="javascript:;" class="show-form" data-data="<%=escape(Dawn.toString(fl, true))%>"><%=name%></a>
+                    <%} else if ("fork".equals(type)) {%>
+                        <%
+                            String ak = Synt.declare(info.get("data-ak"), "" );
+                            String at = Synt.declare(info.get("data-at"), "" );
+                            String rb ;
+                            // 关联名称
+                            if (ak.isEmpty()) {
+                                ak = ! name.endsWith("_id") ? name + "_fork"
+                                     : name.substring(0, -3 + name.length( ) );
+                            }
+                            // 内部字段
+                            Matcher m0 = FORK_RB.matcher(at);
+                            if (m0.find()) rb = m0.group(01);
+                            else rb = Synt.declare(info.get("data-vk"), "id" )
+                                +","+ Synt.declare(info.get("data-tk"),"name");
+                            // 关联资源
+                            Matcher m1 = FORK_AT.matcher(at);
+                            if (m1.find()) at = m1.group(01);
+                            else at = Synt.declare(info.get("conf"), _config )
+                                +"/"+ Synt.declare(info.get("form"),   name  );
+                        %>
+                        <a href="javascript:;" class="show-fork" data-rb="<%=rb%>" data-ak="<%=ak%>" data-at="<%=at%>"><%=name%></a>
                     <%} else { %>
                         <%=name%>
                     <%}%>
@@ -395,6 +442,56 @@ id=ID 或 id.=ID1&id.=ID2...
             },
             'json'
         );
+    });
+
+    // 查看子级内容
+    context.on("click", "a.show-form", function() {
+        var data  = $(this).data("data");
+        if (typeof  data  ===  "string")
+            data  = eval('('+ data +')');
+        var table = $('<table class="table table-hover table-striped"></table>');
+        var thead = $('<thead></thead>').appendTo(table);
+        var tbody = $('<tbody></tbody>').appendTo(table);
+        var tr;
+        tr = $('<tr></tr>').appendTo(thead);
+        $('<th></th>').appendTo(tr).text('字段');
+        $('<th></th>').appendTo(tr).text('类型');
+        $('<th></th>').appendTo(tr).text('名称');
+        for(var i = 0; i < data.length; i ++) {
+            var a = data[i];
+            tr = $('<tr></tr>').appendTo(tbody);
+            $('<td></td>').appendTo(tr).text(a[0]);
+            $('<td></td>').appendTo(tr).text(a[1]);
+            $('<td></td>').appendTo(tr).text(a[2]);
+        }
+        $.hsMask({
+            'title': '数据结构',
+            'node' : table
+        });
+    });
+
+    // 查看关联内容
+    context.on("click", "a.show-fork", function() {
+        var at = $(this).data("at");
+        var ak = $(this).data("ak");
+        var rb = $(this).data("rb");
+        var table = $('<table class="table table-hover table-striped"></table>');
+        var thead = $('<thead></thead>').appendTo(table);
+        var tbody = $('<tbody></tbody>').appendTo(table);
+        var tr;
+        tr = $('<tr></tr>').appendTo(thead);
+        $('<td style="width:80px"></td>').appendTo(tr).text('关联资源');
+        $('<td></td>').appendTo(tr).text(at);
+        tr = $('<tr></tr>').appendTo(tbody);
+        $('<td style="width:80px"></td>').appendTo(tr).text('关联名称');
+        $('<td></td>').appendTo(tr).text(ak);
+        tr = $('<tr></tr>').appendTo(tbody);
+        $('<td style="width:80px"></td>').appendTo(tr).text('内部字段');
+        $('<td></td>').appendTo(tr).text(rb);
+        $.hsMask({
+            'title': '关联参数',
+            'node' : table
+        });
     });
 })(jQuery);
 </script>

@@ -272,20 +272,21 @@ public class Data extends SearchEntity {
              * 1. 不可破坏原始配置
              * 2. 当前的覆盖后台的
              */
-            fields = new LinkedHashMap(fields);
-            for(Object ot : fieldx.entrySet()) {
+            fieldx = new LinkedHashMap(fieldx);
+            for(Object ot : fields.entrySet()) {
                 Map.Entry et = (Map.Entry) ot ;
                 String fn = (String) et.getKey();
-                Map    fx = (Map) et.getValue( );
-                Map    fc = (Map) fields.get(fn);
-                if (fc != null) {
-                    fc  = new LinkedHashMap (fc);
-                    fc.putAll (fx);
-                    fields.put(fn, fc);
+                Map    fc = (Map) et.getValue( );
+                Map    fx = (Map) fieldx.get(fn);
+                if (fx != null) {
+                    fx  = new LinkedHashMap (fx);
+                    fx.putAll (fc);
+                    fieldx.put(fn, fx);
                 } else {
-                    fields.put(fn, fx);
+                    fieldx.put(fn, fc);
                 }
             }
+            fields = fieldx ;
         }   while  ( false );
 
         if ( null == fields) {

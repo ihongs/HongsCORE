@@ -465,10 +465,10 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                 tim = Syno.humanTime (System.currentTimeMillis() - Core.ACTION_TIME.get());
                 uid = hlpr.getSessibute(Cnst.UID_SES);
                 if (uid != null) {
-                    mem  =  uid.toString ( );
+                    mem  = "uid="+ uid.toString();
                 } else
                 if (ses != null) {
-                    mem  =  "$"+ses.getId( );
+                    mem  = "sid="+ ses.getId (  );
                 } else {
                     mem  =  "-";
                 }

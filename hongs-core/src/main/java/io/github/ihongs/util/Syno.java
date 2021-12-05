@@ -1,7 +1,7 @@
 package io.github.ihongs.util;
 
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -372,14 +372,16 @@ public final class Syno
    * @param vars
    * @return 注入后的文本
    */
-  public static String inject(String str, List vars)
+  public static String inject(String str, Collection vars)
   {
     /**
      * 将语句中替换$n或${n}为指定的文字, n从0开始
      */
       Map rep2 = new HashMap();
-      for (int i = 0; i < vars.size(); i ++) {
-          rep2.put(String.valueOf(i) , vars.get(i) );
+      int i = 0;
+      for(Object v : vars) {
+          rep2.put(String.valueOf(i), v);
+          i ++ ;
       }
       return inject(str, rep2);
   }
@@ -390,16 +392,56 @@ public final class Syno
    * @param vars
    * @return  注入后的文本
    */
-  public static String inject(String str, String... vars)
+  public static String inject(String str, Object ... vars)
   {
     /**
      * 将语句中替换$n或${n}为指定的文字, n从0开始
      */
       Map rep2 = new HashMap();
-      for (int i = 0; i < vars.length; i ++) {
-          rep2.put(String.valueOf(i) , vars[i] );
+      int i = 0;
+      for(Object v : vars) {
+          rep2.put(String.valueOf(i), v);
+          i ++ ;
       }
       return inject(str, rep2);
+  }
+
+  //** 拼接 **/
+
+  /**
+   * 拼接字串
+   * @param str
+   * @param vars
+   * @return
+   */
+  public static String concat(String str, Collection vars)
+  {
+      StringBuilder stb = new StringBuilder();
+      for(Object val : vars) {
+          stb.append(val).append(str);
+      }
+      if (vars.isEmpty()) {
+          stb.setLength(stb.length() - str.length());
+      }
+      return stb.toString();
+  }
+
+  /**
+   * 拼接字串
+   * @param str
+   * @param vars
+   * @return
+   */
+  public static String concat(String str, Object ... vars)
+  {
+      StringBuilder stb = new StringBuilder();
+      for(Object val : vars) {
+          stb.append(val).append(str);
+      }
+      if (vars.length!=0) {
+          stb.setLength(stb.length() - str.length());
+      }
+      return stb.toString();
   }
 
   //** 清理 **/

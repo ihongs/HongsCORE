@@ -420,7 +420,7 @@ public final class Syno
       for(Object val : vars) {
           stb.append(val).append(str);
       }
-      if (vars.isEmpty()) {
+      if ( ! vars.isEmpty()) {
           stb.setLength(stb.length() - str.length());
       }
       return stb.toString();
@@ -438,7 +438,7 @@ public final class Syno
       for(Object val : vars) {
           stb.append(val).append(str);
       }
-      if (vars.length!=0) {
+      if ( 0 < vars.length ) {
           stb.setLength(stb.length() - str.length());
       }
       return stb.toString();

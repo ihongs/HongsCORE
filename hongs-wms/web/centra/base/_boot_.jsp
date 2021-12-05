@@ -107,8 +107,21 @@
                     break;
                 }
 
+                // 非破坏式合并
                 _fieldx = new LinkedHashMap(_fieldx);
-                _fieldx.putAll(_fields);
+                for(Object ot : _fields.entrySet()) {
+                    Map.Entry et = (Map.Entry) ot ;
+                    Object    fn = et.getKey  (  );
+                    Map fc = (Map) et.getValue(  );
+                    Map fx = (Map) _fieldx.get(fn);
+                    if (null != fx) {
+                        fx = new LinkedHashMap(fx);
+                        fx.putAll(fc);
+                        _fieldx.put(fn, fx);
+                    } else {
+                        _fieldx.put(fn, fc);
+                    }
+                }
                 _fields = _fieldx;
             }
             while (false);

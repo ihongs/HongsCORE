@@ -201,8 +201,9 @@ public class IsFile extends Rule {
         }
 
         // 大小检查, 超限报错
-        if (size > getParam("size" , Long.MAX_VALUE )) {
-            throw new Wrong("fore.file.invalid.size");
+        long max = getParam("size" , Long.MAX_VALUE);
+        if (size > max) {
+            throw new Wrong("core.file.size.invalid", String.valueOf(max));
         }
 
         /**

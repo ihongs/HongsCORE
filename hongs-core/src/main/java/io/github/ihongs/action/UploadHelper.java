@@ -142,7 +142,7 @@ public class UploadHelper {
         if (this.allowTypes != null
         && !this.allowTypes.contains(type)) {
             // 文件类型不对
-            throw new Wrong("fore.file.invalid.type", this.allowTypes.toString());
+            throw new Wrong("core.file.type.invalid", Syno.concat(", ", this.allowTypes));
         }
 
         /**
@@ -151,7 +151,7 @@ public class UploadHelper {
         if (this.allowExtns != null
         && !this.allowExtns.contains(extn)) {
             // 扩展名不对
-            throw new Wrong("fore.file.invalid.extn", this.allowExtns.toString());
+            throw new Wrong("core.file.extn.invalid", Syno.concat(", ", this.allowExtns));
         }
     }
 

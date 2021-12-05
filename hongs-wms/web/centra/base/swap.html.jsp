@@ -110,6 +110,16 @@
                                 +"/"+ Synt.declare(info.get("form"),   name  );
                         %>
                         <a href="javascript:;" class="show-fork" data-rb="<%=rb%>" data-ak="<%=ak%>" data-at="<%=at%>"><%=name%></a>
+                    <%} else if ("file".equals(type)) {%>
+                        <%
+                            String ft = Synt.declare(info.get("type"), "" );
+                            String fx = Synt.declare(info.get("extn"), "" );
+                            String fz = Synt.declare(info.get("size"), "");
+                            String tm = Synt.declare(info.get("thumb-mode"), "");
+                            String tx = Synt.declare(info.get("thumb-extn"), "");
+                            String tz = Synt.declare(info.get("thumb-size"), "");
+                        %>
+                        <a href="javascript:;" class="show-file" data-file-type="<%=ft%>" data-file-extn="<%=fx%>" data-file-size="<%=fz%>" data-thumb-mode="<%=tm%>" data-thumb-extn="<%=tx%>" data-thumb-size="<%=tz%>"><%=name%></a>
                     <%} else { %>
                         <%=name%>
                     <%}%>
@@ -476,20 +486,68 @@ id=ID 或 id.=ID1&id.=ID2...
         var ak = $(this).data("ak");
         var rb = $(this).data("rb");
         var table = $('<table class="table table-hover table-striped"></table>');
-        var thead = $('<thead></thead>').appendTo(table);
+        $('<col style="width: 80px;"/>').appendTo(table);
         var tbody = $('<tbody></tbody>').appendTo(table);
         var tr;
-        tr = $('<tr></tr>').appendTo(thead);
-        $('<td style="width:80px"></td>').appendTo(tr).text('关联资源');
+        tr = $('<tr></tr>').appendTo(tbody);
+        $('<th></th>').appendTo(tr).text('关联资源');
         $('<td></td>').appendTo(tr).text(at);
         tr = $('<tr></tr>').appendTo(tbody);
-        $('<td style="width:80px"></td>').appendTo(tr).text('关联名称');
+        $('<th></th>').appendTo(tr).text('关联名称');
         $('<td></td>').appendTo(tr).text(ak);
         tr = $('<tr></tr>').appendTo(tbody);
-        $('<td style="width:80px"></td>').appendTo(tr).text('内部字段');
+        $('<th></th>').appendTo(tr).text('内部字段');
         $('<td></td>').appendTo(tr).text(rb);
         $.hsMask({
             'title': '关联参数',
+            'node' : table
+        });
+    });
+    
+    // 查看文件参数
+    context.on("click", "a.show-file", function() {
+        var type  = $(this).data('file-type');
+        var extn  = $(this).data('file-extn');
+        var size  = $(this).data('file-size');
+        var tmode = $(this).data('thumb-mode');
+        var textn = $(this).data('thumb-extn');
+        var tsize = $(this).data('thumb-size');
+        var table = $('<table class="table table-hover table-striped"></table>');
+        $('<col style="width: 80px;"/>').appendTo(table);
+        var tbody = $('<tbody></tbody>').appendTo(table);
+        var tr;
+        if (type) {
+            tr = $('<tr></tr>').appendTo(tbody);
+            $('<th></th>').appendTo(tr).text('文件类型');
+            $('<td></td>').appendTo(tr).text(type);
+        }
+        if (extn) {
+            tr = $('<tr></tr>').appendTo(tbody);
+            $('<th></th>').appendTo(tr).text('类型后缀');
+            $('<td></td>').appendTo(tr).text(extn);
+        }
+        if (size) {
+            tr = $('<tr></tr>').appendTo(tbody);
+            $('<th></th>').appendTo(tr).text('大小限定');
+            $('<td></td>').appendTo(tr).text(size);
+        }
+        if (tmode) {
+            tr = $('<tr></tr>').appendTo(tbody);
+            $('<th></th>').appendTo(tr).text('裁剪模式');
+            $('<td></td>').appendTo(tr).text(tmode);
+        }
+        if (textn) {
+            tr = $('<tr></tr>').appendTo(tbody);
+            $('<th></th>').appendTo(tr).text('存储格式');
+            $('<td></td>').appendTo(tr).text(textn);
+        }
+        if (tsize) {
+            tr = $('<tr></tr>').appendTo(tbody);
+            $('<th></th>').appendTo(tr).text('存储尺寸');
+            $('<td></td>').appendTo(tr).text(tsize);
+        }
+        $.hsMask({
+            'title': '数据结构',
             'node' : table
         });
     });

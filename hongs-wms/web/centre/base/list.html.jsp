@@ -343,15 +343,15 @@
         }
 
         // 权限控制
-        $.each({"create":".create", "update":".update", "delete":".delete"},
-        function(k, v) {
+        $.each({"create":".create", "update":".update", "delete":".delete"}
+        , function(k, v) {
             if (! hsChkUri("<%=_module%>/<%=_entity%>/"+k+".act")) {
                 context.find(v).remove();
             }
         });
         // 外部限制
-        $.each(denycss ? denycss . split(",") : [ ],
-        function(i, n) {
+        $.each(denycss ? denycss . split (",") : [ ]
+        , function(i, n) {
             if (/^find\./.test(n)) {
                 n = ".findbox .form-group[data-name='"+n.substring(5)+"']";
                 findbox.find(n).remove();

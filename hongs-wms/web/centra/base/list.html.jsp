@@ -392,11 +392,7 @@
             [ '<%=_module%>/<%=_entity%>/info.html?<%=Cnst.ID_KEY%>={ID}',
               '.review', '@' ],
             [ '<%=_module%>/<%=_entity%>/snap.html?<%=Cnst.ID_KEY%>={ID}',
-              '.reveal', '@' ],
-            [ '<%=_module%>/<%=_entity%>/snap.html',
-              '.record', '@' ],
-            [ '<%=_module%>/<%=_entity%>/swap.html',
-              '.manual', '@' ]
+              '.reveal', '@' ]
         ],
         load: hsFindWithWord,
         send: hsSendWithMemo,
@@ -480,16 +476,15 @@
 
         // 权限控制
         $.each({"create":".create", "update":".update",
-                "delete":".delete", "search":".review",
-                "reveal":".reveal , .record"},
-        function(k, v) {
+                "delete":".delete", "reveal":".reveal"}
+        , function(k, v) {
             if (! hsChkUri("<%=_module%>/<%=_entity%>/"+k+".act")) {
                 context.find(v).remove();
             }
         });
         // 外部限制
-        $.each(denycss ? denycss . split(",") : [ ],
-        function(i, n) {
+        $.each(denycss ? denycss . split (",") : [ ]
+        , function(i, n) {
             if (/^stat\./.test(n)) {
                 n = ".statbox .form-group[data-name='"+n.substring(5)+"']";
                 statbox.find(n).remove();

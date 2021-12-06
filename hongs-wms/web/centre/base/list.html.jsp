@@ -148,9 +148,9 @@
                     // 选择时禁用创建
                     if ( ! al.isEmpty (   )) {
                     if ( ! al.contains("#")) {
-                        al = al + "#_deny_=.create";
+                        al = al + "#.deny=.create";
                     } else {
-                        al = al + "&_deny_=.create";
+                        al = al + "&.deny=.create";
                     }}
                 %>
                 <ul  class="pickbox" data-ft="_fork" data-fn="<%=name%>" data-ak="<%=ak%>" data-tk="<%=tk%>" data-vk="<%=vk%>"></ul>
@@ -302,9 +302,9 @@
         curl: "<%=_module%>/<%=_entity%>/acount.act?<%=Cnst.RN_KEY%>=<%=Cnst.RN_DEF%>&<%=Cnst.AB_KEY%>=_text,_fork"
     });
 
-    var loadres = hsSerialDat(loadbox);
-    var denycss = (loadres._deny_||"").split (",");
-    delete loadres._deny_ ;
+    var loadres = hsSerialDic(loadbox);
+    var denycss = loadres['.deny'];
+        delete    loadres['.deny'];
 
     // 绑定参数
     listobj._url = hsSetPms(listobj._url, loadres);
@@ -343,15 +343,15 @@
         }
 
         // 权限控制
-        $.each({
-            "create":".create", "update":".update", "delete":".delete"
-        }, function(k, v) {
+        $.each({"create":".create", "update":".update", "delete":".delete"},
+        function(k, v) {
             if (! hsChkUri("<%=_module%>/<%=_entity%>/"+k+".act")) {
                 context.find(v).remove();
             }
         });
         // 外部限制
-        $.each(denycss, function(i, n) {
+        $.each(denycss ? denycss . split(",") : [ ],
+        function(i, n) {
             if (/^find\./.test(n)) {
                 n = ".findbox .form-group[data-name='"+n.substring(5)+"']";
                 findbox.find(n).remove();

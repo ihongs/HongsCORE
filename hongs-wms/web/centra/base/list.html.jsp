@@ -121,9 +121,9 @@
                     // 选择时禁用创建
                     if ( ! al.isEmpty (   )) {
                     if ( ! al.contains("#")) {
-                        al = al + "#_deny_=.create";
+                        al = al + "#.deny=.create";
                     } else {
-                        al = al + "&_deny_=.create";
+                        al = al + "&.deny=.create";
                     }}
                 %>
                 <ul  class="pickbox" data-ft="_fork" data-fn="ar.0.<%=name%>" data-ak="<%=ak%>" data-tk="<%=tk%>" data-vk="<%=vk%>"></ul>
@@ -423,8 +423,8 @@
     });
 
     var loadres = hsSerialDic(loadbox);
-    var denycss = (loadres._deny_||"").split (",");
-    delete loadres._deny_ ;
+    var denycss = loadres['.deny'];
+        delete    loadres['.deny'];
 
     // 绑定参数
     listobj._url = hsSetPms(listobj._url, loadres);
@@ -479,21 +479,22 @@
         }
 
         // 权限控制
-        $.each({
-            "create":".create", "update":".update", "delete":".delete",
-            "search":".review", "reveal":".reveal , .record"
-        }, function(k, v) {
+        $.each({"create":".create", "update":".update",
+                "delete":".delete", "search":".review",
+                "reveal":".reveal , .record"},
+        function(k, v) {
             if (! hsChkUri("<%=_module%>/<%=_entity%>/"+k+".act")) {
                 context.find(v).remove();
             }
         });
         // 外部限制
-        $.each(denycss, function(i, n) {
+        $.each(denycss ? denycss . split(",") : [ ],
+        function(i, n) {
             if (/^stat\./.test(n)) {
                 n = ".statbox .form-group[data-name='"+n.substring(5)+"']";
                 statbox.find(n).remove();
             } else
-            if (/^filt./.test(n)) {
+            if (/^filt\./.test(n)) {
                 n = ".filtbox .form-group[data-name='"+n.substring(5)+"']";
                 filtbox.find(n).remove();
             } else

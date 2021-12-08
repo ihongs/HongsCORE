@@ -200,11 +200,11 @@ public class Casc {
         String  fn = inst.getFormId();
         for (Map info : loop) {
             String id = (String) info.get(Cnst.ID_KEY);
-            inst.set(id, Synt.mapOf(
-                "__meno__" , "system.cascade",
-                "__memo__" , "Update cascade " + fn + ":" + id
-            ) , ct);
             CoreLogger.debug("Update cascade {} {}:{}", fn, fk, id);
+            inst.set(id, Synt.mapOf(
+                "__memo__" , "Update cascade " + fn + ":" + id,
+                "__meno__" , "system.cascade"
+            ) , ct);
         }
     }
 
@@ -232,11 +232,11 @@ public class Casc {
         String  fn = inst.getFormId();
         for (Map info : loop) {
             String id = (String) info.get(Cnst.ID_KEY);
-            inst.cut(id, Synt.mapOf(
-                "__meno__" , "system.cascade",
-                "__memo__" , "Delete cascade " + fn + ":" + id
-            ) , ct);
             CoreLogger.debug("Delete cascade {} {}:{}", fn, fk, id);
+            inst.cut(id, Synt.mapOf(
+                "__memo__" , "Delete cascade " + fn + ":" + id,
+                "__meno__" , "system.cascade"
+            ) , ct);
         }
     }
 

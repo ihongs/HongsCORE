@@ -2,6 +2,7 @@ package io.github.ihongs.serv.centra;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
+import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
@@ -53,6 +54,10 @@ public class InfoAction {
                                  + Core.SERV_PATH  );
             app.put("core_path"  , Core.CORE_PATH  );
             app.put("starts_time", Core.STARTS_TIME);
+            app.put("system_zone", CoreConfig.getInstance()
+                           .getProperty("core.timezone.default", Cnst.ZONE_DEF));
+            app.put("system_lang", CoreConfig.getInstance()
+                           .getProperty("core.language.default", Cnst.LANG_DEF));
         }
 
         // 磁盘情况

@@ -402,9 +402,9 @@ id=ID 或 id.=ID1&id.=ID2...
         <div class="alert alert-info">
             <p>
                 如果已经开放公共访问, 则开放接口只需将上述路径的前缀
-                <b><%=baseHref%>/centr<span style="color: red;">a</span>/</b>
+                <b><%=baseHref%>/centr<span style="color: red; font-size: 1.5em; line-height: 0.7em;">a</span>/</b>
                 换成
-                <b><%=baseHref%>/centr<span style="color: red;">e</span>/</b>
+                <b><%=baseHref%>/centr<span style="color: red; font-size: 1.5em; line-height: 0.7em;">e</span>/</b>
                 即可, 其他部分不用变.
                 管理和开放接口可定制, 有作特殊处理则可能细节稍有不同.
             </p>

@@ -402,9 +402,9 @@ id=ID 或 id.=ID1&id.=ID2...
         <div class="alert alert-info">
             <p>
                 如果已经开放公共访问, 则开放接口只需将上述路径的前缀
-                <b><%=baseHref%>/centr<span style="color: red; font-size: 1.5em; line-height: 0.7em;">a</span>/</b>
+                <a href="javascript:;"><%=baseHref%>/centr<b style="color: red;">a</b>/</a>
                 换成
-                <b><%=baseHref%>/centr<span style="color: red; font-size: 1.5em; line-height: 0.7em;">e</span>/</b>
+                <a href="javascript:;"><%=baseHref%>/centr<b style="color: red;">e</b>/</a>
                 即可, 其他部分不用变.
                 管理和开放接口可定制, 有作特殊处理则可能细节稍有不同.
             </p>
@@ -413,9 +413,13 @@ id=ID 或 id.=ID1&id.=ID2...
     </div>
 </div>
 <style type="text/css">
-    .lore-info pre {
+    .swap-info pre {
         white-space: pre-wrap;
         word-wrap: break-word;
+    }
+    .swap-info .alert-info a:hover b {
+        line-height: 0.7em;
+        font-size: 1.4em;
     }
 </style>
 <script type="text/javascript">

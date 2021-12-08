@@ -401,7 +401,7 @@ id=ID 或 id.=ID1&id.=ID2...
         </fieldset>
         <div class="alert alert-info">
             <p>
-                如果已经开放公共访问, 则开放接口只需将上述路径的前缀
+                如果已经开放公共访问, 则开放接口只需将以上路径的前缀
                 <a href="javascript:;"><%=baseHref%>/centr<b style="color: red;">a</b>/</a>
                 换成
                 <a href="javascript:;"><%=baseHref%>/centr<b style="color: red;">e</b>/</a>

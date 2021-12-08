@@ -223,7 +223,8 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             }
         }
 
-        CoreLogger.info("HTTP server is started."
+        CoreLogger.info(
+            "Action server is started"
             + "\r\n\tDEBUG       : {}"
             + "\r\n\tSERVER_ID   : {}"
             + "\r\n\tCORE_PATH   : {}"
@@ -251,7 +252,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                   - Core.STARTS_TIME;
         Core core = Core.GLOBAL_CORE;
         CoreLogger.info(
-            "HTTP server is stopped."
+            "Action server is stopped"
             + "\r\n\tSERVER_ID   : {}"
             + "\r\n\tRuntime     : {}"
             + "\r\n\tObjects     : {}",

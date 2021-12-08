@@ -23,8 +23,8 @@ body {
     overflow: hidden;
     float : left;
     height: 100%;
-    border-right: 1px solid #a5a5a5;
-    border-left : 1px solid #a5a5a5;
+    border-right: 1px solid #c5c5c5;
+    border-left : 1px solid #c5c5c5;
 }
 #bodybox {
     background: #f8f8f8;
@@ -32,9 +32,9 @@ body {
     overflow: hidden;
     float :right;
     height: 100%;
-    border-right: 1px solid #c5c5c5;
-    border-left : 1px solid #c5c5c5;
-    box-shadow  : 0 0 15px  #a5a5a5 inset;
+    border-right: 1px solid #e5e5e5;
+    border-left : 1px solid #e5e5e5;
+    box-shadow  : 0 0 15px  #c5c5c5 inset;
 }
 #menu-context ,
 #main-context {

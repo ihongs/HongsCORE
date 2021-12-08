@@ -245,11 +245,10 @@ public class Data extends SearchEntity {
                 break;
             }
 
-            if (fields == null) {
+            if (fields  == null ) {
                 break;
-            }
-            cnf = getBgConf(  );
-            if (  cnf  == null) {
+            }   cnf = getBgConf();
+            if (cnf.equals(conf)) {
                 break;
             }
 
@@ -263,6 +262,9 @@ public class Data extends SearchEntity {
                 break;
             }
 
+            if (fieldx  == null ) {
+                break;
+            }
             if (fieldx.isEmpty()) {
                 break;
             }
@@ -300,17 +302,16 @@ public class Data extends SearchEntity {
     }
 
     /**
-     * 获取背景
+     * 背景配置
      * 当前表单不在管理区之内时,
      * 会用当前表单覆盖管理表单,
      * 此可获取对内配置, 用于 getFields
      * @return
      */
     protected String getBgConf() {
-        if ( ! conf.startsWith("centre/") ) {
-            return null;
-        }
-        return "centra/"+ conf.substring(7);
+        return conf.startsWith("centre/")
+            ? "centra/"+conf.substring(7)
+            :  conf;
     }
 
     @Override
@@ -1327,8 +1328,21 @@ public class Data extends SearchEntity {
      * @return
      */
     protected Map<String, Object> getCascades() {
-        String canf = conf;
         do {
+            try {
+                return FormSet.getInstance(conf).getEnum(form+":cascade");
+            }
+            catch (HongsException ex) {
+            if (910 != ex.getErrno( )
+            &&  913 != ex.getErrno()) {
+                throw  ex.toExemption();
+            }}
+
+            String canf = getBgConf();
+            if (canf.equals(conf)) {
+                break;
+            }
+
             try {
                 return FormSet.getInstance(canf).getEnum(form+":cascade");
             }
@@ -1337,10 +1351,9 @@ public class Data extends SearchEntity {
             &&  913 != ex.getErrno()) {
                 throw  ex.toExemption();
             }}
-            canf = getBgConf();
         }
-        while ( canf != null );
-        return  new HashMap ();
+        while (false );
+        return new HashMap(0);
     }
 
     /**
@@ -1350,8 +1363,21 @@ public class Data extends SearchEntity {
      * @return
      */
     protected Map<String, Object> getIncludes() {
-        String canf = conf;
         do {
+            try {
+                return FormSet.getInstance(conf).getEnum(form+":include");
+            }
+            catch (HongsException ex) {
+            if (910 != ex.getErrno( )
+            &&  913 != ex.getErrno()) {
+                throw  ex.toExemption();
+            }}
+
+            String canf = getBgConf();
+            if (canf.equals(conf)) {
+                break;
+            }
+
             try {
                 return FormSet.getInstance(canf).getEnum(form+":include");
             }
@@ -1360,10 +1386,9 @@ public class Data extends SearchEntity {
             &&  913 != ex.getErrno()) {
                 throw  ex.toExemption();
             }}
-            canf = getBgConf();
         }
-        while ( canf != null );
-        return  new HashMap ();
+        while (false);
+        return new HashMap(0);
     }
 
     /**

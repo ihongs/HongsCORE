@@ -151,8 +151,8 @@ public final class Chore implements Core.Singleton, AutoCloseable {
     /**
      * 每日任务
      * @param task
-     * @param hour
-     * @param minu
+     * @param hour 每天几点
+     * @param minu 几分执行
      */
     public void runDaily(Runnable task, int hour, int minu) {
         // 计算延时

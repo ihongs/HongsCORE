@@ -430,7 +430,7 @@
         };
 
         $.hsAjax({
-            url: "centra/info/search.act?rb=app_info,sys_info,run_info,dir_info,core_info,lock_info,task_info",
+            url: "centra/info/search.act?rb=app_info,sys_info,run_info,dir_info,core_info,cron_info,lock_info,task_info",
             dataType: "json",
             success: function(rst) {
                 var box;
@@ -514,6 +514,7 @@
                 }
                 rst.info.lock_info.Larder = a.sort( ).join("\r\n");
                 rst.info.core_info = rst.info.core_info.sort().join("\r\n");
+                rst.info.cron_info = rst.info.cron_info.sort().join("\r\n");
                 rst.info.task_info = rst.info.task_info.sort().join("\r\n");
                 formObj.fillInfo(rst.info);
             }

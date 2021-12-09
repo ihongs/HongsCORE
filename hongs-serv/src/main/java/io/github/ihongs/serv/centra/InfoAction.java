@@ -8,6 +8,7 @@ import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
+import io.github.ihongs.util.daemon.Chore;
 import io.github.ihongs.util.daemon.Gate;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
@@ -26,6 +27,8 @@ import java.util.Collections;
 */
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 /**
  * 管理信息
@@ -116,11 +119,14 @@ public class InfoAction {
         if ( rb != null && rb.contains("core_info")) {
             rsp.put("core_info", new CoreToKeys(Core.GLOBAL_CORE).keySet());
         }
-        if ( rb != null && rb.contains("lock_info")) {
-            rsp.put("lock_info", Gate.counts());
-        }
         if ( rb != null && rb.contains("task_info")) {
             rsp.put("task_info", getAllTasks());
+        }
+        if ( rb != null && rb.contains("cron_info")) {
+            rsp.put("cron_info", getAllCrons());
+        }
+        if ( rb != null && rb.contains("lock_info")) {
+            rsp.put("lock_info", Gate.counts());
         }
 
         helper.reply(Synt.mapOf( "info", rsp ));
@@ -234,6 +240,13 @@ public class InfoAction {
             names.add(task.getName());
         }
 
+        return names;
+    }
+
+    public static Set<String> getAllCrons() {
+        BlockingQueue queue = ((ScheduledThreadPoolExecutor) Chore.getInstance().getExecutor()).getQueue();
+        Set<String> names = new LinkedHashSet(queue.  size  ());
+        for(Object  task  : queue) names.add (task .toString());
         return names;
     }
 

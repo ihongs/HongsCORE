@@ -88,17 +88,12 @@ public final class Gate {
      * @return 引用计数
      */
     public static Map counts() {
-        Map rs = new HashMap();
-        Map st = new HashMap();
-        Map rw = new HashMap();
-
-        rs.put( "Locker", st );
-        rs.put( "Larder", rw );
-
+        Map  st, rw, rs;
         Lock loxk  ;
 
         loxk = ST_LOCKR.readLock();
         loxk.lock();
+        st = new HashMap(ST_LOCKS.size());
         try {
             Iterator<Map.Entry<String, Locker>> it = ST_LOCKS.entrySet().iterator();
             while (it.hasNext()) {
@@ -113,6 +108,7 @@ public final class Gate {
 
         loxk = RW_LOCKR.readLock();
         loxk.lock();
+        rw = new HashMap(RW_LOCKS.size());
         try {
             Iterator<Map.Entry<String, Leader>> it = RW_LOCKS.entrySet().iterator();
             while (it.hasNext()) {
@@ -124,6 +120,10 @@ public final class Gate {
         } finally {
             loxk.unlock();
         }
+
+        rs = new HashMap(2);
+        rs.put("Locker",st);
+        rs.put("Larder",rw);
 
         return rs;
     }

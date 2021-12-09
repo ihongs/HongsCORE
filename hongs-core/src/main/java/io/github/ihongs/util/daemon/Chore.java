@@ -93,9 +93,8 @@ public final class Chore implements Core.Singleton, AutoCloseable {
         SES.shutdown ();
         try {
             if (! SES.isTerminated()) {
-                System.err.println("Core daemons are terminating...");
             if (! SES.awaitTermination(1, TimeUnit.MINUTES)) {
-                System.err.println("Core daemons terminated timeout");
+                System.err.println("CORE-Chore is timeout!");
             }}
         } catch ( InterruptedException e) {
             throw new RuntimeException(e) ;

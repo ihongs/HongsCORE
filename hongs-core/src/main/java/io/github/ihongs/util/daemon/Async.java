@@ -51,7 +51,7 @@ public abstract class Async<T> extends CoreSerial implements AutoCloseable {
         }
 
         for(int i = 0; i < maxServs; i ++) {
-            servs.execute(new Atask(this, "async:"+name+"["+i+"]"));
+            servs.execute(new Atask(this, "CORE-Async-"+name+"-"+i));
         }
 
         //tasks.offer(null); // 放一个空对象促使其执行终止时未执行完的任务

@@ -67,7 +67,7 @@ public final class Chore implements Core.Singleton, AutoCloseable {
                 Thread t ;
                 t = new Thread(r);
                 t.setDaemon(true);
-                t.setName("core-daemon-" + a.incrementAndGet());
+                t.setName("CORE-Chore-" + a.incrementAndGet());
                 return t ;
             }
         });

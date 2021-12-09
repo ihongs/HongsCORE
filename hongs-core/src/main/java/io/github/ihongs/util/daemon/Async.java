@@ -48,6 +48,8 @@ public abstract class Async<T> extends CoreSerial implements AutoCloseable {
                     throw ex.toExemption();
                 }
             }
+        } else {
+            name = this.getClass().getSimpleName();
         }
 
         for(int i = 0; i < maxServs; i ++) {

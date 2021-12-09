@@ -149,6 +149,28 @@ public final class Chore implements Core.Singleton, AutoCloseable {
     }
 
     /**
+     * 每日任务
+     * @param task
+     * @param hour
+     * @param minu
+     */
+    public void runDaily(Runnable task, int hour, int minu) {
+        // 计算延时
+        Calendar cal0 = Calendar.getInstance( );
+        Calendar cal1 = Calendar.getInstance( );
+        cal0.setTimeZone(TimeZone.getDefault());
+        cal1.setTimeZone(TimeZone.getDefault());
+        cal1.setTimeInMillis(hour * 3600000 + minu * 60000);
+        cal1.set(Calendar.MONTH, cal0.get(Calendar.MONTH) );
+        cal1.set(Calendar.YEAR , cal0.get(Calendar.YEAR ) );
+        cal1.set(Calendar.DATE , cal0.get(Calendar.DATE ) );
+        if ( cal1.before(cal0) ) cal1.add(Calendar.HOUR,24);
+        int ddt = (int) (cal1.getTimeInMillis() - cal0.getTimeInMillis()) / 1000 + 1;
+
+        run( task, ddt, DDP );
+    }
+
+    /**
      * 日常维护任务
      * 默认每天零点时运行
      * 或在 default.properties 设置 core.daemon.run.daily=HH:mm
@@ -161,10 +183,10 @@ public final class Chore implements Core.Singleton, AutoCloseable {
         cal0.setTimeZone(TimeZone.getDefault());
         cal1.setTimeZone(TimeZone.getDefault());
         cal1.setTimeInMillis  (  DDT * 1000L  );
-        cal1.set(Calendar.MONTH, cal0.get(Calendar.MONTH ) );
-        cal1.set(Calendar.YEAR , cal0.get(Calendar.YEAR  ) );
-        cal1.set(Calendar.DATE , cal0.get(Calendar.DATE  ) );
-        if ( cal1.before(cal0) ) cal1.add(Calendar.HOUR, 24);
+        cal1.set(Calendar.MONTH, cal0.get(Calendar.MONTH) );
+        cal1.set(Calendar.YEAR , cal0.get(Calendar.YEAR ) );
+        cal1.set(Calendar.DATE , cal0.get(Calendar.DATE ) );
+        if ( cal1.before(cal0) ) cal1.add(Calendar.HOUR,24);
         int ddt = (int) (cal1.getTimeInMillis() - cal0.getTimeInMillis()) / 1000 + 1;
 
         run( task, ddt, DDP );

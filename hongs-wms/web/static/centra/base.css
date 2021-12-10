@@ -414,7 +414,12 @@ body {
 .statbox .chartbox {
     margin  : 0;
     padding : 0;
+}
+.statbox .checkbox {
     overflow: auto;
+}
+.statbox .chartbox {
+    overflow: hidden;
 }
 .statbox .alertbox {
     width   : 100%;

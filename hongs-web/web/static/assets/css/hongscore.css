@@ -223,6 +223,10 @@ input[type="time"].form-control {
 .breadcrumb.laps .close {
     display: none ;
 }
+.breadcrumb.show-close .active .close {
+    display: block;
+    margin-left: 0.5em;
+}
 .breadcrumb.laps > li i + * {
     margin-left: 0.5em;
 }

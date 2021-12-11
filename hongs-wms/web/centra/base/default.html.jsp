@@ -43,7 +43,7 @@
             <%} /* End if */%>
             <div id="bodybox">
                 <div id="main-context" class="container-fluid">
-                    <ol class="breadcrumb tabs laps" data-topple="hsTabs">
+                    <ol class="breadcrumb show-close tabs laps" data-topple="hsTabs">
                         <li class="hook-crumb dont-crumb pull-right" data-eval="H$('!<%=$module%>/<%=$entity%>/select.act') || $(this).hide()">
                             <a href="javascript:;" data-href="<%=$module+"/"+$entity+"/swap.html"%>" title="<%=$locale.translate("fore.manual", $title)%>">
                                 <i class="glyphicon glyphicon-book"></i>
@@ -56,11 +56,6 @@
                                 <span class="title hide">...</span>
                             </a>
                         </li>
-                        <li class="back-crumb dont-close pull-right">
-                            <a href="javascript:;">
-                                <i class="glyphicon glyphicon-remove-sign"></i>
-                            </a>
-                        </li>
                         <li class="home-crumb active">
                             <a href="javascript:;">
                                 <i class="glyphicon glyphicon-folder-open"></i>
@@ -69,7 +64,6 @@
                         </li>
                     </ol>
                     <div class="labs laps">
-                        <div></div>
                         <div></div>
                         <div></div>
                         <div><div data-load="<%=$href%>"></div></div>

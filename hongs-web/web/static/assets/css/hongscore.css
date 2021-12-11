@@ -220,12 +220,18 @@ input[type="time"].form-control {
     display: none ;
 }
 
+.nav-tabs   .close,
+.nav-pills  .close,
+.breadcrumb .close {
+    margin-left: 0.2em;
+}
 .breadcrumb.laps .close {
     display: none ;
+    margin-left: 0.0em;
 }
 .breadcrumb.show-close .active .close {
     display: block;
-    margin-left: 0.5em;
+    margin-left: 0.2em;
 }
 .breadcrumb.laps > li i + * {
     margin-left: 0.5em;

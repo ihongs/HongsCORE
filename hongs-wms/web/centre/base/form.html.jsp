@@ -100,7 +100,7 @@
                     name += "." ; // 后缀点表示可以有多个值
                 }
             %>
-            <div class="form-group row">
+            <div class="form-group row" data-name="<%=name%>">
                 <label class="col-sm-3 col-md-2 control-label text-right"><%=text != null ? text : ""%></label>
                 <div class="col-sm-9 col-md-8">
                 <%if ("textarea".equals(type) || "textview".equals(type)) {%>
@@ -188,7 +188,7 @@
                 </div>
             </div>
         <%} else {%>
-            <div class="form-group row">
+            <div class="form-group row" data-name="<%=name%>">
                 <label class="col-sm-3 col-md-2 control-label text-right"><%=text != null ? text : ""%></label>
                 <div class="col-sm-9 col-md-8">
                 <%if ("textarea".equals(type) || "textview".equals(type)) {%>
@@ -458,13 +458,20 @@
 <script type="text/javascript">
 (function($) {
     var context = H$("#<%=_pageId%>");
+    var loadbox = context.closest( ".loadbox" );
+    var formbox = context.find("form").first( );
+
+    var loadres = hsSerialDic(loadbox);
+    var denycss = loadres['.deny'];
+        delete    loadres['.deny'];
 
     var formobj = context.hsForm({
         <%if ("create".equals(_action)) {%>
-        _url: "<%=_module%>/<%=_entity%>/select.act?<%=Cnst.AB_KEY%>=.enfo,.info,.fall,_fork,_text",
+        _url : "<%=_module%>/<%=_entity%>/select.act?<%=Cnst.AB_KEY%>=.enfo,.info,.fall,_fork,_text",
         <%} else {%>
-        _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.AB_KEY%>=.enfo,.info,.fall,_fork,_text",
+        _url : "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.AB_KEY%>=.enfo,.info,.fall,_fork,_text",
         <%} /* End if */ %>
+        _data: loadres,
         _fill__fork: hsFormFillFork,
         _fill__file: hsFormFillFile,
         _fill__view: hsFormFillView
@@ -476,15 +483,23 @@
             window["<%=_funcId%>"](context, formobj);
         }
 
-        var loadbox = formobj.loadBox;
-        var formbox = formobj.formBox;
-        var formurl = formobj._url;
+        // 外部限制
+        $.each(denycss ? denycss.split(",") : []
+        , function(i, n) {
+            if (/^item\./.test(n)) {
+                n = ".form-group[data-name='"+n.substring(5)+"']";
+                formbox.find(n).remove();
+            } else
+            {
+                context.find(n).remove();
+            }
+        });
 
         // 特殊控件
-        setFormItems (formbox,loadbox);
+        setFormItems(formbox, loadbox);
 
         // 加载数据
-        formobj.load (formurl,loadbox);
+        formobj.load();
     });
 })( jQuery );
 </script>

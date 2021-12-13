@@ -266,6 +266,10 @@
     var filtbox = context.find(".filtbox");
     var statbox = context.find(".statbox");
 
+    var loadres = hsSerialDic(loadbox);
+    var denycss = loadres['.deny'];
+        delete    loadres['.deny'];
+
     //** 列表、搜索表单 **/
 
     var listobj = context.hsList({
@@ -276,7 +280,7 @@
               '<%=_locale.translate("fore.delete.confirm", _title)%>' ]
         ],
         openUrls: [
-            [ '<%=_module%>/<%=_entity%>/form_init.html?'+$.param(hsSerialArr(loadbox)),
+            [ '<%=_module%>/<%=_entity%>/form_init.html?'+$.param(hsSerialArr(loadres)),
               '.create', '@' ],
             [ '<%=_module%>/<%=_entity%>/form.html?<%=Cnst.ID_KEY%>={ID}',
               '.update', '@' ],
@@ -301,10 +305,6 @@
         murl: "<%=_module%>/<%=_entity%>/amount.act?<%=Cnst.RN_KEY%>=<%=Cnst.RN_DEF%>&<%=Cnst.AB_KEY%>=_text",
         curl: "<%=_module%>/<%=_entity%>/acount.act?<%=Cnst.RN_KEY%>=<%=Cnst.RN_DEF%>&<%=Cnst.AB_KEY%>=_text,_fork"
     });
-
-    var loadres = hsSerialDic(loadbox);
-    var denycss = loadres['.deny'];
-        delete    loadres['.deny'];
 
     // 绑定参数
     listobj._url = hsSetPms(listobj._url, loadres);
@@ -379,7 +379,7 @@
         }
 
         // 加载数据
-        listobj.load(listobj._url, findbox);
+        listobj.load(null, findbox);
     });
 })(jQuery);
 </script>

@@ -93,7 +93,7 @@
                     name += ".";
                 }
             %>
-            <div class="form-group row">
+            <div class="form-group row" data-name="<%=name%>">
                 <label class="col-sm-3 col-md-2 control-label text-right"><%=text%></label>
                 <div class="col-sm-9 col-md-8">
                 <%if ("textarea".equals(type) || "textview".equals(type)) {%>
@@ -195,6 +195,12 @@
 <script type="text/javascript">
 (function($) {
     var context = H$("#<%=_pageId%>");
+    var loadbox = context.closest( ".loadbox" );
+    var formbox = context.find("form").first( );
+
+    var loadres = hsSerialDic(loadbox);
+    var denycss = loadres['.deny'];
+        delete    loadres['.deny'];
 
     var formobj = context.hsForm({
         _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.AB_KEY%>=_text,_fork,.fall",
@@ -209,15 +215,23 @@
             window["<%=_funcId%>"](context, formobj);
         }
 
-        var loadbox = formobj.loadBox;
-        var formbox = formobj.formBox;
-        var formurl = formobj._url;
+        // 外部限制
+        $.each(denycss ? denycss.split(",") : []
+        , function(i, n) {
+            if (/^item\./.test(n)) {
+                n = ".form-group[data-name='"+n.substring(5)+"']";
+                formbox.find(n).remove();
+            } else
+            {
+                context.find(n).remove();
+            }
+        });
 
         // 特殊控件
-        setFormItems (formbox,loadbox);
+        setInfoItems(formbox, loadbox);
 
         // 加载数据
-        formobj.load (formurl,loadbox);
+        formobj.load();
     });
 })( jQuery );
 </script>

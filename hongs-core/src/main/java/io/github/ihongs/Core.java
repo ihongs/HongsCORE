@@ -1,12 +1,14 @@
 package io.github.ihongs;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
-import java.util.Locale;
-import java.util.HashMap;
 import java.util.Set;
-import java.util.TimeZone;
+import java.util.HashMap;
 import java.util.TreeSet;
+import java.util.Locale;
+import java.util.TimeZone;
 import java.util.function.Supplier;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -266,13 +268,21 @@ public class Core
     try
     {
       // 获取工厂方法
-      java.lang.reflect.Method method;
-      method =  clas.getMethod("getInstance", new Class [] {});
+      Method method = clas.getMethod("getInstance", new Class [] {});
+      int    modifs = method.getModifiers();
+
+      // 非父类定义的 public static
+      if (! Modifier.isPublic(modifs)
+      ||  ! Modifier.isStatic(modifs)
+      || clas != method.getDeclaringClass())
+      {
+        throw  new  NoSuchMethodException();
+      }
 
       // 获取工厂对象
       try
       {
-        return  ( T )   method.invoke( null , new Object[] {});
+        return (T) method.invoke(null, new Object [] {});
       }
       catch (IllegalAccessException ex)
       {

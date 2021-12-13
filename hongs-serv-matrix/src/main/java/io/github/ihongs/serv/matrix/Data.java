@@ -16,6 +16,8 @@ import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
 
 import java.io.File;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -113,19 +115,24 @@ public class Data extends SearchEntity {
         Map    dict = FormSet.getInstance(conf).getForm(form);
         String name = ( String ) Dict.get(dict, null, "@", "db-class");
         if (name != null && !name.isEmpty() && !name.equals(Data.class.getName( ))) {
-            Class klass ;
+            Class type ;
             try {
-                  klass = Class.forName (name);
+                  type = Class.forName (name);
             } catch (ClassNotFoundException e) {
                 throw new HongsExemption(821, "Can not find class by name '"+name+"'." );
             }
 
             try {
-                return (Data) klass
-                    .getMethod("getInstance", new Class [] {String.class, String.class})
-                    .invoke   (    null     , new Object[] {  conf      ,   form      });
+                Method func = type.getMethod("getInstance", new Class [] {String.class, String.class});
+                int    modi = func.getModifiers();
+                if (! Modifier.isPublic(modi)
+                ||  ! Modifier.isStatic(modi)
+                ||  type != func.getDeclaringClass()) {
+                    throw new NoSuchMethodException();
+                }
+                return (Data) func.invoke(null, new Object[] {conf, form});
             } catch (NoSuchMethodException ex) {
-                return (Data) Core.getInstance(klass);
+                return (Data) Core.getInstance (type);
             } catch (InvocationTargetException ex) {
                 Throwable ta = ex.getCause(  );
                 // 调用层级过多, 最好直接抛出

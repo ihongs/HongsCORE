@@ -62,7 +62,7 @@ public class Tests extends TestCase {
             "/centre/sign/create.act;\r\n/centre/login.html"
         ).toString());
 
-        assertEquals(new URLPatterns("", "").matches("/a/b.js"), false);
+        assertEquals(new URLPatterns("", "").matches("/a/b.js"), true);
 
         assertEquals(new URLPatterns("/a/*", "").matches("/a/b.js"), true );
         assertEquals(new URLPatterns("/a/*", "").matches("/b/a.js"), false);
@@ -75,7 +75,7 @@ public class Tests extends TestCase {
         assertEquals(new URLPatterns("", "*.js").matches("/a/b.ps"), true );
 
         assertEquals(new URLPatterns("/a/*", "*.js").matches("/a/b.js"), false);
-        assertEquals(new URLPatterns("/a/*", "*.js").matches("/a/b.ps"), true );
+        assertEquals(new URLPatterns("*.js", "/a/*").matches("/b/a.js"), true );
     }
 
 }

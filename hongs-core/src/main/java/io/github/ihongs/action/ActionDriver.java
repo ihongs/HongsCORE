@@ -948,15 +948,16 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         }
 
         @Override
-        public  String toString( ) {
-            if (include == null && exclude == null) {
+        public String toString() {
+            if (include == null
+            &&  exclude == null) {
                 return "";
             } else
             if (exclude == null) {
                 return "Include: "+include.toString();
             } else
             if (include == null) {
-                return "Exclude: "+include.toString();
+                return "Exclude: "+exclude.toString();
             } else
             {
                 return "Include: "+include.toString()
@@ -966,8 +967,9 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         }
 
         public  boolean matches(String uri) {
-            if (include == null && exclude == null) {
-                return  false  ;
+            if (include == null
+            &&  exclude == null) {
+                return     true;
             } else
             if (exclude == null) {
                 return  include.matcher(uri).matches();
@@ -982,7 +984,10 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         }
 
         private Pattern compile(String pat) {
-            pat = pat.trim();
+            pat = pat. trim();
+            if (pat.isEmpty()) {
+                return null;
+            }
             pat = pat.replaceAll("[\\^\\$\\(\\)\\[\\]\\{\\}\\+\\.\\\\]", "\\\\$0");
             pat = pat.replaceAll("\\s*;\\s*", ")|(");
             pat = pat.replace("*", ".*");

@@ -22,16 +22,16 @@ import javax.servlet.http.HttpServletResponse;
 public class XrshFilter implements Filter {
 
     private String      inside = null; // 过滤器标识
-    private URLPatterns ignore = null; // 待忽略用例
+    private URLPatterns patter = null; // 待忽略用例
     private boolean     blocks = false ; // 屏蔽全部
 
     @Override
     public void init(FilterConfig fc) throws ServletException {
         inside = XsrfFilter.class.getName()+":"+fc.getFilterName()+":INSIDE";
         blocks = Synt.declare (fc.getInitParameter ("block-every") , false );
-        ignore = new ActionDriver.URLPatterns(
-            fc.getInitParameter("url-exclude"),
-            fc.getInitParameter("url-include")
+        patter = new ActionDriver.URLPatterns(
+            fc.getInitParameter("url-include"),
+            fc.getInitParameter("url-exclude")
         );
     }
 
@@ -44,8 +44,8 @@ public class XrshFilter implements Filter {
          * 对于嵌套相同过滤, 不在内部重复执行;
          * 如外部设置了忽略, 则跳过忽略的路径.
          */
-        if ((inside != null &&  Synt .declare(req.getAttribute(inside), false ))
-        ||  (ignore != null && ignore.matches(ActionDriver.getRecentPath(req)))) {
+        if ((inside != null &&  Synt  .declare(req.getAttribute(inside), false ))
+        ||  (patter != null && !patter.matches(ActionDriver.getRecentPath(req)))) {
             fc.doFilter(req, rsp);
             return;
         }

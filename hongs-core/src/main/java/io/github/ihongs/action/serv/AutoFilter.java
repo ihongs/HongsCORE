@@ -19,7 +19,6 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -31,8 +30,8 @@ import javax.servlet.http.HttpServletResponse;
  *
  * <h3>初始化参数(init-param):</h3>
  * <pre>
- * url-exclude  排除的 URL, 可用","分割多个, 可用"*"为通配符
- * url-include  包含的 URL, 可用","分割多个, 可用"*"为通配符
+ * url-exclude  排除的 URL, 可用";"分割多个, 可用"*"为通配符
+ * url-include  包含的 URL, 可用";"分割多个, 可用"*"为通配符
  * action-path  默认动作地址
  * layout-path  默认页面地址
  * </pre>
@@ -50,7 +49,7 @@ public class AutoFilter extends ActionDriver {
 
     private String action;
     private String layout;
-    private URLPatterns ignore = null;
+    private URLPatterns patter = null;
     private Set<String> layset = null;
     private Set<String> actset = null;
     private Set<String> cstset = null;
@@ -72,9 +71,9 @@ public class AutoFilter extends ActionDriver {
         }
 
         // 获取不包含的URL
-        this.ignore = new URLPatterns(
-            cnf.getInitParameter("url-exclude"),
-            cnf.getInitParameter("url-include")
+        this.patter = new URLPatterns(
+            cnf.getInitParameter("url-include"),
+            cnf.getInitParameter("url-exclude")
         );
     }
 
@@ -93,7 +92,7 @@ public class AutoFilter extends ActionDriver {
         String url = ActionDriver.getRecentPath(req);
 
         // 检查是否需要跳过
-        if (ignore != null && ignore.matches(url)) {
+        if (patter != null && ! patter.matches(url)) {
             chain.doFilter( req , rsp );
             return;
         }

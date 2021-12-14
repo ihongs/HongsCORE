@@ -30,8 +30,8 @@ import javax.servlet.http.HttpServletResponse;
  *
  * <h3>初始化参数(init-param):</h3>
  * <pre>
- * url-exclude  排除的 URL, 可用","分割多个, 可用"*"为通配符
- * url-include  包含的 URL, 可用","分割多个, 可用"*"为通配符
+ * url-exclude  排除的 URL, 可用";"分割多个, 可用"*"为通配符
+ * url-include  包含的 URL, 可用";"分割多个, 可用"*"为通配符
  * config-name  菜单配置, 注: 如存在同名动作, 则全区均需登录
  * expire-time  登录超时(默认为永久)
  * index-page   起始页(为空则不跳转)
@@ -72,9 +72,9 @@ public class AuthFilter
   private String  loginPage = null;
 
   /**
-   * 不包含的URL
+   * 包含的URL
    */
-  private URLPatterns ignore = null;
+  private URLPatterns patter = null;
 
   /**
    * 去主机名正则
@@ -149,9 +149,9 @@ public class AuthFilter
     /**
      * 获取不包含的URL
      */
-    this.ignore = new URLPatterns(
-        config.getInitParameter("url-exclude"),
-        config.getInitParameter("url-include")
+    this.patter = new URLPatterns(
+        config.getInitParameter("url-include"),
+        config.getInitParameter("url-exclude")
     );
   }
 
@@ -163,7 +163,7 @@ public class AuthFilter
     siteMap   = null;
     indexPage = null;
     loginPage = null;
-    ignore    = null;
+    patter    = null;
   }
 
   @Override
@@ -183,7 +183,7 @@ public class AuthFilter
     /**
      * 检查当前动作是否可以忽略
      */
-    if (ignore != null && ignore.matches (act) ) {
+    if (patter != null && ! patter.matches(act)) {
         chain.doFilter(req, rsp);
         return;
     }

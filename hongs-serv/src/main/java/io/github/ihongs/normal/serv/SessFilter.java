@@ -31,7 +31,7 @@ public class SessFilter implements Filter {
     protected int    SSRX =   86400; // 会话过期时间(秒)
 
     private String      inside = null; // 过滤器标识
-    private URLPatterns ignore = null; // 待忽略用例
+    private URLPatterns patter = null; // 待忽略用例
 
     @Override
     public void init(FilterConfig fc)
@@ -61,9 +61,9 @@ public class SessFilter implements Filter {
         }
 
         inside = SessFilter.class.getName()+":"+fc.getFilterName()+":INSIDE";
-        ignore = new ActionDriver.URLPatterns(
-            fc.getInitParameter("url-exclude"),
-            fc.getInitParameter("url-include")
+        patter = new ActionDriver.URLPatterns(
+            fc.getInitParameter("url-include"),
+            fc.getInitParameter("url-exclude")
         );
     }
 
@@ -77,8 +77,8 @@ public class SessFilter implements Filter {
          * 对于嵌套相同过滤, 不在内部重复执行;
          * 如外部设置了忽略, 则跳过忽略的路径.
          */
-        if ((inside != null &&  Synt .declare(req.getAttribute(inside), false ))
-        ||  (ignore != null && ignore.matches(ActionDriver.getRecentPath(raq)))) {
+        if ((inside != null &&  Synt  .declare(req.getAttribute(inside), false ))
+        ||  (patter != null && !patter.matches(ActionDriver.getRecentPath(raq)))) {
             flt.doFilter(req, rsp);
             return;
         }

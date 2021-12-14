@@ -35,8 +35,8 @@ public class VersFilter extends ActionDriver {
     /**
      * 不包含的URL
      */
-    private URLPatterns ignoreUrls = null;
-    private URLPatterns ignoreRefs = null;
+    private URLPatterns urlPatter = null;
+    private URLPatterns refPatter = null;
     private byte level = 0;
 
     private static final Pattern REF_PAT = Pattern.compile("^\\w+://([^/]+)(.*)");
@@ -50,13 +50,13 @@ public class VersFilter extends ActionDriver {
         /**
          * 获取不包含的URL
          */
-        this.ignoreUrls = new URLPatterns(
-            config.getInitParameter("url-exclude"),
-            config.getInitParameter("url-include")
+        this.urlPatter = new URLPatterns(
+            config.getInitParameter("url-include"),
+            config.getInitParameter("url-exclude")
         );
-        this.ignoreRefs = new URLPatterns(
-            config.getInitParameter("ref-exclude"),
-            config.getInitParameter("ref-include")
+        this.refPatter = new URLPatterns(
+            config.getInitParameter("ref-include"),
+            config.getInitParameter("ref-exclude")
         );
 
         /**
@@ -78,8 +78,8 @@ public class VersFilter extends ActionDriver {
     {
         super.destroy();
 
-        ignoreUrls = null;
-        ignoreRefs = null;
+        urlPatter = null;
+        refPatter = null;
     }
 
     @Override
@@ -97,12 +97,12 @@ public class VersFilter extends ActionDriver {
             return;
         }
         String act = ActionDriver.getRecentPath(req);
-        if (act != null && ignoreUrls.matches(act)) {
+        if (act != null && ! urlPatter.matches (act)) {
             chain.doFilter(req, rsp);
             return;
         }
         String ref = /* Referer */getRefersPath(req);
-        if (ref != null && ignoreRefs.matches(ref)) {
+        if (ref != null && ! refPatter.matches (ref)) {
             chain.doFilter(req, rsp);
             return;
         }

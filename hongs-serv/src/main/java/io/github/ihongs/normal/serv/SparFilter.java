@@ -29,14 +29,14 @@ import org.xml.sax.SAXException;
  */
 public class SparFilter implements Filter {
 
-    private URLPatterns ignore;
+    private URLPatterns patter;
     private Set<String> access;
 
     @Override
     public void init(FilterConfig cnf) throws ServletException {
-        ignore = new ActionDriver.URLPatterns(
-            cnf.getInitParameter("url-exclude"),
-            cnf.getInitParameter("url-include")
+        patter = new ActionDriver.URLPatterns(
+            cnf.getInitParameter("url-include"),
+            cnf.getInitParameter("url-exclude")
         );
 
         // 索引文件列表
@@ -48,7 +48,7 @@ public class SparFilter implements Filter {
 
     @Override
     public void destroy() {
-        this.ignore = null;
+        this.patter = null;
         this.access = null;
     }
 
@@ -58,7 +58,7 @@ public class SparFilter implements Filter {
         HttpServletRequest raq = (HttpServletRequest) req;
         String url = ActionDriver.getRecentPath (raq);
 
-        if (ignore.matches( url )) {
+        if (! patter.matches(url)) {
             fc.doFilter(req, rsp);
             return;
         }

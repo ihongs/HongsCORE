@@ -368,15 +368,14 @@ div.bootstrap-tagsinput .tag [data-role="remove"]:after {
 .alert-footer button {
     margin-left: 5px;
 }
-.alert-header h3 ,
-.alert-header h4 {
+.alert-header h4 ,
+.modal-header h4 {
+    line-height: inherit;
     margin-bottom: 0;
 }
-.alert-header .close {
-    margin-bottom: 0;
-}
+.alert-header .close ,
 .modal-header .close {
-    margin-top : 0px;
+    margin-top : 2px;
 }
 .alert-content>.alert-body ,
 .alert-content>.alert-footer {
@@ -384,10 +383,9 @@ div.bootstrap-tagsinput .tag [data-role="remove"]:after {
 }
 .alert-content>.alert-body:empty ,
 .alert-content>.alert-footer:empty {
-    margin-top : 0em;
+    margin-top : 0px;
 }
 .alert.dialog .alert-header .close {
-    margin-top : -0.15em;
     color : #fff;
     opacity: 0.5;
 }

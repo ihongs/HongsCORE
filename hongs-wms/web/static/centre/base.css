@@ -66,6 +66,9 @@ body {
 }
 #main-context > .laps.tabs.bread-home {
     display: none;
+}
+#main-context > .laps.tabs.breadcrumb .active a {
+    text-decoration: none;
     color: #333;
 }
 #main-context > .laps.tabs.breadcrumb .home-crumb .glyphicon {

@@ -4,6 +4,16 @@
  * 版本: 2018/07/27 23:00
  */
 
+html ,
+body {
+    background: #f8f8f8;
+}
+#bodybox>.container {
+    background: #ffffff;
+    padding-top  : 20px;
+    border-radius:  4px;
+}
+
 #context {
     display: flex;
     min-height: 100vh;
@@ -12,11 +22,8 @@
 #bodybox {
     flex: 1;
 }
-#leadbox {
-    height : 20px; /* 顶部空隙高度 */
-}
 #headbox {
-    height : 71px; /* 顶部菜单高度 */
+    height : 71px;
 }
 #footbox .navbar ,
 #footbox .navbar blockquote {
@@ -41,15 +48,21 @@
     margin-right : 1em;
 }
 
+#headbox a#logout {
+    color: #a44;
+}
+#headbox a#logout:hover ,
+#headbox a#logout:hover {
+    color: #d54;
+}
+
 /* 主导航条默认样式 */
 #main-context > .laps.tabs.breadcrumb {
-    border: 0;
-    border-radius: 0;
-    border-bottom: 1px solid #ccc;
+    padding-left : 1px;
+    padding-right: 1px;
+    border-radius: 0px;
+    border-bottom: 1px solid #aaa;
     background-color: transparent;
-}
-#main-context > .laps.tabs.bread-home {
-    display: none;
 }
 #main-context > .laps.tabs.breadcrumb .active a {
     text-decoration: none;
@@ -59,7 +72,7 @@
     color: #555;
 }
 #main-context > .laps.tabs.breadcrumb .back-crumb .glyphicon {
-    color: #d00;
+    color: #d54;
 }
 
 /* 隐藏受限的搜索框 */
@@ -69,6 +82,7 @@
 .input-group .input-search:disabled+.input-group-btn>.btn:first-child {
     border-radius: 4px 0 0 4px;
 }
-.input-group .input-search:disabled+.input-group-btn .glyphicon-search:before {
+.input-group .input-search:disabled+.input-group-btn>.search>.glyphicon:before ,
+.input-group .input-search:disabled+.input-group-btn>.submit>.glyphicon:before {
     content: "\e031";
 }

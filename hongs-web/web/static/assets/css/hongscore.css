@@ -226,18 +226,25 @@ input[type="time"].form-control {
     display: none ;
 }
 
+.laps.tabs.hide-first.bread-home ,
+.laps.tabs.hide-first.bread-hook ,
+.laps.tabs.hide-first.bread-hold {
+    display: none ;
+}
+
+.laps.tabs .close {
+    display: none ;
+}
+.laps.tabs.show-close .active .close {
+    display: block;
+}
+
 .nav-tabs   .close,
 .nav-pills  .close,
 .breadcrumb .close {
     font-size: 20px;
     line-height: 1.0em;
     margin-left: 0.3em;
-}
-.breadcrumb.laps .close {
-    display: none ;
-}
-.breadcrumb.show-close .active .close {
-    display: block;
 }
 .breadcrumb.laps > li i + * {
     margin-left: 0.5em;

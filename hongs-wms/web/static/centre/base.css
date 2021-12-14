@@ -64,9 +64,6 @@ body {
     border-bottom: 1px solid #aaa;
     background-color: transparent;
 }
-#main-context > .laps.tabs.bread-home {
-    display: none;
-}
 #main-context > .laps.tabs.breadcrumb .active a {
     text-decoration: none;
     color: #333;

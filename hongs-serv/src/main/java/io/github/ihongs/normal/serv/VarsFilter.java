@@ -101,7 +101,7 @@ public class VarsFilter extends ActionDriver {
         }
 
         if (rn_limit != 0) {
-            int rn = Synt.asInt(rd.get(Cnst.RN_KEY));
+            int rn = Synt.declare( rd.get(Cnst.RN_KEY) , Cnst.RN_DEF );
             if (rn < 1 || rn > rn_limit) {
                 rsp.setStatus(400);
                 hlpr.fault(Cnst.RN_KEY + " must be 1 to " + rn_limit );

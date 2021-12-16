@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
  * 反射脚本拦截
  * @author Hongs
  */
-public class XrshFilter implements Filter {
+public class XurlFilter implements Filter {
 
     private String      inside = null; // 过滤器标识
     private URLPatterns patter = null; // 待忽略用例

@@ -28,7 +28,7 @@ public class XurlFilter implements Filter {
     @Override
     public void init(FilterConfig fc) throws ServletException {
         inside = XsrfFilter.class.getName()+":"+fc.getFilterName()+":INSIDE";
-        blocks = Synt.declare (fc.getInitParameter ("block-every") , false );
+        blocks = Synt.declare (fc.getInitParameter ("block-force") , false );
         patter = new ActionDriver.URLPatterns(
             fc.getInitParameter("url-include"),
             fc.getInitParameter("url-exclude")

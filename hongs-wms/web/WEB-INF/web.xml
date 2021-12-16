@@ -72,28 +72,26 @@
         <filter-name>SparFilter</filter-name>
         <url-pattern>/public/*</url-pattern>
     </filter-mapping>
-    <!-- XURL Filter -->
+    <!-- XURL Filter 点开头为隐藏文件 -->
     <filter>
         <filter-name>XurlFilter</filter-name>
         <filter-class>io.github.ihongs.normal.serv.XurlFilter</filter-class>
         <init-param>
             <param-name>url-include</param-name>
-            <param-value>*.jsp,*/.*</param-value><!-- 点开头为隐藏文件或目录 -->
+            <param-value>*.jsp,*/.*</param-value>
         </init-param>
     </filter>
     <filter-mapping>
         <filter-name>XurlFilter</filter-name>
         <url-pattern>/static/*</url-pattern>
     </filter-mapping>
-    <!-- XSRF Filter -->
+    <!-- XSRF Filter 开放登录不可限定 -->
     <filter>
         <filter-name>XsrfFilter</filter-name>
         <filter-class>io.github.ihongs.normal.serv.XsrfFilter</filter-class>
         <init-param>
             <param-name>url-exclude</param-name>
-            <param-value>
-                /centre/oauth2/*
-            </param-value>
+            <param-value>/centre/oauth2/*</param-value>
         </init-param>
     </filter>
     <filter-mapping>
@@ -111,24 +109,20 @@
             <param-value>100</param-value>
         </init-param>
         <init-param>
-            <param-name>illegals</param-name>
-            <param-value>ar,nr,or</param-value>
+            <param-name>sr-limit</param-name>
+            <param-value>2</param-value>
         </init-param>
         <init-param>
-            <param-name>url-include</param-name>
-            <param-value>
-                /centre/*,
-                /common/more*,
-                /api/centre/*,
-                /api/common/more*
-            </param-value>
+            <param-name>sr-level</param-name>
+            <param-value>1</param-value>
         </init-param>
     </filter>
     <filter-mapping>
         <filter-name>WaryFilter</filter-name>
         <url-pattern>*.act</url-pattern>
-        <url-pattern>*.api</url-pattern>
-        <url-pattern>/api/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+        <dispatcher>INCLUDE</dispatcher>
     </filter-mapping>
     <!-- Auth Filter -->
     <filter>

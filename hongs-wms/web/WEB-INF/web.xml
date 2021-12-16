@@ -100,10 +100,10 @@
         <url-pattern>*.api</url-pattern>
         <url-pattern>/api/*</url-pattern>
     </filter-mapping>
-    <!-- Wary Filter -->
+    <!-- Vars Filter -->
     <filter>
-        <filter-name>WaryFilter</filter-name>
-        <filter-class>io.github.ihongs.normal.serv.WaryFilter</filter-class>
+        <filter-name>VarsFilter</filter-name>
+        <filter-class>io.github.ihongs.normal.serv.VarsFilter</filter-class>
         <init-param>
             <param-name>rn-limit</param-name>
             <param-value>100</param-value>
@@ -118,7 +118,7 @@
         </init-param>
     </filter>
     <filter-mapping>
-        <filter-name>WaryFilter</filter-name>
+        <filter-name>VarsFilter</filter-name>
         <url-pattern>*.act</url-pattern>
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>

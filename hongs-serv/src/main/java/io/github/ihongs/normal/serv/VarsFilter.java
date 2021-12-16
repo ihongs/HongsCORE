@@ -34,7 +34,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Hongs
  */
-public class WaryFilter extends ActionDriver {
+public class VarsFilter extends ActionDriver {
 
     private URLPatterns patter = null;
     private Set illegals = null;

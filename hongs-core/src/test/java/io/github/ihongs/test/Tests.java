@@ -58,8 +58,8 @@ public class Tests extends TestCase {
     @Test
     public void testUrlPatterns() {
         System.out.println(new URLPatterns(
-            "*.api; *.js; *.json; *.css; *.gif;*.jpg;*.png",
-            "/centre/sign/create.act;\r\n/centre/login.html"
+            "*.js,*.css,*.html, *.gif,*.jpg,*.png,*.bmp",
+            "/centre/sign/* , \r\n /centre/login.html ,"
         ).toString());
 
         assertEquals(new URLPatterns("", "").matches("/a/b.js"), true);

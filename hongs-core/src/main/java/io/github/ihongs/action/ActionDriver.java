@@ -911,16 +911,15 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
      *
      * <ul>
      * <li><b>*</b> 表零个或多个字符</li>
-     * <li><b>?</b> 表单独的一个字符</li>
-     * <li><b>;</b> 分隔多组路径模式</li>
+     * <li><b>,</b> 分隔多组路径模式</li>
      * </ul>
      *
      * <pre>
      * 如通配项
-     * <code>*.api;*.js;*.json;*.css;*.gif;*.jpg;*.png;</code>
-     * <code>/centre/sign/create.act;/centre/login.html</code>
+     * <code>*.js,*.css,*.html,*.gif,*.jpg,*.png,*.bmp,</code>
+     * <code>/centre/sign/create.act,/centre/login.html</code>
      * 转为正则
-     * <code>(.*\.api)|(.*\.js)|(.*\.json)|(.*\.css)|(.*\.gif)|(.*\.jpg)|(.*\.png)|(/centre/sign/create\.act)|(/centre/login\.html)</code>
+     * <code>^(.*\.js|.*\.css|.*\.html|.*\.gif|.*\.jpg|.*\.png|.*\.bmp|/centre/sign/create\.act|/centre/login\.html)$</code>
      * </pre>
      *
      * @author Hongs
@@ -931,16 +930,8 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         private final Pattern exclude;
 
         public URLPatterns(String urlInclude, String urlExclude) {
-            if (urlInclude != null && ! urlInclude.isEmpty()) {
-                include = compile(urlInclude);
-            } else {
-                include = null;
-            }
-            if (urlExclude != null && ! urlExclude.isEmpty()) {
-                exclude = compile(urlExclude);
-            } else {
-                exclude = null;
-            }
+            include = compile(urlInclude);
+            exclude = compile(urlExclude);
         }
 
         public URLPatterns(String urlInclude) {
@@ -984,15 +975,15 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         }
 
         private Pattern compile(String pat) {
-            pat = pat. trim();
-            if (pat.isEmpty()) {
-                return null;
+            if (pat == null || pat.isEmpty( ) || pat.isBlank( )) {
+                return null ;
             }
-            pat = pat.replaceAll("[\\^\\$\\(\\)\\[\\]\\{\\}\\+\\.\\\\]", "\\\\$0");
-            pat = pat.replaceAll("\\s*;\\s*", ")|(");
+            pat = pat.trim();
+            pat = pat.replaceAll("[\\^\\$\\(\\)\\[\\]\\{\\}\\+\\?\\.\\|\\\\]", "\\\\$0");
+            pat = pat.replaceAll("^,\\s*|\\s*,$", "" );
+            pat = pat.replaceAll(  "\\s*,\\s*"  , "|");
             pat = pat.replace("*", ".*");
-            pat = pat.replace("?", ".?");
-            pat = "(" + pat + ")";
+            pat = "^("+ pat +")$";
             return Pattern.compile (pat);
         }
 

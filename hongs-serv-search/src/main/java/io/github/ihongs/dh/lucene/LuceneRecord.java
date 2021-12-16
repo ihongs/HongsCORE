@@ -696,7 +696,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             if (v == null
             ||  k == null
             ||  k.equals("@")
-            ||  unstated( m )) {
+            ||  unstored( m )) {
                 continue;
             }
 
@@ -706,7 +706,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             boolean s = sortable(m);
             boolean p = srchable(m);
             boolean q = findable(m);
-            boolean g =!unstored(m);
+            boolean g = ! inviable(m);
 
             if (Cnst.ID_KEY.equals(k)) {
                 q  = true;
@@ -744,13 +744,12 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 p = false; // 排序类型无法搜索
                 q = false; // 排序类型无法筛选
                 break;
-            case "object":
-                if ("".equals(v)) continue;
-                f = new ObjectFiald();
-                g = true ;
-                p = false; // 对象类型无法搜索
-                q = false; // 对象类型无法筛选
-                s = false; // 对象类型无法排序
+            case "search":
+                f = new StringFiald();
+                p = true ;
+                g = false; // 搜索类型无需存储
+                q = false; // 搜索类型无法筛选
+                s = false; // 搜索类型无法排序
                 break;
             case "stored":
                 f = new StringFiald();
@@ -759,12 +758,13 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 q = false; // 存储类型无法筛选
                 s = false; // 存储类型无法排序
                 break;
-            case "search":
-                f = new StringFiald();
-                p = true ;
-                g = false; // 搜索类型无需存储
-                q = false; // 搜索类型无法筛选
-                s = false; // 搜索类型无法排序
+            case "object":
+                if ("".equals(v)) continue;
+                f = new ObjectFiald();
+                g = true ;
+                p = false; // 对象类型无法搜索
+                q = false; // 对象类型无法筛选
+                s = false; // 对象类型无法排序
                 break;
             default:
                 f = new StringFiald();
@@ -884,8 +884,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
             if (k == null
             ||  k.equals("@")
-            ||  unstated( m )
-            ||  unstored( m )) {
+            ||  unstored( m )
+            ||  inviable( m )
+            ||  invisble( m )) {
                 continue;
             }
 
@@ -1962,11 +1963,18 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
     }
 
     protected boolean unstored(Map fc) {
-        return Synt.declare(fc.get(  "unstored"  ), false);
+        // 兼容旧的 unstated
+        return   fc.containsKey   (  "unstored"  )
+             ? Synt.declare(fc.get(  "unstored"  ), false)
+             : Synt.declare(fc.get(  "unstated"  ), false);
     }
 
-    protected boolean unstated(Map fc) {
-        return Synt.declare(fc.get(  "unstated"  ), false);
+    protected boolean inviable(Map fc) {
+        return Synt.declare(fc.get(  "inviable"  ), false);
+    }
+
+    protected boolean invisble(Map fc) {
+        return Synt.declare(fc.get(  "invisble"  ), false);
     }
 
     //** 辅助对象 **/

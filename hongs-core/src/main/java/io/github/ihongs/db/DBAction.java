@@ -93,7 +93,7 @@ public class DBAction implements IAction, IActing {
 
     @Override
     @Action("create")
-    @Preset(conf="", form="", defs={":defence"})
+    @Preset(conf="", form="", defs={":initial"})
     @Verify(conf="", form="")
     @CommitSuccess
     public void create(ActionHelper helper)

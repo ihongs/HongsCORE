@@ -97,7 +97,7 @@ abstract public class JAction implements IActing, IAction {
 
     @Override
     @Action("create")
-    @Preset(conf="", form="", defs={":defence"})
+    @Preset(conf="", form="", defs={":initial"})
     @Verify(conf="", form="")
     @CommitSuccess
     public void create(ActionHelper helper) throws HongsException {

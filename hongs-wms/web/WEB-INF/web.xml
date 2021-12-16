@@ -72,17 +72,17 @@
         <filter-name>SparFilter</filter-name>
         <url-pattern>/public/*</url-pattern>
     </filter-mapping>
-    <!-- XRSH Filter -->
+    <!-- XURL Filter -->
     <filter>
-        <filter-name>XrshFilter</filter-name>
-        <filter-class>io.github.ihongs.normal.serv.XrshFilter</filter-class>
+        <filter-name>XurlFilter</filter-name>
+        <filter-class>io.github.ihongs.normal.serv.XurlFilter</filter-class>
         <init-param>
             <param-name>url-include</param-name>
-            <param-value>*.jsp;*.php;*.py</param-value>
+            <param-value>*.jsp,*/.*</param-value><!-- 点开头为隐藏文件或目录 -->
         </init-param>
     </filter>
     <filter-mapping>
-        <filter-name>XrshFilter</filter-name>
+        <filter-name>XurlFilter</filter-name>
         <url-pattern>/static/*</url-pattern>
     </filter-mapping>
     <!-- XSRF Filter -->
@@ -91,11 +91,41 @@
         <filter-class>io.github.ihongs.normal.serv.XsrfFilter</filter-class>
         <init-param>
             <param-name>url-exclude</param-name>
-            <param-value>/centre/oauth2/*</param-value>
+            <param-value>
+                /centre/oauth2/*
+            </param-value>
         </init-param>
     </filter>
     <filter-mapping>
         <filter-name>XsrfFilter</filter-name>
+        <url-pattern>*.act</url-pattern>
+        <url-pattern>*.api</url-pattern>
+        <url-pattern>/api/*</url-pattern>
+    </filter-mapping>
+    <!-- Wary Filter -->
+    <filter>
+        <filter-name>WaryFilter</filter-name>
+        <filter-class>io.github.ihongs.normal.serv.WaryFilter</filter-class>
+        <init-param>
+            <param-name>rn-limit</param-name>
+            <param-value>100</param-value>
+        </init-param>
+        <init-param>
+            <param-name>illegals</param-name>
+            <param-value>ar,nr,or</param-value>
+        </init-param>
+        <init-param>
+            <param-name>url-include</param-name>
+            <param-value>
+                /centre/*,
+                /common/more*,
+                /api/centre/*,
+                /api/common/more*
+            </param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>WaryFilter</filter-name>
         <url-pattern>*.act</url-pattern>
         <url-pattern>*.api</url-pattern>
         <url-pattern>/api/*</url-pattern>
@@ -119,8 +149,10 @@
         <init-param>
             <param-name>url-exclude</param-name>
             <param-value>
-                *.js;*.css;*.png;*.jpg;*.gif;*.bmp;*.api;
-                /centra/sign/*;/centra/login.html
+                *.png,*.jpg,*.gif,*.bmp,
+                *.js,*.css,*.html,*.api,
+                /centra/sign/*,
+                /centra/login.html
             </param-value>
         </init-param>
     </filter>
@@ -149,8 +181,11 @@
         <init-param>
             <param-name>url-exclude</param-name>
             <param-value>
-                *.js;*.css;*.png;*.jpg;*.gif;*.bmp;*.api;
-                /centre/sign/*;/centre/login.html
+                *.png,*.jpg,*.gif,*.bmp,
+                *.js,*.css,*.html,*.api,
+                /centre/sign/*,
+                /centre/oauth2/*,
+                /centre/login.html
             </param-value>
         </init-param>
     </filter>

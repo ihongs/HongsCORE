@@ -7,7 +7,6 @@ import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.action.anno.CommitSuccess;
 import io.github.ihongs.action.anno.Verify;
 import io.github.ihongs.db.DB;
-import java.util.HashMap;
 import java.util.Map;
 
 /**

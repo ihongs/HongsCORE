@@ -744,7 +744,8 @@ public class Form extends Model {
             //  docm.renameNode(form, null, "form");
             }
 
-            // 全局性保护
+            /*
+            // 全局性保护, 改用 WaryFilter 限制
             defs = docm.createElement("enum");
             root.appendChild ( defs );
             defs.setAttribute("name", id+":defense");
@@ -760,6 +761,7 @@ public class Form extends Model {
             defs.appendChild ( defi );
             defi.setAttribute("code", Cnst.OR_KEY);
             defi.appendChild ( docm.createTextNode("(void)"));
+            */
 
             // 保护写接口
             defs = docm.createElement("enum");

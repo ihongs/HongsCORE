@@ -290,7 +290,7 @@ ern 为 Er301,Er302,Er401,Er402,Er403,Er404 时, err 如有值为"Goto URL"则�
     // 验证结果, 在 unique,exists 动作返回
     "rn": 1真, 0假
 
-在调用 .api 时, 可将所有请求数据采用 JSON 或 URLEncode 编码放入 .data 参数传递; 如加请求参数 .mode=wrap 可将全部返回数据放入 data 键下; 如加请求参数 .mode=scok 则即使发生异常也返回 200 状态; 可加请求参数 .mode=RULES 启用数据转换规则. 多个可用逗号分隔, 另附 RULES 参数:
+在调用 .api 时, 可将所有请求数据采用 JSON 或 URLEncode 编码放入 __data__ 参数传递; 加请求参数 __mode__=wrap 可将全部返回数据放入 data 键下; 加请求参数 __mode__=scok 则即使发生异常也返回 200 状态; 加请求参数 __mode__=RULES 启用数据转换规则. 多个可用逗号分隔, 另附 RULES 参数:
 
     all2str     全部转为字串
     num2str     数字转为字串

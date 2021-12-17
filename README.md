@@ -56,7 +56,7 @@
     # hongs-serv-wms/target/HongsWMS 为管理系统, 拥有全功能的用户管理和自助模块等.
     # 以上两个包内都放有 Dockerfile 可轻松构建容器镜像, 搭建虚拟系统.
 
-加 --DEBUG 1 可开启调试输出模式, 可在控制台(命令行)显示执行过程(调试信息), server.start 命令可跟数字表示启动端口, 默认 8080 端口. 同时为 windows 用户提供了 setup.bat 和 start.bat 两个快捷命令来执行以上同等任务, windows 用户只需双击即可.
+加 --DEBUG 6 可开启调试及警告输出模式, 可在控制台(命令行)显示执行过程(调试信息), server.start 命令可跟数字表示启动端口, 默认 8080 端口. 同时为 windows 用户提供了 setup.bat 和 start.bat 两个快捷命令来执行以上同等任务, windows 用户只需双击即可.
 
 注意[1]: 退出运行应该用 Ctrl+C 而不应当直接关闭命令窗口, 后者可能导致直接死掉而无法执行退出清理, 再次启动需要删除 var/server 下端口对应的 .pid 文件才行.
 

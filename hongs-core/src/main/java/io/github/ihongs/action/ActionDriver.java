@@ -979,14 +979,14 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                 return null ;
             }
             pat = pat.trim();
+            if (pat.length() == 0) {
+                return null ;
+            }
             pat = pat.replaceAll("[\\^\\$\\(\\)\\[\\]\\{\\}\\+\\?\\.\\|\\\\]", "\\\\$0");
             pat = pat.replaceAll("^,\\s*|\\s*,$", "" );
             pat = pat.replaceAll(  "\\s*,\\s*"  , "|");
             pat = pat.replace("*", ".*");
             pat = "^("+ pat +")$";
-            if (pat.length() == 0) {
-                return null ;
-            }
             return Pattern.compile (pat);
         }
 

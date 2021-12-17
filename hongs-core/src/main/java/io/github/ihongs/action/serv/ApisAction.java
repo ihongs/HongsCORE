@@ -1,12 +1,10 @@
 package io.github.ihongs.action.serv;
 
 import io.github.ihongs.Cnst;
-import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.util.Dawn;
-import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Synt;
 import java.io.IOException;
 import java.util.Date;
@@ -55,8 +53,8 @@ public class ApisAction
         super.init(conf);
 
         CoreConfig cc = CoreConfig.getInstance( );
-        dataKey  = cc.getProperty("core.api.data", ".data"); // 请求数据
-        modeKey  = cc.getProperty("core.api.mode", ".mode"); // 封装模式
+        dataKey  = cc.getProperty("core.api.data", "__data__"); // 请求数据
+        modeKey  = cc.getProperty("core.api.mode", "__mode__"); // 封装模式
     }
 
     @Override
@@ -71,20 +69,10 @@ public class ApisAction
         dot  = act.lastIndexOf( "." );
         act  = act.subSequence(0,dot)+Cnst.ACT_EXT;
 
-        ActionHelper  hlpr = ActionDriver.getActualCore(req).got(ActionHelper.class);
-        Object _dat = Dict.getParam( hlpr.getRequestData(), dataKey );
-        Object _mod = Dict.getParam( hlpr.getRequestData(), modeKey );
-
-        // 请求数据封装
-        Map data  = null;
-        if (_dat != null) {
-            try {
-                data = trnsData(_dat);
-            } catch (ClassCastException e) {
-                hlpr.error(400, "Can not parse value for "+ dataKey );
-                return;
-            }
-        }
+        ActionHelper hlpr = ActionDriver.getActualCore(req).got(ActionHelper.class);
+        Map reqs  =  hlpr.getRequestData();
+        Object _mod = reqs.remove(modeKey);
+        Object _dat = reqs.remove(dataKey);
 
         // 数据转换策略
         Set mode  = null;
@@ -97,15 +85,21 @@ public class ApisAction
             }
         }
 
+        // 请求数据封装
+        Map data  = null;
+        if (_dat != null) {
+            try {
+                data = trnsData(_dat);
+            } catch (ClassCastException e) {
+                hlpr.error(400, "Can not parse value for "+ dataKey );
+                return;
+            }
+        }
+
         // 额外请求数据
-        if (data != null && !data.isEmpty()) {
-            hlpr.getRequestData().putAll(data);
+        if (data != null) {
+            reqs.putAll(data);
         }
-        /*
-        if (mode != null && !mode.isEmpty()) {
-            Core.getInstance().put(Cnst.STRING_MODE,false);
-        }
-        */
 
         // 转发动作处理, 获取响应数据
         req.getRequestDispatcher(act).include( req , rsp );

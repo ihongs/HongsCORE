@@ -89,20 +89,26 @@ public class VersFilter extends ActionDriver {
         HttpServletResponse rsp = hlpr.getResponse();
         HttpServletRequest  req = hlpr.getRequest( );
 
-        /**
-         * 检查当前动作是否可以忽略
-         */
-        if (0 == level) {
+        if (level == 0) {
             chain.doFilter(req, rsp);
             return;
         }
+
+        /**
+         * 跳过内部动作代理, 如 AutoFilter
+         */
+        if (null != req.getAttribute(Cnst.ACTION_ATTR)) {
+            chain.doFilter(req, rsp);
+            return;
+        }
+
         String act = ActionDriver.getRecentPath(req);
-        if (act != null && ! urlPatter.matches (act)) {
+        if (null != act && ! urlPatter.matches (act)) {
             chain.doFilter(req, rsp);
             return;
         }
         String ref = /* Referer */getRefersPath(req);
-        if (ref != null && ! refPatter.matches (ref)) {
+        if (null != ref && ! refPatter.matches (ref)) {
             chain.doFilter(req, rsp);
             return;
         }

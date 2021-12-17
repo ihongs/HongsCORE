@@ -79,8 +79,16 @@ public class VarsFilter extends ActionDriver {
         HttpServletResponse rsp = hlpr.getResponse();
         HttpServletRequest  req = hlpr.getRequest( );
 
+        /**
+         * 跳过内部动作代理, 如 AutoFilter
+         */
+        if (null != req.getAttribute(Cnst.ACTION_ATTR)) {
+            chain.doFilter(req, rsp);
+            return;
+        }
+
         String act = ActionDriver.getRecentPath(req);
-        if (act != null && ! patter.matches(act)) {
+        if (null != act && ! patter.matches(act)) {
             chain.doFilter(req, rsp);
             return;
         }

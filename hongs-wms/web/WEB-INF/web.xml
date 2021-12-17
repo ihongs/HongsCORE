@@ -178,7 +178,6 @@
                 *.png,*.jpg,*.gif,*.bmp,
                 *.js,*.css,*.html,*.api,
                 /centre/sign/*,
-                /centre/oauth2/*,
                 /centre/login.html
             </param-value>
         </init-param>

@@ -975,7 +975,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         }
 
         private Pattern compile(String pat) {
-            if (pat == null || pat.isEmpty( ) || pat.isBlank( )) {
+            if (pat == null) {
                 return null ;
             }
             pat = pat.trim();
@@ -984,6 +984,9 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             pat = pat.replaceAll(  "\\s*,\\s*"  , "|");
             pat = pat.replace("*", ".*");
             pat = "^("+ pat +")$";
+            if (pat.length() == 0) {
+                return null ;
+            }
             return Pattern.compile (pat);
         }
 

@@ -91,7 +91,7 @@
         <filter-class>io.github.ihongs.normal.serv.XsrfFilter</filter-class>
         <init-param>
             <param-name>url-exclude</param-name>
-            <param-value>/centre/oauth2/*</param-value>
+            <param-value>/centre/sign/open/*</param-value>
         </init-param>
     </filter>
     <filter-mapping>

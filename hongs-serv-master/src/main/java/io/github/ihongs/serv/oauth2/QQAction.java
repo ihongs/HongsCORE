@@ -19,7 +19,7 @@ import java.util.Map;
  * QQ关联登录
  * @author Hongs
  */
-@Action("centre/oauth2/qq")
+@Action("centre/sign/open/qq")
 public class QQAction {
 
     /**

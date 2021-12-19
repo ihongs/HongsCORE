@@ -799,12 +799,24 @@ public final class Synt {
                 return new Object[] {
                     arr[0], arr[1], gt_e, lt_e
                 };
+            case 3:
+                Boolean gl_e;
+                try {
+                    gl_e = defoult(asBool(arr[2]), false);
+                }
+                catch (ClassCastException e) {
+                    throw new ClassCastException("Range index 2,3 must be boolean: "+arr);
+                }
+
+                return new Object[] {
+                    arr[0], arr[1], gl_e, gl_e
+                };
             case 2:
                 return new Object[] {
                     arr[0], arr[1], true, true
                 };
 
-            default:throw new ClassCastException("Range index size must be 2 or 4: "+arr);
+            default:throw new ClassCastException("Range index size must be 2 to 4: "+arr);
         }
     }
 

@@ -245,11 +245,13 @@ public class SearchAction extends JAction {
             String fn = fu != null ? fu.toString() : "";
 
             /**
+             * 非聚合统计中
              * - 表默认逆序
              * ~ 表默认正序
              */
-            if (fn.equals("-")
-            ||  fn.equals("~")) {
+            if (nb != 3
+            && (fn.equals("-")
+            ||  fn.equals("~") ) ) {
                 continue;
             }
 

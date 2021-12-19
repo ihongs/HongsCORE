@@ -61,6 +61,7 @@ public class StatisHelper {
         Map         incs = Synt.asMap  (rd.get(Cnst.IN_REL));
         Map         excs = Synt.asMap  (rd.get(Cnst.NI_REL));
         Set<String> cntz = Synt.toTerms(rd.get(Cnst.RB_KEY));
+        Set<String> srtz = Synt.toTerms(rd.get(Cnst.OB_KEY) );
         Map<String, Map<String, Integer>> counts = new HashMap();
 
         //** 整理待统计的数据 **/
@@ -86,7 +87,7 @@ public class StatisHelper {
                     counts.put( x , cnt );
                     for( Object v : inc ) {
                     if (!exc.contains(v)) {
-                        cnt.put(v.toString() , 0 );
+                        cnt.put(v.toString() , 0L);
                     }}
                 }
             }
@@ -162,6 +163,10 @@ public class StatisHelper {
         //** 排序并截取统计数据 **/
 
         int t = Synt.declare(rd.get(Cnst.RN_KEY), 0); // Top N
+        int r = srtz  ==  null   ?   0
+            : ( srtz.contains("-") ? 2 // 默认逆序
+            : ( srtz.contains("~") ? 1 // 默认正序
+                                   : 0 ));
 
         for(Map.Entry<String, Map<String, Integer>> et : counts.entrySet()) {
             List<Object[]> a = new ArrayList ( et.getValue().size(  )  );
@@ -172,8 +177,25 @@ public class StatisHelper {
                     a.add( new Object[] {m, null, c} );
                 }
             }
-            Collections.sort(a, Counts);
 
+            // 排序
+            if (srtz != null && ! srtz.isEmpty()) {
+                String n = et.getKey(  );
+                if (srtz.contains(/**/n)) {
+                    Collections.sort( a, MountA );
+                } else
+                if (srtz.contains("-"+n)) {
+                    Collections.sort( a, MountD );
+                } else
+                if (r == 1) {
+                    Collections.sort( a, MountA );
+                } else
+                if (r == 2) {
+                    Collections.sort( a, MountD );
+                }
+            }
+
+            // 截选 Top N
             int n = Synt.declare(rd.get(Cnst.RN_KEY +"-"+ et.getKey()), t);
             if (0 < n && n < a.size()) {
                 a = a.subList (0, n );
@@ -254,6 +276,7 @@ public class StatisHelper {
         Map         incs = Synt.asMap  (rd.get(Cnst.IN_REL) );
         Map         excs = Synt.asMap  (rd.get(Cnst.NI_REL) );
         Set<String> cntz = Synt.toTerms(rd.get(Cnst.RB_KEY) );
+        Set<String> srtz = Synt.toTerms(rd.get(Cnst.OB_KEY) );
         Map<String, Map<Object, Long>> counts = new HashMap();
         Map<String, Set<Object      >> countx = new HashMap();
 
@@ -282,7 +305,7 @@ public class StatisHelper {
                 if (inc != null && !inc.isEmpty()) {
                     for(Object v:inc) {
                         Object s = f.apply(v);
-                       cnt.put(s, 0 );
+                       cnt.put(s, 0L);
                     }
                 }   counts.put(x,cnt);
 
@@ -380,6 +403,10 @@ public class StatisHelper {
         //** 排序并截取统计数据 **/
 
         int t = Synt.declare(rd.get(Cnst.RN_KEY), 0); // Top N
+        int r = srtz  ==  null   ?   0
+            : ( srtz.contains("-") ? 2 // 默认逆序
+            : ( srtz.contains("~") ? 1 // 默认正序
+                                   : 0 ));
 
         for(Map.Entry<String, Map<Object, Long>> et : counts.entrySet()) {
             List<Object[]> a = new ArrayList(et.getValue().size(  )  );
@@ -390,8 +417,25 @@ public class StatisHelper {
                     a.add( new Object[] {m, null, c} );
                 }
             }
-            Collections.sort(a, Counts);
 
+            // 排序
+            if (srtz != null && ! srtz.isEmpty()) {
+                String n = et.getKey(  );
+                if (srtz.contains(/**/n)) {
+                    Collections.sort( a, CountA );
+                } else
+                if (srtz.contains("-"+n)) {
+                    Collections.sort( a, CountD );
+                } else
+                if (r == 1) {
+                    Collections.sort( a, CountA );
+                } else
+                if (r == 2) {
+                    Collections.sort( a, CountD );
+                }
+            }
+
+            // 截选 Top N
             int n = Synt.declare(rd.get(Cnst.RN_KEY +"-"+ et.getKey()), t);
             if (n > 0 && n < a.size()) {
                 a = a.subList (0, n );
@@ -440,6 +484,7 @@ public class StatisHelper {
         Map         incs = Synt.asMap  (rd.get(Cnst.IN_REL) );
         Map         excs = Synt.asMap  (rd.get(Cnst.NI_REL) );
         Set<String> cntz = Synt.toTerms(rd.get(Cnst.RB_KEY) );
+        Set<String> srtz = Synt.toTerms(rd.get(Cnst.OB_KEY) );
         Map<String, Map<Range, Ratio>> counts = new HashMap();
         Map<String, Set<Range       >> countx = new HashMap();
 
@@ -564,6 +609,10 @@ public class StatisHelper {
         //** 排序统计数据 **/
 
         int t = Synt.declare(rd.get(Cnst.RN_KEY), 0); // Top N
+        int r = srtz  ==  null   ?   0
+            : ( srtz.contains("-") ? 2 // 默认逆序
+            : ( srtz.contains("~") ? 1 // 默认正序
+                                   : 0 ));
 
         for(Map.Entry<String, Map<Range, Ratio>> et : counts.entrySet()) {
             List<Object[]> a = new ArrayList(et.getValue().size(  )  );
@@ -579,8 +628,25 @@ public class StatisHelper {
                     } );
                 }
             }
-            Collections.sort(a, Mounts);
 
+            // 排序
+            if (srtz != null && ! srtz.isEmpty()) {
+                String n = et.getKey(  );
+                if (srtz.contains(/**/n)) {
+                    Collections.sort( a, MountA );
+                } else
+                if (srtz.contains("-"+n)) {
+                    Collections.sort( a, MountD );
+                } else
+                if (r == 1) {
+                    Collections.sort( a, MountA );
+                } else
+                if (r == 2) {
+                    Collections.sort( a, MountD );
+                }
+            }
+
+            // 截选 Top N
             int n = Synt.declare(rd.get(Cnst.RN_KEY +"-"+ et.getKey()), t);
             if (n > 0 && n < a.size()) {
                 a = a.subList (0, n );
@@ -816,7 +882,7 @@ public class StatisHelper {
         if (names == null) {
             return   null;
         }
-        
+
         List<Field> fields = new ArrayList(names.size());
         Map <String, Map   > items = that.getFields (  );
         Map <String, String> types ;
@@ -1166,9 +1232,26 @@ public class StatisHelper {
 
     /**
      * 计数排序
+     * 按数量从少到多排列
+     */
+    private static final Comparator<Object[]> CountA = new Comparator<Object[]>() {
+        @Override
+        public int compare(Object[] o1, Object[] o2) {
+            long   cnt1 = (long)   o1[2];
+            long   cnt2 = (long)   o2[2];
+            if (cnt1 != cnt2) {
+                return  cnt1<cnt2 ? -1:1;
+            }
+
+            return 0;
+        }
+    };
+
+    /**
+     * 计数排序
      * 按数量从多到少排列
      */
-    private static final Comparator<Object[]> Counts = new Comparator<Object[]>() {
+    private static final Comparator<Object[]> CountD = new Comparator<Object[]>() {
         @Override
         public int compare(Object[] o1, Object[] o2) {
             long   cnt1 = (long)   o1[2];
@@ -1183,10 +1266,34 @@ public class StatisHelper {
 
     /**
      * 计算排序
+     * 先按数量从少到多排
+     * 再按求和从小到大排
+     */
+    private static final Comparator<Object[]> MountA = new Comparator<Object[]>() {
+        @Override
+        public int compare(Object[] o1, Object[] o2) {
+            long   cnt1 = (long)   o1[2];
+            long   cnt2 = (long)   o2[2];
+            if (cnt1 != cnt2) {
+                return  cnt1<cnt2 ? -1:1;
+            }
+
+            double sum1 = (double) o1[3];
+            double sum2 = (double) o2[3];
+            if (sum1 != sum2) {
+                return  sum1<sum2 ? -1:1;
+            }
+
+            return 0;
+        }
+    };
+
+    /**
+     * 计算排序
      * 先按数量从多到少排
      * 再按求和从大到小排
      */
-    private static final Comparator<Object[]> Mounts = new Comparator<Object[]>() {
+    private static final Comparator<Object[]> MountD = new Comparator<Object[]>() {
         @Override
         public int compare(Object[] o1, Object[] o2) {
             long   cnt1 = (long)   o1[2];

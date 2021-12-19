@@ -245,6 +245,15 @@ public class SearchAction extends JAction {
             String fn = fu != null ? fu.toString() : "";
 
             /**
+             * - 表默认逆序
+             * ~ 表默认正序
+             */
+            if (fn.equals("-")
+            ||  fn.equals("~")) {
+                continue;
+            }
+
+            /**
              * 排序字段:
              * 对返回的列表排序时,
              * 无效字段会影响效率,

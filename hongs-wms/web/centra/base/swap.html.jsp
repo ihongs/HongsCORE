@@ -413,6 +413,7 @@ id=ID 或 id.=ID1&id.=ID2...
                 <a href="<%=baseHref%>/centre/" target="_blank"><b><%=baseHref%>/centr<b>e</b>/</b></a>
                 即可, 其他部分不用变.
                 管理和开放接口可定制, 有作特殊处理则可能细节稍有不同.
+                统计接口通常禁止对外, 可设置对应导航动作权限使其开放.
             </p>
         </div>
     </div>

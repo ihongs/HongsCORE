@@ -16,9 +16,9 @@
         return menu;
     }
     int makeMenu(StringBuilder menu, List<Map> list, String acti) {
-        int code = 0;
+        int code  = 0;
 
-        for(Map item: list) {
+        if (list != null) for (Map item: list) {
             String text = (String) item.get("text");
             String hint = (String) item.get("hint");
             String href = (String) item.get("href");
@@ -55,41 +55,44 @@
                 actc  = "";
             }
 
-            List<Map> subs = ( List ) item.get ("menus");
-            if (subs != null && ! subs.isEmpty ( /***/ )) {
-                StringBuilder subm = new StringBuilder();
-                switch ( makeMenu ( subm , subs , acti )) {
-                    case 0 : continue ;
-                    case 2 : code = 2 ; actc = "acting" ;
-                }
-
-                href = Core.SERV_PATH +"/"+ href;
-                hrel = Core.SERV_PATH +"/"+ hrel;
-                menu.append("<li class=\"").append(actc).append("\">")
-                    .append( "<a title=\"").append(hint).append("\" ")
-                    .append(     "href=\"").append(href).append("\" ")
-                    .append("data-href=\"").append(hrel).append("\">")
-                    .append("<span class=\"caret\"></span>")
-                    .append( text )
-                    .append("</a>")
-                    .append("\r\n")
-                    .append("<ul>")
-                    .append("\r\n")
-                    .append( subm )
-                    .append("</ul>\r\n")
-                    .append("</li>\r\n");
-            } else
-            if (!href.startsWith("common/menu.")) {
-                actc = "actual " + actc ;
-                href = Core.SERV_PATH +"/"+ href;
-                hrel = Core.SERV_PATH +"/"+ hrel;
-                menu.append("<li class=\"").append(actc).append("\">")
-                    .append( "<a title=\"").append(hint).append("\" ")
-                    .append(     "href=\"").append(href).append("\" ")
-                    .append("data-href=\"").append(hrel).append("\">")
-                    .append( text )
-                    .append("</a>")
-                    .append("</li>\r\n");
+            List<Map> subs = (List) item.get("menus");
+            StringBuilder subm = new StringBuilder( );
+            switch ( makeMenu(subm, subs, acti) ) {
+                case 2 :
+                    code = 2 ;
+                    actc = "acting" ;
+                case 1 :
+                    href = Core.SERV_PATH +"/"+ href;
+                    hrel = Core.SERV_PATH +"/"+ hrel;
+                    menu.append("<li class=\"").append(actc).append("\">")
+                        .append( "<a title=\"").append(hint).append("\" ")
+                        .append(     "href=\"").append(href).append("\" ")
+                        .append("data-href=\"").append(hrel).append("\">")
+                        .append("<span class=\"caret\"></span>")
+                        .append( text )
+                        .append("</a>")
+                        .append("\r\n")
+                        .append("<ul>")
+                        .append("\r\n")
+                        .append( subm )
+                        .append("</ul>\r\n")
+                        .append("</li>\r\n");
+                    break;
+                case 0 :
+                    if (href.startsWith("common/menu.")) {
+                        continue;
+                    }
+                    actc = "actual " + actc ;
+                    href = Core.SERV_PATH +"/"+ href;
+                    hrel = Core.SERV_PATH +"/"+ hrel;
+                    menu.append("<li class=\"").append(actc).append("\">")
+                        .append( "<a title=\"").append(hint).append("\" ")
+                        .append(     "href=\"").append(href).append("\" ")
+                        .append("data-href=\"").append(hrel).append("\">")
+                        .append( text )
+                        .append("</a>")
+                        .append("</li>\r\n");
+                    break;
             }
         }
 

@@ -6,6 +6,7 @@
 <%@page import="java.util.Map"%>
 <%@page pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%
+    Map        $menu  = null;
     String     $hrel  = null;
     String     $title = null;
     String     $module;
@@ -34,6 +35,7 @@
             Map menu;
             menu  = site.getMenu($module +"/"+ $entity +"/");
             if (menu != null) {
+                    $menu   = menu;
                     $hrel   = (String) menu.get("hrel");
                     $title  = (String) menu.get("text");
                 if ($title != null) {
@@ -45,6 +47,7 @@
             }
             menu  = site.getMenu($module +"/#"+$entity);
             if (menu != null) {
+                    $menu   = menu;
                     $hrel   = (String) menu.get("hrel");
                     $title  = (String) menu.get("text");
                 if ($title != null) {

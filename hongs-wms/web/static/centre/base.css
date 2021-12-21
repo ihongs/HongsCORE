@@ -75,6 +75,15 @@ body {
     color: #d54;
 }
 
+/* 下级页签默认样式 */
+#main-context > .labs > * > .nav-tabs {
+    text-align: center;
+}
+#main-context > .labs > * > .nav-tabs > li {
+    display: inline-block;
+    float: none;
+}
+
 /* 隐藏受限的搜索框 */
 .input-group .input-search:disabled {
     visibility: hidden;

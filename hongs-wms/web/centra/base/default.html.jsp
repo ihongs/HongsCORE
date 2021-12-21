@@ -66,7 +66,44 @@
                     <div class="labs laps">
                         <div></div>
                         <div></div>
-                        <div><div data-load="<%=$href%>"></div></div>
+                        <div>
+                            <%
+                            Map menus  = (Map) $menu.get("menus");
+                            if (menus != null && ! menus.isEmpty ()) {
+                                boolean  active  = false;
+                                StringBuilder sb = new StringBuilder ();
+                                for ( Object  ot : menus.entrySet()) {
+                                    Map.Entry et = (Map.Entry) ot ;
+                                    Map menu = (Map) et.getValue();
+                                    String href = (String) et.getKey ();
+                                    String hrel = (String) menu.get("hrel");
+                                    String text = (String) menu.get("text");
+                                    if (href != null &&  href.startsWith("!")
+                                    &&  hrel != null || !hrel.startsWith("!")) {
+                                        if (hrel.isEmpty()
+                                        ||  hrel.startsWith("?")
+                                        ||  hrel.startsWith("#")) {
+                                            hrel = $href + hrel;
+                                        }
+                                        String styles;
+                                        if ( ! active) {
+                                            $href  = hrel;
+                                            active = true;
+                                            styles = " class=\"active\"";
+                                        } else {
+                                            styles = "";
+                                        }
+                                        sb.append("<li"+styles+"><a href=\"javascript:;\" data-href=\""+hrel+"\">"+$locale.translate(text)+"</a></li>");
+                                    }
+                                }
+                            if (active) {
+                            %>
+                            <ul class="nav nav-tabs board">
+                                <%=sb%>
+                            </ul>
+                            <%}} /* End menus */%>
+                            <div data-load="<%=$href%>"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -74,6 +111,16 @@
         <script type="text/javascript">
             (function($) {
                 var context = $("#main-context");
+
+                // 子级菜单
+                var loadBox = context.find("[data-load]").first();
+                var tabsBox = context.find( ".nav-tabs" ).first();
+                tabsBox.on("click", "a", function() {
+                    if ( $(this).is(".active") ) return ;
+                    loadBox.hsLoad($(this).data("href"));
+                    $(this).parent( ).addClass("active")
+                      .siblings( ).removeClass("active");
+                });
 
                 // 外部定制
                 window["<%=$func%>"] && window["<%=$func%>"](context);

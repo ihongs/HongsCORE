@@ -116,10 +116,10 @@
                 var loadBox = context.find("[data-load]").first();
                 var tabsBox = context.find( ".nav-tabs" ).first();
                 tabsBox.on("click", "a", function() {
-                    if ( $(this).is(".active") ) return ;
-                    loadBox.hsLoad($(this).data("href"));
-                    $(this).parent( ).addClass("active")
-                      .siblings( ).removeClass("active");
+                    if ( $(this).parent().is(".active") ) return ;
+                    loadBox.hsLoad($(this).data("href") );
+                    $(this).parent().addClass("active")
+                      .siblings().removeClass("active");
                 });
 
                 // 外部定制

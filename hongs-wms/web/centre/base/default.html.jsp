@@ -63,7 +63,8 @@
                             <%
                             Map menus  = (Map) $menu.get("menus");
                             if (menus != null && ! menus.isEmpty ()) {
-                                boolean  active  = false;
+                                boolean _acti = false;
+                                String  _href = $href;
                                 StringBuilder sb = new StringBuilder ();
                                 for ( Object  ot : menus.entrySet()) {
                                     Map.Entry et = (Map.Entry) ot ;
@@ -72,24 +73,27 @@
                                     String hrel = (String) menu.get("hrel");
                                     String text = (String) menu.get("text");
                                     if (href != null &&  href.startsWith("!")
-                                    &&  hrel != null || !hrel.startsWith("!")) {
+                                    &&  hrel != null && !hrel.startsWith("!")) {
+                                        text  = $locale.translate(text);
                                         if (hrel.isEmpty()
                                         ||  hrel.startsWith("?")
                                         ||  hrel.startsWith("#")) {
-                                            hrel = $href + hrel;
+                                            hrel = _href + hrel ;
                                         }
-                                        String styles;
-                                        if ( ! active) {
-                                            $href  = hrel;
-                                            active = true;
-                                            styles = " class=\"active\"";
-                                        } else {
-                                            styles = "";
+                                        sb.append("<li");
+                                        if (_acti == false) {
+                                            _acti  =  true;
+                                            $href  =  hrel;
+                                            sb.append(" class=\"active\"");
                                         }
-                                        sb.append("<li"+styles+"><a href=\"javascript:;\" data-href=\""+hrel+"\">"+$locale.translate(text)+"</a></li>");
+                                        sb.append("><a href=\"javascript:;\" data-href=\"")
+                                          .append(hrel )
+                                          .append("\">")
+                                          .append(text )
+                                          .append("</a></li>");
                                     }
                                 }
-                            if (active) {
+                            if ( _acti ) {
                             %>
                             <ul class="nav nav-tabs board">
                                 <%=sb%>

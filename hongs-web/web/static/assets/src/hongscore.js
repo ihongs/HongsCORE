@@ -1063,13 +1063,15 @@ function _hsGetDepth(obj, keys, def, pos) {
         }
 
         if (keys.length == pos + 1) {
-            return obj[key] || def;
+            obj =  obj[key];
+            return obj != null ? obj : def;
         } else {
             return _hsGetDepth(obj[key], keys, def, pos + 1);
         }
     } else {
         if (keys.length == pos + 1) {
-            return obj[key] || def;
+            obj =  obj[key];
+            return obj != null ? obj : def;
         } else {
             return _hsGetDepth(obj[key], keys, def, pos + 1);
         }

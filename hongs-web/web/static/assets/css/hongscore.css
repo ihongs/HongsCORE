@@ -684,14 +684,14 @@ div.bootstrap-tagsinput .tag [data-role="remove"]:after {
 .treebox:hover .tree-list {
     border-left: 1px dotted #ccc;
 }
-.tree-node {
-    line-height: 2.2em;
-    cursor: pointer;
-}
 .tree-root {
     padding-left: 0;
     border-left : 0;
     margin-left : 0;
+}
+.tree-node table td {
+    padding : 8px 0;
+    cursor: pointer;
 }
 .tree-node table,
 .tree-node table td {

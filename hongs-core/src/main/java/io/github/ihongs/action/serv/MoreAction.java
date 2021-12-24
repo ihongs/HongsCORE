@@ -197,6 +197,21 @@ public class MoreAction {
                 }
                 re1.put(col, map.keySet());
 
+                // 其他参数
+                Object x;
+                x = re0.get( Cnst.AB_KEY );
+                if (x != null) re1.put(Cnst.AB_KEY, x);
+                x = re0.get( Cnst.RB_KEY );
+                if (x != null) re1.put(Cnst.RB_KEY, x);
+                x = re0.get( Cnst.OB_KEY );
+                if (x != null) re1.put(Cnst.OB_KEY, x);
+                x = re0.get( Cnst.RN_KEY );
+                if (x != null) re1.put(Cnst.RN_KEY, x);
+                x = re0.get( Cnst.PN_KEY );
+                if (x != null) re1.put(Cnst.PN_KEY, x);
+                x = re0.get( Cnst.QN_KEY );
+                if (x != null) re1.put(Cnst.QN_KEY, x);
+
                 // 执行请求
                 helper.reply( (Map) null );
                 helper.setRequestData(re1);
@@ -235,6 +250,21 @@ public class MoreAction {
                 if (re1 == null) {
                     re1  = new  HashMap( );
                 }
+
+                // 其他参数
+                Object x;
+                x = re0.get( Cnst.AB_KEY );
+                if (x != null) re1.put(Cnst.AB_KEY, x);
+                x = re0.get( Cnst.RB_KEY );
+                if (x != null) re1.put(Cnst.RB_KEY, x);
+                x = re0.get( Cnst.OB_KEY );
+                if (x != null) re1.put(Cnst.OB_KEY, x);
+                x = re0.get( Cnst.RN_KEY );
+                if (x != null) re1.put(Cnst.RN_KEY, x);
+                x = re0.get( Cnst.PN_KEY );
+                if (x != null) re1.put(Cnst.PN_KEY, x);
+                x = re0.get( Cnst.QN_KEY );
+                if (x != null) re1.put(Cnst.QN_KEY, x);
 
                 // 执行请求
                 helper.reply( (Map) null );

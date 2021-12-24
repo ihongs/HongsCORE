@@ -2150,12 +2150,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 sb.append( " SORT: ");
                 sb.append( s );
             }
-            if ( r != null && !r.isEmpty()) {
-                sb.append(" REPLY: ");
-            for(Object x : r ) {
-                sb.append( x );
-                sb.append(",");
-            }   sb.setLength(sb.length()-1);
+            if ( r != null && ! r.isEmpty() ) {
+                sb.append( " COLS: ");
+                sb.append( r );
             }
             if ( l != 0 || b != 0 ) {
                 sb.append(" LIMIT: ");

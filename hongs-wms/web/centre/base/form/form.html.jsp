@@ -353,10 +353,10 @@
     });
     if (H$("?id")) {
         formobj.formBox.attr("action", "<%=_module%>/<%=_entity%>/update.act");
-        formobj._url = "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.RN_KEY%>=0&<%=Cnst.AB_KEY%>=.enfo,.info,.fall,_fork,_text";
+        formobj._url = "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.AB_KEY%>=.enfo,.info,.fall,_fork,_text";
     } else {
         formobj.formBox.attr("action", "<%=_module%>/<%=_entity%>/create.act");
-        formobj._url = "<%=_module%>/<%=_entity%>/select.act?<%=Cnst.RN_KEY%>=0&<%=Cnst.AB_KEY%>=.enfo,.info,.fall,_fork,_text";
+        formobj._url = "<%=_module%>/<%=_entity%>/select.act?<%=Cnst.AB_KEY%>=.enfo,.info,.fall,_fork,_text";
     }
 
     // 外部定制

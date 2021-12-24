@@ -1399,11 +1399,11 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
             // 逆序
             boolean  rv;
-            if (fn.  endsWith("!") ) {
+            if (fn.  endsWith("!") ) { // 新的逆序后缀
                 fn = fn.substring(0, fn.length() - 1);
                 rv = true ;
-            } else // 兼容旧版
-            if (fn.startsWith("-") ) {
+            } else
+            if (fn.startsWith("-") ) { // 旧的逆序前缀
                 fn = fn.substring(1);
                 rv = true ;
             } else {

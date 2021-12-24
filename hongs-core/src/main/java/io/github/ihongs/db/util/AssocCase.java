@@ -360,11 +360,11 @@ public class AssocCase {
         }
 
         for(String fn : rb) {
-            if (fn.  endsWith("!") ) {
+            if (fn.  endsWith("!") ) { // 新的排除后缀
                 fn = fn.substring(0, fn.length() - 1);
                 xc = ec;
-            } else // 兼容旧版
-            if (fn.startsWith("-") ) {
+            } else
+            if (fn.startsWith("-") ) { // 旧的排除前缀
                 fn = fn.substring(1);
                 xc = ec;
             } else {
@@ -413,11 +413,11 @@ public class AssocCase {
 
         for(String fn : ob) {
             boolean  ds;
-            if (fn.  endsWith("!") ) {
+            if (fn.  endsWith("!") ) { // 新的逆序后缀
                 fn = fn.substring(0, fn.length() - 1);
                 ds = true ;
-            } else // 兼容旧版
-            if (fn.startsWith("-") ) {
+            } else
+            if (fn.startsWith("-") ) { // 旧的逆序前缀
                 fn = fn.substring(1);
                 ds = true ;
             } else {

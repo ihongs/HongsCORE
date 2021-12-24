@@ -51,6 +51,7 @@ public class SelectHelper {
     private String _href = null;
     private String _path = null;
     private Set    _cols = null;
+    private Set    _ords = null;
 
     public SelectHelper() {
         infos = new LinkedHashMap();
@@ -134,6 +135,19 @@ public class SelectHelper {
     public SelectHelper setLink(String href, String path) {
         _href = href;
         _path = path;
+        return  this;
+    }
+
+    /**
+     * 设置全局排序字段, 可以从中提取下级排序表
+     * @param ob
+     * @return
+     */
+    public SelectHelper setSortsInForm(Set ob ) {
+      if (ob != null && ob.isEmpty()) {
+          ob  = null;
+      }
+        _ords =  ob ;
         return  this;
     }
 
@@ -417,6 +431,8 @@ public class SelectHelper {
     }
 
     public void injectFork(List<Map> list, byte ad ) {
+        if ( forks.isEmpty() ) return ;
+
         ActionHelper ah = ActionHelper.newInstance();
         MergeMore    mm = new MergeMore( list );
         Map          cd = new HashMap();
@@ -424,6 +440,7 @@ public class SelectHelper {
         Set          ab = new HashSet();
         Set          rb = new HashSet();
         Map<String , Set> sb = new HashMap(); // 子级 rb
+        Map<String , Set> ob = new HashMap(); // 子级 ob
 
         ah.setContextData(cd);
         ah.setRequestData(rd);
@@ -442,22 +459,65 @@ public class SelectHelper {
             ab.add( "_fork" );
         }
 
+        // 预先提取所有下级
+        Set ts = new HashSet();
+        for(Map.Entry et : forks.entrySet()) {
+            Map    mt = (Map) et.getValue( );
+            String fn = (String) et.getKey();
+
+            String fk = (String) mt.get("data-fk"); // 关联外键
+            String ak = (String) mt.get("data-ak"); // 数据放入此下
+
+            if (ak == null || ak.isEmpty()) {
+            if (fk == null || fk.isEmpty()) {
+                if (fn.endsWith("_id")) {
+                    int  ln = fn.length()-3;
+                    ak = fn.substring(0,ln);
+                } else {
+                    ak = fn + "_fork";
+                }
+            } else {
+                    ak = fn ;
+            }}
+
+            ts.add( ak );
+        }
+
         // 子级 rb 参数
         if (_cols != null) {
-            String t , f ; int i = 0;
+            String t , f ;
             for(Object o : _cols ) {
                 f = Synt.asString(o);
                 int p  = f.indexOf(".");
                 if (p != -1) {
                     t  = f.substring(0,p);
                     f  = f.substring(1+p);
+                    if (!ts.contains( t )) continue;
                     Set nb  = sb.get( t );
                     if (nb == null) {
-                        nb  = new HashSet(_cols.size() - i);
+                        nb  = new LinkedHashSet ( );
                         sb.put(t, nb);
                     }   nb.add(f    );
                 }
-                i ++;
+            }
+        }
+
+        // 子级 ob 参数
+        if (_ords != null) {
+            String t , f ;
+            for(Object o : _ords ) {
+                f = Synt.asString(o);
+                int p  = f.indexOf(".");
+                if (p != -1) {
+                    t  = f.substring(0,p);
+                    f  = f.substring(1+p);
+                    if (!ts.contains( t )) continue;
+                    Set nb  = ob.get( t );
+                    if (nb == null) {
+                        nb  = new LinkedHashSet ( );
+                        ob.put(t, nb);
+                    }   nb.add(f    );
+                }
             }
         }
 
@@ -540,7 +600,7 @@ public class SelectHelper {
                 rd.putAll( rq );
             }
 
-            // 返回字段
+            // 查询字段
             // 若内部有许可的且外部有指定的
             // 则取二者的交集作为查询的字段
             Set rp  = Synt.toSet(mt.get("data-rb"));
@@ -550,6 +610,19 @@ public class SelectHelper {
                     nb.retainAll(rp);
                     if ( ! nb.isEmpty ( ) )
                     rd.put(Cnst.RB_KEY, nb);
+                }
+            }
+
+            // 排序字段
+            // 若内部有许可的且外部有指定的
+            // 则取二者的交集作为排序的字段
+            Set op  = Synt.toSet(mt.get("data-ob"));
+            if (op != null && !op.isEmpty()) {
+                Set nb  = ob.get(ak);
+                if (nb != null) {
+                    nb.retainAll(op);
+                    if ( ! nb.isEmpty ( ) )
+                    rd.put(Cnst.OB_KEY, nb);
                 }
             }
 

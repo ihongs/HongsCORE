@@ -36,12 +36,12 @@ import javax.servlet.http.HttpServletResponse;
  *   in: {type: 1},
  *   sub1: {
  *     at: "path/to/sub1/action",
- *     on: "sub1_id:id",
+ *     on: "main_id=id", // sub1 belongs to main
  *     in: {rb: ["id", "name"]},
  *     sub2: {
  *       at: "path/to/sub2/action",
- *       on: "id:sub1_id",
- *       in: {ob: ["-mtime"]}
+ *       on: "id=sub2_id", // sub1 has many sub2
+ *       in: {ob: ["boost!"]}
  *     }
  *   }
  * }
@@ -172,7 +172,7 @@ public class MoreAction {
         if (uri != null) {
             if (meg != null) {
                 if (key != null) {
-                    int  p  = key.indexOf  (':');
+                    int  p  = key. indexOf ('=');
                     if ( p >= 0) {
                         col = key.substring(1+p);
                         key = key.substring(0,p);
@@ -196,21 +196,6 @@ public class MoreAction {
                     re1  = new  HashMap( );
                 }
                 re1.put(col, map.keySet());
-
-                // 其他参数
-                Object x;
-                x = re0.get( Cnst.AB_KEY );
-                if (x != null) re1.put(Cnst.AB_KEY, x);
-                x = re0.get( Cnst.RB_KEY );
-                if (x != null) re1.put(Cnst.RB_KEY, x);
-                x = re0.get( Cnst.OB_KEY );
-                if (x != null) re1.put(Cnst.OB_KEY, x);
-                x = re0.get( Cnst.RN_KEY );
-                if (x != null) re1.put(Cnst.RN_KEY, x);
-                x = re0.get( Cnst.PN_KEY );
-                if (x != null) re1.put(Cnst.PN_KEY, x);
-                x = re0.get( Cnst.QN_KEY );
-                if (x != null) re1.put(Cnst.QN_KEY, x);
 
                 // 执行请求
                 helper.reply( (Map) null );
@@ -250,21 +235,6 @@ public class MoreAction {
                 if (re1 == null) {
                     re1  = new  HashMap( );
                 }
-
-                // 其他参数
-                Object x;
-                x = re0.get( Cnst.AB_KEY );
-                if (x != null) re1.put(Cnst.AB_KEY, x);
-                x = re0.get( Cnst.RB_KEY );
-                if (x != null) re1.put(Cnst.RB_KEY, x);
-                x = re0.get( Cnst.OB_KEY );
-                if (x != null) re1.put(Cnst.OB_KEY, x);
-                x = re0.get( Cnst.RN_KEY );
-                if (x != null) re1.put(Cnst.RN_KEY, x);
-                x = re0.get( Cnst.PN_KEY );
-                if (x != null) re1.put(Cnst.PN_KEY, x);
-                x = re0.get( Cnst.QN_KEY );
-                if (x != null) re1.put(Cnst.QN_KEY, x);
 
                 // 执行请求
                 helper.reply( (Map) null );

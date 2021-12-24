@@ -340,8 +340,6 @@ public class SelectHelper {
             }
         }
 
-        // TODO: 有 setItemsInForm 还需处理下级字段列表
-
         // 数据映射整理
         Map<String, List> maps = new HashMap();
         for(String fn : forms.keySet()) {
@@ -421,13 +419,14 @@ public class SelectHelper {
     public void injectFork(List<Map> list, byte ad ) {
         ActionHelper ah = ActionHelper.newInstance();
         MergeMore    mm = new MergeMore( list );
-        Map          rd = new HashMap();
         Map          cd = new HashMap();
-        Set          rb = new HashSet();
+        Map          rd = new HashMap();
         Set          ab = new HashSet();
+        Set          rb = new HashSet();
+        Map<String , Set> sb = new HashMap(); // 子级 rb
 
-        ah.setRequestData(rd);
         ah.setContextData(cd);
+        ah.setRequestData(rd);
 
         // 传递 ab 参数
         if (TEXT==(TEXT & ad)) {
@@ -443,12 +442,31 @@ public class SelectHelper {
             ab.add( "_fork" );
         }
 
+        // 子级 rb 参数
+        if (_cols != null) {
+            String t , f ; int i = 0;
+            for(Object o : _cols ) {
+                f = Synt.asString(o);
+                int p  = f.indexOf(".");
+                if (p != -1) {
+                    t  = f.substring(0,p);
+                    f  = f.substring(1+p);
+                    Set nb  = sb.get( t );
+                    if (nb == null) {
+                        nb  = new HashSet(_cols.size() - i);
+                        sb.put(t, nb);
+                    }   nb.add(f    );
+                }
+                i ++;
+            }
+        }
+
         for(Map.Entry et : forks.entrySet()) {
             Map    mt = (Map) et.getValue( );
             String fn = (String) et.getKey();
 
             String fk = (String) mt.get("data-fk"); // 关联外键
-            
+
             // 建立映射, 清除空值可避免不必要的查询
             Map<Object, List> ms = mm.mapped( fk != null ? fk : fn );
             ms.remove(  ""  );
@@ -507,14 +525,33 @@ public class SelectHelper {
             rd.put(vk, ms.keySet());
             rd.put(Cnst.RN_KEY, 0 );
             Set xb;
-            xb = Synt.toTerms(rd.get(Cnst.RB_KEY));
-            if (xb == null) {
-                xb  = rb;
-            }   rd.put(Cnst.RB_KEY, xb);
             xb = Synt.toTerms(rd.get(Cnst.AB_KEY));
             if (xb == null) {
                 xb  = ab;
             }   rd.put(Cnst.AB_KEY, xb);
+            xb = Synt.toTerms(rd.get(Cnst.RB_KEY));
+            if (xb == null) {
+                xb  = rb;
+            }   rd.put(Cnst.RB_KEY, xb);
+
+            // 请求参数
+            Map rq  = Synt.toMap(mt.get("data-rd"));
+            if (rq != null && !rq.isEmpty()) {
+                rd.putAll( rq );
+            }
+
+            // 返回字段
+            // 若内部有许可的且外部有指定的
+            // 则取二者的交集作为查询的字段
+            Set rp  = Synt.toSet(mt.get("data-rb"));
+            if (rp != null && !rp.isEmpty()) {
+                Set nb  = sb.get(ak);
+                if (nb != null) {
+                    nb.retainAll(rp);
+                    if ( ! nb.isEmpty ( ) )
+                    rd.put(Cnst.RB_KEY, nb);
+                }
+            }
 
             // 获取结果
             // 关联出错应在测试期发现并解决

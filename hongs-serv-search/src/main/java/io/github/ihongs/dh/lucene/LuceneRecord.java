@@ -1398,8 +1398,17 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             }
 
             // 逆序
-            boolean rv = fn.startsWith("-");
-            if (rv) fn = fn.substring ( 1 );
+            boolean  rv;
+            if (fn.  endsWith("!") ) {
+                fn = fn.substring(0, fn.length() - 1);
+                rv = true ;
+            } else // 兼容旧版
+            if (fn.startsWith("-") ) {
+                fn = fn.substring(1);
+                rv = true ;
+            } else {
+                rv = false;
+            }
 
             // 自定义排序
             if (! padSrt (of, rd, fn, rv) ) {

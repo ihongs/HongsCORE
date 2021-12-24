@@ -359,7 +359,11 @@ public class AssocCase {
             fs.add(fn);
         }
 
-        for(String  fn : rb) {
+        for(String fn : rb) {
+            if (fn.  endsWith("!") ) {
+                fn = fn.substring(0, fn.length() - 1);
+                xc = ec;
+            } else // 兼容旧版
             if (fn.startsWith("-") ) {
                 fn = fn.substring(1);
                 xc = ec;
@@ -407,16 +411,25 @@ public class AssocCase {
         Map<String, String> af = allow(SORTABLE);
         if (af == null || af.isEmpty()) return;
 
-        for(String  fn : ob) {
-            boolean desc = fn.startsWith("-");
-            if (desc) {
+        for(String fn : ob) {
+            boolean  ds;
+            if (fn.  endsWith("!") ) {
+                fn = fn.substring(0, fn.length() - 1);
+                ds = true ;
+            } else // 兼容旧版
+            if (fn.startsWith("-") ) {
                 fn = fn.substring(1);
+                ds = true ;
+            } else {
+                ds = false;
             }
+
             if (! af.containsKey(fn)) {
                 continue;
             }
+
             fn = af.get( fn );
-            if (desc && !fn.endsWith(" DESC")) {
+            if (ds && !fn.endsWith(" DESC")) {
                 fn += " DESC";
             }
             caze.assort( fn );

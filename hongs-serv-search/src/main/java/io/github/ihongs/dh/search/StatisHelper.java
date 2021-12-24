@@ -406,7 +406,7 @@ public class StatisHelper {
         int r = srtz  ==  null   ?   0
             : ( srtz.contains("-") ? 2 // 默认逆序
             : ( srtz.contains("~") ? 1 // 默认正序
-                                   : 0 ));
+                                    : 0 ));
 
         for(Map.Entry<String, Map<Object, Long>> et : counts.entrySet()) {
             List<Object[]> a = new ArrayList(et.getValue().size(  )  );
@@ -421,10 +421,11 @@ public class StatisHelper {
             // 排序
             if (srtz != null && ! srtz.isEmpty()) {
                 String n = et.getKey(  );
-                if (srtz.contains(/**/n)) {
+                if (srtz.contains(n/**/)) {
                     Collections.sort( a, CountA );
                 } else
-                if (srtz.contains("-"+n)) {
+                if (srtz.contains(n+"!")
+                ||  srtz.contains("-"+n)) {
                     Collections.sort( a, CountD );
                 } else
                 if (r == 1) {
@@ -632,10 +633,11 @@ public class StatisHelper {
             // 排序
             if (srtz != null && ! srtz.isEmpty()) {
                 String n = et.getKey(  );
-                if (srtz.contains(/**/n)) {
+                if (srtz.contains(n/**/)) {
                     Collections.sort( a, MountA );
                 } else
-                if (srtz.contains("-"+n)) {
+                if (srtz.contains(n+"!")
+                ||  srtz.contains("-"+n)) {
                     Collections.sort( a, MountD );
                 } else
                 if (r == 1) {
@@ -1328,6 +1330,10 @@ public class StatisHelper {
             // 整理出逆序表
             for(int i = 0; i < fields.length; i ++ ) {
                 String fn = fields[i];
+                if (fn.  endsWith("!")) {
+                    fields[i] = fn.substring(0, fn.length() - 1);
+                    desces[i] = true ;
+                } else // 兼容旧版
                 if (fn.startsWith("-")) {
                     fields[i] = fn.substring(1);
                     desces[i] = true ;

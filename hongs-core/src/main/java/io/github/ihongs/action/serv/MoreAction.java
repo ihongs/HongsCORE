@@ -36,12 +36,12 @@ import javax.servlet.http.HttpServletResponse;
  *   in: {type: 1},
  *   sub1: {
  *     at: "path/to/sub1/action",
- *     on: "main_id=id", // sub1 belongs to main
+ *     on: "id=main_id", // main has many sub1
  *     in: {rb: ["id", "name"]},
  *     sub2: {
  *       at: "path/to/sub2/action",
- *       on: "id=sub2_id", // sub1 has many sub2
- *       in: {ob: ["boost!"]}
+ *       on: "sub2_id=id", // sub1 belongs to sub2
+ *       in: {ob: ["age!", "id"]}
  *     }
  *   }
  * }

@@ -3108,7 +3108,8 @@ function() {
     var ths = $(this);
     var tab = ths.parent();
     var nav = tab.parent();
-    var pns = nav.data("labs");
+    var pns = nav.data( "labs")
+           || nav.next(".labs");
     var tao = nav.children(".active");
     var pno = pns ? pns.children().eq(tao.index()) : $();
     var pne = pns ? pns.children().eq(tab.index()) : $();
@@ -3116,24 +3117,22 @@ function() {
         return;
     }
     // 联动关闭
-    if (nav.is(".breadcrumb")
+    if (nav.is(".tabs.laps" )
     && !tab.is(".hook-crumb,.hold-crumb")) {
         tab.nextAll( ).find("a").each( function( ) {
             $(this).hsClose();
         });
     }
     // 延迟加载
+    var ref;
     if (ths.is("[data-href]")) { // 加载一次
-        var ref;
         ref = ths.attr("data-href");
         ths.removeAttr("data-href");
-        ths.attr("data-hrel", ref );
-        pne.hsOpen(ref);
+        pne.hsLoad(ref);
     } else
-    if (ths.is("[data-link]")) { // 总时重载
-        var ref;
-        ref = ths.attr("data-link");
-        pne.hsOpen(ref);
+    if (ths.is("[data-hrel]")) { // 总时重载
+        ref = ths.attr("data-hrel");
+        pne.hsLoad(ref);
     }
     tab.siblings()
     .removeClass("active");
@@ -3145,19 +3144,21 @@ function() {
        .hide();
     pne.trigger("hsRecur");
 })
-.on("click", ".back-crumb  a",
+.on("click", ".back-crumb a",
 function() {
-    var nav = $(this).closest ('.breadcrumb');
-    nav.find('li:last a').hsClose();
-//  nav.find('li:last a').  click();
+    var nav = $(this).closest ('.tabs.laps');
+        nav.find('li:last a').hsClose();
+    if (nav.find(".active").size() < 1) {
+        nav.find('li:last a').  click();
+    }
 })
 .on("hsReady hsRecur", ".labs.laps",
 function() {
-    var nav = $(this).siblings('.breadcrumb') || $ (this).data("tabs");
+    var nav = $(this).data("tabs")
+           || $(this).siblings('.tabs.laps');
     nav.toggleClass("bread-home", nav.children('.home-crumb').is(".active")); // 主页
     nav.toggleClass("bread-hook", nav.children('.hook-crumb').is(".active")); // 主页显示
     nav.toggleClass("bread-hold", nav.children('.hold-crumb').is(".active")); // 总是显示
-    nav.removeClass("hide"); // 兼容代码, 去掉旧的 hide
 });
 
 $(function() {$(document).hsReady();});

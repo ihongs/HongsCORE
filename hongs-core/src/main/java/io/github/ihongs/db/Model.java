@@ -755,14 +755,14 @@ implements IEntity
     int page = 1;
     if (rd.containsKey(Cnst.PN_KEY))
     {
-      page = Synt.declare(rd.get(Cnst.PN_KEY), 1);
+      page = Synt.declare(rd.get(Cnst.PN_KEY), page);
     }
 
     // 续查页数, 默认查总页数
     int ques = 0;
     if (rd.containsKey(Cnst.QN_KEY))
     {
-      ques = Synt.declare(rd.get(Cnst.QN_KEY), 0);
+      ques = Synt.declare(rd.get(Cnst.QN_KEY), ques);
     }
 
     Map data = new HashMap();

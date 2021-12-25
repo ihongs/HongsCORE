@@ -19,7 +19,7 @@
     String LOGO = Synt.declare(_params.get("field-logo"), "logo");
     String USER = Synt.declare(_params.get("field-user"),"cuser");
 
-    StringBuilder _ob = new StringBuilder("-boost,-mtime,-ctime");
+    StringBuilder _ob = new StringBuilder("boost!,mtime!,ctime!");
     StringBuilder _rb = new StringBuilder("id,"+NAME+","+NOTE+","+LOGO+","+USER);
     Set<String>   _wd = getWordable (_fields);
     Set<String>   _sd = getSrchable (_fields);
@@ -213,13 +213,13 @@
                 continue;
             }
         %>
-                        <option value="<%=name%>,*"><%=text%></option>
+                        <option value="*,<%=name%>"><%=text%></option>
         <%} /*End for*/%>
                     </select
                     <span>&nbsp;</span>
                     <select class="form-control" style="width: auto; display: inline-block;">
                         <option value="" >正序</option>
-                        <option value="-">逆序</option>
+                        <option value="!">逆序</option>
                     </select>
                 </div>
             </div>

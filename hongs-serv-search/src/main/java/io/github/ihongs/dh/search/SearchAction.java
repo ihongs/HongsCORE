@@ -246,12 +246,13 @@ public class SearchAction extends JAction {
 
             /**
              * 非聚合统计中
-             * - 表默认逆序
-             * ~ 表默认正序
+             * ! 表默认逆序
+             * * 表默认正序
              */
             if (nb != 3
             && (fn.equals("-")
-            ||  fn.equals("~") ) ) {
+            ||  fn.equals("!")
+            ||  fn.equals("*") ) ) {
                 continue;
             }
 
@@ -260,10 +261,12 @@ public class SearchAction extends JAction {
              * 对返回的列表排序时,
              * 无效字段会影响效率,
              * 故对照查询字段检查.
-             * 逆序字段先去掉负号.
              */
             if (fn.startsWith("-") ) {
                 fn = fn.substring(1);
+            } else
+            if (fn.  endsWith("!") ) {
+                fn = fn.substring(0, fn.length() - 1);
             }
             if ( ! rb.contains(fn) ) {
                 throw new HongsException(400, "Field '"+fu+"' can not be sorted");

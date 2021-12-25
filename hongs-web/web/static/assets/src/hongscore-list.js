@@ -730,30 +730,35 @@ HsList.prototype = {
     },
 
     _fill__sort : function(th, s, n) {
+        var u = this._fill__desc (n);
+
         if (th.find(".sort-ico").size() === 0) {
             var  that = this ;
             th.click( function() {
                 var s = null ;
                 if (!!th.hasClass("sort-asc")) {
-                    s = "-"+n;
+                    s = u;
                 } else
                 if (! th.hasClass("sort-esc")) {
-                    s = /**/n;
+                    s = n;
                 }
                 hsSetSeria(that._data, that.sortKey, s);
-//              hsSetSeria(that._data, that.pageKey, 1);
+            //  hsSetSeria(that._data, that.pageKey, 1);
                 that.load ( );
             });
             th.append('<span class="sort-ico"></span>');
         }
 
-        th .removeClass( "sort-asc sort-esc" );
-        if (s === /**/n) {
-            th.addClass( "sort-asc" );
+        th .removeClass("sort-asc sort-esc");
+        if (s === n) {
+            th.addClass("sort-asc");
         } else
-        if (s === '-'+n) {
-            th.addClass( "sort-esc" );
+        if (s === u) {
+            th.addClass("sort-esc");
         }
+    },
+    _fill__desc : function(n) {
+        return  n + "!";
     }
 };
 

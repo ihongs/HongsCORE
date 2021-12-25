@@ -9,8 +9,14 @@
     String _pageId = (_module + "-" + _entity + "-" + _action).replace('/', '-');
     String _funcId = "in_"+(_module + "_" + _entity + "_pick").replace('/', '_');
 
-    StringBuilder _ob = new StringBuilder( "-,-boost,-mtime,-ctime");
-    StringBuilder _rb = new StringBuilder("id,name,note,logo,mtime");
+    String NAME = Synt.declare(_params.get("field-name"), "name");
+    String NOTE = Synt.declare(_params.get("field-note"), "note");
+    String LOGO = Synt.declare(_params.get("field-logo"), "logo");
+    String USER = Synt.declare(_params.get("field-user"),"cuser");
+
+    StringBuilder _ob = new StringBuilder("boost!,mtime!,ctime!");
+    StringBuilder _rb = new StringBuilder("id,"+NAME+","+NOTE+","+LOGO+","+USER);
+    Set<String>   _wd = getWordable (_fields);
 %>
 <h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
 <div id="<%=_pageId%>" class="<%=_action%>-list board board-end">
@@ -23,7 +29,18 @@
         </div>
         <div style="display: table-cell; width: 100%; vertical-align: middle;">
             <form class="findbox input-group" method="POST" action="">
-                <input type="search" name="<%=_fields.containsKey("word") ? "word" : "wd"%>" class="form-control input-search"/>
+                <%
+                    StringBuilder sp = new StringBuilder( );
+                    if (! _wd.isEmpty()) {
+                    for(String ss : _wd) {
+                        ss = Dict.getValue(_fields, "", ss , "__text__" );
+                        if (ss.length() != 0) sp.append(ss).append(", " );
+                    }   if (sp.length() != 0) sp.setLength(sp.length()-2);
+                    } else {
+                        sp.append("\" disabled=\"disabled");
+                    }
+                %>
+                <input type="search" class="form-control" name="<%=Cnst.WD_KEY%>" placeholder="<%=sp%>" /><!--<%=_wd%>-->
                 <span class="input-group-btn">
                     <button type="submit" class="search btn btn-default" title="<%=_locale.translate("fore.search", _title)%>"><span class="glyphicon glyphicon-search"></span></button>
                 </span>

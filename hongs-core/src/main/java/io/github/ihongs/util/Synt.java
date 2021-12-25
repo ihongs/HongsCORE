@@ -66,12 +66,12 @@ public final class Synt {
     private static final Pattern MEXP = Pattern.compile("\\s*:\\s*");
 
     /**
-     * 拆分字符: 空字符 或 +,;|
+     * 拆分字符: 空字符 或 ,;|
      */
-    private static final Pattern TEXP = Pattern.compile("\\s*[\\s\\+,;|]\\s*");
+    private static final Pattern TEXP = Pattern.compile("\\s*[\\s,;|]\\s*");
 
     /**
-     * 拆分字符: 空字符 或 +,;|.:!?& 等及全角的标点
+     * 拆分字符: 空字符 或 ,;|.:!?&+ 等及全角的标点
      */
     private static final Pattern WEXP = Pattern.compile("\\s*[\\p{Space}\\p{Punct}\\u3000-\\u303F&&[^\\-_]]\\s*");
 

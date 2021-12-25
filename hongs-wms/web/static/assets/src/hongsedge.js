@@ -1527,19 +1527,23 @@ function hsListInitSort(x, v, n) {
         } else {
             chk.toggleClass("invisible", false);
         }
-        inp.val(chk.val() + sel.val());
+        if (chk.val() === "!") {
+            inp.val(sel.val() + chk.val())
+        } else {
+            inp.val(chk.val() + sel.val());
+        }
     });
 
     /*
     if (sel.find("[value=mtime]").size()) {
         chk.prop("checked", true);
-        sel.val ( "mtime");
-        inp.val ("-mtime");
+        sel.val ("mtime" );
+        inp.val ("mtime!");
     } else
     if (sel.find("[value=ctime]").size()) {
         chk.prop("checked", true);
-        sel.val ( "ctime");
-        inp.val ("-ctime");
+        sel.val ("ctime" );
+        inp.val ("ctime!");
     }
     */
 }

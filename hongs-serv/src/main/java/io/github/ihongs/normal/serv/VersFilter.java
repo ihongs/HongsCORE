@@ -156,7 +156,7 @@ public class VersFilter extends ActionDriver {
                     if (c.endsWith("/acount" )
                     ||  c.endsWith("/amount")) {
                         if (rd.containsKey(Cnst.OB_KEY) == false) {
-                            rd.put(Cnst.OB_KEY , Synt.setOf("-"));
+                            rd.put(Cnst.OB_KEY , Synt.setOf("!"));
                         }
                     }
                 }

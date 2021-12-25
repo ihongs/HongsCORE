@@ -14,7 +14,7 @@
                   || NaviMap.hasConfFile(_module + "/" + _entity)
                    ? _module + "/" + _entity : _module ;
 
-    StringBuilder _ob = new StringBuilder("-boost,-mtime,-ctime");
+    StringBuilder _ob = new StringBuilder("boost!,mtime!,ctime!");
     StringBuilder _rb = new StringBuilder("id,name");
     Set<String>   _wd = getWordable (_fields);
     Set<String>   _sd = getSrchable (_fields);

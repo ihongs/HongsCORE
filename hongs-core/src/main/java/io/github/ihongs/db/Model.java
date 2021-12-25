@@ -33,7 +33,7 @@ import java.util.Set;
  * permit 默认调用 filter 来实现的, 可覆盖它来做资源过滤操作.<br/>
  * search 可使用查询参数:
  * <code>
- * ?pn=1&rn=10&f1=123&f2.-gt=456&wd=a+b&ob=-f1+f2&rb=id+f1+f2
+ * ?pn=1&rn=10&f1=123&f2.gt=456&wd=a+b&ob=f1+f2!&rb=id+f1+f2
  * </code>
  * 详见 filter 方法说明
  * </p>
@@ -889,9 +889,9 @@ implements IEntity
    *
    * 设计目标:
    * 1) 按照rb参数设置查询字段;
-   *    限定字段列表: rb=a+b+c或rb=-a+x.b, -表示排除该字段;
+   *    限定字段列表: rb=a+b+c或rb=a!+x.b, !表示排除该字段;
    * 2) 按照ob参数设置排序方式,
-   *    多个字段排序: ob=a+b+c或ob=-a+b+c, -表示该字段逆序;
+   *    多个字段排序: ob=a+b+c或ob=a!+b+c, !表示该字段逆序;
    * 3) 按照wd参数设置模糊查询,
    *    多关键词搜索: wd=x+y+z;
    *    指定字段搜索: a.cq=x或a.b.cq=y, 同样也适用上述规则,
@@ -994,7 +994,7 @@ implements IEntity
     /**
      * 绑定许可字段
      * @param caze  查询用例
-     * @param rb    排序字段, 结构 { FIELD1, FIELD2... }, 前跟 - 号表示逆序
+     * @param rb    排序字段, 结构 { FIELD1, FIELD2... }, 后跟 ! 号或前跟 - 号表逆序
      */
     protected final void field(FetchCase caze, Set rb) {
         if (rb == null) {
@@ -1040,17 +1040,21 @@ implements IEntity
 
         for(Object fo : rb) {
             String fn = fo.toString();
-            if (fn.startsWith("-")) {
-                fn = fn.substring (1);
+            if (fn.  endsWith("!") ) { // 新的排除后缀
+                fn = fn.substring(0, fn.length() - 1);
+                xc = ec;
+            } else
+            if (fn.startsWith("-") ) { // 旧的排除前缀
+                fn = fn.substring(1);
                 xc = ec;
             } else {
                 xc = ic;
             }
 
-            if (cf.containsKey(fn)) {
+            if (cf.containsKey(fn) ) {
                 xc.addAll(cf.get(fn));
             } else
-            if (af.containsKey(fn)) {
+            if (af.containsKey(fn) ) {
                 xc.add(fn);
 
                 // 排除时, 先在包含中增加全部

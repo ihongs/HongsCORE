@@ -109,17 +109,17 @@
             <param-value>100</param-value>
         </init-param>
         <init-param>
-            <param-name>sr-limit</param-name>
-            <param-value>2</param-value>
+            <param-name>illegals</param-name>
+            <param-value>ar,nr,or</param-value>
         </init-param>
         <init-param>
-            <param-name>sr-level</param-name>
-            <param-value>1</param-value>
+            <param-name>url-includes</param-name>
+            <param-value>*.act,*.jsp</param-value>
         </init-param>
     </filter>
     <filter-mapping>
         <filter-name>VarsFilter</filter-name>
-        <url-pattern>*.act</url-pattern>
+        <url-pattern>/centre/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
         <dispatcher>INCLUDE</dispatcher>

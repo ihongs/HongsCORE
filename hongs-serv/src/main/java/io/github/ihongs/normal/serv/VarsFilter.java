@@ -135,6 +135,7 @@ public class VarsFilter extends ActionDriver {
             }
             catch (HongsException|HongsExemption ex) {
                 hlpr.fault( ex );
+                return;
             }
         }
 
@@ -147,7 +148,6 @@ public class VarsFilter extends ActionDriver {
         }
         if (od instanceof Map) {
             Map rd = (Map) od ;
-            srLevel (level, l);
             t = srCount(rd.get(Cnst.AR_KEY), limit, level, t, l);
             t = srCount(rd.get(Cnst.NR_KEY), limit, level, t, l);
             t = srCount(rd.get(Cnst.OR_KEY), limit, level, t, l);
@@ -161,6 +161,7 @@ public class VarsFilter extends ActionDriver {
         if (od == null) {
             return t;
         }
+            srLevel (level, l);
         if (od instanceof Map) {
             t = t + ((Map) od).size( );
             srLimit (limit, t);
@@ -191,7 +192,7 @@ public class VarsFilter extends ActionDriver {
 
     private void srLimit(int limit, int t) throws HongsException {
         if (limit != 0 && limit < t) {
-            throw new HongsException(400, Cnst.AR_KEY+"/"+Cnst.NR_KEY+"/"+Cnst.OR_KEY+" can not exceed "+limit+" items" );
+            throw new HongsException(400, Cnst.AR_KEY+"/"+Cnst.NR_KEY+"/"+Cnst.OR_KEY+" can not exceed "+limit+" groups");
         }
     }
 

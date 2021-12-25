@@ -219,11 +219,9 @@ HsList.prototype = {
 
             // 排序处理
             if (th.hasClass("sortable")) {
-                n  = th.data("ob")
-                  || th.data("fn");
-                v  = th.data("od")
-                  || this._fill__desc(n);
-                this._fill__sort(th, sn, n, v);
+                n  = th.data("fn");
+                t  = th.data("ft");
+                this._fill__sort(th, sn, n, t);
             }
         }
 
@@ -731,16 +729,16 @@ HsList.prototype = {
         jQuery(td).text( v );return false;
     },
 
-    _fill__sort : function(th, s, n, u) {
+    _fill__sort : function(th, s, n) {
         if (th.find(".sort-ico").size() === 0) {
             var  that = this ;
             th.click( function() {
                 var s = null ;
                 if (!!th.hasClass("sort-asc")) {
-                    s = u;
+                    s = that._sort_esc(th, n);
                 } else
                 if (! th.hasClass("sort-esc")) {
-                    s = n;
+                    s = that._sort_asc(th, n);
                 }
                 hsSetSeria(that._data, that.sortKey, s);
             //  hsSetSeria(that._data, that.pageKey, 1);
@@ -750,16 +748,24 @@ HsList.prototype = {
         }
 
         th .removeClass("sort-asc sort-esc");
-        if (s === n) {
+        if (s === that._sort_asc(th, n)) {
             th.addClass("sort-asc");
         } else
-        if (s === u) {
+        if (s === that._sort_asc(th, n)) {
             th.addClass("sort-esc");
         }
     },
-    _fill__desc : function(n) {
-        return  n + "!";
-    }
+    _sort_asc : function(th, n) {
+        return th.data("ob") || n;
+    },
+    _sort_esc : function(th, n) {
+        return th.data("od") || (
+            this._desc === "-"
+          ? this._desc + this._sort_asc(th, n)
+          : this._sort_asc(th, n) + this._desc
+        );
+    },
+    _desc : "!"
 };
 
 /**

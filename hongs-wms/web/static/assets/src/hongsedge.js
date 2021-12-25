@@ -1527,10 +1527,10 @@ function hsListInitSort(x, v, n) {
         } else {
             chk.toggleClass("invisible", false);
         }
-        if (chk.val() === "!") {
-            inp.val(sel.val() + chk.val())
-        } else {
+        if (chk.val() === "-") {
             inp.val(chk.val() + sel.val());
+        } else {
+            inp.val(sel.val() + chk.val());
         }
     });
 

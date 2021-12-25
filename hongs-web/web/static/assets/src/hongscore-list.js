@@ -748,10 +748,10 @@ HsList.prototype = {
         }
 
         th .removeClass("sort-asc sort-esc");
-        if (s === that._sort_asc(th, n)) {
+        if (s === this._sort_asc(th, n)) {
             th.addClass("sort-asc");
         } else
-        if (s === that._sort_asc(th, n)) {
+        if (s === this._sort_esc(th, n)) {
             th.addClass("sort-esc");
         }
     },

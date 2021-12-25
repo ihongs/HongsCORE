@@ -219,9 +219,11 @@ HsList.prototype = {
 
             // 排序处理
             if (th.hasClass("sortable")) {
-                var fn = th.attr("data-ob" )
-                      || th.attr("data-fn" );
-                this._fill__sort(th, sn, fn);
+                n  = th.data("ob")
+                  || th.data("fn");
+                v  = th.data("od")
+                  || this._fill__desc(n);
+                this._fill__sort(th, sn, n, v);
             }
         }
 
@@ -729,9 +731,7 @@ HsList.prototype = {
         jQuery(td).text( v );return false;
     },
 
-    _fill__sort : function(th, s, n) {
-        var u = this._fill__desc (n);
-
+    _fill__sort : function(th, s, n, u) {
         if (th.find(".sort-ico").size() === 0) {
             var  that = this ;
             th.click( function() {

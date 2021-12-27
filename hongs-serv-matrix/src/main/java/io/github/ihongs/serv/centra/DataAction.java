@@ -11,6 +11,7 @@ import io.github.ihongs.action.anno.Verify;
 import io.github.ihongs.action.anno.CommitSuccess;
 import io.github.ihongs.dh.IEntity;
 import io.github.ihongs.dh.search.SearchAction;
+import io.github.ihongs.dh.search.TitlesHelper;
 import io.github.ihongs.serv.matrix.Data;
 import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Synt;
@@ -77,11 +78,16 @@ public class DataAction extends SearchAction {
         Method met = runner.getMethod();
 
         // 绑定特制的表单
-        if (met.isAnnotationPresent(Select.class)
-        ||  met.isAnnotationPresent(Verify.class)) {
+        String fcn = "form:" + mod +"!"+ ent ;
+        Object fco = helper.getAttribute(fcn);
+        if (fco == null
+        && (met.isAnnotationPresent(Select.class)
+        ||  met.isAnnotationPresent(Verify.class)
+        ||  met.isAnnotationPresent(TitlesHelper.Titles.class)
+        )) {
             Data dat = (Data) getEntity(helper);
-            Map  fcs =  dat.getFields();
-            helper.setAttribute("form:"+ mod +"."+ ent, fcs);
+                 fco =  dat . getFields();
+            helper.setAttribute(fcn, fco);
         }
     }
 

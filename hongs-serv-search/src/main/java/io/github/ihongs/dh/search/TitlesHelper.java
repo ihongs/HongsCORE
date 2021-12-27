@@ -351,11 +351,10 @@ public class TitlesHelper {
                           .get(Cnst.RB_KEY)
                 );
 
-                Map data  = (Map) helper.getAttribute("form:"+conf+"."+form);
+                Map data  = (Map) helper.getAttribute("form:"+conf+"!"+form);
                 if (data == null) {
                     data  = FormSet.getInstance(conf).getForm(form);
                 }
-
 
                 TitlesHelper sel = new TitlesHelper();
                 sel.setItemsInForm( rb );

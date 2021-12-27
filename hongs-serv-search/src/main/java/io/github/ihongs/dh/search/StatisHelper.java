@@ -89,7 +89,7 @@ public class StatisHelper {
                 throw new HongsException(400, "Field "+f+" is not exists");
             }
 
-            // 统计容器
+            // 默认统计
             counts.put(k, new HashMap());
 
             Map     vd = null;

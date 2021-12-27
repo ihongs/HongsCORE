@@ -98,6 +98,8 @@ public class StatisHelper {
             if (vo instanceof Map) {
                 Map vm = (Map) vo ;
 
+                try {
+
                 // 特选
                 vs = Synt.asSet(vm.get(ON_REL));
                 if (vs != null && !vs.isEmpty()) {
@@ -118,6 +120,10 @@ public class StatisHelper {
                         vz.add(s /**/);
                     }
                     countx.put(k , vz);
+                }
+
+                } catch ( ClassCastException ex) {
+                    throw new HongsException(400, ex); // 数据转换失败
                 }
 
                 // 分块条件

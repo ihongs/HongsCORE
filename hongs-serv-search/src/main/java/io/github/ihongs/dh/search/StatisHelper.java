@@ -58,13 +58,11 @@ public class StatisHelper {
     public Map acount(Map rd) throws HongsException {
         IndexSearcher finder = that.getFinder();
 
-        int rn = Synt.declare(rd.get(Cnst.RN_KEY), 0); // Top N
         Set<String> rb = Synt.toTerms(rd.get(Cnst.RB_KEY));
         Set<String> ob = Synt.toTerms(rd.get(Cnst.OB_KEY));
 
         Map<String, Map<Object, Long>> counts  = new HashMap();
         Map<String, Set<Object      >> countx  = new HashMap(); // 排除
-        Map<String, Set<Object      >> countz  = new HashMap(); // 特选
 
         Map<String, Map<Object, Long>> counts2 = new HashMap();
         Map<String, Set<Object      >> countx2 = new HashMap();
@@ -91,6 +89,9 @@ public class StatisHelper {
                 throw new HongsException(400, "Field "+f+" is not exists");
             }
 
+            // 统计容器
+            counts.put(k, new HashMap());
+
             Map     vd = null;
             Set     vs = null;
             Object  vo = rd.get(k);
@@ -100,12 +101,12 @@ public class StatisHelper {
                 // 特选
                 vs = Synt.asSet(vm.get(ON_REL));
                 if (vs != null && !vs.isEmpty()) {
-                    Set vz = new HashSet(vs.size());
+                    Map vz = new HashMap(vs.size());
                     for(Object v : vs) {
                         Object s = f.apply(v);
-                        vz.add(s);
+                        vz.put(s , 0L);
                     }
-                    countz.put(k, vz);
+                    counts.put(k , vz);
                 }
 
                 // 排除
@@ -114,9 +115,9 @@ public class StatisHelper {
                     Set vz = new HashSet(vs.size());
                     for(Object v : vs) {
                         Object s = f.apply(v);
-                        vz.add(s);
+                        vz.add(s /**/);
                     }
-                    countx.put(k, vz);
+                    countx.put(k , vz);
                 }
 
                 // 分块条件
@@ -128,9 +129,6 @@ public class StatisHelper {
                     vd.put(k , vm);
                 }
             }
-
-            // 统计容器
-            counts.put(k, new HashMap());
 
             if ( vs == null || vs.isEmpty() ) {
                 Map<Object, Long> vz = counts.get(k);
@@ -155,6 +153,8 @@ public class StatisHelper {
 
         //** 排序并截取统计数据 **/
 
+        int rn  = Synt.declare(rd.get(Cnst.RN_KEY), 0); // Top N
+
         int od  = 0;
         if (ob != null) {
         if (ob.contains("!")
@@ -168,25 +168,13 @@ public class StatisHelper {
         for(Map.Entry<String, Map<Object, Long>> et : counts.entrySet()) {
                  String        k = et.getKey  ();
             Map <Object, Long> m = et.getValue();
-            Set <Object      > z = countz.get(k);
-            List<Object  []  > b ;
-            List<Object  []  > a ;
-
-            if (z == null) {
-                b  = null;
-            } else {
-                b  = new ArrayList(z.size()); // 特选的
-            }
-                a  = new ArrayList(m.size()); // 自然的
+            List<Object  []  > a = new ArrayList(m.size());
 
             for(Map.Entry<Object, Long> e : et.getValue().entrySet()) {
                 Object v = e.getKey  ();
                 long   c = e.getValue();
-                if (c == 0)  continue  ;
-                if (z != null && z.contains(v)) {
-                    b.add(new Object[] {v, null, c});
-                } else {
-                    a.add(new Object[] {v, null, c});
+                if (c != 0) {
+                    a.add( new Object[] {v, null, c} );
                 }
             }
 
@@ -212,25 +200,6 @@ public class StatisHelper {
             if (n > 0 && n < a.size()) {
                 a = a.subList( 0, n );
             }
-
-            // 补充并重排
-            if ( b != null && !  b.isEmpty()) {
-                a.addAll(b);
-            if (ob != null && ! ob.isEmpty()) {
-                if (ob.contains(k+"!")
-                ||  ob.contains("-"+k)) {
-                    Collections.sort(a, CountD);
-                } else
-                if (ob.contains(  k  )) {
-                    Collections.sort(a, CountA);
-                } else
-                if (od == 2) {
-                    Collections.sort(a, CountD);
-                } else
-                if (od == 1) {
-                    Collections.sort(a, CountA);
-                }
-            }}
 
             cnts.put( k, a );
         }
@@ -272,7 +241,6 @@ public class StatisHelper {
     public Map amount(Map rd) throws HongsException {
         IndexSearcher finder = that.getFinder();
 
-        int rn = Synt.declare(rd.get(Cnst.RN_KEY), 0); // Top N
         Set<String> rb = Synt.toTerms(rd.get(Cnst.RB_KEY));
         Set<String> ob = Synt.toTerms(rd.get(Cnst.OB_KEY));
 
@@ -373,6 +341,8 @@ public class StatisHelper {
 
         //** 排序并截取统计数据 **/
 
+        int rn  = Synt.declare(rd.get(Cnst.RN_KEY), 0); // Top N
+
         int od  = 0;
         if (ob != null) {
         if (ob.contains("!")
@@ -391,12 +361,13 @@ public class StatisHelper {
             for(Map.Entry<Range, Ratio> e : et.getValue().entrySet()) {
                 Range  v = e.getKey  ();
                 Ratio  c = e.getValue();
-                if (c.cnt == 0) continue;
-                a.add( new Object [] {
-                    v, null,
-                    c.cnt, c.sum,
-                    c.min, c.max
-                });
+                if (c.cnt != 0) {
+                    a.add( new Object[] {
+                        v, null,
+                        c.cnt, c.sum,
+                        c.min, c.max
+                    });
+                }
             }
 
             // 排序

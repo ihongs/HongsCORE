@@ -28,8 +28,6 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
 
 /**
@@ -37,6 +35,9 @@ import org.apache.lucene.search.Query;
  * @author Hongs
  */
 public class StatisHelper {
+
+    public static final String ON_REL = "on";
+    public static final String NO_REL = "no";
 
     private final LuceneRecord that;
 
@@ -49,228 +50,6 @@ public class StatisHelper {
     }
 
     /**
-     * 统计枚举
-     * @param rd
-     * @return
-     * @throws HongsException
-     * @deprecated 查询次数随统计列和值一同增多, 效率不够理想
-     */
-    public Map ecount(Map rd) throws HongsException {
-        IndexSearcher finder = that.getFinder();
-
-        Map         incs = Synt.asMap  (rd.get(Cnst.IN_REL));
-        Map         excs = Synt.asMap  (rd.get(Cnst.NI_REL));
-        Set<String> cntz = Synt.toTerms(rd.get(Cnst.RB_KEY));
-        Set<String> srtz = Synt.toTerms(rd.get(Cnst.OB_KEY) );
-        Map<String, Map<String, Integer>> counts = new HashMap();
-
-        //** 整理待统计的数据 **/
-
-        if (incs != null && ! incs.isEmpty( )
-        &&  cntz != null && ! cntz.isEmpty()) {
-        //  if (incs == null) {
-        //      incs  = new HashMap();
-        //  }
-            if (excs == null) {
-                excs  = new HashMap();
-            }
-
-            for(String x : cntz) {
-                Map cnt; Set inc, exc;
-                    inc  = Synt.asSet(incs.get(x));
-                if (inc != null && !inc.isEmpty()) {
-                    exc  = Synt.asSet(excs.get(x));
-                if (exc == null) {
-                    exc  = new HashSet( );
-                }
-                    cnt  = new HashMap( );
-                    counts.put( x , cnt );
-                    for( Object v : inc ) {
-                    if (!exc.contains(v)) {
-                        cnt.put(v.toString() , 0L);
-                    }}
-                }
-            }
-        }
-
-        //** 分块统计数据 **/
-
-        Map<String, Map<String, Integer>> counts2 = new HashMap();
-
-        Map<String, Map<String, Integer>> counts3 = new HashMap();
-
-        /**
-         * 根据请求数据进行综合判断,
-         * 如果字段已经作为过滤条件,
-         * 则此字段的统计需单独进行,
-         * 且需抛开此字段的过滤数据.
-         *
-         * 例如某数据有一个地区字段且每条记录只能有一个地区,
-         * 如果没有以下处理则选某地后其他未选地区数量将为零.
-         *
-         * 与 LinkedIn 左侧筛选类似.
-         */
-
-        for(String  k  : counts.keySet()) {
-            Map     vd = null;
-            Set     vs = null;
-            Object  vo = rd.get(k);
-            if (vo instanceof Map) {
-                Map vm = (Map) vo ;
-                if (vm.containsKey ( /***/ Cnst.IN_REL)) {
-                    vs = Synt.asSet(vm.get(Cnst.IN_REL));
-                    vd = new HashMap( rd );
-                    vm = new HashMap( vm );
-                    vm.remove(Cnst.IN_REL);
-                    vd.put(k , vm);
-                }
-            }
-
-            if (vs == null || vs.isEmpty()) {
-                if (counts .containsKey(k)) {
-                    counts2.put(k, counts.get(k));
-                }
-            } else {
-                Map<String, Integer> vz = counts.get(k);
-
-                counts3.clear();
-
-                if (vz != null) {
-                    counts3.put(k, vz);
-                } else {
-                    vz = new HashMap();
-                    counts3.put(k, vz);
-                }
-
-                ecount(vd, finder, counts3);
-            }
-        }
-
-        int z = ecount(rd, finder, counts2);
-
-        // 以上仅对枚举值计数, 以下计算全部
-        try {
-            Query q ;
-            q = that.padQry (rd);
-            z = finder.count( q);
-        } catch (IOException  e) {
-            throw new HongsException(e);
-        }
-
-        Map cnts = new HashMap();
-        cnts.put("__count__", z);
-
-        //** 排序并截取统计数据 **/
-
-        int t = Synt.declare(rd.get(Cnst.RN_KEY), 0); // Top N
-        int r = 0;
-        if (srtz != null) {
-        if (srtz.contains("!")
-        ||  srtz.contains("-")) { // 默认逆序
-            r = 2;
-        } else
-        if (srtz.contains("*")) { // 默认正序
-            r = 1;
-        }}
-
-        for(Map.Entry<String, Map<String, Integer>> et : counts.entrySet()) {
-            List<Object[]> a = new ArrayList ( et.getValue().size(  )  );
-            for(Map.Entry<String, Integer> e : et.getValue().entrySet()) {
-                String m = e.getKey  ();
-                int    c = e.getValue();
-                if (c != 0) {
-                    a.add( new Object[] {m, null, c} );
-                }
-            }
-
-            // 排序
-            if (srtz != null && ! srtz.isEmpty()) {
-                String n = et.getKey(  );
-                if (srtz.contains(n/**/)) {
-                    Collections.sort( a, MountA );
-                } else
-                if (srtz.contains(n+"!")
-                ||  srtz.contains("-"+n)) {
-                    Collections.sort( a, MountD );
-                } else
-                if (r == 1) {
-                    Collections.sort( a, MountA );
-                } else
-                if (r == 2) {
-                    Collections.sort( a, MountD );
-                }
-            }
-
-            // 截选 Top N
-            int n = Synt.declare(rd.get(Cnst.RN_KEY +"-"+ et.getKey()), t);
-            if (0 < n && n < a.size()) {
-                a = a.subList (0, n );
-            }
-
-            cnts.put(et.getKey(), a );
-        }
-
-        return cnts;
-    }
-
-    private int ecount( Map rd, IndexSearcher finder,
-            Map<String, Map<String, Integer>> counts) throws HongsException {
-        int total = 0 ;
-
-        Query q = that.padQry(rd);
-
-        if (4 == (4 & Core.DEBUG)) {
-            CoreLogger.debug("StatisHelper.ecount: "+ q.toString());
-        }
-
-        Map fs = getRecord().getFields();
-        Map ts = FormSet.getInstance().getEnum("__types__");
-        Set ks = Synt.setOf("int", "long", "float", "double", "number");
-
-        for(Map.Entry<String, Map<String, Integer>> et : counts.entrySet()) {
-            Map<String, Integer> fo = et.getValue();
-                String fn = et.getKey();
-
-                // 数值类型采用区间查法
-                Map    fc = ( Map ) fs.get(fn);
-                Object ft = fc.get("__type__");
-                Object fk = fc.get(  "type"  );
-                       ft = ts.containsKey(ft) ? ts.get(ft) : ft ;
-                String fr = "date" .equals(ft)
-                       ||  "number".equals(ft)
-                       || ( "enum" .equals(ft) && ks.contains(fk))
-                       || ("hidden".equals(ft) && ks.contains(fk))
-                          ? Cnst.RG_REL
-                          : Cnst.IN_REL;
-
-            for(Map.Entry<String, Integer> xt : fo.entrySet()) {
-                String fv = xt.getKey();
-
-                // 增加查询条件
-                Query b = that.padQry(Synt.mapOf(fn, Synt.mapOf(fr, fv)));
-                BooleanQuery.Builder bq = new BooleanQuery.Builder();
-                bq.add(q, BooleanClause.Occur.MUST);
-                bq.add(b, BooleanClause.Occur.MUST);
-
-                // 计算命中数量
-                int c ;
-                try {
-                    c = finder.count(bq.build());
-                } catch (IOException ex) {
-                    throw new HongsException(ex);
-                }
-
-                xt.setValue(c);
-                if (total < c) {
-                    total = c;
-                }
-            }
-        }
-
-        return total;
-    }
-
-    /**
      * 分类计数
      * @param rd
      * @return
@@ -279,57 +58,13 @@ public class StatisHelper {
     public Map acount(Map rd) throws HongsException {
         IndexSearcher finder = that.getFinder();
 
-        Map         incs = Synt.asMap  (rd.get(Cnst.IN_REL) );
-        Map         excs = Synt.asMap  (rd.get(Cnst.NI_REL) );
-        Set<String> cntz = Synt.toTerms(rd.get(Cnst.RB_KEY) );
-        Set<String> srtz = Synt.toTerms(rd.get(Cnst.OB_KEY) );
-        Map<String, Map<Object, Long>> counts = new HashMap();
-        Map<String, Set<Object      >> countx = new HashMap();
+        int rn = Synt.declare(rd.get(Cnst.RN_KEY), 0); // Top N
+        Set<String> rb = Synt.toTerms(rd.get(Cnst.RB_KEY));
+        Set<String> ob = Synt.toTerms(rd.get(Cnst.OB_KEY));
 
-        //** 整理待统计的数据 **/
-
-        if (cntz != null && !cntz.isEmpty()) {
-            if (incs == null) {
-                incs  = new HashMap();
-            }
-            if (excs == null) {
-                excs  = new HashMap();
-            }
-
-            try{
-            for(String x : cntz) {
-                Map cnt; Set inc, exc, cnx;
-
-                // 将参数转换成字段对应类型
-                Function f = getGraderFormat(x);
-                if (null == f) {
-                    continue ;
-                }
-
-                    cnt  = new  HashMap( );
-                    inc  = Synt.asSet(incs.get(x));
-                if (inc != null && !inc.isEmpty()) {
-                    for(Object v:inc) {
-                        Object s = f.apply(v);
-                       cnt.put(s, 0L);
-                    }
-                }   counts.put(x,cnt);
-
-                    cnx  = new  HashSet( );
-                    exc  = Synt.asSet(excs.get(x));
-                if (exc != null && !exc.isEmpty()) {
-                    for(Object v:inc) {
-                        Object s = f.apply(v);
-                       cnx.add(s/**/);
-                    }
-                }   countx.put(x,cnx);
-            }
-            } catch ( ClassCastException ex ) {
-                throw new HongsException(400, ex ); // 值与字段不符
-            }
-        }
-
-        //** 分块统计数据 **/
+        Map<String, Map<Object, Long>> counts  = new HashMap();
+        Map<String, Set<Object      >> countx  = new HashMap(); // 排除
+        Map<String, Set<Object      >> countz  = new HashMap(); // 特选
 
         Map<String, Map<Object, Long>> counts2 = new HashMap();
         Map<String, Set<Object      >> countx2 = new HashMap();
@@ -349,111 +84,155 @@ public class StatisHelper {
          * 与 LinkedIn 左侧筛选类似.
          */
 
-        for(String  k  : counts.keySet()) {
+        if (rb != null && !rb.isEmpty())
+        for(String k : rb) {
+            Function f = getGraderFormat(k);
+            if (null == f) {
+                throw new HongsException(400, "Field "+f+" is not exists");
+            }
+
             Map     vd = null;
             Set     vs = null;
             Object  vo = rd.get(k);
             if (vo instanceof Map) {
                 Map vm = (Map) vo ;
-                if (vm.containsKey ( /***/ Cnst.IN_REL)) {
-                    vs = Synt.asSet(vm.get(Cnst.IN_REL));
-                    vd = new HashMap( rd );
-                    vm = new HashMap( vm );
+
+                // 特选
+                vs = Synt.asSet(vm.get(ON_REL));
+                if (vs != null && !vs.isEmpty()) {
+                    Set vz = new HashSet(vs.size());
+                    for(Object v : vs) {
+                        Object s = f.apply(v);
+                        vz.add(s);
+                    }
+                    countz.put(k, vz);
+                }
+
+                // 排除
+                vs = Synt.asSet(vm.get(NO_REL));
+                if (vs != null && !vs.isEmpty()) {
+                    Set vz = new HashSet(vs.size());
+                    for(Object v : vs) {
+                        Object s = f.apply(v);
+                        vz.add(s);
+                    }
+                    countx.put(k, vz);
+                }
+
+                // 分块条件
+                vs = Synt.asSet(vm.get(Cnst.IN_REL));
+                if (vs != null && !vs.isEmpty()) {
+                    vd  = new HashMap (rd);
+                    vm  = new HashMap (vm);
                     vm.remove(Cnst.IN_REL);
                     vd.put(k , vm);
                 }
             }
 
-            if (vs == null || vs.isEmpty()) {
-                if (counts .containsKey(k)) {
-                    counts2.put(k, counts.get(k));
-                }
-                if (countx .containsKey(k)) {
-                    countx2.put(k, countx.get(k));
-                }
-            } else {
-                Map<Object, Long> vz = counts.get(k);
-                Set<Object      > vx = countx.get(k);
+            // 统计容器
+            counts.put(k, new HashMap());
 
+            if ( vs == null || vs.isEmpty() ) {
+                Map<Object, Long> vz = counts.get(k);
+                if (vz != null) counts2.put (k , vz);
+                Set<Object      > vx = countx.get(k);
+                if (vx != null) countx2.put (k , vx);
+            } else {
                 counts3.clear();
                 countx3.clear();
-
-                if (vx != null) {
-                    countx3.put(k, vx);
-                }
-                if (vz != null) {
-                    counts3.put(k, vz);
-                } else {
-                    vz = new HashMap();
-                    counts3.put(k, vz);
-                }
-
-                /* 如果将参数值加入, 下面会跳过其他值
-                for(Object v : vs) {
-                    String s = v.toString();
-                    if (vx  == null || ! vx.contains(s)) {
-                        vz.put( s, 0 );
-                    }
-                }
-                */
-
+                Map<Object, Long> vz = counts.get(k);
+                if (vz != null) counts2.put (k , vz);
+                Set<Object      > vx = countx.get(k);
+                if (vx != null) countx2.put (k , vx);
                 acount(vd, finder, counts3, countx3);
             }
         }
 
-        int z = acount(rd, finder, counts2, countx2);
+        int n = acount(rd, finder, counts2, countx2);
 
         Map cnts = new HashMap();
-        cnts.put("__count__", z);
+        cnts.put("__count__", n);
 
         //** 排序并截取统计数据 **/
 
-        int t = Synt.declare(rd.get(Cnst.RN_KEY), 0); // Top N
-        int r = 0;
-        if (srtz != null) {
-        if (srtz.contains("!")
-        ||  srtz.contains("-")) { // 默认逆序
-            r = 2;
+        int od  = 0;
+        if (ob != null) {
+        if (ob.contains("!")
+        ||  ob.contains("-")) { // 默认逆序
+            od  = 2;
         } else
-        if (srtz.contains("*")) { // 默认正序
-            r = 1;
+        if (ob.contains("*")) { // 默认正序
+            od  = 1;
         }}
 
         for(Map.Entry<String, Map<Object, Long>> et : counts.entrySet()) {
-            List<Object[]> a = new ArrayList(et.getValue().size(  )  );
-            for(Map.Entry<Object , Long> e : et.getValue().entrySet()) {
-                Object m = e.getKey  ();
+                 String        k = et.getKey  ();
+            Map <Object, Long> m = et.getValue();
+            Set <Object      > z = countz.get(k);
+            List<Object  []  > b ;
+            List<Object  []  > a ;
+
+            if (z == null) {
+                b  = null;
+            } else {
+                b  = new ArrayList(z.size()); // 特选的
+            }
+                a  = new ArrayList(m.size()); // 自然的
+
+            for(Map.Entry<Object, Long> e : et.getValue().entrySet()) {
+                Object v = e.getKey  ();
                 long   c = e.getValue();
-                if (0 != c) {
-                    a.add( new Object[] {m, null, c} );
+                if (c == 0)  continue  ;
+                if (z != null && z.contains(v)) {
+                    b.add(new Object[] {v, null, c});
+                } else {
+                    a.add(new Object[] {v, null, c});
                 }
             }
 
             // 排序
-            if (srtz != null && ! srtz.isEmpty()) {
-                String n = et.getKey(  );
-                if (srtz.contains(n/**/)) {
-                    Collections.sort( a, CountA );
+            if (ob != null && ! ob.isEmpty()) {
+                if (ob.contains(k+"!")
+                ||  ob.contains("-"+k)) {
+                    Collections.sort(a, CountD);
                 } else
-                if (srtz.contains(n+"!")
-                ||  srtz.contains("-"+n)) {
-                    Collections.sort( a, CountD );
+                if (ob.contains(  k  )) {
+                    Collections.sort(a, CountA);
                 } else
-                if (r == 1) {
-                    Collections.sort( a, CountA );
+                if (od == 2) {
+                    Collections.sort(a, CountD);
                 } else
-                if (r == 2) {
-                    Collections.sort( a, CountD );
+                if (od == 1) {
+                    Collections.sort(a, CountA);
                 }
             }
 
             // 截选 Top N
-            int n = Synt.declare(rd.get(Cnst.RN_KEY +"-"+ et.getKey()), t);
+            n = Dict.getValue(rd, rn, k, Cnst.RN_KEY);
             if (n > 0 && n < a.size()) {
-                a = a.subList (0, n );
+                a = a.subList( 0, n );
             }
 
-            cnts.put(et.getKey(), a );
+            // 补充并重排
+            if ( b != null && !  b.isEmpty()) {
+                a.addAll(b);
+            if (ob != null && ! ob.isEmpty()) {
+                if (ob.contains(k+"!")
+                ||  ob.contains("-"+k)) {
+                    Collections.sort(a, CountD);
+                } else
+                if (ob.contains(  k  )) {
+                    Collections.sort(a, CountA);
+                } else
+                if (od == 2) {
+                    Collections.sort(a, CountD);
+                } else
+                if (od == 1) {
+                    Collections.sort(a, CountA);
+                }
+            }}
+
+            cnts.put( k, a );
         }
 
         return cnts;
@@ -493,55 +272,12 @@ public class StatisHelper {
     public Map amount(Map rd) throws HongsException {
         IndexSearcher finder = that.getFinder();
 
-        Map         incs = Synt.asMap  (rd.get(Cnst.IN_REL) );
-        Map         excs = Synt.asMap  (rd.get(Cnst.NI_REL) );
-        Set<String> cntz = Synt.toTerms(rd.get(Cnst.RB_KEY) );
-        Set<String> srtz = Synt.toTerms(rd.get(Cnst.OB_KEY) );
-        Map<String, Map<Range, Ratio>> counts = new HashMap();
-        Map<String, Set<Range       >> countx = new HashMap();
+        int rn = Synt.declare(rd.get(Cnst.RN_KEY), 0); // Top N
+        Set<String> rb = Synt.toTerms(rd.get(Cnst.RB_KEY));
+        Set<String> ob = Synt.toTerms(rd.get(Cnst.OB_KEY));
 
-        //** 整理待统计的数据 **/
-
-        if (cntz != null && !cntz.isEmpty()) {
-            if (incs == null) {
-                incs  = new HashMap();
-            }
-            if (excs == null) {
-                excs  = new HashMap();
-            }
-
-            try{
-            for(String x : cntz) {
-                Map cnt; Set inc, exc, cnx;
-
-                    inc  = Synt.asSet(incs.get(x));
-                if (inc != null && !inc.isEmpty()) {
-                    cnt  = new  HashMap();
-                    for(Object v:inc) {
-                        Range  m  = new Range (v);
-                        Ratio  c  = new Ratio ( );
-                       cnt.put(m, c );
-                    }
-                    counts.put(x,cnt);
-                }
-
-                    exc  = Synt.asSet(excs.get(x));
-                if (exc != null && !exc.isEmpty()) {
-                    cnx  = new  HashSet( );
-                    for(Object v:inc) {
-                        Range  m  = new Range (v);
-                    //  Ratio  c  = new Ratio ( );
-                       cnx.add(m/**/);
-                    }
-                    countx.put(x,exc);
-                }
-            }
-            } catch ( ClassCastException ex ) {
-                throw new HongsException(400, ex ); // 区间格式不对
-            }
-        }
-
-        //** 分块统计数据 **/
+        Map<String, Map<Range, Ratio>> counts  = new HashMap();
+        Map<String, Set<Range       >> countx  = new HashMap(); // 排除
 
         Map<String, Map<Range, Ratio>> counts2 = new HashMap();
         Map<String, Set<Range       >> countx2 = new HashMap();
@@ -558,119 +294,135 @@ public class StatisHelper {
          * 例如某数据有一个时间字段且每条记录只能有一个时间,
          * 如果没有以下处理则选某段后其他未选区间数量将为零.
          *
-         * 与 acount 的对应逻辑类似
+         * 与 LinkedIn 左侧筛选类似.
          */
 
-        for(String  k  : counts.keySet()) {
+        if (rb != null && !rb.isEmpty())
+        for(String k : rb) {
+            Function f = getGraderFormat(k);
+            if (null == f || f == asString) {
+                throw new HongsException(400, "Field "+f+" is not exists or is not number");
+            }
+
             Map     vd = null;
             Set     vs = null;
             Object  vo = rd.get(k);
             if (vo instanceof Map) {
                 Map vm = (Map) vo ;
-                if (vm.containsKey ( /***/ Cnst.RG_REL)) {
-                    vs = Synt.asSet(vm.get(Cnst.RG_REL));
-                    vd = new HashMap( rd );
-                    vm = new HashMap( vm );
+
+                try {
+
+                // 特选
+                vs = Synt.asSet(vm.get(ON_REL));
+                if (vs != null && !vs.isEmpty()) {
+                    Map vz = new HashMap(vs.size());
+                    for(Object v : vs) {
+                        Range  s = new Range(v);
+                        Ratio  r = new Ratio( );
+                        vz.put(s , r);
+                    }
+                    counts.put(k, vz);
+                }
+
+                // 排除
+                vs = Synt.asSet(vm.get(NO_REL));
+                if (vs != null && !vs.isEmpty()) {
+                    Set vz = new HashSet(vs.size());
+                    for(Object v : vs) {
+                        Range  s = new Range(v);
+                    //  Ratio  r = new Ratio( );
+                        vz.add(s);
+                    }
+                    countx.put(k, vz);
+                }
+
+                } catch ( ClassCastException ex) {
+                    throw new HongsException(400, ex); // 区间格式不对
+                }
+
+                // 分块条件
+                vs = Synt.asSet(vm.get(Cnst.RG_REL));
+                if (vs != null && !vs.isEmpty()) {
+                    vd  = new HashMap (rd);
+                    vm  = new HashMap (vm);
                     vm.remove(Cnst.RG_REL);
                     vd.put(k , vm);
                 }
             }
 
-            if (vs == null || vs.isEmpty()) {
-                if (counts .containsKey(k)) {
-                    counts2.put(k, counts.get(k));
-                }
-                if (countx .containsKey(k)) {
-                    countx2.put(k, countx.get(k));
-                }
-            } else {
+            if ( vs == null || vs.isEmpty() ) {
                 Map<Range, Ratio> vz = counts.get(k);
+                if (vz != null) counts2.put (k , vz);
                 Set<Range       > vx = countx.get(k);
-
+                if (vz != null) countx2.put (k , vx);
+            } else {
                 counts3.clear();
                 countx3.clear();
-
-                if (vx != null) {
-                    countx3.put(k, vx);
-                }
-                if (vz != null) {
-                    counts3.put(k, vz);
-                } else {
-                    vz = new HashMap();
-                    counts3.put(k, vz);
-                }
-
-                /* 如果将参数值加入, 下面会跳过其他值
-                for(Object v : vs) {
-                    Minmax m = new Minmax(v.toString( ));
-                    if (vx  == null || ! vx.contains(m)) {
-                        vz.put( m, new Cntsum() );
-                    }
-                }
-                */
-
+                Map<Range, Ratio> vz = counts.get(k);
+                if (vz != null) counts3.put (k , vz);
+                Set<Range       > vx = countx.get(k);
+                if (vz != null) countx3.put (k , vx);
                 amount(vd, finder, counts3, countx3);
             }
         }
 
-        int z = amount(rd, finder, counts2, countx2);
+        int n = amount(rd, finder, counts2, countx2);
 
         Map cnts = new HashMap();
-        cnts.put("__count__", z);
+        cnts.put("__count__", n);
 
-        //** 排序统计数据 **/
+        //** 排序并截取统计数据 **/
 
-        int t = Synt.declare(rd.get(Cnst.RN_KEY), 0); // Top N
-        int r = 0;
-        if (srtz != null) {
-        if (srtz.contains("!")
-        ||  srtz.contains("-")) { // 默认逆序
-            r = 2;
+        int od  = 0;
+        if (ob != null) {
+        if (ob.contains("!")
+        ||  ob.contains("-")) { // 默认逆序
+            od  = 2;
         } else
-        if (srtz.contains("*")) { // 默认正序
-            r = 1;
+        if (ob.contains("*")) { // 默认正序
+            od  = 1;
         }}
 
         for(Map.Entry<String, Map<Range, Ratio>> et : counts.entrySet()) {
-            List<Object[]> a = new ArrayList(et.getValue().size(  )  );
-            for(Map.Entry<Range , Ratio> e : et.getValue().entrySet()) {
-                Range  m = e.getKey  ();
+                 String        k = et.getKey  ();
+            Map <Range, Ratio> m = et.getValue();
+            List<Object  []  > a = new ArrayList(m.size());
+
+            for(Map.Entry<Range, Ratio> e : et.getValue().entrySet()) {
+                Range  v = e.getKey  ();
                 Ratio  c = e.getValue();
-                String v = m.toString();
-                if (0 < c.cnt) {
-                    a.add( new Object[] {
-                        v, null,
-                        c.cnt, c.sum,
-                        c.min, c.max
-                    } );
-                }
+                if (c.cnt == 0) continue;
+                a.add( new Object [] {
+                    v, null,
+                    c.cnt, c.sum,
+                    c.min, c.max
+                });
             }
 
             // 排序
-            if (srtz != null && ! srtz.isEmpty()) {
-                String n = et.getKey(  );
-                if (srtz.contains(n/**/)) {
-                    Collections.sort( a, MountA );
+            if (ob != null && ! ob.isEmpty()) {
+                if (ob.contains(k+"!")
+                ||  ob.contains("-"+k)) {
+                    Collections.sort(a, MountD);
                 } else
-                if (srtz.contains(n+"!")
-                ||  srtz.contains("-"+n)) {
-                    Collections.sort( a, MountD );
+                if (ob.contains(  k  )) {
+                    Collections.sort(a, MountA);
                 } else
-                if (r == 1) {
-                    Collections.sort( a, MountA );
+                if (od == 2) {
+                    Collections.sort(a, MountD);
                 } else
-                if (r == 2) {
-                    Collections.sort( a, MountD );
+                if (od == 1) {
+                    Collections.sort(a, MountA);
                 }
             }
 
             // 截选 Top N
-            int n = Synt.declare(rd.get(Cnst.RN_KEY +"-"+ et.getKey()), t);
+            n = Dict.getValue(rd, rn, k, Cnst.RN_KEY);
             if (n > 0 && n < a.size()) {
-                a = a.subList (0, n );
+                a = a.subList( 0, n );
             }
 
-            cnts.put(et.getKey(), a );
+            cnts.put( k, a );
         }
 
         return cnts;
@@ -751,6 +503,7 @@ public class StatisHelper {
      * @param rn 条数
      * @param pn 页码
      * @return
+     * @throws HongsException
      */
     public Map assort (Map rd, int rn, int pn) throws HongsException {
         List list = assort ( rd );
@@ -1206,7 +959,7 @@ public class StatisHelper {
              * 从请求数据中
              * 提取区间列表
              */
-            Set<String> rz = Dict.getValue (rd, Set.class, Cnst.IN_REL, alias);
+            Set<String> rz = Dict.getValue (rd, Set.class, alias, ON_REL);
             if (null == rz ) rz = new LinkedHashSet();
             String [  ] rs = rz . toArray(new String[rz.size()] );
             return new StatisGather.Scope(type, field, alias, rs);

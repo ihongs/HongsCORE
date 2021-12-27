@@ -141,7 +141,6 @@ public class SearchAction extends JAction {
     protected void acheck(LuceneRecord sr, Map rd, int nb) throws HongsException {
         Set rb = Synt.toTerms(rd.get(Cnst.RB_KEY));
         Set ob = Synt.toTerms(rd.get(Cnst.OB_KEY));
-        Map es = Synt.asMap  (rd.get(Cnst.IN_REL));
         Map fs = sr.getFields( );
         Map ts = FormSet.getInstance( ).getEnum("__types__");
         String cn = Dict.getValue(fs, "default", "@","conf");
@@ -157,12 +156,6 @@ public class SearchAction extends JAction {
             ns = sr.getCaseNames("statable");
         }} else {
             ns = sr.getCaseNames("statable");
-        }
-
-        // 枚举统计
-        if (es == null ) {
-            es =  new  HashMap  ( );
-            rd.put(Cnst.IN_REL, es);
         }
 
         if (rb != null ) for (Object fu : rb) {
@@ -218,25 +211,17 @@ public class SearchAction extends JAction {
                  * 如果外部未指定区间,
                  * 则从枚举配置中提取.
                  */
-                if (! es.containsKey(fn)) {
+                Set on  = Dict.getValue(rd, Set.class, fn, StatisHelper.ON_REL);
+                if (on == null) {
                     String xc = Synt.defxult((String) fc.get("conf"), (String) cn);
                     String xn = Synt.defxult((String) fc.get("enum"), (String) fn);
                     try {
-                        es.put( fn, FormSet.getInstance(xc).getEnum(xn).keySet() );
+                        on = FormSet.getInstance(xc).getEnum(xn).keySet();
+                        Dict.put(rd , on , fn , StatisHelper.ON_REL);
                     } catch ( HongsException ex) {
-                    if (ex.getErrno() != 913 ) {
+                    if (ex.getErrno() != 913) {
                         throw ex;
                     }}
-                }
-            }
-
-            /**
-             * 外部指定 * 代表不限
-             */
-            Set e  = Synt.asSet(es.get(fn));
-            if (e != null && ! e.isEmpty()) {
-                if (e.contains("*")) {
-                    es.remove ( fn );
                 }
             }
         }
@@ -268,7 +253,7 @@ public class SearchAction extends JAction {
             if (fn.  endsWith("!") ) {
                 fn = fn.substring(0, fn.length() - 1);
             }
-            if ( ! rb.contains(fn) ) {
+            if (rb == null || ! rb.contains(fn)) {
                 throw new HongsException(400, "Field '"+fu+"' can not be sorted");
             }
         }

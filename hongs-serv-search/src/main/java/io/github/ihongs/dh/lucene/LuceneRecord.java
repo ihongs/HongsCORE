@@ -1160,6 +1160,27 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                         i ++;
                 }
             }
+            
+            v = vd.get(Cnst.ON_REL);
+            if ( v != null ) {
+            if ( v instanceof Collection
+            ||   v instanceof Object[]) {
+                Set  a = Synt.asSet (v);
+                     a.remove(""); // 与 in 不同
+                if (!a.isEmpty( )) {
+                    BooleanQuery.Builder qx = new BooleanQuery.Builder();
+                    for( Object b : a ) {
+                        qx.add(qa.whr(k, b), BooleanClause.Occur.SHOULD);
+                    }
+                    qr.add(qx.build(  ), BooleanClause.Occur.MUST);
+                    i ++;
+                }
+            } else {
+                if (!v.equals("")) {
+                    qr.add(qa.whr(k, v), BooleanClause.Occur.MUST);
+                    i ++;
+                }
+            }}
 
             //** 区间查询 **/
 

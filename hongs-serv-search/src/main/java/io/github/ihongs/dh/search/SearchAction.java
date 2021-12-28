@@ -210,13 +210,13 @@ public class SearchAction extends JAction {
                  * 如果外部未指定区间,
                  * 则从枚举配置中提取.
                  */
-                Set on  = Dict.getValue(rd, Set.class, fn, StatisHelper.ON_REL);
+                Set on  = Dict.getValue ( rd, Set.class, fn, Cnst.AR_KEY);
                 if (on == null) {
                     String xc = Synt.defxult((String) fc.get("conf"), (String) cn);
                     String xn = Synt.defxult((String) fc.get("enum"), (String) fn);
                     try {
                         on = FormSet.getInstance(xc).getEnum(xn).keySet();
-                        Dict.put(rd , on , fn , StatisHelper.ON_REL);
+                        Dict.put( rd, on, fn, Cnst.AR_KEY );
                     } catch ( HongsException ex) {
                     if (ex.getErrno() != 913) {
                         throw ex;

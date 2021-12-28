@@ -36,9 +36,6 @@ import org.apache.lucene.search.Query;
  */
 public class StatisHelper {
 
-    public static final String ON_REL = "on";
-    public static final String NO_REL = "no";
-
     private final LuceneRecord that;
 
     public StatisHelper(LuceneRecord that) {
@@ -101,7 +98,7 @@ public class StatisHelper {
                 try {
 
                 // 特选
-                vs = Synt.asSet(vm.get(ON_REL));
+                vs = Synt.asSet(vm.get(Cnst.AR_KEY));
                 if (vs != null && !vs.isEmpty()) {
                     Map vz = new HashMap(vs.size());
                     for(Object v : vs) {
@@ -112,7 +109,7 @@ public class StatisHelper {
                 }
 
                 // 排除
-                vs = Synt.asSet(vm.get(NO_REL));
+                vs = Synt.asSet(vm.get(Cnst.NR_KEY));
                 if (vs != null && !vs.isEmpty()) {
                     Set vz = new HashSet(vs.size());
                     for(Object v : vs) {
@@ -145,9 +142,9 @@ public class StatisHelper {
                 counts3.clear();
                 countx3.clear();
                 Map<Object, Long> vz = counts.get(k);
-                if (vz != null) counts2.put (k , vz);
+                if (vz != null) counts3.put (k , vz);
                 Set<Object      > vx = countx.get(k);
-                if (vx != null) countx2.put (k , vx);
+                if (vx != null) countx3.put (k , vx);
                 acount(vd, finder, counts3, countx3);
             }
         }
@@ -287,7 +284,7 @@ public class StatisHelper {
                 try {
 
                 // 特选
-                vs = Synt.asSet(vm.get(ON_REL));
+                vs = Synt.asSet(vm.get(Cnst.AR_KEY));
                 if (vs != null && !vs.isEmpty()) {
                     Map vz = new HashMap(vs.size());
                     for(Object v : vs) {
@@ -299,7 +296,7 @@ public class StatisHelper {
                 }
 
                 // 排除
-                vs = Synt.asSet(vm.get(NO_REL));
+                vs = Synt.asSet(vm.get(Cnst.NR_KEY));
                 if (vs != null && !vs.isEmpty()) {
                     Set vz = new HashSet(vs.size());
                     for(Object v : vs) {
@@ -936,7 +933,7 @@ public class StatisHelper {
              * 从请求数据中
              * 提取区间列表
              */
-            Set<String> rz = Dict.getValue (rd, Set.class, alias, ON_REL);
+            Set<String> rz = Dict.getValue (rd, Set.class, alias, Cnst.AR_KEY);
             if (null == rz ) rz = new LinkedHashSet();
             String [  ] rs = rz . toArray(new String[rz.size()] );
             return new StatisGather.Scope(type, field, alias, rs);

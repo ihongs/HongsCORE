@@ -87,9 +87,9 @@
             <div class="col-xs-9">
             <%if ("number".equals(type) || "range".equals(type) || "color".equals(type) || "sorted".equals(type)) {%>
                 <div class="input-group">
-                    <input type="<%=type%>" class="form-control" name="ar.0.<%=name%>.<%=Cnst.GE_REL%>" />
+                    <input type="<%=type%>" class="form-control" name="<%=name%>.<%=Cnst.GE_REL%>" />
                     <span class="input-group-addon input-sm">~</span>
-                    <input type="<%=type%>" class="form-control" name="ar.0.<%=name%>.<%=Cnst.LE_REL%>" />
+                    <input type="<%=type%>" class="form-control" name="<%=name%>.<%=Cnst.LE_REL%>" />
                 </div>
             <%} else if ("date".equals(type) || "time" .equals(type) || "datetime" .equals(type)) {%>
                 <%
@@ -98,9 +98,9 @@
                     }
                 %>
                 <div class="input-group">
-                    <input type="<%=type%>" class="form-control" name="ar.0.<%=name%>.<%=Cnst.GE_REL%>" data-toggle="hsTime" data-type="<%=info.get("type")%>" />
+                    <input type="<%=type%>" class="form-control" name="<%=name%>.<%=Cnst.GE_REL%>" data-toggle="hsTime" data-type="<%=info.get("type")%>" />
                     <span class="input-group-addon input-sm">~</span>
-                    <input type="<%=type%>" class="form-control" name="ar.0.<%=name%>.<%=Cnst.LE_REL%>" data-toggle="hsTime" data-type="<%=info.get("type")%>" />
+                    <input type="<%=type%>" class="form-control" name="<%=name%>.<%=Cnst.LE_REL%>" data-toggle="hsTime" data-type="<%=info.get("type")%>" />
                 </div>
             <%} else if ("fork".equals(type) || "pick".equals(type)) {%>
                 <%
@@ -126,10 +126,10 @@
                         al = al + "&.deny=.create";
                     }}
                 %>
-                <ul  class="pickbox" data-ft="_fork" data-fn="ar.0.<%=name%>" data-ak="<%=ak%>" data-tk="<%=tk%>" data-vk="<%=vk%>"></ul>
+                <ul  class="pickbox" data-ft="_fork" data-fn="<%=name%>.<%=Cnst.ON_REL%>" data-ak="<%=ak%>" data-tk="<%=tk%>" data-vk="<%=vk%>"></ul>
                 <button type="button" class="btn btn-default form-control" data-toggle="hsFork" data-target="@" data-href="<%=al%>"><%=_locale.translate("fore.fork.select", text)%></button>
             <%} else if ("enum".equals(type) || "type".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
-                <select class="form-control" name="ar.0.<%=name%>" data-ft="_enum"></select>
+                <select class="form-control" name="<%=name%>.<%=Cnst.ON_REL%>" data-ft="_enum"></select>
             <%} else {%>
                 <%
                     // 搜索类型优先模糊匹配
@@ -137,10 +137,12 @@
                     && (_wd.contains(name)
                     ||  "textarea".equals(type)
                     ||  "textview".equals(type))) {
-                        name += "."+ Cnst.CQ_REL + "\" placeholder=\"搜索";
+                        name += "."+ Cnst.CQ_REL + "\" placeholder=\"模糊匹配";
+                    } else {
+                        name += "."+ Cnst.ON_REL + "\" placeholder=\"精确匹配";
                     }
                 %>
-                <input class="form-control" type="text" name="ar.0.<%=name%>" />
+                <input class="form-control" type="text" name="<%=name%>" />
             <%} /*End If */%>
             </div>
         </div>

@@ -153,10 +153,10 @@
                         al = al + "&.deny=.create";
                     }}
                 %>
-                <ul  class="pickbox" data-ft="_fork" data-fn="<%=name%>" data-ak="<%=ak%>" data-tk="<%=tk%>" data-vk="<%=vk%>"></ul>
+                <ul  class="pickbox" data-ft="_fork" data-fn="<%=name%>.<%=Cnst.ON_REL%>" data-ak="<%=ak%>" data-tk="<%=tk%>" data-vk="<%=vk%>"></ul>
                 <button type="button" class="btn btn-default form-control" data-toggle="hsFork" data-target="" data-href="<%=al%>"><%=_locale.translate("fore.fork.select", text)%></button>
             <%} else if ("enum".equals(type) || "type".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
-                <select class="form-control" name="<%=name%>" data-ft="_enum"></select>
+                <select class="form-control" name="<%=name%>.<%=Cnst.ON_REL%>" data-ft="_enum"></select>
             <%} else {%>
                 <%
                     // 搜索类型优先模糊匹配
@@ -164,7 +164,9 @@
                     && (_wd.contains(name)
                     ||  "textarea".equals(type)
                     ||  "textview".equals(type))) {
-                        name += "."+ Cnst.CQ_REL + "\" placeholder=\"搜索";
+                        name += "."+ Cnst.CQ_REL + "\" placeholder=\"模糊搜索";
+                    } else {
+                        name += "."+ Cnst.ON_REL + "\" placeholder=\"精确查询";
                     }
                 %>
                 <input type="text" class="form-control" name="<%=name%>" />

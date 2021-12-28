@@ -1029,6 +1029,7 @@ function hsListFillSele(x, v, n) {
  */
 function hsListFillFilt(x, v, n) {
     n = n.replace(/^ar\.\d\./, "");
+    n = n.replace(/\.(\w\w)$/, "");
     v = this._info[n];
     return v;
 }
@@ -1038,6 +1039,7 @@ function hsListFillFilt(x, v, n) {
  */
 function hsListDollFilt(x, v, n) {
     n = n.replace(/^ar\.\d\./, "");
+    n = n.replace(/\.(\w\w)$/, "");
     v = this._enfo[n];
 
     /**

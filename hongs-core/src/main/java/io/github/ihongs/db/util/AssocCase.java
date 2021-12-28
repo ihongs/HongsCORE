@@ -502,7 +502,7 @@ public class AssocCase {
                 Set vs = Synt.asSet( vv );
                     vs.remove("");
                 if(!vs.isEmpty( )) {
-                    caze.filter(fn+" IN (?)", vv);
+                    caze.filter(fn+" IN (?)", vs);
                 }
             } else {
                 if(!vv.equals("")) {
@@ -547,6 +547,21 @@ public class AssocCase {
                     caze.filter(fn+" IS NOT NULL");
                 }
             }
+
+            vo = vm.get(Cnst.ON_REL);
+            if ( vo != null ) {
+            if ( vo instanceof Collection
+            ||   vo instanceof Object[] ) {
+                Set vz = Synt.asSet( vo );
+                    vz.remove(""); // 与 in 不同
+                if(!vz.isEmpty( )) {
+                    caze.filter(fn+" IN (?)", vz );
+                }
+            } else {
+                if(!vo.equals("")) {
+                    caze.filter(fn+  " = ?" , vo );
+                }
+            }}
 
             vo = vm.get(Cnst.IN_REL);
             if ( vo != null ) {

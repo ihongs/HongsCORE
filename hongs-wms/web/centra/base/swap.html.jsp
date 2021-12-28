@@ -93,6 +93,7 @@
                         <%
                             String ak = Synt.declare(info.get("data-ak"), "" );
                             String at = Synt.declare(info.get("data-at"), "" );
+                            String sb = Synt.declare(info.get("data-rb"), "" );
                             String rb ;
                             // 关联名称
                             if (ak.isEmpty()) {
@@ -110,7 +111,7 @@
                             else at = Synt.declare(info.get("conf"), _config )
                                 +"/"+ Synt.declare(info.get("form"),   name  );
                         %>
-                        <a href="javascript:;" class="show-fork" data-rb="<%=rb%>" data-ak="<%=ak%>" data-at="<%=at%>"><%=name%></a>
+                        <a href="javascript:;" class="show-fork" data-ak="<%=ak%>" data-at="<%=at%>" data-rb="<%=rb%>" data-sb="<%=sb%>"><%=name%></a>
                     <%} else if ("file".equals(type)) {%>
                         <%
                             String ft = Synt.declare(info.get("type"), "" );
@@ -509,6 +510,7 @@ id=ID 或 id.=ID1&id.=ID2...
         var at = $(this).data("at");
         var ak = $(this).data("ak");
         var rb = $(this).data("rb");
+        var sb = $(this).data("sb");
         var table = $('<table class="table table-hover table-striped"></table>');
         $('<col style="width: 80px;"/>').appendTo(table);
         var tbody = $('<tbody></tbody>').appendTo(table);
@@ -522,6 +524,11 @@ id=ID 或 id.=ID1&id.=ID2...
         tr = $('<tr></tr>').appendTo(tbody);
         $('<th></th>').appendTo(tr).text('内部字段');
         $('<td></td>').appendTo(tr).text(rb);
+        if (sb) {
+        tr = $('<tr></tr>').appendTo(tbody);
+        $('<th></th>').appendTo(tr).text('可查字段');
+        $('<td></td>').appendTo(tr).text(sb);
+        }
         $.hsMask({
             'title': '关联参数',
             'node' : table

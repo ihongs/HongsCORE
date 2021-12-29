@@ -432,7 +432,7 @@ public final class Dict
    * 拆分键
    *
    * <pre>
-   * 可以将 a.b[c]:d.:e[:f][] 解析为 a b c :d :e :f null
+   * 可以将 a.b[c][.d][] 解析为 a b c .d null
    * 参考自 Javascript 和 PHP 的语法,
    * Javascript 方括号里面用的是变量,
    * 而 PHP 对象键并不支持点符号写法.
@@ -458,7 +458,8 @@ public final class Dict
      * 无法处理 [] 里面有 .! 的情况;
      * 采用下面的程序可规避此种问题,
      * 且无需正则而仅做一次遍历即可.
-     * 2018/3/9 已将 '!' 换为 ':'.
+     * 2018/03/09 已将 '!' 换为 ':'.
+     * 2019/07/28 已将 ':' 等同 '.'.
      */
 
     List    lst = new ArrayList();
@@ -471,7 +472,7 @@ public final class Dict
     while (end < len ) {
         pnt = path.charAt(end);
         switch ( pnt ) {
-            case ':' :/* // 2019/07/28 取消特殊对待, 使其向下兼容
+            case ':' :/*
                 if (fkh) {
                     break; // [] 内可以用 :
                 }

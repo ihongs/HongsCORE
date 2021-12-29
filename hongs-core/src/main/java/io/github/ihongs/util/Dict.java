@@ -48,7 +48,7 @@ public final class Dict
         idx = -1;
     }
     if (idx <  0) {
-        throw new ClassCastException("Array index '"+val+"' is not a positive integer.");
+        throw new ClassCastException("'"+val+"' is not a valid array index");
     }
     return idx;
   }

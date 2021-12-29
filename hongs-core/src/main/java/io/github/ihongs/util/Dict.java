@@ -432,7 +432,7 @@ public final class Dict
    * 拆分键
    *
    * <pre>
-   * 可以将 a.b[c][.d][] 解析为 a b c .d null
+   * 可以将 a.b[c][.d][]. 解析为 a b c .d null null
    * 参考自 Javascript 和 PHP 的语法,
    * Javascript 方括号里面用的是变量,
    * 而 PHP 对象键并不支持点符号写法.

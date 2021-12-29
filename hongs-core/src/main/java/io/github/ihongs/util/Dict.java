@@ -248,9 +248,8 @@ public final class Dict
 
         return lst;
     } else
-    if (key instanceof Integer
-    && (obj instanceof Collection
-    ||  obj instanceof Object [] )) {
+    if (obj instanceof Collection
+    ||  obj instanceof Object [ ] ) {
         List lst = asList(obj);
         int  idx = asIdx (key);
         int  idz = lst.size( );

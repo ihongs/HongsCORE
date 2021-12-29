@@ -664,7 +664,7 @@ public final class Synt {
     /**
      * 确保此变量为 Set  类型
      * 本方法用于处理排序字段参数
-     * 与 declare(Object, T) 不同
+     * 这个不同于 asSet
      * 当数据为字符串时
      * 空串会返回空 Set
      * 否则按此类字符拆分: 空字符或,;|
@@ -690,7 +690,7 @@ public final class Synt {
     /**
      * 确保此变量为 Set  类型
      * 本方法用于处理模糊查找参数
-     * 与 declare(Object, T) 不同
+     * 这个不同于 asSet
      * 当数据为字符串时
      * 空串会返回空 Set
      * 否则按此类字符拆分: 空字符或,;|.:!等及同类全角标点

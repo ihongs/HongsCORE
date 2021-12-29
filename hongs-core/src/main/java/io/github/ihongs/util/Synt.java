@@ -667,7 +667,7 @@ public final class Synt {
      * 与 declare(Object, T) 不同
      * 当数据为字符串时
      * 空串会返回空 Set
-     * 否则按此类字符拆分: 空字符或+,;
+     * 否则按此类字符拆分: 空字符或,;|
      * @param val
      * @return
      */
@@ -693,7 +693,7 @@ public final class Synt {
      * 与 declare(Object, T) 不同
      * 当数据为字符串时
      * 空串会返回空 Set
-     * 否则按此类字符拆分: 空字符或+,;.:!?'"及同类全角标点
+     * 否则按此类字符拆分: 空字符或,;|.:!?&+及同类全角标点
      * @param val
      * @return
      */

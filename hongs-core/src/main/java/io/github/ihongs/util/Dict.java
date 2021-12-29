@@ -186,7 +186,6 @@ public final class Dict
         return def;
     }
 
-    // 按键类型来决定容器类型
     if (key == null) {
         Collection lst = azColl(obj);
 
@@ -236,7 +235,6 @@ public final class Dict
   {
     Object key = keys[pos];
 
-    // 按键类型来决定容器类型
     if (key == null) {
         Collection lst = asColl(obj);
 

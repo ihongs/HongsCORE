@@ -38,22 +38,24 @@ public final class Dict
         if (val instanceof Map ) {
             return ( Map ) val ;
         } else if (val instanceof Collection) {
+            Collection  a = (Collection) val;
             int i = 0;
-            Map m = new LinkedHashMap( );
-            for (Object v : (Collection) val) {
+            Map m = new LinkedHashMap(a.size());
+            for( Object v : a ) {
                 m.put(i ++, v );
             }
             return m;
-        } else if (val instanceof Object[ ] ) {
+        } else if (val instanceof Object [ ]) {
+            Object [ ]  a = (Object [ ]) val;
             int i = 0;
-            Map m = new LinkedHashMap( );
-            for (Object o : (Object[ ] ) val) {
+            Map m = new LinkedHashMap(a.length);
+            for( Object o : a ) {
                 m.put(i ++, o );
             }
             return m;
         }
     }
-    return  new LinkedHashMap();
+    return  new LinkedHashMap(0);
   }
 
   private static List asList(Object val) {
@@ -68,7 +70,7 @@ public final class Dict
             return new ArrayList(Arrays.asList((Object[]) val));
         }
     }
-    return  new ArrayList( );
+    return  new ArrayList(0);
   }
 
   private static Collection asColl(Object val) {
@@ -81,7 +83,7 @@ public final class Dict
             return new ArrayList(Arrays.asList((Object[]) val));
         }
     }
-    return  new ArrayList( );
+    return  new ArrayList(0);
   }
 
   private static List azList(Object val) {

@@ -33,7 +33,7 @@ import java.util.Set;
 public final class Dict
 {
 
-  private static Map  toMap (Object val) {
+  private static Map  asMap (Object val) {
     if (val != null) {
         if (val instanceof Map ) {
             return ( Map ) val ;
@@ -56,7 +56,7 @@ public final class Dict
     return  new LinkedHashMap();
   }
 
-  private static List toList(Object val) {
+  private static List asList(Object val) {
     if (val != null) {
         if (val instanceof List) {
             return ( List) val ;
@@ -71,7 +71,7 @@ public final class Dict
     return  new ArrayList( );
   }
 
-  private static Collection toColl(Object val) {
+  private static Collection asColl(Object val) {
     if (val != null) {
         if (val instanceof Collection ) {
             return ( Collection ) val ;
@@ -84,7 +84,7 @@ public final class Dict
     return  new ArrayList( );
   }
 
-  private static List asList(Object val) {
+  private static List azList(Object val) {
     if (val != null) {
         if (val instanceof List) {
             return ( List) val ;
@@ -99,7 +99,7 @@ public final class Dict
     return  new ArrayList(0);
   }
 
-  private static Collection asColl(Object val) {
+  private static Collection azColl(Object val) {
     if (val != null) {
         if (val instanceof Collection ) {
             return ( Collection ) val ;
@@ -148,7 +148,7 @@ public final class Dict
         for(Object sub : lst) {
             Object obj = get(sub, LOOP.NEXT, keys, pos);
             if (obj != LOOP.NEXT) {
-                col.addAll(asColl(obj));
+                col.addAll(azColl(obj));
             }
         }
     }
@@ -169,7 +169,7 @@ public final class Dict
 
     // 按键类型来决定容器类型
     if (key == null) {
-        Collection lst = asColl(obj);
+        Collection lst = azColl(obj);
 
         if (keys.length == pos + 1) {
             return lst;
@@ -180,7 +180,7 @@ public final class Dict
     if (key instanceof Integer
     && (obj instanceof Collection
     ||  obj instanceof Object [] )) {
-        List lst = asList(obj);
+        List lst = azList(obj);
 
         // 如果列表长度不够, 则直接返回默认值
         int  idx = ( Integer ) key;
@@ -194,7 +194,7 @@ public final class Dict
             return get(lst.get(idx), def, keys, pos + 1);
         }
     } else {
-        Map  map = toMap (obj);
+        Map  map = asMap (obj);
 
         // 如果没有对应的键, 则直接返回默认值
         if (! map.containsKey(key)) {
@@ -215,7 +215,7 @@ public final class Dict
 
     // 按键类型来决定容器类型
     if (key == null) {
-        Collection lst = toColl(obj);
+        Collection lst = asColl(obj);
 
         if (keys.length == pos + 1) {
             lst.add(val);
@@ -228,7 +228,7 @@ public final class Dict
     if (key instanceof Integer
     && (obj instanceof Collection
     ||  obj instanceof Object [] )) {
-        List lst = toList(obj);
+        List lst = asList(obj);
 
         // 如果列表长度不够, 填充到索引的长度
         int idx = ( Integer )  key;
@@ -245,7 +245,7 @@ public final class Dict
 
         return lst;
     } else {
-        Map map = toMap (obj);
+        Map map = asMap (obj);
 
         if (keys.length == pos + 1) {
             map.put(key, val);

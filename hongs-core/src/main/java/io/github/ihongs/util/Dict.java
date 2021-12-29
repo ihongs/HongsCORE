@@ -47,9 +47,6 @@ public final class Dict
     }} else {
         idx = -1;
     }
-    if (idx <  0) {
-        throw new ClassCastException("'"+val+"' is not a valid array index");
-    }
     return idx;
   }
 
@@ -204,6 +201,11 @@ public final class Dict
         List lst = azList(obj);
         int  idx = asIdx (key);
 
+        // 给出的键是错误的, 不必再继续查找了
+        if ( idx < 0 ) {
+            return def;
+        }
+
         // 如果列表长度不够, 则直接返回默认值
         if ( idx > lst.size( ) - 1) {
             return def;
@@ -252,6 +254,11 @@ public final class Dict
         List lst = asList(obj);
         int  idx = asIdx (key);
         int  idz = lst.size( );
+
+        // 给出的键是错误的, 转换类型后再写入
+        if ( idx < 0 ) {
+            return put(asMap(obj), val, keys, pos);
+        }
 
         // 如果列表长度不够, 填充到索引的长度
         for( ; idz <= idx; idz ++ ) {

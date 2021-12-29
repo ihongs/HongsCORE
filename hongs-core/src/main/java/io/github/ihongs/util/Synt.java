@@ -259,6 +259,89 @@ public final class Synt {
     }
 
     /**
+     * 尝试转为布尔型
+     * 数组和集合仅取第一个, 数字零为 false 非零则为 true, 字符串按 TRUE,FAKE 正则判断
+     * @param val
+     * @return
+     */
+    public static Boolean asBool(Object val) {
+        val = asSingle(val);
+        if (val == null) {
+            return null;
+        }
+
+        if (val instanceof Number) {
+            return ((Number) val ).intValue( ) != 0;
+        } else if (val instanceof String) {
+            String str = ((String) val).trim();
+            if (FAKE.matcher(str).matches( ) ) {
+                return false;
+            } else
+            if (TRUE.matcher(str).matches( ) ) {
+                return true ;
+            } else {
+                throw new ClassCastException("'" + str + "' can not be cast to boolean");
+            }
+        }
+
+        return (Boolean) val;
+    }
+
+    /**
+     * 尝试转为字节型
+     * 数组和集合仅取第一个, 日期类型取毫秒时间戳
+     * @param val
+     * @return
+     */
+    public static Byte asByte(Object val) {
+        val = asNumber(val);
+        if (val == null) {
+            return null;
+        }
+
+        if (val instanceof Number) {
+            return ((Number) val ).byteValue();
+        } else
+        if (val instanceof String) {
+            String str = ((String) val).trim();
+            try {
+                return new BigDecimal(str).byteValue();
+            } catch (NumberFormatException ex) {
+                throw new ClassCastException("'" + val + "' can not be cast to byte");
+            }
+        }
+
+        return (Byte) val;
+    }
+
+    /**
+     * 尝试转为短整型
+     * 数组和集合仅取第一个, 日期类型取毫秒时间戳
+     * @param val
+     * @return
+     */
+    public static Short asShort(Object val) {
+        val = asNumber(val);
+        if (val == null) {
+            return null;
+        }
+
+        if (val instanceof Number) {
+            return ((Number) val).shortValue();
+        } else
+        if (val instanceof String) {
+            String str = ((String) val).trim();
+            try {
+                return new BigDecimal(str).shortValue();
+            } catch (NumberFormatException ex) {
+                throw new ClassCastException("'" + val + "' can not be cast to short");
+            }
+        }
+
+        return (Short) val;
+    }
+
+    /**
      * 尝试转为整数
      * 数组和集合仅取第一个, 日期类型取毫秒时间戳
      * @param val
@@ -364,89 +447,6 @@ public final class Synt {
         }
 
         return (Double) val;
-    }
-
-    /**
-     * 尝试转为短整型
-     * 数组和集合仅取第一个, 日期类型取毫秒时间戳
-     * @param val
-     * @return
-     */
-    public static Short asShort(Object val) {
-        val = asNumber(val);
-        if (val == null) {
-            return null;
-        }
-
-        if (val instanceof Number) {
-            return ((Number) val).shortValue();
-        } else
-        if (val instanceof String) {
-            String str = ((String) val).trim();
-            try {
-                return new BigDecimal(str).shortValue();
-            } catch (NumberFormatException ex) {
-                throw new ClassCastException("'" + val + "' can not be cast to short");
-            }
-        }
-
-        return (Short) val;
-    }
-
-    /**
-     * 尝试转为字节型
-     * 数组和集合仅取第一个, 日期类型取毫秒时间戳
-     * @param val
-     * @return
-     */
-    public static Byte asByte(Object val) {
-        val = asNumber(val);
-        if (val == null) {
-            return null;
-        }
-
-        if (val instanceof Number) {
-            return ((Number) val ).byteValue();
-        } else
-        if (val instanceof String) {
-            String str = ((String) val).trim();
-            try {
-                return new BigDecimal(str).byteValue();
-            } catch (NumberFormatException ex) {
-                throw new ClassCastException("'" + val + "' can not be cast to byte");
-            }
-        }
-
-        return (Byte) val;
-    }
-
-    /**
-     * 尝试转为布尔型
-     * 数组和集合仅取第一个, 数字零为 false 非零则为 true, 字符串按 TRUE,FAKE 正则判断
-     * @param val
-     * @return
-     */
-    public static Boolean asBool(Object val) {
-        val = asSingle(val);
-        if (val == null) {
-            return null;
-        }
-
-        if (val instanceof Number) {
-            return ((Number) val ).intValue( ) != 0;
-        } else if (val instanceof String) {
-            String str = ((String) val).trim();
-            if (FAKE.matcher(str).matches( ) ) {
-                return false;
-            } else
-            if (TRUE.matcher(str).matches( ) ) {
-                return true ;
-            } else {
-                throw new ClassCastException("'" + str + "' can not be cast to boolean");
-            }
-        }
-
-        return (Boolean) val;
     }
 
     /**

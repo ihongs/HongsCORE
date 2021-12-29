@@ -101,32 +101,6 @@ public final class Synt {
     };
 
     /**
-     * 快速构建 List
-     * 注意: 可以增删
-     * @param objs
-     * @return
-     */
-    public static List listOf(Object... objs) {
-        return new  ArrayList   (Arrays.asList(objs));
-    }
-    public static List listOf(String... objs) {
-        return listOf((Object[]) objs);
-    }
-
-    /**
-     * 快捷构建 Set
-     * 注意: 可以增删
-     * @param objs
-     * @return
-     */
-    public static Set  setOf (Object... objs) {
-        return new LinkedHashSet(Arrays.asList(objs));
-    }
-    public static Set  setOf (String... objs) {
-        return setOf ((Object[]) objs);
-    }
-
-    /**
      * 快捷构建 Map
      * 注意: 可以增删, 须偶数个
      * @param objs
@@ -149,200 +123,29 @@ public final class Synt {
     }
 
     /**
-     * 尝试转为 Collection
-     * 与 asColl 的不同在于当 val 是字符串时, 尝试通过 JSON 解析或逗号分隔
-     * @param val
+     * 快捷构建 Set
+     * 注意: 可以增删
+     * @param objs
      * @return
      */
-    public static Collection toColl(Object val) {
-        if (val == null) {
-            return null;
-        }
-
-        if (val instanceof String) {
-            if ("".equals(val)) {
-                return  new  ArrayList();
-            }
-            String text = ( (String) val).trim(  );
-            if (text.startsWith("[") && text.endsWith("]")) {
-                return (List) Dawn.toObject (text);
-            } else {
-                return  new  ArrayList(
-                    Arrays.asList(SEXP.split(text))
-                );
-            }
-        }
-
-        return asColl(val);
+    public static Set  setOf (Object... objs) {
+        return new LinkedHashSet(Arrays.asList(objs));
+    }
+    public static Set  setOf (String... objs) {
+        return setOf ((Object[]) objs);
     }
 
     /**
-     * 尝试转为 List
-     * 与 asList 的不同在于当 val 是字符串时, 尝试通过 JSON 解析或逗号分隔
-     * @param val
+     * 快速构建 List
+     * 注意: 可以增删
+     * @param objs
      * @return
      */
-    public static List toList(Object val) {
-        if (val == null) {
-            return null;
-        }
-
-        if (val instanceof String) {
-            if ("".equals(val)) {
-                return  new  ArrayList();
-            }
-            String text = ( (String) val).trim(  );
-            if (text.startsWith("[") && text.endsWith("]")) {
-                return (List) Dawn.toObject (text);
-            } else {
-                return  new  ArrayList(
-                    Arrays.asList(SEXP.split(text))
-                );
-            }
-        }
-
-        return asList(val);
+    public static List listOf(Object... objs) {
+        return new  ArrayList   (Arrays.asList(objs));
     }
-
-    /**
-     * 尝试转为 Set
-     * 与 asSet 的不同在于当 val 是字符串时, 尝试通过 JSON 解析或逗号分隔
-     * @param val
-     * @return
-     */
-    public static Set  toSet (Object val) {
-        if (val == null) {
-            return null;
-        }
-
-        if (val instanceof String) {
-            if ("".equals(val)) {
-                return  new LinkedHashSet();
-            }
-            String text = ( (String) val).trim(  );
-            if (text.startsWith("[") && text.endsWith("]")) {
-                return  new LinkedHashSet(
-                       (List) Dawn.toObject (text)
-                );
-            } else {
-                return  new LinkedHashSet(
-                    Arrays.asList(SEXP.split(text))
-                );
-            }
-        }
-
-        return asSet (val);
-    }
-
-    /**
-     * 尝试转为 Map
-     * 与 asMap 的不同在于当 val 是字符串时, 尝试解析 JSON 或拆分逗号冒号
-     * @param val
-     * @return
-     */
-    public static Map  toMap (Object val) {
-        if (val == null) {
-            return null;
-        }
-
-        if (val instanceof String) {
-            if ("".equals(val)) {
-                return  new LinkedHashMap();
-            }
-            String text = ( (String) val).trim(  );
-            if (text.startsWith("{") && text.endsWith("}")) {
-                return (Map ) Dawn.toObject (text);
-            } else {
-                Map m = new LinkedHashMap();
-                for(String   s : SEXP.split (text)) {
-                    String[] a = MEXP.split (s, 2);
-                    if ( 2 > a.length ) {
-                        m.put( a[0], a[0] );
-                    } else {
-                        m.put( a[0], a[1] );
-                    }
-                }
-                return  m ;
-            }
-        }
-
-        return asMap (val);
-    }
-
-    /**
-     * 尝试转为 Collection
-     * 可将 数组,Map 转为 Collection, 其他情况构建一个单一值 List
-     * @param val
-     * @return
-     */
-    public static Collection asColl (Object val) {
-        if (val == null) {
-            return null;
-        }
-
-        if (val instanceof Collection ) {
-            return ( Collection ) val ;
-        } else if (val instanceof Map ) {
-            return new  ArrayList(((Map ) val).values());
-        } else if (val instanceof Object[]) {
-            return new  ArrayList(Arrays.asList((Object[]) val));
-        } else {
-            List lst = new ArrayList(1);
-            lst.add(val);
-            return  lst ;
-        }
-    }
-
-    /**
-     * 尝试转为 List
-     * 可将 数组,Set,Map 转为 List, 其他情况构建一个单一值的 List
-     * @param val
-     * @return
-     */
-    public static List asList(Object val) {
-        if (val == null) {
-            return null;
-        }
-
-        if (val instanceof List) {
-            return ( List) val ;
-        } else if (val instanceof Set ) {
-            return new  ArrayList(( Set ) val);
-        } else if (val instanceof Map ) {
-            return new  ArrayList(((Map ) val).values());
-        } else if (val instanceof Object[]) {
-            return new  ArrayList(Arrays.asList((Object[]) val));
-        } else {
-            List lst = new ArrayList(1);
-            lst.add(val);
-            return  lst ;
-        }
-    }
-
-    /**
-     * 尝试转为 Set
-     * 可将 数组,List,Map 转为 Set, 其他情况构建一个单一值的 Set
-     * @param val
-     * @return
-     */
-    public static Set  asSet (Object val) {
-        if (val == null) {
-            return null;
-        }
-
-        if (val instanceof Set ) {
-            return ( Set ) val ;
-        } else if (val instanceof List) {
-            return new LinkedHashSet((List) val);
-        } else if (val instanceof Map ) {
-            return new LinkedHashSet(((Map) val).values());
-        } else if (val instanceof Object[]) {
-            return new LinkedHashSet(Arrays.asList((Object[]) val));
-        } else {
-            Set set = new LinkedHashSet(1);
-            set.add(val);
-            return  set ;
-        }
+    public static List listOf(String... objs) {
+        return listOf((Object[]) objs);
     }
 
     /**
@@ -376,6 +179,82 @@ public final class Synt {
             Map m = new LinkedHashMap(1);
             m.put ( null, val );
             return m;
+        }
+    }
+
+    /**
+     * 尝试转为 Set
+     * 可将 数组,List,Map 转为 Set, 其他情况构建一个单一值的 Set
+     * @param val
+     * @return
+     */
+    public static Set  asSet (Object val) {
+        if (val == null) {
+            return null;
+        }
+
+        if (val instanceof Set ) {
+            return ( Set ) val ;
+        } else if (val instanceof List) {
+            return new LinkedHashSet((List) val);
+        } else if (val instanceof Map ) {
+            return new LinkedHashSet(((Map) val).values());
+        } else if (val instanceof Object[]) {
+            return new LinkedHashSet(Arrays.asList((Object[]) val));
+        } else {
+            Set set = new LinkedHashSet(1);
+            set.add(val);
+            return  set ;
+        }
+    }
+
+    /**
+     * 尝试转为 List
+     * 可将 数组,Set,Map 转为 List, 其他情况构建一个单一值的 List
+     * @param val
+     * @return
+     */
+    public static List asList(Object val) {
+        if (val == null) {
+            return null;
+        }
+
+        if (val instanceof List) {
+            return ( List) val ;
+        } else if (val instanceof Set ) {
+            return new  ArrayList(( Set ) val);
+        } else if (val instanceof Map ) {
+            return new  ArrayList(((Map ) val).values());
+        } else if (val instanceof Object[]) {
+            return new  ArrayList(Arrays.asList((Object[]) val));
+        } else {
+            List lst = new ArrayList(1);
+            lst.add(val);
+            return  lst ;
+        }
+    }
+
+    /**
+     * 尝试转为 Collection
+     * 可将 数组,Map 转为 Collection, 其他情况构建一个单一值 List
+     * @param val
+     * @return
+     */
+    public static Collection asColl (Object val) {
+        if (val == null) {
+            return null;
+        }
+
+        if (val instanceof Collection ) {
+            return ( Collection ) val ;
+        } else if (val instanceof Map ) {
+            return new  ArrayList(((Map ) val).values());
+        } else if (val instanceof Object[]) {
+            return new  ArrayList(Arrays.asList((Object[]) val));
+        } else {
+            List lst = new ArrayList(1);
+            lst.add(val);
+            return  lst ;
         }
     }
 
@@ -659,6 +538,127 @@ public final class Synt {
         }
 
         return val;
+    }
+
+    /**
+     * 尝试转为 Map
+     * 与 asMap 的不同在于当 val 是字符串时, 尝试解析 JSON 或拆分逗号冒号
+     * @param val
+     * @return
+     */
+    public static Map  toMap (Object val) {
+        if (val == null) {
+            return null;
+        }
+
+        if (val instanceof String) {
+            if ("".equals(val)) {
+                return  new LinkedHashMap();
+            }
+            String text = ( (String) val).trim(  );
+            if (text.startsWith("{") && text.endsWith("}")) {
+                return (Map ) Dawn.toObject (text);
+            } else {
+                Map m = new LinkedHashMap();
+                for(String   s : SEXP.split (text)) {
+                    String[] a = MEXP.split (s, 2);
+                    if ( 2 > a.length ) {
+                        m.put( a[0], a[0] );
+                    } else {
+                        m.put( a[0], a[1] );
+                    }
+                }
+                return  m ;
+            }
+        }
+
+        return asMap (val);
+    }
+
+    /**
+     * 尝试转为 Set
+     * 与 asSet 的不同在于当 val 是字符串时, 尝试通过 JSON 解析或逗号分隔
+     * @param val
+     * @return
+     */
+    public static Set  toSet (Object val) {
+        if (val == null) {
+            return null;
+        }
+
+        if (val instanceof String) {
+            if ("".equals(val)) {
+                return  new LinkedHashSet();
+            }
+            String text = ( (String) val).trim(  );
+            if (text.startsWith("[") && text.endsWith("]")) {
+                return  new LinkedHashSet(
+                       (List) Dawn.toObject (text)
+                );
+            } else {
+                return  new LinkedHashSet(
+                    Arrays.asList(SEXP.split(text))
+                );
+            }
+        }
+
+        return asSet (val);
+    }
+
+    /**
+     * 尝试转为 List
+     * 与 asList 的不同在于当 val 是字符串时, 尝试通过 JSON 解析或逗号分隔
+     * @param val
+     * @return
+     */
+    public static List toList(Object val) {
+        if (val == null) {
+            return null;
+        }
+
+        if (val instanceof String) {
+            if ("".equals(val)) {
+                return  new  ArrayList();
+            }
+            String text = ( (String) val).trim(  );
+            if (text.startsWith("[") && text.endsWith("]")) {
+                return (List) Dawn.toObject (text);
+            } else {
+                return  new  ArrayList(
+                    Arrays.asList(SEXP.split(text))
+                );
+            }
+        }
+
+        return asList(val);
+    }
+
+    /**
+     * 尝试转为 Collection
+     * 与 asColl 的不同在于当 val 是字符串时, 尝试通过 JSON 解析或逗号分隔
+     * @param val
+     * @return
+     */
+    public static Collection toColl(Object val) {
+        if (val == null) {
+            return null;
+        }
+
+        if (val instanceof String) {
+            if ("".equals(val)) {
+                return  new  ArrayList();
+            }
+            String text = ( (String) val).trim(  );
+            if (text.startsWith("[") && text.endsWith("]")) {
+                return (List) Dawn.toObject (text);
+            } else {
+                return  new  ArrayList(
+                    Arrays.asList(SEXP.split(text))
+                );
+            }
+        }
+
+        return asColl(val);
     }
 
     /**

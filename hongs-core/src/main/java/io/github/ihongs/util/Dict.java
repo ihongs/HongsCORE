@@ -177,7 +177,9 @@ public final class Dict
             return gat(lst, def, keys, pos + 1);
         }
     } else
-    if (key instanceof Integer && obj instanceof Collection) {
+    if (key instanceof Integer
+    && (obj instanceof Collection
+    ||  obj instanceof Object [] )) {
         List lst = asList(obj);
 
         // 如果列表长度不够, 则直接返回默认值
@@ -223,7 +225,9 @@ public final class Dict
 
         return lst;
     } else
-    if (key instanceof Integer && obj instanceof Collection) {
+    if (key instanceof Integer
+    && (obj instanceof Collection
+    ||  obj instanceof Object [] )) {
         List lst = toList(obj);
 
         // 如果列表长度不够, 填充到索引的长度

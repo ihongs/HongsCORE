@@ -716,7 +716,7 @@ public final class Synt {
     /**
      * 解析区间值
      * 可将数学表达式 [min,max] (min,max) 等解析为 {min,max,gte,lte}
-     * 方括号可以省略, 空串被视为无限, 数组仅给两个则后两个认为 true
+     * 空串被视为无限, 省略括号视为开区间, 数组长二视为开区间
      * @param val
      * @return
      */

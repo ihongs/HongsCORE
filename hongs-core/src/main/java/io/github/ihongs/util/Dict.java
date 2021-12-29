@@ -33,6 +33,26 @@ import java.util.Set;
 public final class Dict
 {
 
+  private static int  asIdx (Object val) {
+    Integer idx ;
+    if (val instanceof Number) {
+        idx = ( (Number) val ).intValue( );
+    }  else
+    if (val instanceof String) {
+        String str = ((String) val).trim();
+    try {
+        idx = Integer.parseInt(str);
+    } catch ( NumberFormatException e ) {
+        idx = -1;
+    }} else {
+        idx = -1;
+    }
+    if (idx <  0) {
+        throw new ClassCastException("Array index "+val+" is not a positive integer");
+    }
+    return idx;
+  }
+
   private static Map  asMap (Object val) {
     if (val != null) {
         if (val instanceof Map ) {
@@ -179,13 +199,12 @@ public final class Dict
             return gat(lst, def, keys, pos + 1);
         }
     } else
-    if (key instanceof Integer
-    && (obj instanceof Collection
-    ||  obj instanceof Object [] )) {
+    if (obj instanceof Collection
+    ||  obj instanceof Object [ ] ) {
         List lst = azList(obj);
+        int  idx = asIdx (key);
 
         // 如果列表长度不够, 则直接返回默认值
-        int  idx = ( Integer ) key;
         if ( idx > lst.size( ) - 1) {
             return def;
         }
@@ -231,28 +250,28 @@ public final class Dict
     && (obj instanceof Collection
     ||  obj instanceof Object [] )) {
         List lst = asList(obj);
+        int  idx = asIdx (key);
+        int  idz = lst.size( );
 
         // 如果列表长度不够, 填充到索引的长度
-        int idx = ( Integer )  key;
-        int idz = lst.size( );
-        for ( ; idx >= idz; ++ idz) {
-            lst.add ( null  );
+        for( ; idz <= idx; idz ++ ) {
+            lst.add (  null  );
         }
 
         if (keys.length == pos + 1) {
-            lst.set(idx, val);
+            lst.set(idx , val);
         } else {
-            lst.set(idx, put(lst.get(idx), val, keys, pos + 1));
+            lst.set(idx , put(lst.get(idx), val, keys, pos + 1));
         }
 
         return lst;
     } else {
-        Map map = asMap (obj);
+        Map  map = asMap (obj);
 
         if (keys.length == pos + 1) {
-            map.put(key, val);
+            map.put(key , val);
         } else {
-            map.put(key, put(map.get(key), val, keys, pos + 1));
+            map.put(key , put(map.get(key), val, keys, pos + 1));
         }
 
         return map;

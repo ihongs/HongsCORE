@@ -71,9 +71,9 @@ public final class Synt {
     private static final Pattern TEXP = Pattern.compile("\\s*[\\s,;|]\\s*");
 
     /**
-     * 拆分字符: 空字符 或 ,;|.:!?&+ 等及全角的标点
+     * 拆分字符: 空字符 或 ,;|.:!?&# 等及全角的标点
      */
-    private static final Pattern WEXP = Pattern.compile("\\s*[\\p{Space}\\p{Punct}\\u3000-\\u303F&&[^\\-_]]\\s*");
+    private static final Pattern WEXP = Pattern.compile("\\s*[\\p{Space}\\p{Punct}\\u3000-\\u303F&&[^\\-+_]]\\s*");
 
     /**
      * 区间参数: [min,max] (min,max) 类似数学表达式
@@ -693,7 +693,7 @@ public final class Synt {
      * 与 declare(Object, T) 不同
      * 当数据为字符串时
      * 空串会返回空 Set
-     * 否则按此类字符拆分: 空字符或,;|.:!?&+及同类全角标点
+     * 否则按此类字符拆分: 空字符或,;|.:!等及同类全角标点
      * @param val
      * @return
      */

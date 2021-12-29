@@ -33,7 +33,7 @@ import java.util.Set;
 public final class Dict
 {
 
-  private static Map  asMap (Object val) {
+  private static Map  toMap (Object val) {
     if (val != null) {
         if (val instanceof Map ) {
             return ( Map ) val ;
@@ -56,19 +56,47 @@ public final class Dict
     return  new LinkedHashMap();
   }
 
+  private static List toList(Object val) {
+    if (val != null) {
+        if (val instanceof List) {
+            return ( List) val ;
+        } else if (val instanceof Set ) {
+            return new ArrayList(( Set) val );
+        } else if (val instanceof Map ) {
+            return new ArrayList(((Map) val ).values( ) );
+        } else if (val instanceof Object[]) {
+            return new ArrayList(Arrays.asList((Object[]) val));
+        }
+    }
+    return  new ArrayList( );
+  }
+
+  private static Collection toColl(Object val) {
+    if (val != null) {
+        if (val instanceof Collection ) {
+            return ( Collection ) val ;
+        } else if (val instanceof Map ) {
+            return new ArrayList(((Map) val ).values( ) );
+        } else if (val instanceof Object[]) {
+            return new ArrayList(Arrays.asList((Object[]) val));
+        }
+    }
+    return  new ArrayList( );
+  }
+
   private static List asList(Object val) {
     if (val != null) {
         if (val instanceof List) {
             return ( List) val ;
         } else if (val instanceof Set ) {
-            return new ArrayList(( Set ) val);
+            return new ArrayList(( Set) val );
         } else if (val instanceof Map ) {
-            return new ArrayList(((Map ) val).values( ) );
+            return new ArrayList(((Map) val ).values( ) );
         } else if (val instanceof Object[]) {
-            return new ArrayList(Arrays.asList((Object[]) val));
+            return Arrays.asList((Object[]) val);
         }
     }
-    return  new ArrayList();
+    return  new ArrayList(0);
   }
 
   private static Collection asColl(Object val) {
@@ -76,12 +104,12 @@ public final class Dict
         if (val instanceof Collection ) {
             return ( Collection ) val ;
         } else if (val instanceof Map ) {
-            return new ArrayList(((Map ) val).values( ) );
+            return ((Map) val ).values( );
         } else if (val instanceof Object[]) {
-            return new ArrayList(Arrays.asList((Object[]) val));
+            return Arrays.asList((Object[]) val);
         }
     }
-    return  new ArrayList();
+    return  new ArrayList(0);
   }
 
   private static Object gat(Collection lst, Object def, Object[] keys, int pos)
@@ -141,7 +169,7 @@ public final class Dict
 
     // 按键类型来决定容器类型
     if (key == null) {
-        Collection lst = asColl (obj);
+        Collection lst = asColl(obj);
 
         if (keys.length == pos + 1) {
             return lst;
@@ -149,7 +177,7 @@ public final class Dict
             return gat(lst, def, keys, pos + 1);
         }
     } else
-    if (key instanceof Integer) {
+    if (key instanceof Integer && obj instanceof Collection) {
         List lst = asList(obj);
 
         // 如果列表长度不够, 则直接返回默认值
@@ -164,10 +192,10 @@ public final class Dict
             return get(lst.get(idx), def, keys, pos + 1);
         }
     } else {
-        Map  map = asMap (obj);
+        Map  map = toMap (obj);
 
         // 如果没有对应的键, 则直接返回默认值
-        if (!map.containsKey(key) ) {
+        if (! map.containsKey(key)) {
             return def;
         }
 
@@ -185,7 +213,7 @@ public final class Dict
 
     // 按键类型来决定容器类型
     if (key == null) {
-        Collection lst = asColl(obj);
+        Collection lst = toColl(obj);
 
         if (keys.length == pos + 1) {
             lst.add(val);
@@ -195,8 +223,8 @@ public final class Dict
 
         return lst;
     } else
-    if (key instanceof Integer) {
-        List lst = asList(obj);
+    if (key instanceof Integer && obj instanceof Collection) {
+        List lst = toList(obj);
 
         // 如果列表长度不够, 填充到索引的长度
         int idx = ( Integer )  key;
@@ -213,7 +241,7 @@ public final class Dict
 
         return lst;
     } else {
-        Map map = asMap (obj);
+        Map map = toMap (obj);
 
         if (keys.length == pos + 1) {
             map.put(key, val);

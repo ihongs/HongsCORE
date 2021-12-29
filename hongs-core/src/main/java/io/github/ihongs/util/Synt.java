@@ -259,39 +259,6 @@ public final class Synt {
     }
 
     /**
-     * 确定转为字符串
-     * 数组和集合仅取第一个
-     * @param val
-     * @return
-     */
-    public static String asString(Object val) {
-        val = asSingle(val);
-        if (val == null) {
-            return null;
-        }
-
-        // 规避用科学计数法表示小数
-        if (val  instanceof  Number) {
-            return asString((Number) val);
-        }
-
-        return val.toString();
-    }
-
-    /**
-     * 数字转为字符串
-     * @param val
-     * @return
-     */
-    public static String asString(Number val) {
-        if (val == null) {
-            return null;
-        }
-
-        return DIGI.get( ).format(val);
-    }
-
-    /**
      * 尝试转为整数
      * 数组和集合仅取第一个, 日期类型取毫秒时间戳
      * @param val
@@ -508,6 +475,39 @@ public final class Synt {
         }
 
         return val;
+    }
+
+    /**
+     * 确定转为字符串
+     * 数组和集合仅取第一个
+     * @param val
+     * @return
+     */
+    public static String asString(Object val) {
+        val = asSingle(val);
+        if (val == null) {
+            return null;
+        }
+
+        // 规避用科学计数法表示小数
+        if (val  instanceof  Number) {
+            return asString((Number) val);
+        }
+
+        return val.toString();
+    }
+
+    /**
+     * 数字转为字符串
+     * @param val
+     * @return
+     */
+    public static String asString(Number val) {
+        if (val == null) {
+            return null;
+        }
+
+        return DIGI.get( ).format(val);
     }
 
     /**

@@ -748,21 +748,18 @@ public final class Synt {
             String vs = declare(val, "");
             Matcher m = RNGP.matcher(vs);
             if (m.matches()) {
-                String m2 = m.group (2 ).trim();
-                String m3 = m.group (3 ).trim();
-                return new Object[] {
-                    ! "".equals(m2) ? m2 : null,
-                    ! "".equals(m3) ? m3 : null,
-                    !"(".equals(m.group ( 1 ) ),
-                    !")".equals(m.group ( 4 ) )
+                val = new Object [] {
+                    m.group( 2 ).trim( ),
+                    m.group( 3 ).trim( ),
+                    !"(".equals( m.group( 1 ) ),
+                    !")".equals( m.group( 4 ) )
                 };
-            }
-            // 单一取值, 直接构建
-            if ( ! RNGQ.matcher(vs).find( ) ) {
-                return new Object[] {
+            } else
+            if ( ! RNGQ.matcher( vs ).find( ) ) {
+                val = new Object [] {
                     vs , vs , true, true
                 };
-            }
+            } else
             throw new ClassCastException("'"+val+"' can not be cast to range");
         }
 
@@ -771,7 +768,7 @@ public final class Synt {
          * 两位时默认为开区间
          */
         Object[] arr;
-        if (val instanceof Object[]) {
+        if (val instanceof Object [ ] ) {
             arr = (Object[ ]) val;
         } else if (val instanceof List) {
             arr = ((List)val).toArray();
@@ -784,12 +781,16 @@ public final class Synt {
          * 为便判断统一为空值
          */
         if (0 < arr.length) {
-            if ( "".equals(arr[0]) ) {
+            if ( "".equals(arr[0])
+            ||  "∞".equals(arr[0])
+            || "-∞".equals(arr[0]) ) {
                 arr[0] = null;
             }
         }
         if (1 < arr.length) {
-            if ( "".equals(arr[1]) ) {
+            if ( "".equals(arr[1])
+            ||  "∞".equals(arr[1])
+            || "+∞".equals(arr[1]) ) {
                 arr[1] = null;
             }
         }
@@ -811,12 +812,6 @@ public final class Synt {
                     throw new ClassCastException("Range index 2,3 must be boolean: "+arr);
                 }
 
-                if (gt_e  &&  lt_e
-                &&  arr[0] == null
-                &&  arr[1] == null) {
-                    return null;
-                }
-
                 return new Object[] {
                     arr[0], arr[1], gt_e, lt_e
                 };
@@ -829,29 +824,14 @@ public final class Synt {
                     throw new ClassCastException("Range index 2,3 must be boolean: "+arr);
                 }
 
-                if (gl_e
-                &&  arr[0] == null
-                &&  arr[1] == null) {
-                    return null;
-                }
-
                 return new Object[] {
                     arr[0], arr[1], gl_e, gl_e
                 };
             case 2:
-                if (arr[0] == null
-                &&  arr[1] == null) {
-                    return null;
-                }
-
                 return new Object[] {
                     arr[0], arr[1], true, true
                 };
             case 1:
-                if (arr[0] == null) {
-                    return null;
-                }
-
                 return new Object[] {
                     arr[0], arr[0], true, true
                 };

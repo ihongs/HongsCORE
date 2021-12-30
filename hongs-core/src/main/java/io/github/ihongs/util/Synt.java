@@ -57,6 +57,12 @@ public final class Synt {
     }
 
     /**
+     * 空值对象, 默认跳过
+     */
+    private static final Number  ZERO = 0 ;
+    private static final String  EMPT = "";
+
+    /**
      * 视为真的字符串有: True , Yes, On, T, Y, I, 1
      */
     public  static final Pattern TRUE = Pattern.compile( "(1|I|Y|T|ON|YES|TRUE)" , Pattern.CASE_INSENSITIVE);
@@ -67,7 +73,7 @@ public final class Synt {
     public  static final Pattern FAKE = Pattern.compile("(|0|O|N|F|NO|OFF|FALSE)", Pattern.CASE_INSENSITIVE);
 
     /**
-     * 拆分字符: 用于解 Map
+     * 拆分字符: 用于解 Set,Map
      */
     private static final Pattern SEXP = Pattern.compile("\\s*,\\s*");
     private static final Pattern MEXP = Pattern.compile("\\s*:\\s*");
@@ -87,12 +93,6 @@ public final class Synt {
      */
     private static final Pattern RNGQ = Pattern.compile("[\\[\\(,\\)\\]]");
     private static final Pattern RNGP = Pattern.compile("^([\\(\\[])?(.*?),(.*?)([\\]\\)])?$");
-
-    /**
-     * 空值对象, 默认跳过
-     */
-    private static final String  EMPT = "";
-    private static final Number  ZERO = 0 ;
 
     /**
      * 数字转换工具

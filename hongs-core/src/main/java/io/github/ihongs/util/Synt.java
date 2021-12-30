@@ -757,7 +757,7 @@ public final class Synt {
                     !")".equals(m.group ( 4 ) )
                 };
             }
-            // 单一值区间
+            // 单一取值, 直接构建
             if ( ! RNGQ.matcher(vs).find( ) ) {
                 return new Object[] {
                     vs , vs , true, true
@@ -811,6 +811,12 @@ public final class Synt {
                     throw new ClassCastException("Range index 2,3 must be boolean: "+arr);
                 }
 
+                if (gt_e  &&  lt_e
+                &&  arr[0] == null
+                &&  arr[1] == null) {
+                    return null;
+                }
+
                 return new Object[] {
                     arr[0], arr[1], gt_e, lt_e
                 };
@@ -823,14 +829,29 @@ public final class Synt {
                     throw new ClassCastException("Range index 2,3 must be boolean: "+arr);
                 }
 
+                if (gl_e
+                &&  arr[0] == null
+                &&  arr[1] == null) {
+                    return null;
+                }
+
                 return new Object[] {
                     arr[0], arr[1], gl_e, gl_e
                 };
             case 2:
+                if (arr[0] == null
+                &&  arr[1] == null) {
+                    return null;
+                }
+
                 return new Object[] {
                     arr[0], arr[1], true, true
                 };
             case 1:
+                if (arr[0] == null) {
+                    return null;
+                }
+
                 return new Object[] {
                     arr[0], arr[0], true, true
                 };

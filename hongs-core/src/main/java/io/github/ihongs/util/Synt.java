@@ -59,7 +59,7 @@ public final class Synt {
     /**
      * 空值对象, 默认跳过
      */
-    private static final Number  ZERO = 0 ;
+    private static final Number  ZERO = 00;
     private static final String  EMPT = "";
 
     /**

@@ -66,6 +66,7 @@ public class TestVerify extends TestCase {
             );
             Map cleans = verify.verify(values, false, false);
             System.out.println(Dawn.toString(cleans));
+            assertEquals(Dawn.toString(cleans, true), "{\"name\":\"abcdef\",\"size\":[11,22]}");
         }
         catch (Wrongs wr) {
             Core.ACTION_LANG.set(Cnst.LANG_DEF);

@@ -150,9 +150,9 @@ public class TestUtilDict extends TestCase {
         Object[] a = new Object [] {"", "a", "b", "c", "d", null, "e", "f", "g", "h", null, "x.y:z", "def", null};
         Object[] b = Dict.splitKeys(".a.b[c][d].:e:f[g]:h[][x.y:z].def[]");
         Object[] c = Dict.splitKeys(".a.b[c][d]..e.f[g].h[][x.y:z].def." );
-        System.out.println(Dawn.toString(a));
-        System.out.println(Dawn.toString(b));
-        System.out.println(Dawn.toString(c));
+        //System.out.println(Dawn.toString(a));
+        //System.out.println(Dawn.toString(b));
+        //System.out.println(Dawn.toString(c));
         assertTrue(Arrays.equals(a, b));
         assertTrue(Arrays.equals(a, c));
     }

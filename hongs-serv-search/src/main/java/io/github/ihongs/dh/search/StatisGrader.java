@@ -263,37 +263,39 @@ public class StatisGrader {
      * 数字区间
      */
     public static class Range implements Comparable {
-        public double min = Double.NEGATIVE_INFINITY;
-        public double max = Double.POSITIVE_INFINITY;
-        public boolean ge = true;
-        public boolean le = true;
+        public final double min;
+        public final double max;
+        public final boolean ge;
+        public final boolean le;
 
         public Range(double n) {
-            min = max = n;
+            min  = n ;
+            max  = n ;
+            ge   = true;
+            le   = true;
         }
 
         public Range(Number n) {
-            min = max = n.doubleValue( );
+            double v = n.doubleValue();
+            min  = v ;
+            max  = v ;
+            ge   = true;
+            le   = true;
         }
 
         public Range(Object s) {
             Object[] a = Synt.toRange(s);
-            if (a == null) {
-                return;
+            if (a != null) {
+                min = Synt.declare(a[0], Double.NEGATIVE_INFINITY);
+                max = Synt.declare(a[1], Double.POSITIVE_INFINITY);
+                ge  = (boolean) a[2];
+                le  = (boolean) a[3];
+            } else {
+                min = Double.NEGATIVE_INFINITY;
+                max = Double.POSITIVE_INFINITY;
+                ge  = true;
+                le  = true;
             }
-            if (a[0] != null) {
-                min = Synt.declare(a[0], min);
-            }
-            if (a[1] != null) {
-                max = Synt.declare(a[1], max);
-            }
-            ge = (boolean) a[2];
-            le = (boolean) a[3];
-        }
-
-        public boolean covers(Number n) {
-            double x = n.doubleValue( );
-            return covers(x);
         }
 
         public boolean covers(double n) {
@@ -310,47 +312,28 @@ public class StatisGrader {
             return true;
         }
 
-        public boolean covers() {
-            return ge && le
-            && min == Double.NEGATIVE_INFINITY
-            && max == Double.POSITIVE_INFINITY;
-        }
-
-        @Override
-        public String toString() {
-            // 不限则为空
-            if (ge && min == Double.NEGATIVE_INFINITY
-            &&  le && max == Double.POSITIVE_INFINITY) {
-                return "";
-            }
-            StringBuilder sb = new StringBuilder();
-            sb.append(ge ? "[" : "(");
-            sb.append(min != Double.NEGATIVE_INFINITY ? Synt.asString(min) : "");
-            sb.append(",");
-            sb.append(max != Double.POSITIVE_INFINITY ? Synt.asString(max) : "");
-            sb.append(le ? "]" : ")");
-            return sb.toString();
-        }
-
-        @Override
-        public int hashCode() {
-            return Double.valueOf(min + max).hashCode();
+        public boolean covers(Number n) {
+            double x = n.doubleValue( );
+            return covers(x);
         }
 
         @Override
         public boolean equals(Object o) {
-            if (! (o instanceof Range)) {
-                return false;
+            if ( o instanceof Range) {
+                Range that = (Range) o;
+
+                return that.ge  == this.ge
+                    && that.le  == this.le
+                    && that.min == this.min
+                    && that.max == this.max;
             }
-            Range  m = (Range ) o;
-            return m.ge  == ge  && m.le  == le
-                && m.min == min && m.max == max;
+            return false;
         }
 
         @Override
-        public int compareTo(Object o) {
-            if (o instanceof Range) {
-                Range that =(Range) o;
+        public int compareTo (Object o) {
+            if ( o instanceof Range) {
+                Range that = (Range) o;
 
                 if (this.min < that.min) {
                     return -1;
@@ -381,6 +364,27 @@ public class StatisGrader {
                 }
             }
             return  0;
+        }
+
+        @Override
+        public int hashCode() {
+            return toString().hashCode();
+        }
+
+        @Override
+        public String toString() {
+            // 不限则为空
+            if (ge && min == Double.NEGATIVE_INFINITY
+            &&  le && max == Double.POSITIVE_INFINITY) {
+                return "";
+            }
+            StringBuilder sb = new StringBuilder();
+            sb.append(ge ? "[" : "(");
+            sb.append(min != Double.NEGATIVE_INFINITY ? Synt.asString(min) : "");
+            sb.append(",");
+            sb.append(max != Double.POSITIVE_INFINITY ? Synt.asString(max) : "");
+            sb.append(le ? "]" : ")");
+            return sb.toString();
         }
     }
 

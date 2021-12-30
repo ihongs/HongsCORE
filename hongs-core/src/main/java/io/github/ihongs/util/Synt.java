@@ -44,10 +44,17 @@ public final class Synt {
         NEXT,
         LAST;
         @Override
-        public String toString() {
+        public String toString () {
             return "";
         }
     };
+
+    /**
+     * 遍历每个节点
+     */
+    public  static interface Each {
+        public Object run (Object v, Object k, int i);
+    }
 
     /**
      * 视为真的字符串有: True , Yes, On, T, Y, I, 1
@@ -78,7 +85,7 @@ public final class Synt {
     /**
      * 区间参数: [min,max] (min,max) 类似数学表达式
      */
-    private static final Pattern RNGQ = Pattern.compile(  "[\\[\\(,\\)\\]]"  );
+    private static final Pattern RNGQ = Pattern.compile("[\\[\\(,\\)\\]]");
     private static final Pattern RNGP = Pattern.compile("^([\\(\\[])?(.*?),(.*?)([\\]\\)])?$");
 
     /**
@@ -776,10 +783,12 @@ public final class Synt {
          * 空串表示无穷大或小
          * 为便判断统一为空值
          */
-        if (1 < arr.length) {
+        if (0 < arr.length) {
             if ( "".equals(arr[0]) ) {
                 arr[0] = null;
             }
+        }
+        if (1 < arr.length) {
             if ( "".equals(arr[1]) ) {
                 arr[1] = null;
             }
@@ -787,6 +796,12 @@ public final class Synt {
 
         switch (arr.length) {
             case 4:
+                // 格式符合可直接返回
+                if (arr[2] instanceof Boolean
+                &&  arr[3] instanceof Boolean) {
+                    return arr;
+                }
+
                 Boolean gt_e, lt_e;
                 try {
                     gt_e = defoult(asBool(arr[2]), false);
@@ -815,9 +830,46 @@ public final class Synt {
                 return new Object[] {
                     arr[0], arr[1], true, true
                 };
+            case 1:
+                return new Object[] {
+                    arr[0], arr[0], true, true
+                };
 
             default:throw new ClassCastException("Range index size must be 2 to 4: "+arr);
         }
+    }
+
+    /**
+     * 比较两个值的大小（顺序）
+     * @param a
+     * @param b
+     * @param l true 表示 null 是最大, 反之最小
+     * @return
+     */
+    public static int compare(Comparable a, Comparable b, boolean l) {
+        if (a != b) {
+            if (a != null
+            &&  b != null) {
+                return a.compareTo(b);
+            }
+            if (a == null) {
+                return l ? +1 : -1 ;
+            }
+            if (b == null) {
+                return l ? -1 : +1 ;
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * 比较两个值的大小（顺序）
+     * @param a
+     * @param b
+     * @return
+     */
+    public static int compare(Comparable a, Comparable b) {
+        return compare(a, b, false);
     }
 
     /**
@@ -951,16 +1003,16 @@ public final class Synt {
     /**
      * 过滤 Map
      * @param data
-     * @param conv
+     * @param leaf
      * @return
      */
-    public static Map filter(Map data, Each conv) {
+    public static Map filter(Map data, Each leaf) {
         Map dat = new LinkedHashMap();
         for (Object o : data.entrySet()) {
             Map.Entry e = (Map.Entry) o;
             Object k = e.getKey(  );
             Object v = e.getValue();
-            v = conv.run(v, k, -1 );
+            v = leaf.run(v, k, -1 );
             if (v == LOOP.NEXT) {
                 continue;
             }
@@ -975,13 +1027,13 @@ public final class Synt {
     /**
      * 过滤 Set
      * @param data
-     * @param conv
+     * @param leaf
      * @return
      */
-    public static Set filter(Set data, Each conv) {
+    public static Set filter(Set data, Each leaf) {
         Set dat = new LinkedHashSet();
         for (Object v : data) {
-            v = conv.run(v, null, -1);
+            v = leaf.run(v, null, -1);
             if (v == LOOP.NEXT) {
                 continue;
             }
@@ -996,14 +1048,14 @@ public final class Synt {
     /**
      * 过滤 List
      * @param data
-     * @param conv
+     * @param leaf
      * @return
      */
-    public static List filter(List data, Each conv) {
+    public static List filter(List data, Each leaf) {
         List dat = new LinkedList();
         int i = 0;
         for (Object v : data) {
-            v = conv.run(v, null, i ++);
+            v = leaf.run(v, null, i ++);
             if (v == LOOP.NEXT) {
                 continue;
             }
@@ -1018,14 +1070,14 @@ public final class Synt {
     /**
      * 过滤数组
      * @param data
-     * @param conv
+     * @param leaf
      * @return
      */
-    public static Object[] filter(Object[] data, Each conv) {
+    public static Object[] filter(Object[] data, Each leaf) {
         List dat = new LinkedList();
         int i = 0;
         for (Object v : data) {
-            v = conv.run(v, null, i ++);
+            v = leaf.run(v, null, i ++);
             if (v == LOOP.NEXT) {
                 continue;
             }
@@ -1038,127 +1090,65 @@ public final class Synt {
     }
 
     /**
-     * 过滤全部叶子节点
+     * 过滤 Map
      * @param data
-     * @param conv
-     * @return
+     * @param leaf
      */
-    public static Map digest(Map data, Deep conv) {
-        return filter(data, new EachLeaf(conv));
-    }
-
-    /**
-     * 过滤全部叶子节点
-     * @param data
-     * @param conv
-     * @return
-     */
-    public static Set digest(Set data, Deep conv) {
-        return filter(data, new EachLeaf(conv));
-    }
-
-    /**
-     * 过滤全部叶子节点
-     * @param data
-     * @param conv
-     * @return
-     */
-    public static List digest(List data, Deep conv) {
-        return filter(data, new EachLeaf(conv));
-    }
-
-    /**
-     * 过滤全部叶子节点
-     * @param data
-     * @param conv
-     * @return
-     */
-    public static Object[] digest(Object[] data, Deep conv) {
-        return filter(data, new EachLeaf(conv));
-    }
-
-    //** 内部工具类 **/
-
-    /**
-     * 用于遍历每个节点
-     */
-    public static interface Each {
-        public Object run(Object v, Object k, int i);
-    }
-
-    /**
-     * 用于遍历叶子节点
-     */
-    public static interface Deep {
-        public Object run(Object v, List p);
-    }
-
-    private static class EachLeaf implements Each {
-        private final Deep deep;
-        private final List path;
-
-        public EachLeaf(Deep leaf) {
-            this.deep = leaf;
-            this.path = new ArrayList();
-        }
-
-        @Override
-        public Object run(Object v, Object k, int i) {
-            List p = new ArrayList(path.size() + 1 );
-            p.addAll(path) ; p.add(i != -1 ? i : k );
-            if (v instanceof Map ) {
-                return filter((Map ) v, this);
-            } else
-            if (v instanceof Set ) {
-                return filter((Set ) v, this);
-            } else
-            if (v instanceof List) {
-                return filter((List) v, this);
-            } else
-            if (v instanceof Object[]) {
-                return filter((Object[]) v, this);
-            } else {
-                return deep.run(v, p);
+    public static void falter(Map data, Each leaf) {
+        for (Object o : data.entrySet()) {
+            Map.Entry e = (Map.Entry) o;
+            Object k = e.getKey(  );
+            Object v = e.getValue();
+            v = leaf.run(v, k, -1 );
+            if (v == LOOP.LAST) {
+                break;
             }
         }
     }
 
-    /*
-    public static void main(String[] args) {
-        // filter, digest 的函数式特性测试
-        Object[] a = new Object[] {"a", "b", "c",
-                     new Object[] {"d", "e", "f"},
-                     setOf("g", "h", "i", "j"),
-                     mapOf("k", "l", "m", "n")};
-
-        System.err.println("filter:");
-        Object[] b = filter(a, (v, k, i) -> {
-            System.err.println (i+":"+v);
-            return v.toString().toUpperCase();
-        });
-        System.err.println("");
-
-        System.err.println("digest:");
-        Object[] c = digest(a, (v, p) -> {
-            System.err.println (p+":"+v);
-            return v.toString().toUpperCase();
-        });
-        System.err.println("");
-
-        System.err.print("a = ");
-        Dawn.dumps(a);
-        System.err.print("b = ");
-        Dawn.dumps(b);
-        System.err.print("c = ");
-        Dawn.dumps(c);
-
-        // defoult, defxult 的函数式特性测试
-        String v;
-        v = null;
-        System.err.println(defoult(v, ()->"a"));
-        v = "";
-        System.err.println(defxult(v, ()->"1"));
+    /**
+     * 过滤 Set
+     * @param data
+     * @param leaf
+     * @return
+     */
+    public static void falter(Set data, Each leaf) {
+        for (Object v : data) {
+            v = leaf.run(v, null, -1);
+            if (v == LOOP.LAST) {
+                break;
+            }
+        }
     }
-    */
+
+    /**
+     * 过滤 List
+     * @param data
+     * @param leaf
+     */
+    public static void falter(List data, Each leaf) {
+        int i = 0;
+        for (Object v : data) {
+            v = leaf.run(v, null, i ++);
+            if (v == LOOP.LAST) {
+                break;
+            }
+        }
+    }
+
+    /**
+     * 遍历数组
+     * @param data
+     * @param leaf
+     */
+    public static void falter(Object[] data, Each leaf) {
+        int i = 0;
+        for (Object v : data) {
+            v = leaf.run(v, null, i ++);
+            if (v == LOOP.LAST) {
+                break;
+            }
+        }
+    }
 
 }

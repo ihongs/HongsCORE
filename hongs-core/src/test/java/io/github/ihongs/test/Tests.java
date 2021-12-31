@@ -3,6 +3,9 @@ package io.github.ihongs.test;
 import io.github.ihongs.action.ActionDriver.URLPatterns;
 import io.github.ihongs.cmdlet.CmdletHelper;
 import io.github.ihongs.util.Dawn;
+import io.github.ihongs.util.Synt;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import junit.framework.TestCase;
 import org.junit.After;
@@ -52,15 +55,27 @@ public class Tests extends TestCase {
             "!U",
             "!A"
         );
-        System.out.println(Dawn.toString(opts));
+        Map optz = new HashMap(Synt.mapOf(
+            "", new String[] {"--others", "456", "789"},
+            "number",  123 ,
+            "regexp", "abc",
+            "enable", true ,
+            "repeat", Arrays.asList("def", "--xyz")
+        ));
+        //System.out.println(Dawn.toString(opts));
+        //System.out.println(Dawn.toString(optz));
+        assertEquals(Dawn.toString(opts), Dawn.toString(optz));
     }
 
     @Test
     public void testUrlPatterns() {
-        System.out.println(new URLPatterns(
-            "*.js,*.css,*.html, *.gif,*.jpg,*.png,*.bmp",
-            "/centre/sign/* , \r\n /centre/login.html ,"
-        ).toString());
+        String ss = new URLPatterns(
+                    "*.js,*.css,*.html, *.gif,*.jpg,*.png,*.bmp",
+                    "/centre/sign/* , \r\n /centre/login.html ,"
+                ).toString();
+        String zz = "Include: ^(.*\\.js|.*\\.css|.*\\.html|.*\\.gif|.*\\.jpg|.*\\.png|.*\\.bmp)$\r\n"
+                  + "Exclude: ^(/centre/sign/.*|/centre/login\\.html)$";
+        assertEquals(ss, zz);
 
         assertEquals(new URLPatterns("", "").matches("/a/b.js"), true);
 

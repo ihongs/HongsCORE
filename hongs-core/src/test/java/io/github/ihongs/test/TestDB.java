@@ -1,8 +1,14 @@
 package io.github.ihongs.test;
 
 import io.github.ihongs.HongsException;
+import io.github.ihongs.db.util.AssocCase;
 import io.github.ihongs.db.util.FetchCase;
+import io.github.ihongs.util.Dawn;
+import io.github.ihongs.util.Synt;
+import java.util.HashMap;
+import java.util.Map;
 import static junit.framework.Assert.fail;
+import static junit.framework.TestCase.assertEquals;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -97,6 +103,36 @@ public class TestDB {
         if (! vali.equals(caze.toString())) {
             fail("实例复合查询异常\r\n\t目标: "+vali+"\r\n\t实际: "+caze.toString());
         }
+    }
+    
+    @Test
+    public void testAssocCase() throws HongsException {
+        FetchCase fc = new FetchCase(  );
+        AssocCase ac = new AssocCase(fc);
+        fc.from("a_table", "table1")
+          .join("b_table", "table2", "table1.id=table2.a_id");
+        ac.allow(AssocCase.LISTABLE, "id","name","ctime","mtime","state","t2_id:table2.id","t2_name:table2.name");
+        ac.allow(AssocCase.UNSTORED, "state");
+        ac.parse(Synt.mapOf(
+            "id", Synt.setOf("1", "2", "3"),
+            "rb", "*,table2.name",
+            "ob", "ctime!,state",
+            "state", Synt.mapOf("gt", 1)
+        ));
+        assertEquals(fc.toString(), "SELECT `table1`.`id` AS `id`, `table1`.`name` AS `name`, `table1`.`ctime` AS `ctime`, `table1`.`mtime` AS `mtime`, `table1`.`state` AS `state`, table2.id AS `t2_id`, table2.name AS `t2_name` FROM `a_table` AS `table1` INNER JOIN `b_table` AS `table2` ON table1.id=table2.a_id WHERE `table1`.`id` IN ('1','2','3') AND `table1`.`state` > 1 ORDER BY `table1`.`ctime` DESC, `table1`.`state`");
+        //System.out.println(fc);
+        Map ss = ac.saves(Synt.mapOf(
+            "id", "123",
+            "name", "hh",
+            "note", "nn",
+            "state", 6
+        ));
+        Map zz = new HashMap(Synt.mapOf(
+            "id", "123",
+            "name", "hh"
+        ));
+        assertEquals(ss.toString(), zz.toString());
+        //System.out.println(ss);
     }
 
 }

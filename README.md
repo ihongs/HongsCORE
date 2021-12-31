@@ -205,34 +205,35 @@ action 和 cmdlet 使用 @Action 和 @Cmdlet 注解来设置访问路径, 如果
 
 其中 eq 这样的标识为过滤操作符, 其含义为:
 
-     eq     等于
-     ne     不等于
-     cq     匹配
-     nc     不匹配
-     gt     大于
-     ge     大于或等于
-     lt     小于
-     le     小于或等于
-     rg     区间
-     in     包含
-     ni     不包含
-     is     空或非空
-     or     值关系为或
+    eq  等于
+    ne  不等于
+    cq  匹配
+    nc  不匹配
+    gt  大于
+    ge  大于或等于
+    lt  小于
+    le  小于或等于
+    rg  区间
+    on  等于或包含
+    in  包含
+    ni  不包含
+    is  空或非空
+    or  值关系为或
 
 其中 wd 这样的参数有特定的意义, 列举如下:
 
-     id     主键值
-     wd     关键词
-     pn     当前页码(page num)
-     qn     续探页数(ques num)
-     rn     额定行数(rows num)
-     cb     响应回调(callback)
-     ob     排序字段(order by)
-     rb     响应字段(reply with)
-     ab     应用处理(apply with)
-     or     或查询  (or )
-     ar     多组    (and)
-     nr     否定    (not)
+    id  主键值
+    wd  关键词
+    pn  当前页码(page num)
+    qn  续探页数(ques num)
+    rn  额定行数(rows num)
+    cb  响应回调(callback)
+    ob  排序字段(order by)
+    rb  响应字段(reply with)
+    ab  应用处理(apply with)
+    or  或查询  (or )
+    ar  多组    (and)
+    nr  否定    (not)
 
 其中 ob,rb,ab 的值还支持逗号和空格分隔，如 ob=abc,def 等同于 ob.=abc&ob.=def 等同于 {"ob":["abc","def"]}. 请避免将这些参数作为您的字段名, 除 id 外字段名字母数多于 2 即可.
 
@@ -320,9 +321,11 @@ dete2mic 或 date2sec 搭配 all2str 则将转换后的时间戳数字再转为�
 
     listable    字段可获取(可通过rb参数控制)
     sortable    字段可排序(可通过ob参数控制, 枚举等类型的字段实为分组类聚)
-    srchable    字段可搜索(可通过wd参数限制)
+    rschable    字段可搜索(可通过wd参数限制)
+    srchable    字段可搜索(可以模糊匹配)
+    rankable    字段可区间(可以比较大小)
     findable    字段可过滤(可以用于查询, 用过滤标识时, 以层级数据结构给出)
-    unstored    完全不保存(纯粹虚拟字段, 例如分隔栏等, 暂只在 Lucene 特有)
+    unstored    完全不保存(纯粹虚拟字段, 例如分隔栏等)
     inviable    物理不可见(可查询或排序, 但不可以读取, 暂只在 Lucene 特有)
     invisble    逻辑不可见(可查询或排序, 但不可以读取, 暂只在 Lucene 特有)
 

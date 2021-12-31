@@ -15,7 +15,7 @@ public class DoubleQuery implements IQuery {
     }
     @Override
     public Query whr(String k, Object v) {
-        if (v == null) {
+        if (v == null || "".equals(v)) {
             throw new NullPointerException("Query for "+k+" must be number, but null");
         }
         double  n2 = Synt.asDouble(v);
@@ -31,7 +31,7 @@ public class DoubleQuery implements IQuery {
         if (n == null || "".equals(n)) {
             n2 = Double.NEGATIVE_INFINITY;
         } else {
-            n2 = Synt.asFloat (n);
+            n2 = Synt.asDouble(n);
             if (!l) {
                 n2 = DoublePoint.nextUp  (n2);
             }
@@ -39,7 +39,7 @@ public class DoubleQuery implements IQuery {
         if (x == null || "".equals(x)) {
             x2 = Double.POSITIVE_INFINITY;
         } else {
-            x2 = Synt.asFloat (x);
+            x2 = Synt.asDouble(x);
             if (!g) {
                 x2 = DoublePoint.nextDown(x2);
             }

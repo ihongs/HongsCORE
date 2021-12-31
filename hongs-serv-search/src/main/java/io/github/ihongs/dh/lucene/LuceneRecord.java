@@ -1083,20 +1083,27 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             v = vd.get(Cnst.IS_REL);
             if ( v != null ) {
                 String b = qa instanceof SearchQuery ? "$" : "@";
-                String a = Synt.asString(v);
+                String a = Synt.asString(v).toUpperCase();
                 Query  p ;
                 try {
                     p = new QueryParser(b + k, new StandardAnalyzer()).parse("[* TO *]");
-                } catch ( ParseException e) {
+                }
+                catch  ( ParseException e ) {
                     throw new HongsExemption(e);
                 }
-                if ("WELL".equalsIgnoreCase(a)) {
-                    qr.add(p, BooleanClause.Occur.MUST);
-                    i ++;
-                } else
-                if ("NULL".equalsIgnoreCase(a)) {
-                    qr.add(p, BooleanClause.Occur.MUST_NOT);
-                    i ++;  j ++;
+                switch ( a ) {
+                    case "WELL" :
+                    case "NOT-NULL" :
+                        qr.add(p, BooleanClause.Occur.MUST);
+                        i ++ ;
+                        break;
+                    case "NULL" :
+                    case "NOT-WELL" :
+                        qr.add(p, BooleanClause.Occur.MUST_NOT);
+                        i ++ ; j ++ ;
+                        break;
+                    default:
+                        throw new UnsupportedOperationException("Unsupported `is`: "+v);
                 }
             }
 

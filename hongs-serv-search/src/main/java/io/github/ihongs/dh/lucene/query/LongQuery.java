@@ -15,7 +15,7 @@ public class LongQuery implements IQuery {
     }
     @Override
     public Query whr(String k, Object v) {
-        if (v == null) {
+        if (v == null || "".equals(v)) {
             throw new NullPointerException("Query for "+k+" must be number, but null");
         }
         long    n2 = Synt.asLong(v);

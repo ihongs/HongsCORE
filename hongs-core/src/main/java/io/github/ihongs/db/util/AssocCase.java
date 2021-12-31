@@ -75,9 +75,14 @@ public class AssocCase {
      * 可存储字段, 用于 FetchCase 的 Option, 未设置则取 LISTABLE
      */
     public  static final String  SAVEABLE = "SAVEABLE";
+    /**
+     * 不可存字段, 用于 FetchCase 的 Option
+     */
+    public  static final String  UNSTORED = "UNSTORED";
 
     private static final Pattern ANPT = Pattern.compile("^[\\w\\.]+\\s*(:|$)");
-    private static final Pattern CNPT = Pattern.compile("^[\\w]+$");
+    private static final Pattern CNPT = Pattern.compile("^[\\w]+$" );
+    private static final Pattern SEPA = Pattern.compile("\\s*,\\s*");
 
     private final FetchCase        that;
     private final Map<String, Map> opts;
@@ -299,11 +304,15 @@ public class AssocCase {
      */
     public Map<String, Object> saves(Map rd) {
         Map<String, String> af = allow(SAVEABLE);
-        Map sd = new HashMap();
+        Map<String, String> uf = allow(UNSTORED);
+        Map sd = new HashMap ( rd.size());
 
         for(Map.Entry<String, String> et : af.entrySet()) {
             String fc = et.getValue();
             String fn = et.getKey(  );
+            if (uf.containsKey ( fn )) {
+                continue;
+            }
             Object fv = rd.get ( fn );
             if (fv != null) {
                 sd.put(fc, fv);
@@ -539,12 +548,18 @@ public class AssocCase {
 
             vo = vm.get(Cnst.IS_REL);
             if ( vo != null ) {
-                String rv  =  Synt.asString(vo);
-                if ("NULL".equalsIgnoreCase(rv)) {
-                    caze.filter(fn+/**/" IS NULL");
-                } else
-                if ("WELL".equalsIgnoreCase(rv)) {
-                    caze.filter(fn+" IS NOT NULL");
+                String   vn = Synt.asString(vo).toUpperCase();
+                switch ( vn ) {
+                    case "WELL":
+                    case "NOT-NULL":
+                        caze.filter(fn+" IS NOT NULL");
+                        break;
+                    case "NULL":
+                    case "NOT-WELL":
+                        caze.filter(fn+" IS NULL");
+                        break;
+                    default:
+                        throw new UnsupportedOperationException("Unsupported `is`: "+vo);
                 }
             }
 
@@ -774,7 +789,7 @@ public class AssocCase {
     }
 
     private Map allowCheck(String on) {
-        Map af = opts.get(on);
+        Map af  = opts.get(on);
 
         // 相对查询字段增加, 删减
         if (af != null && !LISTABLE.equals(on)) {
@@ -784,39 +799,48 @@ public class AssocCase {
             }
         }
 
-        // 继承树, 列举和搜索为根
+        /**
+         * 继承树, 列举和搜索为根
+         * 存储需使用列举原始设置
+         */
+        if (on == null) {
+            on  =  "" ;
+        }
         if (af == null) {
-        if (on != null) switch (on) {
+            switch (on) {
             case LISTABLE:
             case SRCHABLE:
-                af =  new HashMap();
+                af =  new HashMap(0);
+                break;
+            case SAVEABLE:
+            case UNSTORED:
+                af = opts.get (LISTABLE);
+                if (af == null) {
+                    af =  new HashMap(0);
+                }
                 break;
             case RSCHABLE:
                 af = allow(SRCHABLE);
                 if (af == null) {
-                    af =  new HashMap();
+                    af =  new HashMap(0);
                 }
                 break;
             case RANKABLE:
                 af = allow(SORTABLE);
                 if (af == null) {
-                    af =  new HashMap();
+                    af =  new HashMap(0);
                 }
                 break;
             default:
                 af = allow(LISTABLE);
                 if (af == null) {
-                    af =  new HashMap();
-                }
-            } else {
-                af = allow(LISTABLE);
-                if (af == null) {
-                    af =  new HashMap();
+                    af =  new HashMap(0);
                 }
             }
         }
 
-        if (SAVEABLE.equals(on) ) {
+        if (SAVEABLE.equals(on)
+        ||  UNSTORED.equals(on) ) {
             return allowSaves(af);
         } else {
             return allowTrans(af);
@@ -911,20 +935,9 @@ public class AssocCase {
     public AssocCase allow(Table table) {
         String cs;
         Map ps = table.getParams();
+
         cs = (String) ps.get("listable");
-        if (cs != null) allow(LISTABLE, cs.trim().split("\\s*,\\s*"));
-        cs = (String) ps.get("sortable");
-        if (cs != null) allow(SORTABLE, cs.trim().split("\\s*,\\s*"));
-        cs = (String) ps.get("findable");
-        if (cs != null) allow(FINDABLE, cs.trim().split("\\s*,\\s*"));
-        cs = (String) ps.get("srchable");
-        if (cs != null) allow(SRCHABLE, cs.trim().split("\\s*,\\s*"));
-        cs = (String) ps.get("rschable");
-        if (cs != null) allow(RSCHABLE, cs.trim().split("\\s*,\\s*"));
-        cs = (String) ps.get("rankable");
-        if (cs != null) allow(RANKABLE, cs.trim().split("\\s*,\\s*"));
-        cs = (String) ps.get("saveable");
-        if (cs != null) allow(SAVEABLE, cs.trim().split("\\s*,\\s*"));
+        if (cs != null) allow(LISTABLE, SEPA.split(cs.trim()));
         else {
             /**
              * 此处未将 SRCHTABLE 设为当前所有字段
@@ -938,6 +951,23 @@ public class AssocCase {
             allow(table, table, table.getAssocs(), name, null, af);
             bufs.put(LISTABLE, af);
         }
+        cs = (String) ps.get("findable");
+        if (cs != null) allow(FINDABLE, SEPA.split(cs.trim()));
+
+        cs = (String) ps.get("sortable");
+        if (cs != null) allow(SORTABLE, SEPA.split(cs.trim()));
+        cs = (String) ps.get("rankable");
+        if (cs != null) allow(RANKABLE, SEPA.split(cs.trim()));
+
+        cs = (String) ps.get("srchable");
+        if (cs != null) allow(SRCHABLE, SEPA.split(cs.trim()));
+        cs = (String) ps.get("rschable");
+        if (cs != null) allow(RSCHABLE, SEPA.split(cs.trim()));
+
+        cs = (String) ps.get("saveable");
+        if (cs != null) allow(SAVEABLE, SEPA.split(cs.trim()));
+        cs = (String) ps.get("unstored");
+        if (cs != null) allow(UNSTORED, SEPA.split(cs.trim()));
 
         return this;
     }

@@ -23,8 +23,8 @@
     <div style="display: table; width: 100%;">
         <div style="display: table-cell; width: 15px; vertical-align: middle;">
             <div class="pagebox btn-group" style="white-space: nowrap; padding-right: 15px;">
-                <button type="button" class="page-prev btn btn-default" style="float: none; display: inline;" title="<%=_locale.translate("fore.list.prev.page")%>" data-pn=""><span class="bi-hi-prev"></span></button>
-                <button type="button" class="page-next btn btn-default" style="float: none; display: inline;" title="<%=_locale.translate("fore.list.next.page")%>" data-pn=""><span class="bi-hi-next"></span></button>
+                <button type="button" class="page-prev btn btn-default" style="float: none; display: inline;" title="<%=_locale.translate("fore.list.prev.page")%>" data-pn=""><span class="bi bi-hi-prev"></span></button>
+                <button type="button" class="page-next btn btn-default" style="float: none; display: inline;" title="<%=_locale.translate("fore.list.next.page")%>" data-pn=""><span class="bi bi-hi-next"></span></button>
             </div>
         </div>
         <div style="display: table-cell; width: 100%; vertical-align: middle;">
@@ -42,7 +42,7 @@
                 %>
                 <input type="search" class="form-control" name="<%=Cnst.WD_KEY%>" placeholder="<%=sp%>" /><!--<%=_wd%>-->
                 <span class="input-group-btn">
-                    <button type="submit" class="search btn btn-default" title="<%=_locale.translate("fore.search", _title)%>"><span class="bi-hi-search"></span></button>
+                    <button type="submit" class="search btn btn-default" title="<%=_locale.translate("fore.search", _title)%>"><span class="bi bi-hi-search"></span></button>
                 </span>
             </form>
         </div>

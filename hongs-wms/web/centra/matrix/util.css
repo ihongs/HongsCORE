@@ -12,14 +12,19 @@
 .cols-form .target-form .control-label,
 .cols-form .detail-set  .ui-sortable-handle
     {cursor : move;}
-.cols-form [class^=bi-hi-]
-    {cursor : pointer; display: inline-block; color: #2780E3; margin-left: 8px;}
-.cols-form              .bi-hi-close
-    {color  : #d55;}
+.cols-form .bi-hi-create,
+.cols-form .bi-hi-update,
+.cols-form .bi-hi-close
+    {cursor : pointer; display: inline-block; margin-left: 8px;}
+.cols-form .widget-form .bi-hi-close ,
 .cols-form .target-form .bi-hi-create,
-.cols-form .widget-form .bi-hi-update,
-.cols-form .widget-form .bi-hi-close
+.cols-form .widget-form .bi-hi-update
     {display: none;}
+.cols-form .bi-hi-close
+    {color: #dd5555;}
+.cols-form .bi-hi-create,
+.cols-form .bi-hi-update
+    {color: #2780E3;}
 .cols-form .widget-form .form-group:hover,
 .cols-form .target-form .form-group:hover
     {color: #2780E3;}

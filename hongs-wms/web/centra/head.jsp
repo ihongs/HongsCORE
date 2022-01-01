@@ -144,19 +144,19 @@
     </a>
     <ul>
         <li><a href="javascript:;" id="manage-morn">
-            <span class="bi-hi-morn"></span>
+            <span class="bi bi-hi-morn"></span>
             <%=CoreLocale.getInstance().translate("fore.manage.morn")%>
         </a></li>
         <li><a href="javascript:;" id="manage-mine">
-            <span class="bi-hi-mine"></span>
+            <span class="bi bi-hi-mine"></span>
             <%=CoreLocale.getInstance().translate("fore.manage.mine")%>
         </a></li>
         <li><a href="javascript:;" id="manage-mima">
-            <span class="bi-hi-mima"></span>
+            <span class="bi bi-hi-mima"></span>
             <%=CoreLocale.getInstance().translate("fore.manage.mima")%>
         </a></li>
         <li><a href="javascript:;" id="logout">
-            <span class="bi-hi-logout"></span>
+            <span class="bi bi-hi-logout"></span>
             <%=CoreLocale.getInstance().translate("fore.logout")%>
         </a></li>
     </ul>

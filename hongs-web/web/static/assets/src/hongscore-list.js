@@ -331,7 +331,7 @@ HsList.prototype = {
             qbox.text(hsGetLang("list.page.info", page));
         }
 ///     if (t >  this.pugsNum) {
-            qbox.append(jQuery('<a href="javascript:;" class="bi-hi-page"></a>'));
+            qbox.append(jQuery('<a href="javascript:;" class="bi bi-hi-page"></a>'));
 ///     }
 
         if (1 < p) {

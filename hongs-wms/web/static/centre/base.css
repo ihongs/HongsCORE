@@ -72,10 +72,10 @@ body {
     text-decoration: none;
     color: #333;
 }
-#main-context > .laps.tabs.breadcrumb .home-crumb [class^=bi-] {
+#main-context > .laps.tabs.breadcrumb .home-crumb .bi {
     color: #555;
 }
-#main-context > .laps.tabs.breadcrumb .back-crumb [class^=bi-] {
+#main-context > .laps.tabs.breadcrumb .back-crumb .bi {
     color: #d55;
 }
 

@@ -49,8 +49,8 @@
                     %>
                     <input type="search" class="form-control" name="<%=Cnst.WD_KEY%>" placeholder="<%=sp%>" /><!--<%=_wd%>-->
                     <span class="input-group-btn">
-                        <button type="submit" class="search btn btn-default" title="<%=_locale.translate("fore.search", _title)%>"><span class="bi-hi-search"></span></button>
-                        <button type="button" class="filter btn btn-default" title="<%=_locale.translate("fore.filter", _title)%>"><span class="bi-hi-filter"></span></button>
+                        <button type="submit" class="search btn btn-default" title="<%=_locale.translate("fore.search", _title)%>"><span class="bi bi-hi-search"></span></button>
+                        <button type="button" class="filter btn btn-default" title="<%=_locale.translate("fore.filter", _title)%>"><span class="bi bi-hi-filter"></span></button>
                     </span>
                 </div>
             </div>
@@ -248,8 +248,8 @@
                         <div data-fn="<%=NOTE%>" style="color: #888;"></div>
                     </div>
                     <div data-fn="<%=USER%>" data-ft="_edit" class="btn-group edit-group" style="position: absolute; right: 0; bottom: 0; opacity: 0.8; display: none;">
-                        <button type="button" class="btn btn-sm btn-default update"><span class="bi-hi-update"></span></button>
-                        <button type="button" class="btn btn-sm btn-default delete"><span class="bi-hi-delete"></span></button>
+                        <button type="button" class="btn btn-sm btn-default update"><span class="bi bi-hi-modify"></span></button>
+                        <button type="button" class="btn btn-sm btn-default delete"><span class="bi bi-hi-remove"></span></button>
                     </div>
                 </div>
             </div>

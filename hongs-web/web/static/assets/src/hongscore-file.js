@@ -27,10 +27,8 @@
             box = $(box );
         var txt = /^data:/.test (src) ? ''
                 : decodeURIComponent(src.replace(/^.*[\/\\]/, ''));
-        var cls = box.is(".pickrol" ) ?
-                "btn btn-link" :
-                "btn btn-info" ;
-        var clz = "bi-hi-file" ;
+        var clz = box.is(".pickrol" ) ? '' : "bi bi-hi-file";
+        var cls = box.is(".pickrol" ) ? "btn btn-link" : "btn btn-info";
         var inp = $(this).after(
                   $(this).clone(    ).val (''));
         var lab = $('<span></span>' ).text(txt);
@@ -55,12 +53,10 @@
             return;
         }
         var box = $(this);
-        var txt = /^data:/.test (src) ?  ''
+        var txt = /^data:/.test (src) ? ''
                 : decodeURIComponent(src.replace(/^.*[\/\\]/, ''));
-        var cls = box.is(".pickrol" ) ?
-                "btn btn-link" :
-                "btn btn-info" ;
-        var clz = "bi-hi-file" ;
+        var clz = box.is(".pickrol" ) ? '' : "bi bi-hi-file";
+        var cls = box.is(".pickrol" ) ? "btn btn-link" : "btn btn-info";
         var inp = $('<input  type="hidden" />')
                   .attr('name' , nam). val(src);
         var lab = $('<span></span>' ).text(txt);

@@ -46,19 +46,19 @@
                     <ol class="breadcrumb show-close tabs laps" data-topple="hsTabs">
                         <li class="hook-crumb dont-crumb pull-right" data-eval="H$('!<%=$module%>/<%=$entity%>/select.act') || $(this).hide()">
                             <a href="javascript:;" data-href="<%=$module+"/"+$entity+"/swap.html"%>" title="<%=$locale.translate("fore.manual", $title)%>">
-                                <i class="bi-hi-manual"></i>
+                                <i class="bi bi-hi-manual"></i>
                                 <span class="title hide">...</span>
                             </a>
                         </li>
                         <li class="hook-crumb dont-crumb pull-right" data-eval="H$('!<%=$module%>/<%=$entity%>/reveal.act') || $(this).hide()">
                             <a href="javascript:;" data-href="<%=$module+"/"+$entity+"/snap.html"%>" title="<%=$locale.translate("fore.record", $title)%>">
-                                <i class="bi-hi-reveal"></i>
+                                <i class="bi bi-hi-reveal"></i>
                                 <span class="title hide">...</span>
                             </a>
                         </li>
                         <li class="home-crumb active">
                             <a href="javascript:;">
-                                <i class="bi-hi-path"></i>
+                                <i class="bi bi-hi-path"></i>
                                 <b><%=$title%></b>
                             </a>
                         </li>

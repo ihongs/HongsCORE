@@ -237,7 +237,7 @@ body {
     padding: 0px 0px;
     margin :-8px 4px;
 }
-#user-menubar [class^=bi-] {
+#user-menubar .bi {
     display: inline-block;
     width  : 23px;
 }
@@ -376,10 +376,10 @@ body {
     text-decoration: none;
     color: #333;
 }
-#main-context > .laps.tabs.breadcrumb .home-crumb [class^=bi-] {
+#main-context > .laps.tabs.breadcrumb .home-crumb .bi {
     color: #555;
 }
-#main-context > .laps.tabs.breadcrumb .back-crumb [class^=bi-] {
+#main-context > .laps.tabs.breadcrumb .back-crumb .bi {
     color: #d55;
 }
 

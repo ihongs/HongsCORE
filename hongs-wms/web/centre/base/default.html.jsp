@@ -47,12 +47,12 @@
                     <ol class="breadcrumb hide-first tabs laps" data-topple="hsTabs">
                         <li class="back-crumb dont-close pull-right">
                             <a href="javascript:;">
-                                <i class="bi-hi-close"></i>
+                                <i class="bi bi-hi-close"></i>
                             </a>
                         </li>
                         <li class="home-crumb active">
                             <a href="javascript:;">
-                                <i class="bi-hi-path"></i>
+                                <i class="bi bi-hi-path"></i>
                                 <b></b>
                             </a>
                         </li>

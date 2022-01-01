@@ -459,11 +459,11 @@ function hsFormFillPick(box, v, n) {
         // 按钮及图标样式
         var cls = [];
         if (box.attr('data-href')) {
-            cls[0] = rol ? "btn btn-link" : "btn btn-info";
-            cls[1] = rol ? "bi-hi-fork" : "bi-hi-fork";
+            cls[0] = rol ? "btn btn-link"  : "btn btn-info" ;
+            cls[1] = rol ? "bi bi-hi-fork" : "bi bi-hi-fork";
         } else {
-            cls[0] = rol ? "btn btn-text" : "btn btn-info";
-            cls[1] = rol ? "bi-hi-fork" : "bi-hi-fork";
+            cls[0] = rol ? "btn btn-text"  : "btn btn-info";
+            cls[1] = rol ? "bi bi-hi-fork" : "bi bi-hi-fork";
         }
         cls[0] = box.attr("data-item-class") || cls[0];
         cls[1] = box.attr("data-icon-class") || cls[1];

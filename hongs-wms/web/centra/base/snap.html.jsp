@@ -34,7 +34,7 @@
                     <input type="datetime-local" data-type="timestamp" data-toggle="hsTime" class="form-control" style="padding-right:0;">
                     <input type="hidden" class="form-ignored" name="ctime.<%=Cnst.LE_REL%>">
                     <span class="input-group-btn">
-                        <button type="submit" class="btn btn-default"><span class="bi-hi-reload"></span></button>
+                        <button type="submit" class="btn btn-default"><span class="bi bi-hi-reload"></span></button>
                     </span>
                 </div>
                 </div>
@@ -48,7 +48,7 @@
                 <tr>
                     <th data-fn="_" data-ft="_admin" class="_admin _amenu">
                         <div class="dropdown invisible">
-                            <a href="javascript:;" data-toggle="dropdown"><span class="bi-hi-action"></span></a>
+                            <a href="javascript:;" data-toggle="dropdown"><span class="bi bi-hi-action"></span></a>
                             <ul class="dropdown-menu adm-menu">
                                 <li><a href="javascript:;" class="review">查看</a></li>
                                 <li><a href="javascript:;" class="revert">恢复</a></li>

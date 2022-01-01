@@ -12,16 +12,15 @@
 .cols-form .target-form .control-label,
 .cols-form .detail-set  .ui-sortable-handle
     {cursor : move;}
-.cols-form .widget-form .glyphicon,
-.cols-form .target-form .glyphicon,
-.cols-form .record-form .glyphicon
-    {display: none; margin: 4px 0 0 8px; cursor: pointer; color: #2780E3;}
-.cols-form .widget-form .glyphicon.glyphicon-plus-sign,
-.cols-form .target-form .glyphicon.glyphicon-info-sign,
-.cols-form .target-form .glyphicon.glyphicon-remove-sign
-    {display: inline-block;}
-.cols-form .widget-form .form-group:hover
-    {color: #2780E3;}
+.cols-form [class^=bi-hi-]
+    {cursor : pointer; display: inline-block; color: #2780E3; margin-left: 8px;}
+.cols-form              .bi-hi-close
+    {color  : #d55;}
+.cols-form .target-form .bi-hi-create,
+.cols-form .widget-form .bi-hi-update,
+.cols-form .widget-form .bi-hi-close
+    {display: none;}
+.cols-form .widget-form .form-group:hover,
 .cols-form .target-form .form-group:hover
     {color: #2780E3;}
 

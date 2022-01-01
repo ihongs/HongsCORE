@@ -1080,12 +1080,12 @@ function hsFillOpenLink(x, v, t) {
 
     var n ;
     switch  (t) {
-        case "email": n = "glyphicon glyphicon-envelope"; break;
-        case "image": n = "glyphicon glyphicon-picture" ; break;
-        case "video": n = "glyphicon glyphicon-play"    ; break;
-        case "audio": n = "glyphicon glyphicon-play"    ; break;
-        case "file" : n = "glyphicon glyphicon-file"    ; break;
-        default     : n = "glyphicon glyphicon-link"    ; break;
+        case "email": n = "bi-hi-email"; break;
+        case "image": n = "bi-hi-image"; break;
+        case "video": n = "bi-hi-video"; break;
+        case "audio": n = "bi-hi-audio"; break;
+        case "file" : n = "bi-hi-file" ; break;
+        default     : n = "bi-hi-link" ; break;
     }
 
     var a = $('<a><span class="'+n+'"></span></a>');

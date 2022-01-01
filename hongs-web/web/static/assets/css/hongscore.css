@@ -625,29 +625,35 @@ div.bootstrap-tagsinput .tag [data-role="remove"]:after {
 .listbox thead .sort-ico {
     color  : #aaa;
     display: inline-block;
-    font-size  : 0.8em ;
-    font-style : normal;
-    font-weight: normal;
-    font-family: 'Glyphicons Halflings';
+    font-style: normal;
+    font-weight: normal !important;
+    font-family: bootstrap-icons !important;
+    font-variant: normal;
+    text-transform: none;
+    vertical-align: -.125em;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
-.listbox thead .sort-asc .sort-ico ,
+.listbox thead .sort-asc .sort-ico {
+    color  : #4a4;
+}
 .listbox thead .sort-esc .sort-ico {
-    top: 1px;
-    margin-left: 0.5em;
-    position: relative;
+    color  : #a44;
+}
+.listbox thead .sort-ico:before {
+    content: "\f14c";
 }
 .listbox thead .sort-asc .sort-ico:before {
-    content: "\e151";
+    content: "\f571";
 }
 .listbox thead .sort-esc .sort-ico:before {
-    content: "\e152";
+    content: "\f572";
 }
 .listbox thead .sort-asc.numerial .sort-ico:before {
-    content: "\e153";
+    content: "\f577";
 }
 .listbox thead .sort-esc.numerial .sort-ico:before {
-    content: "\e154";
+    content: "\f578";
 }
 
 /** 旧的三角排序符 **/
@@ -884,10 +890,12 @@ ul.pickrol > li.btn {
     padding-right: 0px;
     margin-bottom: 0px;
 }
+ul.pickbox > li.btn [class^=bi-],
 ul.pickbox > li.btn .glyphicon {
     margin-right : 9px;
     display : inline;
 }
+ul.pickbox > li.btn [class^=bi-],
 ul.pickrol > li.btn .glyphicon {
     margin-right : 0px;
     display : none;
@@ -1041,3 +1049,40 @@ input[type=file].form-control {
     padding:  0px  0px;
 }
 }
+
+/** 图标 **/
+
+.bi-hi-close:before  { content: "\f622"; color: #d55; }
+.bi-hi-clear:before  { content: "\f623"; }
+.bi-hi-action:before { content: "\f304"; }
+.bi-hi-create:before { content: "\f4fa"; }
+.bi-hi-update:before { content: "\f518"; }
+.bi-hi-delete:before { content: "\f5dd"; }
+.bi-hi-review:before { content: "\f341"; }
+.bi-hi-reveal:before { content: "\f292"; }
+.bi-hi-export:before { content: "\f1c6"; }
+.bi-hi-import:before { content: "\f1bc"; }
+.bi-hi-search:before { content: "\f52a"; }
+.bi-hi-reload:before { content: "\f130"; }
+.bi-hi-filter:before { content: "\f3e1"; }
+.bi-hi-statis:before { content: "\f17e"; }
+.bi-hi-column:before { content: "\f3f7"; }
+.bi-hi-manual:before { content: "\f2d1"; }
+.bi-hi-logout:before { content: "\f307"; }
+.bi-hi-path:before   { content: "\f585"; }
+.bi-hi-page:before   { content: "\f199"; }
+.bi-hi-next:before   { content: "\f551"; }
+.bi-hi-prev:before   { content: "\f55d"; }
+.bi-hi-time:before   { content: "\f293"; }
+.bi-hi-date:before   { content: "\f214"; }
+.bi-hi-morn:before   { content: "\f288"; }
+.bi-hi-mine:before   { content: "\f4de"; }
+.bi-hi-mima:before   { content: "\f537"; }
+.bi-hi-link:before   { content: "\f470"; }
+.bi-hi-fork:before   { content: "\f35f"; }
+.bi-hi-file:before   { content: "\f369"; }
+.bi-hi-image:before  { content: "\f36c"; }
+.bi-hi-video:before  { content: "\f37a"; }
+.bi-hi-audio:before  { content: "\f376"; }
+.bi-hi-email:before  { content: "\f32f"; }
+.bi-hi-phone:before  { content: "\f4e6"; }

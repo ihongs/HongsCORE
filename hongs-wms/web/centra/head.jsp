@@ -144,19 +144,19 @@
     </a>
     <ul>
         <li><a href="javascript:;" id="manage-morn">
-            <span class="glyphicon glyphicon-adjust"></span>
+            <span class="bi-hi-morn"></span>
             <%=CoreLocale.getInstance().translate("fore.manage.morn")%>
         </a></li>
         <li><a href="javascript:;" id="manage-mine">
-            <span class="glyphicon glyphicon-user"></span>
+            <span class="bi-hi-mine"></span>
             <%=CoreLocale.getInstance().translate("fore.manage.mine")%>
         </a></li>
         <li><a href="javascript:;" id="manage-mima">
-            <span class="glyphicon glyphicon-lock"></span>
+            <span class="bi-hi-mima"></span>
             <%=CoreLocale.getInstance().translate("fore.manage.mima")%>
         </a></li>
         <li><a href="javascript:;" id="logout">
-            <span class="glyphicon glyphicon-off "></span>
+            <span class="bi-hi-logout"></span>
             <%=CoreLocale.getInstance().translate("fore.logout")%>
         </a></li>
     </ul>

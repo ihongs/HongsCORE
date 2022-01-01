@@ -31,9 +31,9 @@
                 <%if ("browse".equals(_action)) {%>
                 <button type="button" class="update for-choose btn btn-default"><%=_locale.translate("fore.update", _title)%></button>
                 <button type="button" class="review for-choose btn btn-default"><%=_locale.translate("fore.review", _title)%></button>
-                <button type="button" class="reveal for-choose btn btn-default" title="<%=_locale.translate("fore.reveal", _title)%>"><span class="glyphicon glyphicon-time "></span></button>
-                <button type="button" class="copies for-checks btn btn-default" title="<%=_locale.translate("fore.copies", _title)%>"><span class="glyphicon glyphicon-share"></span></button>
-                <button type="button" class="delete for-checks btn btn-danger " title="<%=_locale.translate("fore.delete", _title)%>"><span class="glyphicon glyphicon-trash"></span></button>
+                <button type="button" class="reveal for-choose btn btn-default" title="<%=_locale.translate("fore.reveal", _title)%>"><span class="bi-hi-reveal"></span></button>
+                <button type="button" class="copies for-checks btn btn-default" title="<%=_locale.translate("fore.copies", _title)%>"><span class="bi-hi-export"></span></button>
+                <button type="button" class="delete for-checks btn btn-danger " title="<%=_locale.translate("fore.delete", _title)%>"><span class="bi-hi-delete"></span></button>
                 <%} // End If %>
             </div>
             <%if ("select".equals(_action)) {%>
@@ -56,10 +56,10 @@
                 %>
                 <input type="search" class="form-control" name="<%=Cnst.WD_KEY%>" placeholder="<%=sp%>" /><!--<%=_wd%>-->
                 <span class="input-group-btn">
-                    <button type="submit" class="search btn btn-default" title="<%=_locale.translate("fore.search", _title)%>"><span class="glyphicon glyphicon-search"></span></button>
-                    <button type="button" class="filter btn btn-default" title="<%=_locale.translate("fore.filter", _title)%>"><span class="glyphicon glyphicon-filter"></span></button>
-                    <button type="button" class="statis btn btn-default" title="<%=_locale.translate("fore.statis", _title)%>"><span class="glyphicon glyphicon-stats "></span></button>
-                    <button type="button" class="column btn btn-default" title="<%=_locale.translate("fore.column", _title)%>"><span class="glyphicon glyphicon-check "></span></button>
+                    <button type="submit" class="search btn btn-default" title="<%=_locale.translate("fore.search", _title)%>"><span class="bi-hi-search"></span></button>
+                    <button type="button" class="filter btn btn-default" title="<%=_locale.translate("fore.filter", _title)%>"><span class="bi-hi-filter"></span></button>
+                    <button type="button" class="statis btn btn-default" title="<%=_locale.translate("fore.statis", _title)%>"><span class="bi-hi-statis "></span></button>
+                    <button type="button" class="column btn btn-default" title="<%=_locale.translate("fore.column", _title)%>"><span class="bi-hi-column"></span></button>
                 </span>
             </div>
         </div>
@@ -228,7 +228,7 @@
                     <%if ("browse".equals(_action)) {%>
                     <th data-fn="_" data-ft="_admin" class="_admin _amenu">
                         <div class="dropdown invisible">
-                            <a href="javascript:;" data-toggle="dropdown"><span class="glyphicon glyphicon-menu-hamburger"></span></a>
+                            <a href="javascript:;" data-toggle="dropdown"><span class="bi-hi-action"></span></a>
                             <ul class="dropdown-menu">
                                 <li><a href="javascript:;" class="update"><%=_locale.translate("fore.update", _title)%></a></li>
                                 <li><a href="javascript:;" class="review"><%=_locale.translate("fore.review", _title)%></a></li>

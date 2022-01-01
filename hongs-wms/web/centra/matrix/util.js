@@ -618,12 +618,12 @@ $.fn.hsCols = function() {
     });
 
     // 删除字段
-    targetz.on("click", ".glyphicon-remove-sign", function() {
+    targetz.on("click", ".bi-hi-close" , function() {
         $(this).closest(".form-group").remove();
     });
 
     // 添加字段
-    widgets.on("click", ".glyphicon-plus-sign", function() {
+    widgets.on("click", ".bi-hi-create", function() {
         // 预定字段不能重复添加
         var group = $(this).closest(".form-group");
         if (group.is(".base-field")) {
@@ -644,12 +644,12 @@ $.fn.hsCols = function() {
                  .attr  ( "name"   , "-" + index);
             input.filter("[data-fn='-']")
                  .attr  ( "data-fn", "-" + index);
-            field.find  (".glyphicon-info-sign" ).click( );
+            field.find  (".bi-hi-update").click();
         }
     });
 
     // 打开设置
-    targetz.on("click", ".glyphicon-info-sign", function() {
+    targetz.on("click", ".bi-hi-update", function() {
         field = $(this).closest(".form-group");
         var tabs =  modal.find ( ".nav:first");
         var type =  field.attr ( "data-type" );

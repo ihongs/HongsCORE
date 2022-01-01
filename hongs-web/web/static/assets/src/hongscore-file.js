@@ -25,17 +25,19 @@
             return;
         }
             box = $(box );
-        var txt = /^data:/.test (src)  ?  ''
+        var txt = /^data:/.test (src) ? ''
                 : decodeURIComponent(src.replace(/^.*[\/\\]/, ''));
-        var cls = box.is(".pickrol" )  ?  "btn-link" : "btn-info" ;
-        var clz = "glyphicon-open-file";
+        var cls = box.is(".pickrol" ) ?
+                "btn btn-link" :
+                "btn btn-info" ;
+        var clz = "bi-hi-file" ;
         var inp = $(this).after(
                   $(this).clone(    ).val (''));
         var lab = $('<span></span>' ).text(txt);
-        var div = $('<li class="btn '+ cls +' form-control"></li>')
+        var div = $( '<li class="' + cls + ' form-control"></li>' )
                   .attr("title", txt)
            .append('<span class="close pull-right">&times;</span>')
-           .append('<span class="glyphicon '  + clz +  '"></span>')
+           .append('<span class="' + clz + '"></span>')
            .append(lab)
            .append(inp);
         box.append(div);
@@ -53,17 +55,19 @@
             return;
         }
         var box = $(this);
-        var txt = /^data:/.test (src)  ?  ''
+        var txt = /^data:/.test (src) ?  ''
                 : decodeURIComponent(src.replace(/^.*[\/\\]/, ''));
-        var cls = box.is(".pickrol" )  ?  "btn-link" : "btn-info" ;
-        var clz = "glyphicon-save-file";
+        var cls = box.is(".pickrol" ) ?
+                "btn btn-link" :
+                "btn btn-info" ;
+        var clz = "bi-hi-file" ;
         var inp = $('<input  type="hidden" />')
                   .attr('name' , nam). val(src);
         var lab = $('<span></span>' ).text(txt);
-        var div = $('<li class="btn '+ cls +' form-control"></li>')
+        var div = $( '<li class="' + cls + ' form-control"></li>' )
                   .attr("title", txt)
            .append('<span class="close pull-right">&times;</span>')
-           .append('<span class="glyphicon '  + clz +  '"></span>')
+           .append('<span class="' + clz + '"></span>')
            .append(lab)
            .append(inp);
         box.append(div);

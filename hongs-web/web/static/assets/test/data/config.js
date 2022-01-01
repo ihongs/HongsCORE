@@ -126,7 +126,7 @@ if(!window.HsLANG)window.HsLANG={};$.extend(window.HsLANG,{
 
 //** 演示处理 **/
 (function($) {
-    var j = 0;
+    var j = 1;
     $(document).on("loadBack", ".HsTree", function(evt, rst) {
         for(var i = 0; i < rst.list.length; i ++) {
             rst.list[i].id = j ++;

@@ -13,7 +13,7 @@ function in_centra_data_upland_tweet_list(context, listobj) {
     context.find(".listbox thead tr").append(
         '<th data-fn="_" data-ft="_admin" class="_admin _amenu">'
       + '<a href="javascript:;" class="delete" title="删除评论">'
-      + '<i class="glyphicon glyphicon-remove"></i>'
+      + '<i class="bi-hi-delete"></i>'
       + '</a>'
       + '</th>'
     );

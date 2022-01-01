@@ -374,10 +374,10 @@ function hsFormFillPick(box, v, n) {
     function doset(box, val, txt, cls) {
         var lab = jQuery('<span></span>').text(txt);
         var inp = jQuery('<input type="hidden" />').attr("name", n).val(val);
-        var div = jQuery('<li class="btn '+ cls[0] +' form-control"></li>' )
+        var div = jQuery('<li class="' + cls[0] + ' form-control"></li>')
            .attr  ("title" , txt)
            .append('<span class="close pull-right">&times;</span>')
-           .append('<span class="glyphicon '+ cls[1] +'" ></span>')
+           .append('<span class="' + cls[1] + '"></span>')
            .append(lab)
            .append(inp);
         box.append(div);
@@ -459,11 +459,11 @@ function hsFormFillPick(box, v, n) {
         // 按钮及图标样式
         var cls = [];
         if (box.attr('data-href')) {
-            cls[0] = rol ? "btn-link" : "btn-info";
-            cls[1] = rol ? "glyphicon-link" : "glyphicon-share";
+            cls[0] = rol ? "btn btn-link" : "btn btn-info";
+            cls[1] = rol ? "bi-hi-fork" : "bi-hi-fork";
         } else {
-            cls[0] = rol ? "btn-text" : "btn-info";
-            cls[1] = rol ? "glyphicon-link" : "glyphicon-check";
+            cls[0] = rol ? "btn btn-text" : "btn btn-info";
+            cls[1] = rol ? "bi-hi-fork" : "bi-hi-fork";
         }
         cls[0] = box.attr("data-item-class") || cls[0];
         cls[1] = box.attr("data-icon-class") || cls[1];

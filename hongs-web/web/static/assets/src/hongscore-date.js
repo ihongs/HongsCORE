@@ -291,8 +291,8 @@
             box.find('.input-group-addon')
                .last()
                .css ("text-align","right")
-               .html('<span class="today glyphicon glyphicon-time  "></span>'
-                    +'<span class="clear glyphicon glyphicon-remove"></span>');
+               .html('<span class="today bi-hi-time "></span>'
+                    +'<span class="clear bi-hi-clear"></span>');
 
             /**
              * 输入框组是不可嵌套的

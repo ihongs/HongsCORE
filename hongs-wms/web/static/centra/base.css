@@ -229,7 +229,7 @@ body {
 #user-menubar .badge {
     position  : absolute;
     display   : none;
-    background: #d54;
+    background: #d55;
     min-width : 0;
     min-height: 0;
     width  : 8px;
@@ -237,9 +237,9 @@ body {
     padding: 0px 0px;
     margin :-8px 4px;
 }
-#user-menubar .glyphicon {
-    top  :  1px; /* 修正字体符号偏上的问题 */
-    width: 23px;
+#user-menubar [class^=bi-] {
+    display: inline-block;
+    width  : 23px;
 }
 
 /* 图标 */
@@ -361,7 +361,7 @@ body {
 }
 #headbox a#logout:hover ,
 #headbox a#logout:hover {
-    color: #d54;
+    color: #d55;
 }
 
 /* 主导航条默认样式 */
@@ -376,11 +376,11 @@ body {
     text-decoration: none;
     color: #333;
 }
-#main-context > .laps.tabs.breadcrumb .home-crumb .glyphicon {
+#main-context > .laps.tabs.breadcrumb .home-crumb [class^=bi-] {
     color: #555;
 }
-#main-context > .laps.tabs.breadcrumb .back-crumb .glyphicon {
-    color: #d54;
+#main-context > .laps.tabs.breadcrumb .back-crumb [class^=bi-] {
+    color: #d55;
 }
 
 /* 隐藏受限的搜索框 */
@@ -390,9 +390,8 @@ body {
 .input-group .input-search:disabled+.input-group-btn>.btn:first-child {
     border-radius: 4px 0 0 4px;
 }
-.input-group .input-search:disabled+.input-group-btn>.search>.glyphicon:before ,
-.input-group .input-search:disabled+.input-group-btn>.submit>.glyphicon:before {
-    content: "\e031";
+.input-group .input-search:disabled+.input-group-btn>.btn>.bi-hi-search:before {
+    content: "\f130";
 }
 
 /* 复制导出列表样式 */

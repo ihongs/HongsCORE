@@ -47,12 +47,12 @@
                     <ol class="breadcrumb hide-first tabs laps" data-topple="hsTabs">
                         <li class="back-crumb dont-close pull-right">
                             <a href="javascript:;">
-                                <i class="glyphicon glyphicon-remove-sign"></i>
+                                <i class="bi-hi-close"></i>
                             </a>
                         </li>
                         <li class="home-crumb active">
                             <a href="javascript:;">
-                                <i class="glyphicon glyphicon-folder-open"></i>
+                                <i class="bi-hi-path"></i>
                                 <b></b>
                             </a>
                         </li>

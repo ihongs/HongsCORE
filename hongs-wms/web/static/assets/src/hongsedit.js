@@ -383,7 +383,6 @@ function setMirror(node, func) {
     forMirror(function() {
         node.each(function() {
             var that = $(this);
-            var read = $(this).prop ("readonly") && "nocursor";
             var mode = $(this).data ("mode")
                   ||   $(this).data ("type");
                 mode = getModeByName( mode );
@@ -391,8 +390,12 @@ function setMirror(node, func) {
             if (that.is("textarea")) {
                 var cm = CodeMirror.fromTextArea(that[0], {
                     mode        : mode[1],
+                    tabSize     : 4,
+                    indentUnit  : 4,
+                    smartIndent : true,
                     lineNumbers : true,
-                    readOnly    : read
+                    readOnly    : that.prop ("readonly"),
+                    value       : that.val  ( )
                 });
 
                 var cw = $(cm.getWrapperElement());
@@ -410,6 +413,9 @@ function setMirror(node, func) {
             } else {
                 var cm = CodeMirror(that.parent()[0], {
                     mode        : mode[1],
+                    tabSize     : 4,
+                    indentUnit  : 4,
+                    smartIndent : true,
                     lineNumbers : true,
                     readOnly    : "nocursor",
                     value       : that.text()

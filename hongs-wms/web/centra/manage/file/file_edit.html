@@ -42,7 +42,10 @@
                 var ch = $(window).height() - 50 - 80 - 95; // 文件名,顶部,底部
                 var cm = CodeMirror.fromTextArea(inp[0], {
                     lineNumbers : true,
-                    mode : mode
+                    smartIndent : true,
+                    indentUnit  : 4,
+                    tabSize     : 4,
+                    mode        : mode
                 });
                 cm.setSize(null , ch );
                 inp. data ("CM" , cm );

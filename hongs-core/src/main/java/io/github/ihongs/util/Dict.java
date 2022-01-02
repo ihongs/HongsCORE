@@ -187,7 +187,7 @@ public final class Dict
     }
 
     if (key == null) {
-        Collection lst = azColl(obj);
+        Collection lst = azColl (obj);
 
         if (keys.length == pos + 1) {
             return lst;
@@ -236,7 +236,7 @@ public final class Dict
     Object key = keys[pos];
 
     if (key == null) {
-        Collection lst = asColl(obj);
+        Collection lst = asColl (obj);
 
         if (keys.length == pos + 1) {
             lst.add(val);
@@ -282,6 +282,59 @@ public final class Dict
     }
   }
 
+  private static Object del(Object obj, Object[] keys, int pos)
+  {
+    Object key = keys[pos];
+
+    if (key == null) {
+        // 全部置空
+        if (obj instanceof Collection
+        ||  obj instanceof Object [ ] ) {
+            Collection lst = asColl (obj);
+            lst.clear();
+            return lst ;
+        } else {
+            Map  map = asMap (obj);
+            map.clear();
+            return map ;
+        }
+    } else
+    if (obj instanceof Collection
+    ||  obj instanceof Object [ ] ) {
+        List lst = asList(obj);
+        int  idx = asIdx (key);
+        int  idz = lst.size( );
+
+        // 给出的键是错误的, 无需处理
+        if ( idx <   0  ) {
+            return obj;
+        }
+
+        // 如果列表长度不够, 无需处理
+        if ( idx >= idz ) {
+            return obj;
+        }
+
+        if (keys.length == pos + 1) {
+            lst.remove(idx);
+        } else {
+            lst.set(idx , del(lst.get(idx), keys, pos + 1));
+        }
+
+        return lst;
+    } else {
+        Map  map = asMap (obj);
+
+        if (keys.length == pos + 1) {
+            map.remove(key);
+        } else {
+            map.put(key , del(map.get(key), keys, pos + 1));
+        }
+
+        return map;
+    }
+  }
+
   /**
    * 获取树纵深值
    * @param map
@@ -321,6 +374,29 @@ public final class Dict
     }
 
     put(map, val, keys, 0);
+  }
+
+  /**
+   * 删除树纵深值
+   * @param map
+   * @param keys
+   */
+  public static void del(Map map, Object... keys)
+  {
+    if (map  == null)
+    {
+      throw new NullPointerException("`map` can not be null");
+    }
+    if (keys.length ==  0)
+    {
+      throw new HongsExemption(856, "Keys required, but empty gives");
+    }
+    if (keys[0] == null || keys[0] instanceof Integer)
+    {
+      throw new HongsExemption(856, "First key can not be null or ints, but it is " + keys[0]);
+    }
+
+    del(map, keys, 0);
   }
 
   /**
@@ -455,6 +531,26 @@ public final class Dict
   public static void setParam(Map map, Object val, String path)
   {
     put(map, val, splitKeys(path));
+  }
+
+  /**
+   * 删除树纵深值(del的别名)
+   * @param map
+   * @param keys
+   */
+  public static void delValue(Map map, Object... keys)
+  {
+    del(map, keys);
+  }
+
+  /**
+   * 删除树纵深值(以属性或键方式"a.b[c]"设置)
+   * @param map
+   * @param path
+   */
+  public static void delParam(Map map, String path)
+  {
+    del(map, splitKeys(path));
   }
 
   /**

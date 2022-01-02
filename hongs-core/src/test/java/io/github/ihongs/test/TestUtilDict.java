@@ -146,6 +146,33 @@ public class TestUtilDict extends TestCase {
     }
 
     @Test
+    public void testDel() {
+        Map  a = new HashMap();
+        Map  b = new HashMap();
+        List c = new ArrayList(Arrays.asList("abc", 123, "xyz"));
+        a.put("abc", 123);
+        a.put(123, "abc");
+        b.put("abc", 456);
+        b.put(456, "abc");
+        Dict.put(a, b, "b");
+        Dict.put(a, c, "b", "c");
+
+        Dict.del(a, "b", 456);
+        assertEquals(Dict.get(a, "xyz", "b", 456), "xyz");
+
+        Dict.del(a, "b", "c", 1);
+        assertEquals(Dict.get(a, 11, "b", "c", 1), "xyz");
+
+        Dict.del(a, "b", "c", null);
+        assertEquals(Dict.get(a, 22, "b", "c", 0),  22  );
+
+        Dict.del(a, "b", null);
+        assertEquals(Dict.get(a, 789, "b", "abc"), 789  );
+
+        //io.github.ihongs.cmdlet.CmdletHelper.preview(a);
+    }
+
+    @Test
     public void testSplitKeys() {
         Object[] a = new Object [] {"", "a", "b", "c", "d", null, "e", "f", "g", "h", null, "x.y:z", "def", null};
         Object[] b = Dict.splitKeys(".a.b[c][d].:e:f[g]:h[][x.y:z].def[]");

@@ -1167,7 +1167,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                         i ++;
                 }
             }
-            
+
             v = vd.get(Cnst.ON_REL);
             if ( v != null ) {
             if ( v instanceof Collection
@@ -1296,6 +1296,8 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             Set<Map> set = Synt.asSet(v);
             if (set != null && ! set.isEmpty()) {
             for(Map  map : set) {
+                if ( map == null) continue; // 规避 NullPointerException
+
                 BooleanQuery.Builder qx = new BooleanQuery.Builder();
                 padQry( qx, map, r + 1 );
 
@@ -1323,6 +1325,8 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             Set<Map> set = Synt.asSet(v);
             if (set != null && ! set.isEmpty()) {
             for(Map  map : set) {
+                if ( map == null) continue; // 规避 NullPointerException
+
                 BooleanQuery.Builder qx = new BooleanQuery.Builder();
                 padQry( qx, map, r + 1 );
 
@@ -1351,6 +1355,8 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             if (set != null && ! set.isEmpty()) {
                 BooleanQuery.Builder qz = new BooleanQuery.Builder();
             for(Map  map : set) {
+                if ( map == null) continue; // 规避 NullPointerException
+
                 BooleanQuery.Builder qx = new BooleanQuery.Builder();
                 padQry( qx, map, r + 1 );
 

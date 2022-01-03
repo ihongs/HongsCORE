@@ -48,6 +48,17 @@ public class StatisHelper {
 
     /**
      * 分类计数
+     *
+     * <pre>
+     * rd.rn 为统计结果长度
+     * rd.rb 为要统计的字段
+     * rd.ob 为要排序的字段
+     * rd.ab 含 linked 时 rd.fn.in 对应字段 fn 分块统计
+     * rd.fn.rn 可单独指定字段统计长度
+     * rd.fn.ar 可指定要统计的取值集合
+     * rd.fn.nr 可指定要忽略的取值集合(只是不作统计, 并非查询约束)
+     * </pre>
+     *
      * @param rd
      * @return
      * @throws HongsException
@@ -55,17 +66,20 @@ public class StatisHelper {
     public Map acount(Map rd) throws HongsException {
         IndexSearcher finder = that.getFinder();
 
+        Set<String> ab = Synt.toTerms(rd.get(Cnst.AB_KEY));
         Set<String> rb = Synt.toTerms(rd.get(Cnst.RB_KEY));
         Set<String> ob = Synt.toTerms(rd.get(Cnst.OB_KEY));
+        boolean ln  =  ab != null && ab.contains("linked");
+        int     rl  =  rb != null  ? rb.size() : 0 ;
 
-        Map<String, Map<Object, Long>> counts  = new HashMap();
-        Map<String, Set<Object      >> countx  = new HashMap(); // 排除
+        Map<String, Map<Object, Long>> counts  = new HashMap(rl);
+        Map<String, Set<Object      >> countx  = new HashMap(rl); // 排除
 
-        Map<String, Map<Object, Long>> counts2 = new HashMap();
-        Map<String, Set<Object      >> countx2 = new HashMap();
+        Map<String, Map<Object, Long>> counts2 = new HashMap(rl);
+        Map<String, Set<Object      >> countx2 = new HashMap(rl);
 
-        Map<String, Map<Object, Long>> counts3 = new HashMap();
-        Map<String, Set<Object      >> countx3 = new HashMap();
+        Map<String, Map<Object, Long>> counts3 = new HashMap(rl);
+        Map<String, Set<Object      >> countx3 = new HashMap(rl);
 
         /**
          * 根据请求数据进行综合判断,
@@ -124,13 +138,14 @@ public class StatisHelper {
                 }
 
                 // 分块条件
+                if (ln != true) vs = null ; else {
                 vs = Synt.asSet(vm.get(Cnst.IN_REL));
                 if (vs != null && !vs.isEmpty()) {
                     vd  = new HashMap (rd);
                     vm  = new HashMap (vm);
                     vm.remove(Cnst.IN_REL);
                     vd.put(k , vm);
-                }
+                }}
             }
 
             if ( vs == null || vs.isEmpty() ) {
@@ -237,6 +252,17 @@ public class StatisHelper {
 
     /**
      * 分类计算
+     *
+     * <pre>
+     * rd.rn 为统计结果长度
+     * rd.rb 为要统计的字段
+     * rd.ob 为要排序的字段
+     * rd.ab 含 linked 时 rd.fn.rg 对应字段 fn 分块统计
+     * rd.fn.rn 可单独指定字段统计长度
+     * rd.fn.ar 可指定要统计的区间集合
+     * rd.fn.nr 可指定要忽略的区间集合(只是不作统计, 并非查询约束)
+     * </pre>
+     *
      * @param rd
      * @return
      * @throws HongsException
@@ -244,17 +270,20 @@ public class StatisHelper {
     public Map amount(Map rd) throws HongsException {
         IndexSearcher finder = that.getFinder();
 
+        Set<String> ab = Synt.toTerms(rd.get(Cnst.AB_KEY));
         Set<String> rb = Synt.toTerms(rd.get(Cnst.RB_KEY));
         Set<String> ob = Synt.toTerms(rd.get(Cnst.OB_KEY));
+        boolean ln  =  ab != null && ab.contains("linked");
+        int     rl  =  rb != null  ? rb.size() : 0 ;
 
-        Map<String, Map<Range, Ratio>> counts  = new HashMap();
-        Map<String, Set<Range       >> countx  = new HashMap(); // 排除
+        Map<String, Map<Range, Ratio>> counts  = new HashMap(rl);
+        Map<String, Set<Range       >> countx  = new HashMap(rl); // 排除
 
-        Map<String, Map<Range, Ratio>> counts2 = new HashMap();
-        Map<String, Set<Range       >> countx2 = new HashMap();
+        Map<String, Map<Range, Ratio>> counts2 = new HashMap(rl);
+        Map<String, Set<Range       >> countx2 = new HashMap(rl);
 
-        Map<String, Map<Range, Ratio>> counts3 = new HashMap();
-        Map<String, Set<Range       >> countx3 = new HashMap();
+        Map<String, Map<Range, Ratio>> counts3 = new HashMap(rl);
+        Map<String, Set<Range       >> countx3 = new HashMap(rl);
 
         /**
          * 根据请求数据进行综合判断,
@@ -312,13 +341,14 @@ public class StatisHelper {
                 }
 
                 // 分块条件
+                if (ln != true) vs = null ; else {
                 vs = Synt.asSet(vm.get(Cnst.RG_REL));
                 if (vs != null && !vs.isEmpty()) {
                     vd  = new HashMap (rd);
                     vm  = new HashMap (vm);
                     vm.remove(Cnst.RG_REL);
                     vd.put(k , vm);
-                }
+                }}
             }
 
             if ( vs == null || vs.isEmpty() ) {
@@ -429,6 +459,24 @@ public class StatisHelper {
 
     /**
      * 聚合统计
+     *
+     * <pre>
+     * rd.ob 为要排序的字段
+     * rd.rb 中根据字段类型区分维度指标, 维度将作为聚合条件, 指标将用于数值统计
+     * 字段格式为: filed!func, 未加后缀的字段将作为维度
+     * 指标后缀有:
+     *  !ratio  计数,求和,最小,最大
+     *  !count  计数
+     *  !sum    求和
+     *  !min    最小
+     *  !max    最大
+     *  !crowd  去重计数
+     *  !first  取首个值
+     *  !flock  取全部值
+     * 特殊维度有:
+     *  !scope,!range 区间, 通过 rd.fn.ar 指定 fn 的区间集合
+     * </pre>
+     *
      * @param rd
      * @return
      * @throws HongsException
@@ -473,6 +521,24 @@ public class StatisHelper {
 
     /**
      * 聚合统计(分页)
+     *
+     * <pre>
+     * rd.ob 为要排序的字段
+     * rd.rb 中根据字段类型区分维度指标, 维度将作为聚合条件, 指标将用于数值统计
+     * 字段格式为: filed!func, 未加后缀的字段将作为维度
+     * 指标后缀有:
+     *  !ratio  计数,求和,最小,最大
+     *  !count  计数
+     *  !sum    求和
+     *  !min    最小
+     *  !max    最大
+     *  !crowd  去重计数
+     *  !first  取首个值
+     *  !flock  取全部值
+     * 特殊维度有:
+     *  !scope,!range 区间, 通过 rd.fn.ar 指定 fn 的区间集合
+     * </pre>
+     *
      * @param rd
      * @param rn 条数
      * @param pn 页码

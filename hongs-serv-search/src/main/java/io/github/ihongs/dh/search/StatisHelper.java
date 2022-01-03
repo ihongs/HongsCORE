@@ -474,7 +474,7 @@ public class StatisHelper {
      *  !first  取首个值
      *  !flock  取全部值
      * 特殊维度有:
-     *  !scope,!range 区间, 通过 rd.fn.ar 指定 fn 的区间集合
+     *  !range,!scope 区间, 通过 rd.fn.ar 指定 fn 的区间集合
      * </pre>
      *
      * @param rd

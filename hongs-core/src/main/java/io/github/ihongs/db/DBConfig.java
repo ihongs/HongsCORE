@@ -75,7 +75,7 @@ public class DBConfig
              Core.CONF_PATH +"/"+ name + Cnst.DB_EXT + ".xml"
     );
     if ( xmlFile.exists()) {
-    if ( xmlFile.lastModified() > serFile.lastModified() ) {
+    if ( xmlFile.lastModified() <= serFile.lastModified() ) {
       return 1;
     } else {
       return 0;

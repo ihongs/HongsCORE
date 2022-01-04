@@ -46,6 +46,9 @@ import org.eclipse.jetty.apache.jsp.JettyJasperInitializer;
 import org.eclipse.jetty.plus.annotation.ContainerInitializer;
 import org.apache.tomcat.InstanceManager;
 import org.apache.tomcat.SimpleInstanceManager;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
 /**
  * 服务启动命令
@@ -84,6 +87,8 @@ public class ServerCmdlet {
             throw new HongsException(e);
         }
 
+        CoreConfig cc = CoreConfig.getInstance("defines");
+
         /**
          * 取消名称
          * 日志中将记录各独立的线程名
@@ -91,17 +96,38 @@ public class ServerCmdlet {
          */
         Core.ACTION_NAME.remove();
 
-        // 构建应用
-        Server        server;
-        WebAppContext webapp;
-        webapp = new  WebAppContext();
-        server = new  Server ( port );
-        webapp.setDescriptor ( conf );
-        webapp.setContextPath (Core.SERV_PATH);
-        webapp.setResourceBase(Core.BASE_PATH);
-        webapp.setParentLoaderPriority              (true);
+        Server          server;
+        WebAppContext   webapp;
+        ServerConnector conner;
+        Connector[]     connes;
+
+        server = new Server (new QueuedThreadPool(
+            cc.getProperty("jetty.pool.max.threads" ,  254 ),
+            cc.getProperty("jetty.pool.min.threads" ,  010 ),
+            cc.getProperty("jetty.pool.idle.timeout", 30000)
+        ));
+        webapp = new WebAppContext( );
+        conner = new ServerConnector(server);
+        connes = new Connector[/**/]{conner};
+
+        conner.setPort(port);
+        conner.setHost(null);
+        conner.setIdleTimeout(cc.getProperty("jetty.conn.idle.timeout", 30000L));
+        conner.setAcceptQueueSize(cc.getProperty("jetty.conn.accept.queue.size" , 254));
+        conner.setAcceptedSendBufferSize(cc.getProperty("jetty.conn.accept.sndbuf.size", -1));
+        conner.setAcceptedReceiveBufferSize(cc.getProperty("jetty.conn.accept.rcvbuf.size", -1));
+        server.setConnectors(connes);
+
+        webapp.setDescriptor( conf );
+        webapp.setContextPath  (Core.SERV_PATH);
+        webapp.setResourceBase (Core.BASE_PATH);
+        webapp.setTempDirectory( new File(Core.DATA_PATH + "/server/temp"));
+        webapp.setPersistTempDirectory ( true );
+        webapp.setParentLoaderPriority ( true );
         webapp.setThrowUnavailableOnStartupException(true);
-        server.setHandler    (webapp);
+    //  webapp.setMaxFormKeys(cc.getProperty("jetty.serv.max.form.keys", 10000));
+    //  webapp.setMaxFormContentSize(cc.getProperty("jetty.serv.max.form.size", 200000));
+        server.setHandler   (webapp);
 
         String x;
 
@@ -116,7 +142,7 @@ public class ServerCmdlet {
          * 可能需要替换 JSP 解析器或 Session 容器
          * 可以设置 jetty.init 来注入 Initer 对象
          */
-        x = CoreConfig.getInstance("defines").getProperty("jetty.init");
+        x = cc.getProperty("jetty.init");
         if (null !=  x) {
             String[] a = x.split(";");
             for ( String n  : a ) {

@@ -1,6 +1,8 @@
 package io.github.ihongs;
 
 import io.github.ihongs.util.daemon.Gate;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -134,17 +136,20 @@ public abstract class CoreSerial
   {
     try
     {
-        FileInputStream fis = null;
-      ObjectInputStream ois = null;
+          FileInputStream fis = null;
+      BufferedInputStream bis = null;
+        ObjectInputStream ois = null;
       try
       {
-        fis = new   FileInputStream(file);
-        ois = new ObjectInputStream(fis );
+        fis = new     FileInputStream(file);
+        bis = new BufferedInputStream(fis );
+        ois = new   ObjectInputStream(bis );
         load(ois.readObject());
       }
       finally
       {
         if (ois != null) ois.close();
+        if (bis != null) bis.close();
         if (fis != null) fis.close();
       }
     }
@@ -185,18 +190,21 @@ public abstract class CoreSerial
 
     try
     {
-        FileOutputStream fos = null;
-      ObjectOutputStream oos = null;
+          FileOutputStream fos = null;
+      BufferedOutputStream bos = null;
+        ObjectOutputStream oos = null;
       try
       {
-        fos = new   FileOutputStream(file);
-        oos = new ObjectOutputStream(fos );
+        fos = new     FileOutputStream(file);
+        bos = new BufferedOutputStream(fos );
+        oos = new   ObjectOutputStream(bos );
         oos.writeObject(save());
         oos.flush();
       }
       finally
       {
         if (oos != null) oos.close();
+        if (bos != null) bos.close();
         if (fos != null) fos.close();
       }
     }

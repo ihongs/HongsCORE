@@ -15,7 +15,7 @@ import net.coobird.thumbnailator.Thumbnails.Builder;
  * 规则参数:
  *  thumb-extn      格式名称, 如 jpg
  *  thumb-size      缩放尺寸, 如 _lg:80*40, _md:60*30, _sm:40*20
- *  thumb-mode      处理模式, 如 pick 截取, keep 保留, test 检查
+ *  thumb-mode      处理模式, 如 pick 截取, keep 保留, test 检查(此时 thumb-size 不加后缀)
  *  thumb-index     返回索引, 默认为 0, 即首个
  *  thumb-color     背景颜色
  *  thumb-align     停靠位置

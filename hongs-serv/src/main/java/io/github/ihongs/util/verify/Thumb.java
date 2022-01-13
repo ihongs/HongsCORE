@@ -60,6 +60,10 @@ public class Thumb extends IsFile {
      */
     private String[][] exec(String url, String nrl, String ext, String suf, String mod, String col, String pos)
     throws  Wrong, IOException {
+        BufferedImage img = Thumbnails.of(nrl).scale(1).asBufferedImage();
+        int rw = img.getWidth ();
+        int rh = img.getHeight();
+
         // 没有指定扩展名则无需改变格式
         if (ext.length() == 0) {
             int idx = nrl.lastIndexOf('.');
@@ -77,9 +81,6 @@ public class Thumb extends IsFile {
          * 多个尺寸后面的会进行缩放处理.
          */
         if ("test".equals( mod )) {
-            BufferedImage  img = make(nrl, null).asBufferedImage();
-            int      rw  = img.getWidth ();
-            int      rh  = img.getHeight();
             String[] sia = suf.split (",");
             boolean  mat = false;
             boolean  rat;
@@ -110,14 +111,19 @@ public class Thumb extends IsFile {
              * 可限制单一的宽或者高.
              */
             if (! rat ) {
+                if (w == 0 && h == 0) {
+                    w  = rw ; h  = rh ;
+                } else
                 if (w == 0) {
-                    w =  rw *  h /  rh;
+                    w  = rw * h  / rh ;
                 } else
                 if (h == 0) {
-                    h =  rh *  w /  rw;
+                    h  = rh * w  / rw ;
                 }
             } else {
+                if (w == 0 || h == 0) {
                 throw new Wrong("Wrong thumb size `"+siz+"`. Usage: W*0 0/H");
+                }
             }
 
             if (! rat ) {
@@ -156,7 +162,6 @@ public class Thumb extends IsFile {
 
             String[] sia = suf.split (",");
             String   src = nrl;
-            double   scl = 0;
             boolean  rat;
             int      w;
             int      h;
@@ -169,20 +174,31 @@ public class Thumb extends IsFile {
             try {
                 String[ ] arr;
                 siz = siz.trim();
-                if (/***/ siz.contains(":")) {
+                if (  siz.contains ( ":" ) ) {
                     arr = siz.split( ":" , 2 );
                     suf = arr[0].trim();
                     siz = arr[1].trim();
+                } else
+                if (! siz.contains ( "*" )
+                &&  ! siz.contains ( "/" ) ) {
+                    suf = siz;
+                    siz = "" ;
                 } else {
                     suf = "" ;
                 }
-                if (rat = siz.contains("/")) {
-                    arr = siz.split( "/" , 2 );
+                if (! siz.isEmpty( ) ) {
+                    if (rat = siz.contains("/")) {
+                        arr = siz.split( "/" , 2 );
+                    } else {
+                        arr = siz.split("\\*", 2 );
+                    }
+                    w   = Integer.parseInt(arr[0]);
+                    h   = Integer.parseInt(arr[1]);
                 } else {
-                    arr = siz.split("\\*", 2 );
+                    rat = false;
+                    w   = 0;
+                    h   = 0;
                 }
-                w   = Integer.parseInt(arr[0]);
-                h   = Integer.parseInt(arr[1]);
             } catch ( IndexOutOfBoundsException | NumberFormatException e ) {
                 throw new Wrong("Wrong thumb size `"+siz+"`. Usage: Suffix:W*H Suffix:W/H W*H W/H");
             }
@@ -192,33 +208,22 @@ public class Thumb extends IsFile {
              * 可限制单一的宽或者高.
              */
             if (! rat ) {
+                if (w == 0 && h == 0) {
+                    w  = rw ; h  = rh ;
+                } else
                 if (w == 0) {
-                    BufferedImage img = Thumbnails.of(nrl).asBufferedImage();
-                    int rw = img.getWidth ();
-                    int rh = img.getHeight();
-                    w = rw * h / rh;
+                    w  = rw * h  / rh ;
                 } else
                 if (h == 0) {
-                    BufferedImage img = Thumbnails.of(nrl).asBufferedImage();
-                    int rw = img.getWidth ();
-                    int rh = img.getHeight();
-                    h = rh * w / rw;
+                    h  = rh * w  / rw ;
                 }
             } else {
+                if (w == 0 || h == 0) {
                 throw new Wrong("Wrong thumb size `"+siz+"`. Usage: Suffix:W*0 Suffix:0*H W*0 0*H");
+                }
             }
 
-            /**
-             * 第一个或比例有了变化,
-             * 才需要特别去裁剪铺贴.
-             */
-            if (bui == null || scl != w / h) {
-                bui = make(src, col, pos, mod, w, h, !rat);
-                scl = w / h;
-            } else {
-                bui = Thumbnails.of(bui.asBufferedImage());
-                if (! rat ) bui.size (w , h);
-            }
+            bui = make(src, col, pos, mod, w, h, ! rat );
 
             // 保存到文件
             nrl = pre + suf + "." + ext;
@@ -235,11 +240,10 @@ public class Thumb extends IsFile {
              * 如果没有指定缩放尺寸,
              * 那就认为仅需转换格式.
              */
-            bui = make(nrl , col);
-
-            BufferedImage img = bui.asBufferedImage();
-            int w = img.getWidth ();
-            int h = img.getHeight();
+            int w = rw;
+            int h = rh;
+            
+            bui = make(nrl, col );
 
             // 保存到文件
             nrl = pre + suf + "." + ext;

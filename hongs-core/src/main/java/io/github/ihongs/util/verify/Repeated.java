@@ -112,7 +112,7 @@ public class Repeated extends Rule implements Rulx {
         }
         n = Synt.declare(getParam("maxrepeat"), 0);
         if (n != 0 && c > n) {
-            throw new Wrong("fore.form.lt.maxrepeat",
+            throw new Wrong("fore.form.gt.maxrepeat",
                     String.valueOf(n), String.valueOf(c) );
         }
 

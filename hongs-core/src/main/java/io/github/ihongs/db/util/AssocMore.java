@@ -150,10 +150,10 @@ public class AssocMore {
     (Table table, FetchCase caze, Map assocs)
   throws HongsException {
     if (assocs == null) {
-        assocs = new HashMap();
+        assocs = new HashMap ();
     }
 
-    List<Map> lnks = new ArrayList(/**/);
+    List lnks = new ArrayList();
     fetchMore(table, caze, assocs, lnks, null);
 
     checkCase(caze , table.getParams() , null, null, null);

@@ -1188,6 +1188,12 @@ public class FetchCase
 
   /**
    * 获取关联的关联对象
+   *
+   * 注意:
+   * 与 gotJoin 不同,
+   * 仅提取已经关联了的对象,
+   * 不存在的关联会返回空值.
+   *
    * @param name
    * @return
    */
@@ -1209,12 +1215,10 @@ public class FetchCase
   /**
    * 获取关联的关联对象
    *
-   * 与 getJoin 不同在于不存在的关联会自动则创建
    * 注意:
-   * 命名虽与 Core.got 类似, 但意义却不同,
-   * Core.got 为调用原 Map 的 get, 没有则返回 null,
-   * FetchCase.gotJoin 相反没有则创建关联;
-   * 新创建的关联实例不设置关联关系和类型;
+   * 与 getJoin 不同,
+   * 不存在的关联会自动创建,
+   * 不会设置关联关系和类型.
    *
    * @param name
    * @return

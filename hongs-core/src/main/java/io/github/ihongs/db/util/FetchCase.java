@@ -418,6 +418,36 @@ public class FetchCase
   //** 关联 **/
 
   /**
+   * 关联已有的用例 (不建议使用)
+   * <pre>
+   * 注意: 关联关系等记录在关联对象内部
+   * 请避免在不同的用例上重用关联的用例
+   * 稍不注意就会致与后者的关联关系混乱
+   * 可以使用 clone/klone 进行深或浅克隆
+   * 构造时非 STRICT 且未设置 CLEVER_MODE 则将开启 CLEVER_MODE, 其它 join 同此
+   * </pre>
+   * @param caze
+   * @return join 前(左) 的用例
+   */
+  public FetchCase join(FetchCase caze)
+  {
+    this.joinSet.add(caze);
+    caze.options = options;
+    if (caze.joinType <= NONE)
+    {
+        caze.joinType = INNER;
+    }
+    if (caze.joinName == null)
+    {
+        caze.joinName =  ""  ;
+    }
+    if (this.hasOption("CLEVER_MODE") == false) {
+        this.setOption("CLEVER_MODE"  ,  true );
+    }
+    return this;
+  }
+
+  /**
    * 快速关联
    * @param tableName
    * @param name
@@ -478,36 +508,6 @@ public class FetchCase
     this.join(caze);
     caze.from(tableName);
     return    caze ;
-  }
-
-  /**
-   * 关联已有的用例
-   * <pre>
-   * 注意: 关联关系等记录在关联对象内部
-   * 请避免在不同的用例上重用关联的用例
-   * 稍不注意就会致与后者的关联关系混乱
-   * 可以使用 clone/copy 进行深或浅克隆
-   * 构造时非 STRICT 且未设置 CLEVER_MODE 则将开启 CLEVER_MODE, 其它 join 同此
-   * </pre>
-   * @param caze
-   * @return join 前(左) 的用例
-   */
-  public FetchCase join(FetchCase caze)
-  {
-    this.joinSet.add(caze);
-    caze.options = options;
-    if (caze.joinType <= NONE)
-    {
-        caze.joinType = INNER;
-    }
-    if (caze.joinName == null)
-    {
-        caze.joinName =  ""  ;
-    }
-    if (this.hasOption("CLEVER_MODE") == false) {
-        this.setOption("CLEVER_MODE"  ,  true );
-    }
-    return this;
   }
 
   /**

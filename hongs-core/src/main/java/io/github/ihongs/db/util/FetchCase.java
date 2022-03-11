@@ -570,7 +570,10 @@ public class FetchCase
     StringBuilder h = new StringBuilder();
     StringBuilder o = new StringBuilder();
 
-    getSQLDeep(t, f, w, g, h, o, null, null);
+    boolean hasJoins = (joinSet.isEmpty( )  ==  false); // 有关联表
+    boolean fixField = getOption("CLEVER_MODE", false); // 补全语句
+
+    getSQLDeep(t, f, w, g, h, o, null, null, fixField, hasJoins);
 
     StringBuilder sql = new StringBuilder("SELECT");
 
@@ -642,16 +645,15 @@ public class FetchCase
   private void getSQLDeep(StringBuilder t, StringBuilder f,
                           StringBuilder w, StringBuilder g,
                           StringBuilder h, StringBuilder o,
-                          String pn, String qn)
+                          String       pn, String       qn,
+                         boolean fixField,
+                         boolean hasJoins)
   {
     if (this.tableName == null
     ||  this.tableName.length() < 1)
     {
         throw new Error(new HongsException(1162, "tableName can not be empty"));
     }
-
-    boolean hasJoins = pn != null || !joinSet.isEmpty(); // 有关联表
-    boolean fixField = getOption("CLEVER_MODE", false ); // 补全语句
 
     // 表名
     String tn;
@@ -800,11 +802,12 @@ public class FetchCase
     }
 
     // 下级
+    hasJoins = true ;
     for  (FetchCase caze : this.joinSet)
     {
       if (caze.joinType != 0)
       {
-        caze.getSQLDeep(t, f, w, g, h, o, tn, qn);
+        caze.getSQLDeep(t, f, w, g, h, o, tn, qn, fixField, hasJoins);
       }
     }
   }

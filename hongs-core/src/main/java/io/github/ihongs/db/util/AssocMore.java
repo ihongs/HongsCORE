@@ -208,44 +208,45 @@ public class AssocMore {
         FetchCase caze2 =  caze.gotJoin (an).from(table2.tableName);
 
         // 建立关联关系
-        if ("BLS_TO".equals(tp)) {
+        switch (tp) {
+        case "BLS_TO": {
             // 上级外键连接下级主键
             if (pk == null) pk = table2.primaryKey;
             fk = "`"+tn+"`.`"+fk+"`";
             pk = "`"+an+"`.`"+pk+"`";
-        } else
-        if ("HAS_ONE".equals(tp)) {
+        } break;
+        case "HAS_ONE": {
             // 上级主键连接下级外键
             if (pk == null) pk = table .primaryKey;
             pk = "`"+tn+"`.`"+pk+"`";
             fk = "`"+an+"`.`"+fk+"`";
-        } else
-        if ("HAS_MANY".equals(tp) || "HAS_MORE".equals(tp)) {
+        } break;
+        case "HAS_MANY":
+        case "HAS_MORE":
             throw new HongsException(1171,  "Unsupported assoc type '"+tp+"'");
-        }
-        else {
+        default:
             throw new HongsException(1171, "Unrecognized assoc type '"+tp+"'");
         }
         caze2.on( pk +"="+ fk );
 
         // 转化关联类型
         byte ji;
-        if ("INNER".equals(jn)) {
+        switch (jn) {
+        case "INNER": {
             ji = FetchCase.INNER;
-        } else
-        if ( "LEFT".equals(jn)) {
-            ji = FetchCase.LEFT;
-        } else
-        if ("RIGHT".equals(jn)) {
+        } break;
+        case "LEFT" : {
+            ji = FetchCase.LEFT ;
+        } break;
+        case "RIGHT": {
             ji = FetchCase.RIGHT;
-        } else
-        if ( "FULL".equals(jn)) {
-            ji = FetchCase.FULL;
-        } else
-        if ("CROSS".equals(jn)) {
+        } break;
+        case "FULL" : {
+            ji = FetchCase.FULL ;
+        } break;
+        case "CROSS":
             throw new HongsException(1172,  "Unsupported assoc join '"+jn+"'");
-        }
-        else {
+        default:
             throw new HongsException(1172, "Unrecognized assoc join '"+jn+"'");
         }
         caze2.by(ji);
@@ -295,23 +296,24 @@ public class AssocMore {
         FetchCase caze2 =  caze.gotJoin (an).from(table2.tableName);
 
         // 准备关联关系
-        if ("BLS_TO".equals(tp)) {
+        switch (tp) {
+        case "BLS_TO": {
             // 上级外键连接下级主键, 交换主外键
             String xk = fk; fk = pk; pk = xk;
             if (fk == null) fk = table2.primaryKey;
             caze2.setOption("ASSOC_MULTI" , false);
-        } else
-        if ("HAS_ONE".equals(tp)) {
+        } break;
+        case "HAS_ONE": {
             // 上级主键连接下级外键
             if (pk == null) pk = table .primaryKey;
             caze2.setOption("ASSOC_MULTI" , false);
-        } else
-        if ("HAS_MANY".equals(tp)) {
+        } break;
+        case "HAS_MANY": {
             // 上级主键连接下级外键
             if (pk == null) pk = table .primaryKey;
             caze2.setOption("ASSOC_MULTI" , true );
-        } else
-        if ("HAS_MORE".equals(tp)) {
+        } break;
+        case "HAS_MORE": {
             // 上级主键连接下级外键
             if (pk == null) pk = table .primaryKey;
             caze2.setOption("ASSOC_MULTI" , true );
@@ -323,8 +325,8 @@ public class AssocMore {
                     }
                 }
             }
-        }
-        else {
+        } break;
+        default:
             throw new HongsException(1171, "Unrecognized assoc type '"+tp+"'");
         }
 

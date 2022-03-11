@@ -230,6 +230,9 @@ public class AssocMore {
 
         // 转化关联类型
         byte ji;
+        if ("INNER".equals(jn)) {
+            ji = FetchCase.INNER;
+        } else
         if ( "LEFT".equals(jn)) {
             ji = FetchCase.LEFT;
         } else
@@ -238,9 +241,6 @@ public class AssocMore {
         } else
         if ( "FULL".equals(jn)) {
             ji = FetchCase.FULL;
-        } else
-        if ("INNER".equals(jn)) {
-            ji = FetchCase.INNER;
         } else
         if ("CROSS".equals(jn)) {
             throw new HongsException(1172,  "Unsupported assoc join '"+jn+"'");

@@ -47,6 +47,7 @@ import org.eclipse.jetty.plus.annotation.ContainerInitializer;
 import org.apache.tomcat.InstanceManager;
 import org.apache.tomcat.SimpleInstanceManager;
 import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.SameFileAliasChecker;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
@@ -244,6 +245,18 @@ public class ServerCmdlet {
 
         public void init(ServletContextHandler context);
 
+    }
+
+    /**
+     * Win 的软链
+     */
+    public static class Linker implements Initer {
+        
+        @Override
+        public void init(ServletContextHandler sc) {
+            sc.addAliasCheck(new SameFileAliasChecker());
+        }
+        
     }
 
     /**

@@ -1049,7 +1049,8 @@ function hsListDollFilt(x, v, n) {
      */
     var vk = x.attr("data-vk") || 0;
     var tk = x.attr("data-tk") || 1;
-    var ek = true;
+    var ek = ! x.find("[value='']");
+    if (ek)
     for(var i = 0; i < v.length; i ++) {
         var k = hsGetValue(v[i], vk  );
         if (k == '') {

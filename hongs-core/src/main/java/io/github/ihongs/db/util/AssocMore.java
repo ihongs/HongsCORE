@@ -222,8 +222,13 @@ public class AssocMore {
             fk = "`"+an+"`.`"+fk+"`";
         } break;
         case "HAS_MANY":
-        case "HAS_MORE":
-            throw new HongsException(1171,  "Unsupported assoc type '"+tp+"'");
+        case "HAS_MORE": {
+            // 上级主键连接下级外键
+            if (pk == null) pk = table .primaryKey;
+            pk = "`"+tn+"`.`"+pk+"`";
+            fk = "`"+an+"`.`"+fk+"`";
+        //  throw new HongsException(1171,  "Unsupported assoc type '"+tp+"'");
+        } break;
         default:
             throw new HongsException(1171, "Unrecognized assoc type '"+tp+"'");
         }

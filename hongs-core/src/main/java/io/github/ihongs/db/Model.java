@@ -882,8 +882,6 @@ implements IEntity
    * 作用于getPage,getList上
    *
    * 如需添加过滤条件, 请重写此方法;
-   * 注意: 此处需要类似引用参数, 故调用前请务必实例化req和caze;
-   * 默认仅关联join类型为LEFT,INNER和link类型为BLS_TO,HAS_ONE的表,
    * 如需指定关联的表请设置FetchCase的option: ASSOCS,
    * 如需指定关联方式请设置FetchCase的option: ASSOC_JOINS, ASSOC_TYEPS
    *
@@ -916,7 +914,8 @@ implements IEntity
      * 如果没指定查询的表、字段
      * 默认只关联 BLS_TO , HAS_ONE 的表(仅能关联一个)
      * 默认只连接 LEFT,INNER,RIGHT 的表(常规关联均可)
-     */
+     * 2022/03/13 没必要限定
+     *//*
     if (null == caze.getOption("ASSOCS")
     && ("getAll" .equals(caze.getOption("MODEL_START"))
     ||  "getList".equals(caze.getOption("MODEL_START"))
@@ -937,15 +936,17 @@ implements IEntity
         types.add( "FULL"  );
         caze.setOption("ASSOC_JOINS", types);
       }
-    }
+    } */
 
     /**
      * 补全空白关联数据
      * 避免外部解析麻烦
      */
-    caze.setOption("ASSOC_FILLS", true);
+    if (caze.hasOption("ASSOC_PATCH") != true) {
+        caze.setOption("ASSOC_PATCH"  ,  true);
+    }
 
-    if ( rd == null  ||  rd.isEmpty() )
+    if ( rd == null || rd.isEmpty() )
     {
       return;
     }
@@ -954,7 +955,7 @@ implements IEntity
      * 如果不是 table.fetchCase( ) 构建查询
      * 在下面组织过滤等时可能导致表别名为空
      */
-    caze.from( table.tableName, table.name );
+    caze.from(table.tableName, table.name);
 
     /**
      * 没有指定 listable

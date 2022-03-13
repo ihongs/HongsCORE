@@ -42,7 +42,7 @@ import java.util.regex.Pattern;
  * STRING_MODE  : boolean     字串模式, 设为 true 则获取结果中的字段值全部转为字串
  * ASSOC_MULTI  : boolean     对多关联(使用IN方式关联); 作用域: FetchMore
  * ASSOC_MERGE  : boolean     归并关联(仅限非对多关联); 作用域: FetchMore
- * ASSOC_FILLS  : boolean     给缺失的关联补全空白数据; 作用域: FetchMore
+ * ASSOC_PATCH  : boolean     给缺失的关联补全空白数据; 作用域: FetchMore
  * ASSOC_TYPES  : Set         仅对某些类型关联; 作用域: AssocMore
  * ASSOC_JOINS  : Set         仅对某些类型连接; 作用域: AssocMore
  * ASSOCS       : Set         仅对某些表做关联; 作用域: AssocMore

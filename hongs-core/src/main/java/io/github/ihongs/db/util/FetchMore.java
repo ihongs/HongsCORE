@@ -137,7 +137,7 @@ public class FetchMore
     String  tableName   = table.tableName;
     boolean multi       = caze.getOption("ASSOC_MULTI", false);
     boolean merge       = caze.getOption("ASSOC_MERGE", false);
-    boolean fills       = caze.getOption("ASSOC_FILLS", false);
+    boolean patch       = caze.getOption("ASSOC_PATCH", false);
 
     if (null != caze.name && 0 != caze.name.length())
     {
@@ -275,7 +275,7 @@ public class FetchMore
      * 避免客户端麻烦
      */
 
-    if (! fills) {
+    if (! patch) {
         return;
     }
 

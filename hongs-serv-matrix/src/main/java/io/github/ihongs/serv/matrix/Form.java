@@ -819,7 +819,7 @@ public class Form extends Model {
             if (root == null) break R1 ;
             root = getNodeByTagNameAndAttr(root, "menu", "href", centre +"/"+id+"/"     );
             if (root == null) break R1 ;
-            root = getNodeByTagNameAndAttr(root, "role", "name", centre     +   "/fork" );
+            root = getNodeByTagNameAndAttr(root, "role", "name", centre +"/"+id+"/fork" );
             if (root == null) break R1 ;
             list = root.getChildNodes();
             for(int i = list.getLength() - 1; i > -1; i --) {
@@ -1039,12 +1039,12 @@ public class Form extends Model {
             // 公共读取权限
             role = docm.createElement( "role" );
             menu.appendChild ( role );
-            role.setAttribute("name" , centre + "/open");
+            role.setAttribute("name", "public");
 
             // 增删改须登录
             role = docm.createElement( "role" );
             menu.appendChild ( role );
-            role.setAttribute("name" , centre + "/edit");
+            role.setAttribute("name", "centre");
             actn = docm.createElement("action");
             role.appendChild ( actn );
             actn.appendChild ( docm.createTextNode(href +"create"+ Cnst.ACT_EXT) );
@@ -1054,19 +1054,22 @@ public class Form extends Model {
             actn = docm.createElement("action");
             role.appendChild ( actn );
             actn.appendChild ( docm.createTextNode(href +"delete"+ Cnst.ACT_EXT) );
-
-            // 聚合统计接口, 默认禁止访问 (较耗资源)
-            role = docm.createElement( "role" );
-            menu.appendChild ( role );
-            role.setAttribute("name" , centre + "/deny");
-            actn = docm.createElement("action");
-            role.appendChild ( actn );
-            actn.appendChild ( docm.createTextNode(href +"assort"+ Cnst.ACT_EXT) );
+            depn = docm.createElement("depend");
+            role.appendChild ( depn );
+            depn.appendChild ( docm.createTextNode(href + "fork" ) );
 
             // 关联查询接口, 默认登录可用 (增改依赖)
             role = docm.createElement( "role" );
             menu.appendChild ( role );
-            role.setAttribute("name" , centre + "/fork");
+            role.setAttribute("name" , href + "/fork");
+
+            // 聚合统计接口, 默认禁止访问 (较耗资源)
+            role = docm.createElement( "role" );
+            menu.appendChild ( role );
+            role.setAttribute("name" , href + "/deny");
+            actn = docm.createElement("action");
+            role.appendChild ( actn );
+            actn.appendChild ( docm.createTextNode(href +"assort"+ Cnst.ACT_EXT) );
         }
 
         saveDocument(file , docm);

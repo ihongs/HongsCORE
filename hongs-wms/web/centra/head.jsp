@@ -103,9 +103,9 @@
     ActionHelper helper = ActionHelper.getInstance();
 
     NaviMap curr = NaviMap.getInstance("centra");
-    Set     role = curr.getRoleSet();
-    if (role == null) {
-        role  = Synt.setOf("public");
+    Set     role = curr.getRoleSet    (        );
+    if (null == role) {
+            role = curr.getMoreRoles  ("public");
     }
     List    menu = curr.getMenuTranslated("common/menu.act?m=centra", 2, role);
 

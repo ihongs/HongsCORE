@@ -18,7 +18,7 @@
     int makeMenu(StringBuilder menu, List<Map> list, String acti) {
         int code  = 0;
 
-        if (list != null) for(Map item: list) {
+        if (list != null) for (Map item: list) {
             String text = (String) item.get("text");
             String hint = (String) item.get("hint");
             String href = (String) item.get("href");
@@ -105,9 +105,9 @@
     ActionHelper helper = ActionHelper.getInstance();
 
     NaviMap curr = NaviMap.getInstance("centre");
-    Set     role = curr.getRoleSet();
-    if (role == null) {
-        role  = Synt.setOf("public");
+    Set     role = curr.getRoleSet    (        );
+    if (null == role) {
+            role = curr.getMoreRoles  ("public");
     }
     List    menu = curr.getMenuTranslated("common/menu.act?m=centre", 2, role);
 

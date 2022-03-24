@@ -4,6 +4,9 @@
         <role text="登录后台" name="centra">
             <action>centra</action><!-- 未登录则完全禁止访问 -->
             <action>centra/data/upload/image/create.act</action>
+            <action>centra/mine/info.act</action>
+            <action>centra/mine/same.act</action>
+            <action>centra/mine/save.act</action>
         </role>
         <menu text="首页" href="centra/#manage" hrel="centra/manage/main.html"></menu>
         <menu text="系统" href="common/menu.act?m=centra&amp;n=system">

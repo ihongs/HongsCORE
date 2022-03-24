@@ -1061,12 +1061,12 @@ public class Form extends Model {
             // 关联查询接口, 默认登录可用 (增改依赖)
             role = docm.createElement( "role" );
             menu.appendChild ( role );
-            role.setAttribute("name" , href + "/fork");
+            role.setAttribute("name", href + "fork" );
 
             // 聚合统计接口, 默认禁止访问 (较耗资源)
             role = docm.createElement( "role" );
             menu.appendChild ( role );
-            role.setAttribute("name" , href + "/deny");
+            role.setAttribute("name", href + "deny" );
             actn = docm.createElement("action");
             role.appendChild ( actn );
             actn.appendChild ( docm.createTextNode(href +"assort"+ Cnst.ACT_EXT) );

@@ -43,6 +43,10 @@ public class CoreRoster {
         }
     }
 
+    /**
+     * 获取所有内置动作
+     * @return
+     */
     public static Map<String, Mathod> getActions() {
         Lock rlock = RWLOCKS.readLock();
         rlock.lock();
@@ -58,6 +62,10 @@ public class CoreRoster {
         return ACTIONS;
     }
 
+    /**
+     * 获取所有内置命令
+     * @return
+     */
     public static Map<String, Method> getCmdlets() {
         Lock rlock = RWLOCKS.readLock();
         rlock.lock();
@@ -75,83 +83,43 @@ public class CoreRoster {
 
     /**
      * 通过包名获取类名集合
-     * @param pkgn 包名
+     * @param pack 包名
      * @param recu 递归
      * @return
      * @throws IOException
      */
-    public static Set<String> getClassNames(String pkgn, boolean recu) throws IOException {
-        ClassLoader      pload = Thread.currentThread().getContextClassLoader();
-        String           ppath = pkgn.replace( "." , "/" );
-        Enumeration<URL> links = pload.getResources(ppath);
-        Set<String>      names = new  HashSet();
-//      boolean          gotit = false;
+    public static Set<String> getClassNames(String pack, boolean recu)
+           throws IOException {
+        pack = pack.replace(".", "/");
 
-        while ( links.hasMoreElements(  )  ) {
-            URL plink = links.nextElement( );
-
-            String  proto = plink.getProtocol();
-            String  proot = plink.getPath( ).replaceFirst( "/$" , "")  // 去掉结尾的 /
-                                            .replaceFirst("^.+:", ""); // 去掉开头的 file:
-            proot = proot.substring(0, proot.length()-ppath.length()); // 去掉目标包的路径
-
-            if ( "jar".equals(proto)) {
-                // 路径类似 file:/xxx/xxx.jar!/zzz/zzz
-                // 上面已删 zzz/zzz 还需删掉 !/
-                proot = proot.substring(0 , proot.lastIndexOf( "!" ));
-                names.addAll(getClassNamesByJar( proot, ppath, recu));
-            } else
-            if ("file".equals(proto)){
-                // 路径类似 /xxx/xxx/ 有后缀 /
-                names.addAll(getClassNamesByDir( proot, ppath, recu));
-            }
-
-//          gotit = true;
-        }
-
-        // 上面找不到就找不到了, 没必要再用 URLClassLoader
-        /*
-        if (gotit) {
-            URL[] paurl = ((URLClassLoader) pload).getURLs();
-
-            if (  paurl != null  ) for ( URL pourl : paurl ) {
-                String proot = pourl.getPath( );
-
-                if (proot.endsWith(".jar")) {
-                    names.addAll(getClassNamesByJar( proot, ppath, recu));
-                } else
-                if (proot.endsWith(  "/" )) {
-                    names.addAll(getClassNamesByDir( proot, ppath, recu));
-                }
-            }
-        }
-        */
-
-        return  names;
-    }
-
-    private static Set<String> getClassNamesByDir(String root, String path, boolean recu) {
+        Enumeration<URL> links = Thread
+                .currentThread (  /**/  )
+                .getContextClassLoader( )
+                .getResources  (  pack  );
         Set<String> names = new HashSet();
-        File[]      files = new File(root + path).listFiles();
 
-        for (File file : files) {
-            if (! file.isDirectory()) {
-                String name = file.getPath().substring(root.length());
-                if (name.endsWith(".class")) {
-                    name = name.substring(0, name.lastIndexOf( '.' ));
-                    name = name.replace(File.separator, "." );
-                    names.add(name);
-                }
-            } else if (recu) {
-                String name = path + File.separator + file.getName( );
-                names.addAll(getClassNamesByDir(root, name, recu));
+        while (links.hasMoreElements()) {
+            URL    link = links.nextElement();
+            String prot = link .getProtocol();
+            String root = link .getPath().replaceFirst( "/$" , "")  // 去掉结尾的 /
+                                         .replaceFirst("^.+:", ""); // 去掉开头的 file:
+            root = root.substring(0 , root.length()-pack.length()); // 去掉目标包的路径
+
+            if ( "jar".equals(prot)) {
+                // 路径类似 file:/xxx/xxx.jar!/zzz/zzz
+                root = root.substring(0 , root.lastIndexOf( "!" ));
+                names.addAll(getClassNamesInJar(root, pack, recu));
+            } else
+            if ("file".equals(prot)){
+                // 路径类似 /xxx/xxx/
+                names.addAll(getClassNamesInDir(root, pack, recu));
             }
         }
 
         return  names;
     }
 
-    private static Set<String> getClassNamesByJar(String root, String path, boolean recu)
+    private static Set<String> getClassNamesInJar(String root, String path, boolean recu)
             throws IOException {
         Set<String> names = new HashSet();
         int         pathl = 1 + path.length();
@@ -166,12 +134,33 @@ public class CoreRoster {
                 if (!name.endsWith(".class")) {
                     continue;
                 }
-                name = name.substring(0, name.length() - 6);
                 if (!recu && name.indexOf("/", pathl ) > 0) {
                     continue;
                 }
+                name = name.substring(0, name.length() - 6);
                 name = name.replace("/", ".");
                 names.add(name);
+            }
+        }
+
+        return  names;
+    }
+
+    private static Set<String> getClassNamesInDir(String root, String path, boolean recu) {
+        Set<String> names = new HashSet();
+        File[]      files = new File(root + path).listFiles();
+
+        for (File file : files) {
+            if (! file.isDirectory()) {
+                String name = file.getPath().substring(root.length());
+                if (name.endsWith(".class")) {
+                    name = name.substring(0, name.lastIndexOf( '.' ));
+                    name = name.replace(File.separator, "." );
+                    names.add(name);
+                }
+            } else if (recu) {
+                String name = path + File.separator + file.getName( );
+                names.addAll( getClassNamesInDir (root, name, recu) );
             }
         }
 

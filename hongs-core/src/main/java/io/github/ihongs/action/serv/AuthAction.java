@@ -110,19 +110,19 @@ public class AuthAction
 
       Map<String, Boolean> datamap = new HashMap();
       if (null == roleset) authset = new HashSet();
-      else  authset  =  sitemap.getRoleAuths(roleset.toArray(new String[]{}));
-      for(String  act : sitemap.actions) {
-        datamap.put( act , authset.contains(act) );
+      else authset = sitemap.getRoleAuths(roleset);
+      for(  String  act: sitemap.actions ) {
+        datamap.put(act, authset.contains( act ) );
       }
 
       s = Dawn.toString(datamap);
     }
-    catch (IllegalArgumentException ex ) {
-      helper.error(500 , ex.getMessage());
+    catch (IllegalArgumentException ex) {
+      helper.error(500, ex.getMessage());
       return;
     }
     catch (HongsException|HongsExemption ex) {
-      helper.error(404 , ex.getMessage());
+      helper.error(404, ex.getMessage());
       return;
     }
 

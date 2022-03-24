@@ -193,6 +193,7 @@ public class NaviMap
   }
 
   static protected boolean expired(String namz , long timz)
+    throws HongsException
   {
     File serFile = new File(Core.DATA_PATH
                  + File.separator + "serial"
@@ -210,19 +211,24 @@ public class NaviMap
     }
 
     // 为减少判断逻辑对 jar 文件不做变更对比, 只要资源存在即可
-    return null == NaviMap.class.getClassLoader().getResource(
-             namz.contains(".")
-          || namz.contains("/") ? namz + Cnst.NAVI_EXT + ".xml"
-           : Cnst.CONF_PACK +"/"+ namz + Cnst.NAVI_EXT + ".xml"
-    );
+    if ( null != NaviMap.class.getClassLoader().getResource(
+               namz.contains("/") ? namz + Cnst.NAVI_EXT + ".xml" :
+               Cnst.CONF_PACK +"/"+ namz + Cnst.NAVI_EXT + ".xml"
+    )) {
+      return true;
+    }
+    
+    throw new HongsException(920, "Can not find the config file '" + namz + Cnst.NAVI_EXT + ".xml'");
   }
 
   public boolean expired()
+    throws HongsException
   {
     return expired (name, time);
   }
 
   public boolean expires()
+    throws HongsException
   {
     /**
      * 逐一检查导入的配置
@@ -257,8 +263,7 @@ public class NaviMap
         is = this.getClass().getClassLoader().getResourceAsStream(fn);
         if (  is  ==  null )
         {
-            throw new HongsException(920,
-                "Can not find the config file '" + name + Cnst.NAVI_EXT + ".xml'.");
+            throw new HongsException(920, "Can not find the config file '" + name + Cnst.NAVI_EXT + ".xml'");
         }
     }
 
@@ -282,15 +287,15 @@ public class NaviMap
     }
     catch ( IOException ex)
     {
-      throw new HongsException(921, "Read '" +name+Cnst.NAVI_EXT+".xml error'", ex);
+      throw new HongsException(921, "Read '" +name+Cnst.NAVI_EXT+".xml' error", ex);
     }
     catch (SAXException ex)
     {
-      throw new HongsException(921, "Parse '"+name+Cnst.NAVI_EXT+".xml error'", ex);
+      throw new HongsException(921, "Parse '"+name+Cnst.NAVI_EXT+".xml' error", ex);
     }
     catch (ParserConfigurationException ex)
     {
-      throw new HongsException(921, "Parse '"+name+Cnst.NAVI_EXT+".xml error'", ex);
+      throw new HongsException(921, "Parse '"+name+Cnst.NAVI_EXT+".xml' error", ex);
     }
 
     this.menus = new LinkedHashMap();

@@ -72,16 +72,15 @@ public class CoreConfig
     InputStream is;
 
     // 资源中的作为默认配置
-    fn = name.contains(".")
-      || name.contains("/") ? name + ".properties"
+    fn = name.contains("/") ? name + ".properties"
        : Cnst.CONF_PACK +"/"+ name + ".properties";
     is = this.getClass().getClassLoader().getResourceAsStream(fn);
     ld = is != null;
     if ( ld )  try {
-        defaults.load( is);
+        defaults.load (is);
     }
     catch (IOException ex) {
-        throw new HongsExemption(827, "Can not read '"+name+".properties'.", ex);
+        throw new HongsExemption(827, "Can not read '"+name+".properties'", ex);
     }
 
     // 优先尝试从配置目录的 .properties 加载数据
@@ -95,12 +94,12 @@ public class CoreConfig
         er = ex;
     }
     catch (IOException ex) {
-        throw new HongsExemption(827, "Can not read '"+name+".properties'.", ex);
+        throw new HongsExemption(827, "Can not read '"+name+".properties'", ex);
     }
 
     // 然后尝试从配置目录的 .prop.xml 中加载数据
     try {
-        fn = Core.CONF_PATH + File.separator + name + Cnst.PROP_EXT + ".xml" ;
+        fn = Core.CONF_PATH + File.separator + name + Cnst.PROP_EXT + ".xml";
         is = new FileInputStream(fn);
         this.loadFromXML(is);
         return;
@@ -109,14 +108,14 @@ public class CoreConfig
         er = ex;
     }
     catch (IOException ex) {
-        throw new HongsExemption(827, "Can not read '"+name+Cnst.PROP_EXT+".xml'.", ex);
+        throw new HongsExemption(827, "Can not read '"+name+Cnst.PROP_EXT+".xml'", ex);
     }
 
     // 没有额外的配置则将默认配置放到前台
     if (ld) {
         this.putAll(defaults);
     } else {
-        throw new HongsExemption(826, "Can not find '"+name+"' properties config.", er);
+        throw new HongsExemption(826, "Can not find '"+name+"' properties config", er);
     }
   }
 

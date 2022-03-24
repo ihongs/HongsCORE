@@ -9,9 +9,9 @@ import io.github.ihongs.util.Syno;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
+import java.io.InputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -72,25 +72,24 @@ public class DBConfig
     }
 
     File xmlFile = new File(
-             Core.CONF_PATH +"/"+ name + Cnst.DB_EXT + ".xml"
+         Core.CONF_PATH +"/"+ name + Cnst.DB_EXT + ".xml"
     );
     if ( xmlFile.exists()) {
-    if ( xmlFile.lastModified() <= serFile.lastModified() ) {
-      return 1;
-    } else {
+    if ( xmlFile.lastModified( ) > serFile.lastModified( ) ) {
       return 0;
+    } else {
+      return 1;
     }}
 
     // 为减少判断逻辑对 jar 文件不做变更对比, 只要资源存在即可
-    if (null != getClass().getClassLoader().getResource(
-             name.contains(".")
-          || name.contains("/") ? name + Cnst.DB_EXT + ".xml"
-           : Cnst.CONF_PACK +"/"+ name + Cnst.DB_EXT + ".xml"
+    if ( null != this.getClass().getClassLoader().getResource(
+         name.contains("/") ? name + Cnst.DB_EXT + ".xml"
+       : Cnst.CONF_PACK +"/"+ name + Cnst.DB_EXT + ".xml"
     )) {
       return 1;
-    } else {
-      return 0;
     }
+
+    throw new HongsExemption(826, "Can not find the config file '" + name + Cnst.DB_EXT + ".xml'");
   }
 
   @Override
@@ -108,14 +107,12 @@ public class DBConfig
     }
     catch (FileNotFoundException ex)
     {
-        fn = name.contains(".")
-          || name.contains("/") ? name + Cnst.DB_EXT + ".xml"
+        fn = name.contains("/") ? name + Cnst.DB_EXT + ".xml"
            : Cnst.CONF_PACK +"/"+ name + Cnst.DB_EXT + ".xml";
         is = this.getClass().getClassLoader().getResourceAsStream(fn);
         if (  is  ==  null )
         {
-            throw new HongsExemption(826,
-                "Can not find the config file '" + name + Cnst.DB_EXT + ".xml'.");
+            throw new HongsExemption(826, "Can not find the config file '" + name + Cnst.DB_EXT + ".xml'");
         }
     }
 

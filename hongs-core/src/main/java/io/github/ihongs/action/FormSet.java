@@ -153,11 +153,12 @@ public class FormSet
   }
 
   static protected boolean expired(String namz , long timz)
+    throws HongsException
   {
     File serFile = new File(Core.DATA_PATH
                  + File.separator + "serial"
                  + File.separator + namz + Cnst.FORM_EXT + ".ser");
-    if (!serFile.exists() || serFile.lastModified() > timz )
+    if (!serFile.exists() || serFile.lastModified() > timz)
     {
       return true;
     }
@@ -170,14 +171,18 @@ public class FormSet
     }
 
     // 为减少判断逻辑对 jar 文件不做变更对比, 只要资源存在即可
-    return null == FormSet.class.getClassLoader().getResource(
-             namz.contains(".")
-          || namz.contains("/") ? namz + Cnst.FORM_EXT + ".xml"
-           : Cnst.CONF_PACK +"/"+ namz + Cnst.FORM_EXT + ".xml"
-    );
+    if ( null != FormSet.class.getClassLoader().getResource(
+               namz.contains("/") ? namz + Cnst.FORM_EXT + ".xml" :
+               Cnst.CONF_PACK +"/"+ namz + Cnst.FORM_EXT + ".xml"
+    )) {
+      return true;
+    }
+
+    throw new HongsException(910, "Can not find the config file '" + namz + Cnst.FORM_EXT + ".xml'");
   }
 
   public boolean expired()
+    throws HongsException
   {
     return expired (name, time);
   }
@@ -196,14 +201,12 @@ public class FormSet
     }
     catch (FileNotFoundException ex)
     {
-        fn = name.contains(".")
-          || name.contains("/") ? name + Cnst.FORM_EXT + ".xml"
+        fn = name.contains("/") ? name + Cnst.FORM_EXT + ".xml"
            : Cnst.CONF_PACK +"/"+ name + Cnst.FORM_EXT + ".xml";
         is = this.getClass().getClassLoader().getResourceAsStream(fn);
         if ( null == is )
         {
-            throw new HongsException(910,
-                "Can not find the config file '" + name + Cnst.FORM_EXT + ".xml'.");
+            throw new HongsException(910, "Can not find the config file '" + name + Cnst.FORM_EXT + ".xml'");
         }
     }
 
@@ -220,15 +223,15 @@ public class FormSet
     }
     catch ( IOException ex)
     {
-      throw new HongsException(911, "Read '" +name+Cnst.FORM_EXT+".xml error'", ex);
+      throw new HongsException(911, "Read '" +name+Cnst.FORM_EXT+".xml' error", ex);
     }
     catch (SAXException ex)
     {
-      throw new HongsException(911, "Parse '"+name+Cnst.FORM_EXT+".xml error'", ex);
+      throw new HongsException(911, "Parse '"+name+Cnst.FORM_EXT+".xml' error", ex);
     }
     catch (ParserConfigurationException ex)
     {
-      throw new HongsException(911, "Parse '"+name+Cnst.FORM_EXT+".xml error'", ex);
+      throw new HongsException(911, "Parse '"+name+Cnst.FORM_EXT+".xml' error", ex);
     }
 
     this.forms = new HashMap();
@@ -568,8 +571,7 @@ public class FormSet
         return true;
     }
 
-    fn = name.contains(".")
-      || name.contains("/") ? name + Cnst.FORM_EXT + ".xml"
+    fn = name.contains("/") ? name + Cnst.FORM_EXT + ".xml"
        : Cnst.CONF_PACK +"/"+ name + Cnst.FORM_EXT + ".xml";
     return null != FormSet.class.getClassLoader().getResourceAsStream(fn);
   }

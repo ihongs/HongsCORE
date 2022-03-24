@@ -48,7 +48,7 @@ public class CoreLocale
 
     if (null == lang)
     {
-      throw new HongsExemption(828, "Language is not specified for '" + name + "'.");
+      throw new HongsExemption(828, "Language is not specified for '" + name + "'");
     }
 
     if (null != name)
@@ -167,12 +167,12 @@ public class CoreLocale
     return Syno.inject(str, rep);
   }
 
-  public void setLikeinst(CoreLocale inst)
+  public void setLocalism(CoreLocale inst)
   {
     that = inst;
   }
 
-  public CoreLocale getLikeinst()
+  public CoreLocale getLocalism()
   {
     return that;
   }
@@ -238,7 +238,7 @@ public class CoreLocale
     }
 
     // 默认语言实例
-    inst.setLikeinst( getLikeinst(name , lang) );
+    inst.setLocalism( getLocalism(name , lang) );
 
     return inst;
   }
@@ -250,18 +250,18 @@ public class CoreLocale
    * @param lang
    * @return
    */
-  public static CoreLocale getLikeinst(String name, String lang)
+  public static CoreLocale getLocalism(String name, String lang)
   {
     CoreConfig conf = CoreConfig.getInstance();
     CoreLocale that;
 
-    that = getBackinst(name, lang, conf);
+    that = getBackInst(name, lang, conf);
     if (null!= that)
     {
         return that;
     }
 
-    that = getBaseinst(name, lang, conf);
+    that = getBaseInst(name, lang, conf);
     if (null!= that)
     {
         return that;
@@ -270,7 +270,7 @@ public class CoreLocale
     return null;
   }
 
-  private static CoreLocale getBaseinst(String name, String lang, CoreConfig conf)
+  private static CoreLocale getBaseInst(String name, String lang, CoreConfig conf)
   {
     String dlng;
     int    p;
@@ -304,7 +304,7 @@ public class CoreLocale
     return null;
   }
 
-  private static CoreLocale getBackinst(String name, String lang, CoreConfig conf)
+  private static CoreLocale getBackInst(String name, String lang, CoreConfig conf)
   {
     String dlng;
     int    p;
@@ -340,7 +340,7 @@ public class CoreLocale
     {
     dlng = lang.substring(0,p);
 
-    return getBackinst(name,dlng, conf);
+    return getBackInst(name,dlng, conf);
     }
 
     return null;
@@ -364,17 +364,6 @@ public class CoreLocale
     return CoreConfig.class.getClassLoader().getResourceAsStream(path) != null;
   }
 
-  private static String getBaseLang(String lang)
-  {
-    int p  = lang.indexOf( "_" );
-    if (p != -1) {
-      return lang.substring(0 , p).toLowerCase()
-        +"_"+lang.substring(1 + p).toUpperCase();
-    } else {
-      return lang.toLowerCase( );
-    }
-  }
-
   /**
    * 从HEAD串中获取支持的语言
    * @param lang
@@ -391,7 +380,7 @@ public class CoreLocale
     for (int i = 0; i < arr1.length; i ++ )
     {
       arr2 = arr1[i].split(";" , 2);
-      lang = getBaseLang  (arr2[0]);
+      lang = getHigherLanguage( arr2[0] ) ;
       if (sups.contains("," + lang + ",") )
       {
         return lang;
@@ -410,7 +399,7 @@ public class CoreLocale
       if (arr2[0].contains("_")) continue ;
 
       arr2 = arr2[0].split("_" , 2);
-      lang = getBaseLang  (arr2[0]);
+      lang = getHigherLanguage( arr2[0] ) ;
       if (sups.contains("," + lang + ",") )
       {
         return lang;
@@ -424,6 +413,17 @@ public class CoreLocale
     }
 
     return null;
+  }
+
+  private static String getHigherLanguage(String lang)
+  {
+    int p  = lang.indexOf( "_" );
+    if (p != -1) {
+      return lang.substring(0 , p).toLowerCase()
+        +"_"+lang.substring(1 + p).toUpperCase();
+    } else {
+      return lang.toLowerCase( );
+    }
   }
 
 }

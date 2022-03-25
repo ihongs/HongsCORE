@@ -91,8 +91,9 @@ public abstract class CoreSerial
   protected final void init(File file)
     throws HongsException
   {
-    Gate.Leader lock = Gate.getLeader(CoreSerial.class.getName() + ":" + file.getAbsolutePath());
-    boolean     drop ;
+         String path = file.getAbsolutePath();
+    Gate.Leader lock = Gate.getLeader(CoreSerial.class.getName() + ":" + path);
+        boolean drop ;
 
     lock.lockr();
     try {
@@ -124,6 +125,8 @@ public abstract class CoreSerial
     } finally {
       lock.unlockw();
     }
+
+    CoreLogger.debug("Serialized {}", path);
   }
 
   /**

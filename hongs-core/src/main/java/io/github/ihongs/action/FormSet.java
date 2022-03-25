@@ -3,6 +3,8 @@ package io.github.ihongs.action;
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreLocale;
+import io.github.ihongs.CoreLogger;
+import io.github.ihongs.CoreRoster;
 import io.github.ihongs.CoreSerial;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
@@ -133,6 +135,8 @@ public class FormSet
     }
 
     time = serFile.lastModified();
+
+    CoreLogger.debug("Serialized form conf {}", name);
   }
 
   @Override
@@ -149,7 +153,7 @@ public class FormSet
                  + File.separator + name + Cnst.FORM_EXT + ".ser");
     File xmlFile = new File(Core.CONF_PATH
                  + File.separator + name + Cnst.FORM_EXT + ".xml");
-    return  Math.max(serFile.lastModified(), xmlFile.lastModified());
+    return Math.max(serFile.lastModified(),xmlFile.lastModified());
   }
 
   static protected boolean expired(String namz , long timz)
@@ -158,7 +162,7 @@ public class FormSet
     File serFile = new File(Core.DATA_PATH
                  + File.separator + "serial"
                  + File.separator + namz + Cnst.FORM_EXT + ".ser");
-    if (!serFile.exists() || serFile.lastModified() > timz)
+    if ( serFile.exists() && serFile.lastModified() > timz)
     {
       return true;
     }
@@ -167,15 +171,14 @@ public class FormSet
                  + File.separator + namz + Cnst.FORM_EXT + ".xml");
     if ( xmlFile.exists() )
     {
-      return xmlFile.lastModified() > timz;
+      return timz < xmlFile.lastModified();
     }
 
-    // 为减少判断逻辑对 jar 文件不做变更对比, 只要资源存在即可
-    if ( null != FormSet.class.getClassLoader().getResource(
+    long resTime = CoreRoster.getResourceModified(
                namz.contains("/") ? namz + Cnst.FORM_EXT + ".xml" :
-               Cnst.CONF_PACK +"/"+ namz + Cnst.FORM_EXT + ".xml"
-    )) {
-      return true;
+               Cnst.CONF_PACK +"/"+ namz + Cnst.FORM_EXT + ".xml");
+    if ( resTime > 0 ) {
+      return timz < resTime;
     }
 
     throw new HongsException(910, "Can not find the config file '" + namz + Cnst.FORM_EXT + ".xml'");
@@ -203,7 +206,7 @@ public class FormSet
     {
         fn = name.contains("/") ? name + Cnst.FORM_EXT + ".xml"
            : Cnst.CONF_PACK +"/"+ name + Cnst.FORM_EXT + ".xml";
-        is = this.getClass().getClassLoader().getResourceAsStream(fn);
+        is = CoreRoster.getResourceAsStream(fn);
         if ( null == is )
         {
             throw new HongsException(910, "Can not find the config file '" + name + Cnst.FORM_EXT + ".xml'");
@@ -573,7 +576,7 @@ public class FormSet
 
     fn = name.contains("/") ? name + Cnst.FORM_EXT + ".xml"
        : Cnst.CONF_PACK +"/"+ name + Cnst.FORM_EXT + ".xml";
-    return null != FormSet.class.getClassLoader().getResourceAsStream(fn);
+    return CoreRoster.getResourceModified(fn) > 0;
   }
 
   public static FormSet getInstance(String name) throws HongsException {

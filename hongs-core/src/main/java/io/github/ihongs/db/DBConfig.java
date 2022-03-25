@@ -2,6 +2,7 @@ package io.github.ihongs.db;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
+import io.github.ihongs.CoreRoster;
 import io.github.ihongs.CoreSerial;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
@@ -67,26 +68,20 @@ public class DBConfig
   protected byte expires(File serFile)
     throws HongsException
   {
-    if (!serFile.exists()) {
-      return 0;
+    long serTime = serFile.lastModified();
+
+    long xmlTime = new File(
+         Core.CONF_PATH +"/"+ name + Cnst.DB_EXT + ".xml"
+    ).lastModified ( );
+    if ( xmlTime > 0 ) {
+      return xmlTime > serTime ? (byte) 0 : (byte) 1;
     }
 
-    File xmlFile = new File(
-         Core.CONF_PATH +"/"+ name + Cnst.DB_EXT + ".xml"
-    );
-    if ( xmlFile.exists()) {
-    if ( xmlFile.lastModified( ) > serFile.lastModified( ) ) {
-      return 0;
-    } else {
-      return 1;
-    }}
-
-    // 为减少判断逻辑对 jar 文件不做变更对比, 只要资源存在即可
-    if ( null != this.getClass().getClassLoader().getResource(
-         name.contains("/") ? name + Cnst.DB_EXT + ".xml"
-       : Cnst.CONF_PACK +"/"+ name + Cnst.DB_EXT + ".xml"
-    )) {
-      return 1;
+    long resTime = CoreRoster.getResourceModified(
+         name.contains("/") ? name + Cnst.DB_EXT + ".xml" :
+         Cnst.CONF_PACK +"/"+ name + Cnst.DB_EXT + ".xml");
+    if ( resTime > 0 ) {
+      return resTime > serTime ? (byte) 0 : (byte) 1;
     }
 
     throw new HongsExemption(826, "Can not find the config file '" + name + Cnst.DB_EXT + ".xml'");
@@ -109,7 +104,7 @@ public class DBConfig
     {
         fn = name.contains("/") ? name + Cnst.DB_EXT + ".xml"
            : Cnst.CONF_PACK +"/"+ name + Cnst.DB_EXT + ".xml";
-        is = this.getClass().getClassLoader().getResourceAsStream(fn);
+        is = CoreRoster.getResourceAsStream(fn);
         if (  is  ==  null )
         {
             throw new HongsExemption(826, "Can not find the config file '" + name + Cnst.DB_EXT + ".xml'");

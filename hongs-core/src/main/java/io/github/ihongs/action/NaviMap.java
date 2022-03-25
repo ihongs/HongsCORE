@@ -4,6 +4,7 @@ import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreLocale;
 import io.github.ihongs.CoreLogger;
+import io.github.ihongs.CoreRoster;
 import io.github.ihongs.CoreSerial;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
@@ -13,6 +14,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -173,6 +175,8 @@ public class NaviMap
     }
 
     time = serFile.lastModified();
+
+    CoreLogger.debug("Serialized navi conf {}", name);
   }
 
   @Override
@@ -189,7 +193,7 @@ public class NaviMap
                  + File.separator + name + Cnst.NAVI_EXT + ".ser");
     File xmlFile = new File(Core.CONF_PATH
                  + File.separator + name + Cnst.NAVI_EXT + ".xml");
-    return  Math.max(serFile.lastModified(), xmlFile.lastModified());
+    return Math.max(serFile.lastModified(),xmlFile.lastModified());
   }
 
   static protected boolean expired(String namz , long timz)
@@ -198,7 +202,7 @@ public class NaviMap
     File serFile = new File(Core.DATA_PATH
                  + File.separator + "serial"
                  + File.separator + namz + Cnst.NAVI_EXT + ".ser");
-    if (!serFile.exists() || serFile.lastModified() > timz)
+    if ( serFile.exists() && serFile.lastModified() > timz)
     {
       return true;
     }
@@ -207,17 +211,16 @@ public class NaviMap
                  + File.separator + namz + Cnst.NAVI_EXT + ".xml");
     if ( xmlFile.exists() )
     {
-      return xmlFile.lastModified() > timz;
+      return timz < xmlFile.lastModified();
     }
 
-    // 为减少判断逻辑对 jar 文件不做变更对比, 只要资源存在即可
-    if ( null != NaviMap.class.getClassLoader().getResource(
+    long resTime = CoreRoster.getResourceModified(
                namz.contains("/") ? namz + Cnst.NAVI_EXT + ".xml" :
-               Cnst.CONF_PACK +"/"+ namz + Cnst.NAVI_EXT + ".xml"
-    )) {
-      return true;
+               Cnst.CONF_PACK +"/"+ namz + Cnst.NAVI_EXT + ".xml");
+    if ( resTime > 0 ) {
+      return timz < resTime;
     }
-    
+
     throw new HongsException(920, "Can not find the config file '" + namz + Cnst.NAVI_EXT + ".xml'");
   }
 
@@ -260,7 +263,7 @@ public class NaviMap
         fn = name.contains(".")
           || name.contains("/") ? name + Cnst.NAVI_EXT + ".xml"
            : Cnst.CONF_PACK +"/"+ name + Cnst.NAVI_EXT + ".xml";
-        is = this.getClass().getClassLoader().getResourceAsStream(fn);
+        is = CoreRoster.getResourceAsStream(fn);
         if (  is  ==  null )
         {
             throw new HongsException(920, "Can not find the config file '" + name + Cnst.NAVI_EXT + ".xml'");
@@ -1039,7 +1042,7 @@ public class NaviMap
     fn = name.contains(".")
       || name.contains("/") ? name + Cnst.NAVI_EXT + ".xml"
        : Cnst.CONF_PACK +"/"+ name + Cnst.NAVI_EXT + ".xml";
-    return null != NaviMap.class.getClassLoader().getResourceAsStream(fn);
+    return CoreRoster.getResourceModified(fn) > 0;
   }
 
   public static NaviMap getInstance(String name) throws HongsException {

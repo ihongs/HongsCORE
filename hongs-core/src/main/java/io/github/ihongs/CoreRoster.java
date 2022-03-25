@@ -2,7 +2,7 @@ package io.github.ihongs;
 
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
-import io.github.ihongs.cmdlet.anno.Cmdlet;
+import io.github.ihongs.combat.anno.Combat;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.File;
@@ -26,7 +26,7 @@ import java.util.jar.JarFile;
 public class CoreRoster {
 
     private static final ReadWriteLock RWLOCKS = new ReentrantReadWriteLock();
-    private static Map<String, Method> CMDLETS = null;
+    private static Map<String, Method> COMBATS = null;
     private static Map<String, Mathod> ACTIONS = null;
 
     public  static final class Mathod {
@@ -67,19 +67,19 @@ public class CoreRoster {
      * 获取所有内置命令
      * @return
      */
-    public static Map<String, Method> getCmdlets() {
+    public static Map<String, Method> getCombats() {
         Lock rlock = RWLOCKS.readLock();
         rlock.lock();
         try {
-            if (null != CMDLETS) {
-                return  CMDLETS;
+            if (null != COMBATS) {
+                return  COMBATS;
             }
         } finally {
             rlock.unlock();
         }
 
         regHandles();
-        return CMDLETS;
+        return COMBATS;
     }
 
     private static void regHandles() {
@@ -87,12 +87,12 @@ public class CoreRoster {
         wlock.lock();
         try {
             ACTIONS = new HashMap();
-            CMDLETS = new HashMap();
+            COMBATS = new HashMap();
             String[] pkgs = CoreConfig
                     .getInstance("defines"   )
                     .getProperty("mount.serv")
                     .split(";");
-            addHandles(ACTIONS , CMDLETS , pkgs );
+            addHandles(ACTIONS , COMBATS , pkgs );
         } finally {
             wlock.unlock();
         }
@@ -122,9 +122,9 @@ public class CoreRoster {
                     continue;
                 }
 
-                Cmdlet cmdo = (Cmdlet) clso.getAnnotation(Cmdlet.class);
+                Combat cmdo = (Combat) clso.getAnnotation(Combat.class);
                 if (cmdo != null) {
-                    addCmdlets(cmds, cmdo, clsn, clso);
+                    addCombats(cmds, cmdo, clsn, clso);
                 }
             }
         }
@@ -168,7 +168,7 @@ public class CoreRoster {
         }
     }
 
-    private static void addCmdlets(Map<String, Method> acts, Cmdlet anno, String clsn, Class clso) {
+    private static void addCombats(Map<String, Method> acts, Combat anno, String clsn, Class clso) {
         String actn = anno.value();
         if (actn == null || actn.length() == 0) {
             actn =  clsn;
@@ -179,7 +179,7 @@ public class CoreRoster {
             String mtdn = mtdo.getName( );
 
             // 从注解提取动作名
-            Cmdlet annx = (Cmdlet) mtdo.getAnnotation(Cmdlet.class);
+            Combat annx = (Combat) mtdo.getAnnotation(Combat.class);
             if (annx == null) {
                 continue;
             }
@@ -191,7 +191,7 @@ public class CoreRoster {
             // 检查方法是否合法
             Class[] prms = mtdo.getParameterTypes();
             if (prms == null || prms.length != 1 || !String[].class.isAssignableFrom(prms[0])) {
-                throw new HongsExemption(832, "Can not find cmdlet method '"+clsn+"."+mtdn+"(String[])'.");
+                throw new HongsExemption(832, "Can not find combat method '"+clsn+"."+mtdn+"(String[])'.");
             }
 
             if ("__main__".equals(actx)) {

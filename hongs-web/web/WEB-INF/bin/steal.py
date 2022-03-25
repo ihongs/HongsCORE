@@ -15,7 +15,7 @@ if  __name__ == "__main__":
     def cmd_help():
         print("Usage: | steal.py REGEXP")
         print("Another options:")
-        print("  -n --name             Action or Cmdlet name")
+        print("  -n --name             Action or Combat name")
         print("  -d --addr             Client IP address")
         print("  -l --type             Logs type level")
         print("  -h --help             Show this msg")

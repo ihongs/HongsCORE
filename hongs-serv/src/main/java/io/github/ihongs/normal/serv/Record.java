@@ -3,14 +3,14 @@ package io.github.ihongs.normal.serv;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsException;
-import io.github.ihongs.cmdlet.CmdletHelper;
-import io.github.ihongs.cmdlet.anno.Cmdlet;
+import io.github.ihongs.combat.CombatHelper;
+import io.github.ihongs.combat.anno.Combat;
 
 /**
  * 简单数据存储
  * @author Hongs
  */
-@Cmdlet("normal.record")
+@Combat("normal.record")
 public class Record {
 
     private static IRecord getRecord() throws HongsException {
@@ -125,7 +125,7 @@ public class Record {
      * 清除过期的数据
      * @param args
      */
-    @Cmdlet("clean")
+    @Combat("clean")
     public static void clean(String[] args) {
         long exp = 0;
         if (args.length != 0) {
@@ -138,12 +138,12 @@ public class Record {
      * 预览存储的数据
      * @param args
      */
-    @Cmdlet("check")
+    @Combat("check")
     public static void check(String[] args) {
         if (args.length == 0) {
-          CmdletHelper.println("Record ID required");
+          CombatHelper.println("Record ID required");
         }
-          CmdletHelper.preview( get ( args [ 0 ] ) );
+          CombatHelper.preview( get ( args [ 0 ] ) );
     }
 
 }

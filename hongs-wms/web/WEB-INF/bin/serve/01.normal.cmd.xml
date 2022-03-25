@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
-    <cmdlet system="no">
+    <combat system="no">
         <cmd>normal.record.clean</cmd>
-    </cmdlet>
-    <cmdlet system="no">
+    </combat>
+    <combat system="no">
         <cmd>normal.sesion.clean</cmd>
-    </cmdlet>
+    </combat>
 </root>

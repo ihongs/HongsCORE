@@ -1,11 +1,11 @@
-package io.github.ihongs.cmdlet.serv;
+package io.github.ihongs.combat.serv;
 
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreRoster;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
-import io.github.ihongs.cmdlet.anno.Cmdlet;
+import io.github.ihongs.combat.anno.Combat;
 import io.github.ihongs.db.DBConfig;
 
 import java.io.File;
@@ -55,10 +55,10 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
  * 服务启动命令
  * @author Hongs
  */
-@Cmdlet("server")
-public class ServerCmdlet {
+@Combat("server")
+public class ServerCombat {
 
-    @Cmdlet("start")
+    @Combat("start")
     public static void start(String[] args) throws HongsException {
         int    port = args.length >0 ? Integer.parseInt(args[0]) : 8080;
         String conf = Core.CORE_PATH + File.separator + "web.xml";

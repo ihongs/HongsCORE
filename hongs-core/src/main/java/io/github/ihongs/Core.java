@@ -43,7 +43,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * CONF_PATH 配置目录路径(CORE_PATH/etc)
  * DATA_PATH 数据目录路径(CORE_PATH/var)
  * SERVER_ID 服务器ID (依附于 Core.newIdentity())
- * 注意: 以上属性将在 Servlet/Filter/Cmdlet 等初始化时进行设置. 为保持简单, 整个容器是开放的, 留意勿被恶意修改.
+ * 注意: 以上属性将在 Servlet/Filter/Combat 等初始化时进行设置. 为保持简单, 整个容器是开放的, 留意勿被恶意修改.
  * </pre>
  *
  * <h3>错误代码:</h3>

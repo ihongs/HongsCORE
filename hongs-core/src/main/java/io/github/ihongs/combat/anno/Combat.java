@@ -1,4 +1,4 @@
-package io.github.ihongs.cmdlet.anno;
+package io.github.ihongs.combat.anno;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -14,6 +14,6 @@ import java.lang.annotation.Target;
  */
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Cmdlet {
+public @interface Combat {
     String value() default "";
 }

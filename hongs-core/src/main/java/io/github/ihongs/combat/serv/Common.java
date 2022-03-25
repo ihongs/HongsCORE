@@ -1,13 +1,13 @@
-package io.github.ihongs.cmdlet.serv;
+package io.github.ihongs.combat.serv;
 
 import io.github.ihongs.Core;
-import io.github.ihongs.HongsException;
-import io.github.ihongs.action.ActionRunner;
-import io.github.ihongs.cmdlet.CmdletHelper;
-import io.github.ihongs.cmdlet.CmdletRunner;
-import io.github.ihongs.cmdlet.anno.Cmdlet;
 import io.github.ihongs.CoreRoster.Mathod;
+import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
+import io.github.ihongs.action.ActionRunner;
+import io.github.ihongs.combat.CombatHelper;
+import io.github.ihongs.combat.CombatRunner;
+import io.github.ihongs.combat.anno.Combat;
 import java.io.File;
 import java.io.PrintStream;
 import java.io.FileInputStream;
@@ -24,36 +24,36 @@ import java.util.Map;
  * 常规命令
  * @author Hongs
  */
-@Cmdlet("common")
+@Combat("common")
 public class Common {
 
-    @Cmdlet("echo")
+    @Combat("echo")
     public static void echo(String[] args) {
-        PrintStream out = CmdletHelper.OUT.get();
+        PrintStream out = CombatHelper.OUT.get();
         for (String arg : args) {
             out.print(arg);
             out.print(" ");
         }   out.println( );
     }
 
-    @Cmdlet("drop-dir")
+    @Combat("drop-dir")
     public static void dropDir(String[] args) {
         new Dirs(args[0]).rmdirs();
     }
 
-    @Cmdlet("make-dir")
+    @Combat("make-dir")
     public static void makeDir(String[] args) {
         new Dirs(args[0]).mkdirs();
     }
 
-    @Cmdlet("make-uid")
+    @Combat("make-uid")
     public static void makeUID(String[] args) {
         String sid =  args.length > 0 ? args[0] : Core.SERVER_ID;
         String uid =  Core.newIdentity( sid );
-        CmdletHelper.OUT.get().println( uid );
+        CombatHelper.OUT.get().println( uid );
     }
 
-    @Cmdlet("show-env")
+    @Combat("show-env")
     public static void showENV(String[] args) {
         Map<String, String> a = new TreeMap(new PropComparator());
         Map<String, String> m = new HashMap(    System.getenv ());
@@ -69,7 +69,7 @@ public class Common {
             }
         }
 
-        PrintStream out = CmdletHelper.OUT.get ();
+        PrintStream out = CombatHelper.OUT.get ();
 
         for (Map.Entry<String, String> n : a.entrySet()) {
             StringBuilder s = new StringBuilder();
@@ -82,7 +82,7 @@ public class Common {
         }
     }
 
-    @Cmdlet("show-properties")
+    @Combat("show-properties")
     public static void showProperties(String[] args) {
         Map<String, String> a = new TreeMap( new  PropComparator());
         Map<String, String> m = new HashMap(System.getProperties());
@@ -98,7 +98,7 @@ public class Common {
             }
         }
 
-        PrintStream out = CmdletHelper.OUT.get ();
+        PrintStream out = CombatHelper.OUT.get ();
 
         for (Map.Entry<String, String> n : a.entrySet()) {
             StringBuilder s = new StringBuilder();
@@ -111,35 +111,7 @@ public class Common {
         }
     }
 
-    @Cmdlet("show-cmdlets")
-    public static void showCmdlets(String[] args) {
-        Map<String, String> a = new TreeMap(new PathComparator('.'));
-        int i = 0, j;
-
-        for (Map.Entry<String, Method> et : CmdletRunner.getCmdlets().entrySet()) {
-            String k = et.getKey(  );
-            Method v = et.getValue();
-            a.put( k, v.getDeclaringClass().getName()+"."+v.getName() );
-            j = k.length();
-            if (i < j && j < 39) {
-                i = j;
-            }
-        }
-
-        PrintStream out = CmdletHelper.OUT.get ();
-
-        for (Map.Entry<String, String> n : a.entrySet()) {
-            StringBuilder s = new StringBuilder();
-            s.append(n.getKey());
-            for (j = n.getKey( ).length( ); j < i; j ++) {
-                s.append(" " );
-            }   s.append("\t");
-                s.append(n.getValue());
-            out.println ( s  );
-        }
-    }
-
-    @Cmdlet("show-actions")
+    @Combat("show-actions")
     public static void showActions(String[] args) {
         Map<String, String> a = new TreeMap(new PathComparator('/'));
         int i = 0, j;
@@ -154,7 +126,7 @@ public class Common {
             }
         }
 
-        PrintStream out = CmdletHelper.OUT.get ();
+        PrintStream out = CombatHelper.OUT.get ();
 
         for (Map.Entry<String, String> n : a.entrySet()) {
             StringBuilder s = new StringBuilder();
@@ -167,10 +139,38 @@ public class Common {
         }
     }
 
-    @Cmdlet("view-serial")
+    @Combat("show-combats")
+    public static void showCombats(String[] args) {
+        Map<String, String> a = new TreeMap(new PathComparator('.'));
+        int i = 0, j;
+
+        for (Map.Entry<String, Method> et : CombatRunner.getCombats().entrySet()) {
+            String k = et.getKey(  );
+            Method v = et.getValue();
+            a.put( k, v.getDeclaringClass().getName()+"."+v.getName() );
+            j = k.length();
+            if (i < j && j < 39) {
+                i = j;
+            }
+        }
+
+        PrintStream out = CombatHelper.OUT.get ();
+
+        for (Map.Entry<String, String> n : a.entrySet()) {
+            StringBuilder s = new StringBuilder();
+            s.append(n.getKey());
+            for (j = n.getKey( ).length( ); j < i; j ++) {
+                s.append(" " );
+            }   s.append("\t");
+                s.append(n.getValue());
+            out.println ( s  );
+        }
+    }
+
+    @Combat("view-serial")
     public static void viewSerial(String[] args) throws HongsException {
         if (args.length == 0) {
-          CmdletHelper.println(
+          CombatHelper.println(
                 "Usage: common.view-serial serial/file/path"
               + "\r\n\tJust for CoreSerial or Collection object.");
           return;
@@ -181,7 +181,7 @@ public class Common {
             FileInputStream fis = new   FileInputStream(fio);
           ObjectInputStream ois = new ObjectInputStream(fis);
         ) {
-          CmdletHelper.preview(ois.readObject());
+          CombatHelper.preview(ois.readObject());
         }
         catch (ClassNotFoundException e)
         {

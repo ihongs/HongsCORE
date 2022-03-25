@@ -6,8 +6,8 @@ import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.CommitRunner;
-import io.github.ihongs.cmdlet.CmdletHelper;
-import io.github.ihongs.cmdlet.anno.Cmdlet;
+import io.github.ihongs.combat.CombatHelper;
+import io.github.ihongs.combat.anno.Combat;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.db.link.Loop;
@@ -28,17 +28,17 @@ import org.apache.lucene.index.Term;
  * 数据操作命令
  * @author hong
  */
-@Cmdlet("matrix.data")
-public class DataCmdlet {
+@Combat("matrix.data")
+public class DataCombat {
 
-    @Cmdlet("revert")
+    @Combat("revert")
     public static void revert(String[] args)
     throws HongsException, InterruptedException {
         revert(args, new Inst());
     }
     public static void revert(String[] args, Inst df)
     throws HongsException, InterruptedException {
-        Map opts = CmdletHelper.getOpts(args, new String[] {
+        Map opts = CombatHelper.getOpts(args, new String[] {
             "conf=s",
             "form=s",
             "user:s",
@@ -146,7 +146,7 @@ public class DataCmdlet {
         boolean pr = ( Core . DEBUG  ==  0 );
         long tm = System.currentTimeMillis();
         long tc = tm / 1000 ;
-        if (pr) CmdletHelper.progres(tm,c,i);
+        if (pr) CombatHelper.progres(tm,c,i);
 
         dr.begin ( );
 
@@ -174,7 +174,7 @@ public class DataCmdlet {
                 da.commit(  );
                 dr.begin (  );
                 if ( pr) {
-                    CmdletHelper.progres(tm, c,i);
+                    CombatHelper.progres(tm, c,i);
                 }
             }
         }
@@ -182,7 +182,7 @@ public class DataCmdlet {
         da.commit( );
         dr.begin ( );
         if ( pr) {
-            CmdletHelper.progres(tm, c,i);
+            CombatHelper.progres(tm, c,i);
         }
 
         /**
@@ -194,20 +194,20 @@ public class DataCmdlet {
 
         da.commit( );
         if ( pr) {
-            CmdletHelper.progres( );
+            CombatHelper.progres( );
         }
 
-        CmdletHelper.println("Revert "+i+" item(s) for "+form+" to "+dr.getDbName());
+        CombatHelper.println("Revert "+i+" item(s) for "+form+" to "+dr.getDbName());
     }
 
-    @Cmdlet("import")
+    @Combat("import")
     public static void impart(String[] args)
     throws HongsException, InterruptedException {
         impart(args, new Inst());
     }
     public static void impart(String[] args, Inst df)
     throws HongsException, InterruptedException {
-        Map opts = CmdletHelper.getOpts(args, new String[] {
+        Map opts = CombatHelper.getOpts(args, new String[] {
             "conf=s",
             "form=s",
             "user:s",
@@ -242,17 +242,17 @@ public class DataCmdlet {
 
         dr.commit( );
 
-        CmdletHelper.println("Import "+i+" item(s) to "+dr.getDbName());
+        CombatHelper.println("Import "+i+" item(s) to "+dr.getDbName());
     }
 
-    @Cmdlet("update")
+    @Combat("update")
     public static void update(String[] args)
     throws HongsException, InterruptedException {
         update(args, new Inst());
     }
     public static void update(String[] args, Inst df)
     throws HongsException, InterruptedException {
-        Map opts = CmdletHelper.getOpts(args, new String[] {
+        Map opts = CombatHelper.getOpts(args, new String[] {
             "conf=s",
             "form=s",
             "user:s",
@@ -268,7 +268,7 @@ public class DataCmdlet {
         String[] dats = (String[]) opts.get("");
 
         if (dats.length < 2) {
-            CmdletHelper.println ( "Need FIND DATA." );
+            CombatHelper.println ( "Need FIND DATA." );
             return;
         }
 
@@ -292,17 +292,17 @@ public class DataCmdlet {
 
         dr.commit( );
 
-        CmdletHelper.println("Update "+i+" item(s) in "+dr.getDbName());
+        CombatHelper.println("Update "+i+" item(s) in "+dr.getDbName());
     }
 
-    @Cmdlet("delete")
+    @Combat("delete")
     public static void delete(String[] args)
     throws HongsException, InterruptedException {
         delete(args, new Inst());
     }
     public static void delete(String[] args, Inst df)
     throws HongsException, InterruptedException {
-        Map opts = CmdletHelper.getOpts(args, new String[] {
+        Map opts = CombatHelper.getOpts(args, new String[] {
             "conf=s",
             "form=s",
             "user:s",
@@ -318,7 +318,7 @@ public class DataCmdlet {
         String[] dats = (String[]) opts.get("");
 
         if (dats.length < 1) {
-            CmdletHelper.println ( "Need FIND_TERM." );
+            CombatHelper.println ( "Need FIND_TERM." );
             return;
         }
 
@@ -343,17 +343,17 @@ public class DataCmdlet {
 
         dr.commit( );
 
-        CmdletHelper.println("Delete "+i+" item(s) in "+dr.getDbName());
+        CombatHelper.println("Delete "+i+" item(s) in "+dr.getDbName());
     }
 
-    @Cmdlet("search")
+    @Combat("search")
     public static void search(String[] args)
     throws HongsException {
         search(args, new Inst());
     }
     public static void search(String[] args, Inst df)
     throws HongsException {
-        Map opts = CmdletHelper.getOpts(args, new String[] {
+        Map opts = CombatHelper.getOpts(args, new String[] {
             "conf=s",
             "form=s",
             "!A",
@@ -365,7 +365,7 @@ public class DataCmdlet {
         String[] dats = (String[]) opts.get("");
 
         if (dats.length < 1) {
-            CmdletHelper.println ( "Need FIND_TERM." );
+            CombatHelper.println ( "Need FIND_TERM." );
             return;
         }
 
@@ -373,7 +373,7 @@ public class DataCmdlet {
         Map  rd = data ( dats[0] );
 
         for(Map od : dr.search(rd, 0, 0)) {
-            CmdletHelper.preview (  od  );
+            CombatHelper.preview (  od  );
         }
     }
 
@@ -382,14 +382,14 @@ public class DataCmdlet {
      * @param args
      * @throws HongsException
      */
-    @Cmdlet("uproot")
+    @Combat("uproot")
     public static void uproot(String[] args)
     throws HongsException {
         uproot(args, new Inst());
     }
     public static void uproot(String[] args, Inst df)
     throws HongsException {
-        Map opts = CmdletHelper.getOpts(
+        Map opts = CombatHelper.getOpts(
             args ,
             "uid=s" ,
             "uids=s",

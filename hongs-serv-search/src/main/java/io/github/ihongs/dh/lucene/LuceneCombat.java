@@ -3,8 +3,8 @@ package io.github.ihongs.dh.lucene;
 import io.github.ihongs.Cnst;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
-import io.github.ihongs.cmdlet.CmdletHelper;
-import io.github.ihongs.cmdlet.anno.Cmdlet;
+import io.github.ihongs.combat.CombatHelper;
+import io.github.ihongs.combat.anno.Combat;
 import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Synt;
 
@@ -15,12 +15,12 @@ import java.util.Map;
  * Lucene 索引命令
  * @author Hongs
  */
-@Cmdlet()
-public class LuceneCmdlet {
+@Combat()
+public class LuceneCombat {
 
-    @Cmdlet("search")
+    @Combat("search")
     public static void search(String[] args) throws HongsException {
-        Map opts = CmdletHelper.getOpts(args, new String[ ] {
+        Map opts = CombatHelper.getOpts(args, new String[ ] {
             "conf=s",
             "form=s",
             "id*s",
@@ -36,12 +36,12 @@ public class LuceneCmdlet {
         String name = Synt.asString(opts.remove("name"));
         LuceneRecord so = LuceneRecord.getInstance(conf, name);
         Map rsp = so.search(opts);
-        CmdletHelper.preview(rsp);
+        CombatHelper.preview(rsp);
     }
 
-    @Cmdlet("delete")
+    @Combat("delete")
     public static void delete(String[] args) throws HongsException {
-        Map opts = CmdletHelper.getOpts(args, new String[ ] {
+        Map opts = CombatHelper.getOpts(args, new String[ ] {
             "conf=s",
             "form=s",
             "id*s"
@@ -68,9 +68,9 @@ public class LuceneCmdlet {
         }
     }
 
-    @Cmdlet("update")
+    @Combat("update")
     public static void update(String[] args) throws HongsException {
-        Map opts = CmdletHelper.getOpts(args, new String[ ] {
+        Map opts = CombatHelper.getOpts(args, new String[ ] {
             "conf=s",
             "form=s",
             "id*s",
@@ -100,9 +100,9 @@ public class LuceneCmdlet {
         }
     }
 
-    @Cmdlet("create")
+    @Combat("create")
     public static void create(String[] args) throws HongsException {
-        Map opts = CmdletHelper.getOpts(args, new String[ ] {
+        Map opts = CombatHelper.getOpts(args, new String[ ] {
             "conf=s",
             "form=s",
             "!A"

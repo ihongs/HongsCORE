@@ -12,7 +12,7 @@ set KLASSPATH=%CLASSPATH%;%CORE_PATH%\lib\*;%CORE_PATH%\classes;%CORE_PATH%\lib\
   -Dlog4j.configurationFile="\\%CORE_PATH%\etc\log.xml"^
   -Dlogs.dir="\\%CORE_PATH%\var\log"^
   -Dtmps.dir="\\%CORE_PATH%\var\tmp"^
-  io.github.ihongs.cmdlet.CmdletRunner %*^
+  io.github.ihongs.combat.CombatRunner %*^
   --COREPATH "%CORE_PATH%"
 
 ENDLOCAL

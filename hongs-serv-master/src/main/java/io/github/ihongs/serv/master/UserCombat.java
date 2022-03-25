@@ -2,8 +2,8 @@ package io.github.ihongs.serv.master;
 
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsException;
-import io.github.ihongs.cmdlet.CmdletHelper;
-import io.github.ihongs.cmdlet.anno.Cmdlet;
+import io.github.ihongs.combat.CombatHelper;
+import io.github.ihongs.combat.anno.Combat;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.db.link.Loop;
@@ -17,17 +17,17 @@ import java.util.Set;
  * 用户维护命令
  * @author hong
  */
-@Cmdlet("master.user")
-public class UserCmdlet {
+@Combat("master.user")
+public class UserCombat {
 
     /**
      * 归并命令
      * @param args
      * @throws HongsException
      */
-    @Cmdlet("uproot")
+    @Combat("uproot")
     public static void uproot(String[] args) throws HongsException {
-        Map opts = CmdletHelper.getOpts(
+        Map opts = CombatHelper.getOpts(
             args ,
             "uid=s" ,
             "uids=s",

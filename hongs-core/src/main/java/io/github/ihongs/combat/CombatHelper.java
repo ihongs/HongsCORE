@@ -1,4 +1,4 @@
-package io.github.ihongs.cmdlet;
+package io.github.ihongs.combat;
 
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreLogger;
@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
  *
  * @author Hongs
  */
-public class CmdletHelper
+public class CombatHelper
 {
 
   /**
@@ -476,7 +476,7 @@ public class CmdletHelper
     if (0 == n) return;
     String notes = String.format("Ok(%d)", ok);
     float  scale = (float) ok / n * 100;
-    CmdletHelper.progres(notes , scale);
+    CombatHelper.progres(notes , scale);
   }
 
   /**
@@ -490,7 +490,7 @@ public class CmdletHelper
     if (0 == n) return;
     String notes = String.format("Ok(%d) Er(%d)", ok, er);
     float  scale = (float) (er + ok) / n * 100;
-    CmdletHelper.progres(notes , scale);
+    CombatHelper.progres(notes , scale);
   }
 
   /**
@@ -517,7 +517,7 @@ public class CmdletHelper
         t = (long) ( t / scale * 100 - t );
         notes = String.format("Ok(%d) ET: %s", ok, Syno.humanTime(t));
     }
-    CmdletHelper.progres(notes , scale);
+    CombatHelper.progres(notes , scale);
   }
 
   /**
@@ -545,7 +545,7 @@ public class CmdletHelper
         t = (long) ( t / scale * 100 - t );
         notes = String.format("Ok(%d) Er(%d) ET: %s", ok, er, Syno.humanTime(t));
     }
-    CmdletHelper.progres(notes , scale);
+    CombatHelper.progres(notes , scale);
   }
 
   /**

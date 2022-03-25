@@ -1,7 +1,7 @@
 package io.github.ihongs.serv.centra;
 
-import io.github.ihongs.cmdlet.CmdletHelper;
-import io.github.ihongs.cmdlet.anno.Cmdlet;
+import io.github.ihongs.combat.CombatHelper;
+import io.github.ihongs.combat.anno.Combat;
 import io.github.ihongs.util.verify.Thumb;
 import io.github.ihongs.util.verify.Wrong;
 import java.io.IOException;
@@ -26,12 +26,12 @@ import java.util.Map;
  *
  * @author hongs
  */
-@Cmdlet("thumb")
+@Combat("thumb")
 public class ThumbShell {
 
-    @Cmdlet("__main__")
+    @Combat("__main__")
     public static void exec(String[] args) throws IOException {
-        Map opts = CmdletHelper.getOpts(args, new String[] {
+        Map opts = CombatHelper.getOpts(args, new String[] {
             "thumb-size:s",
             "thumb-extn:s",
             "thumb-mode:s",
@@ -41,9 +41,9 @@ public class ThumbShell {
         });
         String [] files = (String []) opts.remove("");
 
-        InputStream in  = CmdletHelper.IN .get();
-        PrintStream out = CmdletHelper.OUT.get();
-        PrintStream err = CmdletHelper.ERR.get();
+        InputStream in  = CombatHelper.IN .get();
+        PrintStream out = CombatHelper.OUT.get();
+        PrintStream err = CombatHelper.ERR.get();
         Thumb thu = new Thumb( );
               thu.config( opts );
 

@@ -4,8 +4,8 @@ import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionDriver;
-import io.github.ihongs.cmdlet.CmdletHelper;
-import io.github.ihongs.cmdlet.anno.Cmdlet;
+import io.github.ihongs.combat.CombatHelper;
+import io.github.ihongs.combat.anno.Combat;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.util.Digest;
 import java.io.Serializable;
@@ -24,7 +24,7 @@ import javax.servlet.http.HttpSessionContext;
  * @author Hongs
  * @deprecated 改用 Jetty 的 SessionManager
  */
-@Cmdlet("normal.sesion")
+@Combat("normal.sesion")
 public class Sesion implements HttpSession, AutoCloseable, Serializable {
 
     private transient boolean isNew = false;
@@ -269,7 +269,7 @@ public class Sesion implements HttpSession, AutoCloseable, Serializable {
      * @param args
      * @throws io.github.ihongs.HongsException
      */
-    @Cmdlet("clean")
+    @Combat("clean")
     public static void clean(String[] args) throws HongsException {
         long exp = 0;
         if (args.length != 0) {
@@ -283,12 +283,12 @@ public class Sesion implements HttpSession, AutoCloseable, Serializable {
      * @param args
      * @throws io.github.ihongs.HongsException
      */
-    @Cmdlet("check")
+    @Combat("check")
     public static void check(String[] args) throws HongsException {
         if (args.length == 0) {
-            CmdletHelper.println("Record ID required");
+            CombatHelper.println("Record ID required");
         }
-        CmdletHelper.preview(getRecord().get(args[0]));
+        CombatHelper.preview(getRecord().get(args[0]));
     }
 
     /**

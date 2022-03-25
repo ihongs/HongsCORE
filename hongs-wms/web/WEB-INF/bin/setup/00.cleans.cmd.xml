@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
-    <cmdlet system="no">
+    <combat system="no">
         <cmd>common.drop-dir</cmd>
         <arg>{{$DATA_PATH}}</arg>
-    </cmdlet>
-    <cmdlet system="no">
+    </combat>
+    <combat system="no">
         <cmd>common.make-dir</cmd>
         <arg>{{$DATA_PATH}}</arg>
-    </cmdlet>
+    </combat>
     <!--
         维护命令举例.
         不直接写脚本,
         是为不同系统下使用相同调用方式,
         且可以在参数中可以使用时间变量.
-        cmdlet的system属性为yes时将作为系统命令调用,
+        combat的system属性为yes时将作为系统命令调用,
         action的server属性为yes时将通过HTTP服务调用,
         runsql的db属性可指定将运行的库.
     //-->
     <!--
-    <cmdlet system="no">
+    <combat system="no">
         <cmd>abc.def.xyz</cmd>
         <arg>{{yyyy/MM/dd|-1w}}</arg>
         <arg opt="opt1">123</arg>
         <arg opt="opt2">456</arg>
         <arg opt="opt3"/>
-    </cmdlet>
+    </combat>
     <action server="no">
         <act>abc/def/xyz</act>
         <arg opt="request">

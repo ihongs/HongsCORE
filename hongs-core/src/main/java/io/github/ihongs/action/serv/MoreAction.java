@@ -9,8 +9,8 @@ import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
-import io.github.ihongs.cmdlet.CmdletHelper;
-import io.github.ihongs.cmdlet.CmdletRunner;
+import io.github.ihongs.combat.CombatHelper;
+import io.github.ihongs.combat.CombatRunner;
 import io.github.ihongs.dh.MergeMore;
 import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Synt;
@@ -357,19 +357,19 @@ public class MoreAction {
             rsp.setCharacterEncoding("utf-8");
 
             try {
-                CmdletHelper.ENV.set((byte)1);
-                CmdletHelper.ERR.set(out);
-                CmdletHelper.OUT.set(out);
+                CombatHelper.ENV.set((byte)1);
+                CombatHelper.ERR.set(out);
+                CombatHelper.OUT.set(out);
 
-                CmdletRunner.exec( args );
+                CombatRunner.exec( args );
             }
             catch ( Error | Exception e ) {
                 out.print ("ERROR: "+ e.getMessage());
             }
             finally {
-                CmdletHelper.OUT.remove();
-                CmdletHelper.ERR.remove();
-                CmdletHelper.ENV.remove();
+                CombatHelper.OUT.remove();
+                CombatHelper.ERR.remove();
+                CombatHelper.ENV.remove();
             }
         }
         catch (IOException e) {

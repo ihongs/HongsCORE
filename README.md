@@ -1,7 +1,7 @@
 # HongsCORE framework for Java
 
 * 文档版本: 19.01.12
-* 软件版本: 1.0.5-20201226
+* 软件版本: 1.0.6-20220326
 * 设计作者: 黄弘(Hongs)
 * 技术支持: kevin.hongs@gmail.com
 
@@ -145,7 +145,7 @@
 
     io.github.ihongs            核心
     io.github.ihongs.action     动作支持
-    io.github.ihongs.cmdlet     命令支持
+    io.github.ihongs.combat     命令支持
     io.github.ihongs.db         关系数据模型
     io.github.ihongs.dh         数据仓库组件
     io.github.ihongs.jsp        JSP 工具
@@ -158,8 +158,8 @@
 
 ### 路径映射
 
-    foo.bar.xxx         对应标记 @Cmdlet("fop.bar") 的类下 @Cmdlet("xxx") 的方法
-    foo.bar             对应标记 @Cmdlet("foo.bar") 的类下 @Cmdlet("__main__") 的方法
+    foo.bar.xxx         对应标记 @Combat("fop.bar") 的类下 @Combat("xxx") 的方法
+    foo.bar             对应标记 @Combat("foo.bar") 的类下 @Combat("__main__") 的方法
     foo/bar/xxx.act     对应标记 @Action("foo/bar") 的类下 @Action("xxx") 的方法
     foo/bar.act         对应标记 @Action("foo/bar") 的类下 @Action("__main__") 的方法
     api/foo/bar         对应标记 @Action("foo/bar") 的类下 @Action("search,create,update,delete") 的方法
@@ -168,7 +168,7 @@
     common/conf/name.js 读取 WEB-INF/conf/name.properties 中 fore.xxxx. 开头的配置
     common/lang/name.js 读取 WEB-INF/conf/name_xx_XX.properties 中 fore.xxxx. 开头的配置
 
-action 和 cmdlet 使用 @Action 和 @Cmdlet 注解来设置访问路径, 如果不指定则用类,方法名作为路径; 请在 etc/defines.properties 中设置 mount.serv 为 Action,Cmdlet 类, 或 xxx.foo.* 告知该包下存在 Action,Cmdlet 类, 多个类/包用";"分隔.
+action 和 combat 使用 @Action 和 @Combat 注解来设置访问路径, 如果不指定则用类,方法名作为路径; 请在 etc/defines.properties 中设置 mount.serv 为 Action,Combat 类, 或 xxx.foo.* 告知该包下存在 Action,Combat 类, 多个类/包用";"分隔.
 最后3个路径, 将扩展名 .js 换成 .json 即可得到 JSON 格式的数据; 语言配置可在 name 后加语言区域标识, 如 example_zh_CN.js 为获取 example 的中文大陆简体的 js 格式的语言配置.
 
 ### 请求规则

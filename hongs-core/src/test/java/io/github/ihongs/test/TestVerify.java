@@ -2,7 +2,7 @@ package io.github.ihongs.test;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
-import io.github.ihongs.cmdlet.CmdletRunner;
+import io.github.ihongs.combat.CombatRunner;
 import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.verify.IsNumber;
@@ -49,7 +49,7 @@ public class TestVerify extends TestCase {
     @Test
     public void testVerify() throws IOException {
         // 避免路径缺失致写入项目主目录
-        CmdletRunner.init(new String[] {"--COREPATH", "target"});
+        CombatRunner.init(new String[] {"--COREPATH", "target"});
         
         try {
             Verify verify = new Verify()

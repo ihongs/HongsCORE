@@ -107,7 +107,7 @@ public class TestUtilDict extends TestCase {
         y = new ArrayList(); y.add(1); y.add(2);
         assertEquals(y, x);
 
-        //io.github.ihongs.cmdlet.CmdletHelper.preview(dict);
+        //io.github.ihongs.combat.CombatHelper.preview(dict);
     }
 
     @Test
@@ -142,7 +142,7 @@ public class TestUtilDict extends TestCase {
         x = Dict.get(dict, null, "sub1", "sub3", null, "c", null);
         assertEquals(y, x);
 
-        //io.github.ihongs.cmdlet.CmdletHelper.preview(dict);
+        //io.github.ihongs.combat.CombatHelper.preview(dict);
     }
 
     @Test
@@ -169,7 +169,7 @@ public class TestUtilDict extends TestCase {
         Dict.del(a, "b", null);
         assertEquals(Dict.get(a, 789, "b", "abc"), 789  );
 
-        //io.github.ihongs.cmdlet.CmdletHelper.preview(a);
+        //io.github.ihongs.combat.CombatHelper.preview(a);
     }
 
     @Test

@@ -161,7 +161,7 @@ public abstract class Async<T> extends CoreSerial implements AutoCloseable {
      * @throws java.io.IOException
      */
     public static void main(String[] args) throws IOException {
-        io.github.ihongs.cmdlet.CmdletRunner.init(args);
+        io.github.ihongs.combat.CombatRunner.init(args);
 
         Async a = new Async<String>("test", Integer.MAX_VALUE, 2) {
 

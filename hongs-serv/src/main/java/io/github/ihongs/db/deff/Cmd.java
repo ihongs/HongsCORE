@@ -1,8 +1,8 @@
 package io.github.ihongs.db.deff;
 
 import io.github.ihongs.HongsException;
-import io.github.ihongs.cmdlet.CmdletHelper;
-import io.github.ihongs.cmdlet.anno.Cmdlet;
+import io.github.ihongs.combat.CombatHelper;
+import io.github.ihongs.combat.anno.Combat;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Table;
 import java.util.Map;
@@ -14,12 +14,12 @@ import java.util.regex.Pattern;
  * 此工具仅适合 MySQL
  * @author Hongs
  */
-@Cmdlet("common.db.deff")
-public class Cmdrun {
+@Combat("common.db.deff")
+public class Cmd {
 
-    @Cmdlet("__main__")
+    @Combat("__main__")
     public static void exec(String[] args) throws HongsException {
-        Map opts = CmdletHelper.getOpts(args,
+        Map opts = CombatHelper.getOpts(args,
             "from=s", "to=s", "sync:b", "del-tables:b", "del-fields:b"
         );
 

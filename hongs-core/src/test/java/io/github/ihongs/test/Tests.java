@@ -1,7 +1,7 @@
 package io.github.ihongs.test;
 
 import io.github.ihongs.action.ActionDriver.URLPatterns;
-import io.github.ihongs.cmdlet.CmdletHelper;
+import io.github.ihongs.combat.CombatHelper;
 import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Synt;
 import java.util.Arrays;
@@ -40,7 +40,7 @@ public class Tests extends TestCase {
 
     @Test
     public void testGetOpts() {
-        Map opts = CmdletHelper.getOpts(
+        Map opts = CombatHelper.getOpts(
             new String[] {
                 "--enable",
                 "--number=123",

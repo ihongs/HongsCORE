@@ -90,7 +90,7 @@ public class ActionHelper implements Cloneable
   private       Writer        outputWriter;
 
   /**
-   * 初始化助手(用于cmdlet)
+   * 初始化助手(用于combat)
    *
    * @param req 请求数据
    * @param att 容器属性
@@ -173,7 +173,7 @@ public class ActionHelper implements Cloneable
   }
 
   /**
-   * 供 CmdletRunner 重设输出
+   * 供 CombatRunner 重设输出
    * @param out
    * @param wrt
    */
@@ -184,7 +184,7 @@ public class ActionHelper implements Cloneable
   }
 
   /**
-   * 供 CmdletRunner 重设输出
+   * 供 CombatRunner 重设输出
    * @param out
    */
   public final void updateOutput(OutputStream out)
@@ -742,7 +742,7 @@ public class ActionHelper implements Cloneable
     if (null != inst) {
         return  inst;
     }
-    throw new UnsupportedOperationException("Please use the ActionHelper in the coverage of the ActionDriver or CmdletRunner inside");
+    throw new UnsupportedOperationException("Please use the ActionHelper in the coverage of the ActionDriver or CombatRunner inside");
   }
 
   /**

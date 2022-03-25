@@ -1,12 +1,12 @@
-package io.github.ihongs.cmdlet.serv;
+package io.github.ihongs.combat.serv;
 
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
-import io.github.ihongs.cmdlet.CmdletHelper;
-import io.github.ihongs.cmdlet.CmdletRunner;
-import io.github.ihongs.cmdlet.anno.Cmdlet;
+import io.github.ihongs.combat.CombatHelper;
+import io.github.ihongs.combat.CombatRunner;
+import io.github.ihongs.combat.anno.Combat;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.util.Synt;
 
@@ -47,7 +47,7 @@ import org.xml.sax.SAXException;
  * <p>
  * 除了通过命令执行内部命令和 SQL,
  * 还可添加以下启动项启用计划任务:<br/>
- * io.github.ihongs.cmdlet.serv.SystemCmdlet.Schedu<br/>
+ * io.github.ihongs.combat.serv.SystemCombat.Schedu<br/>
  * bin/serve 下以下文件为任务设置:<br/>
  * </p>
  * <pre>
@@ -58,8 +58,8 @@ import org.xml.sax.SAXException;
  *
  * @author Hongs
  */
-@Cmdlet("system")
-public class SystemCmdlet {
+@Combat("system")
+public class SystemCombat {
 
     private static final Pattern SQL_CMN_PAT = Pattern.compile("(^|[\r\n])--[^\r\n]*");
     private static final Pattern SQL_SET_PAT = Pattern.compile("(^|[\r\n])--(\\S+): *?(\\S+)");
@@ -80,7 +80,7 @@ public class SystemCmdlet {
      * @param args
      * @throws HongsException
      */
-    @Cmdlet( "serve" )
+    @Combat( "serve" )
     public static void serve(String[] args) throws HongsException {
         List<String> argz = Synt.listOf(args);
                      argz.add( 0, "serve" );
@@ -92,7 +92,7 @@ public class SystemCmdlet {
      * @param args
      * @throws HongsException
      */
-    @Cmdlet( "setup" )
+    @Combat( "setup" )
     public static void setup(String[] args) throws HongsException {
         List<String> argz = Synt.listOf(args);
                      argz.add( 0, "setup" );
@@ -104,10 +104,10 @@ public class SystemCmdlet {
      * @param args
      * @throws HongsException
      */
-    @Cmdlet("__main__")
+    @Combat("__main__")
     public static void exec (String[] args) throws HongsException {
         Map<String, Object> opts;
-        opts = CmdletHelper.getOpts(args, "date:s", "!A");
+        opts = CombatHelper.getOpts(args, "date:s", "!A");
         args = ( String[] ) opts.remove("");
         if ( 0 == args.length ) {
             System.err.println("Serve name required!");
@@ -223,7 +223,7 @@ public class SystemCmdlet {
         // 设置时间
         sql = repTim ( sql, dzt );
 
-        CmdletHelper.println("Run '" + fo.getName() + "' for '" + dbn + "'");
+        CombatHelper.println("Run '" + fo.getName() + "' for '" + dbn + "'");
 
         // 逐条执行
         String[] a = sql.split(";\\s*[\r\n]");
@@ -238,16 +238,16 @@ public class SystemCmdlet {
                 if (0 < s.length()) {
                     db.execute( s );
                 }
-                CmdletHelper.progres(st, al, ++ok,er);
+                CombatHelper.progres(st, al, ++ok,er);
             } catch ( HongsException ex) {
-                CmdletHelper.progres(st, al, ok,++er);
+                CombatHelper.progres(st, al, ok,++er);
                 if (0 < Core.DEBUG) {
-                    CmdletHelper.progres( );
+                    CombatHelper.progres( );
                     throw ex;
                 }
             }
         }
-        CmdletHelper.progres( );
+        CombatHelper.progres( );
     }
 
     private static void runCmd(Date dt, File fo, Looker lg)
@@ -279,7 +279,7 @@ public class SystemCmdlet {
             if ("runsql".equals(t)) {
                 runSql( e, dt, lg );
             } else
-            if ("cmdlet".equals(t)) {
+            if ("combat".equals(t)) {
                 runCmd( e, dt, lg );
             } else
             if ("action".equals(t)) {
@@ -468,7 +468,7 @@ public class SystemCmdlet {
 
     private static void runLet(String[] cs, Looker lg) {
         try {
-            CmdletRunner.exec(cs);
+            CombatRunner.exec(cs);
         }
         catch (Exception ex) {
             lg.error(ex);

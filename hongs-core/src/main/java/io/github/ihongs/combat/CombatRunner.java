@@ -1,4 +1,4 @@
-package io.github.ihongs.cmdlet;
+package io.github.ihongs.combat;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
@@ -38,14 +38,14 @@ import java.util.regex.Pattern;
  *
  * @author Hongs
  */
-public class CmdletRunner implements Runnable
+public class CombatRunner implements Runnable
 {
 
   private final Method   met ;
   private final String   act ;
   private final String[] args;
 
-  public CmdletRunner(String[] args)
+  public CombatRunner(String[] args)
   {
     String  act = null ;
     int l = args.length;
@@ -63,14 +63,14 @@ public class CmdletRunner implements Runnable
     // 提取动作
     if (null == act || act.length() < 1)
     {
-      throw new HongsExemption(835, "Cmdlet name can not be empty.");
+      throw new HongsExemption(835, "Combat name can not be empty.");
     }
 
     // 获取方法
-    Method met = getCmdlets().get( act );
+    Method met = getCombats().get( act );
     if (null == met)
     {
-      throw new HongsExemption(835, "Cmdlet "+act+" is not exists.");
+      throw new HongsExemption(835, "Combat "+act+" is not exists.");
     }
 
     this.met  = met ;
@@ -162,14 +162,14 @@ public class CmdletRunner implements Runnable
     // 提取动作
     if (null == act || act.length() < 1)
     {
-      throw new HongsExemption(835, "Cmdlet name can not be empty.");
+      throw new HongsExemption(835, "Combat name can not be empty.");
     }
 
     // 获取方法
-    Method met = getCmdlets().get( act );
+    Method met = getCombats().get( act );
     if (null == met)
     {
-      throw new HongsExemption(835, "Cmdlet "+act+" is not exists.");
+      throw new HongsExemption(835, "Combat "+act+" is not exists.");
     }
 
     // 执行方法
@@ -199,7 +199,7 @@ public class CmdletRunner implements Runnable
   public static String[] init(String[] args)
   {
     Map<String, Object> opts;
-    opts = CmdletHelper.getOpts(args,
+    opts = CombatHelper.getOpts(args,
            "DEBUG:i" , "COREPATH:s" ,
         "CONFPATH:s" , "DATAPATH:s" ,
         "BASEPATH:s" , "BASEHREF:s" ,
@@ -360,9 +360,9 @@ public class CmdletRunner implements Runnable
     return args;
   }
 
-  public static Map<String, Method> getCmdlets()
+  public static Map<String, Method> getCombats()
   {
-    return CoreRoster.getCmdlets();
+    return CoreRoster.getCombats();
   }
 
 }

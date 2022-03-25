@@ -1,4 +1,4 @@
-package io.github.ihongs.cmdlet.serv;
+package io.github.ihongs.combat.serv;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
@@ -6,8 +6,8 @@ import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
-import io.github.ihongs.cmdlet.CmdletHelper;
-import io.github.ihongs.cmdlet.anno.Cmdlet;
+import io.github.ihongs.combat.CombatHelper;
+import io.github.ihongs.combat.anno.Combat;
 import io.github.ihongs.util.Dawn;
 import java.io.File;
 import java.io.FileReader;
@@ -29,14 +29,14 @@ import java.util.Map;
  * 维护命令
  * @author hongs
  */
-@Cmdlet("access")
+@Combat("access")
 public class Access {
 
-    @Cmdlet("exec")
+    @Combat("exec")
     public static void exec(String[] args) throws HongsException {
         if (args.length == 0) {
-            CmdletHelper.ERR.get().println(
-                  "Usage: CMDLET_NAME [ARG_0] [ARG_1] ..."
+            CombatHelper.ERR.get().println(
+                  "Usage: COMBAT_NAME [ARG_0] [ARG_1] ..."
             );
             return;
         }
@@ -74,7 +74,7 @@ public class Access {
             pw.close();
 
             br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            ps = CmdletHelper.OUT.get();
+            ps = CombatHelper.OUT.get();
             while ( (ln = br.readLine()) != null ) {
                 ps.print( ln );
             }   ps.println(  );
@@ -87,16 +87,16 @@ public class Access {
         }
     }
 
-    @Cmdlet("eval")
+    @Combat("eval")
     public static void eval(String[] args) throws HongsException {
         Map<String, Object> opts;
-        opts = CmdletHelper.getOpts(args ,
+        opts = CombatHelper.getOpts(args ,
             "request:s", "context:s", "session:s", "cookies:s", "!A"
         );
         args = (String[ ]) opts.get( "" );
 
         if (args.length == 0) {
-            CmdletHelper.ERR.get().println(
+            CombatHelper.ERR.get().println(
                   "Usage: ACTION_NAME [--request DATA] [--cookies DATA] [--session DATA] [--context DATA]\r\n\t"
                 + "DATA can be JSON or URL search string."
             );
@@ -145,7 +145,7 @@ public class Access {
             pw.close();
 
             br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            ps = CmdletHelper.OUT.get();
+            ps = CombatHelper.OUT.get();
             while ( (ln = br.readLine()) != null ) {
                 ps.print( ln );
             }   ps.println(  );
@@ -158,16 +158,16 @@ public class Access {
         }
     }
 
-    @Cmdlet("call")
+    @Combat("call")
     public static void call(String[] args) throws HongsException {
         Map<String, Object> opts;
-        opts = CmdletHelper.getOpts(args ,
+        opts = CombatHelper.getOpts(args ,
             "request:s", "context:s", "session:s", "cookies:s", "!A"
         );
         args = (String[ ]) opts.get( "" );
 
         if (args.length == 0) {
-            CmdletHelper.ERR.get().println(
+            CombatHelper.ERR.get().println(
                   "Usage: ACTION_NAME [--request DATA] [--cookies DATA] [--session DATA] [--context DATA]\r\n\t"
                 + "DATA can be JSON or URL search string."
             );
@@ -183,7 +183,7 @@ public class Access {
         );
 
         // 输出管道
-        PrintStream ps = CmdletHelper.OUT.get( );
+        PrintStream ps = CombatHelper.OUT.get( );
         PrintWriter pw = new PrintWriter(  ps  );
         helper.updateOutput( ps , pw );
 

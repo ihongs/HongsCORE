@@ -361,7 +361,7 @@ public class CoreLocale
     }
 
     path = Cnst.CONF_PACK+ "/" + name +"_"+ lang + ".properties";
-    return CoreConfig.class.getClassLoader().getResourceAsStream(path) != null;
+    return CoreConfig.class.getClassLoader().getResource(path) != null;
   }
 
   /**

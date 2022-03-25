@@ -1,6 +1,7 @@
 package io.github.ihongs.util.sketch;
 
 import io.github.ihongs.CoreConfig;
+import io.github.ihongs.CoreRoster;
 import io.github.ihongs.HongsExemption;
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
@@ -123,11 +124,11 @@ public class Capts {
         try {
             InputStream is;
             if (fontFile.startsWith("!")) {
-                is = Capts.class.getResourceAsStream(fontFile.substring(1));
+                is = CoreRoster.getResourceAsStream(fontFile.substring(1));
             } else {
-                is =  new  FileInputStream( new File(fontFile));
+                is = new FileInputStream (new File (fontFile));
             }
-            font = Font.createFont ( Font.TRUETYPE_FONT , is ) ;
+            font = Font.createFont ( Font.TRUETYPE_FONT , is );
         } catch (FontFormatException ex) {
             throw new HongsExemption(ex);
         } catch (IOException ex) {

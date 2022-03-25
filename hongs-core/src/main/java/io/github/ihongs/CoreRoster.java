@@ -4,6 +4,7 @@ import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.cmdlet.anno.Cmdlet;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.File;
 import java.net.URL;
 import java.lang.reflect.Method;
@@ -58,7 +59,7 @@ public class CoreRoster {
             rlock.unlock();
         }
 
-        addServ();
+        regHandles();
         return ACTIONS;
     }
 
@@ -77,8 +78,160 @@ public class CoreRoster {
             rlock.unlock();
         }
 
-        addServ();
+        regHandles();
         return CMDLETS;
+    }
+
+    private static void regHandles() {
+        Lock wlock = RWLOCKS.writeLock();
+        wlock.lock();
+        try {
+            ACTIONS = new HashMap();
+            CMDLETS = new HashMap();
+            String[] pkgs = CoreConfig
+                    .getInstance("defines"   )
+                    .getProperty("mount.serv")
+                    .split(";");
+            addHandles(ACTIONS , CMDLETS , pkgs );
+        } finally {
+            wlock.unlock();
+        }
+    }
+
+    private static void addHandles(Map<String, Mathod> acts, Map<String, Method> cmds, String... pkgs) {
+        for(String pkgn : pkgs) {
+            pkgn = pkgn.trim( );
+            if (pkgn.length ( ) == 0) {
+                continue;
+            }
+
+            Set<String> clss = getClasses(pkgn);
+            for(String  clsn : clss) {
+                Class   clso ;
+                try {
+                    clso = Class.forName (clsn);
+                }
+                catch (ClassNotFoundException ex ) {
+                    throw  new HongsExemption(831, "Can not find class '" + clsn + "'.", ex);
+                }
+
+                // 从注解提取动作名
+                Action acto = (Action) clso.getAnnotation(Action.class);
+                if (acto != null) {
+                    addActions(acts, acto, clsn, clso);
+                    continue;
+                }
+
+                Cmdlet cmdo = (Cmdlet) clso.getAnnotation(Cmdlet.class);
+                if (cmdo != null) {
+                    addCmdlets(cmds, cmdo, clsn, clso);
+                }
+            }
+        }
+    }
+
+    private static void addActions(Map<String, Mathod> acts, Action anno, String clsn, Class clso) {
+        String actn = anno.value();
+        if (actn == null || actn.length() == 0) {
+            actn =  clsn.replace('.','/');
+        }
+
+        Method[] mtds = clso.getMethods();
+        for(Method mtdo : mtds) {
+            String mtdn = mtdo.getName( );
+
+            // 从注解提取动作名
+            Action annx = (Action) mtdo.getAnnotation(Action.class);
+            if (annx == null) {
+                continue;
+            }
+            String actx = annx.value();
+            if (actx == null || actx.length() == 0) {
+                actx =  mtdn;
+            }
+
+            // 检查方法是否合法
+            Class[] prms = mtdo.getParameterTypes();
+            if (prms == null || prms.length != 1 || !ActionHelper.class.isAssignableFrom(prms[0])) {
+                throw new HongsExemption(832, "Can not find action method '"+clsn+"."+mtdn+"(ActionHelper)'.");
+            }
+
+            Mathod mtdx = new Mathod();
+            mtdx.method = mtdo;
+            mtdx.mclass = clso;
+
+            if ("__main__".equals(actx)) {
+                acts.put(actn /*__main__*/ , mtdx );
+            } else {
+                acts.put(actn + "/" + actx , mtdx );
+            }
+        }
+    }
+
+    private static void addCmdlets(Map<String, Method> acts, Cmdlet anno, String clsn, Class clso) {
+        String actn = anno.value();
+        if (actn == null || actn.length() == 0) {
+            actn =  clsn;
+        }
+
+        Method[] mtds = clso.getMethods();
+        for(Method mtdo : mtds) {
+            String mtdn = mtdo.getName( );
+
+            // 从注解提取动作名
+            Cmdlet annx = (Cmdlet) mtdo.getAnnotation(Cmdlet.class);
+            if (annx == null) {
+                continue;
+            }
+            String actx = annx.value();
+            if (actx == null || actx.length() == 0) {
+                actx =  mtdn;
+            }
+
+            // 检查方法是否合法
+            Class[] prms = mtdo.getParameterTypes();
+            if (prms == null || prms.length != 1 || !String[].class.isAssignableFrom(prms[0])) {
+                throw new HongsExemption(832, "Can not find cmdlet method '"+clsn+"."+mtdn+"(String[])'.");
+            }
+
+            if ("__main__".equals(actx)) {
+                acts.put(actn /*__main__*/ , mtdo );
+            } else {
+                acts.put(actn + "." + actx , mtdo );
+            }
+        }
+    }
+
+    private static Set<String> getClasses(String pkgn) {
+        Set<String> clss;
+
+        if (pkgn.endsWith(".**")) {
+            pkgn = pkgn.substring(0, pkgn.length() - 3);
+            try {
+                clss = getClassNames(pkgn, true );
+            } catch (IOException ex) {
+                throw new HongsExemption(830, "Can not load package '" + pkgn + "'.", ex);
+            }
+            if (clss == null) {
+                throw new HongsExemption(830, "Can not find package '" + pkgn + "'.");
+            }
+        } else
+        if (pkgn.endsWith(".*" )) {
+            pkgn = pkgn.substring(0, pkgn.length() - 2);
+            try {
+                clss = getClassNames(pkgn, false);
+            } catch (IOException ex) {
+                throw new HongsExemption(830, "Can not load package '" + pkgn + "'.", ex);
+            }
+            if (clss == null) {
+                throw new HongsExemption(830, "Can not find package '" + pkgn + "'.");
+            }
+        } else {
+            clss = new HashSet();
+            clss.add  (  pkgn  );
+        }
+
+        return clss;
     }
 
     /**
@@ -101,17 +254,20 @@ public class CoreRoster {
         while (links.hasMoreElements()) {
             URL    link = links.nextElement();
             String prot = link .getProtocol();
-            String root = link .getPath().replaceFirst( "/$" , "")  // 去掉结尾的 /
-                                         .replaceFirst("^.+:", ""); // 去掉开头的 file:
-            root = root.substring(0 , root.length()-pack.length()); // 去掉目标包的路径
+            String root = link .getPath();
 
+            /**
+             * jar 格式 file:/xxxx/xxxx.jar!/zzzz/zzzz
+             * dir 格式 /xxxx/xxxx/zzzz/zzzz
+             * [1] 需要去掉后面类库包名路径
+             * [2] jar 还要去掉 file: 和 !/
+             */
             if ( "jar".equals(prot)) {
-                // 路径类似 file:/xxx/xxx.jar!/zzz/zzz
-                root = root.substring(0 , root.lastIndexOf( "!" ));
+                root = root.substring(5, root.length() - pack.length() - 2); // [2]
                 names.addAll(getClassNamesInJar(root, pack, recu));
             } else
-            if ("file".equals(prot)){
-                // 路径类似 /xxx/xxx/
+            if ("file".equals(prot)) {
+                root = root.substring(0, root.length() - pack.length() - 0); // [1]
                 names.addAll(getClassNamesInDir(root, pack, recu));
             }
         }
@@ -167,160 +323,46 @@ public class CoreRoster {
         return  names;
     }
 
-    private static void addServ() {
-        Lock wlock = RWLOCKS.writeLock();
-        wlock.lock();
-        try {
-            ACTIONS = new HashMap();
-            CMDLETS = new HashMap();
-            String[] pkgs = CoreConfig
-                    .getInstance("defines"   )
-                    .getProperty("mount.serv")
-                    .split(";");
-            addServ(ACTIONS , CMDLETS , pkgs );
-        } finally {
-            wlock.unlock();
-        }
+    /**
+     * 获取资源的输入流
+     * @param name
+     * @return
+     */
+    public static InputStream getResourceAsStream(String name) {
+        return Thread.currentThread().getContextClassLoader().getResourceAsStream(name);
     }
 
-    private static void addServ(Map<String, Mathod> acts, Map<String, Method> cmds, String... pkgs) {
-        for(String pkgn : pkgs) {
-            pkgn = pkgn.trim( );
-            if (pkgn.length ( ) == 0) {
-                continue;
-            }
-
-            Set<String> clss = getClss(pkgn);
-            for(String  clsn : clss) {
-                Class   clso = getClso(clsn);
-
-                // 从注解提取动作名
-                Action acto = (Action) clso.getAnnotation(Action.class);
-                if (acto != null) {
-                    addActs(acts, acto, clsn, clso);
-                    continue;
+    /**
+     * 获取资源修改时间
+     * jar 内为打包时间
+     * @param name
+     * @return
+     */
+    public static long getResourceModified(String name) {
+        URL link = Thread.currentThread().getContextClassLoader().getResource(name);
+        if (link == null) {
+            return 0;
+        }
+        switch (link.getProtocol()) {
+            case "file":
+                return new File (
+                    link.getPath()
+                ) . lastModified();
+            case "jar" :
+                return new File (
+                    link.getPath()
+                        .replaceFirst("^[^:]+:", "") // 去掉开头的 xxx:
+                        .replaceFirst("![^!]+$", "") // 去掉后面的 !/xx
+                ) . lastModified();
+            default :
+                try {
+                    return link.openConnection ()
+                               .getLastModified();
                 }
-
-                Cmdlet cmdo = (Cmdlet) clso.getAnnotation(Cmdlet.class);
-                if (cmdo != null) {
-                    addCmds(cmds, cmdo, clsn, clso);
+                catch (IOException e) {
+                    throw new HongsExemption( e );
                 }
-            }
         }
-    }
-
-    private static void addActs(Map<String, Mathod> acts, Action anno, String clsn, Class clso) {
-        String actn = anno.value();
-        if (actn == null || actn.length() == 0) {
-            actn =  clsn.replace('.','/');
-        }
-
-        Method[] mtds = clso.getMethods();
-        for(Method mtdo : mtds) {
-            String mtdn = mtdo.getName( );
-
-            // 从注解提取动作名
-            Action annx = (Action) mtdo.getAnnotation(Action.class);
-            if (annx == null) {
-                continue;
-            }
-            String actx = annx.value();
-            if (actx == null || actx.length() == 0) {
-                actx =  mtdn;
-            }
-
-            // 检查方法是否合法
-            Class[] prms = mtdo.getParameterTypes();
-            if (prms == null || prms.length != 1 || !ActionHelper.class.isAssignableFrom(prms[0])) {
-                throw new HongsExemption(832, "Can not find action method '"+clsn+"."+mtdn+"(ActionHelper)'.");
-            }
-
-            Mathod mtdx = new Mathod();
-            mtdx.method = mtdo;
-            mtdx.mclass = clso;
-
-            if ("__main__".equals(actx)) {
-                acts.put(actn /*__main__*/ , mtdx );
-            } else {
-                acts.put(actn + "/" + actx , mtdx );
-            }
-        }
-    }
-
-    private static void addCmds(Map<String, Method> acts, Cmdlet anno, String clsn, Class clso) {
-        String actn = anno.value();
-        if (actn == null || actn.length() == 0) {
-            actn =  clsn;
-        }
-
-        Method[] mtds = clso.getMethods();
-        for(Method mtdo : mtds) {
-            String mtdn = mtdo.getName( );
-
-            // 从注解提取动作名
-            Cmdlet annx = (Cmdlet) mtdo.getAnnotation(Cmdlet.class);
-            if (annx == null) {
-                continue;
-            }
-            String actx = annx.value();
-            if (actx == null || actx.length() == 0) {
-                actx =  mtdn;
-            }
-
-            // 检查方法是否合法
-            Class[] prms = mtdo.getParameterTypes();
-            if (prms == null || prms.length != 1 || !String[].class.isAssignableFrom(prms[0])) {
-                throw new HongsExemption(832, "Can not find cmdlet method '"+clsn+"."+mtdn+"(String[])'.");
-            }
-
-            if ("__main__".equals(actx)) {
-                acts.put(actn /*__main__*/ , mtdo );
-            } else {
-                acts.put(actn + "." + actx , mtdo );
-            }
-        }
-    }
-
-    private static Set<String> getClss(String pkgn) {
-        Set<String> clss;
-
-        if (pkgn.endsWith(".**")) {
-            pkgn = pkgn.substring(0, pkgn.length() - 3);
-            try {
-                clss = getClassNames(pkgn, true );
-            } catch (IOException ex) {
-                throw new HongsExemption(830, "Can not load package '" + pkgn + "'.", ex);
-            }
-            if (clss == null) {
-                throw new HongsExemption(830, "Can not find package '" + pkgn + "'.");
-            }
-        } else
-        if (pkgn.endsWith(".*" )) {
-            pkgn = pkgn.substring(0, pkgn.length() - 2);
-            try {
-                clss = getClassNames(pkgn, false);
-            } catch (IOException ex) {
-                throw new HongsExemption(830, "Can not load package '" + pkgn + "'.", ex);
-            }
-            if (clss == null) {
-                throw new HongsExemption(830, "Can not find package '" + pkgn + "'.");
-            }
-        } else {
-            clss = new HashSet();
-            clss.add  (  pkgn  );
-        }
-
-        return clss;
-    }
-
-    private static Class getClso(String clsn) {
-        Class  clso;
-        try {
-            clso = Class.forName(clsn);
-        } catch (ClassNotFoundException ex) {
-            throw new HongsExemption(831, "Can not find class '" + clsn + "'.", ex);
-        }
-        return clso;
     }
 
 }

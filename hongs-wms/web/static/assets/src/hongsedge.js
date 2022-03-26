@@ -1183,8 +1183,7 @@ function hsHideListCols(box) {
     var tbl = box.is("table")?box:box.find("table:first");
     var ths = tbl.children("thead").children().children();
     var chs = $('<form class="checkbox" onsubmit="return false"></form>');
-    var cho = $('<label><input type="checkbox" name="_list_cols" />'
-              + '<span style="display:inline-block"></span></label>');
+    var cho = $('<label><input type="checkbox" name="rb."><span></span></label>');
 
     ths.each(function() {
         if ($(this).is(".dont-hide,._admin,._check,._radio,._rowid")) {

@@ -767,14 +767,14 @@ div.bootstrap-tagsinput .tag [data-role="remove"]:after {
 
 .radio     label ,
 .checkbox  label {
-    margin-right: 1em;
+    padding-right: 20px;
 }
 .repeated .label ,
 .labelbox .label {
-    margin-right: 6px;
-    line-height : 2em;
-    font-weight : inherit;
     font-size   : inherit;
+    font-weight : inherit;
+    line-height : 2em;
+    margin-right: 8px;
 }
 .repeated .label .remove ,
 .labelbox .label .remove {

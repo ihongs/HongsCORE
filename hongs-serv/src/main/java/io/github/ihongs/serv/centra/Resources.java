@@ -79,10 +79,16 @@ public class Resources {
                            .getResourceAsStream(path)
         ) {
             if (inps == null) {
-                throw new IOException("Can not get resrouce for "+path);
+                throw new IOException( "Can not get resrouce for " + path );
             }
             if (dist != null) {
-                Files.copy(inps , new File(dist + "/" + path).toPath());
+                File disf = new File(dist +"/"+ path);
+                File dirf = disf.getParentFile();
+                Path disp = disf.toPath();
+                if (!dirf.exists()) {
+                     dirf.mkdirs();
+                }
+                Files.copy(inps, disp, StandardCopyOption.REPLACE_EXISTING);
             }
             CombatHelper.paintln(path);
         }
@@ -144,18 +150,17 @@ public class Resources {
                 }
 
                 if (dist != null) {
+                    InputStream fils = jfile.getInputStream(item);
                     File disf = new File(dist +"/"+ name);
                     File dirf = disf.getParentFile();
+                    Path disp = disf.toPath();
                     if (!dirf.exists()) {
                          dirf.mkdirs();
                     }
-
-                    Path disp = disf.toPath();
-                    InputStream fils = jfile.getInputStream(item);
-                    Files.copy( fils , disp , StandardCopyOption.REPLACE_EXISTING );
+                    Files.copy(fils, disp, StandardCopyOption.REPLACE_EXISTING);
                 }
 
-                CombatHelper.paintln ( name );
+                CombatHelper.paintln(name);
             }
         }
     }
@@ -173,16 +178,15 @@ public class Resources {
                 if (dist != null) {
                     File disf = new File(dist +"/"+  name);
                     File dirf = disf.getParentFile();
+                    Path disp = disf.toPath();
+                    Path filp = file.toPath();
                     if (!dirf.exists()) {
                          dirf.mkdirs();
                     }
-
-                    Path disp = disf.toPath();
-                    Path filp = file.toPath();
-                    Files.copy( filp , disp , StandardCopyOption.REPLACE_EXISTING );
+                    Files.copy(filp, disp, StandardCopyOption.REPLACE_EXISTING);
                 }
 
-                CombatHelper.paintln ( name );
+                CombatHelper.paintln(name);
             } else if (recu) {
                 String name = path + "/" + file.getName( );
                 saveResourcesInDir(dist, root, name, recu);

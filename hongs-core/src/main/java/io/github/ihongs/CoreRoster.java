@@ -254,7 +254,7 @@ public class CoreRoster {
         while (links.hasMoreElements()) {
             URL    link = links.nextElement();
             String prot = link .getProtocol();
-            String root = link .getPath();
+            String root = link .getPath  (  );
 
             /**
              * jar 格式 file:/xxxx/xxxx.jar!/zzzz/zzzz
@@ -272,7 +272,7 @@ public class CoreRoster {
                     names.addAll(getClassNamesInDir(root, pack, recu));
                     break;
                 default:
-                    throw new IOException("Can not get class names in " + link.toString());
+                    throw new IOException("Can not get class names in "+ link.toString());
             }
         }
 

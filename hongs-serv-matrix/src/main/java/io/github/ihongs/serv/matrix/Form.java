@@ -884,9 +884,6 @@ public class Form extends Model {
             actn = docm.createElement("action");
             role.appendChild ( actn );
             actn.appendChild ( docm.createTextNode(href +"amount"+ Cnst.ACT_EXT) );
-            actn = docm.createElement("action");
-            role.appendChild ( actn );
-            actn.appendChild ( docm.createTextNode(href +"assort"+ Cnst.ACT_EXT) );
             depn = docm.createElement("depend");
             role.appendChild ( depn );
             depn.appendChild ( docm.createTextNode("centra") );
@@ -910,7 +907,7 @@ public class Form extends Model {
 //          depn.appendChild ( docm.createTextNode(href +"search") );
             depn = docm.createElement("depend");
             role.appendChild ( depn );
-            depn.appendChild ( docm.createTextNode(href + "fork" ) );
+            depn.appendChild ( docm.createTextNode(href +"relate") );
 
             // 修改
             role = docm.createElement("role");
@@ -925,7 +922,7 @@ public class Form extends Model {
             depn.appendChild ( docm.createTextNode(href +"search") );
             depn = docm.createElement("depend");
             role.appendChild ( depn );
-            depn.appendChild ( docm.createTextNode(href + "fork" ) );
+            depn.appendChild ( docm.createTextNode(href +"relate") );
 
             // 删除
             role = docm.createElement("role");
@@ -966,7 +963,15 @@ public class Form extends Model {
             // 关联
             role = docm.createElement("role");
             menu.appendChild ( role );
-            role.setAttribute("name", href + "fork" );
+            role.setAttribute("name", href +"relate");
+
+            // 其他
+            role = docm.createElement("role");
+            menu.appendChild ( role );
+            role.setAttribute("name", href +"reject");
+            actn = docm.createElement("action");
+            role.appendChild ( actn );
+            actn.appendChild ( docm.createTextNode(href +"assort"+ Cnst.ACT_EXT) );
         }
 
         saveDocument(file , docm);
@@ -1056,17 +1061,17 @@ public class Form extends Model {
             actn.appendChild ( docm.createTextNode(href +"delete"+ Cnst.ACT_EXT) );
             depn = docm.createElement("depend");
             role.appendChild ( depn );
-            depn.appendChild ( docm.createTextNode(href + "fork" ) );
+            depn.appendChild ( docm.createTextNode(href +"relate") );
 
             // 关联查询接口, 默认登录可用 (增改依赖)
             role = docm.createElement( "role" );
             menu.appendChild ( role );
-            role.setAttribute("name", href + "fork" );
+            role.setAttribute("name", href +"relate");
 
             // 聚合统计接口, 默认禁止访问 (较耗资源)
             role = docm.createElement( "role" );
             menu.appendChild ( role );
-            role.setAttribute("name", href + "deny" );
+            role.setAttribute("name", href +"reject");
             actn = docm.createElement("action");
             role.appendChild ( actn );
             actn.appendChild ( docm.createTextNode(href +"assort"+ Cnst.ACT_EXT) );

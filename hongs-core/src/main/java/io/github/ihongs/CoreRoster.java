@@ -282,9 +282,9 @@ public class CoreRoster {
     private static Set<String> getClassNamesInJar(String root, String path, boolean recu)
             throws IOException {
         Set<String> names = new HashSet();
-        int         pathl = 1 + path.length();
         try(JarFile filej = new JarFile(root)) {
             Enumeration<JarEntry> items  =  filej.entries();
+            int     pathl = 1 + path.length();
 
             while ( items.hasMoreElements( )) {
                 String name = items.nextElement().getName();

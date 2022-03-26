@@ -311,12 +311,7 @@ public class CoreRoster {
         File[]      files = new File(root+path).listFiles();
 
         for (File file : files) {
-            if (file.isDirectory()) {
-                String name = path +"/"+ file.getName();
-                names.addAll (
-                    getClassNamesInDir ( root, name, recu )
-                );
-            } else if (recu) {
+            if (! file.isDirectory()) {
                 String name = path +"/"+ file.getName();
                 if (!name.endsWith(".class")) {
                     continue;
@@ -324,6 +319,11 @@ public class CoreRoster {
                 name = name.substring(0, name.length() - 6);
                 name = name.replace("/", ".");
                 names.add(name);
+            } else if (recu) {
+                String name = path +"/"+ file.getName();
+                names.addAll (
+                    getClassNamesInDir ( root, name, recu )
+                );
             }
         }
 

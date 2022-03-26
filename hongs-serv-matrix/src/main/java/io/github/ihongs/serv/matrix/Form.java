@@ -745,7 +745,7 @@ public class Form extends Model {
             }
 
             /*
-            // 全局性保护, 改用 WaryFilter 限制
+            // 全局性保护, 改用 VarsFilter 限制
             defs = docm.createElement("enum");
             root.appendChild ( defs );
             defs.setAttribute("name", id+":defense");
@@ -793,9 +793,9 @@ public class Form extends Model {
             docm = readDocument(file);
             root = docm.getDocumentElement();
             if (root == null) break R0 ;
-            root = getNodeByTagNameAndAttr(root, "menu", "href", centra +"/"+id+"/"     );
+            root = getNodeByTagNameAndAttr(root, "menu", "href", centra+"/"+id+"/");
             if (root == null) break R0 ;
-            root = getNodeByTagNameAndAttr(root, "role", "name", centra +"/"+id+"/fork" );
+            root = getNodeByTagNameAndAttr(root, "role", "name", centra+"/"+id+"/relate");
             if (root == null) break R0 ;
             list = root.getChildNodes();
             for(int i = list.getLength() - 1; i > -1; i --) {
@@ -817,9 +817,9 @@ public class Form extends Model {
             docm = readDocument(file);
             root = docm.getDocumentElement();
             if (root == null) break R1 ;
-            root = getNodeByTagNameAndAttr(root, "menu", "href", centre +"/"+id+"/"     );
+            root = getNodeByTagNameAndAttr(root, "menu", "href", centre+"/"+id+"/");
             if (root == null) break R1 ;
-            root = getNodeByTagNameAndAttr(root, "role", "name", centre +"/"+id+"/fork" );
+            root = getNodeByTagNameAndAttr(root, "role", "name", centre+"/"+id+"/relate");
             if (root == null) break R1 ;
             list = root.getChildNodes();
             for(int i = list.getLength() - 1; i > -1; i --) {

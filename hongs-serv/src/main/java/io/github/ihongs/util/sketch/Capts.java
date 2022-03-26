@@ -124,11 +124,11 @@ public class Capts {
         try {
             InputStream is;
             if (fontFile.startsWith("!")) {
-                is = CoreRoster.getResourceAsStream(fontFile.substring(1));
+                is = Capts.class.getResourceAsStream(fontFile.substring(1));
             } else {
-                is = new FileInputStream (new File (fontFile));
+                is =  new  FileInputStream( new File(fontFile) );
             }
-            font = Font.createFont ( Font.TRUETYPE_FONT , is );
+            font = Font.createFont(Font.TRUETYPE_FONT, is);
         } catch (FontFormatException ex) {
             throw new HongsExemption(ex);
         } catch (IOException ex) {

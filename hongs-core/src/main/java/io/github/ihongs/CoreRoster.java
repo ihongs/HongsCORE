@@ -245,7 +245,7 @@ public class CoreRoster {
            throws IOException {
         pack = pack.replace(".", "/");
 
-        Enumeration<URL> links = Thread
+        Enumeration <URL> links = Thread
                 .currentThread (  /**/  )
                 .getContextClassLoader( )
                 .getResources  (  pack  );

@@ -26,8 +26,8 @@ import java.util.Map;
  *
  * @author hongs
  */
-@Combat("thumb")
-public class ThumbShell {
+@Combat("thumbnail")
+public class Thumbnail {
 
     @Combat("__main__")
     public static void exec(String[] args) throws IOException {

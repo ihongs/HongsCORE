@@ -262,13 +262,17 @@ public class CoreRoster {
              * [1] 需要去掉后面类库包名路径
              * [2] jar 还要去掉 file: 和 !/
              */
-            if ( "jar".equals(prot)) {
-                root = root.substring(5, root.length() - pack.length() - 2); // [2]
-                names.addAll(getClassNamesInJar(root, pack, recu));
-            } else
-            if ("file".equals(prot)) {
-                root = root.substring(0, root.length() - pack.length() - 0); // [1]
-                names.addAll(getClassNamesInDir(root, pack, recu));
+            switch (prot) {
+                case "jar" :
+                    root = root.substring(5, root.length() - pack.length() - 2); // [2]
+                    names.addAll(getClassNamesInJar(root, pack, recu));
+                    break;
+                case "file":
+                    root = root.substring(0, root.length() - pack.length() - 0); // [1]
+                    names.addAll(getClassNamesInDir(root, pack, recu));
+                    break;
+                default:
+                    throw new IOException("Can not get class names in " + link.toString());
             }
         }
 

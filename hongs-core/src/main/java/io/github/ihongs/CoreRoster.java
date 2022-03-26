@@ -288,10 +288,10 @@ public class CoreRoster {
 
             while ( items.hasMoreElements( )) {
                 String name = items.nextElement().getName();
-                if (!name.startsWith( path )) {
+                if (!name.endsWith(".class")) {
                     continue;
                 }
-                if (!name.endsWith(".class")) {
+                if (!name.startsWith( path )) {
                     continue;
                 }
                 if (!recu && name.indexOf("/", pathl ) > 0) {
@@ -308,19 +308,22 @@ public class CoreRoster {
 
     private static Set<String> getClassNamesInDir(String root, String path, boolean recu) {
         Set<String> names = new HashSet();
-        File[]      files = new File(root + path).listFiles();
+        File[]      files = new File(root+path).listFiles();
 
         for (File file : files) {
-            if (! file.isDirectory()) {
-                String name = file.getPath().substring(root.length());
-                if (name.endsWith(".class")) {
-                    name = name.substring(0, name.lastIndexOf( '.' ));
-                    name = name.replace(File.separator, "." );
-                    names.add(name);
-                }
+            if (file.isDirectory()) {
+                String name = path +"/"+ file.getName();
+                names.addAll (
+                    getClassNamesInDir ( root, name, recu )
+                );
             } else if (recu) {
-                String name = path + File.separator + file.getName( );
-                names.addAll( getClassNamesInDir (root, name, recu) );
+                String name = path +"/"+ file.getName();
+                if (!name.endsWith(".class")) {
+                    continue;
+                }
+                name = name.substring(0, name.length() - 6);
+                name = name.replace("/", ".");
+                names.add(name);
             }
         }
 

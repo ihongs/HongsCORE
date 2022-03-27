@@ -5,7 +5,7 @@ SETLOCAL
 set CURR_PATH=%~DP0
 set CORE_PATH=%CURR_PATH%..
 set JAVA_PATH=%JAVA_HOME%\bin\java
-set KLASSPATH=%CLASSPATH%;%CORE_PATH%\lib\*;%CORE_PATH%\classes;%CORE_PATH%\lib\classes
+set KLASSPATH=%CLASSPATH%;%CORE_PATH%\classes;%CORE_PATH%\lib\classes;%CORE_PATH%\lib\*
 
 "%JAVA_PATH%" %JAVA_OPTS% ^
   -classpath "%KLASSPATH%"^

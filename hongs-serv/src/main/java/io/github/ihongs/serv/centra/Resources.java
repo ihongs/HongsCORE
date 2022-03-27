@@ -25,14 +25,14 @@ public class Resources {
     @Combat("save")
     public static void save(String[] args)
            throws IOException {
-        if (args.length <= 1) {
+        if (args.length <= 1 || args[0].isEmpty()) {
             CombatHelper.println(
                 "Usage: resources.save save/path " +
                 "resource/path1 resource/path2/* resource/path3/**");
             return;
         }
 
-        new Resources(args[0], args, 1);
+        saveResources(args[0], args, 1);
     }
 
     @Combat("list")
@@ -45,7 +45,7 @@ public class Resources {
             return;
         }
 
-        new Resources(null, args, 0);
+        saveResources(null, args, 0);
     }
 
     @Combat("find")
@@ -58,29 +58,28 @@ public class Resources {
             return;
         }
 
-        new Resources( "" , args, 0);
+        saveResources( "" , args, 0);
     }
 
-    private Set<String> resources = new HashSet();
-
-    private Resources(String dist, String[] args, int b)
+    private static void saveResources(String dist, String[] args, int b)
             throws IOException {
+        Set ress = new HashSet();
         for (int i = b; i < args.length; i ++) {
             String path = args[i];
 
             if (path.endsWith("/**")) {
-                saveResources(dist, path.substring(0, path.length() - 3), true );
+                saveResources(ress, dist, path.substring(0, path.length() - 3), true );
             } else
             if (path.endsWith("/*" )) {
-                saveResources(dist, path.substring(0, path.length() - 2), false);
+                saveResources(ress, dist, path.substring(0, path.length() - 2), false);
             } else
             {
-                saveResource (dist, path);
+                saveResource (ress, dist, path);
             }
         }
     }
 
-    private void saveResources(String dist, String path, boolean recu)
+    private static void saveResources(Set ress, String dist, String path, boolean recu)
             throws IOException {
         Enumeration <URL> links = Thread
                 .currentThread (  /**/  )
@@ -101,11 +100,11 @@ public class Resources {
             switch (prot) {
                 case "jar" :
                     root = root.substring(5, root.length() - path.length() - 2); // [2]
-                    saveResourcesInJar(dist, root, path, recu);
+                    saveResourcesInJar(ress, dist, root, path, recu);
                     break;
                 case "file":
                     root = root.substring(0, root.length() - path.length() - 0); // [1]
-                    saveResourcesInDir(dist, root, path, recu);
+                    saveResourcesInDir(ress, dist, root, path, recu);
                     break;
                 default:
                     throw new IOException("Can not get resrouces in "+ link.toString());
@@ -113,7 +112,7 @@ public class Resources {
         }
     }
 
-    private void saveResourcesInJar(String dist, String root, String path, boolean recu)
+    private static void saveResourcesInJar(Set ress, String dist, String root, String path, boolean recu)
             throws IOException {
         try(JarFile file = new JarFile(root)) {
             Enumeration<JarEntry> items = file.entries();
@@ -142,14 +141,14 @@ public class Resources {
                     CombatHelper.paintln(name);
                 } else
                 {
-                    save(dist,name, file,item);
+                    saveFile(ress, dist, name, file, item);
                     CombatHelper.paintln(name);
                 }
             }
         }
     }
 
-    private void saveResourcesInDir(String dist, String root, String path, boolean recu)
+    private static void saveResourcesInDir(Set ress, String dist, String root, String path, boolean recu)
             throws IOException {
         File[] files = new File (root + path).listFiles();
         for (File file : files) {
@@ -167,17 +166,17 @@ public class Resources {
                     CombatHelper.paintln(name);
                 } else
                 {
-                    save ( dist , name , file);
+                    saveFile(ress, dist, name, file);
                     CombatHelper.paintln(name);
                 }
             } else if (recu) {
                 String name = path + "/" + file.getName( );
-                saveResourcesInDir(dist, root, name, recu);
+                saveResourcesInDir(ress, dist, root, name, recu);
             }
         }
     }
 
-    private void saveResource(String dist, String path)
+    private static void saveResource(Set ress, String dist, String path)
             throws IOException {
         Enumeration <URL> links = Thread
                 .currentThread (  /**/  )
@@ -198,11 +197,11 @@ public class Resources {
             switch (prot) {
                 case "jar" :
                     root = root.substring(5, root.length() - path.length() - 2); // [2]
-                    saveResourceInJar(dist, root, path);
+                    saveResourceInJar (ress, dist, root, path);
                     break;
                 case "file":
                     root = root.substring(0, root.length() - path.length() - 0); // [1]
-                    saveResourceInDir(dist, root, path);
+                    saveResourceInDir (ress, dist, root, path);
                     break;
                 default:
                     throw new IOException("Can not get resrouce in " + link.toString());
@@ -210,7 +209,7 @@ public class Resources {
         }
     }
 
-    private void saveResourceInJar(String dist, String root, String name)
+    private static void saveResourceInJar(Set ress, String dist, String root, String name)
             throws IOException {
         try(JarFile  file = new JarFile(root)) {
             JarEntry item = file.getJarEntry(name);
@@ -226,13 +225,13 @@ public class Resources {
                 CombatHelper.paintln(name);
             } else
             {
-                save(dist,name, file,item);
+                saveFile(ress, dist, name, file, item);
                 CombatHelper.paintln(name);
             }
         }
     }
 
-    private void saveResourceInDir(String dist, String root, String name)
+    private static void saveResourceInDir(Set ress, String dist, String root, String name)
             throws IOException {
         File file = new File (root + name);
         if ( file.isDirectory() ) {
@@ -247,15 +246,15 @@ public class Resources {
             CombatHelper.paintln(name);
         } else
         {
-            save ( dist , name , file);
+            saveFile(ress, dist, name, file);
             CombatHelper.paintln(name);
         }
     }
 
-    private void save(String dist, String name, File file)
+    private static void saveFile(Set ress, String dist, String name, File file)
             throws IOException {
-        if (resources.contains(name) == false) {
-            resources.add(name);
+        if (ress.contains(name) == false) {
+            ress.add(name);
         } else {
             return;
         }
@@ -273,15 +272,15 @@ public class Resources {
         }
     }
 
-    private void save(String dist, String name, JarFile file, JarEntry item)
+    private static void saveFile(Set ress, String dist, String name, JarFile file, JarEntry item)
             throws IOException {
-        if (resources.contains(name) == false) {
-            resources.add(name);
+        if (ress.contains(name) == false) {
+            ress.add(name);
         } else {
             return;
         }
 
-        File disf = new File (dist +"/"+ name);
+        File disf = new File(dist +"/"+ name);
         File dirf = disf.getParentFile();
         Path disp = disf.toPath();
         if (!dirf.exists()) {

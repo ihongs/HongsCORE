@@ -205,7 +205,7 @@ public class Resources {
                     saveResourceInDir(dist, root, path);
                     break;
                 default:
-                    throw new IOException("Can not get resrouces in "+ link.toString());
+                    throw new IOException("Can not get resrouce in " + link.toString());
             }
         }
     }

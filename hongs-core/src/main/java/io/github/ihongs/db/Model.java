@@ -914,12 +914,13 @@ implements IEntity
      * 如果没指定查询的表、字段
      * 默认只关联 BLS_TO , HAS_ONE 的表(仅能关联一个)
      * 默认只连接 LEFT,INNER,RIGHT 的表(常规关联均可)
-     * 2022/03/13 没必要限定
-     *//*
-    if (null == caze.getOption("ASSOCS")
-    && ("getAll" .equals(caze.getOption("MODEL_START"))
-    ||  "getList".equals(caze.getOption("MODEL_START"))
-    )) {
+     */
+    Object ms = caze.getOption("MODEL_START");
+    if ("getAll" .equals(ms)
+    ||  "getList".equals(ms)
+    ) {
+      if (null == caze.getOption("ASSOC"))
+      {
       if (null == caze.getOption("ASSOC_TYPES"))
       {
         Set types = new HashSet();
@@ -936,7 +937,7 @@ implements IEntity
         types.add( "FULL"  );
         caze.setOption("ASSOC_JOINS", types);
       }
-    } */
+    } }
 
     /**
      * 补全空白关联数据

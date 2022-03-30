@@ -927,7 +927,7 @@ implements IEntity
         types.add("BLS_TO" );
         types.add("HAS_ONE");
         caze.setOption("ASSOC_TYPES", types);
-      }
+      } /*
       if (null == caze.getOption("ASSOC_JOINS"))
       {
         Set types = new HashSet();
@@ -936,7 +936,7 @@ implements IEntity
         types.add( "RIGHT" );
         types.add( "FULL"  );
         caze.setOption("ASSOC_JOINS", types);
-      }
+      } */
     } }
 
     /**

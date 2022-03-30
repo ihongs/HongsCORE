@@ -103,17 +103,17 @@ extends Grade {
         Object uid = req.get("user_id");
         if (null != uid && ! "".equals(uid)) {
             if ( "-".equals (uid)) {
-                caze.gotJoin("users")
+                caze.gotJoin("users2")
                     .from   ("a_master_dept_user")
                     .by     (FetchCase.INNER)
-                    .on     ("`users`.`dept_id` = `dept`.`id`")
-                    .filter ("`users`.`user_id` IS NULL" /**/ );
+                    .on     ("`users2`.`dept_id` = `dept`.`id`")
+                    .filter ("`users2`.`user_id` IS NULL" /**/ );
             } else {
-                caze.gotJoin("users")
+                caze.gotJoin("users2")
                     .from   ("a_master_dept_user")
                     .by     (FetchCase.INNER)
-                    .on     ("`users`.`dept_id` = `dept`.`id`")
-                    .filter ("`users`.`user_id` IN (?)" , uid );
+                    .on     ("`users2`.`dept_id` = `dept`.`id`")
+                    .filter ("`users2`.`user_id` IN (?)" , uid );
             }
         }
 

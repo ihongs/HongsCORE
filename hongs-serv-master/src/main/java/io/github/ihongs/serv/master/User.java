@@ -85,11 +85,11 @@ extends Model {
                 set = AuthKit.getMoreDepts(set);
             if (!set.contains(pid)) {
                 caze.by     (FetchCase.DISTINCT  ); // 去重复
-                caze.gotJoin("depts")
+                caze.gotJoin("depts2")
                     .from   ("a_master_dept_user")
                     .by     (FetchCase.INNER)
-                    .on     ("`depts`.`user_id` = `user`.`id`")
-                    .filter ("`depts`.`dept_id` IN (?)" , set );
+                    .on     ("`depts2`.`user_id` = `user`.`id`")
+                    .filter ("`depts2`.`dept_id` IN (?)" , set );
             }
             } else caze.setOption("SCOPE" , 2 );
             } else caze.setOption("SCOPE" , 1 );
@@ -103,17 +103,17 @@ extends Model {
         Object pid = req.get("dept_id");
         if (null != pid && ! "".equals(pid)) {
             if ( "-".equals (pid ) ) {
-                caze.gotJoin("depts")
+                caze.gotJoin("depts2")
                     .from   ("a_master_dept_user")
                     .by     (FetchCase.INNER)
-                    .on     ("`depts`.`user_id` = `user`.`id`")
-                    .filter ("`depts`.`dept_id` IS NULL" /**/ );
+                    .on     ("`depts2`.`user_id` = `user`.`id`")
+                    .filter ("`depts2`.`dept_id` IS NULL" /**/ );
             } else {
-                caze.gotJoin("depts")
+                caze.gotJoin("depts2")
                     .from   ("a_master_dept_user")
                     .by     (FetchCase.INNER)
-                    .on     ("`depts`.`user_id` = `user`.`id`")
-                    .filter ("`depts`.`dept_id` IN (?)" , pid );
+                    .on     ("`depts2`.`user_id` = `user`.`id`")
+                    .filter ("`depts2`.`dept_id` IN (?)" , pid );
             }
         }
 

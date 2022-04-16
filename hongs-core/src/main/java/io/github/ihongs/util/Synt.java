@@ -125,6 +125,13 @@ public final class Synt {
         }
         return  map;
     }
+
+    /**
+     * 快捷构建 Map
+     * 注意: 可以增删, 须偶数个
+     * @param objs
+     * @return
+     */
     public static Map  mapOf (String... objs) {
         return mapOf ((Object[]) objs);
     }
@@ -138,6 +145,13 @@ public final class Synt {
     public static Set  setOf (Object... objs) {
         return new LinkedHashSet(Arrays.asList(objs));
     }
+
+    /**
+     * 快捷构建 Set
+     * 注意: 可以增删
+     * @param objs
+     * @return
+     */
     public static Set  setOf (String... objs) {
         return setOf ((Object[]) objs);
     }
@@ -151,6 +165,13 @@ public final class Synt {
     public static List listOf(Object... objs) {
         return new  ArrayList   (Arrays.asList(objs));
     }
+
+    /**
+     * 快速构建 List
+     * 注意: 可以增删
+     * @param objs
+     * @return
+     */
     public static List listOf(String... objs) {
         return listOf((Object[]) objs);
     }

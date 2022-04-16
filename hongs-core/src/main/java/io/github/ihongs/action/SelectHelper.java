@@ -214,7 +214,7 @@ public class SelectHelper {
                     String xame = (String) mt.get("enum");
                     if (null == xonf || "".equals( xonf )) xonf = conf;
                     if (null == xame || "".equals( xame )) xame = name;
-                    Map xnum = FormSet.getInstance(xonf).getEnumTranslated(xame);
+                    Map xnum = FormSet.getInstance(xonf).getEnum(xame); // getEnumTranslated
                     enums.put(name , xnum);
                 } break;
                 case "form" : {
@@ -222,7 +222,7 @@ public class SelectHelper {
                     String xame = (String) mt.get("form");
                     if (null == xonf || "".equals( xonf )) xonf = conf;
                     if (null == xame || "".equals( xame )) xame = name;
-                    Map xnum = FormSet.getInstance(xonf).getForm/*Normal*/(xame);
+                    Map xnum = FormSet.getInstance(xonf).getForm(xame); // getFormTranslated
                     forms.put(name , xnum);
                 } break;
                 case "fork" : {

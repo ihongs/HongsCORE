@@ -101,7 +101,7 @@ public class TitlesHelper {
                 String xn = Synt.defxult( (String) mt.get("enum") , name);
                 Map    fe ;
                 try {
-                       fe = FormSet.getInstance(xc).getEnumTranslated(xn);
+                       fe = FormSet.getInstance(xc).getEnum( xn ) ;
                 } catch ( HongsException ex) {
                 if (ex.getErrno() == 913 ) {
                     continue;

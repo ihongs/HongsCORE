@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Map;
 import java.util.Properties;
 
@@ -306,4 +307,86 @@ public class CoreConfig
 
     return inst;
   }
+
+  /**
+   * 持久化配置
+   * 以便在输出时才进行转换
+   */
+  public static class Property implements CharSequence, Serializable {
+
+      private final String   conf;
+      private final String   text;
+      private final String   defs;
+
+      public Property(String conf, String text) {
+          this.conf = conf;
+          this.text = text;
+          this.defs = null;
+      }
+
+      public Property(String conf, String text, String defs) {
+          this.conf = conf;
+          this.text = text;
+          this.defs = defs;
+      }
+
+      @Override
+      public String toString() {
+          Core core = Core.getInstance();
+          String nc = CoreConfig.class.getName()+"!"+conf;
+          if (!core.exists(nc)) try {
+              return  CoreConfig.getInstance(conf).getProperty(text, defs);
+          }
+          catch (HongsExemption ex) {
+          if (826 == ex.getErrno()) {
+              core.put( nc , null );
+          } else throw  ex ;
+          }
+          return defs;
+      }
+
+      @Override
+      public boolean equals(Object o) {
+          if (o == this) {
+            return true ;
+          }
+          if (o == null) {
+            return false;
+          }
+          if (o.equals("")) {
+            return o.equals(text);
+          }
+          if (o instanceof Property ) {
+            Property p = ( Property ) o ;
+            return   p.text.equals(text)
+                &&   p.conf.equals(conf);
+          }
+          if (o instanceof CharSequence) {
+            return o.equals(toString( ));
+          }
+          return false;
+      }
+
+      @Override
+      public int hashCode() {
+          return toString().hashCode();
+      }
+
+      @Override
+      public int  length () {
+          return toString().length ( );
+      }
+
+      @Override
+      public char charAt (int i) {
+          return toString().charAt (i);
+      }
+
+      @Override
+      public CharSequence subSequence(int b, int e) {
+          return toString().subSequence ( b, e );
+      }
+
+  }
+
 }

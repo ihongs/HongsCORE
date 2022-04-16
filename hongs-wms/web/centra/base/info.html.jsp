@@ -29,9 +29,9 @@
                 continue ;
             }
 
-            String  type = (String) info.get("__type__");
-            String  text = (String) info.get("__text__");
-            String  dint = (String) info.get("__dint__");
+            String  type = Synt.asString(info.get("__type__"));
+            String  text = Synt.asString(info.get("__text__"));
+            String  hist = Synt.asString(info.get("__hist__"));
 
             // 显示 ID
             if (name.equals(Cnst.ID_KEY)) {
@@ -181,9 +181,9 @@
                     <div class="form-control-static" data-fn="<%=name%>" data-ft="<%=kind%>"></div>
                 <%} /*End If */%>
                     <%
-                        dint = Synt.declare(info.get("dint"), dint != null ? dint : "");
+                        hist = Synt.declare(info.get("hist") , hist != null ? hist : "");
                     %>
-                    <div class="help-block text-muted form-control-static"><%=dint%></div>
+                    <div class="help-block text-muted form-control-static"><%=hist%></div>
                 </div>
             </div>
         <%} /*End if */%>

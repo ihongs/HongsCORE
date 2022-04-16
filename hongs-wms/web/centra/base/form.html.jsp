@@ -29,10 +29,10 @@
                 continue ;
             }
 
-            String  type = (String) info.get("__type__");
-            String  text = (String) info.get("__text__");
-            String  hint = (String) info.get("__hint__");
-            String  dint = (String) info.get("__dint__");
+            String  type = Synt.asString(info.get("__type__"));
+            String  text = Synt.asString(info.get("__text__"));
+            String  hint = Synt.asString(info.get("__hint__"));
+            String  hist = Synt.asString(info.get("__hist__"));
             boolean rqrd = Synt.declare(info.get("__required__"), false);
             boolean rptd = Synt.declare(info.get("__repeated__"), false);
             boolean roly = Synt.declare(info.get(  "readonly"  ), false);
@@ -188,9 +188,9 @@
                     <div class="form-control-static" data-fn="<%=name%>" data-ft="<%=kind%>"></div>
                 <%} /*End If */%>
                     <%
-                        dint = Synt.declare(info.get("dint"), dint != null ? dint : "");
+                        hist = Synt.declare(info.get("hist") , hist != null ? hist : "");
                     %>
-                    <div class="help-block text-muted form-control-static"><%=dint%></div>
+                    <div class="help-block text-muted form-control-static"><%=hist%></div>
                 </div>
             </div>
         <%} else {%>
@@ -435,7 +435,7 @@
                     <%hint = null;%>
                 <%} /*End If */%>
                     <%
-                        hint = Synt.declare(info.get("hint"), hint != null ? hint : "");
+                        hint = Synt.declare(info.get("hint") , hint != null ? hint : "");
                     %>
                     <div class="help-block text-error form-control-static"><%-- --%></div>
                     <div class="help-block text-muted form-control-static"><%=hint%></div>

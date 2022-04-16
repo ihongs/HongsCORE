@@ -503,7 +503,7 @@ public class FormSet
     throws HongsException
   {
     return getEnum(namc);
-    /* 2022/04/15 有 Lang 可在输出时才翻译
+    /* 2022/04/15 输出时会翻译
     Map items = getEnum(namc);
     Map itemz = new LinkedHashMap();
     CoreLocale lang = getCurrTranslator();
@@ -530,7 +530,7 @@ public class FormSet
     throws HongsException
   {
     return getForm(namc);
-    /* 2022/04/15 有 Lang 可在输出时才翻译
+    /* 2022/04/15 输出时会翻译
     Map items = getForm(namc);
     Map itemz = new LinkedHashMap();
     CoreLocale lang = getCurrTranslator();

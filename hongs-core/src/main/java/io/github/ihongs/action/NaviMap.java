@@ -8,13 +8,13 @@ import io.github.ihongs.CoreRoster;
 import io.github.ihongs.CoreSerial;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
+import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.daemon.Gate;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -366,10 +366,10 @@ public class NaviMap
         if (icon != null) menu2.put( "icon", icon );
 
         String text = element2.getAttribute("text");
-        if (text != null) menu2.put( "text", text );
+        if (text != null) menu2.put( "text", gotLanguage(text));
 
         String hint = element2.getAttribute("hint");
-        if (hint != null) menu2.put( "hint", hint );
+        if (hint != null) menu2.put( "hint", gotLanguage(hint));
 
         Map menus2 = new LinkedHashMap();
         Set roles2 = new LinkedHashSet();
@@ -711,7 +711,8 @@ public class NaviMap
   //** 导航菜单及权限表单 **/
 
   /**
-   * 获取翻译对象(与当前请求相关)
+   * 获取当前语言类
+   * @deprecated 输出时会翻译, 不必预先翻译
    * @return
    */
   public CoreLocale getCurrTranslator() {
@@ -744,6 +745,14 @@ public class NaviMap
       return getMenuTranslated(d, null );
   }
 
+  public List<Map> getMenuTranslates(String name) {
+      return getMenuTranslated(name, 1, null);
+  }
+
+  public List<Map> getMenuTranslates(String name, int d) {
+      return getMenuTranslated(name, d, null);
+  }
+
   /**
    * 获取当前用户有权的菜单
    * @return
@@ -768,16 +777,7 @@ public class NaviMap
   }
 
   public List<Map> getMenuTranslated(int d, Set<String> rolez) {
-      CoreLocale lang = getCurrTranslator();
-      return getMenuTranslated(menus, rolez, lang, d, 0);
-  }
-
-  public List<Map> getMenuTranslates(String name) {
-      return getMenuTranslated(name, 1, null);
-  }
-
-  public List<Map> getMenuTranslates(String name, int d) {
-      return getMenuTranslated(name, d, null);
+      return getMenuTranslated(menus, rolez, d, 0);
   }
 
   public List<Map> getMenuTranslated(String name)
@@ -799,15 +799,14 @@ public class NaviMap
   }
 
   public List<Map> getMenuTranslated(String name, int d, Set<String> rolez) {
-      CoreLocale lang= getCurrTranslator();
       Map menu = getMenu(name);
       if (menu == null) {
           throw new NullPointerException("Menu for href '"+name+"' is not in "+this.name);
       }
-      return getMenuTranslated((Map) menu.get("menus"), rolez, lang, d, 0 );
+      return getMenuTranslated((Map) menu.get("menus"), rolez, d, 0);
   }
 
-  protected List<Map> getMenuTranslated(Map<String, Map> menus, Set<String> rolez, CoreLocale lang, int j, int i) {
+  protected List<Map> getMenuTranslated(Map<String, Map> menus, Set<String> rolez, int j, int i) {
       List<Map> list = new LinkedList();
 
       if (null == menus||(j != 0 && j <= i)) {
@@ -820,7 +819,7 @@ public class NaviMap
           Map    m = (Map) v.get( "menus" );
           Set    r = (Set) v.get( "roles" );
 
-          List<Map> subz = getMenuTranslated(m, rolez, lang, j, i + 1);
+          List<Map> subz = getMenuTranslated(m, rolez, j, i + 1);
 
           /**
            * 当前菜单没有权限则跳过
@@ -848,11 +847,8 @@ public class NaviMap
 
           String p = (String) v.get("hrel");
           String d = (String) v.get("icon");
-          String s = (String) v.get("text");
-          String z = (String) v.get("hint");
-
-          s = s != null ? lang.translate(s) : "";
-          z = z != null ? lang.translate(z) : "";
+          String s = Synt.declare(v.get("text"), "");
+          String z = Synt.declare(v.get("hint"), "");
 
           Map menu = new HashMap();
           menu.put("href", h);
@@ -879,6 +875,14 @@ public class NaviMap
       return getRoleTranslated(d, null);
   }
 
+  public List<Map> getRoleTranslates(String name) {
+      return getRoleTranslated(name, 0, null);
+  }
+
+  public List<Map> getRoleTranslates(String name, int d) {
+      return getRoleTranslated(name, d, null);
+  }
+
   /**
    * 获取当前用户有权的角色
    * @return
@@ -903,16 +907,7 @@ public class NaviMap
   }
 
   public List<Map> getRoleTranslated(int d, Set<String> rolez) {
-      CoreLocale lang = getCurrTranslator();
-      return getRoleTranslated(menus, rolez, lang, d, 0);
-  }
-
-  public List<Map> getRoleTranslates(String name) {
-      return getRoleTranslated(name, 0, null);
-  }
-
-  public List<Map> getRoleTranslates(String name, int d) {
-      return getRoleTranslated(name, d, null);
+      return getRoleTranslated(menus, rolez, d, 0);
   }
 
   public List<Map> getRoleTranslated(String name)
@@ -934,18 +929,17 @@ public class NaviMap
   }
 
   public List<Map> getRoleTranslated(String name, int d, Set<String> rolez) {
-      CoreLocale lang= getCurrTranslator();
       Map menu = getMenu(name);
       if (menu == null) {
           throw new NullPointerException("Menu for href '"+name+"' is not in "+this.name);
       }
-      return getRoleTranslated((Map) menu.get("menus"), rolez, lang, d, 0 );
+      return getRoleTranslated((Map) menu.get("menus"), rolez, d, 0);
   }
 
-  protected List<Map> getRoleTranslated(Map<String, Map> menus, Set<String> rolez, CoreLocale lang, int j, int i) {
-      return getRoleTranslated(menus, rolez, lang, j, i, new HashSet(), new ArrayList(0));
+  protected List<Map> getRoleTranslated(Map<String, Map> menus, Set<String> rolez, int j, int i) {
+      return getRoleTranslated(menus, rolez, j, i, new HashSet(), new ArrayList(0));
   }
-  protected List<Map> getRoleTranslated(Map<String, Map> menus, Set<String> rolez, CoreLocale lang, int j, int i, Set q, List p) {
+  protected List<Map> getRoleTranslated(Map<String, Map> menus, Set<String> rolez, int j, int i, Set q, List p) {
       List<Map> list = new LinkedList();
 
       if (null == menus||(j != 0 && j <= i)) {
@@ -954,13 +948,11 @@ public class NaviMap
 
       for(Map.Entry item : menus.entrySet()) {
           Map v = (Map) item.getValue();
-          Map m = (Map) v.get("menus" );
-          Set r = (Set) v.get("roles" );
+          Map m = (Map) v.get ("menus");
+          Set r = (Set) v.get ("roles");
 
-          String t = (String) v.get("text");
-          String d = (String) v.get("hint");
-          t = t != null ? lang.translate(t) : "";
-          d = d != null ? lang.translate(d) : "";
+          String t = Synt.declare(v.get("text"), "");
+          String d = Synt.declare(v.get("hint"), "");
 
           if (r != null) {
           List<Map> rolz = new LinkedList();
@@ -973,18 +965,16 @@ public class NaviMap
                   continue; // 重复
               }
 
-              Map    o = getRole(n);
-              Set    x = (Set) o.get("depends");
-              String l = (String) o.get("text");
-              String b = (String) o.get("hint");
+              Map o = getRole(n);
+              Set x = (Set) o.get ("depends");
+
+              String l = Synt.declare(o.get("text"), "");
+              String b = Synt.declare(o.get("hint"), "");
 
               if (l == null
               ||  l.length( ) == 0 ) {
                   continue; // 无名
               }
-
-              l = l != null ? lang.translate(l) : "";
-              b = b != null ? lang.translate(b) : "";
 
               Map role = new HashMap();
               role.put("name", n);
@@ -1014,14 +1004,58 @@ public class NaviMap
           }
 
           // 拉平下级
-          List<String> g = new ArrayList(p.size( )+1); g.addAll(p); g.add(t);
-          List<Map> subz = getRoleTranslated(m, rolez, lang, j, i + 1, q, g);
+          List<String> g = new ArrayList(1 + p.size());
+                       g.addAll(p);
+                       g.add   (t);
+          List<Map> subz = getRoleTranslated(m, rolez, j, i + 1, q, g);
           if (! subz.isEmpty()) {
               list.addAll(subz);
           }
       }
 
       return list;
+  }
+
+  private Object getLanguage(String text) {
+      if (text == null || text.isEmpty())
+          return  text;
+
+      int p;
+      String   conf;
+      String   repo;
+      String[] reps;
+
+          p  = text. indexOf (":");
+      if (p >= 0) {
+        repo = text.substring(1+p);
+        text = text.substring(0,p);
+        reps = ((List<String>)Synt.toList(repo)).toArray(new String[0]);
+      } else {
+        reps = null;
+      }
+
+          p  = text. indexOf ("!");
+      if (p >= 0) {
+        conf = text.substring(0,p);
+        text = text.substring(1+p);
+      } else {
+        conf = name;
+      }
+
+      return new CoreLocale.Property(conf, text, reps);
+  }
+
+  private Object gotLanguage(String text) {
+      if (text == null || text.isEmpty())
+          return  text;
+
+      if (text.length() > 0 && text.charAt(0) == '@') {
+          text = text.substring(1);
+      if (text.length() > 0 && text.charAt(0) != '@') {
+          return getLanguage(text);
+      }}
+
+      return text;
   }
 
   //** 工厂方法 **/

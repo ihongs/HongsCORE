@@ -2,6 +2,7 @@ package io.github.ihongs.action;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
+import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLocale;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.CoreRoster;
@@ -50,8 +51,8 @@ import org.xml.sax.SAXException;
                 __text__ : "Label",
                 __type__ : "string|number|date|file|enum|form",
                 __rule__ : "rule.class.Name",
-                __required__ : "yes|no",
-                __repeated__ : "yes|no",
+                __required__ : "true|false",
+                __repeated__ : "true|false",
                 "param_name" : "Value"
                 ...
             }
@@ -311,23 +312,26 @@ public class FormSet
         items.put("__rule__", attr);
 
         attr = element2.getAttribute("text");
-        items.put("__text__", attr);
+        items.put("__text__", gotLanguage(attr));
 
         attr = element2.getAttribute("hint");
-        items.put("__hint__", attr);
+        items.put("__hint__", gotLanguage(attr));
+
+        attr = element2.getAttribute("dint");
+        items.put("__dint__", gotLanguage(attr));
 
         if (element2.hasAttribute("required")) {
             attr = element2.getAttribute("required");
-            items.put("__required__",  attr  );
+            items.put("__required__", attr );
         } else {
-            items.put("__required__", "false");
+            items.put("__required__", "no" );
         }
 
         if (element2.hasAttribute("repeated")) {
             attr = element2.getAttribute("repeated");
-            items.put("__repeated__",  attr  );
+            items.put("__repeated__", attr );
         } else {
-            items.put("__repeated__", "false");
+            items.put("__repeated__", "no" );
         }
 
         /**
@@ -346,15 +350,6 @@ public class FormSet
                     items.put("conf", name);
                 }
             } else
-            if ("enum".equals(typz)) {
-                if (! items.containsKey("enum")) {
-                //  namz = namz.replaceFirst("_id$","");
-                    items.put("enum", namz);
-                }
-                if (! items.containsKey("conf")) {
-                    items.put("conf", name);
-                }
-            } else
             if ("form".equals(typz)) {
                 if (! items.containsKey("form")) {
                     namz = namz.replaceFirst("_id$","");
@@ -364,20 +359,17 @@ public class FormSet
                     items.put("conf", name);
                 }
             } else
-            if ("fork".equals(typz)) {
-                if (! items.containsKey("data-at" )
-                &&  ! items.containsKey("data-al")) {
-                if (! items.containsKey("form")) {
-                    namz = namz.replaceFirst("_id$","");
-                    items.put("form", namz);
+            if ("enum".equals(typz)) {
+                if (! items.containsKey("enum")) {
+                //  namz = namz.replaceFirst("_id$","");
+                    items.put("enum", namz);
                 }
                 if (! items.containsKey("conf")) {
                     items.put("conf", name);
                 }
-                }
             } else
-            if (items.containsKey("enum")
-            ||  items.containsKey("form") ) {
+            if (items.containsKey("form")
+            ||  items.containsKey("enum") ) {
                 if (! items.containsKey("conf")) {
                     items.put("conf", name);
                 }
@@ -408,63 +400,40 @@ public class FormSet
           text =  text.trim();
       }
 
-      if ("bool".equals(type)) {
+      switch (type) {
+        case "conf":
+          return getProperty  (text);
+        case "lang":
+          return getLanguage  (text);
+        case "map" :
+          return Synt.toMap   (text);
+        case "set" :
+          return Synt.toSet   (text);
+        case "list":
+          return Synt.toList  (text);
+        case "json":
+          return Dawn.toObject(text);
+        case "bool":
           return Synt.defoult(Synt.asBool(text), false);
-      }
-
-      if ("json".equals(type)) {
-        if (text.startsWith("(") && text.endsWith(")")) {
-          text = text.substring( 1, text.length() - 1 );
-          return Dawn.toObject(text);
-        } else {
-          return Dawn.toObject(text);
-        }
-      }
-
-      if ("list".equals(type)) {
-        if (text.startsWith("[") && text.endsWith("]")) {
-          return ( List) Dawn.toObject(text);
-        } else {
-          return  new  ArrayList   (
-              Arrays.asList(SEXP.split(text))
-          );
-        }
-      }
-
-      if ( "set".equals(type)) {
-        if (text.startsWith("[") && text.endsWith("]")) {
-          return  new LinkedHashSet(
-                 ( List) Dawn.toObject(text)
-          );
-        } else {
-          return  new LinkedHashSet(
-              Arrays.asList(SEXP.split(text))
-          );
-        }
-      }
-
-      if ( "map".equals(type)) {
-        if (text.startsWith("{") && text.endsWith("}")) {
-          return ( Map ) Dawn.toObject(text);
-        } else {
-          Map m = new LinkedHashMap();
-          for(String   s : SEXP.split (text)) {
-              String[] a = MEXP.split (s, 2);
-              if ( 2 > a.length ) {
-                  m.put( a[0], a[0] );
-              } else {
-                  m.put( a[0], a[1] );
-              }
-          }
-          return  m;
-        }
+        case "int" :
+          return Synt.defoult(Synt.asInt (text), (int ) 0 );
+        case "long":
+          return Synt.defoult(Synt.asLong(text), (long) 0 );
+        case "byte":
+          return Synt.defoult(Synt.asByte(text), (byte) 0 );
+        case "short" :
+          return Synt.defoult(Synt.asShort (text), (short ) 0);
+        case "float" :
+          return Synt.defoult(Synt.asFloat (text), (float ) 0);
+        case "double":
+          return Synt.defoult(Synt.asDouble(text), (double) 0);
+        case "number":
+          return Synt.defoult(Synt.asDouble(text), (double) 0);
       }
 
       throw new HongsException(914, "Unrecognized type '"+ type +"'")
           .setLocalizedOptions(type);
   }
-  private static final Pattern SEXP = Pattern.compile ( "\\s*,\\s*" );
-  private static final Pattern MEXP = Pattern.compile ( "\\s*:\\s*" );
 
   public String getName() {
       return  this.name;
@@ -506,6 +475,11 @@ public class FormSet
     throw new HongsException(912, "Form "+name+" in "+this.name+" is not exists");
   }
 
+  /**
+   * 获取当前语言类
+   * @deprecated 输出时会翻译, 不必预先翻译
+   * @return
+   */
   public CoreLocale getCurrTranslator() {
     try {
       return CoreLocale.getInstance(name);
@@ -518,25 +492,45 @@ public class FormSet
     }
   }
 
+  /**
+   * 获取翻译的枚举
+   * @deprecated 输出时会翻译, 不必预先翻译, 只需 getEnum
+   * @param namc 枚举名称
+   * @return
+   * @throws HongsException
+   */
   public Map getEnumTranslated(String namc)
     throws HongsException
   {
+    return getEnum(namc);
+    /* 2022/04/15 有 Lang 可在输出时才翻译
     Map items = getEnum(namc);
     Map itemz = new LinkedHashMap();
     CoreLocale lang = getCurrTranslator();
     itemz.putAll(items);
     for(Object o : itemz.entrySet()) {
       Map.Entry e = (Map.Entry) o;
-//    String    k = (String) e.getKey(  );
-      String    n = (String) e.getValue();
-      e.setValue(lang.translate(n));
+      Object    n = e.getValue( );
+      if (n instanceof String ) {
+        e.setValue(lang.translate((String) n));
+      }
     }
     return itemz;
+    */
   }
 
+  /**
+   * 获取翻译的表单
+   * @deprecated 输出时会翻译, 不必预先翻译, 只需 getForm
+   * @param namc 表单名称
+   * @return
+   * @throws HongsException
+   */
   public Map getFormTranslated(String namc)
     throws HongsException
   {
+    return getForm(namc);
+    /* 2022/04/15 有 Lang 可在输出时才翻译
     Map items = getForm(namc);
     Map itemz = new LinkedHashMap();
     CoreLocale lang = getCurrTranslator();
@@ -546,6 +540,7 @@ public class FormSet
       String    k = (String) e.getKey();
       String    n = (String) m.get("__text__");
       String    h = (String) m.get("__hint__");
+      String    d = (String) m.get("__dint__");
       Map       u = new LinkedHashMap();
       u.putAll( m );
       if (n != null ||!"".equals(n)) {
@@ -554,9 +549,85 @@ public class FormSet
       if (h != null &&!"".equals(n)) {
           u.put("__hint__", lang.translate(h));
       }
+      if (d != null &&!"".equals(d)) {
+          u.put("__dint__", lang.translate(h));
+      }
       itemz.put(k, u);
     }
     return itemz;
+    */
+  }
+
+  private Object getProperty(String text) {
+      if (null == text || text.isEmpty()) {
+          return  text;
+      }
+
+      int p;
+      String   conf;
+      String   defs;
+
+          p  = text. indexOf (":");
+      if (p >= 0) {
+        defs = text.substring(1+p);
+        text = text.substring(0,p);
+      } else {
+        defs = null;
+      }
+
+          p  = text. indexOf ("!");
+      if (p >= 0) {
+        conf = text.substring(0,p);
+        text = text.substring(1+p);
+      } else {
+        conf = name;
+      }
+
+      return new CoreConfig.Property(conf, text, defs);
+  }
+
+  private Object getLanguage(String text) {
+      if (null == text || text.isEmpty()) {
+          return  text;
+      }
+
+      int p;
+      String   conf;
+      String   repo;
+      String[] reps;
+
+          p  = text. indexOf (":");
+      if (p >= 0) {
+        repo = text.substring(1+p);
+        text = text.substring(0,p);
+        reps = ((List<String>)Synt.toList(repo)).toArray(new String[0]);
+      } else {
+        reps = null;
+      }
+
+          p  = text. indexOf ("!");
+      if (p >= 0) {
+        conf = text.substring(0,p);
+        text = text.substring(1+p);
+      } else {
+        conf = name;
+      }
+
+      return new CoreLocale.Property(conf, text, reps);
+  }
+
+  private Object gotLanguage(String text) {
+      if (null == text || text.isEmpty()) {
+          return  text;
+      }
+
+      if (text.length() > 0 && text.charAt(0) == '@') {
+          text = text.substring(1);
+      if (text.length() > 0 && text.charAt(0) != '@') {
+          return getLanguage(text);
+      }}
+
+      return text;
   }
 
   //** 工厂方法 **/

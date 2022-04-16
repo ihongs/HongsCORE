@@ -3,6 +3,7 @@
 <%@page import="io.github.ihongs.HongsException"%>
 <%@page import="io.github.ihongs.action.ActionDriver"%>
 <%@page import="io.github.ihongs.action.NaviMap"%>
+<%@page import="io.github.ihongs.util.Synt"%>
 <%@page import="java.util.Map"%>
 <%@page pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%
@@ -37,24 +38,14 @@
             if (menu != null) {
                     $menu   = menu;
                     $hrel   = (String) menu.get("hrel");
-                    $title  = (String) menu.get("text");
-                if ($title != null) {
-                    $title  = $locale.translate($title);
-                } else {
-                    $title  = "";
-                }
+                    $title  = Synt.declare (menu.get("text"),"");
                 break;
             }
             menu  = site.getMenu($module +"/#"+$entity);
             if (menu != null) {
                     $menu   = menu;
                     $hrel   = (String) menu.get("hrel");
-                    $title  = (String) menu.get("text");
-                if ($title != null) {
-                    $title  = $locale.translate($title);
-                } else {
-                    $title  = "";
-                }
+                    $title  = Synt.declare (menu.get("text"),"");
                 break;
             }
         } catch (HongsException ex) {

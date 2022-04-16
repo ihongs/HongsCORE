@@ -554,62 +554,80 @@ public final class Synt {
      * @return
      */
     public static Map  toMap (Object val) {
-        if (val == null) {
-            return null;
-        }
-
         if (val instanceof String) {
-            if ("".equals(val)) {
-                return  new LinkedHashMap();
-            }
-            String text = ( (String) val).trim(  );
-            if (text.startsWith("{") && text.endsWith("}")) {
-                return (Map ) Dawn.toObject (text);
-            } else {
-                Map m = new LinkedHashMap();
-                for(String   s : SEXP.split (text)) {
-                    String[] a = MEXP.split (s, 2);
-                    if ( 2 > a.length ) {
-                        m.put( a[0], a[0] );
-                    } else {
-                        m.put( a[0], a[1] );
-                    }
-                }
-                return  m ;
-            }
+            return toMap ((String) val);
         }
 
         return asMap (val);
     }
 
     /**
+     * 尝试转为 Map
+     * 尝试解析 JSON 或拆分逗号冒号
+     * @param txt
+     * @return
+     */
+    public static Map  toMap (String txt) {
+        if (txt == null) {
+            return null;
+        }
+        txt = txt.trim();
+        if (txt.length() == 0) {
+            return new LinkedHashMap();
+        }
+        if (txt.startsWith("{") && txt.endsWith("}")) {
+            return (Map ) Dawn.toObject(txt);
+        } else {
+            Map m = new LinkedHashMap();
+            for(String   s : SEXP.split(txt)) {
+                String[] a = MEXP.split(s,2);
+                if ( 2 > a.length ) {
+                    m.put( a[0], a[0] );
+                } else {
+                    m.put( a[0], a[1] );
+                }
+            }
+            return  m;
+        }
+    }
+
+    /**
      * 尝试转为 Set
-     * 与 asSet 的不同在于当 val 是字符串时, 尝试通过 JSON 解析或逗号分隔
+     * 尝试通过 JSON 解析或逗号分隔
      * @param val
      * @return
      */
     public static Set  toSet (Object val) {
-        if (val == null) {
-            return null;
-        }
-
         if (val instanceof String) {
-            if ("".equals(val)) {
-                return  new LinkedHashSet();
-            }
-            String text = ( (String) val).trim(  );
-            if (text.startsWith("[") && text.endsWith("]")) {
-                return  new LinkedHashSet(
-                       (List) Dawn.toObject (text)
-                );
-            } else {
-                return  new LinkedHashSet(
-                    Arrays.asList(SEXP.split(text))
-                );
-            }
+            return toSet ((String) val);
         }
 
         return asSet (val);
+    }
+
+    /**
+     * 尝试转为 Set
+     * 尝试通过 JSON 解析或逗号分隔
+     * @param txt
+     * @return
+     */
+    public static Set  toSet (String txt) {
+        if (txt == null) {
+            return null;
+        }
+        txt = txt.trim();
+        if (txt.length() == 0) {
+            return  new LinkedHashSet();
+        }
+        if (txt.startsWith("[") && txt.endsWith("]")) {
+            return  new LinkedHashSet(
+                   (List) Dawn.toObject (txt)
+            );
+        } else {
+            return  new LinkedHashSet(
+                Arrays.asList(SEXP.split(txt))
+            );
+        }
     }
 
     /**
@@ -619,25 +637,34 @@ public final class Synt {
      * @return
      */
     public static List toList(Object val) {
-        if (val == null) {
-            return null;
-        }
-
         if (val instanceof String) {
-            if ("".equals(val)) {
-                return  new  ArrayList();
-            }
-            String text = ( (String) val).trim(  );
-            if (text.startsWith("[") && text.endsWith("]")) {
-                return (List) Dawn.toObject (text);
-            } else {
-                return  new  ArrayList(
-                    Arrays.asList(SEXP.split(text))
-                );
-            }
+            return toList((String) val);
         }
 
         return asList(val);
+    }
+
+    /**
+     * 尝试转为 List
+     * 尝试通过 JSON 解析或逗号分隔
+     * @param val
+     * @return
+     */
+    public static List toList(String txt) {
+        if (txt == null) {
+            return null;
+        }
+        txt = txt.trim();
+        if (txt.length() == 0) {
+            return  new  ArrayList();
+        }
+        if (txt.startsWith("[") && txt.endsWith("]")) {
+            return (List) Dawn.toObject (txt);
+        } else {
+            return  new  ArrayList(
+                Arrays.asList(SEXP.split(txt))
+            );
+        }
     }
 
     /**
@@ -647,25 +674,34 @@ public final class Synt {
      * @return
      */
     public static Collection toColl(Object val) {
-        if (val == null) {
-            return null;
-        }
-
         if (val instanceof String) {
-            if ("".equals(val)) {
-                return  new  ArrayList();
-            }
-            String text = ( (String) val).trim(  );
-            if (text.startsWith("[") && text.endsWith("]")) {
-                return (List) Dawn.toObject (text);
-            } else {
-                return  new  ArrayList(
-                    Arrays.asList(SEXP.split(text))
-                );
-            }
+            return toColl((String) val);
         }
 
         return asColl(val);
+    }
+
+    /**
+     * 尝试转为 Collection
+     * 尝试通过 JSON 解析或逗号分隔
+     * @param txt
+     * @return
+     */
+    public static Collection toColl(String txt) {
+        if (txt == null) {
+            return null;
+        }
+        txt = txt.trim();
+        if (txt.length() == 0) {
+            return  new  ArrayList();
+        }
+        if (txt.startsWith("[") && txt.endsWith("]")) {
+            return (List) Dawn.toObject (txt);
+        } else {
+            return  new  ArrayList(
+                Arrays.asList(SEXP.split(txt))
+            );
+        }
     }
 
     /**

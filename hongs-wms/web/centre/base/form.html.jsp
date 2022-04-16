@@ -33,6 +33,7 @@
             String  type = (String) info.get("__type__");
             String  text = (String) info.get("__text__");
             String  hint = (String) info.get("__hint__");
+            String  dint = (String) info.get("__dint__");
             boolean rqrd = Synt.declare(info.get("__required__"), false);
             boolean rptd = Synt.declare(info.get("__repeated__"), false);
             boolean roly = Synt.declare(info.get(  "readonly"  ), false);
@@ -185,6 +186,10 @@
                 <%} else {%>
                     <div class="form-control-static" data-fn="<%=name%>" data-ft="<%=kind%>"></div>
                 <%} /*End If */%>
+                    <%
+                        dint = Synt.declare(info.get("dint"), dint != null ? dint : "");
+                    %>
+                    <div class="help-block text-muted form-control-static"><%=dint%></div>
                 </div>
             </div>
         <%} else {%>
@@ -427,13 +432,9 @@
                     <%hint = null;%>
                 <%} /*End If */%>
                     <%
-                        String hist = "";
-                        if (hint == null)
-                               hint = "";
-                        hist = Synt.declare(info.get("hist"), hist);
-                        hint = Synt.declare(info.get("hint"), hint);
+                        hint = Synt.declare(info.get("hint"), hint != null ? hint : "");
                     %>
-                    <div class="help-block text-error form-control-static"><%=hist%></div>
+                    <div class="help-block text-error form-control-static"><%-- --%></div>
                     <div class="help-block text-muted form-control-static"><%=hint%></div>
                 </div>
                 <div class="col-md-2 hidden-sm hidden-xs">

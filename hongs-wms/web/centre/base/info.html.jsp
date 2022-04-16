@@ -30,8 +30,9 @@
                 continue ;
             }
 
-            String  text = (String) info.get("__text__");
             String  type = (String) info.get("__type__");
+            String  text = (String) info.get("__text__");
+            String  dint = (String) info.get("__dint__");
 
             // 显示 ID
             if (name.equals(Cnst.ID_KEY)) {
@@ -178,6 +179,10 @@
                 <%} else {%>
                     <div class="form-control-static" data-fn="<%=name%>" data-ft="<%=kind%>"></div>
                 <%} /*End If */%>
+                    <%
+                        dint = Synt.declare(info.get("dint"), dint != null ? dint : "");
+                    %>
+                    <div class="help-block text-muted form-control-static"><%=dint%></div>
                 </div>
             </div>
         <%} /*End if */%>

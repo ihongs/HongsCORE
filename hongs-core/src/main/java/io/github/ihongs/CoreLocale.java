@@ -13,7 +13,7 @@ import java.util.Map;
  * <p>
  * 为与配置保持一致, 故从CoreConfig继承.<br/>
  * 放弃使用"ResourceBundle"类加载语言资源.<br/>
- * 资源文件名为"xxx_语言[_国家].properties".<br/>
+ * 资源文件名为"xxx_语言[_地区].properties".<br/>
  * </p>
  *
  * <h3>配置选项:</h3>

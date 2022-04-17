@@ -62,7 +62,11 @@ public class CoreConfig
   }
 
   /**
-   * 根据配置名称加载配置
+   * 加载指定配置文件
+   * 注意:
+   * 如果通过 getInstance 取对象且 core.load.config.once=true (默认),
+   * 务必要先 clone 然后再去 load,
+   * 从而避免对全局配置对象的破坏.
    * @param name
    */
   public void load(String name)
@@ -121,14 +125,18 @@ public class CoreConfig
   }
 
   /**
-   * 根据配置名称加载配置(但忽略文件不存在)
+   * 加载指定配置文件(会忽略文件不存在)
+   * 注意:
+   * 如果通过 getInstance 取对象且 core.load.config.once=true (默认),
+   * 务必要先 clone 然后再去 fill,
+   * 从而避免对全局配置对象的破坏.
    * @param name
    */
   public void fill(String name)
   {
     try {
         this.load(name);
-    } catch (HongsExemption e) {
+    } catch (HongsExemption  e  ) {
         if  (e.getErrno() != 826) {
             throw e;
         }

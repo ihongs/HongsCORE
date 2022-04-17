@@ -84,6 +84,10 @@ public class CoreLocale
 
   /**
    * 加载指定语言文件
+   * 注意:
+   * 如果通过 getInstance 取对象且 core.load.locale.once=true (默认),
+   * 务必要先 clone 然后再去 load,
+   * 从而避免对全局配置对象的破坏.
    * @param name
    */
   @Override
@@ -94,6 +98,20 @@ public class CoreLocale
       that.fill(name);
     }
      super.load(name + "_" + this.lang);
+  }
+
+  /**
+   * 加载指定语言文件(会忽略文件不存在)
+   * 注意:
+   * 如果通过 getInstance 取对象且 core.load.locale.once=true (默认),
+   * 务必要先 clone 然后再去 fill,
+   * 从而避免对全局配置对象的破坏.
+   * @param name
+   */
+  @Override
+  public void fill(String name)
+  {
+     super.fill(name);
   }
 
   /**

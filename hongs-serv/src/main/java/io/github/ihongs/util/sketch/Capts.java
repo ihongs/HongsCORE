@@ -123,7 +123,7 @@ public class Capts {
         Font font;
         try {
             InputStream is;
-            if (fontFile.startsWith("!")) {
+            if (fontFile.startsWith("@")) {
                 is = Capts.class.getResourceAsStream(fontFile.substring(1));
             } else {
                 is =  new  FileInputStream( new File(fontFile) );

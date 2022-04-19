@@ -37,7 +37,7 @@ public class DataAction extends SearchAction {
         ActionRunner runner = (ActionRunner) helper.getAttribute(ActionRunner.class.getName());
         Data   entity = Data.getInstance(runner.getModule(), runner.getEntity());
         String userId = (String) helper.getSessibute(Cnst.UID_SES);
-        if  (  userId == null  ) userId = Cnst.ADM_GID; // 匿名用户
+        if  (  userId == null  ) userId = Cnst.GUS_UID; // 匿名用户
         entity.setUserId(userId);
         return entity;
     }

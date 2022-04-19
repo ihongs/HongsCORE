@@ -44,17 +44,16 @@ public class PresetInvoker implements FilterInvoker {
                     // 废弃返回数据模式
                     // 规避内部不确定性
                     // 总是返回原始对象
-                    if (item.equals("_str_")) {
-                        Core.getInstance().put(Cnst.STRING_MODE, true );
-                    } else
                     if (item.equals("_obj_")) {
                         Core.getInstance().put(Cnst.STRING_MODE, false);
+                    } else
+                    if (item.equals("_str_")) {
+                        Core.getInstance().put(Cnst.STRING_MODE, true );
                     } else
                     */
                     if (item.length() > 1) {
                     char c  = item.charAt(0);
-                    if ( c != '_' && c != '-' && c != '*'
-                    &&   c != '.' && c != ':' && c != '!' ) {
+                    if ( c != '_' && c != '.' && c != ':' && c != '!' ) {
                         used.add(form+".def."+item);
                     }}
                 }

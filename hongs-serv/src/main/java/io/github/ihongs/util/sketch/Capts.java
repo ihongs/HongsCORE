@@ -35,7 +35,7 @@ public class Capts {
     private float maskRatio = 0.05f;
     private Color backColor = Color.WHITE;
     private Color fontColor = Color.BLACK;
-    private String fontFile ="!Capts.ttf";
+    private String fontFile ="@Capts.ttf";
     private char[] fontDict = new char[] {
         '3', '4', '5', '6', '7', '8', '9',
         'A', 'B', 'C', 'D', 'E', 'F', 'G',
@@ -232,7 +232,7 @@ public class Capts {
 
         // 获取配置
         CoreConfig  cc = CoreConfig.getInstance();
-        String ff = cc.getProperty("core.capts.font.file", "!Capts.ttf");
+        String ff = cc.getProperty("core.capts.font.file", "@Capts.ttf");
         String cs = cc.getProperty("core.capts.code.dict", "1234567890");
         int    cn = cc.getProperty("core.capts.code.count", 4);
         int    mn = cc.getProperty("core.capts.mask.count", 8);

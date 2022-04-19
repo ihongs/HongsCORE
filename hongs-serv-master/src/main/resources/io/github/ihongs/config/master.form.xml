@@ -82,7 +82,7 @@
         <value code="-1">锁定</value>
         <value code="-2">系统</value>
     </enum>
-    <enum name="mine:defense">
+    <enum name="mine.defense">
         <value code="id">($session.uid)</value>
     </enum>
 </root>

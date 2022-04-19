@@ -1,7 +1,6 @@
 package io.github.ihongs.action.anno;
 
 import io.github.ihongs.Cnst;
-import io.github.ihongs.Core;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
@@ -14,16 +13,11 @@ import java.util.Set;
 
 /**
  * 预置补充处理器
- * <pre>
- * ab 参数含义:
- * _obj_ 将启用对象模式
- * _str_ 将启用字串模式
- * </pre>
  * <p>
  * 可使用 ab 参数将指定好的条件注入到请求数据中.
  * 这样可减少终端一些常规参数,
  * 并能在未来更方便地做出调整;
- * 如 ab=v1 附加版本 1 的参数.
+ * 如: ab=v1 附加版本控制标识.
  * </p>
  * @author Hong
  */
@@ -57,12 +51,12 @@ public class PresetInvoker implements FilterInvoker {
                         Core.getInstance().put(Cnst.STRING_MODE, false);
                     } else
                     */
-                    if (item.startsWith("_") == false
-                    && !item.startsWith(".")
-                    && !item.startsWith(":")
-                    && !item.startsWith("!")) {
-                        used.add("." + item);
-                    }
+                    if (item.length() > 1) {
+                    char c  = item.charAt(0);
+                    if ( c != '_' && c != '-' && c != '*'
+                    &&   c != '.' && c != ':' && c != '!' ) {
+                        used.add(form+".def."+item);
+                    }}
                 }
                 deft  = used.toArray(new String[0]);
             }

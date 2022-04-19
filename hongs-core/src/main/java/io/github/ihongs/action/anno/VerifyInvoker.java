@@ -85,7 +85,7 @@ public class VerifyInvoker implements FilterInvoker {
 
         // 执行校验
         try {
-            Map data  = (Map) helper.getAttribute("form:"+conf+"!"+form);
+            Map data  = (Map) helper.getAttribute("form:"+conf+":"+form);
             if (data == null) {
                 data  = FormSet.getInstance(conf).getForm(form);
             }

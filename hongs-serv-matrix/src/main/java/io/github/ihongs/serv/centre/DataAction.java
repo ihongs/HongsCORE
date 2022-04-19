@@ -74,7 +74,7 @@ public class DataAction extends SearchAction {
         Method met = runner.getMethod();
 
         // 绑定特制的表单
-        String fcn = "form:" + mod +"!"+ ent ;
+        String fcn = "form:" + mod +":"+ ent ;
         Object fco = helper.getAttribute(fcn);
         if (fco == null
         && (met.isAnnotationPresent(Select.class)

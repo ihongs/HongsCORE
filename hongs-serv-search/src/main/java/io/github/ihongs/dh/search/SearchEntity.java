@@ -54,12 +54,12 @@ public class SearchEntity extends LuceneRecord {
      * @throws HongsException
      */
     public static SearchEntity getInstance(String conf, String form) throws HongsException {
-        String code = SearchEntity.class.getName() +":"+ conf +"!"+ form;
+        String code = SearchEntity.class.getName() +":"+ conf +":"+ form;
         Core   core = Core.getInstance( );
         SearchEntity  inst = (SearchEntity) core.get(code);
         if (inst == null) {
             String path = conf +"/"+ form;
-            String name = conf +"!"+ form;
+            String name = conf +":"+ form;
             Map    fxrm = FormSet.getInstance(conf).getForm(form);
 
             // 表单配置中可指定数据路径

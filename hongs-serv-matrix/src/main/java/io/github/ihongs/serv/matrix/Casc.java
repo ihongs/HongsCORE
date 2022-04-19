@@ -17,13 +17,13 @@ import java.util.Set;
  *
  * <pre>
  * 配置格式:
- *  &lt;enum name="form:cascade"&gt;
- *    &lt;value code="conf!form?thatForeignKey"&gt;UPDATE,DELETE,DEPEND&lt/value&gt;
+ *  &lt;enum name="form.cascade"&gt;
+ *    &lt;value code="conf:form;thatFk"&gt;UPDATE,DELETE,DEPEND&lt/value&gt;
  *  &lt;/enum&gt;
- *  &lt;enum name="form:include"&gt;
- *    &lt;value name="conf!form?thisForeignKey"&gt;thisFn:thatFn,sameFn&lt/value&gt;
+ *  &lt;enum name="form.include"&gt;
+ *    &lt;value name="conf:form;thisFk"&gt;thisFn:thatFn,sameFn&lt/value&gt;
  *  &lt;/enum&gt;
- * cascade 中可用分号分隔相同表单的多个外键字段, 如 ?fk1;fk2
+ * cascade 中可用逗号分隔相同表单的多个外键字段, 如 ;fk1,fk2
  * </pre>
  * <pre>
  * 级联模式:
@@ -125,7 +125,7 @@ public class Casc {
                 continue;
             }
 
-            // 格式: conf!form?fk#DELETE#UPDATE
+            // 格式: conf:form;fk#DELETE#UPDATE
             int     p = at.indexOf  ("#");
             if (0 < p ) {
             String tk = at.substring(0+p);
@@ -133,10 +133,10 @@ public class Casc {
                 continue;
             }      at = at.substring(0,p);
             }
-                    p = at.indexOf  ("?");
+                    p = at.indexOf  (";");
             String fk = at.substring(1+p);
                    at = at.substring(0,p);
-                    p = at.indexOf  ("!");
+                    p = at.indexOf  (":");
             String  f = at.substring(1+p);
             String  c = at.substring(0,p);
 
@@ -157,7 +157,7 @@ public class Casc {
                 continue;
             }
 
-            // 格式: conf!form?fk#DELETE#UPDATE
+            // 格式: conf:form;fk#DELETE#UPDATE
             int     p = at.indexOf  ("#");
             if (0 < p ) {
             String tk = at.substring(0+p);
@@ -165,10 +165,10 @@ public class Casc {
                 continue;
             }      at = at.substring(0,p);
             }
-                    p = at.indexOf  ("?");
+                    p = at.indexOf  (";");
             String fk = at.substring(1+p);
                    at = at.substring(0,p);
-                    p = at.indexOf  ("!");
+                    p = at.indexOf  (":");
             String  f = at.substring(1+p);
             String  c = at.substring(0,p);
 

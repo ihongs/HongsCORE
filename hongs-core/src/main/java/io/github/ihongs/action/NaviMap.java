@@ -1025,7 +1025,7 @@ public class NaviMap
       String   repo;
       String[] reps;
 
-          p  = text. indexOf (':');
+          p  = text. indexOf (';');
       if (p >= 0) {
         repo = text.substring(1+p);
         text = text.substring(0,p);
@@ -1034,7 +1034,7 @@ public class NaviMap
         reps = null;
       }
 
-          p  = text. indexOf ('!');
+          p  = text. indexOf (':');
       if (p >= 0) {
         conf = text.substring(0,p);
         text = text.substring(1+p);

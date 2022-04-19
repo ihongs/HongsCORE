@@ -748,7 +748,7 @@ public class Form extends Model {
             // 全局性保护, 改用 VarsFilter 限制
             defs = docm.createElement("enum");
             root.appendChild ( defs );
-            defs.setAttribute("name", id+":defense");
+            defs.setAttribute("name", id+".defense");
             defi = docm.createElement("value");
             defs.appendChild ( defi );
             defi.setAttribute("code", Cnst.AR_KEY);
@@ -766,7 +766,7 @@ public class Form extends Model {
             // 保护写接口
             defs = docm.createElement("enum");
             root.appendChild ( defs );
-            defs.setAttribute("name", id+":defence");
+            defs.setAttribute("name", id+".defence");
             defi = docm.createElement("value");
             defs.appendChild ( defi );
             defi.setAttribute("code", Cnst.AR_KEY+".x.cuser");
@@ -775,7 +775,7 @@ public class Form extends Model {
             // 我所创建的
             defs = docm.createElement("enum");
             root.appendChild ( defs );
-            defs.setAttribute("name", id+".created");
+            defs.setAttribute("name", id+".def.own");
             defi = docm.createElement("value");
             defs.appendChild ( defi );
             defi.setAttribute("code", Cnst.AR_KEY+".x.cuser");

@@ -150,7 +150,7 @@ public class Data extends SearchEntity {
         }
 
         // 默认构造
-        name = Data.class.getName() +":"+ conf +"!"+ form;
+        name = Data.class.getName() +":"+ conf +":"+ form;
         Core core =  Core.getInstance(  );
         Data inst = (Data) core.get(name);
         if (inst == null) {
@@ -371,9 +371,9 @@ public class Data extends SearchEntity {
         if (name == null || name.isEmpty()) {
             if (conf.startsWith("centra/")
             ||  conf.startsWith("centre/")) {
-                name = "matrix/"+ conf.substring(7) +"!"+ form ;
+                name = "matrix/"+ conf.substring(7) +":"+ form ;
             } else {
-                name = conf +"!"+ form;
+                name = conf +":"+ form;
             }
         }
 
@@ -1330,14 +1330,14 @@ public class Data extends SearchEntity {
 
     /**
      * 获取级联动作配置
-     * 返回格式 {"conf!form?fk": ["UPDATE","DELETE","DEPEND"]}
+     * 返回格式 {"conf:form;fk": ["UPDATE","DELETE","DEPEND"]}
      * 值也可能是符合标准的字符串
      * @return
      */
     protected Map<String, Object> getCascades() {
         do {
             try {
-                return FormSet.getInstance(conf).getEnum(form+":cascade");
+                return FormSet.getInstance(conf).getEnum(form+".cascade");
             }
             catch (HongsException ex) {
             if (910 != ex.getErrno( )
@@ -1351,7 +1351,7 @@ public class Data extends SearchEntity {
             }
 
             try {
-                return FormSet.getInstance(canf).getEnum(form+":cascade");
+                return FormSet.getInstance(canf).getEnum(form+".cascade");
             }
             catch (HongsException ex) {
             if (910 != ex.getErrno( )
@@ -1365,14 +1365,14 @@ public class Data extends SearchEntity {
 
     /**
      * 获取级联包含配置
-     * 返回格式 {"conf!form?fk": {"fn1":"fn_a", "fn2":"fn_x"}}
+     * 返回格式 {"conf:form;fk": {"fn1":"fn_a", "fn2":"fn_x"}}
      * 值也可能是符合标准的字符串
      * @return
      */
     protected Map<String, Object> getIncludes() {
         do {
             try {
-                return FormSet.getInstance(conf).getEnum(form+":include");
+                return FormSet.getInstance(conf).getEnum(form+".include");
             }
             catch (HongsException ex) {
             if (910 != ex.getErrno( )
@@ -1386,7 +1386,7 @@ public class Data extends SearchEntity {
             }
 
             try {
-                return FormSet.getInstance(canf).getEnum(form+":include");
+                return FormSet.getInstance(canf).getEnum(form+".include");
             }
             catch (HongsException ex) {
             if (910 != ex.getErrno( )
@@ -1475,11 +1475,11 @@ public class Data extends SearchEntity {
                 continue;
             }
 
-            // 解析关联描述串, 格式: conf!form?fk
-            int     p = at.indexOf  ("?");
+            // 解析关联描述串, 格式: conf:form;fk
+            int     p = at.indexOf  (";");
             String  k = at.substring(1+p);
             String  c = at.substring(0,p);
-                    p =  c.indexOf  ("!");
+                    p =  c.indexOf  (":");
             String  f =  c.substring(1+p);
                     c =  c.substring(0,p);
 
@@ -1575,11 +1575,11 @@ public class Data extends SearchEntity {
                 continue;
             }
 
-            // 解析关联描述串, 格式: conf!form?fk
-            int     p = at.indexOf  ("?");
+            // 解析关联描述串, 格式: conf:form;fk
+            int     p = at.indexOf  (";");
             String  k = at.substring(1+p);
             String  c = at.substring(0,p);
-                    p =  c.indexOf  ("!");
+                    p =  c.indexOf  (":");
             String  f =  c.substring(1+p);
                     c =  c.substring(0,p);
 
@@ -1587,7 +1587,7 @@ public class Data extends SearchEntity {
             Map    ar = new HashMap();
             Set    or = new HashSet();
             ar.put( Cnst.OR_KEY, or );
-            for(String fn : k.split(";")) {
+            for(String fn : k.split(",")) {
                 or.add(Synt.mapOf(fn,rs));
             }
 

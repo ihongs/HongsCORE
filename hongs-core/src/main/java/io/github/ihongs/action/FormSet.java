@@ -563,7 +563,7 @@ public class FormSet
       String   conf;
       String   defs;
 
-          p  = text. indexOf (':');
+          p  = text. indexOf (';');
       if (p >= 0) {
         defs = text.substring(1+p);
         text = text.substring(0,p);
@@ -571,7 +571,7 @@ public class FormSet
         defs = null;
       }
 
-          p  = text. indexOf ('!');
+          p  = text. indexOf (':');
       if (p >= 0) {
         conf = text.substring(0,p);
         text = text.substring(1+p);
@@ -592,7 +592,7 @@ public class FormSet
       String   repo;
       String[] reps;
 
-          p  = text. indexOf (':');
+          p  = text. indexOf (';');
       if (p >= 0) {
         repo = text.substring(1+p);
         text = text.substring(0,p);
@@ -601,7 +601,7 @@ public class FormSet
         reps = null;
       }
 
-          p  = text. indexOf ('!');
+          p  = text. indexOf (':');
       if (p >= 0) {
         conf = text.substring(0,p);
         text = text.substring(1+p);

@@ -12,8 +12,8 @@ import java.util.regex.Pattern;
 
 /**
  * 预置数据助手
- * xxx:xxx 为内部预置数据, :default为默认补充, :defense为全局强制, :defence为变更强制.
- * xxx.xxx 为外部打包数据, 例如传参 ab=ios10 可对应 .ios10 的数据, 即针对特定参数打包,
+ * xxxx.xxxx 为内部预置数据, .default为默认补充, .defense为全局强制, .defence为变更强制, .initial为创建补充.
+ * xxxx.def. 为外部补充数据, 如传参 ab=v1 将对应 xxxx.def.v1 的数据, 会将其注入到请求中, 但只是补充而非覆盖.
  * @author Hongs
  */
 public class PresetHelper {
@@ -82,8 +82,8 @@ public class PresetHelper {
     /**
      * 以表单配置追加预设值
      * 注意:
-     *  deft,defs 中以 :. 打头会把 name 作为前缀,
-     *  name=abc, deft=:xyz 会取配置枚举 abc:xyz,
+     *  deft,defs 中以 . 打头会把 name 作为前缀,
+     *  name=abc, deft=.xyz 会取 abc.xyz 的枚举.
      * @param conf
      * @param name
      * @param deft 默认值
@@ -95,13 +95,12 @@ public class PresetHelper {
     throws HongsException {
         FormSet form = FormSet.getInstance(conf);
 
-        addDefenseData(form , name + ":defense");
-        addDefaultData(form , name + ":default");
+        addDefenseData(form , name + ".defense");
+        addDefaultData(form , name + ".default");
 
         for (String usen : defs) {
             if (name != null
-            && (usen.startsWith( ":" )
-            ||  usen.startsWith( "." ))) {
+            &&  usen.startsWith(".") ) {
                 usen  = name  +  usen ;
             }
             addDefenseData(form, usen);
@@ -109,8 +108,7 @@ public class PresetHelper {
 
         for (String usen : deft) {
             if (name != null
-            && (usen.startsWith( ":" )
-            ||  usen.startsWith( "." ))) {
+            &&  usen.startsWith(".") ) {
                 usen  = name  +  usen ;
             }
             addDefaultData(form, usen);

@@ -616,21 +616,26 @@ public class Form extends Model {
                 if (k.startsWith("__")) {
                     continue;
                 }
-                if (k.startsWith( "." )   // 外部预置数据
-                ||  k.startsWith( ":")) { // 内部预置数据
+                if (k.startsWith(".") ) {
+                    int    p;
+                    String l;
+                    p = k.indexOf(':', 1);
+                    if (p < 0) throw new HongsException(400, "Wrong param name '"+k+"', must be '.name:code'");
+                    l = k.substring(1+ p);
+                    k = k.substring(0, p);
+                    k = n.equals("@") ? id + k : n + k;
                     if (preset == null) {
                         preset =  new  LinkedHashMap();
                     }
-                    String  l;
-                    if (n.equals( "@")) { // 表单预置数据
-                        int p = k.indexOf('.', 1);
-                        if (p == -1) continue;
-                        l = k.substring(1+ p);
-                        k = k.substring(0, p);
-                        k = id + k ;
-                    } else {              // 一般枚举选项
-                        l = k.substring(1   );
-                        k = n;
+                    Dict.put(preset, v, k, l);
+                    continue;
+                }
+                if (k.startsWith(":") ) {
+                    String l;
+                    l = k.substring(1   );
+                    k = n.equals("@") ? id     : n    ;
+                    if (preset == null) {
+                        preset =  new  LinkedHashMap();
                     }
                     Dict.put(preset, v, k, l);
                     continue;

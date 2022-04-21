@@ -139,9 +139,9 @@ public class CoreLogger
      */
     public static void error(String text, Object... args) {
         if (1 == (1 & Core.DEBUG)) {
-            getLogger(space("hongs.out")).error(envir(text), args);
-        } else {
             getLogger(space("hongs.log")).error(envir(text), args);
+        } else {
+            getLogger(space("hongs.out")).error(envir(text), args);
         }
     }
 

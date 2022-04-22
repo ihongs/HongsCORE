@@ -887,53 +887,39 @@ public class ActionHelper implements Cloneable
     String   msg ;
 
     // 错误消息
+    DO: {
       err = ta.getMessage();
       msg = ta.getLocalizedMessage();
-    if (null != te)
-    if (null == msg || msg.isEmpty())
-    {
+      if (null != msg && ! msg.isEmpty()) break DO;
+      
+      if (null != te) {
       msg = te.getLocalizedMessage();
-    }
-    if (null == msg || msg.isEmpty())
-    {
+      if (null != msg && ! msg.isEmpty()) break DO;
+      }
+      
       msg = CoreLocale.getInstance().translate("core.error.undef");
     }
 
-    // 外部错误
+    // 外部错误, 无需记录
     if (ero >= 400 && ero <= 499) {
         if (null != rs) {
             rs.setStatus(ero);
         }
-        if (null != te) {
-            CoreLogger.error(ta);
-        }
+    //  CoreLogger.error(ta );
     } else
     // 内部错误
     if (ero >= 500 && ero <= 599) {
         if (null != rs) {
             rs.setStatus(ero);
         }
-    //  if (null != te) {
-            CoreLogger.error(ta);
-    //  }
-    } else
-    // 内部异常
-    if (ero >= 600) {
-        if (null != rs) {
-            rs.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        }
-    //  if (null != te) {
-            CoreLogger.error(ta);
-    //  }
+        CoreLogger.error(ta );
     } else
     // 其他异常
     {
         if (null != rs) {
-            rs.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            rs.setStatus(500);
         }
-        if (null != te) {
-            CoreLogger.error(ta);
-        }
+        CoreLogger.error(ta );
     }
 
     Map map = new HashMap();

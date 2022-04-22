@@ -4,7 +4,7 @@ import io.github.ihongs.util.Syno;
 import java.io.File;
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -136,11 +136,12 @@ public class CoreLocale
    * @param rep
    * @return 翻译后的语句, 会替换特定标识
    */
-  public String translate(String key, String... rep)
+  public String translate(String key, Object ... rep)
   {
     String str =  this.getProperty(key);
     if  (  str == null  )  str  =  key ;
     if  (  rep == null  )  return  str ;
+    if  (  rep.length==0)  return  str ;
 
     /**
      * 将语句中替换$n或${n}为指定的文字, n从0开始
@@ -155,11 +156,12 @@ public class CoreLocale
    * @param rep
    * @return 翻译后的语言, 会替换特定标识
    */
-  public String translate(String key, List<String> rep)
+  public String translate(String key, Collection rep)
   {
     String str =  this.getProperty(key);
     if  (  str == null  )  str  =  key ;
     if  (  rep == null  )  return  str ;
+    if  (  rep.isEmpty())  return  str ;
 
     /**
      * 将语句中替换$n或${n}为指定的文字, n从0开始
@@ -174,11 +176,12 @@ public class CoreLocale
    * @param rep
    * @return 翻译后的语句, 会替换特定标识
    */
-  public String translate(String key, Map<String, String> rep)
+  public String translate(String key, Map rep)
   {
     String str =  this.getProperty(key);
     if  (  str == null  )  str  =  key ;
     if  (  rep == null  )  return  str ;
+    if  (  rep.isEmpty())  return  str ;
 
     /**
      * 将语句中的$xxx或${xxx}替换成指定文字

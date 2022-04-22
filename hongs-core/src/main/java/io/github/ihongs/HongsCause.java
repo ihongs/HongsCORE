@@ -3,6 +3,7 @@ package io.github.ihongs;
 /**
  * 异常基类
  * @author Hongs
+ * @param <T> 子类
  */
 public interface HongsCause
 {
@@ -25,13 +26,17 @@ public interface HongsCause
 
     public String getLocalizedContent();
 
-    public String[] getLocalizedOptions();
+    public String getFinalizedMessage();
+
+    public Object[] getFinalizedOptions();
 
     public HongsCause setLocalizedContext(String    lang);
 
     public HongsCause setLocalizedContent(String    term);
 
-    public HongsCause setLocalizedOptions(String... opts);
+    public HongsCause setFinalizedMessage(String    text);
+
+    public HongsCause setFinalizedOptions(Object... opts);
 
     public HongsException toException();
 

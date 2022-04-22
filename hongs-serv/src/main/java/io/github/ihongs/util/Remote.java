@@ -495,19 +495,25 @@ public final class Remote {
     public static class StatusException extends HongsException {
 
         private final  int   sta;
-        private final String url;
         private final String rsp;
+        private final String url;
 
         public StatusException(int sta, String url, String rsp) {
-            super(sta >= 300 && sta <= 399
-                ? "Redirect from "+url+" to " +rsp
-                : "Error "+sta+" for request "+url);
+            super("");
 
             this.sta = sta;
             this.url = url;
             this.rsp = rsp;
 
-            setLocalizedOptions(String.valueOf(sta), url, rsp);
+            this.setFinalizedOptions(sta, url, rsp);
+            this.setLocalizedContext("manage");
+            if (sta >= 300 && sta <= 399) {
+                this.setLocalizedContent("core.manage.remote.request.status.refer");
+                this.setFinalizedMessage("Redirect($0) from $1 to $2");
+            } else {
+                this.setLocalizedContent("core.manage.remote.request.status.error");
+                this.setFinalizedMessage( "Request $1 error($0): $2" );
+            }
         }
 
         public int getStatus() {
@@ -536,11 +542,14 @@ public final class Remote {
         private final String url;
 
         public SimpleException(String url, Throwable cause) {
-            super("Fail to request "+ url, cause);
+            super( cause );
 
             this.url = url;
 
-            setLocalizedOptions(url);
+            this.setFinalizedOptions(  url   );
+            this.setLocalizedContext("manage");
+            this.setLocalizedContext("core.manage.remove.request.simple.error");
+            this.setFinalizedMessage("Request $1 error");
         }
 
         public String getUrl() {

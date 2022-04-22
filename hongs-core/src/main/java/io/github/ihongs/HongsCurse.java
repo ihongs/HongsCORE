@@ -1,5 +1,7 @@
 package io.github.ihongs;
 
+import io.github.ihongs.util.Syno;
+
 /**
  * 异常本地化工具
  * @author Hongs
@@ -12,7 +14,8 @@ public final class HongsCurse {
 
     private String   lang;
     private String   term;
-    private String[] opts;
+    private String   text;
+    private Object[] opts;
 
     HongsCurse( int errno, String error, Throwable cause ) {
         this.code = errno;
@@ -123,12 +126,12 @@ public final class HongsCurse {
             codx  = "";
         }
 
-        // 优先错误描述
+        // 优先消息语句
+        if (null != text) {
+            desx  = text;
+        } else
         if (null != desc) {
             desx  = desc;
-        } else
-        if (null != term) {
-            desx  = term;
         } else {
           Throwable erro = that.getCause();
         if (null != erro) {
@@ -144,7 +147,12 @@ public final class HongsCurse {
             desx  = "";
         }}
 
-        return (codx +" "+ desx).trim( );
+        // 注入消息参数
+        if (null != text) {
+            desx  = Syno.inject(text, opts);
+        }
+
+        return (codx +" "+ desx).trim();
     }
 
     /**
@@ -204,11 +212,15 @@ public final class HongsCurse {
             trns = trns.clone();
             trns . load( lang );
         }
-        if (trns.getProperty(desx) != null) {
-            desx = trns.translate( desx, opts != null ? opts : new String[] {} );
+        if (null != (desx = trns.getProperty(desx))) {
+            if (null != opts && 0 < opts.length) {
+                desx  = Syno.inject(desx, opts );
+            }
         } else
-        if (trns.getProperty(codx) != null) {
-            desx = trns.translate( codx, opts != null ? opts : new String[] {} );
+        if (null != (desx = trns.getProperty(codx))) {
+            if (null != opts && 0 < opts.length) {
+                desx  = Syno.inject(desx, opts );
+            }
         }
         if (code < 600 ) {
             codx = trns.translate("fore.error" , codx);
@@ -216,7 +228,7 @@ public final class HongsCurse {
             codx = trns.translate("core.error" , codx);
         }
 
-        return (codx +" "+ desx).trim( );
+        return (codx +" "+ desx).trim();
     }
 
     /**
@@ -236,10 +248,18 @@ public final class HongsCurse {
     }
 
     /**
-     * 获取翻译选项
+     * 获取消息语句
      * @return
      */
-    public String[] getLocalizedOptions() {
+    public String   getFinalizedMessage() {
+        return this.text;
+    }
+
+    /**
+     * 获取消息选项
+     * @return
+     */
+    public Object[] getFinalizedOptions() {
         return this.opts;
     }
 
@@ -260,10 +280,18 @@ public final class HongsCurse {
     }
 
     /**
-     * 设置翻译选项
+     * 设置消息语句
+     * @param term
+     */
+    public void setFinalizedMessage(String    text) {
+        this.text = text;
+    }
+
+    /**
+     * 设置消息选项
      * @param opts
      */
-    public void setLocalizedOptions(String... opts) {
+    public void setFinalizedOptions(Object... opts) {
         this.opts = opts;
     }
 

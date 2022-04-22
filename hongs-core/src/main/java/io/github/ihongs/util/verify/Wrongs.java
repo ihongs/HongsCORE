@@ -35,8 +35,21 @@ public class Wrongs extends HongsException {
     }
 
     @Override
-    public Wrongs setLocalizedOptions(String...  opts) {
+    @Deprecated
+    public Wrongs setLocalizedOptions(Object...  opts) {
         super.setLocalizedOptions(opts);
+        return this;
+    }
+
+    @Override
+    public Wrongs setFinalizedOptions(Object...  opts) {
+        super.setFinalizedOptions(opts);
+        return this;
+    }
+
+    @Override
+    public Wrongs setFinalizedMessage(String     text) {
+        super.setFinalizedMessage(text);
         return this;
     }
 

@@ -18,9 +18,6 @@ public class HongsExemption
   extends  RuntimeException
   implements HongsCause {
 
-    public static final int COMMON = 0;
-    public static final int NOTICE = 1;
-
     protected final HongsCurse that;
 
     public HongsExemption(int code, String desc, Throwable fact) {
@@ -99,8 +96,18 @@ public class HongsExemption
     }
 
     @Override
-    public String[] getLocalizedOptions() {
-        return that.getLocalizedOptions();
+    public String getFinalizedMessage() {
+        return that.getFinalizedMessage();
+    }
+
+    @Override
+    public Object[] getFinalizedOptions() {
+        return that.getFinalizedOptions();
+    }
+
+    @Deprecated
+    public Object[] getLocalizedOptions() {
+        return that.getFinalizedOptions();
     }
 
     @Override
@@ -116,8 +123,20 @@ public class HongsExemption
     }
 
     @Override
-    public HongsExemption setLocalizedOptions(String... opts) {
-        that.setLocalizedOptions(opts);
+    public HongsExemption setFinalizedMessage(String    text) {
+        that.setLocalizedContent(text);
+        return this;
+    }
+
+    @Override
+    public HongsExemption setFinalizedOptions(Object... opts) {
+        that.setFinalizedOptions(opts);
+        return this;
+    }
+
+    @Deprecated
+    public HongsExemption setLocalizedOptions(Object... opts) {
+        that.setFinalizedOptions(opts);
         return this;
     }
 
@@ -131,8 +150,14 @@ public class HongsExemption
         return new HongsException(this.getErrno(), this.getError(), this)
              .setLocalizedContext(this.getLocalizedContext())
              .setLocalizedContent(this.getLocalizedContent())
-             .setLocalizedOptions(this.getLocalizedOptions());
+             .setFinalizedMessage(this.getFinalizedMessage())
+             .setFinalizedOptions(this.getFinalizedOptions());
     }
+
+    @Deprecated
+    public static final int COMMON = 0;
+    @Deprecated
+    public static final int NOTICE = 1;
 
     /**
      * 常规错误(无需错误代码)

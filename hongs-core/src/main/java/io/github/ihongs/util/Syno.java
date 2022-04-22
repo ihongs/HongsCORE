@@ -377,10 +377,10 @@ public final class Syno
     /**
      * 将语句中替换$n或${n}为指定的文字, n从0开始
      */
-      Map rep2 = new HashMap();
+      Map rep2 = new HashMap(vars.size());
       int i = 0;
       for(Object v : vars) {
-          rep2.put(String.valueOf(i), v);
+          rep2.put (String.valueOf(i), v);
           i ++ ;
       }
       return inject(str, rep2);
@@ -397,10 +397,10 @@ public final class Syno
     /**
      * 将语句中替换$n或${n}为指定的文字, n从0开始
      */
-      Map rep2 = new HashMap();
+      Map rep2 = new HashMap(vars.length);
       int i = 0;
       for(Object v : vars) {
-          rep2.put(String.valueOf(i), v);
+          rep2.put (String.valueOf(i), v);
           i ++ ;
       }
       return inject(str, rep2);

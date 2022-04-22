@@ -15,7 +15,7 @@ public class Wrong extends HongsException {
         super(400 , term , cause);
         this.setLocalizedContext("default");
         this.setLocalizedContent(term);
-        this.setLocalizedOptions(opts);
+        this.setFinalizedOptions(opts);
     }
 
     public Wrong(String term, String... opts) {
@@ -23,6 +23,51 @@ public class Wrong extends HongsException {
         this.setLocalizedContext("default");
         this.setLocalizedContent(term);
         this.setLocalizedOptions(opts);
+    }
+
+    /**
+     * 设置错误参数
+     * @param opts
+     * @return
+     */
+    @Override
+    @Deprecated
+    public Wrong  setLocalizedOptions(Object...  opts) {
+        super.setLocalizedOptions(opts);
+        return this;
+    }
+
+    /**
+     * 设置错误参数
+     * @param opts
+     * @return
+     */
+    @Override
+    public Wrong  setFinalizedOptions(Object...  opts) {
+        super.setFinalizedOptions(opts);
+        return this;
+    }
+
+    /**
+     * 设置错误消息
+     * @param text
+     * @return
+     */
+    @Override
+    public Wrong  setFinalizedMessage(String     text) {
+        super.setFinalizedMessage(text);
+        return this;
+    }
+
+    /**
+     * 设置错误短语
+     * @param term
+     * @return
+     */
+    @Override
+    public Wrong  setLocalizedContent(String     term) {
+        super.setLocalizedContent(term);
+        return this;
     }
 
     /**
@@ -45,28 +90,6 @@ public class Wrong extends HongsException {
     public Wrong  setLocalizedContext(String     name) {
         super.setLocalizedContext(name);
         this.lang = null;
-        return this;
-    }
-
-    /**
-     * 设置错误短语
-     * @param name
-     * @return
-     */
-    @Override
-    public Wrong  setLocalizedContent(String     term) {
-        super.setLocalizedContent(term);
-        return this;
-    }
-
-    /**
-     * 设置错误参数
-     * @param name
-     * @return
-     */
-    @Override
-    public Wrong  setLocalizedOptions(String...  opts) {
-        super.setLocalizedOptions(opts);
         return this;
     }
 
@@ -96,7 +119,7 @@ public class Wrong extends HongsException {
         if (null== lang) {
             lang = CoreLocale.getInstance(getLocalizedContext());
         }
-        return lang.translate(getError(), getLocalizedOptions());
+        return lang.translate(getError(), getFinalizedOptions());
     }
 
     /**
@@ -110,9 +133,9 @@ public class Wrong extends HongsException {
         }
         if (null!= name && 0 < name.length()) {
             return lang.translate(name)
-            +": "+ lang.translate(getLocalizedContent(), getLocalizedOptions());
+            +": "+ lang.translate(getLocalizedContent(), getFinalizedOptions());
         } else {
-            return lang.translate(getLocalizedContent(), getLocalizedOptions());
+            return lang.translate(getLocalizedContent(), getFinalizedOptions());
         }
     }
 

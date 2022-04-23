@@ -299,9 +299,7 @@ public class Data extends SearchEntity {
         }   while  ( false );
 
         if ( null == fields) {
-            throw new HongsExemption(910, "Data form '"+conf+"."+form+"' is not exists")
-                .setLocalizedContent("matrix.form.not.exists")
-                .setLocalizedContext("matrix");
+            throw new HongsExemption(910, "matrix:matrix.form.not.exists", conf, form);
         }
 
         setFields(fields);
@@ -620,14 +618,10 @@ public class Data extends SearchEntity {
             .getOne( );
         if (! nd.isEmpty()) {
             if (Synt.declare(nd.get("state"), 0 ) ==  0   ) {
-                throw new HongsException(404, "Data item '"+id+"' is removed in "+getDbName())
-                    .setLocalizedContent("matrix.item.is.removed")
-                    .setLocalizedContext("matrix");
+                throw new HongsException(404, "matrix:matrix.item.is.removed", getDbName(), id);
             } /* 没有新增, 不必限时
             if (Synt.declare(nd.get("ctime"), 0L ) >= ctime) {
-                throw new HongsException(400, "Wait 1 second to put '"+id+"' in "+getDbName())
-                    .setLocalizedContent("matrix.wait.one.second")
-                    .setLocalizedContext("matrix");
+                throw new HongsException(400, "matrix:matrix.wait.one.second", getDbName(), id);
             } */
         } else {
             nd.put("ctime", ctime);
@@ -703,14 +697,10 @@ public class Data extends SearchEntity {
             .getOne( );
         if (! od.isEmpty()) {
             if (Synt.declare(od.get("state"), 0  ) ==  0   ) {
-                throw new HongsException(404, "Data item '"+id+"' is removed in "+getDbName())
-                    .setLocalizedContent("matrix.item.is.removed")
-                    .setLocalizedContext("matrix");
+                throw new HongsException(404, "matrix:matrix.item.is.removed", getDbName(), id);
             }
             if (Synt.declare(od.get("ctime"), 0L ) >= ctime) {
-                throw new HongsException(400, "Wait 1 second to put '"+id+"' in "+getDbName())
-                    .setLocalizedContent("matrix.wait.one.second")
-                    .setLocalizedContext("matrix");
+                throw new HongsException(400, "matrix:matrix.wait.one.second", getDbName(), id);
             }
         }
 
@@ -779,9 +769,7 @@ public class Data extends SearchEntity {
             return 0; // 删除是幂等的可重复调用
         } /* 没有新增, 不必限时
         if (Synt.declare(nd.get("ctime"), 0L ) >= ctime) {
-            throw new HongsException(400, "Wait 1 second to del '"+id+"' in "+getDbName())
-                .setLocalizedContent("matrix.wait.one.second")
-                .setLocalizedContext("matrix");
+            throw new HongsException(400, "matrix:matrix.wait.one.second", getDbName(), id);
         } */
 
         nd.put("state" ,  0  );
@@ -834,9 +822,7 @@ public class Data extends SearchEntity {
             return 0; // 删除是幂等的可重复调用
         }
         if (Synt.declare(od.get("ctime"), 0L ) >= ctime) {
-            throw new HongsException(400, "Wait 1 second to del '"+id+"' in "+getDbName())
-                .setLocalizedContent("matrix.wait.one.second")
-                .setLocalizedContext("matrix");
+            throw new HongsException(400, "matrix:matrix.wait.one.second", getDbName(), id);
         }
 
         Map ud = new HashMap();
@@ -879,9 +865,7 @@ public class Data extends SearchEntity {
     public int rev(String id, Map rd, long ctime) throws HongsException {
         Table table = getTable();
         if (table == null) {
-            throw new HongsException(405, "Data table for '"+getDbName()+"' is not exists")
-                .setLocalizedContent("matrix.rev.unsupported")
-                .setLocalizedContext("matrix");
+            throw new HongsException(405, "matrix:matrix.rev.unsupported", getDbName());
         }
 
         String   uid   = getUserId();
@@ -899,14 +883,10 @@ public class Data extends SearchEntity {
             .select("ctime")
             .getOne( );
         if (od.isEmpty()) {
-        //  throw new HongsException(404, "Can not find current '"+id+"' in "+getDbName())
-        //      .setLocalizedContent("matrix.node.not.exists")
-        //      .setLocalizedContext("matrix");
+        //  throw new HongsException(404, "matrix:matrix.node.not.exists", getDbName(), id);
         } else
         if (Synt.declare(od.get("ctime"), 0L ) >= ctime) {
-            throw new HongsException(400, "Wait 1 second to del '"+id+"' in "+getDbName())
-                .setLocalizedContent("matrix.wait.one.second")
-                .setLocalizedContext("matrix");
+            throw new HongsException(400, "matrix:matrix.wait.one.second", getDbName(), id);
         }
 
         // 获取快照数据
@@ -915,16 +895,12 @@ public class Data extends SearchEntity {
         //  .assort("ctime  DESC")
             .getOne( );
         if (nd.isEmpty()) {
-            throw new HongsException(404, "Empty '"+id+"' at '"+ctime+"' in "+getDbName())
-                .setLocalizedContent("matrix.node.not.exists")
-                .setLocalizedContext("matrix");
+            throw new HongsException(404, "matrix:matrix.node.not.exists", getDbName(), id, ctime);
         }
         // 删除时保留的是删除前的快照, 即使为最终记录仍然可以恢复
         if (Synt.declare(nd.get("state"), 0  ) !=  0   ) {
         if (Synt.declare(nd.get("etime"), 0L ) ==  0L  ) {
-            throw new HongsException(400, "Alive '"+id+"' at '"+ctime+"' in "+getDbName())
-                .setLocalizedContent("matrix.node.is.current")
-                .setLocalizedContext("matrix");
+            throw new HongsException(400, "matrix:matrix.node.is.current", getDbName(), id, ctime);
         }}
 
         Map ud = new HashMap();
@@ -1606,11 +1582,7 @@ public class Data extends SearchEntity {
             nb.setLength(nb.length() - 2);
 
             // 抛出异常告知依赖情况
-            throw new HongsException(1097, "Being dependent on "
-                                    + sb.toString( ) )
-                .setLocalizedContent("core.delete.depend.error")
-                .setLocalizedOptions( nb.toString( ) )
-                .setLocalizedContext("matrix");
+            throw new HongsException(1097, "matrix:core.delete.depend.error", nb);
         }
     }
 

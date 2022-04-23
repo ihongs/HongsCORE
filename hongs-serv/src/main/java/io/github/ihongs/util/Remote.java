@@ -314,12 +314,12 @@ public final class Remote {
             if (sta >= 300 && sta <= 399) {
                 Header hea = rsp.getFirstHeader( "Location" );
                 String loc = hea != null ? hea.getValue(): "";
-                throw  new StatusException(sta, url, loc);
+                throw  new StatusException(url, loc, sta);
             }
             if (sta >= 400 || sta <= 199) {
                 HttpEntity t = rsp.getEntity();
                 String txt = EntityUtils.toString(t, "UTF-8");
-                throw  new StatusException(sta, url, txt);
+                throw  new StatusException(url, txt, sta);
             }
 
             con.accept( rsp );
@@ -494,30 +494,20 @@ public final class Remote {
      */
     public static class StatusException extends HongsException {
 
-        private final  int   sta;
-        private final String rsp;
         private final String url;
+        private final String rsp;
+        private final  int   sta;
 
-        public StatusException(int sta, String url, String rsp) {
-            super("");
+        public StatusException(String url, String rsp, int sta) {
+            super(sta >= 300 && sta <= 399
+                ? "manage:core.manage.remote.request.status.refer"
+                : "manage:core.manage.remove.request.status.error"
+                , url, rsp, sta
+            );
 
             this.sta = sta;
             this.url = url;
             this.rsp = rsp;
-
-            this.setFinalizedOptions(sta, url, rsp);
-            this.setLocalizedContext("manage");
-            if (sta >= 300 && sta <= 399) {
-                this.setLocalizedContent("core.manage.remote.request.status.refer");
-                this.setFinalizedMessage("Redirect($0) from $1 to $2");
-            } else {
-                this.setLocalizedContent("core.manage.remote.request.status.error");
-                this.setFinalizedMessage( "Request $1 error($0): $2" );
-            }
-        }
-
-        public int getStatus() {
-            return sta;
         }
 
         public String getUrl() {
@@ -526,6 +516,10 @@ public final class Remote {
 
         public String getRsp() {
             return rsp;
+        }
+
+        public int getStatus() {
+            return sta;
         }
 
     }
@@ -542,14 +536,9 @@ public final class Remote {
         private final String url;
 
         public SimpleException(String url, Throwable cause) {
-            super( cause );
+            super(cause, "manage:core.manage.remove.request.simple.error", url);
 
             this.url = url;
-
-            this.setFinalizedOptions(  url   );
-            this.setLocalizedContext("manage");
-            this.setLocalizedContext("core.manage.remove.request.simple.error");
-            this.setFinalizedMessage("Request $1 error");
         }
 
         public String getUrl() {

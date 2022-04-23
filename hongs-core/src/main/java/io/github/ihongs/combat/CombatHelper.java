@@ -361,9 +361,9 @@ public class CombatHelper
       }
       hlp = err.toString();
 
-      throw  new HongsExemption(838, hlp).setLocalizedOptions(hlp);
+      throw  new HongsExemption(838, hlp, hlp);
     } else if (hlp != null && args.length == 0) {
-      throw  new HongsExemption(839, hlp).setLocalizedOptions(hlp);
+      throw  new HongsExemption(839, hlp, hlp);
     }
 
     // 把剩余的参数放进去

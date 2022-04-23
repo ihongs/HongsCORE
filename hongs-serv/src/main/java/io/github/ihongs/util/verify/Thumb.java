@@ -140,7 +140,7 @@ public class Thumb extends IsFile {
         }
 
             if (! mat ) {
-                throw new Wrong("fore.size.invalid").setLocalizedOptions(suf);
+                throw new Wrong("fore.size.invalid", suf);
             }
 
             // 尺寸匹配, 无需改变
@@ -231,7 +231,7 @@ public class Thumb extends IsFile {
             try {
                 bui.outputFormat(ext);
             } catch (IllegalArgumentException ex) {
-                throw new Wrong(ex, "fore.type.invalid").setLocalizedOptions(ext);
+                throw new Wrong(ex, "fore.type.invalid", ext);
             }
             bui.toFile(file(nrl));
             hps.add(new String [] {url, nrl, "w="+w+"&h="+h});
@@ -251,7 +251,7 @@ public class Thumb extends IsFile {
             try {
                 bui.outputFormat(ext);
             } catch (IllegalArgumentException ex) {
-                throw new Wrong(ex, "fore.type.invalid").setLocalizedOptions(ext);
+                throw new Wrong(ex, "fore.type.invalid", ext);
             }
             bui.toFile(file(nrl));
             hps.add(new String [] {url, nrl, "w="+w+"&h="+h});

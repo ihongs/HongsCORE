@@ -91,9 +91,7 @@ public class RoleSet extends CoreSerial implements CoreSerial.Mtimes, Set<String
             }
             ot = Synt.declare(ah.getSessibute(Cnst.UST_SES) , 0L);
             if (ot < pt && 0 < ot && 0 < pt) {
-                throw new HongsException(401, "Password changed")
-                    .setLocalizedContent("core.password.changed")
-                    .setLocalizedContext("master");
+                throw new HongsException(401, "master:core.password.changed");
             }
         }
         

@@ -855,45 +855,34 @@ public class Table
 
   //** 私有方法 **/
 
-  private HongsException nullException(String name) {
-    String error = "Value for column '"+name+"' can not be NULL";
-    return valiException(1074, error, name);
+  private HongsException nullException(String field) {
+    String error = "Value for field $2 in table $0.$1 can not be NULL";
+    return new HongsException(1074, error, db.name,name, field);
   }
 
-  private HongsException sizeException(String name, String value, int size) {
-    String error = "Value for column '"+name+"'("+value+") must be a less than "+size;
-    return valiException(1075, error, name, value, String.valueOf(size));
+  private HongsException sizeException(String field, String value, int size) {
+    String error = "Value for field $2 in table $0.$1 must be a less than $4, value: $3";
+    return new HongsException(1075, error, db.name,name, field, value, size);
   }
 
-  private HongsException scleException(String name, String value, int scle) {
-    String error = "Scale for column '"+name+"'("+value+") must be a less than "+scle;
-    return valiException(1076, error, name, value, String.valueOf(scle));
+  private HongsException scleException(String field, String value, int scle) {
+    String error = "Scale for field $2 in table $0.$1 must be a less than $4, value: $3";
+    return new HongsException(1076, error, db.name,name, field, value, scle);
   }
 
-  private HongsException numeException(String name, String value) {
-    String error = "Value for column '"+name+"'("+value+") must be a standard number";
-    return valiException(1077, error, name, value);
+  private HongsException numeException(String field, String value) {
+    String error = "Value for field $2 in table $0.$1 must be a standard number, value: $3";
+    return new HongsException(1077, error, db.name,name, field, value);
   }
 
-  private HongsException unsiException(String name, String value) {
-    String error = "Value for column '"+name+"'("+value+") must be a unsigned number";
-    return valiException(1078, error, name, value);
+  private HongsException unsiException(String field, String value) {
+    String error = "Value for field $2 in table $0.$1 must be a unsigned number, value: $3";
+    return new HongsException(1078, error, db.name,name, field, value);
   }
 
-  private HongsException dateException(String name, String value, String format) {
-    String error = "Value for column '"+name+"'("+value+") must like '"+ format + "'";
-    return valiException(1079, error, name, value, format);
-  }
-
-  private HongsException valiException(int code, String error, String fieldName, String... otherParams)
-  {
-    List<String> trans = new ArrayList(otherParams.length + 2);
-    trans.add(db.name+"."+name);
-    trans.add(/*the*/fieldName);
-    trans.addAll(Arrays.asList(otherParams));
-
-    return new HongsException(code, error+" (Table:"+name+")")
-         .setLocalizedOptions(trans.toArray (new String[]{}) );
+  private HongsException dateException(String field, String value, String format) {
+    String error = "Value for field $2 in table $0.$1 must like '$4', value: $3";
+    return new HongsException(1079, error, db.name,name, field, value, format);
   }
 
   /**

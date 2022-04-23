@@ -20,44 +20,49 @@ public class HongsExemption
 
     protected final HongsCurse that;
 
-    public HongsExemption(Throwable fact, int code, String desc) {
+    public HongsExemption(Throwable fact, int code, String desc, Object... data) {
         super(fact);
 
-        that = new HongsCurse(code, desc, this);
+        that = new HongsCurse(this, code, desc, data);
     }
 
-    public HongsExemption(Throwable fact, String desc) {
-        this(fact, 0x0 , null);
+    public HongsExemption(Throwable fact, String desc, Object... data) {
+        this(fact, 0x0 , desc, data);
+    }
+
+    public HongsExemption(int code, String desc, Object... data) {
+        this(null, code, desc, data);
+    }
+
+    public HongsExemption(String desc, Object... data) {
+        this(null, 0x0 , desc, data);
     }
 
     public HongsExemption(Throwable fact, int code) {
         this(fact, code, null);
     }
 
-    public HongsExemption(int code, String desc) {
-        this(null, code, desc);
-    }
-
     public HongsExemption(Throwable fact) {
         this(fact, 0x0 , null);
     }
 
-    public HongsExemption(String desc) {
-        this(null, 0x0 , desc);
-    }
-
     public HongsExemption(int code) {
-        this(null, code, null);
+        this(code, null);
     }
 
     @Override
     public int getErrno() {
-        return that.getErrno();
+        return that.errno;
     }
 
     @Override
     public String getError() {
-        return that.getError();
+        return that.error;
+    }
+
+    @Override
+    public Object[] getCases() {
+        return that.cases;
     }
 
     @Override
@@ -86,72 +91,13 @@ public class HongsExemption
     }
 
     @Override
-    public String getLocalizedContext() {
-        return that.getLocalizedContext();
-    }
-
-    @Override
-    public String getLocalizedContent() {
-        return that.getLocalizedContent();
-    }
-
-    @Override
-    public String getFinalizedMessage() {
-        return that.getFinalizedMessage();
-    }
-
-    @Override
-    public Object[] getFinalizedOptions() {
-        return that.getFinalizedOptions();
-    }
-
-    @Deprecated
-    public Object[] getLocalizedOptions() {
-        return that.getFinalizedOptions();
-    }
-
-    @Override
-    public HongsExemption setLocalizedContext(String    lang) {
-        that.setLocalizedContext(lang);
-        return this;
-    }
-
-    @Override
-    public HongsExemption setLocalizedContent(String    term) {
-        that.setLocalizedContent(term);
-        return this;
-    }
-
-    @Override
-    public HongsExemption setFinalizedMessage(String    text) {
-        that.setLocalizedContent(text);
-        return this;
-    }
-
-    @Override
-    public HongsExemption setFinalizedOptions(Object... opts) {
-        that.setFinalizedOptions(opts);
-        return this;
-    }
-
-    @Deprecated
-    public HongsExemption setLocalizedOptions(Object... opts) {
-        that.setFinalizedOptions(opts);
-        return this;
-    }
-
-    @Override
     public HongsExemption toExemption() {
         return this;
     }
 
     @Override
     public HongsException toException() {
-        return new HongsException(this, this.getErrno(), this.getError())
-             .setLocalizedContext(this.getLocalizedContext())
-             .setLocalizedContent(this.getLocalizedContent())
-             .setFinalizedMessage(this.getFinalizedMessage())
-             .setFinalizedOptions(this.getFinalizedOptions());
+        return new HongsException(this, this.getErrno(), this.getError(), this.getCases());
     }
 
 }

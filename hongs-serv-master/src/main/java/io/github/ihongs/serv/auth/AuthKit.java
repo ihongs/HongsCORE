@@ -242,9 +242,8 @@ public class AuthKit {
             // 锁定或系统账号
             if (stat <= 0) {
                 throw new Wrongs(Synt.mapOf("state" ,
-                      new Wrong ( "core.sign.state.invalid")
-                )).setLocalizedContext("master");
-                //.setLocalizedOptions(  stat  );
+                      new Wrong ("master:core.sign.state.invalid")
+                ));
             }
 
             uuid  = (String) ud.get( "id" );
@@ -303,7 +302,6 @@ public class AuthKit {
         Map m  = new HashMap();
             m.put( k ,    new Wrong ( w ));
             e.put("errs", new Wrongs( m )
-                .setLocalizedContext( l )
                 .getErrors( ));
             e.put("msg", l.translate( w ));
         } else {

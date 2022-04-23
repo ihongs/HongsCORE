@@ -16,27 +16,13 @@ public interface HongsCause
 
     public String getStage();
 
+    public Object [] getCases();
+
     public Throwable getCause();
 
     public String getMessage( );
 
     public String getLocalizedMessage();
-
-    public String getLocalizedContext();
-
-    public String getLocalizedContent();
-
-    public String getFinalizedMessage();
-
-    public Object[] getFinalizedOptions();
-
-    public HongsCause setLocalizedContext(String    lang);
-
-    public HongsCause setLocalizedContent(String    term);
-
-    public HongsCause setFinalizedMessage(String    text);
-
-    public HongsCause setFinalizedOptions(Object... opts);
 
     public HongsException toException();
 

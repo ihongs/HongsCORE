@@ -153,9 +153,7 @@ extends Grade {
                 .limit (1)
                 .getAll( );
             if (!list.isEmpty() ) {
-                throw new HongsException(400)
-                    .setLocalizedContent("master.dept.have.depts")
-                    .setLocalizedContext("master");
+                throw new HongsException(400, "master:master.dept.have.depts");
             }
 
             // 删除限制, 如果部门下有用户则中止当前操作
@@ -164,9 +162,7 @@ extends Grade {
                 .limit (1)
                 .getAll( );
             if (!list.isEmpty() ) {
-                throw new HongsException(400)
-                    .setLocalizedContent("master.dept.have.users")
-                    .setLocalizedContext("master");
+                throw new HongsException(400, "master:master.dept.have.users");
             }
         }
 
@@ -203,9 +199,7 @@ extends Grade {
                 }
             }
 
-            throw new HongsException(400)
-                .setLocalizedContent("master.dept.unit.error")
-                .setLocalizedContext("master");
+            throw new HongsException(400, "master:master.dept.unit.error");
         }
     }
 

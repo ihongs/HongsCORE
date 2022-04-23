@@ -427,8 +427,7 @@ public class FormSet
           return Synt.defoult(Synt.asDouble(text), (double) 0);
       }
 
-      throw new HongsException(914, "Unrecognized type '"+ type +"'")
-          .setLocalizedOptions(type);
+      throw new HongsException(914, "Unrecognized type '$0'", type);
   }
 
   public String getName() {

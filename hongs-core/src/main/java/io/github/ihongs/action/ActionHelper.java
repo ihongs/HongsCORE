@@ -891,21 +891,26 @@ public class ActionHelper implements Cloneable
       err = ta.getMessage();
       msg = ta.getLocalizedMessage();
       if (null != msg && ! msg.isEmpty()) break DO;
-      
+
       if (null != te) {
       msg = te.getLocalizedMessage();
       if (null != msg && ! msg.isEmpty()) break DO;
       }
-      
+
       msg = CoreLocale.getInstance().translate("core.error.undef");
     }
 
-    // 外部错误, 无需记录
+    // 外部错误, 可不记录
     if (ero >= 400 && ero <= 499) {
         if (null != rs) {
             rs.setStatus(ero);
         }
-    //  CoreLogger.error(ta );
+        if (2 == (2 &Core.DEBUG)) {
+            CoreLogger.warn (ta.getMessage());
+        } else
+        if (4 == (4 &Core.DEBUG)) {
+            CoreLogger.debug(ta.getMessage());
+        }
     } else
     // 内部错误
     if (ero >= 500 && ero <= 599) {
@@ -915,10 +920,12 @@ public class ActionHelper implements Cloneable
         CoreLogger.error(ta );
     } else
     // 其他异常
-    {
+    if (ero >= 600 || ero <= 199) {
         if (null != rs) {
             rs.setStatus(500);
         }
+        CoreLogger.error(ta );
+    } else {
         CoreLogger.error(ta );
     }
 

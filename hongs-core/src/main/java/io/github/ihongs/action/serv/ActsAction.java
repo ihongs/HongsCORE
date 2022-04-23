@@ -85,7 +85,7 @@ public class ActsAction
     }
     catch (RuntimeException e)
     {
-      helper.fault(new HongsException(500, e));
+      helper.fault(new HongsException(e, 500));
     }
   }
 

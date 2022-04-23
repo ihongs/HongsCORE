@@ -295,7 +295,7 @@ public class ActionRunner {
             if (ex instanceof HongsException) {
                 throw (HongsException) ex;
             } else {
-                throw new HongsException(1106, ex);
+                throw new HongsException(ex, 1106);
             }
         }
     }

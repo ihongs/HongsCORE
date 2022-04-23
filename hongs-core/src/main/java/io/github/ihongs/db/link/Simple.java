@@ -44,9 +44,9 @@ public class Simple extends Link {
 
             return connection;
         } catch (SQLException ex) {
-            throw new HongsException(1024, ex);
+            throw new HongsException(ex, 1024);
         } catch (ClassNotFoundException ex ) {
-            throw new HongsException(1024, ex);
+            throw new HongsException(ex, 1024);
         }
     }
 

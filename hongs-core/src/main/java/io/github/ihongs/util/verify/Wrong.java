@@ -12,14 +12,14 @@ public class Wrong extends HongsException {
     private CoreLocale lang = null;
 
     public Wrong(Throwable cause, String term, String... opts) {
-        super(400 , term , cause);
+        super(cause, 400 , term );
         this.setLocalizedContext("default");
         this.setLocalizedContent(term);
         this.setFinalizedOptions(opts);
     }
 
     public Wrong(String term, String... opts) {
-        super(400 , term );
+        super(null , 400 , term );
         this.setLocalizedContext("default");
         this.setLocalizedContent(term);
         this.setLocalizedOptions(opts);

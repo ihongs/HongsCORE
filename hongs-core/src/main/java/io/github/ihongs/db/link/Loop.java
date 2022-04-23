@@ -56,7 +56,7 @@ public class Loop implements Iterable<Map>, Iterator<Map>, AutoCloseable {
             try {
                 md = rs.getMetaData();
             } catch (SQLException ex) {
-                throw new HongsException(1150, ex);
+                throw new HongsException(ex, 1150);
             }
         }
         return md;
@@ -71,9 +71,9 @@ public class Loop implements Iterable<Map>, Iterator<Map>, AutoCloseable {
                     td.put(md.getColumnLabel(i), Class.forName(md.getColumnClassName(i)));
                 }
             } catch (  SQLException ex ) {
-                throw new HongsException(1151, ex);
+                throw new HongsException(ex, 1151);
             } catch (ClassNotFoundException ex) {
-                throw new HongsException(1151, ex);
+                throw new HongsException(ex, 1151);
             }
         }
         return td;
@@ -93,7 +93,7 @@ public class Loop implements Iterable<Map>, Iterator<Map>, AutoCloseable {
                 il = rs.next();
             } catch (SQLException ex) {
                 this.close(  );
-                throw new HongsExemption(1152, ex);
+                throw new HongsExemption(ex, 1152);
             }
         }
         return  il;
@@ -135,7 +135,7 @@ public class Loop implements Iterable<Map>, Iterator<Map>, AutoCloseable {
             return  row ;
         } catch (  SQLException ex ) {
             this.close();
-            throw new HongsExemption(1153, ex);
+            throw new HongsExemption(ex, 1153);
         }
     }
 
@@ -148,7 +148,7 @@ public class Loop implements Iterable<Map>, Iterator<Map>, AutoCloseable {
                 }
             }
             catch (SQLException ex ) {
-                throw new HongsExemption(1035, ex);
+                throw new HongsExemption(ex, 1035);
             }
         }
         finally {
@@ -158,7 +158,7 @@ public class Loop implements Iterable<Map>, Iterator<Map>, AutoCloseable {
                 }
             }
             catch (SQLException ex ) {
-                throw new HongsExemption(1034, ex);
+                throw new HongsExemption(ex, 1034);
             }
         }
     }

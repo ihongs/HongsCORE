@@ -494,7 +494,7 @@ public class ServerCombat {
             try {
                 clso = Class.forName(clsn);
             } catch (ClassNotFoundException ex ) {
-                throw new HongsExemption("Can not find class '" + clsn + "'.", ex);
+                throw new HongsExemption(ex, "Can not find class '" + clsn + "'.");
             }
             return clso;
         }
@@ -507,7 +507,7 @@ public class ServerCombat {
                 try {
                     clss = CoreRoster.getClassNames(pkgn, true );
                 } catch (IOException ex) {
-                    throw new HongsExemption("Can not load package '" + pkgn + "'.", ex);
+                    throw new HongsExemption(ex, "Can not load package '" + pkgn + "'.");
                 }
                 if (clss == null) {
                     throw new HongsExemption("Can not find package '" + pkgn + "'.");
@@ -518,7 +518,7 @@ public class ServerCombat {
                 try {
                     clss = CoreRoster.getClassNames(pkgn, false);
                 } catch (IOException ex) {
-                    throw new HongsExemption("Can not load package '" + pkgn + "'.", ex);
+                    throw new HongsExemption(ex, "Can not load package '" + pkgn + "'.");
                 }
                 if (clss == null) {
                     throw new HongsExemption("Can not find package '" + pkgn + "'.");

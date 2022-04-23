@@ -277,15 +277,15 @@ public class DBConfig
     }
     catch (ParserConfigurationException ex)
     {
-      throw new  HongsException(1062, ex);
+      throw new  HongsException(ex, 1062);
     }
     catch (SAXException ex)
     {
-      throw new  HongsException(1062, ex);
+      throw new  HongsException(ex, 1062);
     }
     catch ( IOException ex)
     {
-      throw new  HongsException(1064, ex);
+      throw new  HongsException(ex, 1064);
     }
 
     return new DBConfig(doc);
@@ -310,15 +310,15 @@ public class DBConfig
     }
     catch (ParserConfigurationException ex)
     {
-      throw new  HongsException(1062, ex);
+      throw new  HongsException(ex, 1062);
     }
     catch (SAXException ex)
     {
-      throw new  HongsException(1062, ex);
+      throw new  HongsException(ex, 1062);
     }
     catch ( IOException ex)
     {
-      throw new  HongsException(1065, ex);
+      throw new  HongsException(ex, 1065);
     }
 
     return new DBConfig(doc);
@@ -343,15 +343,15 @@ public class DBConfig
     }
     catch (ParserConfigurationException ex)
     {
-      throw new  HongsException(1062, ex);
+      throw new  HongsException(ex, 1062);
     }
     catch (SAXException ex)
     {
-      throw new  HongsException(1062, ex);
+      throw new  HongsException(ex, 1062);
     }
     catch ( IOException ex)
     {
-      throw new  HongsException(1065, ex);
+      throw new  HongsException(ex, 1065);
     }
 
     return new DBConfig(doc);

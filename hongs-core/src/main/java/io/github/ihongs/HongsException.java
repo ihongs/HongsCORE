@@ -20,34 +20,34 @@ public class HongsException
 
     protected final HongsCurse that;
 
-    public HongsException(int code, String desc, Throwable fact) {
+    public HongsException(Throwable fact, int code, String desc) {
         super(fact);
 
         that = new HongsCurse(code, desc, this);
     }
 
-    public HongsException(String desc, Throwable fact) {
-        this(0x0 , null, fact);
+    public HongsException(Throwable fact, String desc) {
+        this(fact, 0x0 , null);
     }
 
-    public HongsException(int code, Throwable fact) {
-        this(code, null, fact);
+    public HongsException(Throwable fact, int code) {
+        this(fact, code, null);
     }
 
     public HongsException(int code, String desc) {
-        this(code, desc, null);
+        this(null, code, desc);
     }
 
     public HongsException(Throwable fact) {
-        this(0x0 , null, fact);
+        this(fact, 0x0 , null);
     }
 
     public HongsException(String desc) {
-        this(0x0 , desc, null);
+        this(null, 0x0 , desc);
     }
 
     public HongsException(int code) {
-        this(code, null, null);
+        this(null, code, null);
     }
 
     @Override
@@ -147,48 +147,11 @@ public class HongsException
 
     @Override
     public HongsExemption toExemption() {
-        return new HongsExemption(this.getErrno(), this.getError(), this)
+        return new HongsExemption(this, this.getErrno(), this.getError())
              .setLocalizedContext(this.getLocalizedContext())
              .setLocalizedContent(this.getLocalizedContent())
              .setFinalizedMessage(this.getFinalizedMessage())
              .setFinalizedOptions(this.getFinalizedOptions());
-    }
-
-    @Deprecated
-    public static final int COMMON = 0;
-    @Deprecated
-    public static final int NOTICE = 1;
-
-    /**
-     * 常规错误(无需错误代码)
-     * @deprecated 请改用 HongsException(String, Throwable)
-     */
-    public static final class Common extends HongsException {
-        public Common(String error, Throwable cause) {
-            super(COMMON, error,cause);
-        }
-        public Common(Throwable cause) {
-            super(COMMON, cause);
-        }
-        public Common(String error) {
-            super(COMMON, error);
-        }
-    }
-
-    /**
-     * 通告错误(无需错误代码)
-     * @deprecated 请改用 HongsException(String, Throwable)
-     */
-    public static final class Notice extends HongsException {
-        public Notice(String error, Throwable cause) {
-            super(NOTICE, error,cause);
-        }
-        public Notice(Throwable cause) {
-            super(NOTICE, cause);
-        }
-        public Notice(String error) {
-            super(NOTICE, error);
-        }
     }
 
 }

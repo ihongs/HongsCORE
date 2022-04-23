@@ -97,7 +97,7 @@ public class DBFields
     }
     catch (SQLException ex)
     {
-      throw new HongsException(1068, ex);
+      throw new HongsException(ex, 1068);
     }
 
     // 由于 ResultSetMetaData 缺少默认值, 通过 DatabaseMetaData 作补充检测
@@ -120,7 +120,7 @@ public class DBFields
     }
     catch (SQLException ex)
     {
-      throw new HongsException(1068, ex);
+      throw new HongsException(ex, 1068);
     }
   }
 

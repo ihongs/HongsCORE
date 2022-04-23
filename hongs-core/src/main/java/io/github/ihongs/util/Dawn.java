@@ -62,7 +62,7 @@ public final class Dawn
     }
     catch (ParseException | IOException ex)
     {
-      throw new HongsExemption(850, "Can not parse data by json", ex);
+      throw new HongsExemption(ex, 850, "Can not parse data by json");
     }
   }
 
@@ -79,7 +79,7 @@ public final class Dawn
     }
     catch (ParseException ex)
     {
-      throw new HongsExemption(850, "Can not parse data by json", ex);
+      throw new HongsExemption(ex, 850, "Can not parse data by json");
     }
   }
 
@@ -145,7 +145,7 @@ public final class Dawn
     }
     catch (IOException ex)
     {
-      throw new HongsExemption(851, "Can not write data for json", ex);
+      throw new HongsExemption(ex, 851, "Can not write data for json");
     }
   }
 
@@ -474,7 +474,7 @@ public final class Dawn
             }
         }
         catch (IOException e)  {
-            throw new HongsExemption(851, "Can not write data for json", e);
+            throw new HongsExemption(e, 851, "Can not write data for json");
         }
     }
 

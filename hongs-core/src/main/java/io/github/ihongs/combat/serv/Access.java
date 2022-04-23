@@ -79,11 +79,11 @@ public class Access {
                 ps.print( ln );
             }   ps.println(  );
         } catch (UnsupportedEncodingException ex ) {
-            throw new HongsException(1111, ex);
+            throw new HongsException(ex, 1111);
         } catch (MalformedURLException ex) {
-            throw new HongsException(1111, ex);
+            throw new HongsException(ex, 1111);
         } catch (IOException ex) {
-            throw new HongsException(1110, ex);
+            throw new HongsException(ex, 1110);
         }
     }
 
@@ -261,9 +261,9 @@ public class Access {
             }
             return sb.toString();
         } catch (FileNotFoundException ex) {
-            throw  new  HongsException("Can not find " + path, ex);
+            throw  new  HongsException(ex, "Can not find " + path);
         } catch (IOException ex) {
-            throw  new  HongsException("Can not read " + path, ex);
+            throw  new  HongsException(ex, "Can not read " + path);
         }
     }
 

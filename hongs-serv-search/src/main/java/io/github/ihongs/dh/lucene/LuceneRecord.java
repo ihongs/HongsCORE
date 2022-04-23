@@ -963,7 +963,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         try {
             padQry(qr, rd, 0);
         } catch (BooleanQuery.TooManyClauses ex) {
-            throw  new  HongsException(400 , ex);
+            throw  new  HongsException(ex , 400);
         }
     }
 
@@ -1592,7 +1592,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 writer.commit ( );
             }
         } catch (IOException ex ) {
-            throw new HongsExemption(1055, ex);
+            throw new HongsExemption(ex, 1055);
         }
         REFLUX_MODE = false;
     }
@@ -1607,7 +1607,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 writer.rollback();
             }
         } catch (IOException ex ) {
-            throw new HongsExemption(1056, ex);
+            throw new HongsExemption(ex, 1056);
         }
         REFLUX_MODE = false;
     }

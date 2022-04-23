@@ -265,10 +265,10 @@ public class UploadHelper {
             a = m.digest(  );
         }
         catch (NoSuchAlgorithmException e) {
-            throw new HongsExemption(1120, e);
+            throw new HongsExemption(e, 1120);
         }
         catch (IOException e) {
-            throw new HongsExemption(1121, e);
+            throw new HongsExemption(e, 1121);
         }
 
         // 转为 16 进制

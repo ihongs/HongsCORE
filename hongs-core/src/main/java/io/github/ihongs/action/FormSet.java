@@ -223,15 +223,15 @@ public class FormSet
     }
     catch ( IOException ex)
     {
-      throw new HongsException(911, "Read '" +name+Cnst.FORM_EXT+".xml' error", ex);
+      throw new HongsException(ex, 911, "Read '" +name+Cnst.FORM_EXT+".xml' error");
     }
     catch (SAXException ex)
     {
-      throw new HongsException(911, "Parse '"+name+Cnst.FORM_EXT+".xml' error", ex);
+      throw new HongsException(ex, 911, "Parse '"+name+Cnst.FORM_EXT+".xml' error");
     }
     catch (ParserConfigurationException ex)
     {
-      throw new HongsException(911, "Parse '"+name+Cnst.FORM_EXT+".xml' error", ex);
+      throw new HongsException(ex, 911, "Parse '"+name+Cnst.FORM_EXT+".xml' error");
     }
 
     this.forms = new HashMap();

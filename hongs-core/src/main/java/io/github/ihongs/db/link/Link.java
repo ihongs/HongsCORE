@@ -119,7 +119,7 @@ abstract public class Link
             this.connection.setAutoCommit(  !  this.REFLUX_MODE);
         }
     } catch (SQLException ex) {
-        throw new HongsException(1053, ex);
+        throw new HongsException(ex, 1053);
     }
   }
 
@@ -135,7 +135,7 @@ abstract public class Link
             connection.setAutoCommit(false);
         }
     } catch (SQLException ex) {
-        throw new HongsExemption(1054, ex);
+        throw new HongsExemption(ex, 1054);
     }
     REFLUX_MODE = true;
   }
@@ -153,7 +153,7 @@ abstract public class Link
             connection.commit ( );
         }
     } catch (SQLException ex) {
-        throw new HongsExemption(1055, ex);
+        throw new HongsExemption(ex, 1055);
     }
     REFLUX_MODE = false;
   }
@@ -171,7 +171,7 @@ abstract public class Link
             connection.rollback();
         }
     } catch (SQLException ex) {
-        throw new HongsExemption(1056, ex);
+        throw new HongsExemption(ex, 1056);
     }
     REFLUX_MODE = false;
   }
@@ -214,7 +214,7 @@ abstract public class Link
     }
     catch ( SQLException ex )
     {
-      throw new HongsException(1042, ex);
+      throw new HongsException(ex, 1042);
     }
 
     return ps;
@@ -238,7 +238,7 @@ abstract public class Link
     }
     catch (SQLException ex)
     {
-      throw new HongsException(1041, ex);
+      throw new HongsException(ex, 1041);
     }
 
     return ps;
@@ -260,7 +260,7 @@ abstract public class Link
     }
     catch (SQLException ex)
     {
-      throw new HongsException(1041, ex);
+      throw new HongsException(ex, 1041);
     }
 
     return ps;
@@ -281,7 +281,7 @@ abstract public class Link
     }
     catch (SQLException ex)
     {
-      throw new HongsException(1034, ex);
+      throw new HongsException(ex, 1034);
     }
   }
 
@@ -300,7 +300,7 @@ abstract public class Link
     }
     catch (SQLException ex)
     {
-      throw new HongsException(1035, ex);
+      throw new HongsException(ex, 1035);
     }
   }
 
@@ -372,7 +372,7 @@ abstract public class Link
     }
     catch (SQLException ex )
     {
-      throw new HongsException(1043, ex);
+      throw new HongsException(ex, 1043);
     }
 
     return  new Loop(rs, ps);
@@ -478,7 +478,7 @@ abstract public class Link
     }
     catch (  SQLException  ex )
     {
-      throw new HongsException(1044, ex);
+      throw new HongsException(ex, 1044);
     }
     finally
     {
@@ -515,7 +515,7 @@ abstract public class Link
     }
     catch (  SQLException  ex )
     {
-      throw new HongsException(1045, ex);
+      throw new HongsException(ex, 1045);
     }
     finally
     {

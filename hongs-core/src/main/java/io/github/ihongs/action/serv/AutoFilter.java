@@ -220,8 +220,8 @@ public class AutoFilter extends ActionDriver {
                               .get(action.substring(1) + "/search")
                               .getMclass( );
         } catch ( NullPointerException ex ) {
-            throw new HongsExemption(1130,
-                 "Auto action '" + action.substring(1) + "/search' is not exists", ex);
+            throw new HongsExemption(ex, 1130,
+                 "Auto action '" + action.substring(1) + "/search' is not exists");
         }
 
         cstset = new HashSet();

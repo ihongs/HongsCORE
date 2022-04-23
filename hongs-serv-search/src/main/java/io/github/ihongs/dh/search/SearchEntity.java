@@ -192,7 +192,7 @@ public class SearchEntity extends LuceneRecord {
         } catch (HongsException ex) {
             throw ex.toExemption( );
         } catch (   IOException ex) {
-            throw new HongsExemption(1055, ex);
+            throw new HongsExemption(ex, 1055);
         } finally {
             WRITES.clear();
             DOCK = null;
@@ -214,7 +214,7 @@ public class SearchEntity extends LuceneRecord {
         } catch (HongsException ex) {
             throw ex.toExemption( );
         } catch (   IOException ex) {
-            throw new HongsExemption(1056, ex);
+            throw new HongsExemption(ex, 1056);
         } finally {
             WRITES.clear();
             DOCK = null;

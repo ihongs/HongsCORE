@@ -46,9 +46,9 @@ public class Origin extends Link {
 
             return connection;
         } catch (SQLException ex) {
-            throw new HongsException(1022, ex);
+            throw new HongsException(ex, 1022);
         } catch (NamingException ex ) {
-            throw new HongsException(1022, ex);
+            throw new HongsException(ex, 1022);
         }
     }
 

@@ -179,15 +179,15 @@ public class CombatRunner implements Runnable
     }
     catch (   IllegalAccessException ex)
     {
-      throw new HongsExemption(836, "Illegal access for method "+met.getClass().getName()+"."+met.getName()+"(String[]).", ex);
+      throw new HongsExemption(ex, 836, "Illegal access for method "+met.getClass().getName()+"."+met.getName()+"(String[]).");
     }
     catch ( IllegalArgumentException ex)
     {
-      throw new HongsExemption(836, "Illegal params for method "+met.getClass().getName()+"."+met.getName()+"(String[]).", ex);
+      throw new HongsExemption(ex, 836, "Illegal params for method "+met.getClass().getName()+"."+met.getName()+"(String[]).");
     }
     catch (InvocationTargetException ex)
     {
-      throw new HongsExemption(837, ex.getCause());
+      throw new HongsExemption(ex.getCause(), 837);
     }
   }
 

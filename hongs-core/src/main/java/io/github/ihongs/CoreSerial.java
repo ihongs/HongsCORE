@@ -158,15 +158,15 @@ public abstract class CoreSerial
     }
     catch (ClassNotFoundException ex)
     {
-      throw new HongsException(904, ex);
+      throw new HongsException(ex, 904);
     }
     catch (FileNotFoundException ex)
     {
-      throw new HongsException(903, ex);
+      throw new HongsException(ex, 903);
     }
     catch (IOException ex)
     {
-      throw new HongsException(902, ex);
+      throw new HongsException(ex, 902);
     }
   }
 
@@ -187,7 +187,7 @@ public abstract class CoreSerial
       try {
         file.createNewFile( );
       } catch (IOException e) {
-        throw new HongsException(900, e);
+        throw new HongsException(e, 900);
       }
     }
 
@@ -213,11 +213,11 @@ public abstract class CoreSerial
     }
     catch (FileNotFoundException ex)
     {
-      throw new HongsException(903, ex);
+      throw new HongsException(ex, 903);
     }
     catch (IOException ex)
     {
-      throw new HongsException(901, ex);
+      throw new HongsException(ex, 901);
     }
   }
 
@@ -253,11 +253,11 @@ public abstract class CoreSerial
       }
       catch (IllegalAccessException e)
       {
-        throw new HongsException(905, e);
+        throw new HongsException(e, 905);
       }
       catch (IllegalArgumentException e)
       {
-        throw new HongsException(905, e);
+        throw new HongsException(e, 905);
       }
     }
 
@@ -283,11 +283,11 @@ public abstract class CoreSerial
       }
       catch (IllegalAccessException e)
       {
-        throw new HongsException(905, e);
+        throw new HongsException(e, 905);
       }
       catch (IllegalArgumentException e)
       {
-        throw new HongsException(905, e);
+        throw new HongsException(e, 905);
       }
     }
   }
@@ -324,11 +324,11 @@ public abstract class CoreSerial
       }
       catch (IllegalAccessException e)
       {
-        throw new HongsException(905, e);
+        throw new HongsException(e, 905);
       }
       catch (IllegalArgumentException e)
       {
-        throw new HongsException(905, e);
+        throw new HongsException(e, 905);
       }
     }
 
@@ -354,11 +354,11 @@ public abstract class CoreSerial
       }
       catch (IllegalAccessException e)
       {
-        throw new HongsException(906, e);
+        throw new HongsException(e, 906);
       }
       catch (IllegalArgumentException e)
       {
-        throw new HongsException(906, e);
+        throw new HongsException(e, 906);
       }
     }
 

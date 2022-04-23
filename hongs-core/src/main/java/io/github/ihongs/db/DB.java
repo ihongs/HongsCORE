@@ -160,7 +160,7 @@ public class DB
     }
     catch (SQLException ex)
     {
-      throw new HongsException(1031 , ex);
+      throw new HongsException(ex, 1031);
     }
 
     /**
@@ -203,7 +203,7 @@ public class DB
       }
       catch (SQLException ex)
       {
-        throw new HongsException(1022, ex );
+        throw new HongsException(ex, 1022 );
       }
       catch (javax.naming.NamingException ex )
       {
@@ -244,7 +244,7 @@ public class DB
       }
       catch (SQLException ex)
       {
-        throw new HongsException(1024, ex );
+        throw new HongsException(ex, 1024 );
       }
 
       CoreLogger.trace("DB: Connect to '{}' by source mode: {} {} ", name, mode, namc);
@@ -255,7 +255,7 @@ public class DB
 
     if (ez !=null)
     {
-      throw new HongsException(1025, ez);
+      throw new HongsException(ez, 1025);
     }
     else
     {
@@ -458,7 +458,7 @@ public class DB
     }
     catch (ClassNotFoundException ex)
     {
-      throw new HongsException(1027, ex);
+      throw new HongsException(ex, 1027);
     }
 
     /**
@@ -471,11 +471,11 @@ public class DB
     }
     catch (NoSuchMethodException ex)
     {
-      throw new HongsException(1028, ex);
+      throw new HongsException(ex, 1028);
     }
     catch (SecurityException ex)
     {
-      throw new HongsException(1028, ex);
+      throw new HongsException(ex, 1028);
     }
 
     /**
@@ -488,19 +488,19 @@ public class DB
     }
     catch (InstantiationException ex)
     {
-      throw new HongsException(1029, ex);
+      throw new HongsException(ex, 1029);
     }
     catch (IllegalAccessException ex)
     {
-      throw new HongsException(1029, ex);
+      throw new HongsException(ex, 1029);
     }
     catch (IllegalArgumentException ex)
     {
-      throw new HongsException(1029, ex);
+      throw new HongsException(ex, 1029);
     }
     catch (InvocationTargetException ex)
     {
-      throw new HongsException(1029, ex);
+      throw new HongsException(ex, 1029);
     }
 
     this.tableObjects.put(tableName, tobj);
@@ -577,7 +577,7 @@ public class DB
     }
     catch (ClassNotFoundException ex)
     {
-      throw new HongsException(1037, ex);
+      throw new HongsException(ex, 1037);
     }
 
     /**
@@ -590,11 +590,11 @@ public class DB
     }
     catch (NoSuchMethodException ex)
     {
-      throw new HongsException(1038, ex);
+      throw new HongsException(ex, 1038);
     }
     catch (SecurityException ex)
     {
-      throw new HongsException(1038, ex);
+      throw new HongsException(ex, 1038);
     }
 
     /**
@@ -607,19 +607,19 @@ public class DB
     }
     catch (InstantiationException ex)
     {
-      throw new HongsException(1039, ex);
+      throw new HongsException(ex, 1039);
     }
     catch (IllegalAccessException ex)
     {
-      throw new HongsException(1039, ex);
+      throw new HongsException(ex, 1039);
     }
     catch (IllegalArgumentException ex)
     {
-      throw new HongsException(1039, ex);
+      throw new HongsException(ex, 1039);
     }
     catch (InvocationTargetException ex)
     {
-      throw new HongsException(1039, ex);
+      throw new HongsException(ex, 1039);
     }
 
     this.modelObjects.put(tableName, mobj);

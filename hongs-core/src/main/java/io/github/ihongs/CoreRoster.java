@@ -111,8 +111,8 @@ public class CoreRoster {
                 try {
                     clso = Class.forName (clsn);
                 }
-                catch (ClassNotFoundException ex ) {
-                    throw  new HongsExemption(831, "Can not find class '" + clsn + "'.", ex);
+                catch (ClassNotFoundException ex) {
+                    throw  new HongsExemption(ex, 831, "Can not find class '" + clsn + "'.");
                 }
 
                 // 从注解提取动作名
@@ -210,7 +210,7 @@ public class CoreRoster {
             try {
                 clss = getClassNames(pkgn, true );
             } catch (IOException ex) {
-                throw new HongsExemption(830, "Can not load package '" + pkgn + "'.", ex);
+                throw new HongsExemption(ex, 830, "Can not load package '" + pkgn + "'.");
             }
             if (clss == null) {
                 throw new HongsExemption(830, "Can not find package '" + pkgn + "'.");
@@ -221,7 +221,7 @@ public class CoreRoster {
             try {
                 clss = getClassNames(pkgn, false);
             } catch (IOException ex) {
-                throw new HongsExemption(830, "Can not load package '" + pkgn + "'.", ex);
+                throw new HongsExemption(ex, 830, "Can not load package '" + pkgn + "'.");
             }
             if (clss == null) {
                 throw new HongsExemption(830, "Can not find package '" + pkgn + "'.");

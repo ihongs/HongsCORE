@@ -290,15 +290,15 @@ public class NaviMap
     }
     catch ( IOException ex)
     {
-      throw new HongsException(921, "Read '" +name+Cnst.NAVI_EXT+".xml' error", ex);
+      throw new HongsException(ex, 921, "Read '" +name+Cnst.NAVI_EXT+".xml' error");
     }
     catch (SAXException ex)
     {
-      throw new HongsException(921, "Parse '"+name+Cnst.NAVI_EXT+".xml' error", ex);
+      throw new HongsException(ex, 921, "Parse '"+name+Cnst.NAVI_EXT+".xml' error");
     }
     catch (ParserConfigurationException ex)
     {
-      throw new HongsException(921, "Parse '"+name+Cnst.NAVI_EXT+".xml' error", ex);
+      throw new HongsException(ex, 921, "Parse '"+name+Cnst.NAVI_EXT+".xml' error");
     }
 
     this.menus = new LinkedHashMap();

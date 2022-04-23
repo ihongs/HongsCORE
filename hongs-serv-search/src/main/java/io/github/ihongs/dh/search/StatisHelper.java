@@ -134,7 +134,7 @@ public class StatisHelper {
                 }
 
                 } catch ( ClassCastException ex) {
-                    throw new HongsException(400, ex); // 数据转换失败
+                    throw new HongsException(ex, 400); // 数据转换失败
                 }
 
                 // 分块条件
@@ -337,7 +337,7 @@ public class StatisHelper {
                 }
 
                 } catch ( ClassCastException ex) {
-                    throw new HongsException(400, ex); // 区间格式不对
+                    throw new HongsException(ex, 400); // 区间格式不对
                 }
 
                 // 分块条件

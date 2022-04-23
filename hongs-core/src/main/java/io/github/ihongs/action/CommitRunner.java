@@ -85,7 +85,7 @@ public final class CommitRunner {
                 }
 
                 // 其他异常需包裹
-                throw new  HongsException (1109, ex);
+                throw new  HongsException (ex , 1109);
             }
         } finally {
             // 重置

@@ -169,25 +169,25 @@ public class VerifyHelper extends Verify {
                     rule = (Rule) (Class.forName(item).getDeclaredConstructor().newInstance());
                 }
                 catch (ClassNotFoundException ex) {
-                    throw new HongsException(1125, "Failed to get rule: "+item+" in "+conf+":"+form, ex);
+                    throw new HongsException(ex, 1125, "Failed to get rule: "+item+" in "+conf+":"+form);
                 }
                 catch ( NoSuchMethodException ex) {
-                    throw new HongsException(1125, "Failed to get rule: "+item+" in "+conf+":"+form, ex);
+                    throw new HongsException(ex, 1125, "Failed to get rule: "+item+" in "+conf+":"+form);
                 }
                 catch (InstantiationException ex) {
-                    throw new HongsException(1126, "Failed to get rule: "+item+" in "+conf+":"+form, ex);
+                    throw new HongsException(ex, 1126, "Failed to get rule: "+item+" in "+conf+":"+form);
                 }
                 catch (IllegalAccessException ex) {
-                    throw new HongsException(1126, "Failed to get rule: "+item+" in "+conf+":"+form, ex);
+                    throw new HongsException(ex, 1126, "Failed to get rule: "+item+" in "+conf+":"+form);
                 }
                 catch (IllegalArgumentException  ex) {
-                    throw new HongsException(1126, "Failed to get rule: "+item+" in "+conf+":"+form, ex);
+                    throw new HongsException(ex, 1126, "Failed to get rule: "+item+" in "+conf+":"+form);
                 }
                 catch (InvocationTargetException ex) {
-                    throw new HongsException(1126, "Failed to get rule: "+item+" in "+conf+":"+form, ex);
+                    throw new HongsException(ex, 1126, "Failed to get rule: "+item+" in "+conf+":"+form);
                 }
                 catch (ClassCastException ex) {
-                    throw new HongsException(1126, "Failed to get rule: "+item+" in "+conf+":"+form, ex);
+                    throw new HongsException(ex, 1126, "Failed to get rule: "+item+" in "+conf+":"+form);
                 }
 
                 rule.config (opts);

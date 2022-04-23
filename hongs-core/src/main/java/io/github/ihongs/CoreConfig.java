@@ -85,7 +85,7 @@ public class CoreConfig
         defaults.load (is);
     }
     catch (IOException ex) {
-        throw new HongsExemption(827, "Can not read '"+name+".properties'", ex);
+        throw new HongsExemption(ex, 827, "Can not read '"+name+".properties'");
     }
 
     // 优先尝试从配置目录的 .properties 加载数据
@@ -99,7 +99,7 @@ public class CoreConfig
         er = ex;
     }
     catch (IOException ex) {
-        throw new HongsExemption(827, "Can not read '"+name+".properties'", ex);
+        throw new HongsExemption(ex, 827, "Can not read '"+name+".properties'");
     }
 
     // 然后尝试从配置目录的 .prop.xml 中加载数据
@@ -113,14 +113,14 @@ public class CoreConfig
         er = ex;
     }
     catch (IOException ex) {
-        throw new HongsExemption(827, "Can not read '"+name+Cnst.PROP_EXT+".xml'", ex);
+        throw new HongsExemption(ex, 827, "Can not read '"+name+Cnst.PROP_EXT+".xml'");
     }
 
     // 没有额外的配置则将默认配置放到前台
     if (ld) {
         this.putAll(defaults);
     } else {
-        throw new HongsExemption(826, "Can not find '"+name+"' properties config", er);
+        throw new HongsExemption(er, 826, "Can not find '"+name+"' properties config");
     }
   }
 

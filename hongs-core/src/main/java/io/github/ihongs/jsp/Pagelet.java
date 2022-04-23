@@ -75,10 +75,8 @@ abstract public class Pagelet extends ActionDriver implements HttpJspPage
                 if (ax instanceof HongsCause) {
                     ah.fault((HongsCause) ax);
                 } else {
-                    ah.fault( new HongsException(
-                        ern , ( String ) msg ,
-                        ax != null ? ax : ex
-                    ));
+                    ah.fault(new HongsException(
+                            ax != null ? ax : ex , ern , ( String ) msg ));
                 }
             } else {
                 Map dat = new HashMap( );
@@ -199,7 +197,7 @@ abstract public class Pagelet extends ActionDriver implements HttpJspPage
       try {
           return URLEncoder.encode(str, "UTF-8");
       } catch (UnsupportedEncodingException ex ) {
-          throw new HongsExemption(1111, ex);
+          throw new HongsExemption(ex, 1111);
       }
   }
 
@@ -213,7 +211,7 @@ abstract public class Pagelet extends ActionDriver implements HttpJspPage
       try {
           return URLDecoder.decode(str, "UTF-8");
       } catch (UnsupportedEncodingException ex ) {
-          throw new HongsExemption(1111, ex);
+          throw new HongsExemption(ex, 1111);
       }
   }
 

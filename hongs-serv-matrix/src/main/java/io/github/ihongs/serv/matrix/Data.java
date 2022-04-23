@@ -139,13 +139,13 @@ public class Data extends SearchEntity {
                 if (ta instanceof StackOverflowError) {
                     throw (StackOverflowError) ta;
                 }
-                throw new HongsExemption(823, "Can not call '"+name+".getInstance'", ta);
+                throw new HongsExemption(ta, 823, "Can not call '"+name+".getInstance'");
             } catch ( IllegalArgumentException ex) {
-                throw new HongsExemption(823, "Can not call '"+name+".getInstance'", ex);
+                throw new HongsExemption(ex, 823, "Can not call '"+name+".getInstance'");
             } catch (   IllegalAccessException ex) {
-                throw new HongsExemption(823, "Can not call '"+name+".getInstance'", ex);
+                throw new HongsExemption(ex, 823, "Can not call '"+name+".getInstance'");
             } catch (        SecurityException se) {
-                throw new HongsExemption(822, "Can not call '"+name+".getInstance'", se);
+                throw new HongsExemption(se, 822, "Can not call '"+name+".getInstance'");
             }
         }
 

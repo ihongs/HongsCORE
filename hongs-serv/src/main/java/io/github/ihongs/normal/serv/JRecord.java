@@ -73,7 +73,7 @@ public class JRecord<T> implements IRecord<T>, AutoCloseable {
             }
         }
         catch (SQLException ex) {
-            throw new  HongsException(1152, ex);
+            throw new  HongsException(ex, 1152);
         }
         catch ( IOException ex) {
             throw new  HongsException(ex);
@@ -132,7 +132,7 @@ public class JRecord<T> implements IRecord<T>, AutoCloseable {
             }
         }
         catch ( SQLException e ) {
-            throw new HongsException(1045, e);
+            throw new HongsException(e, 1045);
         }
 
         try (
@@ -153,7 +153,7 @@ public class JRecord<T> implements IRecord<T>, AutoCloseable {
             }
         }
         catch ( SQLException e ) {
-            throw new HongsException(1045, e);
+            throw new HongsException(e, 1045);
         }
     }
 
@@ -181,7 +181,7 @@ public class JRecord<T> implements IRecord<T>, AutoCloseable {
             ps.executeUpdate(  );
         }
         catch ( SQLException e ) {
-            throw new HongsException(1045, e);
+            throw new HongsException(e, 1045);
         }
     }
 
@@ -203,7 +203,7 @@ public class JRecord<T> implements IRecord<T>, AutoCloseable {
             ps.executeUpdate(  );
         }
         catch ( SQLException e ) {
-            throw new HongsException(1045, e);
+            throw new HongsException(e, 1045);
         }
     }
 
@@ -225,7 +225,7 @@ public class JRecord<T> implements IRecord<T>, AutoCloseable {
             ps.executeUpdate(  );
         }
         catch ( SQLException e ) {
-            throw new HongsException(1045, e);
+            throw new HongsException(e, 1045);
         }
     }
 

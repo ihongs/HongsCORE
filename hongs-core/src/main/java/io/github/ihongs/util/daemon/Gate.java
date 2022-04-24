@@ -17,6 +17,12 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * 每隔一段时间自动清理锁, 以及释放可以关闭的对象;
  * 注意: 以下锁均不支持 tryLock/lockInterruptibly.
  *
+ * 异常代码:
+ * Ex860=读取超时
+ * Ex861=存储超时
+ * Ex862=执行超时
+ * Ex863=程序中断
+ *
  * @author Hongs
  */
 public final class Gate {
@@ -209,58 +215,6 @@ public final class Gate {
     }
 
     /**
-     * 读写锁
-     * 对 ReadWriteLock 的封装
-     */
-    public static final class Leader implements ReadWriteLock {
-        private final ReadWriteLock lock = new ReentrantReadWriteLock();
-        private long  time = 0;
-        private  int  cite = 0;
-
-        private Leader() {} // 避免外部 new
-
-        public void lockr() {
-            synchronized (this) {
-                cite ++;
-            }
-            lock.readLock().lock();
-        }
-
-        public void unlockr() {
-            synchronized (this) {
-                cite --;
-                time = System.currentTimeMillis();
-            }
-            lock.readLock().unlock();
-        }
-
-        public void lockw() {
-            synchronized (this) {
-                cite ++;
-            }
-            lock.writeLock().lock();
-        }
-
-        public void unlockw() {
-            synchronized (this) {
-                cite --;
-                time = System.currentTimeMillis();
-            }
-            lock.writeLock().unlock();
-        }
-
-        @Override
-        public Lock  readLock() {
-            return new Reader(this);
-        }
-
-        @Override
-        public Lock writeLock() {
-            return new Writer(this);
-        }
-    }
-
-    /**
      * 基础锁
      * 对 ReentrantLock 的封装
      */
@@ -273,46 +227,51 @@ public final class Gate {
 
         @Override
         public void lock() {
-            synchronized(this) {
-                cite ++;
-            }
             lock.lock();
+        //  synchronized(this) {
+                cite ++;
+        //  }
         }
 
         @Override
         public void unlock() {
-            synchronized(this) {
+        //  synchronized(this) {
                 cite --;
                 time = System.currentTimeMillis();
-            }
+        //  }
             lock.unlock();
         }
 
-        /**
-         * @deprecated 不支持
-         * @throws UnsupportedOperationException
-         */
         @Override
         public boolean tryLock() {
-            throw new UnsupportedOperationException("Not supported.");
+            if (! lock.tryLock() ) {
+                return false;
+            }
+        //  synchronized(this) {
+                cite ++;
+        //  }
+            return true;
         }
 
-        /**
-         * @deprecated 不支持
-         * @throws UnsupportedOperationException
-         */
         @Override
-        public boolean tryLock(long time, TimeUnit unit) {
-            throw new UnsupportedOperationException("Not supported.");
+        public boolean tryLock(long time, TimeUnit unit)
+        throws InterruptedException {
+            if (! lock.tryLock(time, unit)) {
+                return false;
+            }
+        //  synchronized(this) {
+                cite ++;
+        //  }
+            return true;
         }
 
-        /**
-         * @deprecated 不支持
-         * @throws UnsupportedOperationException
-         */
         @Override
-        public void lockInterruptibly() {
-            throw new UnsupportedOperationException("Not supported.");
+        public void lockInterruptibly()
+        throws InterruptedException {
+            lock.lockInterruptibly();
+        //  synchronized(this) {
+                cite ++;
+        //  }
         }
 
         /**
@@ -322,6 +281,116 @@ public final class Gate {
         @Override
         public Condition newCondition() {
             throw new UnsupportedOperationException("Not supported.");
+        }
+    }
+
+    /**
+     * 读写锁
+     * 对 ReadWriteLock 的封装
+     */
+    public static final class Leader implements ReadWriteLock {
+        private final ReadWriteLock lock = new ReentrantReadWriteLock();
+        private long  time = 0;
+        private  int  cite = 0;
+
+        private Leader() {} // 避免外部 new
+
+        public void lockr() {
+            lock. readLock().lock();
+            synchronized (this) {
+                cite ++;
+            }
+        }
+
+        public void lockw() {
+            lock.writeLock().lock();
+            synchronized (this) {
+                cite ++;
+            }
+        }
+
+        public void unlockr() {
+            lock. readLock().unlock();
+            synchronized (this) {
+                cite --;
+                time = System.currentTimeMillis();
+            }
+        }
+
+        public void unlockw() {
+            lock.writeLock().unlock();
+            synchronized (this) {
+                cite --;
+                time = System.currentTimeMillis();
+            }
+        }
+
+        public boolean tryLockr() {
+            if (lock. readLock().tryLock()) {
+                synchronized (this) {
+                    cite ++;
+                }
+                return true;
+            }
+            return false;
+        }
+
+        public boolean tryLockw() {
+            if (lock.writeLock().tryLock()) {
+                synchronized (this) {
+                    cite ++;
+                }
+                return true;
+            }
+            return false;
+        }
+
+        public boolean tryLockr(long time, TimeUnit unit)
+        throws InterruptedException {
+            if (lock. readLock().tryLock(time , unit)) {
+                synchronized (this) {
+                    cite ++;
+                }
+                return true;
+            }
+            return false;
+        }
+
+        public boolean tryLockw(long time, TimeUnit unit)
+        throws InterruptedException {
+            if (lock.writeLock().tryLock(time , unit)) {
+                synchronized (this) {
+                    cite ++;
+                }
+                return true;
+            }
+            return false;
+        }
+
+        public void lockrInterruptibly()
+        throws InterruptedException {
+            lock. readLock().lockInterruptibly();
+            synchronized (this) {
+                cite ++;
+            }
+        }
+
+        public void lockwInterruptibly()
+        throws InterruptedException {
+            lock.writeLock().lockInterruptibly();
+            synchronized (this) {
+                cite ++;
+            }
+        }
+
+        @Override
+        public Lock  readLock() {
+            return new Reader(this);
+        }
+
+        @Override
+        public Lock writeLock() {
+            return new Writer(this);
         }
     }
 
@@ -346,31 +415,21 @@ public final class Gate {
             lock.unlockr();
         }
 
-        /**
-         * @deprecated 不支持
-         * @throws UnsupportedOperationException
-         */
         @Override
         public boolean tryLock() {
-            throw new UnsupportedOperationException("Not supported.");
+            return lock.tryLockr();
         }
 
-        /**
-         * @deprecated 不支持
-         * @throws UnsupportedOperationException
-         */
         @Override
-        public boolean tryLock(long time, TimeUnit unit) {
-            throw new UnsupportedOperationException("Not supported.");
+        public boolean tryLock(long time, TimeUnit unit)
+        throws InterruptedException {
+            return lock.tryLockr(time, unit);
         }
 
-        /**
-         * @deprecated 不支持
-         * @throws UnsupportedOperationException
-         */
         @Override
-        public void lockInterruptibly() {
-            throw new UnsupportedOperationException("Not supported.");
+        public void lockInterruptibly()
+        throws InterruptedException {
+            lock.lockrInterruptibly();
         }
 
         /**
@@ -404,31 +463,21 @@ public final class Gate {
             lock.unlockw();
         }
 
-        /**
-         * @deprecated 不支持
-         * @throws UnsupportedOperationException
-         */
         @Override
         public boolean tryLock() {
-            throw new UnsupportedOperationException("Not supported.");
+            return lock.tryLockw();
         }
 
-        /**
-         * @deprecated 不支持
-         * @throws UnsupportedOperationException
-         */
         @Override
-        public boolean tryLock(long time, TimeUnit unit) {
-            throw new UnsupportedOperationException("Not supported.");
+        public boolean tryLock(long time, TimeUnit unit)
+        throws InterruptedException {
+            return lock.tryLockw(time, unit);
         }
 
-        /**
-         * @deprecated 不支持
-         * @throws UnsupportedOperationException
-         */
         @Override
-        public void lockInterruptibly() {
-            throw new UnsupportedOperationException("Not supported.");
+        public void lockInterruptibly()
+        throws InterruptedException {
+            lock.lockwInterruptibly();
         }
 
         /**

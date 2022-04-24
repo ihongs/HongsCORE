@@ -9,6 +9,7 @@ import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.FormSet;
 import io.github.ihongs.dh.lucene.LuceneRecord;
 import io.github.ihongs.util.Syno;
+import io.github.ihongs.util.daemon.Gate;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,6 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexWriter;
@@ -91,6 +93,14 @@ public class SearchEntity extends LuceneRecord {
         return inst;
     }
 
+    /**
+     * 获取写锁, 如需使用 IndexWriter 务必加锁
+     * @return
+     */
+    public Gate.Locker getLocker() {
+        return Gate.getLocker(Writer.class.getName () + ":" + getDbName());
+    }
+
     @Override
     public IndexWriter getWriter() throws HongsException {
         /**
@@ -106,7 +116,7 @@ public class SearchEntity extends LuceneRecord {
 
         if (WRITER != null) {
             b[ 0 ]  = true;
-        } else try {
+        } else {
             WRITER  = Core.GLOBAL_CORE.get(
                 Writer.class.getName () + ":" + name ,
                 new Supplier<Writer> () {
@@ -118,8 +128,6 @@ public class SearchEntity extends LuceneRecord {
                     }
                 }
             );
-        } catch (HongsExemption x) {
-            throw x.toException( );
         }
 
         // 首次进入无需计数
@@ -176,8 +184,19 @@ public class SearchEntity extends LuceneRecord {
         }
         try {
             IndexWriter iw = getWriter();
-            synchronized (iw) {
-                // 此处才会是真的更新文档
+            Gate.Locker lk = getLocker();
+
+            long tt = CoreConfig.getInstance().getProperty("core.try.save.timeout", 0L);
+            if ( tt > 0L ) {
+                if (! lk.tryLock(tt, TimeUnit.MILLISECONDS)) {
+                    throw new HongsExemption(861, "Lucene commit timeout (${0}ms)", tt);
+                }
+            } else {
+                lk.lockInterruptibly();
+            }
+
+            // 此处才是真的更新文档
+            try {
                 for (Map.Entry<String, Document> et : WRITES.entrySet()) {
                     String   id = et.getKey  ();
                     Document dc = et.getValue();
@@ -187,12 +206,16 @@ public class SearchEntity extends LuceneRecord {
                         iw.deleteDocuments(new Term("@"+Cnst.ID_KEY, id)    );
                     }
                 }
-                iw.commit(  );
+                iw.commit();
+            } finally {
+                lk.unlock();
             }
-        } catch (HongsException ex) {
-            throw ex.toExemption( );
-        } catch (   IOException ex) {
-            throw new HongsExemption(ex, 1055);
+        } catch ( HongsException e) {
+            throw  e.toExemption( );
+        } catch (InterruptedException e) {
+            throw new  HongsExemption(e, 863 );
+        } catch ( IOException e ) {
+            throw new  HongsExemption(e, 1055);
         } finally {
             WRITES.clear();
             DOCK = null;
@@ -206,19 +229,25 @@ public class SearchEntity extends LuceneRecord {
         if (WRITES.isEmpty()) {
             return;
         }
+        /*
+        // 此为缓存, 尚未更新, 清空即可
         try {
             IndexWriter iw = getWriter();
-            synchronized (iw) {
+            Gate.Locker lk = getLocker();
+            lk.lock();
+            try {
                 iw.rollback();
+            } finally {
+                lk.unlock();
             }
         } catch (HongsException ex) {
             throw ex.toExemption( );
         } catch (   IOException ex) {
             throw new HongsExemption(ex, 1056);
-        } finally {
+        } finally { */
             WRITES.clear();
             DOCK = null;
-        }
+    //  }
     }
 
     @Override

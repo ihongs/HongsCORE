@@ -50,6 +50,6 @@ public class Wrong extends HongsException {
 
     @Override
     public String toString() {
-        return getLocalizedMessage( );
+        return getLocalizedMistake( );
     }
 }

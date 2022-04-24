@@ -501,7 +501,7 @@ public final class Remote {
         public StatusException(String url, String rsp, int sta) {
             super(sta >= 300 && sta <= 399
                 ? "manage:core.manage.remote.request.status.refer"
-                : "manage:core.manage.remove.request.status.error"
+                : "manage:core.manage.remote.request.status.error"
                 , url, rsp, sta
             );
 
@@ -536,7 +536,7 @@ public final class Remote {
         private final String url;
 
         public SimpleException(String url, Throwable cause) {
-            super(cause, "manage:core.manage.remove.request.simple.error", url);
+            super(cause, "manage:core.manage.remote.request.simple.error", url);
 
             this.url = url;
         }

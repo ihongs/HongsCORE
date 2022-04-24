@@ -189,7 +189,7 @@ public final class HongsCurse {
 
             Throwable  erroo = cause.getCause();
             if (erroo != null) {
-                return erroo.getMessage();
+                return erroo.getLocalizedMessage();
             }
 
             errox  = "";

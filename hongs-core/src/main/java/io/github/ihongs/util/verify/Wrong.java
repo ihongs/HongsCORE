@@ -36,11 +36,20 @@ public class Wrong extends HongsException {
     }
 
     /**
-     * 获取错误内容(包含字段标题)
+     * 获取错误内容(不含字段标题)
      * @return
      */
     public String getLocalizedMistake() {
-        String msgs  = this.getLocalizedMessage();
+        return super.getLocalizedMessage();
+    }
+
+    /**
+     * 获取错误内容(包含字段标题)
+     * @return
+     */
+    @Override
+    public String getLocalizedMessage() {
+        String msgs  = this.getLocalizedMistake();
         return name != null && ! name.isEmpty()
              ? name +": "+ msgs: msgs;
     }
@@ -52,7 +61,7 @@ public class Wrong extends HongsException {
 
     @Override
     public String toString() {
-        return getLocalizedMistake( );
+        return getLocalizedMessage( );
     }
 
     @Override

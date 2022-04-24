@@ -1,8 +1,6 @@
 package io.github.ihongs.util.verify;
 
-import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsException;
-import io.github.ihongs.util.Syno;
 
 /**
  * 单项错误

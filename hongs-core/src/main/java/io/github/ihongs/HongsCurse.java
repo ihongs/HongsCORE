@@ -203,7 +203,7 @@ public final class HongsCurse {
         return errox;
     }
 
-    private CoreConfig getConfig() {
+    public CoreConfig getConfig() {
         try {
             return CoreConfig.getInstance(conf);
         } catch (HongsExemption e) {
@@ -216,7 +216,7 @@ public final class HongsCurse {
         }}
     }
 
-    private CoreLocale getLocale() {
+    public CoreLocale getLocale() {
         /**
          * 在例如多线程环境下未初始化 Core 时
          * 出现异常会导致下方因找不到语言类别而提前终止

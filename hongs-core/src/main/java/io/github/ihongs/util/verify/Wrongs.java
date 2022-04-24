@@ -18,7 +18,7 @@ public class Wrongs extends HongsException {
   private Causes caus = null;
 
     public Wrongs(Map<String,Wrong> wrongs) {
-        super(400, "default:fore.form.invalid");
+        super ("fore.form.invalid");
         this.wrongs = wrongs;
     }
 
@@ -76,6 +76,11 @@ public class Wrongs extends HongsException {
     @Override
     public String toString() {
         return getLocalizedMessage();
+    }
+
+    @Override
+    public int getState() {
+        return 400;
     }
 
     /**

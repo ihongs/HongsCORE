@@ -1,6 +1,8 @@
 package io.github.ihongs.util.verify;
 
+import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsException;
+import io.github.ihongs.util.Syno;
 
 /**
  * 单项错误
@@ -10,11 +12,11 @@ public class Wrong extends HongsException {
     private String name = null;
 
     public Wrong(Throwable cause, String term, Object... opts) {
-        super(cause, 400 , term , opts);
+        super(cause, term, opts);
     }
 
     public Wrong(String term, Object... opts) {
-        super( 400 , term, opts);
+        super(term , opts);
     }
 
     /**
@@ -51,5 +53,10 @@ public class Wrong extends HongsException {
     @Override
     public String toString() {
         return getLocalizedMistake( );
+    }
+
+    @Override
+    public int getState() {
+        return 400;
     }
 }

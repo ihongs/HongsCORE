@@ -116,7 +116,7 @@ public class SearchEntity extends LuceneRecord {
 
         if (WRITER != null) {
             b[ 0 ]  = true;
-        } else {
+        } else try {
             WRITER  = Core.GLOBAL_CORE.get(
                 Writer.class.getName () + ":" + name ,
                 new Supplier<Writer> () {
@@ -128,13 +128,19 @@ public class SearchEntity extends LuceneRecord {
                     }
                 }
             );
+        } catch (HongsExemption x) {
+            throw x.toException( );
         }
 
-        // 首次进入无需计数
-        if (b[0] == true) {
-            return  WRITER.conn( );
-        } else {
-            return  WRITER.open( );
+        try {
+            // 首次进入无需计数
+            if (b[0] == true) {
+                return  WRITER.conn( );
+            } else {
+                return  WRITER.open( );
+            }
+        } catch (HongsExemption x) {
+            throw x.toException( );
         }
     }
 

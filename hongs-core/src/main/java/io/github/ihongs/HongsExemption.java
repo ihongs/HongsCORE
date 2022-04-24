@@ -97,7 +97,7 @@ public class HongsExemption
 
     @Override
     public HongsException toException() {
-        return new HongsException(this, this.getErrno(), this.getError(), this.getCases());
+        return new HongsException((Throwable) this.getCause(), this.getErrno(), this.getError(), this.getCases());
     }
 
 }

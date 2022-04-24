@@ -130,6 +130,27 @@ public class CoreLocale
   }
 
   /**
+   * translate(String, Object...) 的别名
+   * @param key
+   * @return
+   */
+  public String translate(String key)
+  {
+    return translate(key,(Object[]) null);
+  }
+
+  /**
+   * translate(String, Object...) 的别名
+   * @param key
+   * @param rep
+   * @return
+   */
+  public String translate(String key, String ... rep)
+  {
+    return translate(key,(Object[]) rep );
+  }
+
+  /**
    * 翻译指定键对应的语句并替换参数
    * 参数名为$n($0,$1...)
    * @param key

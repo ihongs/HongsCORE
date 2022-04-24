@@ -10,11 +10,11 @@ public class Wrong extends HongsException {
     private String name = null;
 
     public Wrong(Throwable cause, String term, Object... opts) {
-        super(cause, 400, term(term), opts);
+        super(cause, 400 , term , opts);
     }
 
     public Wrong(String term, Object... opts) {
-        super( /***/ 400, term(term), opts);
+        super( 400 , term, opts);
     }
 
     /**
@@ -34,36 +34,22 @@ public class Wrong extends HongsException {
     }
 
     /**
-     * 获取错误内容(不含字段名)
+     * 获取错误内容(包含字段标题)
      * @return
      */
     public String getLocalizedMistake() {
-        String msgs = super.getLocalizedMessage();
-        return msgs ;
-    }
-
-    /**
-     * 获取错误内容(含有字段名)
-     * @return
-     */
-    public String getLocalizedMessage() {
-        String msgs = super.getLocalizedMessage();
+        String msgs  = this.getLocalizedMessage();
         return name != null && ! name.isEmpty()
              ? name +": "+ msgs: msgs;
     }
 
     @Override
     public String getMessage() {
-        return getLocalizedMistake( );
+        return getLocalizedMessage( );
     }
 
-    private static String term (String term) {
-        if (term != null
-        &&  term.length() >= 0x1
-        &&  term.length() <= 128
-        &&  term.matches("^[0-9A-Za-z_.]$")) {
-            term  = "deafult:" + term;
-        }
-        return term ;
+    @Override
+    public String toString() {
+        return getLocalizedMessage( );
     }
 }

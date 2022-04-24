@@ -57,7 +57,7 @@ public class Thumbnail {
                     thu.checks ("", path.trim());
                     out.println(path + "\t[OK]");
                 } catch (Wrong wr) {
-                    err.println(path + "\t" + wr.getLocalizedMistake());
+                    err.println(path + "\t" + wr.getLocalizedMessage());
                 }
             }
         } else
@@ -75,7 +75,7 @@ public class Thumbnail {
                     thu.checks ("", path.trim());
                     out.println(path + "\t[OK]");
                 } catch (Wrong wr) {
-                    err.println(path + "\t" + wr.getLocalizedMistake());
+                    err.println(path + "\t" + wr.getLocalizedMessage());
                 }
             }
         }

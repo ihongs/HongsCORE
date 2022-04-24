@@ -9,7 +9,7 @@ import io.github.ihongs.util.Syno;
  * 且由字母、数字、点、冒号、下划线组成时,
  * 表示将从对应的配置文件和语言资源里读取,
  * 如 default:my.error 为默认配置自定语句,
- * 若省略配置名称前缀则会默认设为 defects.
+ * 若省略配置名称前缀则会默认设为 default.
  *
  * @author Hongs
  */
@@ -34,17 +34,17 @@ public final class HongsCurse {
         if (error != null
         &&  error.length() >= 0x1
         &&  error.length() <= 128
-        &&  error.matches("^[0-9A-Za-z_.:]$")) {
+        &&  error.matches("^[0-9A-Za-z_.:]+$")) {
             int  p  =  error. indexOf (":");
             if ( p  >  0 ) {
                 conf = error.substring(0,p);
                 mark = error.substring(1+p);
             } else {
-                conf = "defects";
+                conf = "default";
                 mark = error;
             }
         } else {
-                conf = "defects";
+                conf = "default";
                 mark = null ;
         }
 
@@ -64,7 +64,7 @@ public final class HongsCurse {
             return errno ;
         } else
         if (errno >= 600 ) {
-            String codx = "Ex" + Integer.toString(errno , 10 );
+            String codx = "Ex" + Integer.toString(errno, 10 );
             return getConfig().getProperty(codx+".stat", 500);
         } else
         if (null != mark && ! mark.isEmpty()) {
@@ -102,7 +102,7 @@ public final class HongsCurse {
     @Override
     public String toString()
     {
-        return  getMessage();
+        return getStage() +": "+ getMessage();
     }
 
     /**
@@ -111,124 +111,103 @@ public final class HongsCurse {
      */
     public String getMessage()
     {
-        String codx, mrkx;
-
-        CoreConfig conf = getConfig();
-
-        if ( 600 <= errno ) {
-            codx  = "Ex" + Integer.toString(errno, 10);
-        } else
-        if ( 400 <= errno ) {
-            codx  = "Er" + Integer.toString(errno, 10);
-        } else {
-            codx  = "" ;
-        }
+        String  errox;
 
         R: {
-            if (mark != null && ! mark.isEmpty()) {
-                mrkx  = conf.getProperty(mark);
-                if (mrkx != null) break R;
+            CoreConfig conf = getConfig( );
+
+                errox  = mark;
+            if (errox != null && ! errox.isEmpty()) {
+                errox  = conf.getProperty(errox);
+                if (errox != null) break R;
             }
 
-            if (codx != null && ! codx.isEmpty()) {
-                mrkx  = conf.getProperty(codx);
-                if (mrkx != null) break R;
+            if ( 600 <= errno ) {
+                errox  = "Ex" + Integer.toString(errno, 10);
+                errox  = conf.getProperty(errox);
+                if (errox != null) break R;
+            } else
+            if ( 400 <= errno ) {
+                errox  = "Er" + Integer.toString(errno, 10);
+                errox  = conf.getProperty(errox);
+                if (errox != null) break R;
             }
 
             if (error != null && ! error.isEmpty()) {
-                mrkx  = error;
+                errox  = error;
                 break R;
             }
 
-            Throwable erro = cause.getCause();
-            if (erro != null) {
-                if (errno < 400) {
-                    return erro.getMessage();
-                } else {
-                    mrkx = erro.getMessage();
-                    return (codx +" "+ mrkx).trim ();
-                }
+            Throwable  erroo = cause.getCause();
+            if (erroo != null) {
+                return erroo.getMessage();
             }
 
-            mrkx  = "" ;
+            errox  = "";
         }
 
         // 注入消息参数
-        if (null == mrkx  ||  mrkx.isEmpty( )) {
-            mrkx  = "" ;
-        } else
-        if (null != cases && cases.length > 0) {
-            mrkx  = Syno.inject(mrkx, cases );
+        if (cases != null && cases.length > 0) {
+            errox  = Syno.inject(errox, cases);
         }
 
-        return (codx +" "+ mrkx).trim();
+        return errox;
     }
 
     /**
      * 获取本地消息
      * @return
      */
-    public String getLocalizedMessage() {
-        String codx, mrkx;
-
-        CoreLocale conf = getLocale();
-
-        if ( 600 <= errno ) {
-            codx  = "Ex" + Integer.toString(errno, 10);
-            codx  = conf.translate("core.error", codx);
-        } else
-        if ( 400 <= errno ) {
-            codx  = "Er" + Integer.toString(errno, 10);
-            codx  = conf.translate("fore.error", codx);
-        } else {
-            codx  = "" ;
-        }
+    public String getLocalizedMessage()
+    {
+        String  errox;
 
         R: {
-            if (mark != null && ! mark.isEmpty()) {
-                mrkx  = conf.getProperty(mark);
-                if (mrkx != null) break R;
+            CoreConfig conf = getLocale( );
+
+                errox  = mark;
+            if (errox != null && ! errox.isEmpty()) {
+                errox  = conf.getProperty(errox);
+                if (errox != null) break R;
             }
 
-            if (codx != null && ! codx.isEmpty()) {
-                mrkx  = conf.getProperty(codx);
-                if (mrkx != null) break R;
+            if ( 600 <= errno ) {
+                errox  = "Ex" + Integer.toString(errno, 10);
+                errox  = conf.getProperty(errox);
+                if (errox != null) break R;
+            } else
+            if ( 400 <= errno ) {
+                errox  = "Er" + Integer.toString(errno, 10);
+                errox  = conf.getProperty(errox);
+                if (errox != null) break R;
             }
 
             if (error != null && ! error.isEmpty()) {
-                mrkx  = error;
+                errox  = error;
                 break R;
             }
 
-            Throwable erro = cause.getCause();
-            if (erro != null) {
-                if (errno < 400) {
-                    return erro.getLocalizedMessage();
-                } else {
-                    mrkx = erro.getLocalizedMessage();
-                    return (codx + " " + mrkx).trim();
-                }
+            Throwable  erroo = cause.getCause();
+            if (erroo != null) {
+                return erroo.getMessage();
             }
 
-            mrkx  = "" ;
+            errox  = "";
         }
 
         // 注入消息参数
-        if (null == mrkx  ||  mrkx.isEmpty( )) {
-            mrkx  = "" ;
-        } else
-        if (null != cases && cases.length > 0) {
-            mrkx  = Syno.inject(mrkx, cases );
+        if (cases != null && cases.length > 0) {
+            errox  = Syno.inject(errox, cases);
         }
 
-        return (codx +" "+ mrkx).trim();
+        return errox;
     }
 
     private CoreConfig getConfig() {
         try {
             return CoreConfig.getInstance(conf);
         } catch (HongsExemption e) {
-            String defs = "defetcs";
+            String defs = "default";
         if (826 == e.getErrno()
         && ! defs.equals(conf)) {
             return CoreConfig.getInstance(defs);
@@ -246,13 +225,13 @@ public final class HongsCurse {
          */
         if (Core.ACTION_LANG.get() == null) {
             Core.ACTION_LANG.set(CoreConfig.getInstance().getProperty("core.language.default"));
-            CoreLogger.error("ACTION_LANG is null in error or exception: " + cause.getMessage());
+            CoreLogger.error("ACTION_LANG is not set. Current exception: " + cause.toString( ));
         }
 
         try {
             return CoreLocale.getInstance(conf);
         } catch (HongsExemption e) {
-            String defs = "defetcs";
+            String defs = "default";
         if (826 == e.getErrno()
         && ! defs.equals(conf)) {
             return CoreLocale.getInstance(defs);

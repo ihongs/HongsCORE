@@ -40,7 +40,7 @@ public class Wrongs extends HongsException {
         for (Map.Entry et : wrongs.entrySet()) {
             Wrong  w = (Wrong ) et.getValue( );
             String n = (String) et.getKey  ( );
-            String e = w.getLocalizedMistake();
+            String e = w.getLocalizedMessage();
             errors.put ( n, e );
         }
         return errors;
@@ -51,7 +51,7 @@ public class Wrongs extends HongsException {
         for (Map.Entry et : wrongs.entrySet()) {
             Wrong  w = (Wrong ) et.getValue( );
             String n = (String) et.getKey  ( );
-            String e = w.getLocalizedMistake();
+            String e = w.getLocalizedMessage();
             Dict.setParam(errors, e, n);
         }
         return errors;
@@ -62,7 +62,7 @@ public class Wrongs extends HongsException {
         StringBuilder  sb = new StringBuilder( );
         for (Map.Entry et : wrongs.entrySet()) {
             Wrong  w = (Wrong ) et.getValue( );
-            String e = w.getLocalizedMessage();
+            String e = w.getLocalizedMistake();
             sb.append(e).append("\r\n");
         }
         return sb.toString().trim( );

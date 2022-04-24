@@ -321,11 +321,13 @@ public final class Syno
 
   /**
    * 注入参数
+   * 将语句中的$x或${x}替换为对应的文字
    * @param str
    * @param vars
    * @return 注入后的文本
    */
-  public static String inject(String str, Map vars) {
+  public static String inject(String str, Map vars)
+  {
       Matcher matcher = INJ.matcher( str );
       StringBuffer sb = new StringBuffer();
       Object       ob;
@@ -368,63 +370,76 @@ public final class Syno
 
   /**
    * 注入参数
-   * @param str
-   * @param vars
-   * @return 注入后的文本
-   */
-  public static String inject(String str, Collection vars)
-  {
-    /**
-     * 将语句中替换$n或${n}为指定的文字, n从0开始
-     */
-      Map rep2 = new HashMap(vars.size());
-      int i = 0;
-      for(Object v : vars) {
-          rep2.put (String.valueOf(i), v);
-          i ++ ;
-      }
-      return inject(str, rep2);
-  }
-
-  /**
-   * 注入参数
+   * 将语句中的$n或${n}替换为对应的文字, n从0开始
    * @param str
    * @param vars
    * @return  注入后的文本
    */
   public static String inject(String str, Object ... vars)
   {
-    /**
-     * 将语句中替换$n或${n}为指定的文字, n从0开始
-     */
-      Map rep2 = new HashMap(vars.length);
-      int i = 0;
-      for(Object v : vars) {
-          rep2.put (String.valueOf(i), v);
-          i ++ ;
+      Matcher matcher = INJ.matcher( str );
+      StringBuffer sb = new StringBuffer();
+      Object       ob;
+      String       st;
+      String       sd;
+      int          id;
+
+      while  ( matcher.find() ) {
+          st = matcher.group(1);
+
+          if (! st.equals("$")) {
+              if (st.startsWith("{")) {
+                  st = st.substring(1, st.length() - 1);
+                  // 默认值
+                  int p  = st.indexOf  ("|");
+                  if (p != -1) {
+                      sd = st.substring(1+p);
+                      st = st.substring(0,p);
+                  } else {
+                      sd = "";
+                  }
+              } else {
+                      sd = "";
+              }
+
+              // 尝试转为数字然后按下标提取
+              try {
+                  id  = Integer.valueOf(st);
+                  ob  = vars[id];
+              }
+              catch (NumberFormatException|ArrayIndexOutOfBoundsException ex) {
+                  ob  = null;
+              }
+
+              //  ob  = vars.get (st);
+              if (ob != null) {
+                  st  = ob.toString();
+              } else {
+                  st  = sd;
+              }
+          }
+
+          st = Matcher.quoteReplacement(st);
+          matcher.appendReplacement(sb, st);
       }
-      return inject(str, rep2);
+      matcher.appendTail(sb);
+
+      return sb.toString(  );
+  }
+
+  /**
+   * 注入参数
+   * 将语句中的$n或${n}替换为对应的文字, n从0开始
+   * @param str
+   * @param vars
+   * @return 注入后的文本
+   */
+  public static String inject(String str, Collection vars)
+  {
+      return inject(str, vars.toArray());
   }
 
   //** 拼接 **/
-
-  /**
-   * 拼接字串
-   * @param str
-   * @param vars
-   * @return
-   */
-  public static String concat(String str, Collection vars)
-  {
-      StringBuilder stb = new StringBuilder();
-      for(Object val : vars) {
-          stb.append(val).append(str);
-      }
-      if ( ! vars.isEmpty()) {
-          stb.setLength(stb.length() - str.length());
-      }
-      return stb.toString();
-  }
 
   /**
    * 拼接字串
@@ -439,6 +454,24 @@ public final class Syno
           stb.append(val).append(str);
       }
       if ( 0 < vars.length ) {
+          stb.setLength(stb.length() - str.length());
+      }
+      return stb.toString();
+  }
+
+  /**
+   * 拼接字串
+   * @param str
+   * @param vars
+   * @return
+   */
+  public static String concat(String str, Collection vars)
+  {
+      StringBuilder stb = new StringBuilder();
+      for(Object val : vars) {
+          stb.append(val).append(str);
+      }
+      if ( ! vars.isEmpty()) {
           stb.setLength(stb.length() - str.length());
       }
       return stb.toString();

@@ -192,10 +192,10 @@ public class SearchEntity extends LuceneRecord {
             IndexWriter iw = getWriter();
             Gate.Locker lk = getLocker();
 
-            long tt = CoreConfig.getInstance().getProperty("core.try.save.timeout", 0L);
+            long tt = CoreConfig.getInstance().getProperty("core.try.lock.save.timeout" , 0L);
             if ( tt > 0L ) {
                 if (! lk.tryLock(tt, TimeUnit.MILLISECONDS)) {
-                    throw new HongsExemption(861, "Lucene commit timeout (${0}ms)", tt);
+                    throw new HongsExemption(861, "Lucene try to commit timeout(${0}ms)", tt);
                 }
             } else {
                 lk.lockInterruptibly();
@@ -219,7 +219,7 @@ public class SearchEntity extends LuceneRecord {
         } catch ( HongsException e) {
             throw  e.toExemption( );
         } catch (InterruptedException e) {
-            throw new  HongsExemption(e, 863 );
+            throw new  HongsExemption(e, 860 );
         } catch ( IOException e ) {
             throw new  HongsExemption(e, 1055);
         } finally {

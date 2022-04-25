@@ -18,10 +18,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * 注意: 以下锁均不支持 tryLock/lockInterruptibly.
  *
  * 异常代码:
- * Ex860=读取超时
- * Ex861=存储超时
- * Ex862=执行超时
- * Ex863=程序中断
+ * Ex860=程序中断
+ * Ex861=保存超时
+ * Ex862=连接超时
  *
  * @author Hongs
  */

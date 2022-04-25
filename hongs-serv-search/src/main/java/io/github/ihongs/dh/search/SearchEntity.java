@@ -201,7 +201,7 @@ public class SearchEntity extends LuceneRecord {
                 lk.lockInterruptibly();
             }
 
-            // 此处才是真的更新文档
+            // 此处才是真更新文档
             try {
                 for (Map.Entry<String, Document> et : WRITES.entrySet()) {
                     String   id = et.getKey  ();
@@ -234,28 +234,11 @@ public class SearchEntity extends LuceneRecord {
 
         if (WRITES.isEmpty()) {
             return;
-        }
-        /*
-        // 此为缓存, 尚未更新, 清空即可
-        try {
-            IndexWriter iw = getWriter();
-            Gate.Locker lk = getLocker();
-            lk.lockInterruptibly();
-            try {
-                iw.rollback();
-            } finally {
-                lk.unlock();
-            }
-        } catch ( HongsException e) {
-            throw  e.toExemption( );
-        } catch (InterruptedException e) {
-            throw new  HongsExemption(e, 860 );
-        } catch ( IOException e ) {
-            throw new  HongsExemption(e, 1056);
-        } finally { */
+        } else {
+            // 此为缓存, 清空即可
             WRITES.clear();
             DOCK = null;
-    //  }
+        }
     }
 
     @Override

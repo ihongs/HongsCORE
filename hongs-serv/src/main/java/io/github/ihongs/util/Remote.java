@@ -314,7 +314,7 @@ public final class Remote {
             CoreConfig cc = CoreConfig.getInstance ("manage");
             RequestConfig.Builder cb = RequestConfig.custom();
             int tt;
-            tt = Synt.declare(head.get(":WATI-TIMEOUT"), cc.getProperty("core.remote.request.wait.timeout", 0));
+            tt = Synt.declare(head.get(":WAIT-TIMEOUT"), cc.getProperty("core.remote.request.wait.timeout", 0));
             if (tt > 0) cb.setConnectionRequestTimeout ( tt );
             tt = Synt.declare(head.get(":CONN-TIMEOUT"), cc.getProperty("core.remote.request.conn.timeout", 0));
             if (tt > 0) cb.setConnectTimeout(tt);

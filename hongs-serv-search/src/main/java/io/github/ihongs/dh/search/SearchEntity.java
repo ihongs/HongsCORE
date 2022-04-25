@@ -240,16 +240,18 @@ public class SearchEntity extends LuceneRecord {
         try {
             IndexWriter iw = getWriter();
             Gate.Locker lk = getLocker();
-            lk.lock();
+            lk.lockInterruptibly();
             try {
                 iw.rollback();
             } finally {
                 lk.unlock();
             }
-        } catch (HongsException ex) {
-            throw ex.toExemption( );
-        } catch (   IOException ex) {
-            throw new HongsExemption(ex, 1056);
+        } catch ( HongsException e) {
+            throw  e.toExemption( );
+        } catch (InterruptedException e) {
+            throw new  HongsExemption(e, 860 );
+        } catch ( IOException e ) {
+            throw new  HongsExemption(e, 1056);
         } finally { */
             WRITES.clear();
             DOCK = null;

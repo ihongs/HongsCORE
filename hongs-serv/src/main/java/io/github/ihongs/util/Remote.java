@@ -1,5 +1,6 @@
 package io.github.ihongs.util;
 
+import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import java.io.File;
@@ -25,18 +26,19 @@ import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.ParseException;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.ContentBody;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
@@ -157,7 +159,7 @@ public final class Remote {
      * @throws StatusException
      * @throws SimpleException
      */
-    public static String request(METHOD type, FORMAT kind, String url, Map<String, Object> data, Map<String, String> head)
+    public static String request(METHOD type, FORMAT kind, String url, Map data, Map head)
             throws HongsException, StatusException, SimpleException {
         final String         [ ] txt = new String         [1];
         final SimpleException[ ] err = new SimpleException[1];
@@ -186,7 +188,7 @@ public final class Remote {
      * @throws StatusException
      * @throws SimpleException
      */
-    public static void request(METHOD type, FORMAT kind, String url, Map<String, Object> data, Map<String, String> head, File file)
+    public static void request(METHOD type, FORMAT kind, String url, Map data, Map head, File file)
             throws HongsException, StatusException, SimpleException {
         final SimpleException[ ] err = new SimpleException[1];
         request(type, kind, url, data, head, (rsp) -> {
@@ -223,7 +225,7 @@ public final class Remote {
      * @throws StatusException
      * @throws SimpleException
      */
-    public static void request(METHOD type, FORMAT kind, String url, Map<String, Object> data, Map<String, String> head, OutputStream out)
+    public static void request(METHOD type, FORMAT kind, String url, Map data, Map head, OutputStream out)
             throws HongsException, StatusException, SimpleException {
         final SimpleException[ ] err = new SimpleException[1];
         request(type, kind, url, data, head, (rsp) -> {
@@ -252,7 +254,7 @@ public final class Remote {
      * @throws StatusException
      * @throws SimpleException
      */
-    public static void request(METHOD type, FORMAT kind, String url, Map<String, Object> data, Map<String, String> head, Consumer<HttpResponse> con)
+    public static void request(METHOD type, FORMAT kind, String url, Map data, Map head, Consumer<HttpResponse> con)
             throws HongsException, StatusException, SimpleException {
         if (url == null) {
             throw new NullPointerException("Request url can not be null");
@@ -298,10 +300,29 @@ public final class Remote {
 
             // 设置报头
             if (head != null) {
-                for(Map.Entry<String, String> et : head.entrySet()) {
-                    http.setHeader( et.getKey( ) , et.getValue( ) );
+                String k , v ;
+                for(Object o : head.entrySet()) {
+                    Map.Entry e = ( Map.Entry ) o;
+                    k = Synt.asString(e.getKey  ());
+                    if (k.startsWith(":")) continue;
+                    v = Synt.asString(e.getValue());
+                    http.setHeader(k, v);
                 }
             }
+
+            // 设置超时
+            CoreConfig cc = CoreConfig.getInstance ("manage");
+            RequestConfig.Builder cb = RequestConfig.custom();
+            int tt;
+            tt = Synt.declare(head.get(":WATI-TIMEOUT"), cc.getProperty("core.remote.request.wait.timeout", 0));
+            if (tt > 0) cb.setConnectionRequestTimeout ( tt );
+            tt = Synt.declare(head.get(":CONN-TIMEOUT"), cc.getProperty("core.remote.request.conn.timeout", 0));
+            if (tt > 0) cb.setConnectTimeout(tt);
+            tt = Synt.declare(head.get(":SOCK-TIMEOUT"), cc.getProperty("core.remote.request.sock.timeout", 0));
+            if (tt > 0) cb.setSocketTimeout (tt);
+            tt = Synt.declare(head.get(":MAX-REDIRECT"), cc.getProperty("core.remote.request.max.redirect", 0));
+            if (tt > 0) { cb.setMaxRedirects(tt); cb.setRedirectsEnabled(true); }
+            http.setConfig( cb.build() );
 
             // 执行请求
             http.setURI(new URI(url));
@@ -500,8 +521,8 @@ public final class Remote {
 
         public StatusException(String url, String rsp, int sta) {
             super(sta >= 300 && sta <= 399
-                ? "manage:core.manage.remote.request.status.refer"
-                : "manage:core.manage.remote.request.status.error"
+                ? "manage:core.remote.request.status.refer"
+                : "manage:core.remote.request.status.error"
                 , url, rsp, sta
             );
 
@@ -536,7 +557,7 @@ public final class Remote {
         private final String url;
 
         public SimpleException(String url, Throwable cause) {
-            super(cause, "manage:core.manage.remote.request.simple.error", url);
+            super(cause, "manage:core.remote.request.simple.error", url);
 
             this.url = url;
         }

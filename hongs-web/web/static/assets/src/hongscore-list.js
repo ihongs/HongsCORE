@@ -430,7 +430,8 @@ HsList.prototype = {
     _rc_key  : "count" ,
 
     send     : function(btn, msg, url, data) {
-        var that = this;
+        btn = jQuery(btn);
+        var that = this ;
         var func = function() {
         var dat2 = jQuery.extend({}, hsSerialDat(url), hsSerialDat(data));
         that.ajax({
@@ -455,6 +456,7 @@ HsList.prototype = {
         }
     },
     sendBack : function(btn, rst, data) {
+        btn = jQuery(btn);
         rst = hsResponse(rst, 1);
         if (rst.ok) {
             if (rst.msg) {
@@ -488,7 +490,8 @@ HsList.prototype = {
             data = undefined;
         }
 
-        var that = this;
+        btn = jQuery(btn);
+        var that = this ;
         var dat2 = jQuery.extend({}, hsSerialDat(url), hsSerialDat(data));
         if (box) {
             // 外部打开
@@ -510,7 +513,8 @@ HsList.prototype = {
         }
     },
     openBack : function(btn, box, data) {
-        var that = this;
+        btn = jQuery(btn);
+        var that = this ;
         btn.trigger("openBack", [box, data, this]);
 
         box.on("saveBack", function(evt, rst, rel) {

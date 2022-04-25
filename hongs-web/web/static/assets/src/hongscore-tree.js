@@ -333,7 +333,8 @@ HsTree.prototype = {
     },
 
     send     : function(btn, msg, url, data) {
-        var that = this;
+        btn = jQuery(btn);
+        var that = this ;
         var func = function() {
         var dat2 = jQuery.extend({}, hsSerialDat(url), hsSerialDat(data||{}));
         that.ajax({
@@ -358,6 +359,7 @@ HsTree.prototype = {
         }
     },
     sendBack : function(btn, rst, data) {
+        btn = jQuery(btn);
         rst = hsResponse(rst, 1);
         if (rst.ok) {
             if (rst.msg) {
@@ -396,7 +398,8 @@ HsTree.prototype = {
             data = undefined;
         }
 
-        var that = this;
+        btn = jQuery(btn);
+        var that = this ;
         var dat2 = jQuery.extend({}, hsSerialDat(url), hsSerialDat(data||{}));
         if (box) {
             // 外部打开
@@ -418,7 +421,8 @@ HsTree.prototype = {
         }
     },
     openBack : function(btn, box, data) {
-        var that = this;
+        btn = jQuery(btn);
+        var that = this ;
         btn.trigger("openBack", [box, data, this]);
 
         box.on("saveBack", function(evt, rst, rel) {
@@ -490,10 +494,10 @@ HsTree.prototype = {
             return "";
     },
     getPid   : function(id) {
-        return this.getId(this.getPnode( id ));
+        return this.getId(this.getPnode(id));
     },
     getCid   : function(nd) {
-        return this.getId(nd.closest(".tree-node"));
+        return this.getId(jQuery(nd).closest(".tree-node"));
     },
     getSid   : function() {
         return this.getId(this.treeBox.find(".tree-curr"));

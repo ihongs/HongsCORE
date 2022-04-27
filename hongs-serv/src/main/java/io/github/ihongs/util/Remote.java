@@ -314,13 +314,13 @@ public final class Remote {
             CoreConfig cc = CoreConfig.getInstance ("manage");
             RequestConfig.Builder cb = RequestConfig.custom();
             int tt;
-            tt = Synt.declare(head.get(":WAIT-TIMEOUT"), cc.getProperty("core.remote.request.wait.timeout", 0));
+            tt = Synt.declare(head != null ? head.get(":WAIT-TIMEOUT") : null, cc.getProperty("core.remote.request.wait.timeout", 0));
             if (tt > 0) cb.setConnectionRequestTimeout ( tt );
-            tt = Synt.declare(head.get(":CONN-TIMEOUT"), cc.getProperty("core.remote.request.conn.timeout", 0));
+            tt = Synt.declare(head != null ? head.get(":CONN-TIMEOUT") : null, cc.getProperty("core.remote.request.conn.timeout", 0));
             if (tt > 0) cb.setConnectTimeout(tt);
-            tt = Synt.declare(head.get(":SOCK-TIMEOUT"), cc.getProperty("core.remote.request.sock.timeout", 0));
+            tt = Synt.declare(head != null ? head.get(":SOCK-TIMEOUT") : null, cc.getProperty("core.remote.request.sock.timeout", 0));
             if (tt > 0) cb.setSocketTimeout (tt);
-            tt = Synt.declare(head.get(":MAX-REDIRECT"), cc.getProperty("core.remote.request.max.redirect", 0));
+            tt = Synt.declare(head != null ? head.get(":MAX-REDIRECT") : null, cc.getProperty("core.remote.request.max.redirect", 0));
             if (tt > 0) { cb.setMaxRedirects(tt); cb.setRedirectsEnabled(true); }
             http.setConfig( cb.build() );
 

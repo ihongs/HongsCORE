@@ -26,36 +26,40 @@ public class HongsExemption
         that = new HongsCurse(this, code, desc, data);
     }
 
-    public HongsExemption(Throwable fact, String desc, Object... data) {
-        this(fact, 0x1 , desc, data);
-    }
-
-    public HongsExemption(int code, String desc, Object... data) {
-        this(null, code, desc, data);
-    }
-
-    public HongsExemption(String desc, Object... data) {
-        this(null, 0x1 , desc, data);
+    public HongsExemption(Throwable fact, int code, String desc) {
+        this(fact, code, desc, (Object[]) null);
     }
 
     public HongsExemption(Throwable fact, int code) {
         this(fact, code, null, (Object[]) null);
     }
 
-    public HongsExemption(Throwable fact) {
-        this(fact, 0x1 , null, (Object[]) null);
-    }
-
-    public HongsExemption(int code) {
-        this(null, code, null, (Object[]) null);
+    public HongsExemption(Throwable fact, String desc, Object... data) {
+        this(fact, 0x1 , desc, data);
     }
 
     public HongsExemption(Throwable fact, String desc) {
         this(fact, 0x1 , desc, (Object[]) null);
     }
 
+    public HongsExemption(Throwable fact) {
+        this(fact, 0x1 , null, (Object[]) null);
+    }
+
+    public HongsExemption(int code, String desc, Object... data) {
+        this(null, code, desc, data);
+    }
+
     public HongsExemption(int code, String desc) {
         this(null, code, desc, (Object[]) null);
+    }
+
+    public HongsExemption(int code) {
+        this(null, code, null, (Object[]) null);
+    }
+
+    public HongsExemption(String desc, Object... data) {
+        this(null, 0x1 , desc, data);
     }
 
     public HongsExemption(String desc) {

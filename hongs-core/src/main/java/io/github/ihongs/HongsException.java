@@ -39,15 +39,27 @@ public class HongsException
     }
 
     public HongsException(Throwable fact, int code) {
-        this(fact, code, null);
+        this(fact, code, null, (Object[]) null);
     }
 
     public HongsException(Throwable fact) {
-        this(fact, 0x0 , null);
+        this(fact, 0x0 , null, (Object[]) null);
     }
 
     public HongsException(int code) {
-        this(code, null);
+        this(null, code, null, (Object[]) null);
+    }
+
+    public HongsException(Throwable fact, String desc) {
+        this(fact, 0x0 , desc, (Object[]) null);
+    }
+
+    public HongsException(int code, String desc) {
+        this(null, code, desc, (Object[]) null);
+    }
+
+    public HongsException(String desc) {
+        this(null, 0x0 , desc, (Object[]) null);
     }
 
     @Override

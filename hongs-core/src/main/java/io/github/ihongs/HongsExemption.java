@@ -27,7 +27,7 @@ public class HongsExemption
     }
 
     public HongsExemption(Throwable fact, String desc, Object... data) {
-        this(fact, 0x0 , desc, data);
+        this(fact, 0x1 , desc, data);
     }
 
     public HongsExemption(int code, String desc, Object... data) {
@@ -35,19 +35,31 @@ public class HongsExemption
     }
 
     public HongsExemption(String desc, Object... data) {
-        this(null, 0x0 , desc, data);
+        this(null, 0x1 , desc, data);
     }
 
     public HongsExemption(Throwable fact, int code) {
-        this(fact, code, null);
+        this(fact, code, null, (Object[]) null);
     }
 
     public HongsExemption(Throwable fact) {
-        this(fact, 0x0 , null);
+        this(fact, 0x1 , null, (Object[]) null);
     }
 
     public HongsExemption(int code) {
-        this(code, null);
+        this(null, code, null, (Object[]) null);
+    }
+
+    public HongsExemption(Throwable fact, String desc) {
+        this(fact, 0x1 , desc, (Object[]) null);
+    }
+
+    public HongsExemption(int code, String desc) {
+        this(null, code, desc, (Object[]) null);
+    }
+
+    public HongsExemption(String desc) {
+        this(null, 0x1 , desc, (Object[]) null);
     }
 
     @Override

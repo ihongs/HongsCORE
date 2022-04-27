@@ -9,12 +9,20 @@ import io.github.ihongs.HongsException;
 public class Wrong extends HongsException {
     private String name = null;
 
-    public Wrong(Throwable cause, String term, Object... opts) {
+    public Wrong(Throwable cause, String term, Object ... opts) {
         super(cause, term, opts);
     }
 
-    public Wrong(String term, Object... opts) {
-        super(term , opts);
+    public Wrong(String term, Object ... opts) {
+        super( null, term, opts);
+    }
+
+    public Wrong(Throwable cause, String term) {
+        super(cause, term, (Object[]) null);
+    }
+
+    public Wrong(String term) {
+        super( null, term, (Object[]) null);
     }
 
     /**

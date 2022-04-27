@@ -3,6 +3,7 @@ package io.github.ihongs;
 /**
  * 通用异常类
  *
+ * 部分方法说明请参考 HongsCurse
  * 与 HongsExemption 不同, 必须 throws
  *
  * <h3>取值范围:</h3>

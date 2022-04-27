@@ -3,6 +3,7 @@ package io.github.ihongs;
 /**
  * 通用免责类
  *
+ * 部分方法说明请参考 HongsCurse
  * 与 HongsException 不同, 无需 throws;
  *
  * <h3>取值范围:</h3>

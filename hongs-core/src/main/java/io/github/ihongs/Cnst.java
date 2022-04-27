@@ -147,5 +147,9 @@ public final class Cnst {
     //** 系统路径 **/
 
     public static final String CONF_PACK = "io/github/ihongs/config";
+    
+    public static final String  LOG_NAME = "hongs.log";
+    
+    public static final String  OUT_NAME = "hongs.out";
 
 }

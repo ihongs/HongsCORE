@@ -22,81 +22,125 @@ public class CoreLogger
     }
 
     /**
-     * 获取动作空间标识
-     * @param name
+     * 获取当前客户端IP
+     * 没有则返回线程ID
      * @return
      */
-    public static String space(String name) {
-        String flag = Core.ACTION_NAME.get( );
-        if (flag != null && !"".equals(flag)) {
-            name += "."+flag.replace('/','.')
-                            .replace(':','.');
+    public static String addr() {
+        String a = Core.CLIENT_ADDR.get();
+        if (a == null || ! a.isEmpty()) {
+            a = String.valueOf(Thread.currentThread().getId(  ));
         }
-        return name;
+        return a;
     }
 
     /**
-     * 补充动作环境信息
+     * 获取当前请求路径
+     * 无则返回线程名称
+     * @return
+     */
+    public static String path() {
+        String a = Core.ACTION_NAME.get();
+        if (a == null || ! a.isEmpty()) {
+            a = String.valueOf(Thread.currentThread().getName());
+        }
+        return a;
+    }
+
+    /**
+     * 补充当前状态信息
+     * 等同 addr()+" "+path()+" "+text
+     * 下列 info,warn,trace,debug,error 均已调此, 无需再加
      * @param text
      * @return
      */
-    public static String envir(String text) {
-        StringBuilder line = new StringBuilder();
-
-        // add IP Address
-        String a = Core.CLIENT_ADDR.get();
-        if (a != null && ! a.isEmpty()) {
-            line.append( a )
-                .append(' ');
-        } else {
-            line.append('#')
-                .append(Thread.currentThread().getId(  ))
-                .append(' ');
-        }
-
-        // add Action Name
-        String n = Core.ACTION_NAME.get();
-        if (n != null && ! n.isEmpty()) {
-            line.append( n )
-                .append(' ');
-        } else {
-            line.append('$')
-                .append(Thread.currentThread().getName())
-                .append(' ');
-        }
-
-        return line.append(text).toString();
+    public static String mark(String text) {
+        String addr = addr();
+        String path = path();
+        if (text == null) text = "";
+        return new StringBuilder(addr.length() + path.length() + text.length() + 2)
+            .append(addr)
+            .append(' ' )
+            .append(path)
+            .append(' ' )
+            .append(text)
+            .toString(  );
     }
 
     /**
      * 信息
      * @param text
-     * @param args 
+     */
+    public static void info (String text) {
+        if (2 != (2 & Core.DEBUG)) {
+            return;
+        }
+        if (1 == (1 & Core.DEBUG)) {
+            getLogger(Cnst.LOG_NAME).info (mark(text));
+        } else {
+            getLogger(Cnst.OUT_NAME).info (mark(text));
+        }
+    }
+
+    /**
+     * 信息
+     * @param text
+     * @param args
      */
     public static void info (String text, Object... args) {
         if (2 != (2 & Core.DEBUG)) {
             return;
         }
         if (1 == (1 & Core.DEBUG)) {
-            getLogger(space("hongs.log")).info (envir(text), args);
+            getLogger(Cnst.LOG_NAME).info (mark(text), args);
         } else {
-            getLogger(space("hongs.out")).info (envir(text), args);
+            getLogger(Cnst.OUT_NAME).info (mark(text), args);
         }
     }
 
     /**
      * 警告
      * @param text
-     * @param args 
+     */
+    public static void warn (String text) {
+        if (2 != (2 & Core.DEBUG)) {
+            return;
+        }
+        if (1 == (1 & Core.DEBUG)) {
+            getLogger(Cnst.LOG_NAME).warn (mark(text));
+        } else {
+            getLogger(Cnst.OUT_NAME).warn (mark(text));
+        }
+    }
+
+    /**
+     * 警告
+     * @param text
+     * @param args
      */
     public static void warn (String text, Object... args) {
         if (2 != (2 & Core.DEBUG)) {
             return;
         }
         if (1 == (1 & Core.DEBUG)) {
-            getLogger(space("hongs.log")).warn (envir(text), args);
+            getLogger(Cnst.LOG_NAME).warn (mark(text), args);
         } else {
-            getLogger(space("hongs.out")).warn (envir(text), args);
+            getLogger(Cnst.OUT_NAME).warn (mark(text), args);
+        }
+    }
+
+    /**
+     * 跟踪
+     * @param text
+     */
+    public static void trace(String text) {
+        if (4 != (4 & Core.DEBUG)) {
+            return;
+        }
+        if (1 == (1 & Core.DEBUG)) {
+            getLogger(Cnst.LOG_NAME).trace(mark(text));
+        } else {
+            getLogger(Cnst.OUT_NAME).trace(mark(text));
         }
     }
 
@@ -110,9 +154,24 @@ public class CoreLogger
             return;
         }
         if (1 == (1 & Core.DEBUG)) {
-            getLogger(space("hongs.log")).trace(envir(text), args);
+            getLogger(Cnst.LOG_NAME).trace(mark(text), args);
         } else {
-            getLogger(space("hongs.out")).trace(envir(text), args);
+            getLogger(Cnst.OUT_NAME).trace(mark(text), args);
+        }
+    }
+
+    /**
+     * 调试
+     * @param text
+     */
+    public static void debug(String text) {
+        if (4 != (4 & Core.DEBUG)) {
+            return;
+        }
+        if (1 == (1 & Core.DEBUG)) {
+            getLogger(Cnst.LOG_NAME).debug(mark(text));
+        } else {
+            getLogger(Cnst.OUT_NAME).debug(mark(text));
         }
     }
 
@@ -126,9 +185,21 @@ public class CoreLogger
             return;
         }
         if (1 == (1 & Core.DEBUG)) {
-            getLogger(space("hongs.log")).debug(envir(text), args);
+            getLogger(Cnst.LOG_NAME).debug(mark(text), args);
         } else {
-            getLogger(space("hongs.out")).debug(envir(text), args);
+            getLogger(Cnst.OUT_NAME).debug(mark(text), args);
+        }
+    }
+
+    /**
+     * 错误(总是记录)
+     * @param text
+     */
+    public static void error(String text) {
+        if (1 == (1 & Core.DEBUG)) {
+            getLogger(Cnst.LOG_NAME).error(mark(text));
+        } else {
+            getLogger(Cnst.OUT_NAME).error(mark(text));
         }
     }
 
@@ -139,9 +210,9 @@ public class CoreLogger
      */
     public static void error(String text, Object... args) {
         if (1 == (1 & Core.DEBUG)) {
-            getLogger(space("hongs.log")).error(envir(text), args);
+            getLogger(Cnst.LOG_NAME).error(mark(text), args);
         } else {
-            getLogger(space("hongs.out")).error(envir(text), args);
+            getLogger(Cnst.OUT_NAME).error(mark(text), args);
         }
     }
 
@@ -161,9 +232,9 @@ public class CoreLogger
         }
 
         if (1 == (1 & Core.DEBUG)) {
-            getLogger(space("hongs.log")).error(envir(text));
+            getLogger(Cnst.LOG_NAME).error(mark(text));
         } else {
-            getLogger(space("hongs.out")).error(envir(text));
+            getLogger(Cnst.OUT_NAME).error(mark(text));
         }
     }
 

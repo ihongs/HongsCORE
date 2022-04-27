@@ -1,5 +1,6 @@
 package io.github.ihongs.combat.serv;
 
+import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsException;
@@ -625,19 +626,21 @@ public class SystemCombat {
         final Logger lgr;
 
         Looker() {
-              String spc;
-            spc = CoreLogger.space("hongs.out");
-            lgr = CoreLogger.getLogger(  spc  );
+            lgr = CoreLogger.getLogger(1 == (1 & Core.DEBUG) ? Cnst.LOG_NAME : Cnst.OUT_NAME);
         }
 
         void print(String msg) {
-            lgr.trace(msg);
+            lgr.trace(CoreLogger.mark(msg));
         }
 
-        void error(Throwable  err) {
+        void error(String msg) {
+            lgr.error(CoreLogger.mark(msg));
+        }
+
+        void error(Throwable err) {
             ByteArrayOutputStream buf = new ByteArrayOutputStream();
             err.printStackTrace ( new PrintStream(buf));
-            lgr.error(buf.toString());
+            error(buf.toString());
         }
     }
 

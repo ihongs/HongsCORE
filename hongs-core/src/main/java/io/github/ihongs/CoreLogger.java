@@ -26,10 +26,10 @@ public class CoreLogger
      * 没有则返回线程ID
      * @return
      */
-    public static String addr() {
+    public static String client() {
         String a = Core.CLIENT_ADDR.get();
-        if (a == null || ! a.isEmpty()) {
-            a = String.valueOf(Thread.currentThread().getId(  ));
+        if (a == null || a.isEmpty()) {
+            a = "#"+String.valueOf(Thread.currentThread().getId(  ));
         }
         return a;
     }
@@ -39,32 +39,31 @@ public class CoreLogger
      * 无则返回线程名称
      * @return
      */
-    public static String path() {
+    public static String action() {
         String a = Core.ACTION_NAME.get();
-        if (a == null || ! a.isEmpty()) {
-            a = String.valueOf(Thread.currentThread().getName());
+        if (a == null || a.isEmpty()) {
+            a = "$"+String.valueOf(Thread.currentThread().getName());
         }
         return a;
     }
 
     /**
      * 补充当前状态信息
-     * 等同 addr()+" "+path()+" "+text
+     * 等同 client()+" "+action()+" "+text
      * 下列 info,warn,trace,debug,error 均已调此, 无需再加
      * @param text
      * @return
      */
-    public static String mark(String text) {
-        String addr = addr();
-        String path = path();
-        if (text == null) text = "";
+    public static String mark (String text) {
+        String addr = client();
+        String path = action();
+        if (text == null) {
+            text  =  "" ;
+        }
         return new StringBuilder(addr.length() + path.length() + text.length() + 2)
-            .append(addr)
-            .append(' ' )
-            .append(path)
-            .append(' ' )
-            .append(text)
-            .toString(  );
+            .append(addr).append(' ')
+            .append(path).append(' ')
+            .append(text).toString( );
     }
 
     /**

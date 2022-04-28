@@ -9,8 +9,10 @@ import java.io.ByteArrayOutputStream;
  * 日志记录工具
  * @author Hongs
  */
-public class CoreLogger
+public final class CoreLogger
 {
+
+    private CoreLogger() {}
 
     /**
      * 获取 slf4j 的 Logger 实例
@@ -220,14 +222,25 @@ public class CoreLogger
      * @param flaw
      */
     public static void error(Throwable flaw) {
-        // 调试模式下取完整错误栈
         String text ;
         if (4 == (4 & Core.DEBUG)) {
+            // 调试模式下取完整错误栈
             ByteArrayOutputStream buff = new ByteArrayOutputStream();
             flaw.printStackTrace( new PrintStream( buff ) ) ;
             text = buff.toString().replaceAll("(\r\n|\r|\n)","$1\t");
         } else {
             text = flaw.toString().replaceAll("(\r\n|\r|\n)","$1\t");
+            // 加异常类名以便发现问题
+            if (flaw instanceof HongsCause) {
+                Throwable   caus = flaw.getCause();
+                if (null != caus && 2 > ((HongsCause) flaw).getErrno()) {
+                    text  = caus.getClass().getName() +" "+ text;
+                } else {
+                    text  = flaw.getClass().getName() +" "+ text;
+                }
+            } else {
+                    text  = flaw.getClass().getName() +" "+ text;
+            }
         }
 
         if (1 == (1 & Core.DEBUG)) {

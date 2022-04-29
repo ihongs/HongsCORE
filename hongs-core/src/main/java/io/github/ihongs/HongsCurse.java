@@ -102,7 +102,13 @@ public final class HongsCurse {
     @Override
     public String toString()
     {
-        return getStage() +": "+ getMessage();
+        Throwable  cauze = cause.getCause();
+        if (cauze != null
+        &&  error == null
+        &&  errno <= 1) {
+            return cauze.toString();
+        }
+        return getStage()+": "+getMessage();
     }
 
     /**

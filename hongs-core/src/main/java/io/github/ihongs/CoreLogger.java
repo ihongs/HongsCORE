@@ -230,17 +230,6 @@ public final class CoreLogger
             text = buff.toString().replaceAll("(\r\n|\r|\n)","$1\t");
         } else {
             text = flaw.toString().replaceAll("(\r\n|\r|\n)","$1\t");
-            // 加异常类名以便发现问题
-            if (flaw instanceof HongsCause) {
-                Throwable   caus = flaw.getCause();
-                if (null != caus && 2 > ((HongsCause) flaw).getErrno()) {
-                    text  = caus.getClass().getName() +" "+ text;
-                } else {
-                    text  = flaw.getClass().getName() +" "+ text;
-                }
-            } else {
-                    text  = flaw.getClass().getName() +" "+ text;
-            }
         }
 
         if (1 == (1 & Core.DEBUG)) {

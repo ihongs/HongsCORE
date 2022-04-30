@@ -49,6 +49,8 @@ import java.util.LinkedHashMap;
 public final class Dawn
 {
 
+  private Dawn() {}
+
   /**
    * 将JSON字符流解析成Java对象
    * @param str JSON字符流

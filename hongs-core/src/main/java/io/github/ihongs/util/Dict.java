@@ -33,6 +33,8 @@ import java.util.Set;
 public final class Dict
 {
 
+  private Dict() {}
+
   private static int  asIdx (Object val) {
     Integer idx ;
     if (val instanceof Number) {

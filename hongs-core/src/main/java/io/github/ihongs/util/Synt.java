@@ -36,6 +36,8 @@ import java.util.regex.Pattern;
  */
 public final class Synt {
 
+    private Synt() {}
+
     /**
      * LOOP.NEXT 跳过此项
      * LOOP.LAST 跳出循环

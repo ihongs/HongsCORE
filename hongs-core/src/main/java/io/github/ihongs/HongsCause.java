@@ -3,7 +3,6 @@ package io.github.ihongs;
 /**
  * 异常基类
  * @author Hongs
- * @param <T> 子类
  */
 public interface HongsCause
 {

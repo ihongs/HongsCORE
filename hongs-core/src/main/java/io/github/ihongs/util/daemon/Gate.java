@@ -31,6 +31,8 @@ public final class Gate {
     private static final Map<String, Locker> ST_LOCKS = new HashMap();
     private static final Map<String, Leader> RW_LOCKS = new HashMap();
 
+    private Gate() {}
+
     /**
      * 清理, 仅供定时任务
      */

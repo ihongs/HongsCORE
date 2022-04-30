@@ -20,6 +20,8 @@ import java.util.regex.Matcher;
 public final class Syno
 {
 
+  private Syno() {}
+
   /**
    * 默认情况大数字转字符串会用科学计数法
    * 故用 NumberFormat 格式化成普通数字串

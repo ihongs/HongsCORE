@@ -16,12 +16,11 @@ import java.util.LinkedHashSet;
 import java.util.HashSet;
 import java.util.TreeSet;
 import java.util.Set;
-import java.util.regex.Pattern;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -35,6 +34,11 @@ import javax.servlet.http.HttpServletResponse;
  * action-path  默认动作地址
  * layout-path  默认页面地址
  * </pre>
+ * <p>
+ * 当目录下面的 __main__.jsp 文件存在时会将请求交给这个脚本,
+ * 当目录下面的 __main__.jsp 为空文件时会将转到 /xxx/_ 路径.
+ * 禁止直接访问 /xxx/_ 或 /xxx/_xxx.jsp 或 /xxx/xxx.xxx.jsp
+ * </p>
  * <p>
  * 注意:
  * action-path, layout-path 与 filter-mapping 的 url-pattern
@@ -53,9 +57,6 @@ public class AutoFilter extends ActionDriver {
     private Set<String> layset = null;
     private Set<String> actset = null;
     private Set<String> cstset = null;
-
-    // 禁止访问: xxx.xxx.jsp
-    private static final Pattern DENY_JSPS = Pattern.compile(".*(/_|\\.)[^/]*\\.jsp$"); // [_#$]
 
     @Override
     public void init(FilterConfig cnf) throws ServletException {
@@ -102,13 +103,12 @@ public class AutoFilter extends ActionDriver {
          * 因此需要规避目标为动作脚本的情况
          * 以免绕过权限过滤从而带来安全问题
          */
-        if (DENY_JSPS.matcher( url ).matches(   )) {
-            if (url.substring(  1  ).equals ( Core.ACTION_NAME.get() )) {
-                rsp.sendError( HttpServletResponse.SC_NOT_FOUND , "What's your problem?" );
-            } else {
-              chain.doFilter ( req , rsp );
-            }
-            return;
+        if (decline(url)) {
+        if (url.substring(1).equals(Core.ACTION_NAME.get())) {
+            rsp.sendError(HttpServletResponse.SC_NOT_FOUND , "HOW DARE YOU!");
+        } else {
+            chain.doFilter( req , rsp );
+        }   return;
         }
 
         if (url.endsWith(Cnst.API_EXT)) {
@@ -124,6 +124,7 @@ public class AutoFilter extends ActionDriver {
             String src; // 资源路径
 //          String met; // 动作方法
             String uri;
+            File   urf;
             int    pos;
 
             try {
@@ -139,15 +140,18 @@ public class AutoFilter extends ActionDriver {
             }
 
             // 检查是否有特定动作脚本
-            uri = "/" + src + "/__main__.jsp";
-            if (new File(Core.BASE_PATH+ uri).exists()) {
-                include ( req, rsp, url, uri);
+            uri = "/"+src+ "/__main__.jsp";
+            urf = new File(Core.BASE_PATH + uri);
+            if (urf.exists()) {
+                inclose(req, rsp, url, uri, urf);
                 return;
             }
 
-            uri =  layout  +  "/__main__.jsp";
-            if (new File(Core.BASE_PATH+ uri).exists()) {
-                include ( req, rsp, url, uri);
+            // 检查是否有默认动作脚本
+            uri = layout + "/__main__.jsp";
+            urf = new File(Core.BASE_PATH + uri);
+            if (urf.exists()) {
+                inclose(req, rsp, url, uri, urf);
                 return;
             }
 
@@ -189,6 +193,18 @@ public class AutoFilter extends ActionDriver {
         chain.doFilter(req, rsp);
     }
 
+    private void inclose(ServletRequest req, ServletResponse rsp, String url, String uri, File urf)
+            throws ServletException, IOException {
+        // 若脚本文件为空转入对应 Servlet (/xxxx/__main__.jsp -> /xxxx/_)
+        if (urf.length() == 0) {
+            int   pos;
+            pos = uri.length()  -  11  ;
+            uri = uri.substring(0, pos);
+        }
+
+        include(req, rsp, url, uri);
+    }
+
     private void include(ServletRequest req, ServletResponse rsp, String url, String uri)
             throws ServletException, IOException {
         // 虚拟路径
@@ -205,6 +221,38 @@ public class AutoFilter extends ActionDriver {
         req.setAttribute(Cnst.ACTION_ATTR, url.substring(1));
         // 转发请求
         req.getRequestDispatcher( uri ).forward( req , rsp );
+    }
+
+    private boolean decline(String url) {
+        int    pos;
+        String ext;
+
+        pos = url.lastIndexOf("/");
+        if (pos > -1) {
+            url = url.substring(1 + pos);
+        }
+
+        if (url.length() == 1) {
+            if (url.charAt (0) == '_') {
+                return true;
+            }
+        }
+
+        pos = url.lastIndexOf(".");
+        if (pos > -1) {
+            ext = url.substring(1 + pos);
+        if (ext.equals("jsp")) {
+            url = url.substring(0 , pos);
+
+            if (url.charAt (0) == '_') {
+                return true;
+            }
+            if (url.contains ( "." ) ) {
+                return true;
+            }
+        }}
+
+        return false;
     }
 
     private Set<String> getacts() {

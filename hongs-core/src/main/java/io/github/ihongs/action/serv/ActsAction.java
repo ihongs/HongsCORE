@@ -64,7 +64,7 @@ public class ActsAction
 
     // 去掉根和扩展名
     int pos = act.lastIndexOf('.');
-    if (pos != -1) {
+    if (pos > 1) {
         act = act.substring(1,pos);
     } else {
         act = act.substring(1);

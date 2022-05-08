@@ -462,6 +462,9 @@ public class ServerCombat {
             for(String       ur : anno.urlPatterns()) {
                 context.addFilter (hd, ur, es);
             }
+            for(String       ur : anno.value()) {
+                context.addFilter (hd, ur, es);
+            }
         }
 
         private void addServlet(ServletContextHandler context, Class clso, WebServlet anno) {
@@ -474,6 +477,9 @@ public class ServerCombat {
             }
 
             for(String       ur : anno.urlPatterns()) {
+                context.addServlet(hd, ur/**/);
+            }
+            for(String       ur : anno.value()) {
                 context.addServlet(hd, ur/**/);
             }
         }

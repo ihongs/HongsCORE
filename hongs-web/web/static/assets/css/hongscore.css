@@ -895,7 +895,7 @@ ul.pickbox > li.btn .glyphicon {
     margin-right : 9px;
     display : inline;
 }
-ul.pickbox > li.btn .bi,
+ul.pickrol > li.btn .bi,
 ul.pickrol > li.btn .glyphicon {
     margin-right : 0px;
     display : none;

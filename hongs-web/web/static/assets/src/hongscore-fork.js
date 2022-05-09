@@ -79,11 +79,18 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
                 delete v[key];
             if (txt !== undefined)
                 v[val]= [txt, inf];
+
+            // 单选直接结束
+            pickBack();
         } else {
             if (txt !== undefined)
                 v[val]= [txt, inf];
             else
                 delete v[val];
+
+            // 显示已选数量
+            var l = Object.keys(v).length ;
+            bin.find(".picknum").text( l );
         }
         return true;
     }
@@ -129,48 +136,35 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
             return;
         }
 
-        var val = chk.val();
+        var ckd = chk.prop("checked");
+        var val = chk.val ();
         var txt;
         var inf;
 
-        do {
-            if (! chk.prop("checked")) {
-                break;
-            }
-
+        if (ckd) do {
             // 获取选项名称和附加信息
-            txt = chk.attr( "title" );
-            if (txt) break;
+            txt = chk.attr("title") || "" ;
+            inf = chk.hsData();
 
-            // 选项中没有指定则尝试从当前行的其他位置获取
+            // 尝试从当前行的列中获取
             var thd = chk.closest("table").find("thead");
             var tds = chk.closest( "tr"  ).find( "td"  );
             var idx;
+            var tit;
 
             idx = thd.find("[data-fn='"+tk+"']").index();
-            if (idx != -1) txt = tds.eq(idx).text();
-            if (txt) break;
+            if (idx !== -1) tit = tds.eq(idx).text();
+            if (tit) {txt = tit ; break;}
 
             idx = thd.find("[data-ft='"+tk+"']").index();
-            if (idx != -1) txt = tds.eq(idx).text();
-            if (txt) break;
-
-            idx = thd.find(".name" ).index();
-            if (idx != -1) txt = tds.eq(idx).text();
+            if (idx !== -1) txt = tds.eq(idx).text();
+            if (tit) {txt = tit ; break;}
         }
         while (false);
 
-        if (txt) inf = chk.hsData( ); // 其他字段信息
-
         if (pickItem(val, txt, inf, chk) === false) {
-            chk.prop( "checked", false );
             return false;
         }
-
-        // 已选数量
-        var num = Object.keys(v).length ;
-        bin.find(".picknum")
-           .text( num || "");
     }
 
     function create () {
@@ -210,16 +204,13 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
         } else {
             return;
         }
+
         var val = rst[vk] || hsGetValue(rst, vk );
         var txt = rst[tk] || hsGetValue(rst, tk );
 
         if (pickItem(val, txt, rst) === false) {
             return false;
         }
-
-        if ( ! mul )
-        pickBack ( );
-        return false;
     }
 
     function commit () {
@@ -316,7 +307,7 @@ function hsFormFillPick(box, v, n) {
     var btn = box.siblings("[data-toggle=hsPick],[data-toggle=hsFork]");
 
     box.toggleClass ("pickmul", mul);
-    
+
     // 表单初始化载入时需从关联数据提取选项对象
     if (this._info) {
         var ak = box.attr("data-ak") || "data";

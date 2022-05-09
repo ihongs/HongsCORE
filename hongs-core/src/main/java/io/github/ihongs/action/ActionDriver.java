@@ -63,8 +63,8 @@ public class ActionDriver implements Filter, Servlet {
     private static final Pattern URL_REG = Pattern.compile("^\\w+://[^/]+");
     private static final Pattern URI_REG = Pattern.compile("^\\w+://|^/"  );
 
-    private transient  FilterConfig filtConf = null;
-    private transient ServletConfig servConf = null;
+    private transient  FilterConfig FILT_CONF = null;
+    private transient ServletConfig SERV_CONF = null;
 
     /**
      * 首位标识, 为 true 表示最先执行，负责初始化和清理
@@ -84,7 +84,7 @@ public class ActionDriver implements Filter, Servlet {
     @Override
     public void init( FilterConfig conf) throws ServletException {
         this.init(conf.getServletContext());
-        this.filtConf = conf;
+        this.FILT_CONF  = conf;
     }
 
     /**
@@ -95,7 +95,7 @@ public class ActionDriver implements Filter, Servlet {
     @Override
     public void init(ServletConfig conf) throws ServletException {
         this.init(conf.getServletContext());
-        this.servConf = conf;
+        this.SERV_CONF  = conf;
     }
 
     /**
@@ -650,29 +650,29 @@ public class ActionDriver implements Filter, Servlet {
     }
 
     public FilterConfig getFilterConfig() {
-        return filtConf;
+        return FILT_CONF;
     }
 
     @Override
     public ServletConfig getServletConfig() {
-        return servConf;
+        return SERV_CONF;
     }
 
     public ServletContext getServletContext() {
-        if (servConf != null) return servConf.getServletContext();
-        if (filtConf != null) return filtConf.getServletContext();
+        if (SERV_CONF != null) return SERV_CONF.getServletContext();
+        if (FILT_CONF != null) return FILT_CONF.getServletContext();
         throw new IllegalStateException("err.servlet_config_not_initialized");
     }
 
     public String getInitParameter(String name) {
-        if (servConf != null) return servConf.getInitParameter( name );
-        if (filtConf != null) return filtConf.getInitParameter( name );
+        if (SERV_CONF != null) return SERV_CONF.getInitParameter( name );
+        if (FILT_CONF != null) return FILT_CONF.getInitParameter( name );
         throw new IllegalStateException("err.servlet_config_not_initialized");
     }
 
     public Enumeration<String> getInitParameterNames() {
-        if (servConf != null) return servConf.getInitParameterNames( );
-        if (filtConf != null) return filtConf.getInitParameterNames( );
+        if (SERV_CONF != null) return SERV_CONF.getInitParameterNames( );
+        if (FILT_CONF != null) return FILT_CONF.getInitParameterNames( );
         throw new IllegalStateException("err.servlet_config_not_initialized");
     }
 

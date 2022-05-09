@@ -32,7 +32,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -59,7 +58,13 @@ import javax.servlet.http.Part;
  *
  * @author Hong
  */
-public class ActionDriver extends HttpServlet implements Servlet, Filter {
+public class ActionDriver implements Filter, Servlet {
+
+    private static final Pattern URL_REG = Pattern.compile("^\\w+://[^/]+");
+    private static final Pattern URI_REG = Pattern.compile("^\\w+://|^/"  );
+
+    private transient  FilterConfig filtConf;
+    private transient ServletConfig servConf;
 
     /**
      * 首位标识, 为 true 表示最先执行，负责初始化和清理
@@ -71,9 +76,6 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
      */
     private boolean SETUP = false;
 
-    private static final Pattern URL_REG = Pattern.compile("^\\w+://[^/]+");
-    private static final Pattern URI_REG = Pattern.compile("^\\w+://|^/"  );
-
     /**
      * 初始化 Filter
      * @param conf
@@ -82,6 +84,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
     @Override
     public void init( FilterConfig conf) throws ServletException {
         this.init(conf.getServletContext());
+        this.filtConf = conf;
     }
 
     /**
@@ -91,8 +94,8 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
      */
     @Override
     public void init(ServletConfig conf) throws ServletException {
-       super.init(conf /*call super init*/);
         this.init(conf.getServletContext());
+        this.servConf = conf;
     }
 
     /**
@@ -619,9 +622,60 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
      */
     protected void doAction(Core core, ActionHelper hlpr)
     throws ServletException, IOException {
-        /**/ service(hlpr.getRequest(), hlpr.getResponse());
+        this.service(hlpr.getRequest(), hlpr.getResponse());
     }
 
+    /**
+     * 服务动作
+     * 覆盖方法类似 HttpServlet
+     * @param req
+     * @param rsp
+     * @throws ServletException
+     * @throws IOException
+     */
+    protected void service(HttpServletRequest req, HttpServletResponse rsp)
+    throws ServletException, IOException {
+        // Nothing todo
+    }
+
+    //** 配置信息方法 **/
+
+    public String getConfigInfo() {
+        return "";
+    }
+
+    @Override
+    public String getServletInfo() {
+        return "";
+    }
+
+    public FilterConfig getFilterConfig() {
+        return filtConf;
+    }
+
+    @Override
+    public ServletConfig getServletConfig() {
+        return servConf;
+    }
+
+    public ServletContext getServletContext() {
+        if (servConf != null) return servConf.getServletContext();
+        if (filtConf != null) return filtConf.getServletContext();
+        throw new IllegalStateException("err.servlet_config_not_initialized");
+    }
+
+    public String getInitParameter(String name) {
+        if (servConf != null) return servConf.getInitParameter( name );
+        if (filtConf != null) return filtConf.getInitParameter( name );
+        throw new IllegalStateException("err.servlet_config_not_initialized");
+    }
+
+    public Enumeration<String> getInitParameterNames() {
+        if (servConf != null) return servConf.getInitParameterNames( );
+        if (filtConf != null) return filtConf.getInitParameterNames( );
+        throw new IllegalStateException("err.servlet_config_not_initialized");
+    }
+    
     //** 静态工具函数 **/
 
     /**

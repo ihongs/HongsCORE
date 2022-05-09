@@ -63,18 +63,18 @@ public class ActionDriver implements Filter, Servlet {
     private static final Pattern URL_REG = Pattern.compile("^\\w+://[^/]+");
     private static final Pattern URI_REG = Pattern.compile("^\\w+://|^/"  );
 
-    private transient  FilterConfig filtConf;
-    private transient ServletConfig servConf;
+    private transient  FilterConfig filtConf = null;
+    private transient ServletConfig servConf = null;
 
     /**
      * 首位标识, 为 true 表示最先执行，负责初始化和清理
      */
-    private boolean FIRST = false;
+    private transient boolean FIRST = false;
 
     /**
      * 关闭标识, 为 true 表示有初始化, 需要承担全局清理
      */
-    private boolean SETUP = false;
+    private transient boolean SETUP = false;
 
     /**
      * 初始化 Filter
@@ -675,7 +675,7 @@ public class ActionDriver implements Filter, Servlet {
         if (filtConf != null) return filtConf.getInitParameterNames( );
         throw new IllegalStateException("err.servlet_config_not_initialized");
     }
-    
+
     //** 静态工具函数 **/
 
     /**

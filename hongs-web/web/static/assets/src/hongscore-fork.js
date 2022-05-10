@@ -162,7 +162,7 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
         }
         while (false);
 
-        if (pickItem(val, txt, inf, chk) === false) {
+        if (pickItem(val, txt, inf, chk) === false ) {
             return false;
         }
     }
@@ -185,13 +185,13 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
         if (rst.info) {
             rst = rst.info ;
         } else
-        if (rst.id && at) {
+        if (rst.id && at ) {
             /**
              * 新方案创建接口仅返回id
              * 需调用详情接口获取数据
              */
             $.hsAjax({
-                url : hsSetParam(at, vk, rst.id),
+                url : hsSetParam(at, vk, rst.id ),
                 cache : false,
                 rsync : false,
                 dataType:  "json"  ,
@@ -200,7 +200,7 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
                     create.call(btn[0], evt, rst);
                 }
             });
-            return false;
+            return;
         } else {
             return;
         }
@@ -208,7 +208,7 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
         var val = rst[vk] || hsGetValue(rst, vk );
         var txt = rst[tk] || hsGetValue(rst, tk );
 
-        if (pickItem(val, txt, rst) === false) {
+        if (pickItem(val, txt, rst) === false ) {
             return false;
         }
     }

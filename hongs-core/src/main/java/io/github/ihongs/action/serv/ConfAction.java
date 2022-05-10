@@ -5,7 +5,7 @@ import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.ActionHelper;
-import io.github.ihongs.util.Syno;
+import io.github.ihongs.util.Dawn;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -183,9 +183,9 @@ public class ConfAction
     // 查找扩展配置信息
     for (String nk : mk.conf.stringPropertyNames())
     {
-      if( nk.startsWith ( "fore." ))
+      if (nk.startsWith("fore."))
       {
-          sb.append(mk.make(nk, nk));
+          sb.append( mk.make(nk.substring(5), nk) );
       }
     }
 
@@ -234,77 +234,45 @@ public class ConfAction
 
     public String make(String nam, String key)
     {
-      /**
-       * 后缀 意义
-       * [无] 字符串
-       * .N   数字
-       * .B   布尔
-       * .C   代码
-       * .D   指向
-       */
-      String name = nam.replaceFirst( "\\.[N|B|C|D]$" , "")
-                       .replaceFirst("^(fore|core)\\.", "");
-      if (nam.endsWith(".D"))
+      if (nam.endsWith(".json"))
       {
-        return this.makeLink(name, key);
+        nam = nam.substring (nam.length() - 5);
+        return this.makeCode(nam, key);
       }
-      else if (nam.endsWith(".C"))
+      if (nam.endsWith(".num" ))
       {
-        return this.makeCode(name, key);
-      }
-      else if (nam.endsWith(".B"))
-      {
-        return this.makeConf(name, key, false);
-      }
-      else if (nam.endsWith(".N"))
-      {
-        return this.makeConf(name, key, 0 );
+        nam = nam.substring (nam.length() - 4);
+        return this.makeCode(nam, key);
       }
       else
       {
-        return this.makeConf(name, key, "");
+        return this.makeConf(nam, key);
       }
     }
 
-    private String makeConf(String name, String key, String def)
+    private String makeCode(String nam, String key)
     {
-      String value = this.conf.getProperty(key, def);
-      value = Syno.escape(value);
-      return "\t\"" + name + "\":\"" + value + "\",\r\n";
+      String val = this.getValue(key, "null");
+      return "\t\""+ nam +"\":"  + val +  ",\r\n";
     }
 
-    private String makeConf(String name, String key, double def)
+    private String makeConf(String nam, String key)
     {
-      String value = String.valueOf(this.conf.getProperty(key, def));
-      return "\t\"" + name + "\":" + value + ",\r\n";
+      String val = this.getValue(key, "");
+             val = Dawn.doEscape(  val  );
+      return "\t\""+ nam +"\":\""+ val +"\",\r\n";
     }
 
-    private String makeConf(String name, String key, boolean def)
+    private String getValue(String key, String def)
     {
-      String value = String.valueOf(this.conf.getProperty(key, def));
-      return "\t\"" + name + "\":" + value + ",\r\n";
-    }
-
-    private String makeCode(String name, String key)
-    {
-      String value = this.conf.getProperty(key, "null");
-      return "\t\"" + name + "\":" + value + ",\n";
-    }
-
-    private String makeLink(String name, String key)
-    {
-      String[] arr = this.conf.getProperty(key, "" ).split(":", 2);
-      if (1 == arr.length)
-      {
-        name = "default";
-        key  = arr[0];
+      int pos = key.indexOf(":");
+      if (pos == -1) {
+          return this.conf.getProperty (key, def);
+      } else {
+          return CoreConfig
+                .getInstance(key.substring(0,pos)/**/)
+                .getProperty(key.substring(1+pos),def);
       }
-      else
-      {
-        name = arr[0];
-        key  = arr[1];
-      }
-      return new Maker(name).make(key, key);
     }
   }
 

@@ -665,14 +665,14 @@ public class ActionDriver implements Filter, Servlet {
     }
 
     public String getInitParameter(String name) {
-        if (SERV_CONF != null) return SERV_CONF.getInitParameter( name );
-        if (FILT_CONF != null) return FILT_CONF.getInitParameter( name );
+        if (SERV_CONF != null) return SERV_CONF.getInitParameter (name);
+        if (FILT_CONF != null) return FILT_CONF.getInitParameter (name);
         throw new IllegalStateException("err.servlet_config_not_initialized");
     }
 
     public Enumeration<String> getInitParameterNames() {
-        if (SERV_CONF != null) return SERV_CONF.getInitParameterNames( );
-        if (FILT_CONF != null) return FILT_CONF.getInitParameterNames( );
+        if (SERV_CONF != null) return SERV_CONF.getInitParameterNames();
+        if (FILT_CONF != null) return FILT_CONF.getInitParameterNames();
         throw new IllegalStateException("err.servlet_config_not_initialized");
     }
 

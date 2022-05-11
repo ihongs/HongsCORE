@@ -18,7 +18,7 @@ import java.net.URLConnection;
 import java.net.MalformedURLException;
 import java.net.URLDecoder;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.http.Part;
@@ -167,7 +167,7 @@ public class IsFile extends Rule {
             /**
              * 井号后为附加选项
              * 竖杆后为真实名称
-             * 又斜杠为旧的记录
+             * 有斜杠为旧的记录
              * 外部记录的是网址
              * 必须进行解码才行
              */
@@ -217,8 +217,7 @@ public class IsFile extends Rule {
         } else
         if (Synt.declare(getParam("drop-origin"), false)) {
             try {
-                String dist = hp[1];
-                if (Files.isSameFile(Paths.get(dist), Paths.get(path))) {
+                if (! Files.isSameFile(Path.of(path), Path.of(hp[1]))) {
                       new File ( path ).delete();
                 }
             } catch (IOException e) {
@@ -275,7 +274,7 @@ public class IsFile extends Rule {
                      d.mkdir ();
                 }
 
-                Files.createSymbolicLink(Paths.get(path), Paths.get(dist));
+                Files.createSymbolicLink(Path.of(path), Path.of(dist));
             }
             catch (StringIndexOutOfBoundsException ex) {
                 throw new HongsExemption("Wrong path/href setting");

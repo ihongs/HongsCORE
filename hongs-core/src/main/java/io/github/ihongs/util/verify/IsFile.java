@@ -216,7 +216,14 @@ public class IsFile extends Rule {
             // Keep to return origin href
         } else
         if (Synt.declare(getParam("drop-origin"), false)) {
-            new File(path).delete();
+            try {
+                String dist = hp[1];
+                if (Files.isSameFile(Paths.get(dist), Paths.get(path))) {
+                      new File ( path ).delete();
+                }
+            } catch (IOException e) {
+                throw new Wrong( e.getMessage());
+            }
             href = hp[0];
             path = hp[1];
         } else {

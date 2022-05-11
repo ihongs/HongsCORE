@@ -22,17 +22,6 @@ public final class Syno
 
   private Syno() {}
 
-  /**
-   * 默认情况大数字转字符串会用科学计数法
-   * 故用 NumberFormat 格式化成普通数字串
-   * @deprecated 请使用 Synt.asString
-   * @param num
-   * @return
-   */
-  public static String toNumStr(Number num) {
-    return Synt.asString(num);
-  }
-
   //** 进制 **/
 
   /**

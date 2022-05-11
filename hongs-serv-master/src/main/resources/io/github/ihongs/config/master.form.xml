@@ -20,9 +20,9 @@
         <field name="head" rule="Thumb">
             <param name="href">static/upload/master/head</param>
             <param name="path">static/upload/master/head</param>
-            <param name="thumb-extn">png</param>
+            <param name="thumb-kind">png</param>
             <param name="thumb-mode">pick</param>
-            <param name="thumb-size">_lg:300*300,_md:150*150,_sm:75*75</param>
+            <param name="thumb-size">:300*300</param>
             <param name="down-remote">yes</param>
         </field>
         <field name="note" >
@@ -46,9 +46,9 @@
         <field name="head" rule="Thumb">
             <param name="href">static/upload/master/head</param>
             <param name="path">static/upload/master/head</param>
-            <param name="thumb-extn">png</param>
+            <param name="thumb-kind">png</param>
             <param name="thumb-mode">pick</param>
-            <param name="thumb-size">_lg:300*300,_md:150*150,_sm:75*75</param>
+            <param name="thumb-size">:300*300</param>
             <param name="down-remote">yes</param>
         </field>
         <field name="note" >
@@ -66,9 +66,9 @@
         <field name="head" rule="Thumb">
             <param name="href">static/upload/master/head</param>
             <param name="path">static/upload/master/head</param>
-            <param name="thumb-extn">png</param>
+            <param name="thumb-kind">png</param>
             <param name="thumb-mode">pick</param>
-            <param name="thumb-size">_lg:300*300,_md:150*150,_sm:75*75</param>
+            <param name="thumb-size">:300*300</param>
             <param name="down-remote">yes</param>
         </field>
         <field name="state" type="enum">

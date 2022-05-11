@@ -13,7 +13,7 @@ import net.coobird.thumbnailator.Thumbnails.Builder;
  * 缩略图
  *
  * 规则参数:
- *  thumb-extn      格式名称, 如 jpg
+ *  thumb-kind      格式名称, 如 jpg
  *  thumb-size      缩放尺寸, 如 _lg:80*40, _md:60*30, _sm:40*20
  *  thumb-mode      处理模式, 如 pick 截取, keep 保留, test 检查(此时 thumb-size 不加后缀)
  *  thumb-index     返回索引, 默认为 0, 即首个
@@ -28,7 +28,7 @@ public class Thumb extends IsFile {
     @Override
     public String[] checks(String href, String path)
     throws Wrong {
-        String extn = Synt.declare(getParam("thumb-extn" ), "");
+        String kind = Synt.declare(getParam("thumb-kind" ), "");
         String size = Synt.declare(getParam("thumb-size" ), "");
         String mode = Synt.declare(getParam("thumb-mode" ), "");
         String col  = Synt.declare(getParam("thumb-color"), "");
@@ -36,7 +36,7 @@ public class Thumb extends IsFile {
         int    idx  = Synt.declare(getParam("thumb-index"), 0 );
 
         try {
-            String [][] hps = exec(href, path, extn, size, mode, col, pos);
+            String [][] hps = exec(href, path, kind, size, mode, col, pos);
             return hps[ idx ];
         } catch (IndexOutOfBoundsException ex) {
             throw new Wrong( ex, "Thumb index out of bounds." );

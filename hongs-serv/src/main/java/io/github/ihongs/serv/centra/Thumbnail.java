@@ -15,7 +15,7 @@ import java.util.Map;
  * 缩略图批量处理
  *
  * 命令参数:
- *  --thumb-extn    格式名称, 如 jpg
+ *  --thumb-kind    格式名称, 如 jpg
  *  --thumb-size    缩放尺寸, 如 _lg:80*40, _md:60*30, _sm:40*20
  *  --thumb-mode    处理模式, 如 pick 截取, keep 保留, test 检查(此时 thumb-size 不加后缀)
  *  --thumb-color   背景颜色
@@ -33,7 +33,7 @@ public class Thumbnail {
     public static void exec(String[] args) throws IOException {
         Map opts = CombatHelper.getOpts(args, new String[] {
             "thumb-size:s",
-            "thumb-extn:s",
+            "thumb-kind:s",
             "thumb-mode:s",
             "thumb-color:s",
             "thumb-align:s",

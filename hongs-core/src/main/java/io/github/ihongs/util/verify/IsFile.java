@@ -40,7 +40,7 @@ import javax.servlet.http.Part;
  *  path 上传目标目录, 可用变量 $BASE_PATH, $DATA_PATH 等
  *  href 上传文件链接, 可用变量 $SERV_PATH, $SERV_HREF 等, 后者包含域名
  *  type 文件类型限制, 逗号分隔 (Mime-Type)
- *  extn 扩展名称限制, 逗号分隔
+ *  kind 扩展名称限制, 逗号分隔
  *  size 文件大小限制
  * </pre>
  * @author Hongs
@@ -120,8 +120,8 @@ public class IsFile extends Rule {
 
         para = getParam("type");
         if (para != null && !"".equals(para)) hlpr.setAllowTypes(Synt.toSet(para));
-        para = getParam("extn");
-        if (para != null && !"".equals(para)) hlpr.setAllowExtns(Synt.toSet(para));
+        para = getParam("kind");
+        if (para != null && !"".equals(para)) hlpr.setAllowKinds(Synt.toSet(para));
         para = getParam("temp");
         if (para != null && !"".equals(para)) hlpr.setUploadTemp(Synt.declare(para, String.class));
         para = getParam("path");
@@ -365,20 +365,20 @@ public class IsFile extends Rule {
             }
             int j  = name.lastIndexOf( '.' );
             if (j != -1) {
-                String extn;
-                extn = name.substring(j + 1);
+                String kind;
+                kind = name.substring(j + 1);
                 name = name.substring(0 , j);
 
                 // 检查扩展名
                 CoreConfig c = CoreConfig.getInstance( "default" );
-                String d = c.getProperty("fore.upload.deny.extns");
-                if (Synt.toTerms(d).contains(extn)) {
+                String d = c.getProperty("fore.upload.deny.kinds");
+                if (Synt.toTerms(d).contains(kind)) {
                     throw new Wrong("fore.form.upload.failed");
                 }
 
                 name = URLEncoder.encode(name, "UTF-8")
                      + "."
-                     + URLEncoder.encode(extn, "UTF-8");
+                     + URLEncoder.encode(kind, "UTF-8");
             } else {
                 name = URLEncoder.encode(name, "UTF-8");
             }

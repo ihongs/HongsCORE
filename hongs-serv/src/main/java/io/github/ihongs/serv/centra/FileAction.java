@@ -487,8 +487,8 @@ public class FileAction implements IAction {
         String name = file.getName( );
         String extn = name.replaceFirst("^.*\\.", "");
         CoreConfig  conf = CoreConfig.getInstance(  );
-        Set<String> extz = Synt.toTerms(conf.getProperty("fore.upload.deny.extns" ));
-        Set<String> exts = Synt.toTerms(conf.getProperty("fore.upload.allow.extns"));
+        Set<String> extz = Synt.toTerms(conf.getProperty("fore.upload.deny.kinds" ));
+        Set<String> exts = Synt.toTerms(conf.getProperty("fore.upload.allow.kinds"));
         return (null != extz &&  extz.contains(extn))
             || (null != exts && !exts.contains(extn));
     }

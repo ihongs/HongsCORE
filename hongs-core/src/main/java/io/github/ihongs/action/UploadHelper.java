@@ -48,7 +48,7 @@ public class UploadHelper {
     private String resultName = null;
     private String requestKey = null;
     private Set<String> allowTypes = null;
-    private Set<String> allowExtns = null;
+    private Set<String> allowKinds = null;
 
     private static final char[] DIGITS = {
         '0', '1', '2', '3', '4', '5', '6', '7',
@@ -122,20 +122,20 @@ public class UploadHelper {
     }
 
     /**
-     * 设置许可的类型(扩展名)
-     * @param extn
+     * 设置许可的类型(Extension)
+     * @param kind
      * @return
      */
-    public UploadHelper setAllowExtns(Set<String> extn) {
-        this.allowExtns = extn;
+    public UploadHelper setAllowKinds(Set<String> kind) {
+        this.allowKinds = kind;
         return this;
     }
-    public UploadHelper setAllowExtns(String ...  extn) {
-        this.allowExtns = new HashSet(Arrays.asList(extn));
+    public UploadHelper setAllowKinds(String ...  kind) {
+        this.allowKinds = new HashSet(Arrays.asList(kind));
         return this;
     }
 
-    private void chkTypeOrExtn(String type, String extn) throws Wrong {
+    private void chkTypeOrKind(String type, String kind) throws Wrong {
         /**
          * 检查文件类型
          */
@@ -148,14 +148,14 @@ public class UploadHelper {
         /**
          * 检查扩展名
          */
-        if (this.allowExtns != null
-        && !this.allowExtns.contains(extn)) {
+        if (this.allowKinds != null
+        && !this.allowKinds.contains(kind)) {
             // 扩展名不对
-            throw new Wrong("core.file.extn.invalid", Syno.concat(",", this.allowExtns));
+            throw new Wrong("core.file.kind.invalid", Syno.concat(",", this.allowKinds));
         }
     }
 
-    private void setResultName(String name, String extn) {
+    private void setResultName(String name, String kind) {
         /**
          * 当文件名含点和斜杠时将作为完整文件名
          * 当文件名以点结尾表示同上但需加扩展名
@@ -170,12 +170,12 @@ public class UploadHelper {
             name  = Syno.splitPath(name);
         } else
         {
-            extn  = null;
+            kind  = null;
         }
 
-        if (extn != null
-        &&  extn.length() != 0) {
-            name += "." + extn;
+        if (kind != null
+        &&  kind.length() != 0) {
+            name += "." + kind;
         }
 
         this.resultName = name;
@@ -237,7 +237,7 @@ public class UploadHelper {
         }
     }
 
-    private String getExtnByName(String name) {
+    private String getKindByName(String name) {
         int pos  = name.lastIndexOf('.');
         if (pos >= 1 ) {
             return name.substring(1+pos);
@@ -287,10 +287,10 @@ public class UploadHelper {
 
     private File getDigestFile(File file) {
         String name = file. getName();
-        String extn = getExtnByName(name);
-        String subn = getDigestName(file);
+        String kind = getKindByName(name);
+        String dige = getDigestName(file);
 
-        setResultName ( subn , extn );
+        setResultName ( dige , kind );
         String path = getResultPath();
 
         // 移动文件
@@ -332,21 +332,21 @@ public class UploadHelper {
      * 检查文件流并写入目标目录
      * @param xis  上传文件输入流
      * @param type 上传文件类型
-     * @param extn 上传文件扩展
-     * @param subn 目标文件名称
+     * @param kind 上传文件扩展
+     * @param lead 目标文件名称
      * @return
      * @throws Wrong
      */
-    public File upload(InputStream xis, String type, String extn, String subn) throws Wrong {
+    public File upload(InputStream xis, String type, String kind, String lead) throws Wrong {
         if (type.contains( ";" )) {
             type = type.substring(0 , type./**/indexOf(";"));
         }
-        if (extn.contains( "." )) {
-            extn = extn.substring(1 + extn.lastIndexOf('.'));
+        if (kind.contains( "." )) {
+            kind = kind.substring(1 + kind.lastIndexOf('.'));
         }
 
-        chkTypeOrExtn(type, extn);
-        setResultName(subn, extn);
+        chkTypeOrKind(type, kind);
+        setResultName(lead, kind);
 
         File file = new File(getResultPath());
         File fdir = file.getParentFile();
@@ -378,16 +378,16 @@ public class UploadHelper {
      * 检查文件流并写入目标目录
      * @param xis  上传文件输入流
      * @param type 上传文件类型
-     * @param extn 上传文件扩展
+     * @param kind 上传文件扩展
      * @return
      * @throws Wrong
      */
-    public File upload(InputStream xis, String type, String extn) throws Wrong {
+    public File upload(InputStream xis, String type, String kind) throws Wrong {
         if (digestType == null) {
-            return upload(xis, type, extn, Core.newIdentity());
+            return upload(xis, type, kind, Core.newIdentity());
         }
 
-        File tmp = upload(xis, type, extn, Core.newIdentity()+".tmp.");
+        File tmp = upload(xis, type, kind, Core.newIdentity()+".tmp.");
 
         return getDigestFile(tmp);
     }
@@ -395,11 +395,11 @@ public class UploadHelper {
     /**
      * 检查上传对象并写入目标目录
      * @param part
-     * @param subn
+     * @param lead
      * @return
      * @throws Wrong
      */
-    public File upload(Part part, String subn) throws Wrong {
+    public File upload(Part part, String lead) throws Wrong {
         if (part == null) {
             setResultName("", null);
             return  null;
@@ -410,11 +410,11 @@ public class UploadHelper {
          */
         String type = part.getContentType( /**/ );
                type = getTypeByMime( type );
-        String extn = part.getSubmittedFileName();
-               extn = getExtnByName( extn );
+        String kind = part.getSubmittedFileName();
+               kind = getKindByName(kind );
 
         try {
-            return upload(part.getInputStream(), type, extn, subn);
+            return upload(part.getInputStream(), type, kind, lead);
         }
         catch ( IOException ex) {
             throw new Wrong(ex, "fore.form.upload.failed");
@@ -441,11 +441,11 @@ public class UploadHelper {
      * 检查文件对象并写入目标目录
      * 检查当前文件
      * @param file
-     * @param subn
+     * @param lead
      * @return
      * @throws Wrong
      */
-    public File upload(File file, String subn) throws Wrong {
+    public File upload(File file, String lead) throws Wrong {
         if (file == null) {
             setResultName("", null);
             return  null;
@@ -460,10 +460,10 @@ public class UploadHelper {
          */
         String name = file. getName();
         String type = getTypeByName(name);
-        String extn = getExtnByName(name);
+        String kind = getKindByName(name);
 
-        chkTypeOrExtn(type, extn);
-        setResultName(subn, extn);
+        chkTypeOrKind(type, kind);
+        setResultName(lead, kind);
 
         /**
          * 原始文件与目标文件不同才需移动
@@ -522,27 +522,27 @@ public class UploadHelper {
          * 此时不得含斜杠从而规避同上问题.
          */
 
-        String  subn;
+        String  lead;
 
         do {
             String href = getResultHref(uploadHref) + "/";
             String path = getResultPath(uploadPath) + "/";
 
             if (name.startsWith(href)) {
-                subn = name.substring(href.length());
-                if (subn.contains("./" )) {
+                lead = name.substring(href.length());
+                if (lead.contains("./" )) {
                     throw new Wrong("core.file.upload.not.allows");
                 }
-                name = path + subn;
+                name = path + lead;
                 break;
             }
 
             if (name.startsWith(path)) {
-                subn = name.substring(path.length());
-                if (subn.contains("./" )) {
+                lead = name.substring(path.length());
+                if (lead.contains("./" )) {
                     throw new Wrong("core.file.upload.not.allows");
                 }
-            //  name = path + subn;
+            //  name = path + lead;
                 break;
             }
 
@@ -553,13 +553,13 @@ public class UploadHelper {
                     throw new Wrong("core.file.upload.not.allows");
                 }
                 name = temp + name;
-                subn = getDigestName(new File(name));
+                lead = getDigestName(new File(name));
                 break;
             }
         }
         while (false);
 
-        return upload(new File(name), subn);
+        return upload(new File(name), lead);
     }
 
     /**

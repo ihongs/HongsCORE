@@ -114,7 +114,7 @@ if(!window.HsLANG)window.HsLANG={};$.extend(window.HsLANG,{
 	"file.remove.title":"删除文件",
 	"file.drop.to.here":"请将文件拖拽到此处...",
 	"file.invalid.type":"不支持 {name} 的类型, 仅能上传类型为 <b>{types}</b> 的文件",
-	"file.invalid.extn":"不支持 {name} 的类型, 仅能上传类型为 <b>{extensions}</b> 的文件",
+	"file.invalid.kind":"不支持 {name} 的类型, 仅能上传类型为 <b>{extensions}</b> 的文件",
 	"file.invalid.size":"文件 {name} (<b>{size} KB</b>) 太大, 不得超过 <b>{maxSize} KB</b>",
 
 	"welcome0":"您好!",

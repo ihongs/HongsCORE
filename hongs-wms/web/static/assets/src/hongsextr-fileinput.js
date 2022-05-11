@@ -21,7 +21,7 @@
         dropZoneTitle   : hsGetLang('file.drop.to.here'),
         msgSizeTooLarge         : hsGetLang('file.invalid.size'),
         msgInvalidFileType      : hsGetLang('file.invalid.type'),
-        msgInvalidFileExtension : hsGetLang('file.invalid.extn'),
+        msgInvalidFileExtension : hsGetLang('file.invalid.kind'),
 
         fileActionSettings: {
             removeTitle : hsGetLang('file.remove'),
@@ -148,7 +148,7 @@
             if (attr) {
                 opts.allowedFileTypes = attr.split(",");
             }
-            attr = that.attr("data-extns");
+            attr = that.attr("data-kinds");
             if (attr) {
                 opts.allowedFileExtensions = attr.split(",");
             }

@@ -115,13 +115,13 @@
                     <%} else if ("file".equals(type)) {%>
                         <%
                             String ft = Synt.declare(info.get("type"), "" );
-                            String fx = Synt.declare(info.get("extn"), "" );
+                            String fx = Synt.declare(info.get("kind"), "" );
                             String fz = Synt.declare(info.get("size"), "");
                             String tm = Synt.declare(info.get("thumb-mode"), "");
-                            String tx = Synt.declare(info.get("thumb-extn"), "");
+                            String tx = Synt.declare(info.get("thumb-kind"), "");
                             String tz = Synt.declare(info.get("thumb-size"), "");
                         %>
-                        <a href="javascript:;" class="show-file" data-file-type="<%=ft%>" data-file-extn="<%=fx%>" data-file-size="<%=fz%>" data-thumb-mode="<%=tm%>" data-thumb-extn="<%=tx%>" data-thumb-size="<%=tz%>"><%=name%></a>
+                        <a href="javascript:;" class="show-file" data-file-type="<%=ft%>" data-file-kind="<%=fx%>" data-file-size="<%=fz%>" data-thumb-mode="<%=tm%>" data-thumb-kind="<%=tx%>" data-thumb-size="<%=tz%>"><%=name%></a>
                     <%} else { %>
                         <%=name%>
                     <%}%>
@@ -538,10 +538,10 @@ id=ID 或 id.=ID1&id.=ID2...
     // 查看文件参数
     context.on("click", "a.show-file", function() {
         var type  = $(this).data('file-type');
-        var extn  = $(this).data('file-extn');
+        var kind  = $(this).data('file-kind');
         var size  = $(this).data('file-size');
         var tmode = $(this).data('thumb-mode');
-        var textn = $(this).data('thumb-extn');
+        var tkind = $(this).data('thumb-kind');
         var tsize = $(this).data('thumb-size');
         var table = $('<table class="table table-hover table-striped"></table>');
         $('<col style="width: 80px;"/>').appendTo(table);
@@ -552,10 +552,10 @@ id=ID 或 id.=ID1&id.=ID2...
             $('<th></th>').appendTo(tr).text('文件类型');
             $('<td></td>').appendTo(tr).text(type);
         }
-        if (extn) {
+        if (kind) {
             tr = $('<tr></tr>').appendTo(tbody);
             $('<th></th>').appendTo(tr).text('类型后缀');
-            $('<td></td>').appendTo(tr).text(extn);
+            $('<td></td>').appendTo(tr).text(kind);
         }
         if (size) {
             tr = $('<tr></tr>').appendTo(tbody);
@@ -567,10 +567,10 @@ id=ID 或 id.=ID1&id.=ID2...
             $('<th></th>').appendTo(tr).text('裁剪模式');
             $('<td></td>').appendTo(tr).text(tmode);
         }
-        if (textn) {
+        if (tkind) {
             tr = $('<tr></tr>').appendTo(tbody);
             $('<th></th>').appendTo(tr).text('存储格式');
-            $('<td></td>').appendTo(tr).text(textn);
+            $('<td></td>').appendTo(tr).text(tkind);
         }
         if (tsize) {
             tr = $('<tr></tr>').appendTo(tbody);

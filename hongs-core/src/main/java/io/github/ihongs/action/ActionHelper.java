@@ -332,15 +332,15 @@ public class ActionHelper implements Cloneable
     if (x != null) {
          denyTypes = new HashSet(Arrays.asList(x.split(",")));
     }
-    Set<String> allowExtns = null;
-    x = conf.getProperty("fore.upload.allow.extns", null);
+    Set<String> allowKinds = null;
+    x = conf.getProperty("fore.upload.allow.kinds", null);
     if (x != null) {
-        allowExtns = new HashSet(Arrays.asList(x.split(",")));
+        allowKinds = new HashSet(Arrays.asList(x.split(",")));
     }
-    Set<String>  denyExtns = null;
-    x = conf.getProperty("fore.upload.deny.extns" , null);
+    Set<String>  denyKinds = null;
+    x = conf.getProperty("fore.upload.deny.kinds" , null);
     if (x != null) {
-         denyExtns = new HashSet(Arrays.asList(x.split(",")));
+         denyKinds = new HashSet(Arrays.asList(x.split(",")));
     }
 
     //** 解析数据 **/
@@ -353,12 +353,12 @@ public class ActionHelper implements Cloneable
             long   size = part.getSize();
             String name = part.getName();
             String type = part.getContentType();
-            String extn = part.getSubmittedFileName();
+            String kind = part.getSubmittedFileName();
 
             // 无类型的普通参数已在外部处理
             if (name == null
             ||  type == null
-            ||  extn == null) {
+            ||  kind == null) {
                 continue;
             }
 
@@ -384,45 +384,18 @@ public class ActionHelper implements Cloneable
             }
 
             // 检查扩展
-            pos  = extn.lastIndexOf('.');
+            pos  = kind.lastIndexOf('.');
             if (pos != -1) {
-                extn = extn.substring(1 + pos);
+                kind = kind.substring(1 + pos);
             } else {
-                extn = "";
+                kind = "";
             }
-            if (allowExtns != null && !allowExtns.contains(extn)) {
-                throw new HongsExemption(400, "Extension '" +extn+ "' is not allowed");
+            if (allowKinds != null && !allowKinds.contains(kind)) {
+                throw new HongsExemption(400, "Extension '" +kind+ "' is not allowed");
             }
-            if ( denyExtns != null &&   denyExtns.contains(extn)) {
-                throw new HongsExemption(400, "Extension '" +extn+ "' is denied");
+            if ( denyKinds != null &&   denyKinds.contains(kind)) {
+                throw new HongsExemption(400, "Extension '" +kind+ "' is denied");
             }
-
-            /**
-             * 临时存储文件
-             * 不再需要暂存
-             * 可以直接利用 Part 继续向下传递
-             */
-            /*
-            String id = Core.getUniqueId();
-            String temp = path + File.separator + id + ".tmp";
-            String tenp = path + File.separator + id + ".tnp";
-            subn = subn.replaceAll("[\\r\\n\\\\/]", ""); // 清理非法字符: 换行和路径分隔符
-            subn = subn + "\r\n" + type + "\r\n" + size; // 拼接存储信息: 名称和类型及大小
-            try (
-                InputStream      xmin = part.getInputStream();
-                FileOutputStream mout = new FileOutputStream(temp);
-                FileOutputStream nout = new FileOutputStream(tenp);
-            ) {
-                byte[] nts = subn.getBytes("UTF-8");
-                byte[] buf = new byte[1024];
-                int    cnt ;
-                while((cnt = xmin.read(buf)) != -1) {
-                    mout.write(buf, 0, cnt);
-                }
-                nout.write(nts);
-            }
-            Dict.setParam( rd , id , name );
-            */
 
             Dict.setValue( ud, part, name  , null );
             Dict.setParam( rd, part, name );

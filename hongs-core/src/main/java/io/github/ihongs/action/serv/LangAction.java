@@ -235,25 +235,31 @@ public class LangAction
 
     public String make(String nam, String key)
     {
-      if (nam.endsWith(".json"))
-      {
-        nam = nam.substring (nam.length() - 5);
-        return this.makeCode(nam, key);
+      String  fmt;
+      int p = nam.lastIndexOf (".");
+      if (p > 0) {
+          fmt = nam.substring (1+p);
+      } else {
+          fmt = "" ;
       }
-      if (nam.endsWith(".num" ))
-      {
-        nam = nam.substring (nam.length() - 4);
-        return this.makeCode(nam, key);
-      }
-      else
-      {
-        return this.makeConf(nam, key);
+      switch (fmt) {
+        case "json":
+        case "bool":
+        case "num" :
+          nam = nam.substring (0,p);
+          return this.makeCode(nam, key);
+        case "str" :
+          nam = nam.substring (0,p);
+          return this.makeConf(nam, key);
+        default:
+          return this.makeConf(nam, key);
       }
     }
 
     private String makeCode(String nam, String key)
     {
-      String val = this.getValue(key, "null");
+      String val = this.getValue(key, "");
+      if ( val.isEmpty( ) ) val = "null" ;
       return "\t\""+ nam +"\":"  + val +  ",\r\n";
     }
 

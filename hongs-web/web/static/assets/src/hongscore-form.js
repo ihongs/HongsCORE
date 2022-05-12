@@ -277,14 +277,20 @@ HsForm.prototype = {
                 v  = this["_fill_"+t].call(this, i, v, n);
             }
             // 无值不理会
-            if (!v && v !== 0 && v !== "") {
+            if (! v && v !== 0 && v !== "") {
                 continue;
             }
 
-            if (i.attr("type") === "file") {
-                i.attr("data-value", v).change();
+            if (i.is(":file")) {
+                i.attr("data-value", v ).change();
             } else
-            if (i.is  ("input,select,textarea")) {
+            if (i.is(":checkbox,:radio")) {
+                if (!jQuery.isArray( v )) {
+                    v = [v];
+                }
+                i.val (v).change();
+            } else
+            if (i.is("input,select,textarea")) {
                 i.val (v).change();
             } else {
                 i.text(v);

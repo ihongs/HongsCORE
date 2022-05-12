@@ -318,13 +318,15 @@ public class IsFile extends Rule {
      */
     protected String stores(String href, String temp) throws Wrong {
         // 允许不加 http 或 https
-        if (href.startsWith( "/" ) ) href = "http:" + href ;
+        if (href.startsWith("/")) {
+            href = "http:"+href ;
+        }
 
         URL url = null;
         try {
-            url = new URL(href);
+            url = new URL (href);
         } catch (MalformedURLException ex) {
-            throw new Wrong(ex, "file.url.has.error", href);
+            throw new Wrong(ex, "core.file.url.has.error", href);
         }
 
            URLConnection cnn ;
@@ -334,59 +336,73 @@ public class IsFile extends Rule {
             cnn = url.openConnection( );
             ins = cnn.getInputStream( );
 
-            // 从响应头中获取到名称
-            String name;
-            do {
+            // 从响应头取名称和类型
+            String name = cnn.getHeaderField("Content-Disposition");
+            String type = cnn.getHeaderField("Content-Type");
+            String kind = null;
+            if (type  !=  null) {
                 Pattern pat;
                 Matcher mat;
-
-                name = cnn.getHeaderField("Content-Disposition");
-                if (name != null) {
-                    pat = Pattern.compile("filename=\"(.*?)\"" );
-                    mat = pat.matcher(name);
-                    if (mat.find()) {
-                        name = mat.group(1);
-                        break;
-                    }
+                pat = Pattern.compile (  "^[^/]+/[^/; ]+"  );
+                mat = pat.matcher(name);
+                if (mat.find()) {
+                    name = mat.group(0);
                 }
-
-                name = cnn.getHeaderField("Content-Type");
-                if (name != null) {
-                    pat = Pattern.compile( "^\\w+/\\w+" );
-                    mat = pat.matcher(name);
-                    if (mat.find()) {
-                        name = mat.group(0).replace( "/" , "." );
-                        break;
-                    }
-                }
-
-                name = cnn.getURL().getPath().replaceAll("[\\?#].*", "");
             }
-            while (false);
+            if (name  !=  null) {
+                Pattern pat;
+                Matcher mat;
+                pat = Pattern.compile ("filename=\"(.*?)\"");
+                mat = pat.matcher(name);
+                if (mat.find()) {
+                    name = mat.group(1);
+                } else {
+                    name = cnn.getURL().getPath().replaceAll("[\\?#].*", "");
+                }
+            } else {
+                    name = cnn.getURL().getPath().replaceAll("[\\?#].*", "");
+            }
 
-            // 重组名称避免无法存储
+            // 从文件名拆分出扩展名
             int i  = name.lastIndexOf( '/' );
             if (i != -1) {
                 name = name.substring(i + 1);
             }
             int j  = name.lastIndexOf( '.' );
             if (j != -1) {
-                String kind;
                 kind = name.substring(j + 1);
                 name = name.substring(0 , j);
+            }
 
-                // 检查扩展名
-                CoreConfig c = CoreConfig.getInstance( "default" );
-                String d = c.getProperty("fore.upload.deny.kinds");
-                if (Synt.toTerms(d).contains(kind)) {
-                    throw new Wrong("fore.form.upload.failed");
-                }
+            // 检查文件类型是否合法
+            CoreConfig c = CoreConfig.getInstance ("default");
+            /**/Object p ;
+                p  = getParam("type");
+            if (p != null && !Synt.toTerms(p).contains(type)) {
+                throw new Wrong("core.file.url.not.allow", href);
+            }   p  = c.getProperty("fore.upload.allow.types");
+            if (p != null && !Synt.toTerms(p).contains(type)) {
+                throw new Wrong("core.file.url.not.allow", href);
+            }   p  = c.getProperty( "fore.upload.deny.types");
+            if (p != null &&  Synt.toTerms(p).contains(type)) {
+                throw new Wrong("core.file.url.not.allow", href);
+            }
+                p  = getParam("kind");
+            if (p != null && !Synt.toTerms(p).contains(kind)) {
+                throw new Wrong("core.file.url.not.allow", href);
+            }   p  = c.getProperty("fore.upload.allow.kinds");
+            if (p != null && !Synt.toTerms(p).contains(kind)) {
+                throw new Wrong("core.file.url.not.allow", href);
+            }   p  = c.getProperty( "fore.upload.deny.kinds");
+            if (p != null &&  Synt.toTerms(p).contains(kind)) {
+                throw new Wrong("core.file.url.not.allow", href);
+            }
 
+            if (kind != null && !kind.isEmpty()) {
                 name = URLEncoder.encode(name, "UTF-8")
-                     + "."
-                     + URLEncoder.encode(kind, "UTF-8");
+                +"." + URLEncoder.encode(kind, "UTF-8");
             } else {
-                name = URLEncoder.encode(name, "UTF-8");
+                name = URLEncoder.encode(name, "UTF-8"); // 编码规避特殊字符
             }
                 name = Core.newIdentity () + "!" + name; // 加上编号避免重名
 

@@ -334,7 +334,6 @@ public class IsFile extends Rule {
         FileOutputStream out = null;
         try {
             cnn = url.openConnection( );
-            ins = cnn.getInputStream( );
 
             // 从响应头取名称和类型
             String name = cnn.getHeaderField("Content-Disposition");
@@ -415,6 +414,7 @@ public class IsFile extends Rule {
 
             // 将上传的存入临时文件
             out  = new FileOutputStream( file );
+            ins  = cnn.getInputStream();
             byte[] buf = new byte[1024];
             int    ovr ;
             while((ovr = ins.read(buf )) != -1) {

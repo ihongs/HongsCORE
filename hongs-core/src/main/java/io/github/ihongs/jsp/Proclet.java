@@ -68,6 +68,34 @@ abstract public class Proclet extends ActionDriver implements HttpJspPage
     }
   }
 
+  public String getSourceName(String url)
+  {
+    url = url.substring(1);
+    int p  = url.lastIndexOf("/");
+    if (p != -1) url = url.substring(0+p);
+    return url;
+  }
+
+  public String getSourceName(HttpServletRequest req)
+  {
+    return getSourceName(ActionDriver.getRecentPath(req));
+  }
+
+  public String getMethodName(String url)
+  {
+    url = url.substring(1);
+    int p  = url.lastIndexOf("/");
+    if (p != -1) url = url.substring(0+p);
+        p  = url.lastIndexOf(".");
+    if (p != -1) url = url.substring(0,p);
+    return url;
+  }
+
+  public String getMethodName(HttpServletRequest req)
+  {
+    return getMethodName(ActionDriver.getRecentPath(req));
+  }
+
   /**
    * 将非 GET,HEAD 转为 POST
    * 规避 JSP 拒绝处理的问题

@@ -113,9 +113,9 @@ public class IsFile extends Rule {
         } // End If
 
         UploadHelper hlpr = new UploadHelper();
-        String href;
-        String path;
         Object para;
+        String path;
+        String href;
         String name;
         long   size;
 

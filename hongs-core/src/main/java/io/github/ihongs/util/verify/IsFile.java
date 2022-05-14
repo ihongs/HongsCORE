@@ -86,10 +86,9 @@ public class IsFile extends Rule {
                     }
                 }
                 // 如果是目标路径则不再下载
-                // 需先对目标路径作参数补全
                 x = (String) getParam ("href");
                 if (x != null && !"".equals(x)) {
-                    x  = getUrl(x);
+                    x  = getUrl(x); // 补全
                     if (u.startsWith(x)) {
                         value = u ;
                         break ;
@@ -98,7 +97,7 @@ public class IsFile extends Rule {
                 // 如果有临时目录则下载到这
                 x = (String) getParam ("temp");
                 if (x != null && !"".equals(x)) {
-                    x  = getDir(x);
+                    x  = getDir(x); // 补全
                 } else {
                     x  = Core.BASE_PATH
                        + "/static/upload/tmp" ;

@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * 接口代理
+ * 动作代理
  * 需要覆盖 service(HttpServletRequest, HttpServletResponse)
  * 建议采用 Filter 而非 Servlet, 避免同级和下级目录也被接管.
  * @author Kevin

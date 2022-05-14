@@ -80,6 +80,15 @@
             <param name="default">1</param>
         </field>
     </form>
+    <form name="dept">
+        <field name="name" required="yes">
+        </field>
+        <field name="state" type="enum">
+            <param name="conf">master</param>
+            <param name="enum">stat</param>
+            <param name="default">1</param>
+        </field>
+    </form>
     <enum name="stat">
         <value code="1" >正常</value>
         <value code="-1">锁定</value>

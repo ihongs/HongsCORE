@@ -48,6 +48,8 @@ import org.apache.http.util.EntityUtils;
  */
 public final class Remote {
 
+    private Remote () {}
+
     public static enum METHOD { GET, PUT, POST, PATCH, DELETE };
 
     public static enum FORMAT { JSON, FORM, PART };

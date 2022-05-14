@@ -2,24 +2,20 @@ package io.github.ihongs.util.verify;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
-import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsExemption;
+import io.github.ihongs.action.DownPart;
 import io.github.ihongs.action.UploadHelper;
 import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.net.URLEncoder;
-import java.net.URLConnection;
-import java.net.MalformedURLException;
 import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.regex.Matcher;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 import javax.servlet.http.Part;
 
@@ -85,23 +81,29 @@ public class IsFile extends Rule {
                 x = Core.SERVER_HREF.get()+"/";
                 if (x != null && !"".equals(x)) {
                     if (u.startsWith(x)) {
-                        value = u;
+                        value = u ;
                         break ;
                     }
                 }
+                // 如果是目标路径则不再下载
+                // 需先对目标路径作参数补全
                 x = (String) getParam ("href");
                 if (x != null && !"".equals(x)) {
+                    x  = getUrl(x);
                     if (u.startsWith(x)) {
-                        value = u;
+                        value = u ;
                         break ;
                     }
                 }
                 // 如果有临时目录则下载到这
                 x = (String) getParam ("temp");
-                if (x == null ||  "".equals(x)) {
-                    x = Core.BASE_PATH + "/static/upload/tmp";
+                if (x != null && !"".equals(x)) {
+                    x  = getDir(x);
+                } else {
+                    x  = Core.BASE_PATH
+                       + "/static/upload/tmp" ;
                 }
-                value = stores(value.toString(), x);
+                value  = stores(value.toString( ), x);
                 if (value == null) {
                     return   null;
                 }
@@ -202,7 +204,7 @@ public class IsFile extends Rule {
 
         // 大小检查, 超限报错
         long max = getParam("size" , Long.MAX_VALUE);
-        if (size > max) {
+        if ( max < size ) {
             throw new Wrong("core.file.size.invalid", String.valueOf(max));
         }
 
@@ -309,137 +311,16 @@ public class IsFile extends Rule {
     }
 
     /**
-     * 远程文件预先下载到本地
-     * 返回临时名称
+     * 远程文件下载到本地
+     * 返回临时名称, 或者临时文件, 或者包装了的 Part
      * @param href 文件链接
      * @param temp 临时目录
      * @return
      * @throws Wrong
      */
-    protected String stores(String href, String temp) throws Wrong {
-        // 允许不加 http 或 https
-        if (href.startsWith("/")) {
-            href = "http:"+href ;
-        }
-
-        URL url = null;
-        try {
-            url = new URL (href);
-        } catch (MalformedURLException ex) {
-            throw new Wrong(ex, "core.file.url.has.error", href);
-        }
-
-           URLConnection cnn ;
-             InputStream ins = null;
-        FileOutputStream out = null;
-        try {
-            cnn = url.openConnection( );
-
-            // 从响应头取名称和类型
-            String name = cnn.getHeaderField("Content-Disposition");
-            String type = cnn.getHeaderField("Content-Type");
-            String kind = null;
-            if (type  !=  null) {
-                Pattern pat;
-                Matcher mat;
-                pat = Pattern.compile (  "^[^/]+/[^/; ]+"  );
-                mat = pat.matcher(name);
-                if (mat.find()) {
-                    name = mat.group(0);
-                }
-            }
-            if (name  !=  null) {
-                Pattern pat;
-                Matcher mat;
-                pat = Pattern.compile ("filename=\"(.*?)\"");
-                mat = pat.matcher(name);
-                if (mat.find()) {
-                    name = mat.group(1);
-                } else {
-                    name = cnn.getURL().getPath().replaceAll("[\\?#].*", "");
-                }
-            } else {
-                    name = cnn.getURL().getPath().replaceAll("[\\?#].*", "");
-            }
-
-            // 从文件名拆分出扩展名
-            int i  = name.lastIndexOf( '/' );
-            if (i != -1) {
-                name = name.substring(i + 1);
-            }
-            int j  = name.lastIndexOf( '.' );
-            if (j != -1) {
-                kind = name.substring(j + 1);
-                name = name.substring(0 , j);
-            }
-
-            // 检查文件类型是否合法
-            CoreConfig c = CoreConfig.getInstance ("default");
-            /**/Object p ;
-                p  = getParam("type");
-            if (p != null && !Synt.toTerms(p).contains(type)) {
-                throw new Wrong("core.file.url.not.allow", href);
-            }   p  = c.getProperty("fore.upload.allow.types");
-            if (p != null && !Synt.toTerms(p).contains(type)) {
-                throw new Wrong("core.file.url.not.allow", href);
-            }   p  = c.getProperty( "fore.upload.deny.types");
-            if (p != null &&  Synt.toTerms(p).contains(type)) {
-                throw new Wrong("core.file.url.not.allow", href);
-            }
-                p  = getParam("kind");
-            if (p != null && !Synt.toTerms(p).contains(kind)) {
-                throw new Wrong("core.file.url.not.allow", href);
-            }   p  = c.getProperty("fore.upload.allow.kinds");
-            if (p != null && !Synt.toTerms(p).contains(kind)) {
-                throw new Wrong("core.file.url.not.allow", href);
-            }   p  = c.getProperty( "fore.upload.deny.kinds");
-            if (p != null &&  Synt.toTerms(p).contains(kind)) {
-                throw new Wrong("core.file.url.not.allow", href);
-            }
-
-            if (kind != null && !kind.isEmpty()) {
-                name = URLEncoder.encode(name, "UTF-8")
-                +"." + URLEncoder.encode(kind, "UTF-8");
-            } else {
-                name = URLEncoder.encode(name, "UTF-8"); // 编码规避特殊字符
-            }
-                name = Core.newIdentity () + "!" + name; // 加上编号避免重名
-
-            // 检查目录避免写入失败
-            File file = new File(temp + File.separator + name);
-            File fdir = file.getParentFile();
-            if (!fdir.exists()) {
-                 fdir.mkdirs();
-            }
-
-            // 将上传的存入临时文件
-            out  = new FileOutputStream( file );
-            ins  = cnn.getInputStream();
-            byte[] buf = new byte[1024];
-            int    ovr ;
-            while((ovr = ins.read(buf )) != -1) {
-                out.write(buf, 0, ovr );
-            }
-
-            return name;
-        } catch (IOException ex) {
-            throw new Wrong( ex, "core.file.can.not.fetch", href, temp);
-        } finally {
-            if (out != null) {
-                try {
-                    out.close( );
-                } catch (IOException ex) {
-                    throw new Wrong( ex, "core.file.can.not.close", temp);
-                }
-            }
-            if (ins != null) {
-                try {
-                    ins.close( );
-                } catch (IOException ex) {
-                    throw new Wrong( ex, "core.file.can.not.close", href);
-                }
-            }
-        }
+    protected Object stores(String href, String temp) throws Wrong {
+        String name = Synt.asString(getParam("__name__"));
+        return new DownPart(href , name);
     }
 
     /**
@@ -451,7 +332,7 @@ public class IsFile extends Rule {
      * @throws Wrong
      */
     protected String[] checks(String href, String path) throws Wrong {
-        return new String[] {href, path};
+        return new String [] {href , path};
     }
 
     /**
@@ -504,6 +385,36 @@ public class IsFile extends Rule {
 
         name = name.replace("+","%20");
         return path + name;
+    }
+
+    private String getUrl(String href) {
+        String CURR_SERV_HREF = Core.SERVER_HREF.get();
+        String CORE_SERV_PATH = Core.SERVER_PATH.get();
+
+        Map m = new HashMap();
+        m.put("SERV_HREF", CURR_SERV_HREF);
+        m.put("SERV_PATH", CORE_SERV_PATH);
+        m.put("BASE_HREF", CURR_SERV_HREF
+                         + CORE_SERV_PATH);
+        href = Syno.inject(href, m );
+
+        return href;
+    }
+
+    private String getDir(String path) {
+        Map m = new HashMap();
+        m.put("BASE_PATH", Core.BASE_PATH);
+        m.put("CORE_PATH", Core.CORE_PATH);
+        m.put("CONF_PATH", Core.CONF_PATH);
+        m.put("DATA_PATH", Core.DATA_PATH);
+        path = Syno.inject(path, m );
+
+        // 对相对路径进行补全
+        if (! new File(path).isAbsolute()) {
+            path = Core.BASE_PATH  + "/" + path;
+        }
+
+        return path;
     }
 
     private static final Pattern HREF_PATT = Pattern.compile("^(\\w+:)?//.*");

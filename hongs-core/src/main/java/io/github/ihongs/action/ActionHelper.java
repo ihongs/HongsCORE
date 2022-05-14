@@ -342,6 +342,7 @@ public class ActionHelper implements Cloneable
     if (x != null) {
          denyKinds = new HashSet(Arrays.asList(x.split(",")));
     }
+    long sizeLimit = conf.getProperty("fore.upload.size.limit", 0L);
 
     //** 解析数据 **/
 
@@ -369,6 +370,11 @@ public class ActionHelper implements Cloneable
                     Dict.setParam  ( rd , null , name );
                 }
                 continue;
+            }
+
+            // 检查大小
+            if (sizeLimit > 0 && sizeLimit < size) {
+                throw new HongsExemption(400, "File size must not exceed "+ sizeLimit);
             }
 
             // 检查类型

@@ -30,7 +30,7 @@ import javax.servlet.http.Part;
 
 /**
  * 文件上传助手
- * 
+ *
  * <h3>异常代码</h3>
  * <pre>
  * 代码区间 1120~1124
@@ -137,21 +137,23 @@ public class UploadHelper {
 
     private void chkTypeOrKind(String type, String kind) throws Wrong {
         /**
-         * 检查文件类型
-         */
-        if (this.allowTypes != null
-        && !this.allowTypes.contains(type)) {
-            // 文件类型不对
-            throw new Wrong("core.file.type.invalid", Syno.concat(",", this.allowTypes));
-        }
-
-        /**
          * 检查扩展名
          */
         if (this.allowKinds != null
         && !this.allowKinds.contains(kind)) {
             // 扩展名不对
             throw new Wrong("core.file.kind.invalid", Syno.concat(",", this.allowKinds));
+        }
+
+        /**
+         * 检查文件类型
+         */
+        String typa = type.replaceFirst("/.*", "/*");
+        if (this.allowTypes != null
+        && !this.allowTypes.contains(type)
+        && !this.allowTypes.contains(typa)) {
+            // 文件类型不对
+            throw new Wrong("core.file.type.invalid", Syno.concat(",", this.allowTypes));
         }
     }
 
@@ -212,14 +214,16 @@ public class UploadHelper {
     }
 
     private String getResultHref(String href) {
-        Map m = new HashMap();
         String CURR_SERV_HREF = Core.SERVER_HREF.get();
         String CORE_SERV_PATH = Core.SERVER_PATH.get();
+
+        Map m = new HashMap();
         m.put("SERV_HREF", CURR_SERV_HREF);
         m.put("SERV_PATH", CORE_SERV_PATH);
         m.put("BASE_HREF", CURR_SERV_HREF
                          + CORE_SERV_PATH);
         href = Syno.inject(href, m );
+
         return href;
     }
 

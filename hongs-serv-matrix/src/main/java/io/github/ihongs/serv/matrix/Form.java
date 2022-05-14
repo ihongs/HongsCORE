@@ -1086,7 +1086,7 @@ public class Form extends Model {
     }
 
     protected void updateUnitMenu(String id) throws HongsException {
-        new Unit().updateMenus( );
+        new Furl().updateMenus( );
     }
 
     private Document makeDocument() throws HongsException {

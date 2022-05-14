@@ -4,8 +4,8 @@
 -- 单元
 --
 
-DROP TABLE IF EXISTS `a_matrix_unit`;
-CREATE TABLE `a_matrix_unit` (
+DROP TABLE IF EXISTS `a_matrix_furl`;
+CREATE TABLE `a_matrix_furl` (
   `id` CHAR(16) NOT NULL,
   `pid` CHAR(16) DEFAULT NULL,
   `name` VARCHAR(200) NOT NULL,
@@ -16,15 +16,15 @@ CREATE TABLE `a_matrix_unit` (
   `boost` INTEGER DEFAULT '0',
   `state` TINYINT DEFAULT '1',
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`pid`) REFERENCES `a_matrix_unit` (`id`) ON DELETE CASCADE
+  FOREIGN KEY (`pid`) REFERENCES `a_matrix_furl` (`id`) ON DELETE CASCADE
 );
 
-CREATE INDEX `IK_a_matrix_unit_unit` ON `a_matrix_unit` (`pid`);
-CREATE INDEX `IK_a_matrix_unit_state` ON `a_matrix_unit` (`state`);
-CREATE INDEX `IK_a_matrix_unit_boost` ON `a_matrix_unit` (`boost`);
-CREATE INDEX `IK_a_matrix_unit_ctime` ON `a_matrix_unit` (`ctime`);
-CREATE INDEX `IK_a_matrix_unit_mtime` ON `a_matrix_unit` (`mtime`);
-CREATE UNIQUE INDEX `UK_a_matrix_unit_name` ON `a_matrix_unit` (`name`,`pid`);
+CREATE INDEX `IK_a_matrix_furl_pid` ON `a_matrix_furl` (`pid`);
+CREATE INDEX `IK_a_matrix_furl_state` ON `a_matrix_furl` (`state`);
+CREATE INDEX `IK_a_matrix_furl_boost` ON `a_matrix_furl` (`boost`);
+CREATE INDEX `IK_a_matrix_furl_ctime` ON `a_matrix_furl` (`ctime`);
+CREATE INDEX `IK_a_matrix_furl_mtime` ON `a_matrix_furl` (`mtime`);
+CREATE UNIQUE INDEX `UK_a_matrix_furl_name` ON `a_matrix_furl` (`name`,`pid`);
 
 --
 -- 表单
@@ -33,7 +33,7 @@ CREATE UNIQUE INDEX `UK_a_matrix_unit_name` ON `a_matrix_unit` (`name`,`pid`);
 DROP TABLE IF EXISTS `a_matrix_form`;
 CREATE TABLE `a_matrix_form` (
   `id` CHAR(16) NOT NULL,
-  `unit_id` CHAR(16) NOT NULL,
+  `furl_id` CHAR(16) NOT NULL,
   `name` VARCHAR(200) NOT NULL,
   `icon` VARCHAR(100) DEFAULT NULL,
   `note` TEXT,
@@ -43,15 +43,15 @@ CREATE TABLE `a_matrix_form` (
   `boost` INTEGER DEFAULT '0',
   `state` TINYINT DEFAULT '1',
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`unit_id`) REFERENCES `a_matrix_unit` (`id`) ON DELETE CASCADE
+  FOREIGN KEY (`furl_id`) REFERENCES `a_matrix_furl` (`id`) ON DELETE CASCADE
 );
 
-CREATE INDEX `IK_a_matrix_form_unit` ON `a_matrix_form` (`unit_id`);
+CREATE INDEX `IK_a_matrix_form_furl` ON `a_matrix_form` (`furl_id`);
 CREATE INDEX `IK_a_matrix_form_state` ON `a_matrix_form` (`state`);
 CREATE INDEX `IK_a_matrix_form_boost` ON `a_matrix_form` (`boost`);
 CREATE INDEX `IK_a_matrix_form_ctime` ON `a_matrix_form` (`ctime`);
 CREATE INDEX `IK_a_matrix_form_mtime` ON `a_matrix_form` (`mtime`);
-CREATE UNIQUE INDEX `UK_a_matrix_form_name` ON `a_matrix_form` (`name`,`unit_id`);
+CREATE UNIQUE INDEX `UK_a_matrix_form_name` ON `a_matrix_form` (`name`,`furl_id`);
 
 --
 -- 数据
@@ -86,11 +86,11 @@ CREATE INDEX `IK_a_matrix_data_rtime` ON `a_matrix_data` (`rtime`);
 -- 预定内置关联资源
 --
 
-INSERT INTO a_matrix_unit (`id`, `pid`, `name`, `icon`, `note`, `ctime`, `mtime`, `boost`, `state`)
+INSERT INTO a_matrix_furl (`id`, `pid`, `name`, `icon`, `note`, `ctime`, `mtime`, `boost`, `state`)
 VALUES ('-', NULL, 'Base', '', '', 0, 0, 0, 1),
        ('0', NULL, 'Root', '', '', 0, 0, 0, 1);
 
-INSERT INTO a_matrix_form (`id`, `unit_id`, `name`, `icon`, `note`, `conf`, `ctime`, `mtime`, `boost`, `state`)
+INSERT INTO a_matrix_form (`id`, `furl_id`, `name`, `icon`, `note`, `conf`, `ctime`, `mtime`, `boost`, `state`)
 VALUES ('user', '-', '用户', '', '', '{
     "form":"user",
     "conf":"master",

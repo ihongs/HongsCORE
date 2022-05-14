@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
-    <form name="unit">
+    <form name="furl">
         <field name="icon" text="图标" type="file" rule="Thumb">
             <param name="href">static/upload/matrix/icon</param>
             <param name="path">static/upload/matrix/icon</param>

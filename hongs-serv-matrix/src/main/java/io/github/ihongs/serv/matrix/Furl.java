@@ -40,16 +40,16 @@ import org.w3c.dom.Element;
  * 单元模型
  * @author Hongs
  */
-public class Unit extends Grade {
+public class Furl extends Grade {
 
     protected String centra = "centra/data";
     protected String centre = "centre/data";
 
-    public Unit() throws HongsException {
-        this(DB.getInstance("matrix").getTable("unit"));
+    public Furl() throws HongsException {
+        this(DB.getInstance("matrix").getTable("furl"));
     }
 
-    public Unit(Table table) throws HongsException {
+    public Furl(Table table) throws HongsException {
         super(table);
     }
 
@@ -109,15 +109,15 @@ public class Unit extends Grade {
         // 从导航表中取单元ID
         Set<String> us = new HashSet();
         NaviMap     nv = NaviMap.getInstance(centra);
-        getSubUnits(nv.menus, nv.getRoleSet ( ), us);
+        getSubFurls(nv.menus, nv.getRoleSet ( ), us);
 
         // 限制为有权限的单元
         caze.filter("`"+table.name+"`.`id` IN (?)", us);
     }
 
-    private static final Pattern UNIT_CODE = Pattern.compile("\\Wx=(\\w+)");
+    private static final Pattern FURL_CODE = Pattern.compile("\\Wx=(\\w+)");
 
-    private int getSubUnits(Map<String, Map> menus, Set<String> roles, Set<String> units) {
+    private int getSubFurls(Map<String, Map> menus, Set<String> roles, Set<String> furls) {
         /**
          * 返回值及 hasRol 和 hasSub 取值含义为:
          * 0 无角色设置
@@ -142,18 +142,18 @@ public class Unit extends Grade {
 
             int hasSub = menus2 == null || menus2.isEmpty( ) ? 0 : 1;
             if (hasSub == 1) {
-                hasSub = getSubUnits(menus2 , roles , units);
+                hasSub = getSubFurls(menus2 , roles , furls);
             }
 
             if (hasRol == 0 && hasSub == 0) {
                 cntNul += 1;
-                Matcher m = UNIT_CODE.matcher(href);
-                if (m.find()) units.add(m.group(1));
+                Matcher m = FURL_CODE.matcher(href);
+                if (m.find()) furls.add(m.group(1));
             } else
             if (hasRol == 1 || hasSub == 1) {
                 cntRol += 1;
-                Matcher m = UNIT_CODE.matcher(href);
-                if (m.find()) units.add(m.group(1));
+                Matcher m = FURL_CODE.matcher(href);
+                if (m.find()) furls.add(m.group(1));
             }
         }
 
@@ -200,7 +200,7 @@ public class Unit extends Grade {
         insertForms(centraDocm, centraRoot, centreDocm, centreRoot, "0");
 
         // 第一层单元
-        insertUnits(centraDocm, centraRoot, centreDocm, centreRoot, "0");
+        insertFurls(centraDocm, centraRoot, centreDocm, centreRoot, "0");
 
         saveDocument(new File(Core.CONF_PATH+"/"+centra+Cnst.NAVI_EXT+".xml"), centraDocm);
         saveDocument(new File(Core.CONF_PATH+"/"+centre+Cnst.NAVI_EXT+".xml"), centreDocm);
@@ -217,7 +217,7 @@ public class Unit extends Grade {
 
         rows = this.db.getTable("form")
             .fetchCase()
-            .filter("unit_id = ? AND state > 0",id)
+            .filter("furl_id = ? AND state > 0",id)
             .select("id, state" )
             .assort("boost DESC")
             .getAll( );
@@ -251,7 +251,7 @@ public class Unit extends Grade {
         }
     }
 
-    private void insertUnits(
+    private void insertFurls(
             Document centraDocm, Element centraRoot,
             Document centreDocm, Element centreRoot,
             String id)

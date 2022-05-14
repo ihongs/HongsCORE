@@ -751,7 +751,7 @@ $.fn.hsCols = function() {
 
 function hsFormMove(treebox, listbox) {
     listbox.on("loadOver", function(evt, rst, mod) {
-        var uid = hsGetParam(mod._url , "unit_id");
+        var uid = hsGetParam(mod._url , "furl_id");
 
         listbox.find(".listbox tbody tr td:nth-child(3)")
         .draggable({
@@ -764,7 +764,7 @@ function hsFormMove(treebox, listbox) {
                 var txt = tr.find("td:eq(2)").clone();
                 return $('<table data-type="form"></table>')
                         .data("form_id" , fid)
-                        .data("unit_id" , uid)
+                        .data("furl_id" , uid)
                         .append($('<tr></tr>')
                                 //.append(img)
                                   .append(txt)
@@ -780,7 +780,7 @@ function hsFormMove(treebox, listbox) {
             revert: "invalid",
             helper: function() {
                 var txt = $(this).clone();
-                return $('<table data-type="unit"></table>')
+                return $('<table data-type="furl"></table>')
                         .append($('<tr></tr>').append(txt) );
             }
         });
@@ -794,7 +794,7 @@ function hsFormMove(treebox, listbox) {
             },
             drop: function(ev, ui) {
                 var pid = $(this).parent().closest(".tree-node").attr("id").substring(10);
-                if (ui.helper.data("type") == "unit") {
+                if (ui.helper.data("type") == "furl") {
                     var did = ui.draggable.closest(".tree-node").attr("id").substring(10);
                     var req = { id : did, pid : pid };
                     $.hsMask({
@@ -807,7 +807,7 @@ function hsFormMove(treebox, listbox) {
                             "label": "移动",
                             "click": function() {
                                 $.ajax({
-                                    url     : hsFixUri("centra/matrix/unit/save.act"),
+                                    url     : hsFixUri("centra/matrix/furl/save.act"),
                                     data    : hsSerialArr(req),
                                     type    : "POST",
                                     dataType: "JSON",
@@ -831,7 +831,7 @@ function hsFormMove(treebox, listbox) {
                     );
                 } else {
                     var fid = ui.helper.data("form_id");
-                    var req = {id: fid, "unit_id": pid};
+                    var req = {id: fid, "furl_id": pid};
                     $.hsMask({
                             "mode" : "warn",
                             "class": "alert-success",

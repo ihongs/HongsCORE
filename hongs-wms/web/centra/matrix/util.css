@@ -43,7 +43,7 @@
     color: #f22;
 }
 table[data-type=form] ,
-table[data-type=unit] {
+table[data-type=furl] {
     color: #000;
     background: #ddd;
     box-shadow: 0 0 8px #888;
@@ -54,6 +54,6 @@ table[data-type=unit] {
 table[data-type=form] td {
     padding: 8px 8px;
 }
-table[data-type=unit] td {
+table[data-type=furl] td {
     padding: 3px 8px;
 }

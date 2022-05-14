@@ -13,13 +13,13 @@ import java.util.Map;
  *
  * @author Hongs
  */
-@Action("centra/matrix/unit")
-public class UnitAction {
+@Action("centra/matrix/furl")
+public class FurlAction {
     
-    protected final Unit model;
+    protected final Furl model;
 
-    public UnitAction() throws HongsException {
-        model = (Unit) DB.getInstance("matrix").getModel("unit");
+    public FurlAction() throws HongsException {
+        model = (Furl) DB.getInstance("matrix").getModel("furl");
     }
 
     @Action("list")
@@ -39,7 +39,7 @@ public class UnitAction {
     }
 
     @Action("save")
-    @Verify(conf="matrix", form="unit")
+    @Verify(conf="matrix", form="furl")
     @CommitSuccess
     public void doSave(ActionHelper helper)
     throws HongsException {
@@ -47,7 +47,7 @@ public class UnitAction {
         String id = model.set(rd);
         CoreLocale  lang = CoreLocale.getInstance().clone( );
                     lang.load("matrix");
-        String ms = lang.translate("core.save.unit.success");
+        String ms = lang.translate("core.save.furl.success");
         helper.reply(ms, id);
     }
 
@@ -59,7 +59,7 @@ public class UnitAction {
         int rn = model.delete(rd);
         CoreLocale  ln = CoreLocale.getInstance().clone( );
                     ln.load("matrix");
-        String ms = ln.translate("core.delete.unit.success", null, Integer.toString(rn));
+        String ms = ln.translate("core.delete.furl.success", null, Integer.toString(rn));
         helper.reply(ms, rn);
     }
 

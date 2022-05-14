@@ -5,10 +5,10 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://ihongs.github.io/hongs-core db.xsd">
     <config link="centra"/>
     <tables>
-        <table name="unit"
-               tableName="a_matrix_unit"
+        <table name="furl"
+               tableName="a_matrix_furl"
                primaryKey="id"
-               model="io.github.ihongs.serv.matrix.Unit">
+               model="io.github.ihongs.serv.matrix.Furl">
             <param name="srchable">name,note</param>
         </table>
         <table name="form"
@@ -17,9 +17,9 @@ xsi:schemaLocation="http://ihongs.github.io/hongs-core db.xsd">
                model="io.github.ihongs.serv.matrix.Form">
             <param name="srchable">name,note</param>
             <assoc type="BLS_TO"
-                   name="unit"
-                   foreignKey="unit_id"
-                   tableName="matrix.unit">
+                   name="furl"
+                   foreignKey="furl_id"
+                   tableName="matrix.furl">
             </assoc>
             <param name="user.table">master.user</param>
             <param name="role.table">master.user_role</param>

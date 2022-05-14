@@ -1,9 +1,9 @@
 <h2>{DO}单元</h2>
-<div id="matrix-unit-form"
+<div id="matrix-furl-form"
      class="board"
      data-topple="hsForm"
-     data-load-url="centra/matrix/unit/info.act?id=${id}"
-     data-save-url="centra/matrix/unit/save.act"
+     data-load-url="centra/matrix/furl/info.act?id=${id}"
+     data-save-url="centra/matrix/furl/save.act"
      data--0="_fill_icon: (hsFormFillView) ">
     <form action="" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="id" />
@@ -12,7 +12,7 @@
             <label class="col-xs-3 col-md-2 control-label form-control-static text-right">名称</label>
             <div class="col-xs-9 col-md-8">
                 <input class="form-control" required="required" type="text" name="name"
-                       data-unique="centra/matrix/unit/unique.act?rb=id&id=${id}&pid=${pid}"
+                       data-unique="centra/matrix/furl/unique.act?rb=id&id=${id}&pid=${pid}"
                        placeholder="请输入名字用以作为菜单显示"/>
             </div>
             <div class="col-xs-9 col-md-2 col-xs-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>

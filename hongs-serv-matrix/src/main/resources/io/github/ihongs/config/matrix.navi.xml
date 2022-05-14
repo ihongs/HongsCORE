@@ -3,7 +3,7 @@
     <menu text="模型矩阵" href="centra/matrix/">
         <role text="查看表单" name="centra/matrix/form/search">
             <depend>centra</depend>
-            <depend>centra/matrix/unit/search</depend>
+            <depend>centra/matrix/furl/search</depend>
             <action>centra/matrix/form/search.act</action>
         </role>
         <role text="添加表单" name="centra/matrix/form/create">
@@ -18,21 +18,21 @@
             <depend>centra/matrix/form/search</depend>
             <action>centra/matrix/form/delete.act</action>
         </role>
-        <role text="查看单元" name="centra/matrix/unit/search">
+        <role text="查看单元" name="centra/matrix/furl/search">
             <depend>centra/matrix/form/search</depend>
-            <action>centra/matrix/unit/search.act</action>
+            <action>centra/matrix/furl/search.act</action>
         </role>
-        <role text="添加单元" name="centra/matrix/unit/create">
-            <depend>centra/matrix/unit/search</depend>
-            <action>centra/matrix/unit/create.act</action>
+        <role text="添加单元" name="centra/matrix/furl/create">
+            <depend>centra/matrix/furl/search</depend>
+            <action>centra/matrix/furl/create.act</action>
         </role>
-        <role text="修改单元" name="centra/matrix/unit/update">
-            <depend>centra/matrix/unit/search</depend>
-            <action>centra/matrix/unit/update.act</action>
+        <role text="修改单元" name="centra/matrix/furl/update">
+            <depend>centra/matrix/furl/search</depend>
+            <action>centra/matrix/furl/update.act</action>
         </role>
-        <role text="删除单元" name="centra/matrix/unit/delete">
-            <depend>centra/matrix/unit/search</depend>
-            <action>centra/matrix/unit/delete.act</action>
+        <role text="删除单元" name="centra/matrix/furl/delete">
+            <depend>centra/matrix/furl/search</depend>
+            <action>centra/matrix/furl/delete.act</action>
         </role>
     </menu>
 </root>

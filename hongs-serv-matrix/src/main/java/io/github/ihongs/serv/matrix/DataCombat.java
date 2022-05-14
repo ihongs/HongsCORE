@@ -553,13 +553,13 @@ public class DataCombat {
 
             // 提取所有表单记录
             try {
-                // unit_id 为 - 表示这是一个内置关联项, 这样的无需处理
+                // furl_id 为 - 表示这是一个内置关联项, 这样的无需处理
                 Loop lo = DB
                     .getInstance("matrix")
                     .getTable   ( "form" )
                     .fetchCase  ( )
                     .filter("`state` > 0")
-                    .filter("`unit_id` != '-'")
+                    .filter("`furl_id` != '-'")
                     .select("`id`")
                     .select();
                 for(Map ro : lo ) {

@@ -10,14 +10,14 @@
                  data-save-url="centra/matrix/form/save.act">
                 <form class="record-form">
                     <input type="hidden" name="id"/>
-                    <input type="hidden" name="unit_id"/>
+                    <input type="hidden" name="furl_id"/>
                     <input type="hidden" name="conf"   />
                     <div class="form-group" data-type="text">
                         <label class="control-label clearfix" style="display: block;">
                             <span>名称</span>
                         </label>
                         <input class="form-control" name="name" type="text" required="required"
-                               data-unique="centra/matrix/form/unique.act?rb=id&id=${id}&unit_id=${unit_id}"
+                               data-unique="centra/matrix/form/unique.act?rb=id&id=${id}&furl_id=${furl_id}"
                                placeholder="输入名字用以识别这个表单"/>
                     </div>
                     <div class="form-group">

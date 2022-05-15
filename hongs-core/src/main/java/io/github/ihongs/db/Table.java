@@ -15,8 +15,6 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
 import java.util.Iterator;
-import java.util.Arrays;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -856,32 +854,32 @@ public class Table
   //** 私有方法 **/
 
   private HongsException nullException(String field) {
-    String error = "Value for field $2 in table $0.$1 can not be NULL";
+    String error = "Value for field `$2` in table `$0.$1` can not be NULL";
     return new HongsException(1074, error, db.name,name, field);
   }
 
   private HongsException sizeException(String field, String value, int size) {
-    String error = "Value for field $2 in table $0.$1 must be a less than $4, value: $3";
+    String error = "Value for field `$2` in table `$0.$1` must be a less than $4, value: $3";
     return new HongsException(1075, error, db.name,name, field, value, size);
   }
 
   private HongsException scleException(String field, String value, int scle) {
-    String error = "Scale for field $2 in table $0.$1 must be a less than $4, value: $3";
+    String error = "Scale for field `$2` in table `$0.$1` must be a less than $4, value: $3";
     return new HongsException(1076, error, db.name,name, field, value, scle);
   }
 
   private HongsException numeException(String field, String value) {
-    String error = "Value for field $2 in table $0.$1 must be a standard number, value: $3";
+    String error = "Value for field `$2` in table `$0.$1` must be a standard number, value: $3";
     return new HongsException(1077, error, db.name,name, field, value);
   }
 
   private HongsException unsiException(String field, String value) {
-    String error = "Value for field $2 in table $0.$1 must be a unsigned number, value: $3";
+    String error = "Value for field `$2` in table `$0.$1` must be a unsigned number, value: $3";
     return new HongsException(1078, error, db.name,name, field, value);
   }
 
   private HongsException dateException(String field, String value, String format) {
-    String error = "Value for field $2 in table $0.$1 must like '$4', value: $3";
+    String error = "Value for field `$2` in table `$0.$1` must like '$4', value: $3";
     return new HongsException(1079, error, db.name,name, field, value, format);
   }
 

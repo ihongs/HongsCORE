@@ -114,8 +114,10 @@ public class Verify {
             }
 
             /**
-             * 字段名也可能用 a..b a[]b 的形式表示关联
-             * 需将其展开写入, 避免末层为数组
+             * 字段名也可能用 a..b a[]b
+             * 表示多对多关联
+             * 需将其展开写入
+             * 避免末层为数组
              */
             if (data instanceof Collection
             && (name.endsWith("." )

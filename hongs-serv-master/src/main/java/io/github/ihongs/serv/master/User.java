@@ -153,9 +153,7 @@ extends Model {
                 List list = Synt.asList(data.get( "roles" ));
                 AuthKit.cleanUserRoles (list, id);
 //              if ( list.isEmpty() ) {
-//                  throw new HongsException(400)
-//                      .setLocalizedContent("master.user.role.error")
-//                      .setLocalizedContext("master");
+//                  throw new HongsException(400, "master:master.user.role.error");
 //              }
                 data.put("roles", list);
             }

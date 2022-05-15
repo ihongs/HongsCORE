@@ -97,8 +97,10 @@ public class Verify {
             List<Ruly> rulez = et.getValue();
             String     name  = et.getKey(  );
             Object     data  ;
+            Object[]   keys  ;
 
-            data = Dict.get(values, STAND, Dict.splitKeys(name) );
+            keys = Dict.splitKeys(name);
+            data = Dict.get(values, STAND, keys);
             data = verify(values, cleans, wrongz, veriby, name, data, rulez);
 
             if (prompt && ! wrongz.isEmpty()) {
@@ -111,7 +113,20 @@ public class Verify {
                 continue;
             }
 
-            Dict.setParam(cleans, data, name);
+            /**
+             * 字段名也可能用 a..b a[]b 的形式表示关联
+             * 需将其展开写入, 避免末层为数组
+             */
+            if (data instanceof Collection
+            && (name.endsWith("." )
+            ||  name.contains("..")
+            ||  name.contains("[]"))) {
+            for(Object item : (Collection) data) {
+                Dict.put(cleans, item, keys);
+            }
+            } else {
+                Dict.put(cleans, data, keys);
+            }
         }
 
         if (!wrongz.isEmpty()) {

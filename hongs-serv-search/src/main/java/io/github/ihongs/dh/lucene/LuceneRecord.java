@@ -1081,7 +1081,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             //** 空值查询 **/
 
             v = vd.get(Cnst.IS_REL);
-            if ( v != null ) {
+            if ( v != null && !"".equals(v) ) {
                 String b = qa instanceof SearchQuery ? "$" : "@";
                 String a = Synt.asString(v).toUpperCase();
                 Query  p ;
@@ -1103,7 +1103,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                         i ++ ; j ++ ;
                         break;
                     default:
-                        throw new UnsupportedOperationException("Unsupported `is`: "+v);
+                        throw new HongsException(400, "Unsupported `is`: "+v);
                 }
             }
 

@@ -16,6 +16,7 @@ import io.github.ihongs.normal.serv.Record;
 import io.github.ihongs.serv.auth.AuthKit;
 import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Synt;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
@@ -170,6 +171,24 @@ public class UserAction {
             cp = true ;
         }
 
+        /**
+         * 2022/05/15
+         * 区分所属的分组和管理的分组
+         */
+        if (rd.containsKey("depts0")
+        ||  rd.containsKey("depts1")) {
+            List<Map> unit0 = Synt.asList(rd.get("depts0"));
+            List<Map> unit1 = Synt.asList(rd.get("depts1"));
+            List<Map> units = new ArrayList((unit0 != null ? unit0.size() : 0) + (unit1 != null ? unit1.size() : 0));
+            if (unit0 != null) for (Map item : unit0) {
+                units.add(item); item.put("type" , 0);
+            }
+            if (unit1 != null) for (Map item : unit1) {
+                units.add(item); item.put("type" , 1);
+            }
+            rd.put("depts", units);
+        }
+        
         String id = model.set(rd);
         CoreLocale  ln = CoreLocale.getInstance().clone( );
                     ln.load("master");

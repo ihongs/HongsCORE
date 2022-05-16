@@ -79,6 +79,10 @@
             <param name="enum">stat</param>
             <param name="default">1</param>
         </field>
+        <field name="depts0..dept_id" repeated="yes">
+        </field>
+        <field name="depts1..dept_id" repeated="yes">
+        </field>
     </form>
     <form name="dept">
         <field name="name" required="yes">

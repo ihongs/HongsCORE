@@ -10,7 +10,6 @@ import io.github.ihongs.db.Table;
 import io.github.ihongs.db.util.FetchCase;
 import io.github.ihongs.serv.auth.AuthKit;
 import io.github.ihongs.util.Synt;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -78,21 +77,29 @@ extends Model {
         if (Synt.declare (req.get("bind-scope"), false)) {
             ActionHelper helper = Core.getInstance(ActionHelper.class);
             String mid = (String) helper.getSessibute ( Cnst.UID_SES );
-            String pid = Synt.declare(req.get("dept_id"),"");
-            if (!Cnst.ADM_UID.equals( mid )) {
-            Set set = AuthKit.getUserDepts(mid);
-            if (!set.contains(Cnst.ADM_GID)) {
-                set = AuthKit.getMoreDepts(set);
-            if (!set.contains(pid)) {
+            Object pid =  req.get(  "dept_id" );
+            if (Cnst.ADM_UID.equals( mid )) {
+                caze.setOption("SCOPE" , 1);
+            } else {
+            Set set = AuthKit.getManaDepts(mid);
+            if (set.contains(Cnst.TOP_GID)) {
+                caze.setOption("SCOPE" , 2);
+            } else
+            if (pid. equals (Cnst.TOP_GID)) {
+                caze.filter ("`user`.`id` = ''"  ); // 空查询
+            } else
+            if (pid. equals ("" ) || ! (pid instanceof String) ) {
                 caze.by     (FetchCase.DISTINCT  ); // 去重复
                 caze.gotJoin("depts2")
                     .from   ("a_master_dept_user")
                     .by     (FetchCase.INNER)
                     .on     ("`depts2`.`user_id` = `user`.`id`")
                     .filter ("`depts2`.`dept_id` IN (?)" , set );
+            } else
+            if (set.contains(pid) == false) {
+                throw new HongsException(400, "master:master.user.area.error");
             }
-            } else caze.setOption("SCOPE" , 2 );
-            } else caze.setOption("SCOPE" , 1 );
+            }
         }
 
         /**
@@ -152,9 +159,9 @@ extends Model {
                 data.put("rtime", System.currentTimeMillis() / 1000);
                 List list = Synt.asList(data.get( "roles" ));
                 AuthKit.cleanUserRoles (list, id);
-//              if ( list.isEmpty() ) {
-//                  throw new HongsException(400, "master:master.user.role.error");
-//              }
+            //  if ( list.isEmpty() ) {
+            //      throw new HongsException(400, "master:master.user.role.error");
+            //  }
                 data.put("roles", list);
             }
 
@@ -172,33 +179,21 @@ extends Model {
 
         if (id != null) {
             // 超级管理员可操作任何用户
-            // 但允许操作自身账号
             ActionHelper helper = Core.getInstance(ActionHelper.class);
             String uid = (String) helper.getSessibute ( Cnst.UID_SES );
             if (Cnst.ADM_UID.equals(uid) || id.equals ( uid )) {
                 return;
             }
 
-            // 超级管理组可操作任何用户
-            // 但不包含超级管理员
-            Set cur = AuthKit.getUserDepts(uid);
-            if (cur.contains(Cnst.ADM_GID)
-            && !Cnst.ADM_UID.equals( id )) {
+            // 仅可以操作管理范围的用户
+            Set cur = AuthKit.getUserDepts( id);
+            Set mur = AuthKit.getManaDepts(uid);
+            for(Object pid : cur ) {
+            if (mur.contains(pid)) {
                 return;
-            }
+            }}
 
-            // 仅可以操作下级用户
-            Set tar = AuthKit.getLessDepts( id);
-            Dept dept = new Dept();
-            for (Object gid : cur) {
-                Set cld = new HashSet(dept.getChildIds((String) gid, true));
-                cld.retainAll(tar);
-                if(!cld.isEmpty()) {
-                    return;
-                }
-            }
-
-            throw new HongsException(400, "master:master.user.unit.error");
+            throw new HongsException(400, "master:master.user.area.error");
         }
     }
 

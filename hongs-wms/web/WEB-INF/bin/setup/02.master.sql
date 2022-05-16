@@ -120,10 +120,10 @@ INSERT INTO `a_master_user_role` VALUES ('1','centra/matrix/form/search');
 INSERT INTO `a_master_user_role` VALUES ('1','centra/matrix/form/create');
 INSERT INTO `a_master_user_role` VALUES ('1','centra/matrix/form/update');
 INSERT INTO `a_master_user_role` VALUES ('1','centra/matrix/form/delete');
-INSERT INTO `a_master_user_role` VALUES ('1','centra/matrix/unit/search');
-INSERT INTO `a_master_user_role` VALUES ('1','centra/matrix/unit/create');
-INSERT INTO `a_master_user_role` VALUES ('1','centra/matrix/unit/update');
-INSERT INTO `a_master_user_role` VALUES ('1','centra/matrix/unit/delete');
+INSERT INTO `a_master_user_role` VALUES ('1','centra/matrix/furl/search');
+INSERT INTO `a_master_user_role` VALUES ('1','centra/matrix/furl/create');
+INSERT INTO `a_master_user_role` VALUES ('1','centra/matrix/furl/update');
+INSERT INTO `a_master_user_role` VALUES ('1','centra/matrix/furl/delete');
 
 --
 -- 用户所属部门
@@ -133,15 +133,17 @@ DROP TABLE IF EXISTS `a_master_dept_user`;
 CREATE TABLE `a_master_dept_user` (
   `user_id` CHAR(16) NOT NULL,
   `dept_id` CHAR(16) NOT NULL,
-  PRIMARY KEY (`user_id`,`dept_id`),
+  `type` TINYINT DEFAULT '0', /* 0 所属部门, 1 管理部分 */
+  PRIMARY KEY (`user_id`,`dept_id`,`type`),
   FOREIGN KEY (`user_id`) REFERENCES `a_master_user` (`id`) ON DELETE CASCADE,
   FOREIGN KEY (`dept_id`) REFERENCES `a_master_dept` (`id`) ON DELETE CASCADE
 );
 
 CREATE INDEX `IK_a_master_dept_user_user` ON `a_master_dept_user` (`user_id`);
 CREATE INDEX `IK_a_master_dept_user_dept` ON `a_master_dept_user` (`dept_id`);
+CREATE INDEX `IK_a_master_dept_user_type` ON `a_master_dept_user` (`type`);
 
-INSERT INTO `a_master_dept_user` VALUES ('1','0');
+INSERT INTO `a_master_dept_user` VALUES ('1','0','0');
 
 --
 -- 用户关联登录

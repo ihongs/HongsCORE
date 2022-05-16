@@ -1,16 +1,13 @@
 
 function hsUserMove(treebox, listbox) {
-    var top_ids = {};
+    var topDisabled = false;
 
-    // 顶层需禁止操作
-    treebox.on("treeSelect", ".tree-node>table", function(ev, id) {
-        if (top_ids[id]) {
-            if (id == 0)ev.preventDefault(); // 受限时原始顶层不要打开用户列表
-            treebox.find(".for-select")
+    treebox.on("treeSelect", ".tree-node>table", function(evt, did) {
+        // 非超管禁加顶层
+        if (did === "0"
+        &&  topDisabled) {
+            treebox.find(".create")
                    .prop("disabled", true );
-        } else {
-            treebox.find(".for-select")
-                   .prop("disabled", false);
         }
     });
 
@@ -18,7 +15,8 @@ function hsUserMove(treebox, listbox) {
         var did = hsGetParam(mod._url , "dept_id");
 
         // 非管辖范围提示
-        if (top_ids[did]) {
+        if (did === "0") {
+        if (topDisabled) {
             listbox.find(".create" )
                    .prop("disabled", true );
             listbox.find(".pagebox .alert")
@@ -26,12 +24,11 @@ function hsUserMove(treebox, listbox) {
             listbox.find(".findbox .input-search")
                    .attr("placeholder", "可以搜全部用户哦");
             listbox.find(".listbox").addClass("on-top");
-        } else
-        if (did === "0" ) {
+        } else {
             listbox.find(".findbox .input-search")
                    .attr("placeholder", "可以搜全部用户哦");
             listbox.find(".listbox").addClass("on-top");
-        }
+        }}
 
         // 拖拽用户
         listbox.find(".listbox tbody tr td:nth-child(3)"
@@ -61,16 +58,13 @@ function hsUserMove(treebox, listbox) {
         // 非管辖范围处理
         if (rst.scope == 0
         &&  rst._pid  == 0 ) {
-            var  pid  ;
-            for(var i = 0; i < rst.list.length; i ++) {
-                var d = rst.list[i]["id"];
-                if (i < 1) pid = d;
-                top_ids[d] = true ;
-            }
-            top_ids[ "0" ] = true ;
+            topDisabled  =  true;
+            var  pid  = rst.list.length
+                      ? rst.list[0]["id"]
+                      : "0" ;
             mod.select (pid);
             mod.toggle (pid);
-            mod.getNode("0").children("table").hide();
+        //  mod.getNode("0").children("table").hide();
         }
 
         // 拖拽分组

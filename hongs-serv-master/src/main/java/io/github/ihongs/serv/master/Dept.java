@@ -10,7 +10,6 @@ import io.github.ihongs.db.Table;
 import io.github.ihongs.db.util.FetchCase;
 import io.github.ihongs.serv.auth.AuthKit;
 import io.github.ihongs.util.Synt;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -78,21 +77,26 @@ extends Grade {
         if (Synt.declare (req.get("bind-scope"), false)) {
             ActionHelper helper = Core.getInstance(ActionHelper.class);
             String mid = (String) helper.getSessibute ( Cnst.UID_SES );
-            String pid = Synt.declare(req.get("pid"),"");
-            if (!Cnst.ADM_UID.equals( mid )) {
-            Set set = AuthKit.getUserDepts(mid);
-            if (!set.contains(Cnst.ADM_GID)) {
-                if ("0".equals(  pid  )) {
-                    set = AuthKit.getLessDepts(set);
-                    req.remove( "pid" );
-                    req.put( "id", set);
-                } else {
-                    set = AuthKit.getMoreDepts(set);
-                    if (! set.contains( pid ) ) // 有则不必限制
-                    req.put( "id", set);
-                }
-            } else caze.setOption("SCOPE" , 2 );
-            } else caze.setOption("SCOPE" , 1 );
+            Object pid =  req.get(    "pid"   );
+            if (Cnst.ADM_UID.equals( mid )) {
+                caze.setOption("SCOPE" , 2);
+            } else {
+            Set set = AuthKit.getManaDepts(mid);
+            if (set.contains(Cnst.TOP_GID)) {
+                caze.setOption("SCOPE" , 1);
+            } else
+            if (pid. equals (Cnst.TOP_GID)) {
+                set = AuthKit.getLeadDepts(mid);
+                req.remove("pid");
+                req.put("id",set);
+            } else
+            if (pid. equals ( "") || ! (pid instanceof String) ) {
+                req.put("id",set);
+            } else
+            if (set.contains(pid) == false) {
+                throw new HongsException(400, "master:master.dept.area.error");
+            }
+            }
         }
 
         /**
@@ -136,9 +140,9 @@ extends Grade {
                 data.put("rtime", System.currentTimeMillis() / 1000);
                 List list = Synt.asList(data.get( "roles" ));
                 AuthKit.cleanDeptRoles (list, id);
-//              if ( list.isEmpty() ) {
-//                  throw new HongsException(400, "master.master.user.dept.error");
-//              }
+            //  if ( list.isEmpty() ) {
+            //      throw new HongsException(400, "master.master.user.dept.error");
+            //  }
                 data.put("roles", list);
             }
         } else {
@@ -175,29 +179,14 @@ extends Grade {
                 return;
             }
 
-            // 超级管理组可操作任何部门
-            // 但禁止操作顶级部门
-            Set cur = AuthKit.getUserDepts(uid);
-            if (cur.contains(Cnst.ADM_GID)
-            && !Cnst.ADM_GID.equals( id )) {
+            // 仅可以操作管理范围的部门
+            Set mur = AuthKit.getManaDepts(uid);
+            if (mur.contains( id )
+            &&  mur.contains(pid)) {
                 return;
             }
 
-            // 仅可以操作下级部门
-            for (Object gid : cur) {
-                Set cld = new HashSet(this.getChildIds((String) gid, true));
-                if (  null != pid
-                && (gid.  equals(pid)
-                ||  cld.contains(pid))) {
-                    return;
-                }
-                if (  null !=  id
-                &&  cld.contains( id) ) {
-                    return;
-                }
-            }
-
-            throw new HongsException(400, "master:master.dept.unit.error");
+            throw new HongsException(400, "master:master.dept.area.error");
         }
     }
 

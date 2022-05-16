@@ -114,11 +114,11 @@ public final class Cnst {
 
     public static final String  USK_SES =  "usk";  // 登录模式
 
+    public static final String  ADM_UID =  "1";    // 超级用户
+
     public static final String  GUS_UID =  "0";    // 访客用户
 
-    public static final String  ADM_UID =  "1";    // 超级管理员
-
-    public static final String  ADM_GID =  "0";    // 顶级管理组
+    public static final String  TOP_GID =  "0";    // 顶层用户组
 
     //** 请求属性 **/
 

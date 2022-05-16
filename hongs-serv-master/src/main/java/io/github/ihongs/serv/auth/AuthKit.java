@@ -29,10 +29,12 @@ import java.util.Set;
 import javax.servlet.http.HttpSession;
 
 /**
- * 登录工具
+ * 登录及权限工具
  * @author Hongs
  */
 public class AuthKit {
+
+    private  AuthKit () {}
 
     private static final byte[] PAZZ = {'A','B','C','D','E','F','1','2','3','4','5','6','7','8','9','0'};
     private static final String NAME = "uname" ;
@@ -333,6 +335,8 @@ public class AuthKit {
         }
     }
 
+    //** 分组权限辅助方法 **/
+
     /**
      * 获取分组拥有的权限
      * @param gid
@@ -391,14 +395,15 @@ public class AuthKit {
     }
 
     /**
-     * 获取所在的下级分组
+     * 获取管理的全部分组
      * @param uid
      * @return
      * @throws HongsException
      */
-    public static Set getMoreDepts(String uid) throws HongsException {
+    public static Set getManaDepts(String uid) throws HongsException {
         Table rel = DB.getInstance("master").getTable("dept_user");
         List<Map> lst = rel.fetchCase()
+            .filter("type = ?"   , 1  )
             .filter("user_id = ?", uid)
             .select("dept_id" )
             .getAll();
@@ -407,34 +412,21 @@ public class AuthKit {
         for(Map row : lst) {
             String id = (String) row.get("dept_id");
             set.addAll( dp.getChildIds(id , true) );
+            set.add   ( id );
         }
         return set;
     }
 
     /**
-     * 获取所在的下级分组
-     * @param deptIds
-     * @return
-     * @throws HongsException
-     */
-    public static Set getMoreDepts(Set<String> deptIds) throws HongsException {
-        Set set = new HashSet();
-        Dept dp = new Dept();
-        for(String id:deptIds ) {
-            set.addAll( dp.getChildIds(id , true) );
-        }
-        return set;
-    }
-
-    /**
-     * 获取所在的顶层分组
+     * 获取管理的顶层分组
      * @param uid
      * @return
      * @throws HongsException
      */
-    public static Set getLessDepts(String uid) throws HongsException {
+    public static Set getLeadDepts(String uid) throws HongsException {
         Table rel = DB.getInstance("master").getTable("dept_user");
         List<Map> lst = rel.fetchCase()
+            .filter("type = ?"   , 1  )
             .filter("user_id = ?", uid)
             .select("dept_id" )
             .getAll();
@@ -442,21 +434,6 @@ public class AuthKit {
         Dept dp = new Dept();
         for(Map row : lst) {
             String id = (String) row.get("dept_id");
-            set.add(getDeptPath(id, dp));
-        }
-        return getPeakPids(set);
-    }
-
-    /**
-     * 获取所在的顶层分组
-     * @param deptIds
-     * @return
-     * @throws HongsException
-     */
-    public static Set getLessDepts(Set<String> deptIds) throws HongsException {
-        Set set = new TreeSet();
-        Dept dp = new Dept();
-        for(String id:deptIds ) {
             set.add(getDeptPath(id, dp));
         }
         return getPeakPids(set);
@@ -476,7 +453,7 @@ public class AuthKit {
             return; // 超级管理员可以更改任何组的权限, 即使自己没有
         }
 
-            Set urs = getCurrRoles(cid);
+            Set urs = getUserRoles(cid);
         if (gid != null) {
             Set xrs = getDeptRoles(gid);
             xrs.addAll(urs);
@@ -524,7 +501,7 @@ public class AuthKit {
             return; // 超级管理员可以更改任何人的部门, 即使自己没有
         }
 
-            Set uds = getMoreDepts(cid);
+            Set uds = getManaDepts(cid);
         if (uid != null) {
             Set xds = getUserDepts(uid);
             xds.addAll(uds);
@@ -532,10 +509,6 @@ public class AuthKit {
         }
 
         cleanListItems(list,"dept_id",uds);
-    }
-
-    private static Set getCurrRoles(String uid) throws HongsException {
-        return RoleSet.getInstance (uid);
     }
 
     private static String getDeptPath(String id, Dept dp) throws HongsException {

@@ -1,6 +1,7 @@
 # 更新日志
 
-* 2022/03/26 Cmdlet 更名为 combat
+* 2022/05/15 master dept 更名为 unit, matrix unit 更名为 furl
+* 2022/03/26 cmdlet 更名为 combat
 * 2022/03/25 重构内部资源获取方法
 * 2022/01/01 将图标从 glyphicon 更换为 bootstrap-icons
 * 2021/12/26 将逆序由前缀"-"改为后缀"!", 以便于逐层传递时拆分

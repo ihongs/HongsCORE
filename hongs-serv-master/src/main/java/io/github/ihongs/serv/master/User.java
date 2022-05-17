@@ -77,11 +77,11 @@ extends Model {
         if (Synt.declare (req.get("bind-scope"), false)) {
             ActionHelper helper = Core.getInstance(ActionHelper.class);
             String mid = (String) helper.getSessibute ( Cnst.UID_SES );
-            Object pid =  req.get(  "dept_id" );
+            Object pid =  req.get(  "unit_id" );
             if (Cnst.ADM_UID.equals( mid )) {
                 caze.setOption("SCOPE" , 1);
             } else {
-            Set set = AuthKit.getManaDepts(mid);
+            Set set = AuthKit.getManaUnits(mid);
             if (set.contains(Cnst.TOP_GID)) {
                 caze.setOption("SCOPE" , 2);
             } else
@@ -90,11 +90,11 @@ extends Model {
             } else
             if (pid. equals ("" ) || ! (pid instanceof String) ) {
                 caze.by     (FetchCase.DISTINCT  ); // 去重复
-                caze.gotJoin("depts2")
-                    .from   ("a_master_dept_user")
+                caze.gotJoin("units2")
+                    .from   ("a_master_unit_user")
                     .by     (FetchCase.INNER)
-                    .on     ("`depts2`.`user_id` = `user`.`id`")
-                    .filter ("`depts2`.`dept_id` IN (?)" , set );
+                    .on     ("`units2`.`user_id` = `user`.`id`")
+                    .filter ("`units2`.`unit_id` IN (?)" , set );
             } else
             if (set.contains(pid) == false) {
                 throw new HongsException(400, "master:master.user.area.error");
@@ -103,24 +103,24 @@ extends Model {
         }
 
         /**
-         * 如果有指定 dept_id
-         * 则关联 a_master_dept_user 来约束范围
+         * 如果有指定 unit_id
+         * 则关联 a_master_unit_user 来约束范围
          * 当其为横杠时表示取那些没有关联的用户
          */
-        Object pid = req.get("dept_id");
+        Object pid = req.get("unit_id");
         if (null != pid && ! "".equals(pid)) {
             if ( "-".equals (pid ) ) {
-                caze.gotJoin("depts2")
-                    .from   ("a_master_dept_user")
+                caze.gotJoin("units2")
+                    .from   ("a_master_unit_user")
                     .by     (FetchCase.INNER)
-                    .on     ("`depts2`.`user_id` = `user`.`id`")
-                    .filter ("`depts2`.`dept_id` IS NULL" /**/ );
+                    .on     ("`units2`.`user_id` = `user`.`id`")
+                    .filter ("`units2`.`unit_id` IS NULL" /**/ );
             } else {
-                caze.gotJoin("depts2")
-                    .from   ("a_master_dept_user")
+                caze.gotJoin("units2")
+                    .from   ("a_master_unit_user")
                     .by     (FetchCase.INNER)
-                    .on     ("`depts2`.`user_id` = `user`.`id`")
-                    .filter ("`depts2`.`dept_id` IN (?)" , pid );
+                    .on     ("`units2`.`user_id` = `user`.`id`")
+                    .filter ("`units2`.`unit_id` IN (?)" , pid );
             }
         }
 
@@ -166,14 +166,14 @@ extends Model {
             }
 
             // 部门限制, 仅能指定当前登录用户下属的部门
-            if (data.containsKey("depts")) {
+            if (data.containsKey("units")) {
                 data.put("rtime", System.currentTimeMillis() / 1000);
-                List list = Synt.asList(data.get( "depts" ));
-                AuthKit.cleanUserDepts (list, id);
+                List list = Synt.asList(data.get( "units" ));
+                AuthKit.cleanUserUnits (list, id);
                 if ( list.isEmpty() ) {
-                    throw new HongsException(400, "master:master.user.dept.error");
+                    throw new HongsException(400, "master:master.user.unit.error");
                 }
-                data.put("depts", list);
+                data.put("units", list);
             }
         }
 
@@ -186,8 +186,8 @@ extends Model {
             }
 
             // 仅可以操作管理范围的用户
-            Set cur = AuthKit.getUserDepts( id);
-            Set mur = AuthKit.getManaDepts(uid);
+            Set cur = AuthKit.getUserUnits( id);
+            Set mur = AuthKit.getManaUnits(uid);
             for(Object pid : cur ) {
             if (mur.contains(pid)) {
                 return;

@@ -68,7 +68,7 @@ public class MineAction {
         rd.put( "id", id );
 
         // 禁止危险修改, 其实校验已经做过限制了. 这是以防万一
-        rd.remove("depts");
+        rd.remove("units");
         rd.remove("roles");
         rd.remove("state");
 
@@ -77,29 +77,43 @@ public class MineAction {
         String pw = (String) rd.get("password");
         String po = (String) rd.get("passolde");
         if (pw != null && ! "".equals(pw)) {
+            Map row = ut.fetchCase( )
+                .filter("id = ?", id)
+                .select("password , passcode")
+                .getOne( );
+            String ps = (String) row.get("password");
+            String pc = (String) row.get("passcode");
             Map xd = new HashMap();
             Map ed = new HashMap();
-            xd.put("ok",false);
-            xd.put("errs", ed);
-            xd.put("msg", CoreLocale.getInstance().translate("fore.form.invalid"));
-            if (po != null && !"".equals(po)) {
-                Map row = ut.fetchCase( )
-                    .filter("id = ?", id)
-                    .select("password , passcode")
-                    .getOne( );
-                String ps = (String) row.get("password");
-                String pc = (String) row.get("passcode");
-                if (pc != null) po += pc ;
+            xd.put("ok", false);
+            xd.put("errs", ed );
+            xd.put("msg" , CoreLocale.getInstance().translate("fore.form.invalid"));
+            if (po != null && ! "".equals(po)) {
+                if (ps == null) {
+                    ps  = "";
+                }
+                if (pc != null) {
+                    pw += pc;
+                    po += pc;
+                }
                 po = AuthKit.getCrypt(po);
                 if (! po.equals(ps)) {
-                    ed.put("passolde", "旧密码不正确");
+                    ed.put("passolde", CoreLocale.getInstance("master").translate("core.passolde.invalid"));
+                    ah.reply(xd);
+                    return;
+                }
+                pw = AuthKit.getCrypt(pw);
+                if (!!po.equals(pw)) {
+                    ed.put("password", CoreLocale.getInstance("master").translate("core.passolde.unchged"));
                     ah.reply(xd);
                     return;
                 }
             } else {
-                    ed.put("passolde", "请填写旧密码");
+                if (ps != null && !"".equals(ps)) {
+                    ed.put("passolde", CoreLocale.getInstance("master").translate("core.passolde.undefed"));
                     ah.reply(xd);
                     return;
+                }
             }
         }
 

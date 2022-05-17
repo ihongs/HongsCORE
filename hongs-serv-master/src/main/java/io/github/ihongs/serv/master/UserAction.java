@@ -44,18 +44,18 @@ public class UserAction {
     public void getList(ActionHelper helper)
     throws HongsException {
         Map  rd = helper.getRequestData();
-        byte wd =  Synt.declare(rd.get("with-depts") , (byte) 0);
+        byte wd =  Synt.declare(rd.get("with-units") , (byte) 0);
      boolean fd =  Synt.declare(rd.get("find-depth") ,  false  );
 
-        // With sub depts
+        // With sub units
         if ( fd ) {
-            Dept depth = (Dept) DB.getInstance("master")
-                                  .getModel   ( "dept" );
-            String pid =  Synt.declare(rd.get("dept_id"),  ""  );
+            Unit depth = (Unit) DB.getInstance("master")
+                                  .getModel   ( "unit" );
+            String pid =  Synt.declare(rd.get("unit_id"),  ""  );
             if (! "".equals( pid ) && ! "-".equals( pid ) ) {
                 Collection ids = depth.getChildIds( pid , true );
                            ids.add(pid);
-                rd.put("dept_id" , ids);
+                rd.put("unit_id" , ids);
             }
         }
 
@@ -63,41 +63,41 @@ public class UserAction {
         List<Map> list = (List) rd.get("list");
         if (list != null) {
 
-        // With all depts
+        // With all units
         if (wd == 1) {
             Map<String, Map> maps = new HashMap( );
             for ( Map info : list ) {
-                info.put( "depts" , new HashSet());
+                info.put( "units" , new HashSet());
                 maps.put(info.get("id").toString(), info);
             }
 
-            List<Map> rows = model.db.getTable("dept_user")
+            List<Map> rows = model.db.getTable("unit_user")
                 .fetchCase()
                 .filter("user_id IN (?)" , maps.keySet( ) )
-                .select("user_id, dept_id")
+                .select("user_id, unit_id")
                 .getAll(   );
-            for ( Map dept : rows ) {
-                String uid = dept.remove("user_id").toString();
-                ((Set) maps.get(uid).get("depts") ).add(dept );
+            for ( Map unit : rows ) {
+                String uid = unit.remove("user_id").toString();
+                ((Set) maps.get(uid).get("units") ).add(unit );
             }
         } else
         if (wd == 2) {
             Map<String, Map> maps = new HashMap( );
             for ( Map info : list ) {
-                info.put( "depts" , new HashSet());
+                info.put( "units" , new HashSet());
                 maps.put(info.get("id").toString(), info);
             }
 
-            List<Map> rows = model.db.getTable("dept_user")
+            List<Map> rows = model.db.getTable("unit_user")
                 .fetchCase()
-                .join(model.db.getTable("dept").tableName ,
-                    "dept", "dept_user.dept_id = dept.id" )
+                .join(model.db.getTable("unit").tableName ,
+                    "unit", "unit_user.unit_id = unit.id" )
                 .filter("user_id IN (?)" , maps.keySet( ) )
-                .select("user_id, dept_id, dept.*")
+                .select("user_id, unit_id, unit.*")
                 .getAll(   );
-            for ( Map dept : rows ) {
-                String uid = dept.remove("user_id").toString();
-                ((Set) maps.get(uid).get("depts") ).add(dept );
+            for ( Map unit : rows ) {
+                String uid = unit.remove("user_id").toString();
+                ((Set) maps.get(uid).get("units") ).add(unit );
             }
         }
 
@@ -175,10 +175,10 @@ public class UserAction {
          * 2022/05/15
          * 区分所属的分组和管理的分组
          */
-        if (rd.containsKey("depts0")
-        ||  rd.containsKey("depts1")) {
-            List<Map> unit0 = Synt.asList(rd.get("depts0"));
-            List<Map> unit1 = Synt.asList(rd.get("depts1"));
+        if (rd.containsKey("units0")
+        ||  rd.containsKey("units1")) {
+            List<Map> unit0 = Synt.asList(rd.get("units0"));
+            List<Map> unit1 = Synt.asList(rd.get("units1"));
             List<Map> units = new ArrayList((unit0 != null ? unit0.size() : 0) + (unit1 != null ? unit1.size() : 0));
             if (unit0 != null) for (Map item : unit0) {
                 units.add(item); item.put("type" , 0);
@@ -186,7 +186,7 @@ public class UserAction {
             if (unit1 != null) for (Map item : unit1) {
                 units.add(item); item.put("type" , 1);
             }
-            rd.put("depts", units);
+            rd.put("units", units);
         }
         
         String id = model.set(rd);

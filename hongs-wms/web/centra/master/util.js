@@ -12,7 +12,7 @@ function hsUserMove(treebox, listbox) {
     });
 
     listbox.on("loadOver", function(evt, rst, mod) {
-        var did = hsGetParam(mod._url , "dept_id");
+        var did = hsGetParam(mod._url , "unit_id");
 
         // 非管辖范围提示
         if (did === "0") {
@@ -41,11 +41,11 @@ function hsUserMove(treebox, listbox) {
                 var uid = tr.find("td:eq(0) input").val();
                 var img = tr.find("td:eq(2)").clone();
                 var txt = tr.find("td:eq(3)").clone();
-                var dis = tr.data("dept_ids");
+                var dis = tr.data("unit_ids");
                 return $('<table data-type="user"></table>')
                         .data("user_id" , uid)
-                        .data("dept_id" , did)
-                        .data("dept_ids", dis)
+                        .data("unit_id" , did)
+                        .data("unit_ids", dis)
                         .append($('<tr></tr>')
                                   .append(img)
                                   .append(txt)
@@ -74,7 +74,7 @@ function hsUserMove(treebox, listbox) {
             revert: "invalid",
             helper: function() {
                 var txt = $(this).clone();
-                return $('<table data-type="dept"></table>')
+                return $('<table data-type="unit"></table>')
                         .append($('<tr></tr>').append(txt) );
             }
         });
@@ -89,7 +89,7 @@ function hsUserMove(treebox, listbox) {
             },
             drop: function(ev, ui) {
                 var pid = $(this).parent().closest(".tree-node").attr("id").substring(10);
-                if (ui.helper.data("type") == "dept") {
+                if (ui.helper.data("type") == "unit") {
                     var did = ui.draggable.closest(".tree-node").attr("id").substring(10);
                     var req = { id : did, pid : pid };
                     $.hsMask({
@@ -101,7 +101,7 @@ function hsUserMove(treebox, listbox) {
                             "label": "移动",
                             "click": function() {
                                 $.ajax({
-                                    url     : hsFixUri("centra/master/dept/save.act"),
+                                    url     : hsFixUri("centra/master/unit/save.act"),
                                     data    : hsSerialArr(req),
                                     type    : "POST",
                                     dataType: "JSON",
@@ -125,8 +125,8 @@ function hsUserMove(treebox, listbox) {
                     );
                 } else {
                     var uid = ui.helper.data("user_id" );
-                    var did = ui.helper.data("dept_id" );
-                    var dis = ui.helper.data("dept_ids").slice(0);
+                    var did = ui.helper.data("unit_id" );
+                    var dis = ui.helper.data("unit_ids").slice(0);
                     var del = hsUserDel_;
                     $.hsMask({
                             "mode" : "warn",
@@ -138,7 +138,7 @@ function hsUserMove(treebox, listbox) {
                             "label": "移动",
                             "click": function() {
                                 var diz = [pid];
-                                var req = new HsSerialDic({id: uid, "depts..dept_id": diz});
+                                var req = new HsSerialDic({id: uid, "units..unit_id": diz});
                                 $.ajax({
                                     url     : hsFixUri("centra/master/user/save.act"),
                                     data    : hsSerialArr(req),
@@ -161,7 +161,7 @@ function hsUserMove(treebox, listbox) {
                             "click": function() {
                                 del( dis, did );
                                 dis.push( pid );
-                                var req = new HsSerialDic({id: uid, "depts..dept_id": dis});
+                                var req = new HsSerialDic({id: uid, "units..unit_id": dis});
                                 $.ajax({
                                     url     : hsFixUri("centra/master/user/save.act"),
                                     data    : hsSerialArr(req),
@@ -184,7 +184,7 @@ function hsUserMove(treebox, listbox) {
                             "click": function() {
 //                              del( dis, did );
                                 dis.push( pid );
-                                var req = new HsSerialDic({id: uid, "depts..dept_id": dis});
+                                var req = new HsSerialDic({id: uid, "units..unit_id": dis});
                                 $.ajax({
                                     url     : hsFixUri("centra/master/user/save.act"),
                                     data    : hsSerialArr(req),
@@ -222,9 +222,9 @@ function hsUserLoad(url, data) {
         var rd = hsSerialArr( data );
         var wd = hsGetSeria(rd,"wd");
         if (wd) {
-           url = hsSetParam(url, "dept_id", "");
+           url = hsSetParam(url, "unit_id", "");
         } else {
-           url = hsSetParam(url, "dept_id","0");
+           url = hsSetParam(url, "unit_id","0");
         }
     }
     HsList.prototype.load.call(this, url, data);
@@ -235,9 +235,9 @@ function hsUserSend(btn, msg, url, data) {
     if (btn.is(".remove")) {
         var uid = data.val();
         var dis = data.closest("tr")
-                 .data ( "dept_ids")
+                 .data ( "unit_ids")
                  .slice( 0 );
-        var did = hsGetParam(this._url, "dept_id");
+        var did = hsGetParam(this._url, "unit_id");
 
         hsUserDel_(dis, did);
         if (dis.length == 0) {
@@ -245,7 +245,7 @@ function hsUserSend(btn, msg, url, data) {
             return;
         }
 
-        data = new HsSerialDic({id: uid, "depts..dept_id": dis});
+        data = new HsSerialDic({id: uid, "units..unit_id": dis});
     }
     HsList.prototype.send.call(this, btn, msg, url, data);
 }

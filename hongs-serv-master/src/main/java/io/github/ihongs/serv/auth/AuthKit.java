@@ -10,7 +10,7 @@ import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.VerifyHelper;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Table;
-import io.github.ihongs.serv.master.Dept;
+import io.github.ihongs.serv.master.Unit;
 import io.github.ihongs.serv.master.UserAction;
 import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.verify.Wrong;
@@ -267,22 +267,31 @@ public class AuthKit {
 
             // 第三方登录项
             ud  =  new HashMap( );
-            ud.put("user_id",  uuid   );
-            ud.put("unit"   ,  unit   );
-            ud.put("code"   ,  code   );
+            ud.put("user_id", uuid );
+            ud.put("unit"   , unit );
+            ud.put("code"   , code );
             db.getTable("user_sign").insert(ud);
 
-            // 加入公共部门
-            ud  =  new HashMap( );
-            ud.put("user_id",  uuid   );
-            ud.put("dept_id", "CENTRE");
-            db.getTable("dept_user").insert(ud);
+            CoreConfig cc = CoreConfig.getInstance("master");
+            /**/String rr ;
 
-            // 赋予公共权限. 仅用部门即可(2019/02/28)
-//          ud  =  new HashMap( );
-//          ud.put("user_id",  uuid   );
-//          ud.put("role"   , "centre");
-//          db.getTable("user_role").insert(ud);
+            // 赋予公共权限
+            rr  = cc.getProperty("core.public.regs.role","");
+            if (! rr.isEmpty()) {
+                ud  =  new HashMap();
+                ud.put("user_id", uuid );
+                ud.put("role"   ,  rr  );
+                db.getTable("user_role").insert(ud);
+            }
+
+            // 加入公共部门
+            rr  = cc.getProperty("core.public.regs.unit","");
+            if (! rr.isEmpty()) {
+                ud  =  new HashMap();
+                ud.put("user_id", uuid );
+                ud.put("unit_id",  rr  );
+                db.getTable("unit_user").insert(ud);
+            }
         }
 
         ud = userSign( ah , unit, uuid, uname, uhead );
@@ -298,16 +307,16 @@ public class AuthKit {
      * @return
      */
     public static Map getWrong(String k, String w) {
-        CoreLocale l = CoreLocale.getInstance("master");
+        String n = w.startsWith("core.") ? w.substring( 5 ) : w ;
+        String s = CoreLocale.getInstance("master").translate(w);
         Map e  = new HashMap();
-        if (k != null && ! "".equals( k )) {
+        if (k != null && ! "".equals(k)) {
         Map m  = new HashMap();
-            m.put( k ,    new Wrong ( w ));
-            e.put("errs", new Wrongs( m )
-                .getErrors( ));
-            e.put("msg", l.translate( w ));
+            m.put(   k   , s );
+            e.put( "errs", m );
+            e.put( "msg" , s );
         } else {
-            e.put("msg", l.translate( w ));
+            e.put( "msg" , s );
         }
         e.put("ok", false);
         return e;
@@ -343,10 +352,10 @@ public class AuthKit {
      * @return
      * @throws HongsException
      */
-    public static Set getDeptRoles(String gid) throws HongsException {
-        Table rel = DB.getInstance("master").getTable("dept_role");
+    public static Set getUnitRoles(String gid) throws HongsException {
+        Table rel = DB.getInstance("master").getTable("unit_role");
         List<Map> lst = rel.fetchCase()
-            .filter("dept_id = ?", gid)
+            .filter("unit_id = ?", gid)
             .select("role"    )
             .getAll();
         Set set = new HashSet();
@@ -381,15 +390,15 @@ public class AuthKit {
      * @return
      * @throws HongsException
      */
-    public static Set getUserDepts(String uid) throws HongsException {
-        Table rel = DB.getInstance("master").getTable("dept_user");
+    public static Set getUserUnits(String uid) throws HongsException {
+        Table rel = DB.getInstance("master").getTable("unit_user");
         List<Map> lst = rel.fetchCase()
             .filter("user_id = ?", uid)
-            .select("dept_id" )
+            .select("unit_id" )
             .getAll();
         Set set = new HashSet();
         for(Map row : lst) {
-            set.add(row.get("dept_id"));
+            set.add(row.get("unit_id"));
         }
         return set;
     }
@@ -400,17 +409,17 @@ public class AuthKit {
      * @return
      * @throws HongsException
      */
-    public static Set getManaDepts(String uid) throws HongsException {
-        Table rel = DB.getInstance("master").getTable("dept_user");
+    public static Set getManaUnits(String uid) throws HongsException {
+        Table rel = DB.getInstance("master").getTable("unit_user");
         List<Map> lst = rel.fetchCase()
             .filter("type = ?"   , 1  )
             .filter("user_id = ?", uid)
-            .select("dept_id" )
+            .select("unit_id" )
             .getAll();
         Set set = new HashSet();
-        Dept dp = new Dept();
+        Unit dp = new Unit();
         for(Map row : lst) {
-            String id = (String) row.get("dept_id");
+            String id = (String) row.get("unit_id");
             set.addAll( dp.getChildIds(id , true) );
             set.add   ( id );
         }
@@ -423,18 +432,18 @@ public class AuthKit {
      * @return
      * @throws HongsException
      */
-    public static Set getLeadDepts(String uid) throws HongsException {
-        Table rel = DB.getInstance("master").getTable("dept_user");
+    public static Set getLeadUnits(String uid) throws HongsException {
+        Table rel = DB.getInstance("master").getTable("unit_user");
         List<Map> lst = rel.fetchCase()
             .filter("type = ?"   , 1  )
             .filter("user_id = ?", uid)
-            .select("dept_id" )
+            .select("unit_id" )
             .getAll();
         Set set = new TreeSet();
-        Dept dp = new Dept();
+        Unit dp = new Unit();
         for(Map row : lst) {
-            String id = (String) row.get("dept_id");
-            set.add(getDeptPath(id, dp));
+            String id = (String) row.get("unit_id");
+            set.add(getDeepPath(id, dp));
         }
         return getPeakPids(set);
     }
@@ -446,7 +455,7 @@ public class AuthKit {
      * @param gid  部门ID
      * @throws HongsException
      */
-    public static void cleanDeptRoles(List<Map> list, String gid) throws HongsException {
+    public static void cleanUnitRoles(List<Map> list, String gid) throws HongsException {
         String cid = (String) Core.getInstance(ActionHelper.class).getSessibute("uid");
         if (Cnst.ADM_UID.equals(cid)) {
             cleanListItems(list,"role");
@@ -455,7 +464,7 @@ public class AuthKit {
 
             Set urs = getUserRoles(cid);
         if (gid != null) {
-            Set xrs = getDeptRoles(gid);
+            Set xrs = getUnitRoles(gid);
             xrs.addAll(urs);
             urs = xrs;
         }
@@ -494,24 +503,24 @@ public class AuthKit {
      * @param uid  用户ID
      * @throws HongsException
      */
-    public static void cleanUserDepts(List<Map> list, String uid) throws HongsException {
+    public static void cleanUserUnits(List<Map> list, String uid) throws HongsException {
         String cid = (String) Core.getInstance(ActionHelper.class).getSessibute("uid");
         if (Cnst.ADM_UID.equals(cid)) {
-            cleanListItems(list,"dept_id");
+            cleanListItems(list,"unit_id");
             return; // 超级管理员可以更改任何人的部门, 即使自己没有
         }
 
-            Set uds = getManaDepts(cid);
+            Set uds = getManaUnits(cid);
         if (uid != null) {
-            Set xds = getUserDepts(uid);
+            Set xds = getUserUnits(uid);
             xds.addAll(uds);
             uds = xds;
         }
 
-        cleanListItems(list,"dept_id",uds);
+        cleanListItems(list,"unit_id",uds);
     }
 
-    private static String getDeptPath(String id, Dept dp) throws HongsException {
+    private static String getDeepPath(String id, Unit dp) throws HongsException {
         List <String> ds = dp.getParentIds(id);
         StringBuilder sb = new StringBuilder();
         Collections.reverse(ds);

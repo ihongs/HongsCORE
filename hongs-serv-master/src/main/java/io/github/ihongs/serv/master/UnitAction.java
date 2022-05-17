@@ -22,25 +22,25 @@ import java.util.Map;
  * 部门动作接口
  * @author Hongs
  */
-@Action("centra/master/dept")
-public class DeptAction {
+@Action("centra/master/unit")
+public class UnitAction {
 
-    private final Dept model;
+    private final Unit model;
 
-    public DeptAction()
+    public UnitAction()
     throws HongsException {
-        model = (Dept) DB.getInstance("master").getModel("dept");
+        model = (Unit) DB.getInstance("master").getModel("unit");
     }
 
     @Action("list")
-    @Select(conf="master", form="dept")
+    @Select(conf="master", form="unit")
     public void getList(ActionHelper helper)
     throws HongsException {
         Map  rd = helper.getRequestData();
-        byte wd =  Synt.declare(rd.get("with-depts") , (byte) 0);
+        byte wd =  Synt.declare(rd.get("with-units") , (byte) 0);
      boolean fd =  Synt.declare(rd.get("find-depth") ,  false  );
 
-        // With sub depts
+        // With sub units
         if ( fd ) {
             String pid =  Synt.declare(rd.get("pid") , "" );
             if (! "".equals( pid ) && ! "-".equals( pid ) ) {
@@ -54,17 +54,17 @@ public class DeptAction {
         List<Map> list = (List) rd.get("list");
         if (list != null) {
 
-        // With all depts
+        // With all units
         if (wd == 1) {
             for ( Map info : list ) {
                 String id = info.get("id").toString (   );
-                info.put("depts", model.getParentIds(id));
+                info.put("units", model.getParentIds(id));
             }
         } else
         if (wd == 2) {
             for ( Map info : list ) {
                 String id = info.get("id").toString (   );
-                info.put("depts", model.getParents  (id));
+                info.put("units", model.getParents  (id));
             }
         }
 
@@ -74,7 +74,7 @@ public class DeptAction {
     }
 
     @Action("info")
-    @Select(conf="master", form="dept")
+    @Select(conf="master", form="unit")
     public void getInfo(ActionHelper helper)
     throws HongsException {
         Map    rd = helper.getRequestData(  );
@@ -110,7 +110,7 @@ public class DeptAction {
         String id = model.set(rd);
         CoreLocale  ln = CoreLocale.getInstance().clone( );
                     ln.load("master");
-        String ms = ln.translate("core.save.dept.success");
+        String ms = ln.translate("core.save.unit.success");
         helper.reply(ms, id);
     }
 
@@ -122,7 +122,7 @@ public class DeptAction {
         int rn = model.delete(rd);
         CoreLocale  ln = CoreLocale.getInstance().clone( );
                     ln.load("master");
-        String ms = ln.translate("core.delete.dept.success", null,Integer.toString(rn));
+        String ms = ln.translate("core.delete.unit.success", null,Integer.toString(rn));
         helper.reply(ms, rn);
     }
 

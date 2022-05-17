@@ -1,9 +1,9 @@
 <h2>{DO}部门</h2>
-<div id="master-dept-form"
+<div id="master-unit-form"
      class="hide-roles board"
      data-topple="hsForm"
-     data-load-url="centra/master/dept/info.act?ab=.enfo&amp;with-roles=default"
-     data-save-url="centra/master/dept/save.act">
+     data-load-url="centra/master/unit/info.act?ab=.enfo&amp;with-roles=default"
+     data-save-url="centra/master/unit/save.act">
     <form action="" method="POST">
         <input type="hidden" name="id" />
         <input type="hidden" name="pid"/>
@@ -49,7 +49,7 @@
 </div>
 <script type="text/javascript">
     (function($) {
-        var context = $("#master-dept-form");
+        var context = $("#master-unit-form");
 
         // 左右平衡大小, 需减掉上下部分的高度
         var h = $(window).height() - 55 - 95;

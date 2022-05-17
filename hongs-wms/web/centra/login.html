@@ -83,9 +83,17 @@
 
                 // 表单
                 context.on("saveBack", function(ev, rd, md) {
-                    H$('%HsCUID', rd.info.uid);
-                    H$('%HsCUST', rd.info.ust);
-                    location.replace(hsFixUri(hsGetParam(location.href, "r") || "centra/"));
+                    var fx = function() {
+                        H$('%HsCUID', rd.info.uid);
+                        H$('%HsCUST', rd.info.ust);
+                        location.replace(hsFixUri(hsGetParam(location.href, "r") || "centra/"));
+                    };
+                    if (rd.msg) {
+                        $.hsWarn( rd.msg, "info", fx );
+                    } else {
+                        fx();
+                    }
+                    return false;
                 });
                 context.on("saveFail", function(ev, rd, md) {
                     md.formBox.find( "img" ).click(  );

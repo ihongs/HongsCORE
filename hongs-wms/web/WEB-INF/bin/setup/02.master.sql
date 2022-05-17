@@ -4,8 +4,8 @@
 -- 部门
 --
 
-DROP TABLE IF EXISTS `a_master_dept`;
-CREATE TABLE `a_master_dept` (
+DROP TABLE IF EXISTS `a_master_unit`;
+CREATE TABLE `a_master_unit` (
   `id` CHAR(16) NOT NULL,
   `pid` CHAR(16) DEFAULT NULL,
   `name` VARCHAR(200) NOT NULL,
@@ -16,38 +16,38 @@ CREATE TABLE `a_master_dept` (
   `boost` INTEGER DEFAULT '0',
   `state` TINYINT DEFAULT '1',
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`pid`) REFERENCES `a_master_dept` (`id`) ON DELETE CASCADE
+  FOREIGN KEY (`pid`) REFERENCES `a_master_unit` (`id`) ON DELETE CASCADE
 );
 
-CREATE INDEX `IK_a_master_dept_dept` ON `a_master_dept` (`pid`);
-CREATE INDEX `IK_a_master_dept_boost` ON `a_master_dept` (`boost`);
-CREATE INDEX `IK_a_master_dept_state` ON `a_master_dept` (`state`);
-CREATE INDEX `IK_a_master_dept_ctime` ON `a_master_dept` (`ctime`);
-CREATE INDEX `IK_a_master_dept_mtime` ON `a_master_dept` (`mtime`);
-CREATE UNIQUE INDEX `UK_a_master_dept_name` ON `a_master_dept` (`name`,`pid`);
+CREATE INDEX `IK_a_master_unit_unit` ON `a_master_unit` (`pid`);
+CREATE INDEX `IK_a_master_unit_boost` ON `a_master_unit` (`boost`);
+CREATE INDEX `IK_a_master_unit_state` ON `a_master_unit` (`state`);
+CREATE INDEX `IK_a_master_unit_ctime` ON `a_master_unit` (`ctime`);
+CREATE INDEX `IK_a_master_unit_mtime` ON `a_master_unit` (`mtime`);
+CREATE UNIQUE INDEX `UK_a_master_unit_name` ON `a_master_unit` (`name`,`pid`);
 
-INSERT INTO `a_master_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('0',NULL,'ROOT','ROOT','1424075622','1424075622','0',1);
-INSERT INTO `a_master_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('CENTRA','0','管理区','默认内部管理区域','1424075622','1424075622','0',1);
-INSERT INTO `a_master_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('CENTRE','0','公共区','默认注册到此区域','1424075622','1424075622','0',1);
+INSERT INTO `a_master_unit` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('0',NULL,'ROOT','ROOT','1424075622','1424075622','0',1);
+INSERT INTO `a_master_unit` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('CENTRA','0','管理区','默认内部管理区域','1424075622','1424075622','0',1);
+INSERT INTO `a_master_unit` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('CENTRE','0','公共区','默认注册到此区域','1424075622','1424075622','0',1);
 
 --
 -- 部门拥有角色
 --
 
-DROP TABLE IF EXISTS `a_master_dept_role`;
-CREATE TABLE `a_master_dept_role` (
-  `dept_id` CHAR(16) NOT NULL,
+DROP TABLE IF EXISTS `a_master_unit_role`;
+CREATE TABLE `a_master_unit_role` (
+  `unit_id` CHAR(16) NOT NULL,
   `role` VARCHAR(80) NOT NULL,
-  PRIMARY KEY (`dept_id`,`role`),
-  FOREIGN KEY (`dept_id`) REFERENCES `a_master_dept` (`id`)
+  PRIMARY KEY (`unit_id`,`role`),
+  FOREIGN KEY (`unit_id`) REFERENCES `a_master_unit` (`id`)
 );
 
-CREATE INDEX `IK_a_master_dept_role_dept` ON `a_master_dept_role` (`dept_id`);
-CREATE INDEX `IK_a_master_dept_role_role` ON `a_master_dept_role` (`role`);
+CREATE INDEX `IK_a_master_unit_role_unit` ON `a_master_unit_role` (`unit_id`);
+CREATE INDEX `IK_a_master_unit_role_role` ON `a_master_unit_role` (`role`);
 
-INSERT INTO `a_master_dept_role` VALUES ('CENTRA','centra');
-INSERT INTO `a_master_dept_role` VALUES ('CENTRA','centre');
-INSERT INTO `a_master_dept_role` VALUES ('CENTRE','centre');
+INSERT INTO `a_master_unit_role` VALUES ('CENTRA','centra');
+INSERT INTO `a_master_unit_role` VALUES ('CENTRA','centre');
+INSERT INTO `a_master_unit_role` VALUES ('CENTRE','centre');
 
 --
 -- 用户
@@ -112,10 +112,10 @@ INSERT INTO `a_master_user_role` VALUES ('1','centra/master/user/search');
 INSERT INTO `a_master_user_role` VALUES ('1','centra/master/user/create');
 INSERT INTO `a_master_user_role` VALUES ('1','centra/master/user/update');
 INSERT INTO `a_master_user_role` VALUES ('1','centra/master/user/delete');
-INSERT INTO `a_master_user_role` VALUES ('1','centra/master/dept/search');
-INSERT INTO `a_master_user_role` VALUES ('1','centra/master/dept/create');
-INSERT INTO `a_master_user_role` VALUES ('1','centra/master/dept/update');
-INSERT INTO `a_master_user_role` VALUES ('1','centra/master/dept/delete');
+INSERT INTO `a_master_user_role` VALUES ('1','centra/master/unit/search');
+INSERT INTO `a_master_user_role` VALUES ('1','centra/master/unit/create');
+INSERT INTO `a_master_user_role` VALUES ('1','centra/master/unit/update');
+INSERT INTO `a_master_user_role` VALUES ('1','centra/master/unit/delete');
 INSERT INTO `a_master_user_role` VALUES ('1','centra/matrix/form/search');
 INSERT INTO `a_master_user_role` VALUES ('1','centra/matrix/form/create');
 INSERT INTO `a_master_user_role` VALUES ('1','centra/matrix/form/update');
@@ -129,21 +129,21 @@ INSERT INTO `a_master_user_role` VALUES ('1','centra/matrix/furl/delete');
 -- 用户所属部门
 --
 
-DROP TABLE IF EXISTS `a_master_dept_user`;
-CREATE TABLE `a_master_dept_user` (
+DROP TABLE IF EXISTS `a_master_unit_user`;
+CREATE TABLE `a_master_unit_user` (
   `user_id` CHAR(16) NOT NULL,
-  `dept_id` CHAR(16) NOT NULL,
+  `unit_id` CHAR(16) NOT NULL,
   `type` TINYINT DEFAULT '0', /* 0 所属部门, 1 管理部分 */
-  PRIMARY KEY (`user_id`,`dept_id`,`type`),
+  PRIMARY KEY (`user_id`,`unit_id`,`type`),
   FOREIGN KEY (`user_id`) REFERENCES `a_master_user` (`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`dept_id`) REFERENCES `a_master_dept` (`id`) ON DELETE CASCADE
+  FOREIGN KEY (`unit_id`) REFERENCES `a_master_unit` (`id`) ON DELETE CASCADE
 );
 
-CREATE INDEX `IK_a_master_dept_user_user` ON `a_master_dept_user` (`user_id`);
-CREATE INDEX `IK_a_master_dept_user_dept` ON `a_master_dept_user` (`dept_id`);
-CREATE INDEX `IK_a_master_dept_user_type` ON `a_master_dept_user` (`type`);
+CREATE INDEX `IK_a_master_unit_user_user` ON `a_master_unit_user` (`user_id`);
+CREATE INDEX `IK_a_master_unit_user_unit` ON `a_master_unit_user` (`unit_id`);
+CREATE INDEX `IK_a_master_unit_user_type` ON `a_master_unit_user` (`type`);
 
-INSERT INTO `a_master_dept_user` VALUES ('1','0','0');
+INSERT INTO `a_master_unit_user` VALUES ('1','0','0');
 
 --
 -- 用户关联登录

@@ -94,12 +94,12 @@ public class TestDB {
         
         caze = new FetchCase(FetchCase.CLEVER);
         caze.from   ("a_master_user", "user")
-            .filter ("state != 1 AND dept_id IN (?)", 1)
-            .join   ("a_master_dept_user", "depts")
+            .filter ("state != 1 AND unit_id IN (?)", 1)
+            .join   ("a_master_unit_user", "units")
             .on     ("user_id = :user_id")
             .by     (FetchCase.LEFT)
-            .filter ("dept_id IN (?)", 10);
-        vali = "SELECT `user`.* FROM `a_master_user` AS `user` LEFT JOIN `a_master_dept_user` AS `depts` ON `depts`.user_id = `user`.user_id WHERE `user`.state != 1 AND `user`.dept_id IN (1) AND `depts`.dept_id IN (10)";
+            .filter ("unit_id IN (?)", 10);
+        vali = "SELECT `user`.* FROM `a_master_user` AS `user` LEFT JOIN `a_master_unit_user` AS `units` ON `units`.user_id = `user`.user_id WHERE `user`.state != 1 AND `user`.unit_id IN (1) AND `units`.unit_id IN (10)";
         if (! vali.equals(caze.toString())) {
             fail("实例复合查询异常\r\n\t目标: "+vali+"\r\n\t实际: "+caze.toString());
         }

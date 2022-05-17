@@ -82,15 +82,15 @@
             <div class="col-xs-6 role-info" style="overflow: auto;">
                 <div class="form-group">
                     <label class="control-label">所属分组</label>
-                    <input type="hidden" name="depts0..dept_id" class="form-ignored"/>
-                    <ul class="pickbox pickmul units0" data-fn="depts0..dept_id" data-icon-class="bi bi-arrows-expand"></ul>
-                    <button type="button" class="btn btn-default form-control" data-href="centra/master/dept/pick.html" data-toggle="hsFork" data-target="@">选择分组</button>
+                    <input type="hidden" name="units0..unit_id" class="form-ignored"/>
+                    <ul class="pickbox pickmul units0" data-fn="units0..unit_id" data-icon-class="bi bi-arrows-expand"></ul>
+                    <button type="button" class="btn btn-default form-control" data-href="centra/master/unit/pick.html" data-toggle="hsFork" data-target="@">选择分组</button>
                 </div>
                 <div class="form-group">
                     <label class="control-label">管理分组</label>
-                    <input type="hidden" name="depts1..dept_id" class="form-ignored"/>
-                    <ul class="pickbox pickmul units1" data-fn="depts1..dept_id" data-icon-class="bi bi-arrows-expand"></ul>
-                    <button type="button" class="btn btn-default form-control" data-href="centra/master/dept/pick.html" data-toggle="hsFork" data-target="@">选择分组</button>
+                    <input type="hidden" name="units1..unit_id" class="form-ignored"/>
+                    <ul class="pickbox pickmul units1" data-fn="units1..unit_id" data-icon-class="bi bi-arrows-expand"></ul>
+                    <button type="button" class="btn btn-default form-control" data-href="centra/master/unit/pick.html" data-toggle="hsFork" data-target="@">选择分组</button>
                 </div>
                 <div class="alert alert-info">注意: 如需要让用户管理分组和用户, 管理分组与用户/分组管理权限均需设置.</div>
                 <div class="form-group" style="margin-bottom: 0;">
@@ -118,8 +118,8 @@
         var context = $("#master-user-form");
         var loadbox = context.closest(".loadbox");
         var loadpms = hsSerialArr( loadbox );
-        var units0Box = context.find("[data-fn='depts0..dept_id']");
-        var units1Box = context.find("[data-fn='depts1..dept_id']");
+        var units0Box = context.find("[data-fn='units0..unit_id']");
+        var units1Box = context.find("[data-fn='units1..unit_id']");
 
         // 左右平衡大小, 需减掉上下部分的高度
         var h = $(window).height() - 80 - 95;
@@ -142,11 +142,11 @@
 
             // 填充分组选项
             if (rd.info) {
-                if (rd.info.depts) {
+                if (rd.info.units) {
                     var units0 = [];
                     var units1 = [];
-                    for(var i = 0; i < rd.info.depts.length; i ++) {
-                        var item = rd.info.depts[i];
+                    for(var i = 0; i < rd.info.units.length; i ++) {
+                        var item = rd.info.units[i];
                         if (1 == item.type) {
                             units1.push(item);
                         } else {
@@ -157,10 +157,10 @@
                     hsFormFillFork.call(xb, units1Box, units1);
                 }
             } else {
-                var ids = hsGetSerias(loadpms, "dept_id");
+                var ids = hsGetSerias(loadpms, "unit_id");
                 if (ids) {
                     $.hsAjax({
-                        url : "centra/master/dept/list.act",
+                        url : "centra/master/unit/list.act",
                         data: {"id": ids, "ob": ["id"], "rb": ["id", "name"]},
                         dataType: "json",
                         success : function (rs) {

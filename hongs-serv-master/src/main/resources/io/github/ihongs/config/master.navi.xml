@@ -3,7 +3,7 @@
     <menu text="用户单元" href="centra/master/">
         <role text="查看用户" name="centra/master/user/search">
             <depend>centra</depend>
-            <depend>centra/master/dept/search</depend>
+            <depend>centra/master/unit/search</depend>
             <action>centra/master/user/search.act</action>
         </role>
         <role text="添加用户" name="centra/master/user/create">
@@ -18,21 +18,21 @@
             <depend>centra/master/user/search</depend>
             <action>centra/master/user/delete.act</action>
         </role>
-        <role text="查看部门" name="centra/master/dept/search">
+        <role text="查看部门" name="centra/master/unit/search">
             <depend>centra/master/user/search</depend>
-            <action>centra/master/dept/search.act</action>
+            <action>centra/master/unit/search.act</action>
         </role>
-        <role text="添加部门" name="centra/master/dept/create">
-            <depend>centra/master/dept/search</depend>
-            <action>centra/master/dept/create.act</action>
+        <role text="添加部门" name="centra/master/unit/create">
+            <depend>centra/master/unit/search</depend>
+            <action>centra/master/unit/create.act</action>
         </role>
-        <role text="修改部门" name="centra/master/dept/update">
-            <depend>centra/master/dept/search</depend>
-            <action>centra/master/dept/update.act</action>
+        <role text="修改部门" name="centra/master/unit/update">
+            <depend>centra/master/unit/search</depend>
+            <action>centra/master/unit/update.act</action>
         </role>
-        <role text="删除部门" name="centra/master/dept/delete">
-            <depend>centra/master/dept/search</depend>
-            <action>centra/master/dept/delete.act</action>
+        <role text="删除部门" name="centra/master/unit/delete">
+            <depend>centra/master/unit/search</depend>
+            <action>centra/master/unit/delete.act</action>
         </role>
     </menu>
 </root>

@@ -3,11 +3,11 @@
      data-topple="hsList"
      data--0="load:(hsUserLoad)"
      data--1="send:(hsUserSend)"
-     data-load-url="centra/master/user/list.act?dept_id=${dept_id}&amp;ob=mtime!,ctime!&amp;ab=_text&amp;with-depts=2&amp;bind-scope=1"
+     data-load-url="centra/master/user/list.act?unit_id=${unit_id}&amp;ob=mtime!,ctime!&amp;ab=_text&amp;with-units=2&amp;bind-scope=1"
      data-send-urls-0="['centra/master/user/save.act'  ,'.remove', '您确定要移出此用户?']"
      data-send-urls-1="['centra/master/user/delete.act','.delete', '您确定要删除此用户?']"
      data-open-urls-0="['centra/master/user/form.html?id={ID}','.modify','@']"
-     data-open-urls-1="['centra/master/user/form.html?dept_id=${dept_id}','.create','@']">
+     data-open-urls-1="['centra/master/user/form.html?unit_id=${unit_id}','.create','@']">
     <form class="findbox toolbox board row" action="" method="POST">
         <div class="col-xs-7">
             <div class="btn-group">
@@ -47,7 +47,7 @@
                     <th data-fn="head" class="userhead">头像</th>
                     <th data-fn="name" class="sortable">名称</th>
                     <th data-fn="username" class="sortable">账号</th>
-                    <th data-fn="depts..name" data-ft="tips">分组</th>
+                    <th data-fn="units..name" data-ft="tips">分组</th>
                     <th data-fn="state_text">状态</th>
                     <th data-fn="mtime" data-ft="_htime" data-fl="v*1000" class="_htime sortable">修改时间</th>
                     <th data-fn="ctime" data-ft="_htime" data-fl="v*1000" class="_htime sortable">创建时间</th>
@@ -110,12 +110,12 @@
             }
 
             // 用户所属的全部部门, 用于拖拽挂职到其他部门
-            var deptIds = [];
-            if (this._info.depts)
-            for(var i= 0; i< this._info.depts.length;i++) {
-                deptIds.push(this._info.depts[i].dept_id);
+            var unitIds = [];
+            if (this._info.units)
+            for(var i= 0; i< this._info.units.length;i++) {
+                unitIds.push(this._info.units[i].unit_id);
             }
-            c.closest( "tr" ).data( "dept_ids" , deptIds);
+            c.closest( "tr" ).data( "unit_ids" , unitIds);
         });
     })(jQuery);
 </script>

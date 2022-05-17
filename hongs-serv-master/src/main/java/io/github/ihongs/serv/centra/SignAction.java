@@ -3,6 +3,7 @@ package io.github.ihongs.serv.centra;
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
+import io.github.ihongs.CoreLocale;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
@@ -17,6 +18,7 @@ import io.github.ihongs.serv.auth.AuthKit;
 import io.github.ihongs.serv.auth.RoleSet;
 import io.github.ihongs.util.Synt;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import javax.servlet.http.HttpSession;
@@ -55,7 +57,7 @@ public class SignAction {
         fc = new FetchCase( )
             .from   ( tb.tableName )
             .filter ( "username = ?" , username )
-            .select ( "password, passcode, id, name, head, state" );
+            .select ( "password, passcode, id, name, head, state, ptime" );
         ud = db.fetchLess(fc);
         if ( ud.isEmpty() ) {
             ah.reply(AuthKit.getWrong("username", "core.username.invalid"));
@@ -112,6 +114,7 @@ public class SignAction {
         String uname = (String) ud.get("name");
         String uhead = (String) ud.get("head");
         int    state = Synt.declare( ud.get("state"), 0 );
+        long   ptime = Synt.declare( ud.get("ptime"), 0L);
 
         // 验证状态
         if (0 >= state) {
@@ -131,8 +134,22 @@ public class SignAction {
             return;
         }
 
-        Map sd  = AuthKit.userSign( ah, "*", uuid, uname, uhead ); // * 表示密码登录
-        ah.reply(Synt.mapOf("info", sd));
+        Map ad  = AuthKit.userSign( ah, "*", uuid, uname, uhead ); // * 表示密码登录
+        Map sd  = new HashMap(5);
+        sd.put("info", ad);
+        sd.put("ok", true);
+
+        // 密码时效
+        int xd  = cc.getProperty("core.pswd.alter.alert", 0);
+        if (xd  > 0 ) {
+        int pd  = (int)(System.currentTimeMillis() / 1000L - ptime) / 86400;
+        if (pd  > xd) {
+            sd.put("ern", "password.expired");
+            sd.put("err", "Password expired");
+            sd.put("msg", CoreLocale.getInstance("master").translate("core.password.expired", pd, xd, pd - xd));
+        }}
+
+        ah.reply (sd);
     }
 
     /**

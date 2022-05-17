@@ -15,38 +15,38 @@ xsi:schemaLocation="http://ihongs.github.io/hongs-core db.xsd">
                    tableName="user_role"
                    foreignKey="user_id"/>
             <assoc type="HAS_MORE"
-                   name="depts"
-                   tableName="dept_user"
+                   name="units"
+                   tableName="unit_user"
                    foreignKey="user_id">
                 <assoc type="BLS_TO"
-                       name="dept"
-                       foreignKey="dept_id">
+                       name="unit"
+                       foreignKey="unit_id">
                     <assoc type="HAS_MANY"
                            name="roles"
-                           tableName="dept_role"
-                           foreignKey="dept_id"/>
+                           tableName="unit_role"
+                           foreignKey="unit_id"/>
                 </assoc>
             </assoc>
         </table>
-        <table name="dept"
-               tableName="a_master_dept"
+        <table name="unit"
+               tableName="a_master_unit"
                primaryKey="id"
-               model="io.github.ihongs.serv.master.Dept">
+               model="io.github.ihongs.serv.master.Unit">
             <param name="srchable">name,note</param>
             <assoc type="HAS_MANY"
                    name="roles"
-                   tableName="dept_role"
-                   foreignKey="dept_id"/>
+                   tableName="unit_role"
+                   foreignKey="unit_id"/>
         </table>
         <table name="user_role"
                tableName="a_master_user_role"/>
-        <table name="dept_role"
-               tableName="a_master_dept_role"/>
+        <table name="unit_role"
+               tableName="a_master_unit_role"/>
         <table name="user_sign"
                tableName="a_master_user_sign"/>
-        <table name="dept_user"
-               tableName="a_master_dept_user"/>
-        <table name="user_dept"
-               tableName="a_master_dept_user"/>
+        <table name="unit_user"
+               tableName="a_master_unit_user"/>
+        <table name="user_unit"
+               tableName="a_master_unit_user"/>
     </tables>
 </db>

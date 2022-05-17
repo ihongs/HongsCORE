@@ -18,15 +18,15 @@ import java.util.Set;
  * 部门基础信息树模型
  * @author Hongs
  */
-public class Dept
+public class Unit
 extends Grade {
 
-    public Dept()
+    public Unit()
     throws HongsException {
-        this(DB.getInstance("master").getTable("dept"));
+        this(DB.getInstance("master").getTable("unit"));
     }
 
-    public Dept(Table table)
+    public Unit(Table table)
     throws HongsException {
         super(table);
     }
@@ -81,12 +81,12 @@ extends Grade {
             if (Cnst.ADM_UID.equals( mid )) {
                 caze.setOption("SCOPE" , 2);
             } else {
-            Set set = AuthKit.getManaDepts(mid);
+            Set set = AuthKit.getManaUnits(mid);
             if (set.contains(Cnst.TOP_GID)) {
                 caze.setOption("SCOPE" , 1);
             } else
             if (pid. equals (Cnst.TOP_GID)) {
-                set = AuthKit.getLeadDepts(mid);
+                set = AuthKit.getLeadUnits(mid);
                 req.remove("pid");
                 req.put("id",set);
             } else
@@ -94,29 +94,29 @@ extends Grade {
                 req.put("id",set);
             } else
             if (set.contains(pid) == false) {
-                throw new HongsException(400, "master:master.dept.area.error");
+                throw new HongsException(400, "master:master.unit.area.error");
             }
             }
         }
 
         /**
          * 如果有指定 user_id
-         * 则关联 a_master_dept_user 来约束范围
+         * 则关联 a_master_unit_user 来约束范围
          * 当其为横杠时表示取那些没有关联的部门
          */
         Object uid = req.get("user_id");
         if (null != uid && ! "".equals(uid)) {
             if ( "-".equals (uid)) {
                 caze.gotJoin("users2")
-                    .from   ("a_master_dept_user")
+                    .from   ("a_master_unit_user")
                     .by     (FetchCase.INNER)
-                    .on     ("`users2`.`dept_id` = `dept`.`id`")
+                    .on     ("`users2`.`unit_id` = `unit`.`id`")
                     .filter ("`users2`.`user_id` IS NULL" /**/ );
             } else {
                 caze.gotJoin("users2")
-                    .from   ("a_master_dept_user")
+                    .from   ("a_master_unit_user")
                     .by     (FetchCase.INNER)
-                    .on     ("`users2`.`dept_id` = `dept`.`id`")
+                    .on     ("`users2`.`unit_id` = `unit`.`id`")
                     .filter ("`users2`.`user_id` IN (?)" , uid );
             }
         }
@@ -139,15 +139,15 @@ extends Grade {
             if (data.containsKey("roles")) {
                 data.put("rtime", System.currentTimeMillis() / 1000);
                 List list = Synt.asList(data.get( "roles" ));
-                AuthKit.cleanDeptRoles (list, id);
+                AuthKit.cleanUnitRoles (list, id);
             //  if ( list.isEmpty() ) {
-            //      throw new HongsException(400, "master.master.user.dept.error");
+            //      throw new HongsException(400, "master.master.user.unit.error");
             //  }
                 data.put("roles", list);
             }
         } else {
             List  list  ;
-            Table tablx = db.getTable("dept_user");
+            Table tablx = db.getTable("unit_user");
 
             // 删除限制, 如果部门下有部门则中止当前操作
             list = table.fetchCase()
@@ -155,16 +155,16 @@ extends Grade {
                 .limit (1)
                 .getAll( );
             if (!list.isEmpty() ) {
-                throw new HongsException(400, "master:master.dept.have.depts");
+                throw new HongsException(400, "master:master.unit.have.units");
             }
 
             // 删除限制, 如果部门下有用户则中止当前操作
             list = tablx.fetchCase()
-                .filter("dept_id = ?", id)
+                .filter("unit_id = ?", id)
                 .limit (1)
                 .getAll( );
             if (!list.isEmpty() ) {
-                throw new HongsException(400, "master:master.dept.have.users");
+                throw new HongsException(400, "master:master.unit.have.users");
             }
         }
 
@@ -180,13 +180,13 @@ extends Grade {
             }
 
             // 仅可以操作管理范围的部门
-            Set mur = AuthKit.getManaDepts(uid);
+            Set mur = AuthKit.getManaUnits(uid);
             if (mur.contains( id )
             &&  mur.contains(pid)) {
                 return;
             }
 
-            throw new HongsException(400, "master:master.dept.area.error");
+            throw new HongsException(400, "master:master.unit.area.error");
         }
     }
 

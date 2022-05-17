@@ -43,7 +43,7 @@
     color: #f22;
 }
 table[data-type=user] ,
-table[data-type=dept] {
+table[data-type=unit] {
     color: #000;
     background: #ddd;
     box-shadow: 0 0 8px #888;
@@ -54,6 +54,6 @@ table[data-type=dept] {
 table[data-type=user] td {
     padding: 8px 8px;
 }
-table[data-type=dept] td {
+table[data-type=unit] td {
     padding: 3px 8px;
 }

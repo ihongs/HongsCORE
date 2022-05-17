@@ -57,21 +57,31 @@ public class SignAction extends io.github.ihongs.serv.centra.SignAction {
         String uuid  =  uo.create(rd);
         String uname = Synt.declare(rd.get("name"), "");
         String uhead = Synt.declare(rd.get("head"), "");
+        String role  ;
+
+        // 赋予公共权限
+        role = cc.getProperty("core.public.regs.role", "");
+        if (!role.isEmpty()) {
+            Map  sd = new HashMap();
+            sd.put("user_id", uuid);
+            sd.put("role"   , role);
+            uo.db.getTable("user_role").insert(sd);
+        }
 
         // 加入公共部门
-        Map  sd = new HashMap();
-        sd.put("user_id", uuid);
-        sd.put("dept_id", cc.getProperty("core.public.regs.dept", "CENTRE"));
-        uo.db.getTable("dept_user").insert(sd);
-
-        // 赋予公共权限. 仅用部门即可(2019/02/28)
-//      Map  sd = new HashMap();
-//      sd.put("user_id", uuid);
-//      sd.put("role"   , cc.getProperty("core.public.regs.role", "centre"));
-//      uo.db.getTable("user_role").insert(sd);
+        role = cc.getProperty("core.public.regs.unit", "");
+        if (!role.isEmpty()) {
+            Map  sd = new HashMap();
+            sd.put("user_id", uuid);
+            sd.put("unit_id", role);
+            uo.db.getTable("unit_user").insert(sd);
+        }
 
         Map  ad = AuthKit.userSign( ah, "*", uuid, uname, uhead ); // * 表示密码登录
-        ah.reply(Synt.mapOf("info", ad));
+        Map  sd = new HashMap(2);
+        sd.put("info", ad);
+        sd.put("ok", true);
+        ah.reply (sd);
     }
 
     /**

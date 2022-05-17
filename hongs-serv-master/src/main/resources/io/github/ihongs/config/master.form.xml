@@ -79,12 +79,12 @@
             <param name="enum">stat</param>
             <param name="default">1</param>
         </field>
-        <field name="depts0..dept_id" repeated="yes">
+        <field name="units0..unit_id" repeated="yes">
         </field>
-        <field name="depts1..dept_id" repeated="yes">
+        <field name="units1..unit_id" repeated="yes">
         </field>
     </form>
-    <form name="dept">
+    <form name="unit">
         <field name="name" required="yes">
         </field>
         <field name="state" type="enum">

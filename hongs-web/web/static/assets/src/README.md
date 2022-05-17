@@ -57,9 +57,9 @@ data-fl,data-dl 的取值为表达式, 参数可使用 this,form|list,v,n; data-
 ```html
     <div id="master-user-list"
          data-topple="hsList"
-         data-load-url="centra/master/user/list.act?dept_id=${dept_id}"
+         data-load-url="centra/master/user/list.act?unit_id=${unit_id}"
          data-send-urls-0="['centra/master/user/delete.act','.delete','您确定要删除此用户?']"
-         data-open-urls-0="['centra/master/user/form.html?dept_id=${dept_id}','.create','@']"
+         data-open-urls-0="['centra/master/user/form.html?unit_id=${unit_id}','.create','@']"
          data-open-urls-1="['centra/master/user/form.html?id={ID}'           ,'.modify','@']">
         <div class="row board">
             <div class="toolbox col-md-8 btn-group">
@@ -97,13 +97,13 @@ data-fl,data-dl 的取值为表达式, 参数可使用 this,form|list,v,n; data-
 ## HsTree 树型组件的用法
 
 ```html
-    <div id="master-dept-tree"
+    <div id="master-unit-tree"
          data-topple="hsTree"
-         data-load-url="centra/master/dept/list.act"
-         data-send-urls-0="['centra/master/dept/delete.act','.delete','您确定要删除此部门?']"
-         data-link-urls-0="['centra/master/user/list.html?dept_id={ID}','.main-context']"
-         data-open-urls-0="['centra/master/dept/form.html?pid={ID}','.create','@']"
-         data-open-urls-1="['centra/master/dept/form.html?id={ID}' ,'.modify','@']"
+         data-load-url="centra/master/unit/list.act"
+         data-send-urls-0="['centra/master/unit/delete.act','.delete','您确定要删除此部门?']"
+         data-link-urls-0="['centra/master/user/list.html?unit_id={ID}','.main-context']"
+         data-open-urls-0="['centra/master/unit/form.html?pid={ID}','.create','@']"
+         data-open-urls-1="['centra/master/unit/form.html?id={ID}' ,'.modify','@']"
          data-root-name="组织架构">
         <div class="toolbox btn-group board">
             <button type="button" class="create btn btn-default">添加</button>
@@ -118,10 +118,10 @@ data-fl,data-dl 的取值为表达式, 参数可使用 this,form|list,v,n; data-
 
 ```html
     <h2>{DO}部门</h2>
-    <div id="master-dept-form"
+    <div id="master-unit-form"
          data-topple="hsForm"
-         data-load-url="centra/master/dept/info.act"
-         data-save-url="centra/master/dept/save.act">
+         data-load-url="centra/master/unit/info.act"
+         data-save-url="centra/master/unit/save.act">
         <form action="" method="POST">
             <input type="hidden" name="id"/>
             <input type="hidden" name="pid"/>

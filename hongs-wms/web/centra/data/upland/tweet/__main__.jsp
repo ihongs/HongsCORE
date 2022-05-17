@@ -19,17 +19,17 @@
     /**
      * 获取用户所属的全部部门ID
      */
-    private Set getUserDeptIds(Object uid) throws HongsException {
+    private Set getUserUnitIds(Object uid) throws HongsException {
         List<Map> rows = DB
             .getInstance("master")
-            .getTable("user_dept")
+            .getTable("user_unit")
             .fetchCase()
-            .field("dept_id")
+            .field("unit_id")
             .where("user_id = ?" , uid )
             .getAll();
         Set dids = Synt.setOf();
         for(Map row : rows) {
-            dids.add(row.get("dept_id"));
+            dids.add(row.get("unit_id"));
         }
         if (dids.isEmpty()) {
             dids.add( "-" );
@@ -113,7 +113,7 @@
         row = Data
             .getInstance("centra/data/upland" , "theme")
             .getOne(Synt.mapOf(
-                Cnst.RB_KEY, Synt.setOf("owner","users","depts"),
+                Cnst.RB_KEY, Synt.setOf("owner","users","units"),
                 Cnst.ID_KEY, tid
             ));
         if (row == null || row.isEmpty()) {
@@ -125,7 +125,7 @@
          * 主题未限定用户和部门的可以访问.
          */
         Object  uid = helper.getSessibute(Cnst.UID_SES);
-        Set     did = getUserDeptIds(uid);
+        Set     did = getUserUnitIds(uid);
         boolean owned  = false;
         DO: {
             Set owner  = Synt.asSet(row.get("owner"));
@@ -139,16 +139,16 @@
                 break DO;
             }
 
-            Set depts  = Synt.asSet(row.get("depts"));
-            if (depts != null) {
-                depts.retainAll(did);
-                if (depts.isEmpty()) {
+            Set units  = Synt.asSet(row.get("units"));
+            if (units != null) {
+                units.retainAll(did);
+                if (units.isEmpty()) {
                     break DO;
                 }
             }
 
             if ((users == null || users.isEmpty())
-            &&  (depts == null || depts.isEmpty())) {
+            &&  (units == null || units.isEmpty())) {
                 break DO;
             }
 

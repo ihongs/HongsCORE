@@ -95,11 +95,11 @@ public class RoleSet extends CoreSerial implements CoreSerial.Mtimes, Set<String
             }
         }
         
-        tb = db.getTable("dept");
-        td = db.getTable("dept_user");
+        tb = db.getTable("unit");
+        td = db.getTable("unit_user");
         fc = new FetchCase( FetchCase.STRICT )
                 .from  (tb.tableName, tb.name)
-                .join  (td.tableName, td.name , td.name+".dept_id = "+tb.name+".id" /***/ )
+                .join  (td.tableName, td.name , td.name+".unit_id = "+tb.name+".id" /***/ )
                 .select("MAX("+tb.name+".state) AS state, MAX("+tb.name+".rtime) AS rtime")
                 .filter(td.name+".user_id = ?", userId)
                 .gather(td.name+".user_id");
@@ -151,13 +151,13 @@ public class RoleSet extends CoreSerial implements CoreSerial.Mtimes, Set<String
 
         //** 查询部门权限 **/
 
-        tb = db.getTable("dept_role");
-        td = db.getTable("dept_user");
-        tt = db.getTable("dept");
+        tb = db.getTable("unit_role");
+        td = db.getTable("unit_user");
+        tt = db.getTable("unit");
         fc = new FetchCase( FetchCase.STRICT )
                 .from  (tb.tableName, tb.name)
-                .join  (td.tableName, td.name , tb.name+".dept_id = "+td.name+".dept_id")
-                .join  (tt.tableName, tt.name , td.name+".dept_id = "+tt.name+".id" /**/)
+                .join  (td.tableName, td.name , tb.name+".unit_id = "+td.name+".unit_id")
+                .join  (tt.tableName, tt.name , td.name+".unit_id = "+tt.name+".id" /**/)
                 .select(tb.name+".role")
                 .filter(td.name+".user_id = ?", userId)
                 .filter(tt.name+".state > 0" );

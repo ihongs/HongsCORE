@@ -102,29 +102,29 @@ public class UserCombat {
 
         //** 用户分组 **/
 
-        tb = db.getTable("dept_user");
+        tb = db.getTable("unit_user");
 
         lo = tb.fetchCase()
                .filter("`user_id` = ?", uid)
-               .select("`dept_id`")
+               .select("`unit_id`")
                .select();
         Set dids = new HashSet();
         for(Map ro : lo) {
-            dids.add(ro.get("dept_id"));
+            dids.add(ro.get("unit_id"));
         }
 
         lo = tb.fetchCase()
-               .filter("`user_id` IN (?) AND `dept_id` NOT IN (?)", uids, dids)
-               .select("`dept_id`")
+               .filter("`user_id` IN (?) AND `unit_id` NOT IN (?)", uids, dids)
+               .select("`unit_id`")
                .select();
             dids.clear();
         for(Map ro : lo) {
-            dids.add(ro.get("dept_id"));
+            dids.add(ro.get("unit_id"));
         }
 
         for(Object did : dids) {
             tb.insert(Synt.mapOf(
-                "dept_id", did,
+                "unit_id", did,
                 "user_id", uid
             ));
         }

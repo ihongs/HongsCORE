@@ -25,7 +25,8 @@
                     <input type="password" name="passcode" class="form-control" data-repeat="password" data-error="请重复输入口令" placeholder="请重复输入口令" autocomplete="off"/>
                 </div>
                 <div class="form-group form-control-static" style="padding-top: 0;">
-                    <a href="javascript:;" class="new-password">生成密码</a>
+                    <label><input type="checkbox" name="password" value="*" class="non-password form-ignored" style="margin-right: 1em;" />清除口令</label>
+                    <span style="margin-left: 1em; margin-right: 1em;">/</span><a href="javascript:;" class="new-password form-ignored"><b>生成口令</b></a>
                 </div>
                 <div class="form-group">
                     <label class="control-label">昵称</label>
@@ -269,8 +270,17 @@
             }
         });
 
-        context.on("click", ".new-password", function() {
-            newPassword();
+        context.on("change", ".non-password", function() {
+            if ($(this).prop( "checked" )) {
+                context.find(":password").val ("");
+                context.find(":password").prop("disabled", true );
+            } else {
+                context.find(":password").prop("disabled", false);
+            }
+        });
+        context.on("click" , ".new-password", function() {
+            context.find(".non-password").prop("checked" , false);
+            newPassword ( );
         });
         function newPassword() {
             var pw = getPassword();

@@ -138,15 +138,22 @@ extends Model {
             }
 
             // 加密密码, 联动密码更新时间
-            data.remove ("passcode");
             if (data.containsKey("password") ) {
                 String pw = Synt.declare(data.get("password") , "" );
-                String pc = Core.newIdentity();
-                pc = AuthKit.getCrypt(pw + pc);
-                pw = AuthKit.getCrypt(pw + pc);
-                data.put("password" , pw);
-                data.put("passcode" , pc);
+                String pc ;
+                if (pw.isEmpty()) {
+                    data.put("password", null);
+                    data.put("passcode", null);
+                } else {
+                    pc = Core.newIdentity(   );
+                    pc = AuthKit.getCrypt(pw + pc);
+                    pw = AuthKit.getCrypt(pw + pc);
+                    data.put("password" , pw );
+                    data.put("passcode" , pc );
+                }
                 data.put("ptime", System.currentTimeMillis() / 1000);
+            } else {
+                data.remove( "passcode" );
             }
 
             // 状态变更, 联动权限更新时间

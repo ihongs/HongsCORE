@@ -170,6 +170,14 @@ public class UserAction {
         {
             cp = true ;
         }
+        
+        /**
+         * 2022/05/18
+         * 提供一种可以清除密码的方式
+         */
+        if ("*".equals(rd.get("password"))) {
+            rd.put("password", null);
+        }
 
         /**
          * 2022/05/15
@@ -198,8 +206,7 @@ public class UserAction {
         /**
          * 2019/02/26
          * 有修改密码则将重试次数归零,
-         * 若密码重试次数标记有用到IP,
-         * 需告知登录的校验标记改用ID.
+         * 同时把登录的校验标记改用ID.
          *
          * 2021/06/20
          * 已加修改密码需重新登录逻辑,
@@ -208,16 +215,17 @@ public class UserAction {
         if (cp) {
             Calendar ca;
             long     et;
-            ca = Calendar.getInstance(Core.getTimezone( ));
-            ca.setTimeInMillis ( Core.ACTION_TIME.get ( ));
+            ca = Calendar.getInstance(Core.getTimezone());
+            ca.setTimeInMillis( Core.ACTION_TIME.get( ) );
             ca.set(Calendar.HOUR_OF_DAY, 23);
             ca.set(Calendar.MINUTE, 59);
             ca.set(Calendar.SECOND, 59);
-            et = ca.getTimeInMillis()/ 1000 + 1 ;
-            Record.set( "sign.retry.allow." + id, 1 , et );
-            Record.del( "sign.retry.times." + id /*Drop*/);
+            et = ca.getTimeInMillis() / 1000 + 1 ;
+            Record.del( "sign.retry.times." + id);
+            Record.set( "sign.retry.allow." + id , 1, et);
 
-            if ("*".equals(helper.getSessibute(Cnst.USK_SES))) {
+            if (id.equals(helper.getSessibute(Cnst.UID_SES))
+            && "*".equals(helper.getSessibute(Cnst.USK_SES))) {
                 helper.setSessibute(Cnst.UST_SES, System.currentTimeMillis() / 1000);
             }
         }

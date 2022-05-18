@@ -182,12 +182,34 @@ public class UserAction {
         /**
          * 2022/05/15
          * 区分所属的分组和管理的分组
+         * 补全分组类型是所属还是管理
          */
+        if (rd.containsKey("units" )) {
+            List<Map> units = Synt.asList(rd.get("units" ));
+            String id  = helper.getParameter( Cnst.ID_KEY );
+            Map types  = new HashMap();
+            if ( null != id && ! id.isEmpty() ) {
+                for(Map item : DB.getInstance("master")
+                                 .getTable("unit_user")
+                                 .fetchCase()
+                                 .filter("user_id = ?", id)
+                                 .select("unit_id, type"  )
+                                 .select(   ) ) {
+                    types.put(item.get("unit_id"), item.get("type"));
+                }
+            }
+            if (units != null) for (Map item : units) {
+                if (! item.containsKey("type")) {
+                    item.put("type",Synt.defoult(types.get(item.get("unit_id")), 0));
+                }
+            }
+        } else
         if (rd.containsKey("units0")
         ||  rd.containsKey("units1")) {
             List<Map> unit0 = Synt.asList(rd.get("units0"));
             List<Map> unit1 = Synt.asList(rd.get("units1"));
-            List<Map> units = new ArrayList((unit0 != null ? unit0.size() : 0) + (unit1 != null ? unit1.size() : 0));
+            List<Map> units = new ArrayList((unit0 != null ? unit0.size() : 0)
+                                           +(unit1 != null ? unit1.size() : 0));
             if (unit0 != null) for (Map item : unit0) {
                 units.add(item); item.put("type" , 0);
             }

@@ -813,7 +813,7 @@ function hsFormMove(treebox, listbox) {
                                     dataType: "JSON",
                                     cache   : false,
                                     global  : false,
-                                    success : function(rst) {
+                                    complete: function(rst) {
                                         rst = hsResponse(rst);
                                         if (rst.ok) {
                                             var mod = treebox.find(".HsTree").data("HsTree");
@@ -848,7 +848,7 @@ function hsFormMove(treebox, listbox) {
                                     dataType: "JSON",
                                     cache   : false,
                                     global  : false,
-                                    success : function(rst) {
+                                    complete: function(rst) {
                                         rst = hsResponse(rst);
                                         if (rst.ok) {
                                             var mod = listbox.find(".HsList").data("HsList");

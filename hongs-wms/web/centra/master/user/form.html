@@ -210,6 +210,7 @@
             drop: function(ev, ui) {
                 ui.draggable.fadeOut(function() {
                     ui.draggable.appendTo(units0Box).fadeIn();
+                    ui.draggable.find("input").attr("name", "units0..unit_id");
                 });
             }
         });
@@ -218,6 +219,7 @@
             drop: function(ev, ui) {
                 ui.draggable.fadeOut(function() {
                     ui.draggable.appendTo(units1Box).fadeIn();
+                    ui.draggable.find("input").attr("name", "units1..unit_id");
                 });
             }
         });

@@ -107,7 +107,7 @@ function hsUserMove(treebox, listbox) {
                                     dataType: "JSON",
                                     cache   : false,
                                     global  : false,
-                                    success : function(rst) {
+                                    complete: function(rst) {
                                         rst = hsResponse(rst);
                                         if (rst.ok) {
                                             var mod = treebox.find(".HsTree").data("HsTree");
@@ -128,6 +128,7 @@ function hsUserMove(treebox, listbox) {
                     var did = ui.helper.data("unit_id" );
                     var dis = ui.helper.data("unit_ids").slice(0);
                     var del = hsUserDel_;
+                    var has = hsUserHas_;
                     $.hsMask({
                             "mode" : "warn",
                             "class": "alert-success",
@@ -146,7 +147,7 @@ function hsUserMove(treebox, listbox) {
                                     dataType: "JSON",
                                     cache   : false,
                                     global  : false,
-                                    success : function(rst) {
+                                    complete: function(rst) {
                                         rst = hsResponse(rst);
                                         if (rst.ok) {
                                             var mod = listbox.find(".HsList").data("HsList");
@@ -160,7 +161,9 @@ function hsUserMove(treebox, listbox) {
                             "label": "移补",
                             "click": function() {
                                 del( dis, did );
-                                dis.push( pid );
+                                if (!has(dis, pid)) {
+                                    dis.push( pid );
+                                }
                                 var req = new HsSerialDic({id: uid, "units..unit_id": dis});
                                 $.ajax({
                                     url     : hsFixUri("centra/master/user/save.act"),
@@ -169,7 +172,7 @@ function hsUserMove(treebox, listbox) {
                                     dataType: "JSON",
                                     cache   : false,
                                     global  : false,
-                                    success : function(rst) {
+                                    complete: function(rst) {
                                         rst = hsResponse(rst);
                                         if (rst.ok) {
                                             var mod = listbox.find(".HsList").data("HsList");
@@ -182,8 +185,10 @@ function hsUserMove(treebox, listbox) {
                         {
                             "label": "增挂",
                             "click": function() {
-//                              del( dis, did );
-                                dis.push( pid );
+                            //  del( dis, did );
+                                if (!has(dis, pid)) {
+                                    dis.push( pid );
+                                }
                                 var req = new HsSerialDic({id: uid, "units..unit_id": dis});
                                 $.ajax({
                                     url     : hsFixUri("centra/master/user/save.act"),
@@ -192,7 +197,7 @@ function hsUserMove(treebox, listbox) {
                                     dataType: "JSON",
                                     cache   : false,
                                     global  : false,
-                                    success : function(rst) {
+                                    complete: function(rst) {
                                         rst = hsResponse(rst);
                                         if (rst.ok) {
                                             var mod = listbox.find(".HsList").data("HsList");
@@ -248,6 +253,15 @@ function hsUserSend(btn, msg, url, data) {
         data = new HsSerialDic({id: uid, "units..unit_id": dis});
     }
     HsList.prototype.send.call(this, btn, msg, url, data);
+}
+
+function hsUserHas_(arr, val) {
+    for(var i = 0; i < arr.length; i ++) {
+        if (arr[i] === val) {
+            return true;
+        }
+    }
+    return  false;
 }
 
 function hsUserDel_(arr, val) {

@@ -144,9 +144,10 @@ public class SignAction {
         if (xd  > 0 ) {
         int pd  = (int)(System.currentTimeMillis() / 1000L - ptime) / 86400;
         if (pd  > xd) {
+            if (0 == ptime) pd = xd; // 首批导入可能为 0
             sd.put("ern", "password.expired");
             sd.put("err", "Password expired");
-            sd.put("msg", CoreLocale.getInstance("master").translate("core.password.expired", pd, xd, pd - xd));
+            sd.put("msg", CoreLocale.getInstance("master").translate("core.password.expired", pd, xd));
         }}
 
         ah.reply (sd);

@@ -140,7 +140,7 @@ public class SignAction {
         sd.put("ok", true);
 
         // 密码时效
-        int xd  = cc.getProperty("core.pswd.alter.alert", 0);
+        int xd  = cc.getProperty("core.passwd.worn.days", 0);
         if (xd  > 0 ) {
         int pd  = (int)(System.currentTimeMillis() / 1000L - ptime) / 86400;
         if (pd  > xd) {

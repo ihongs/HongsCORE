@@ -16,79 +16,77 @@ package io.github.ihongs;
  */
 public final class Cnst {
 
-    //** 默认取值 **/
-
-    public static final String LANG_DEF = "zh_CN"; // 默认语言
-
-    public static final String ZONE_DEF = "GMT+8"; // 默认时区
-
-    public static final int    RN_DEF =   20 ; // 默认每页行数
+    public static final int    RN_DEF =  20 ; // 默认每页行数
 
     //** 查询参数 **/
 
-    public static final String ID_KEY =  "id"; // 编号
+    public static final String ID_KEY = "id"; // 编号
 
-    public static final String WD_KEY =  "wd"; // 查询      (Word)
+    public static final String WD_KEY = "wd"; // 查询      (Word)
 
-    public static final String CB_KEY =  "cb"; // 回调名称  (Callback)
+    public static final String CB_KEY = "cb"; // 回调名称  (Callback)
 
-    public static final String PN_KEY =  "pn"; // 页码编号  (Page num)
+    public static final String RN_KEY = "rn"; // 每页行数  (Rows num)
 
-    public static final String QN_KEY =  "qn"; // 探查页数  (Ques num)
+    public static final String PN_KEY = "pn"; // 页码编号  (Page num)
 
-    public static final String RN_KEY =  "rn"; // 每页行数  (Rows num)
+    public static final String QN_KEY = "qn"; // 探查页数  (Ques num)
 
-    public static final String OB_KEY =  "ob"; // 排序字段  (Order by)
+    public static final String OB_KEY = "ob"; // 排序字段  (Order by)
 
-    public static final String RB_KEY =  "rb"; // 应答字段  (Reply with)
+    public static final String RB_KEY = "rb"; // 应答字段  (Reply with)
 
-    public static final String AB_KEY =  "ab"; // 应用约束  (Apply with)
+    public static final String AB_KEY = "ab"; // 应用约束  (Apply with)
 
-    public static final String OR_KEY =  "or"; // 或条件    (Or )
+    public static final String OR_KEY = "or"; // 或条件    (Or )
 
-    public static final String NR_KEY =  "nr"; // 否条件    (Not)
+    public static final String NR_KEY = "nr"; // 否条件    (Not)
 
-    public static final String AR_KEY =  "ar"; // 与条件    (And)
+    public static final String AR_KEY = "ar"; // 与条件    (And)
 
     //** 关系符号 **/
 
-    public static final String OR_REL =  "or"; // 条件关系  (or, nr, ar)
+    public static final String OR_REL = "or"; // 条件关系  (or, nr, ar)
 
-    public static final String IS_REL =  "is"; // 是否为空  (NULL, WELL)
+    public static final String IS_REL = "is"; // 是否为空  (NULL, WELL)
 
-    public static final String EQ_REL =  "eq"; // 等于
+    public static final String EQ_REL = "eq"; // 等于
 
-    public static final String NE_REL =  "ne"; // 不等于
+    public static final String NE_REL = "ne"; // 不等于
 
-    public static final String CQ_REL =  "cq"; // 匹配
+    public static final String CQ_REL = "cq"; // 匹配
 
-    public static final String NC_REL =  "nc"; // 不匹配
+    public static final String NC_REL = "nc"; // 不匹配
 
-    public static final String GT_REL =  "gt"; // 大于
+    public static final String GT_REL = "gt"; // 大于
 
-    public static final String GE_REL =  "ge"; // 大于或等于
+    public static final String GE_REL = "ge"; // 大于或等于
 
-    public static final String LT_REL =  "lt"; // 小于
+    public static final String LT_REL = "lt"; // 小于
 
-    public static final String LE_REL =  "le"; // 小于或等于
+    public static final String LE_REL = "le"; // 小于或等于
 
-    public static final String RG_REL =  "rg"; // 区间
+    public static final String RG_REL = "rg"; // 区间
 
-    public static final String ON_REL =  "on"; // 条件      ( 同 in, 排除空串 )
+    public static final String ON_REL = "on"; // 条件      ( 同 in, 排除空串 )
 
-    public static final String IN_REL =  "in"; // 包含
+    public static final String IN_REL = "in"; // 包含
 
-    public static final String NI_REL =  "ni"; // 不包含    (not in)
+    public static final String NI_REL = "ni"; // 不包含    (not in)
 
-    public static final String AI_REL =  "ai"; // 全包含    (all in, DB 未实现)
+    public static final String AI_REL = "ai"; // 全包含    (all in, DB 未实现)
 
-    public static final String WT_REL =  "wt"; // 权重      (weight, DB 未实现)
+    public static final String WT_REL = "wt"; // 权重      (weight, DB 未实现)
 
     //** 配置扩展 **/
 
-    public static final String DB_EXT = ".db"; // 数据库配置
+    public static final String  ACT_EXT = ".act";  // 动作后缀
 
-    public static final String DF_EXT = ".df"; // 表字段缓存
+    public static final String  API_EXT = ".api";  // 接口后缀
+
+    public static final String   DB_EXT = ".db"; // 数据库配置
+
+    public static final String   DF_EXT = ".df"; // 表字段缓存
 
     public static final String FORM_EXT = ".form"; // 表单配置
 
@@ -96,11 +94,11 @@ public final class Cnst {
 
     public static final String PROP_EXT = ".prop"; // 属性配置
 
-    public static final String  ACT_EXT = ".act";
-
-    public static final String  API_EXT = ".api";
-
     //** 会话参数 **/
+
+    public static final String LANG_DEF = "zh_CN"; // 默认语言
+
+    public static final String ZONE_DEF = "GMT+8"; // 默认时区
 
     public static final String LANG_KEY =  "lang"; // 语言代号
 

@@ -36,7 +36,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * <h3>静态属性:</h3>
  * <pre>
  * ENVIR     标识不同运行环境(0 cmd, 1 web)
- * DEBUG     标识不同调试模式(0 off, 1 log, 2 warn/info, 4 debug/trace; 可以多个标识相加, 错误总是需要记录)
+ * DEBUG     标识不同调试模式(0 out, 1 log, 2 warn/info, 4 debug/trace; 可以多个标识相加, 错误总是需要记录)
  * SERV_PATH 应用访问路径(Web应用中为ContextPath)
  * BASE_PATH 应用目录路径(Web应用中为RealPath(/))
  * CORE_PATH 应用目录路径(Web应用中为WEB-INF目录)

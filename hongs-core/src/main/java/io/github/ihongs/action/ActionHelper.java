@@ -783,9 +783,9 @@ public class ActionHelper implements Cloneable
    */
   public void reply(String msg, Map info)
   {
-    Map map = new HashMap();
+    Map map = new HashMap(3);
     if (null !=  msg) {
-        map.put("msg", msg);
+        map.put("msg" , msg);
     }
     map.put("info", info);
     reply(map);
@@ -799,9 +799,9 @@ public class ActionHelper implements Cloneable
    */
   public void reply(String msg, String id)
   {
-    Map map = new HashMap();
+    Map map = new HashMap(3);
     if (null !=  msg) {
-        map.put("msg", msg);
+        map.put("msg" , msg);
     }
     map.put(Cnst.ID_KEY, id);
     reply(map);
@@ -815,9 +815,9 @@ public class ActionHelper implements Cloneable
    */
   public void reply(String msg, Number rn)
   {
-    Map map = new HashMap();
+    Map map = new HashMap(3);
     if (null !=  msg) {
-        map.put("msg", msg);
+        map.put("msg" , msg);
     }
     map.put(Cnst.RN_KEY, rn);
     reply(map);
@@ -829,9 +829,9 @@ public class ActionHelper implements Cloneable
    */
   public void reply(String msg)
   {
-    Map map = new HashMap();
+    Map map = new HashMap(2);
     if (null !=  msg) {
-        map.put("msg", msg);
+        map.put("msg" , msg);
     }
     map.put("ok", true );
     reply(map);
@@ -843,9 +843,9 @@ public class ActionHelper implements Cloneable
    */
   public void fault(String msg)
   {
-    Map map = new HashMap();
+    Map map = new HashMap(2);
     if (null !=  msg) {
-        map.put("msg", msg);
+        map.put("msg" , msg);
     }
     map.put("ok", false);
     reply(map);
@@ -908,7 +908,7 @@ public class ActionHelper implements Cloneable
         CoreLogger.error(ta );
     }
 
-    Map map = new HashMap();
+    Map map = new HashMap (4);
     map.put( "ok" , false );
     map.put("ern" , ern );
     map.put("err" , err );

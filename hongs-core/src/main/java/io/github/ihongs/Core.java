@@ -384,10 +384,12 @@ public class Core
    */
   public static final String newIdentity(String svid)
   {
-    long time = (System.currentTimeMillis ()- 1314320040000L); // 2011/08/26, 溜溜生日
-    long trid = (Thread.currentThread/**/ (). getId ()%1296L); // 36^2
-    int  rand =  ThreadLocalRandom.current().nextInt(1679616); // 36^4
-         time =  time  %  2821109907456L;                      // 36^8
+    long time = System.currentTimeMillis ();                  // 时间戳
+    long trid = Thread.currentThread/**/ (). getId ();        // 线程ID
+    int  rand = ThreadLocalRandom.current().nextInt(1679616); // 36^4
+         time = time - 1314320040000L;                        // 2011/08/26, 溜溜生日
+         time = time % 2821109907456L;                        // 36^8
+         trid = trid % 1296L;                                 // 36^2
 
     return  String.format(
             "%8s%4s%2s%2s",

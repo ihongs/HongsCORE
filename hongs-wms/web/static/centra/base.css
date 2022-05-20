@@ -394,7 +394,7 @@ body {
     content: "\f130";
 }
 
-/* 复制导出列表样式 */
+/* 拷贝导出列表样式 */
 .table-copylist th ,
 .table-copylist td {
     white-space: pre-line;

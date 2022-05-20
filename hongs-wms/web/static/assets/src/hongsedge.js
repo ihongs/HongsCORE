@@ -248,45 +248,47 @@ HsStat.prototype = {
     },
 
     copy: function(itemBox) {
-        var listBox =itemBox.find(".checkbox");
+        var listBox = itemBox.find(".checkbox");
 
         // 检查接口
-        if (! window.getSelection
-        ||  ! document.execCommand
-        ||  ! document.createRange ) {
-            $.hsWarn("浏览器无法复制\r\n请使用较新版的 Chrome/Safari/Firefox, 或某些双核/多核浏览器的极速模式.", "warning");
+        if (! $.hsCanCopy()) {
+            $.hsWarn("浏览器无法拷贝\r\n请使用较新版的 Chrome/Firefox/Safari/Edge, 或某些双核/多核浏览器的极速模式.", "warning");
             return;
         }
 
         // 复制提示
-        var msk = $.hsMask({
+        var set = [{
             mode : "warn",
             glass: "alert-default",
-            text : "为了降低网络延迟, 图表按从多到少排, 仅取前 20 条; 而此功能将调取完整统计数据, 以便您复制到 Office 等软件中查阅.",
-            title: "正在获取完整统计数据, 请稍等..."
+            text : "为了降低网络延迟, 图表按从多到少排, 仅取前 20 条; 而此功能将调取完整统计数据, 以便导入 Office/WPS 等应用中.",
+            title: "正在获取完整统计数据, 请稍等...",
+            topic: "已经取得完整统计数据, 请拷贝吧!",
+            note : "拷贝成功, 去粘贴吧!"
         }, {
-            glass: "btn-primary",
-            label: "复制"
+            glass: "btn-primary copies",
+            label: "拷贝"
         }, {
             glass: "btn-default",
             label: "取消"
-        });
+        }];
+        var msk = $.hsMask.apply( $, set );
         var mok = function() {
             msk.removeClass ("alert-info")
                .addClass ("alert-success");
             msk.find(".alert-footer .btn")
                .prop( "disabled" , false );
             msk.find(".alert-title" /**/ )
-               .text("已经取得完整统计数据, 请复制吧!");
+               .text( set[0].topic );
+            return msk;
         };
-        msk.find(".alert-footer button").prop("disabled", true);
-        msk.find(".alert-footer button").eq(0).click(function() {
+        msk.find(".alert-footer button").prop("disabled", true );
+        msk.find(".alert-footer button.copies").click(function() {
             var div = listBox.children( "div" );
             var tab = /**/div.children("table");
             div.show(  );
             tab.hsCopy();
             div.hide(  );
-            $.hsNote("复制成功, 去粘贴吧!", "success");
+            $.hsNote( set[1].note , "success" );
         });
 
         // 重复拷贝
@@ -307,6 +309,7 @@ HsStat.prototype = {
         url = hsSetParam(url, "rb", fn ); // 单字段
         url = hsSetParam(url, "rn", "0"); // 不分页
 
+        // 读取全部
         $.hsAjax({
             url : url,
             data: dat,
@@ -1236,14 +1239,14 @@ function hsHideListCols(box) {
 }
 
 /**
- * 复制列表中的内容
+ * 拷贝列表中的内容
  * 后可跟对话框参数, 参数同  $.hsMask
  * 如首参为数据对象, 结构为: {cols: [{label: "标签", fn: "字段", ft: "类型", fl: "填充方法"}], list: [{col1: "", col2: ""}]}
  */
 function hsCopyListData(box) {
     // 检查接口
     if (! $.hsCanCopy()) {
-        $.hsWarn("浏览器无法复制\r\n请使用较新版的 Chrome/Firefox/Safari/Edge/IE, 或某些双核/多核浏览器的极速模式.", "warning");
+        $.hsWarn("浏览器无法拷贝\r\n请使用较新版的 Chrome/Firefox/Safari/Edge, 或某些双核/多核浏览器的极速模式.", "warning");
         return;
     }
 
@@ -1252,13 +1255,13 @@ function hsCopyListData(box) {
     var def = [{
         mode : "warn",
         glass: "alert-default",
-        text : "这将整理原始数据, 清理表格中的内容, 提取完整的日期/时间, 补全图片/链接等网址, 以便您复制到 Office 等软件中查阅.",
+        text : "这将整理原始数据, 清理表格中的内容, 提取完整的日期/时间, 补全图片/链接等网址, 以便导入 Office/WPS 等应用中.",
         title: "正在组织列表原始数据, 请稍等...",
-        topic: "已经备好列表原始数据, 请复制吧!",
-        note : "复制成功, 去粘贴吧!"
+        topic: "已经备好列表原始数据, 请拷贝吧!",
+        note : "拷贝成功, 去粘贴吧!"
     }, {
         glass: "btn-primary copies",
-        label: "复制"
+        label: "拷贝"
     }, {
         glass: "btn-default",
         label: "取消"
@@ -1393,7 +1396,7 @@ function hsCopyListData(box) {
 
 /**
  * 清理内容中的标签
- * 以供表格复制中用
+ * 以供表格拷贝中用
  */
 function hsTidyHtmlTags(htm) {
     if (!htm) return "";

@@ -881,6 +881,7 @@ ul.pickbox {
 }
 ul.pickbox > li.btn {
     width        : 100%;
+    max-width    : 100%;
     overflow     : hidden;
     white-space  : nowrap;
     text-overflow: ellipsis;
@@ -918,6 +919,39 @@ ul.pickrol > li.btn-default.form-control {
     color: #555;
 }
 
+.pickmul:after {
+    clear  : both ;
+    display: table;
+    content: " "  ;
+}
+.pickmul.pickrol {
+    display: table;
+    width: 100%;
+    margin-bottom:-2px;
+}
+.pickmul > .btn {
+    width: auto;
+    margin-right : 2px;
+    margin-bottom: 2px;
+}
+.pickmul > .preview {
+    float: left;
+    margin-right : 2px;
+    margin-bottom: 2px;
+}
+
+.pickbox:empty  ,
+.pickrol .close ,
+.pickrol  input {
+    display: none;
+}
+.picksel .picksum {
+    display: none;
+}
+.pickmul .picksum {
+    display: inline;
+}
+
 .preview {
     position: relative;
     cursor  : pointer ;
@@ -945,38 +979,6 @@ ul.pickrol > li.btn-default.form-control {
 .preview .close:hover ,
 .preview .close:focus {
     box-shadow: 0 0 0.5em #000;
-}
-
-.pickmul:after {
-    clear  : both ;
-    display: table;
-    content: " "  ;
-}
-.pickmul.pickrol {
-    display: table;
-    width: 100%;
-    margin-bottom:-2px;
-}
-.pickmul > .preview {
-    float: left;
-    margin-right : 2px;
-    margin-bottom: 2px;
-}
-.pickmul > .btn {
-    margin-bottom: 2px;
-}
-
-.pickbox:empty  ,
-.pickrol .close ,
-.pickrol  input {
-    display: none;
-}
-/* 已选数量 */
-.picksel .picksum {
-    display: none;
-}
-.pickmul .picksum {
-    display: inline;
 }
 
 .datebox.input-group {

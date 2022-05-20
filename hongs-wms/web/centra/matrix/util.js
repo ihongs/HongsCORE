@@ -665,6 +665,9 @@ $.fn.hsCols = function() {
         modal.find( ".detail-set" ) // 详细设置区
              .find("tr").not(".hide").remove();
 
+        // 关闭可能的关联选择
+        modal.find(".labs .loadbox").hsClose();
+
         // 表单设置只显示高级, 分隔栏仅需基础设置
         if (type == '_') {
             tabs.find("li:eq(1) a").click();

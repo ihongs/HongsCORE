@@ -3149,15 +3149,10 @@ function() {
         });
     }
     // 延迟加载
-    var ref;
-    if (ths.is("[data-href]")) { // 加载一次
-        ref = ths.attr("data-href");
+    if (ths.is("[data-href]")) {
+        tao = ths.attr("data-href");
         ths.removeAttr("data-href");
-        pne.hsLoad(ref);
-    } else
-    if (ths.is("[data-hrel]")) { // 总时重载
-        ref = ths.attr("data-hrel");
-        pne.hsLoad(ref);
+        pne.hsLoad(tao);
     }
     tab.siblings()
     .removeClass("active");

@@ -110,6 +110,7 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
     }
 
     function pickOpen() {
+        var bin = jQuery(this); // 还没赋值
         var evt = jQuery.Event("pickOpen");
         evt.target = bin;
         box.trigger( evt, [v, n, t] );
@@ -453,7 +454,7 @@ function hsFormFillPick(box, v, n) {
             cls[0] = rol ? "btn btn-link"  : "btn btn-info" ;
             cls[1] = rol ? "bi bi-hi-fork" : "bi bi-hi-fork";
         } else {
-            cls[0] = rol ? "btn btn-text"  : "btn btn-info";
+            cls[0] = rol ? "btn btn-text"  : "btn btn-info" ;
             cls[1] = rol ? "bi bi-hi-fork" : "bi bi-hi-fork";
         }
         cls[0] = box.attr("data-item-class") || cls[0];

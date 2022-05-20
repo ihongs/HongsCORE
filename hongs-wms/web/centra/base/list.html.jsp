@@ -400,7 +400,7 @@
             [ '<%=_module%>/<%=_entity%>/snap.html?<%=Cnst.ID_KEY%>={ID}',
               '.reveal', '@' ]
         ],
-        load: hsFindWithWord,
+        load: hsLoadWithWord,
         send: hsSendWithMemo,
         <%if ("select".equals(_action)) {%>
         _fill__check: hsListFillSele,

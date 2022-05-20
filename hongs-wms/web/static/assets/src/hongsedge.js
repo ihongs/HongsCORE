@@ -1,4 +1,4 @@
-/* global H$, jQuery, HsCUID, HsForm, HsList, hsFormFillFork, hsListFillFork, echarts */
+/* global jQuery, Element, H$, HsCUID, HsForm, HsList, hsFormFillFork, hsListFillFork, echarts */
 
 //** 资源扩展功能 **/
 
@@ -1237,6 +1237,8 @@ function hsHideListCols(box) {
 
 /**
  * 复制列表中的内容
+ * 后可跟对话框参数, 参数同  $.hsMask
+ * 如首参为数据对象, 结构为: {cols: [{label: "标签", fn: "字段", ft: "类型", fl: "填充方法"}], list: [{col1: "", col2: ""}]}
  */
 function hsCopyListData(box) {
     // 检查接口
@@ -1246,30 +1248,41 @@ function hsCopyListData(box) {
     }
 
     // 复制提示
-    var msk = $.hsMask({
+    var set ;
+    var def = [{
         mode : "warn",
         glass: "alert-default",
         text : "这将整理原始数据, 清理表格中的内容, 提取完整的日期/时间, 补全图片/链接等网址, 以便您复制到 Office 等软件中查阅.",
-        title: "正在组织列表原始数据, 请稍等..."
+        title: "正在组织列表原始数据, 请稍等...",
+        topic: "已经备好列表原始数据, 请复制吧!",
+        note : "复制成功, 去粘贴吧!"
     }, {
-        glass: "btn-primary",
+        glass: "btn-primary copies",
         label: "复制"
     }, {
         glass: "btn-default",
         label: "取消"
-    });
+    }];
+    if (arguments.length > 1) {
+        set = [].slice.call(arguments, 1);
+        set[0] = $.extend(def[0], set[0]);
+    } else {
+        set = def;
+    }
+    var msk = $.hsMask.apply( $, set );
     var mok = function() {
         msk.removeClass ("alert-info")
            .addClass ("alert-success");
         msk.find(".alert-footer .btn")
            .prop( "disabled" , false );
         msk.find(".alert-title" /**/ )
-           .text("已经备好列表原始数据, 请复制吧!");
+           .text( set[0].topic );
+        return msk;
     };
-    msk.find(".alert-footer button").prop("disabled", true);
-    msk.find(".alert-footer button").eq(0).click(function() {
+    msk.find(".alert-footer button").prop("disabled", true );
+    msk.find(".alert-footer button.copies").click(function() {
         msk.prev().show().children().hsCopy();
-        $.hsNote("复制成功, 去粘贴吧!", "success");
+        $.hsNote( set[0].note , "success" );
     });
 
     // 复制表格
@@ -1340,7 +1353,8 @@ function hsCopyListData(box) {
          * 拷贝原始数据
          * 以便导出表格
          */
-
+        var cols = box.cols || [];
+        var list = box.list || [];
         var mod  = new HsList({
             context : div
         });
@@ -1348,19 +1362,21 @@ function hsCopyListData(box) {
 
         // 表头
             var tr2 = tr.clone().appendTo(thd);
-        for(var i = 1; i < arguments.length; i ++) {
+        for(var i = 1; i < cols.length; i ++ ) {
             var th2 = th.clone().appendTo(tr2);
-            var col = arguments[i];
+            var col = cols[i];
             if (typeof col === "string"
             ||  typeof col === "number") {
                 col = { fn : col };
             }
-            th2.text( col.tt || col.fn );
-            th2.data( col );
+            th2.attr("class", col.glass);
+            th2.attr("style", col.style);
+            th2.text( col. label || "" );
+            th2.data( col  );
         }
 
         // 内容
-        mod.fillList( box );
+        mod.fillList( list );
 
         /**
          * 规避将非数字类型的数字文本解析为数字
@@ -1372,7 +1388,7 @@ function hsCopyListData(box) {
     }
 
     // 就绪
-    mok ();
+    return mok();
 }
 
 /**
@@ -1453,7 +1469,7 @@ function hsSendWithMemo(btn, msg, url, data) {
 /**
  * 列表高级搜索支持
  */
-function hsFindWithWord(url, data) {
+function hsLoadWithWord(url, data) {
     var word = this.context.find(".findbox [name=wd]").val();
     if (data && word && /^\?.+=/.test(word)) {
         word = hsSerialDic(word);
@@ -1463,6 +1479,7 @@ function hsFindWithWord(url, data) {
     }
     HsList.prototype.load.call(this, url, data);
 }
+hsFindWithWord = hsLoadWithWord; // 兼容
 
 //** 前台标准功能 **/
 

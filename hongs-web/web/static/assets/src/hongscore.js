@@ -2241,7 +2241,7 @@ $.hsWait = function(msg, xhr, xhu) {
         snt  =  ""  ;
         ctt  = Math.floor(rtt /3600);
         if ( 0<ctt) rtt  =rtt %3600 ;
-//      if (10>ctt) snt += "0";
+    //  if (10>ctt) snt += "0";
         snt += ctt + ":";
         ctt  = Math.floor(rtt / 60 );
         if ( 0<ctt) rtt  =rtt % 60  ;
@@ -2290,13 +2290,19 @@ $.hsWait = function(msg, xhr, xhu) {
         bar.css ( "width" , pct + "%");
         foo.text(  pct  + "% -" + snt);
     };
+    box.hide = function() {
+        mod.modal("hide");
+        if (itl) {
+            clearInterval(itl);
+            itl  =  undefined ;
+        }
+    };
 
-    foo.css("font-family","monospace");
-    foo.empty().text("...");
+    foo.addClass("code").text("..."); // 清空
 
     if (xhr)
     xhr.addEventListener(  "load"  , function(   ) {
-        mod.modal( "hide" );
+        box.hide( );
     } , false );
     if (xhu)
     xhu.addEventListener("progress", function(evt) {
@@ -2861,6 +2867,24 @@ $.fn.hsBind = function(func, opts) {
 };
 $.fn._hsModule = $.fn.hsBind; // 兼容旧版命名
 
+/*
+ * 隐藏数据
+ * @param {Object} data
+ */
+$.fn.hsHide = function(data) {
+    data = hsSerialArr(data);
+    var hide = $('<input type="hidden" class="form-ignored"/>');
+    this.empty( );
+    for(var i = 0; i < data.length; i ++) {
+        var item = data [i];
+        var node = hide.clone();
+        node.attr("name" , item.name );
+        node.attr("value", item.value);
+        node.appendTo(this);
+    }
+    return  this;
+};
+
 /**
  * 拷贝助手
  */
@@ -2888,6 +2912,7 @@ $.fn.hsCopy = function() {
     {
         throw new Error("hsCopy: Copy is not supported");
     }
+    return  this;
 };
 $.hsCanCopy = function() {
     if (window.clipboardData) {

@@ -53,10 +53,15 @@ fieldset>.dropdown-list {
     top: 2px; /* 修正 Mac 偏下 */
 }
 
+.code ,
+.samp {
+    font-family: monospace;
+}
+
 .close ,
 .badge ,
 .label {
-    font-family: Helvetica, Arial; /* Helvetica Neue 偏下 */
+    font-family: Helvetica, Arial, sans-serif; /* Helvetica Neue 偏下 */
 }
 
 .btn .close {

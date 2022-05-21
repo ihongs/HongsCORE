@@ -3081,7 +3081,7 @@ function() {
     var box = $(this).attr("data-target");
     $(this).hsFind(box || "@").hsClose( );
 })
-.on("click", ".exit,.close,.cancel",
+.on("click", ".close,.cancel",
 function() {
     var box;
     var ths = $(this);
@@ -3130,8 +3130,8 @@ function() {
 $(document)
 .on("click", ".tabs > li > a",
 function() {
-    var ths = $(this);
-    var tab = ths.parent();
+    var lnk = $(this);
+    var tab = lnk.parent();
     var nav = tab.parent();
     var pns = nav.data( "labs")
            || nav.next(".labs");
@@ -3149,20 +3149,18 @@ function() {
         });
     }
     // 延迟加载
-    if (ths.is("[data-href]")) {
-        tao = ths.attr("data-href");
-        ths.removeAttr("data-href");
-        pne.hsLoad(tao);
+    if (lnk.is("[data-href]")
+    && !pne.children().size()) {
+        var ref = lnk.data("href");
+        var box = $('<div></div>');
+        pne.append (box);
+        box.hsLoad (ref);
     }
-    tab.siblings()
-    .removeClass("active");
-    tab.addClass("active")
-       .css("display", "");
-    pno.trigger("hsRetir");
-    pne.show()
-       .siblings()
-       .hide();
-    pne.trigger("hsRecur");
+    tao.removeClass("active");
+    tab.   addClass("active")
+       .   css("display", "");
+    pno.hide( ).trigger("hsRetir");
+    pne.show( ).trigger("hsRecur");
 })
 .on("click", ".back-crumb a",
 function() {

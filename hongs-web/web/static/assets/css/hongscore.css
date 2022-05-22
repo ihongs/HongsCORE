@@ -887,13 +887,20 @@ ul.pickbox > li.btn {
     text-overflow: ellipsis;
     text-align   : left;
 }
-ul.pickrol > li.btn {
+ul.pickmol > li.btn {
+    width        : auto;
+    max-width    : 100%;
+    overflow     : hidden;
+    white-space  : nowrap;
+    text-overflow: ellipsis;
+    text-align   : left;
+}
+ul.pickrol > li.btn.btn-link ,
+ul.pickrol > li.btn.btn-text {
     box-shadow   : none;
-    font-weight  : normal;
-    border-color : transparent;
     background   : transparent;
+    border-color : transparent;
     padding-left : 0px;
-    padding-right: 0px;
     margin-bottom: 0px;
 }
 ul.pickbox > li.btn .bi,
@@ -905,6 +912,12 @@ ul.pickrol > li.btn .bi,
 ul.pickrol > li.btn .glyphicon {
     margin-right : 0px;
     display : none;
+}
+ul.pickmol > li.btn .close {
+    margin-left  : 9px;
+}
+ul.pickrol > li.btn .close {
+    margin-left  : 0px;
 }
 ul.pickrol > li.btn-text,
 ul.pickrol > li.btn-text:hover ,
@@ -926,11 +939,10 @@ ul.pickrol > li.btn-default.form-control {
 }
 .pickmul.pickrol {
     display: table;
-    width: 100%;
-    margin-bottom:-2px;
+    margin-bottom: -2px;
 }
-.pickmul > .btn {
-    width: auto;
+.pickmol > li.btn {
+    float: left;
     margin-right : 2px;
     margin-bottom: 2px;
 }

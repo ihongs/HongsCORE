@@ -1104,9 +1104,21 @@ public class Form extends Model {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder        builder = factory.newDocumentBuilder();
             try {
-                return  builder.parse(new FileInputStream(file));
+                /**
+                 * 因写入时有换行缩进
+                 * 换行和缩进会解析成 TextNode
+                 * 需遍历并清理掉这些 TextNode
+                 * 设置 factory.setIgnoringElementContentWhitespace(true) 无效
+                 * Java 8 没发现这个问题, Java 11/17 都遇到这个问题
+                 */
+                Document docu;
+                Element  root;
+                docu = builder.parse(new FileInputStream(file));
+                root = docu.getDocumentElement();
+                delBlankLinesInDocument ( root );
+                return docu;
             } catch (FileNotFoundException e) {
-                return  builder.newDocument();
+                return builder.newDocument( );
             }
         } catch (ParserConfigurationException e) {
             throw new HongsException( e );
@@ -1150,6 +1162,23 @@ public class Form extends Model {
         }
     }
 
+    private void delBlankLinesInDocument(Element elem) {
+        NodeList list = elem.getChildNodes();
+        for(int i = list.getLength() -1; i > -1; i --) {
+            Node node = list.item(i);
+            switch ( node.getNodeType() ) {
+                case Node.ELEMENT_NODE:
+                    delBlankLinesInDocument((Element) node);
+                    break;
+                case Node.TEXT_NODE:
+                    if (node.getTextContent( ).isBlank( ) ) {
+                        elem.removeChild(node);
+                    }
+                    break;
+            }
+        }
+    }
+    
     private Element getNodeByTagNameAndAttr(Element elem, String tag, String att, String val) {
         NodeList a = elem.getChildNodes();
         for (int i = 0; i < a.getLength(); i ++ ) {

@@ -306,6 +306,9 @@ function hsFormFillPick(box, v, n) {
         || !! box.data("multiple")
         || /(\[\]|\.\.|\.$)/.test(n);
     var btn = box.siblings("[data-toggle=hsPick],[data-toggle=hsFork]");
+    if (btn.size() === 0) {
+        btn = box.children("[data-toggle=hsPick],[data-toggle=hsFork]");
+    }
 
     box.toggleClass ("pickmul", mul);
 
@@ -364,15 +367,14 @@ function hsFormFillPick(box, v, n) {
         btn.append('<span class="close pull-right">&times;</span>');
     }
     function doset(box, val, txt, cls) {
-        var lab = jQuery('<span></span>').text(txt);
-        var inp = jQuery('<input type="hidden" />').attr("name", n).val(val);
-        var div = jQuery('<li class="' + cls[0] + ' form-control"></li>')
+        var tms = "&times;";
+        jQuery('<li class="' + cls[0] + '"></li>')
+           .append(jQuery('<span class="' + cls[1] + '"></span>' ))
+           .append(jQuery('<span class="close"></span>').html(tms))
+           .append(jQuery('<span class="title"></span>').text(txt))
+           .append(jQuery('<input type="hidden">').attr("name", n).val(val))
            .attr  ("title" , txt)
-           .append('<span class="close pull-right">&times;</span>')
-           .append('<span class="' + cls[1] + '"></span>')
-           .append(lab)
-           .append(inp);
-        box.append(div);
+           .appendTo(box);
     }
 
     if (box.is("input") ) {
@@ -414,7 +416,7 @@ function hsFormFillPick(box, v, n) {
                 box.trigger("change");
                 return false;
             });
-            box.on("click", "li.btn", [btn, box], function(evt) {
+            box.on("click", "li:not([data-toggle])", [btn, box], function(evt) {
                 var btn = evt.data[0];
                 var box = evt.data[1];
                 var opt = jQuery( this ).closest( "li" );
@@ -460,7 +462,7 @@ function hsFormFillPick(box, v, n) {
         cls[0] = box.attr("data-item-class") || cls[0];
         cls[1] = box.attr("data-icon-class") || cls[1];
 
-        box.empty();
+        box.children().not("[data-toggle]" ).remove( );
         for(var val in v) {
             var arr  = v[val];
             var txt  = arr[0];
@@ -505,9 +507,10 @@ function hsListFillPick(cel, v, n) {
     $(document)
     .on("click", "[data-toggle=hsPick],[data-toggle=hsFork]",
     function() {
-        var url = $(this).attr("data-href") || $(this).attr("href");
-        var bin = $(this).attr("data-target"); // 选择区域
-        var box = $(this).attr("data-result"); // 填充区域
+        var url = $(this).data( "href" )
+               || $(this).attr( "href" );
+        var bin = $(this).data("target"); // 选择区域
+        var box = $(this).data("result"); // 填充区域
 
         if (bin) {
             bin = $(this).hsFind(bin);
@@ -516,9 +519,11 @@ function hsListFillPick(cel, v, n) {
             box = $(this).hsFind(box);
         } else
         {
-            box = $(this).siblings ( "[name],[data-fn],[data-ft]" )
+            box = $(this).siblings("[name],[data-fn],[data-ft]")
                .not(".form-ignored" );
-        }
+        if (! box.size()) {
+            box = $(this). parent ( );
+        }}
 
         $(this).hsPick(url, bin, box);
         return false;

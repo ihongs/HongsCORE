@@ -938,8 +938,10 @@ ul.pickrol > li.btn-default.form-control {
     content: " "  ;
 }
 .pickmul.pickrol {
-    display: table;
     margin-bottom: -2px;
+}
+.pickmul > li.btn {
+    margin-bottom: 2px;
 }
 .pickmol > li.btn {
     float: left;

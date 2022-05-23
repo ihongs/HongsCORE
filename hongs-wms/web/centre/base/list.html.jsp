@@ -153,8 +153,9 @@
                         al = al + "&.deny=.create";
                     }}
                 %>
-                <ul  class="pickbox pickmul pickmol" data-ft="_fork" data-fn="<%=name%>.<%=Cnst.ON_REL%>." data-ak="<%=ak%>" data-tk="<%=tk%>" data-vk="<%=vk%>"></ul>
-                <button type="button" class="btn btn-default form-control" data-toggle="hsFork" data-target="" data-href="<%=al%>"><%=_locale.translate("fore.fork.select", text)%></button>
+                <ul class="pickbox pickmul pickmol" data-ft="_fork" data-fn="<%=name%>.<%=Cnst.ON_REL%>." data-ak="<%=ak%>" data-tk="<%=tk%>" data-vk="<%=vk%>" data-item-class="btn btn-sm btn-info" data-icon-class="-">
+                    <li type="button" class="btn btn-sm btn-default" data-toggle="hsFork" data-target="@" data-result="/" data-href="<%=al%>"><%=_locale.translate("fore.fork.select", text)%></li>
+                </ul>
             <%} else if ("enum".equals(type) || "type".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
                 <select class="form-control" name="<%=name%>.<%=Cnst.ON_REL%>" data-ft="_enum"></select>
             <%} else {%>

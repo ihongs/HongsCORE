@@ -183,10 +183,8 @@
                         location.search   +
                         $(this).attr("data-hash"));
                 });
-                if (location.hash) {
-                    $('[data-hash="' + location.hash + '"]')
-                        .parent( ).attr( "class", "active" );
-                }
+                $('[data-hash="'+(location.hash || "#in")+'"]')
+                        .parent( ).attr(  "class" , "active"  );
             })(jQuery);
         </script>
     </body>

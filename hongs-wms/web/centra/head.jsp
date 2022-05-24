@@ -113,10 +113,8 @@
     String  name = (String) helper.getSessibute("uname");
     String  head = (String) helper.getSessibute("uhead");
 
-    if (head != null && !"".equals(head)) {
-        head = head.replaceFirst("(_[^_]+)?\\.[^\\.]+$", "_sm.png");
-    } else {
-        head = "static/assets/img/head_icon_sm.jpg";
+    if (head == null || head.isEmpty()) {
+        head = "static/assets/img/head_icon.jpg";
     }
 %>
 

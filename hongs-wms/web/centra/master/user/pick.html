@@ -76,14 +76,13 @@
         viewImg.modal("hide");
         context.data("_fill_head" , function(c, v, n) {
             if (!v) {
-                var u = "static/assets/img/head_icon_sm.jpg";
-                $('<a href="javascript:;" data-href="'+u+'">'
-                 +'<span class="img" style="background-image:url('+u+');"/></a>')
+                 v = "static/assets/img/head_icon.jpg";
+                $('<a href="javascript:;" data-href="'+v+'">'
+                 +'<span class="img" style="background-image:url('+v+');"/></a>')
                 .appendTo(c);
             } else {
-                var u = v.replace(/(_[^_]+)?\.[^\.]+$/, "_sm.png");
                 $('<a href="javascript:;" data-href="'+v+'">'
-                 +'<span class="img" style="background-image:url('+u+');"/></a>')
+                 +'<span class="img" style="background-image:url('+v+');"/></a>')
                 .appendTo(c)
                 .click( function( ) {
                     var v = $(this).attr("data-href");

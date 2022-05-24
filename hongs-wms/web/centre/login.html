@@ -145,18 +145,23 @@
                 </p></blockquote>
             </div>
         </nav>
-        <style  type="text/css">
-            #footbox .site-links a {margin-right: 1em;}
-        </style>
         <script type="text/javascript">
             (function($) {
                 var context = $("#sign-in-form,#sign-on-form");
 
                 // 表单
                 context.on("saveBack", function(ev, rd, md) {
-                    H$('%HsCUID', rd.info.uid);
-                    H$('%HsCUST', rd.info.ust);
-                    location.replace(hsFixUri(hsGetParam(location.href, "r") || "centre/"));
+                    var fx = function() {
+                        H$('%HsCUID', rd.info.uid);
+                        H$('%HsCUST', rd.info.ust);
+                        location.replace(hsFixUri(hsGetParam(location.href, "r") || "centre/"));
+                    };
+                    if (rd.msg) {
+                        $.hsWarn( rd.msg, "info", fx );
+                    } else {
+                        fx();
+                    }
+                    return false;
                 });
                 context.on("saveFail", function(ev, rd, md) {
                     md.formBox.find( "img" ).click(  );

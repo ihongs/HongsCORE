@@ -68,32 +68,34 @@ abstract public class Proclet extends ActionDriver implements HttpJspPage
     }
   }
 
-  public String getSourceName(String url)
+  /**
+   * 获取动作方法名称
+   * @param req
+   * @return
+   */
+  public String getHandle(HttpServletRequest req)
   {
-    url = url.substring(1);
-    int p  = url.lastIndexOf("/");
-    if (p != -1) url = url.substring(0+p);
-    return url;
+    String rec = ActionDriver.getRecentPath (req).substring(1);
+    int p  = rec.lastIndexOf("/");
+    if (p != -1) rec = rec.substring(0+p);
+        p  = rec.lastIndexOf(".");
+    if (p != -1) rec = rec.substring(0,p);
+    return rec;
   }
 
-  public String getSourceName(HttpServletRequest req)
+  /**
+   * 获取协议方法名称
+   * @param req
+   * @return
+   */
+  public String getMethod(HttpServletRequest req)
   {
-    return getSourceName(ActionDriver.getRecentPath(req));
-  }
-
-  public String getMethodName(String url)
-  {
-    url = url.substring(1);
-    int p  = url.lastIndexOf("/");
-    if (p != -1) url = url.substring(0+p);
-        p  = url.lastIndexOf(".");
-    if (p != -1) url = url.substring(0,p);
-    return url;
-  }
-
-  public String getMethodName(HttpServletRequest req)
-  {
-    return getMethodName(ActionDriver.getRecentPath(req));
+    if (req instanceof Request) {
+        Request raq = (Request) req;
+        return  raq.getMathod();
+    } else {
+        return  req.getMethod();
+    }
   }
 
   /**

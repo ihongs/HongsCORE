@@ -7,6 +7,7 @@ import io.github.ihongs.action.ActionHelper;
 import java.io.IOException;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.annotation.WebServlet;
@@ -24,10 +25,7 @@ abstract public class Servact extends ActionDriver {
     protected String ACT_DIR = null;
     protected String ACT_EXT = null;
 
-    @Override
-    public void init(FilterConfig conf) throws ServletException {
-        super.init(conf);
-
+    private void init() {
         if (ACT_EXT == null) {
             ACT_EXT  = Cnst.ACT_EXT;
         }
@@ -65,6 +63,18 @@ abstract public class Servact extends ActionDriver {
     }
 
     @Override
+    public void init( FilterConfig conf) throws ServletException {
+        super.init(conf);
+         this.init();
+    }
+
+    @Override
+    public void init(ServletConfig conf) throws ServletException {
+        super.init(conf);
+         this.init();
+    }
+
+    @Override
     protected void doFilter(Core core, ActionHelper hlpr, FilterChain next)
     throws ServletException, IOException {
         HttpServletRequest  req = hlpr.getRequest ();
@@ -72,7 +82,7 @@ abstract public class Servact extends ActionDriver {
         String url = ActionDriver.getRecentPath(req);
         if (url.  endsWith(ACT_EXT)
         &&  url.startsWith(ACT_DIR)
-        && !getMethodName(url).contains("/")) {
+        && !getHandle(url).contains("/")) {
             this.service (req, rsp);
         } else {
             next.doFilter(req, rsp);
@@ -87,7 +97,7 @@ abstract public class Servact extends ActionDriver {
         String url = ActionDriver.getRecentPath(req);
         if (url.  endsWith(ACT_EXT)
         &&  url.startsWith(ACT_DIR)
-        && !getMethodName(url).contains("/")) {
+        && !getHandle(url).contains("/")) {
             this.service (req, rsp);
         } else {
             rsp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, "Unsupported action url: " + url);
@@ -97,17 +107,17 @@ abstract public class Servact extends ActionDriver {
     @Override
     abstract public void service(HttpServletRequest req, HttpServletResponse rsp);
 
-    public String getSourceName() {
+    public String getSource() {
        return ACT_DIR.substring(1 , ACT_DIR.length() - 1);
     }
 
-    public String getMethodName(String url) {
+    public String getHandle(String url) {
        return url.substring( ACT_DIR.length()
             , url.length() - ACT_EXT.length() );
     }
 
-    public String getMethodName(HttpServletRequest req) {
-       return getMethodName(ActionDriver.getRecentPath(req));
+    public String getHandle(HttpServletRequest req) {
+       return getHandle(ActionDriver.getRecentPath(req));
     }
 
 }

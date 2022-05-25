@@ -5,6 +5,7 @@ import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
 import io.github.ihongs.action.NaviMap;
 import java.lang.annotation.Annotation;
+import java.util.Set;
 
 /**
  * 权限过滤处理器
@@ -30,23 +31,30 @@ public class PermitInvoker implements FilterInvoker {
         }
 
         NaviMap map = NaviMap.getInstance(conf);
-        boolean was = map.getAuthSet() != null ;
+        Set     rol = map.getRoleSet();
         boolean has = false;
 
-        if (! was) {
+        if (rol  == null) {
             throw new HongsException(1101);
         }
 
         if (role == null || role.length < 1) {
             has  =  map.chkAuth(chains.getAction());
-        } else for (String rale:role ) {
-            if (rale.startsWith("@") ) {
+        } else for (String rale:role) {
+            if (rale.startsWith("@")) {
                 if (map.chkAuth(rale.substring(1))) {
                     has = true;
                     break;
                 }
-            } else {
-                if (map.chkRole(rale)) {
+            } else
+            if (rale.startsWith("$")) {
+                if (map.chkRole(rale.substring(1))) {
+                    has = true;
+                    break;
+                }
+            } else
+            {
+                if (rol.contains(rale)) {
                     has = true;
                     break;
                 }

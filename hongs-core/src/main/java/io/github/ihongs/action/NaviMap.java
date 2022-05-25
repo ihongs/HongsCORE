@@ -637,9 +637,9 @@ public class NaviMap
 
   /**
    * 检查角色权限(与当前请求相关)
-   * 注意: 并不包含其依赖的角色
+   * 注意: 并不包含其依赖的角色, 配置里没登记角色也返 true
    * @param role
-   * @return 可访问则为true
+   * @return 可访问则为 true
    * @throws io.github.ihongs.HongsException
    */
   public boolean chkRole(String role) throws HongsException {
@@ -652,9 +652,9 @@ public class NaviMap
 
   /**
    * 检查动作权限(与当前请求相关)
-   * 注意: 包含依赖的角色的权限
+   * 注意: 包含依赖的角色的权限, 配置里没登记动作也返 true
    * @param auth
-   * @return 可访问则为true
+   * @return 可访问则为 true
    * @throws io.github.ihongs.HongsException
    */
   public boolean chkAuth(String auth) throws HongsException {
@@ -668,7 +668,7 @@ public class NaviMap
   /**
    * 检查页面权限(与当前请求相关)
    * @param name
-   * @return 有一个配置角色即为true
+   * @return 有一个配置角色即为 true
    * @throws io.github.ihongs.HongsException
    */
   public boolean chkMenu(String name) throws HongsException {

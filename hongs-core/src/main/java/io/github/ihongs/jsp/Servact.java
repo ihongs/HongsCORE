@@ -4,6 +4,7 @@ import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.ActionHelper;
+import io.github.ihongs.action.anno.Assign;
 import java.io.IOException;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -16,8 +17,9 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * 动作代理
- * 需要覆盖 service(HttpServletRequest, HttpServletResponse)
- * 建议采用 Filter 而非 Servlet, 避免同级和下级目录也被接管.
+ *
+ * 建议精确匹配具体动作路径(包含扩展名)
+ *
  * @author Kevin
  */
 abstract public class Servact extends ActionDriver {
@@ -32,32 +34,48 @@ abstract public class Servact extends ActionDriver {
 
         // 从注解提取资源前缀
         if (ACT_DIR == null) {
-            WebFilter  fil  = this.getClass().getAnnotation(WebFilter.class );
-            if (fil != null) {
-                String [ ] val;
-                    val  = fil.value();
-                if (val == null || val.length == 0) {
-                    val  = fil.urlPatterns();
-                }
-                if (val != null && val.length != 0) {
-                    if (val [0] . endsWith( "/*" )) {
-                        ACT_DIR = val[0].substring( 0, val[0].length() - 1 );
+            DO: {
+                Assign asg = this.getClass().getAnnotation(Assign.class);
+                if (asg != null) {
+                    if (!asg.conf().endsWith("/"+asg.name())) {
+                        ACT_DIR = "/"+asg.conf()+"/"+asg.name();
+                    } else {
+                        ACT_DIR = "/"+asg.conf();
                     }
+                    break DO;
                 }
-            }
 
-            WebServlet srv = this.getClass().getAnnotation(WebServlet.class);
-            if (srv != null) {
-                String [ ] val;
-                    val  = srv.value();
-                if (val == null || val.length == 0) {
-                    val  = srv.urlPatterns();
-                }
-                if (val != null && val.length != 0) {
-                    if (val [0] . endsWith( "/*" )) {
-                        ACT_DIR = val[0].substring( 0, val[0].length() - 1 );
+                WebFilter  fil  = this.getClass().getAnnotation(WebFilter.class);
+                if (fil != null) {
+                    String [ ] val;
+                        val  = fil.value();
+                    if (val == null || val.length == 0) {
+                        val  = fil.urlPatterns();
+                    }
+                    if (val != null && val.length != 0) {
+                        if (val [0] . endsWith( "/*" )) {
+                            ACT_DIR = val[0].substring( 0, val[0].length() - 1 );
+                            break DO;
+                        }
                     }
                 }
+
+                WebServlet srv = this.getClass().getAnnotation(WebServlet.class);
+                if (srv != null) {
+                    String [ ] val;
+                        val  = srv.value();
+                    if (val == null || val.length == 0) {
+                        val  = srv.urlPatterns();
+                    }
+                    if (val != null && val.length != 0) {
+                        if (val [0] . endsWith( "/*" )) {
+                            ACT_DIR = val[0].substring( 0, val[0].length() - 1 );
+                            break DO;
+                        }
+                    }
+                }
+
+                ACT_DIR = "";
             }
         }
     }
@@ -80,8 +98,11 @@ abstract public class Servact extends ActionDriver {
         HttpServletRequest  req = hlpr.getRequest ();
         HttpServletResponse rsp = hlpr.getResponse();
         String url = ActionDriver.getRecentPath(req);
-        if (url.  endsWith(ACT_EXT)
-        &&  url.startsWith(ACT_DIR)
+        if (ACT_DIR == null || ACT_DIR.isEmpty ( ) ) {
+            this.service (req, rsp);
+        } else
+        if (url.startsWith(ACT_DIR)
+        &&  url.  endsWith(ACT_EXT)
         && !getHandle(url).contains("/")) {
             this.service (req, rsp);
         } else {
@@ -95,8 +116,11 @@ abstract public class Servact extends ActionDriver {
         HttpServletRequest  req = hlpr.getRequest ();
         HttpServletResponse rsp = hlpr.getResponse();
         String url = ActionDriver.getRecentPath(req);
-        if (url.  endsWith(ACT_EXT)
-        &&  url.startsWith(ACT_DIR)
+        if (ACT_DIR == null || ACT_DIR.isEmpty ( ) ) {
+            this.service (req, rsp);
+        } else
+        if (url.startsWith(ACT_DIR)
+        &&  url.  endsWith(ACT_EXT)
         && !getHandle(url).contains("/")) {
             this.service (req, rsp);
         } else {
@@ -107,17 +131,40 @@ abstract public class Servact extends ActionDriver {
     @Override
     abstract public void service(HttpServletRequest req, HttpServletResponse rsp);
 
-    public String getSource() {
-       return ACT_DIR.substring(1 , ACT_DIR.length() - 1);
-    }
-
+    /**
+     * 获取动作方法名称
+     * 用于内部模糊匹配
+     * @param url
+     * @return
+     */
     public String getHandle(String url) {
        return url.substring( ACT_DIR.length()
             , url.length() - ACT_EXT.length() );
     }
 
-    public String getHandle(HttpServletRequest req) {
-       return getHandle(ActionDriver.getRecentPath(req));
+    /**
+     * 获取动作方法名称
+     * @param req
+     * @return
+     */
+    public String getHandle(HttpServletRequest req)
+    {
+      String url = ActionDriver.getRecentPath (req).substring(1);
+      int p  = url.lastIndexOf("/");
+      if (p != -1) url = url.substring(0+p);
+          p  = url.lastIndexOf(".");
+      if (p != -1) url = url.substring(0,p);
+      return url;
+    }
+
+    /**
+     * 获取协议方法名称
+     * @param req
+     * @return
+     */
+    public String getMethod(HttpServletRequest req)
+    {
+      return req. getMethod();
     }
 
 }

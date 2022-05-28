@@ -63,7 +63,7 @@ import org.xml.sax.SAXException;
 public class SystemCombat {
 
     private static final Pattern SQL_CMN_PAT = Pattern.compile("(^|[\r\n])--[^\r\n]*");
-    private static final Pattern SQL_SET_PAT = Pattern.compile("(^|[\r\n])--(\\S+): *?(\\S+)");
+    private static final Pattern SQL_SET_PAT = Pattern.compile("(^|[\r\n])--(\\S+)=(\\S+)");
     private static final Pattern TIM_VAR_PAT = Pattern.compile("\\{\\{(.+?)(\\|(.+?))?\\}\\}");
     private static final Pattern TIM_FMT_PAT = Pattern.compile("([\\-\\+])(\\d+Y)?(\\d+M)?(\\d+w)?(\\d+d)?(\\d+h)?(\\d+m)?(\\d+s)?$");
     private static final Pattern TIN_FMT_PAT = Pattern.compile("^((\\d{2,4}/\\d{1,2}/\\d{1,2}T\\d{1,2}:\\d{1,2}:\\d{1,2})|(\\d{2,4}/\\d{1,2}/\\d{1,2})|(\\d{1,2}:\\d{1,2}:\\d{1,2})|(\\d{1,2}:\\d{1,2}))$");
@@ -209,13 +209,11 @@ public class SystemCombat {
                 dzt = getTim(mat.group(2).trim(), dt);
             }
         }
+        if (dbn == null) {
+            dbn  = "default";
+        }
         if (dzt == null) {
             dzt  = dt;
-        }
-        if (dbn == null) {
-            dbn  = fo.getName()
-                     .replaceFirst("\\.[^\\.]+$", "")  // 去掉扩展名
-                     .replaceFirst("^[^\\.]+\\.", ""); // 去掉前缀名
         }
 
         // 清理注释

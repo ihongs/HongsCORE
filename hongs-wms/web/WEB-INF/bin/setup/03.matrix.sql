@@ -1,4 +1,4 @@
--- DB: matrix
+--DB=matrix
 
 --
 -- 单元

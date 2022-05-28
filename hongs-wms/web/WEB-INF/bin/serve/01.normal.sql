@@ -1,5 +1,5 @@
--- DB: normal
--- DT: -1D
+--DB=normal
+--DT=-1D
 
 DELETE FROM a_normal_data WHERE xtime < '{{t}}';
 

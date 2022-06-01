@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
@@ -30,9 +29,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 public abstract class Batch<T> extends CoreSerial implements AutoCloseable {
 
     private transient File back = null;
-    public  transient ExecutorService     servs;
-    public  transient BlockingQueue  <T>  tasks;
-    public  transient List<Collection<T>> cache;
+    public  transient ExecutorService  servs;
+    public  transient BlockingQueue<T> tasks;
+    public  transient Collection<T>[ ] cache;
 
     /**
      * @param name      任务集名称, 退出时保存现有任务待下次启动时执行, 为 null 则不保存
@@ -45,10 +44,17 @@ public abstract class Batch<T> extends CoreSerial implements AutoCloseable {
     protected Batch(String name, int maxTasks, int maxServs, int timeout, int sizeout, boolean diverse) {
         servs = Executors.newCachedThreadPool(  );
         tasks = new LinkedBlockingQueue(maxTasks);
-        cache = new ArrayList ( maxServs );
-
-        for(int i = 0; i < maxServs; i ++) {
-            cache.add(diverse ? new LinkedHashSet() : new ArrayList());
+        
+        if (diverse) {
+            cache  =  new LinkedHashSet[maxServs];
+            for ( int i = 0; i < maxServs; i ++ ) {
+                cache[i] = new LinkedHashSet(sizeout);
+            }
+        } else {
+            cache  =  new  ArrayList   [maxServs];
+            for ( int i = 0; i < maxServs; i ++ ) {
+                cache[i] = new  ArrayList   (sizeout);
+            }
         }
 
         if (name != null) {
@@ -68,7 +74,7 @@ public abstract class Batch<T> extends CoreSerial implements AutoCloseable {
         }
 
         for(int i = 0; i < maxServs; i ++) {
-            servs.execute(new Btask(this, "CORE-Batch-"+name+"-"+i, cache.get(i), timeout, sizeout));
+            servs.execute(new Btask(this, "CORE-Batch-"+name+"-"+i, i, timeout, sizeout));
         }
 
         //tasks.offer(null); // 放一个空对象促使其执行终止时未执行完的任务
@@ -107,21 +113,21 @@ public abstract class Batch<T> extends CoreSerial implements AutoCloseable {
             return;
         }
 
-        File   file;
-        file = back;
-        back = null;
+        try {
+            File   file;
+            file = back;
+            back = null;
 
-        if (!isEmpty()) {
-            try {
+            if (!isEmpty()) {
                 save(file);
                 CoreLogger.trace("There has {} task(s) not run, save to '{}'.", size(), back.getPath());
+            } else
+            if (file.exists()) {
+                file.delete();
             }
-            catch (HongsException ex) {
-                CoreLogger.error( ex);
-            }
-        } else
-        if (file.exists()) {
-            file.delete();
+        }
+        catch (HongsException ex) {
+            CoreLogger.error( ex);
         }
     }
 
@@ -167,16 +173,16 @@ public abstract class Batch<T> extends CoreSerial implements AutoCloseable {
 
     private static class Btask implements Runnable {
 
+        private final Collection cache;
         private final Batch batch;
         private final String name;
-        private final Collection cache;
         private final int timeout;
         private final int sizeout;
 
-        public Btask(Batch batch, String name, Collection cache, int timeout, int sizeout) {
+        public Btask(Batch batch, String name, int index, int timeout, int sizeout) {
+            this.cache = batch.cache[index];
             this.batch = batch;
             this.name  = name ;
-            this.cache = cache;
             this.timeout = timeout;
             this.sizeout = sizeout;
         }

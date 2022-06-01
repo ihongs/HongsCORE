@@ -86,21 +86,21 @@ public abstract class Async<T> extends CoreSerial implements AutoCloseable {
             return;
         }
 
-        File   file;
-        file = back;
-        back = null;
+        try {
+            File   file;
+            file = back;
+            back = null;
 
-        if (!isEmpty()) {
-            try {
+            if (!isEmpty()) {
                 save(file);
                 CoreLogger.trace("There has {} task(s) not run, save to '{}'.", size(), file.getPath());
+            } else
+            if (file.exists()) {
+                file.delete();
             }
-            catch (HongsException ex) {
-                CoreLogger.error( ex);
-            }
-        } else
-        if (file.exists()) {
-            file.delete();
+        }
+        catch (HongsException ex) {
+            CoreLogger.error( ex);
         }
     }
 

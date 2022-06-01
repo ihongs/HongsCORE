@@ -44,7 +44,8 @@ public abstract class Batch<T> extends CoreSerial implements AutoCloseable {
     protected Batch(String name, int maxTasks, int maxServs, int timeout, int sizeout, boolean diverse) {
         servs = Executors.newCachedThreadPool(  );
         tasks = new LinkedBlockingQueue(maxTasks);
-        
+
+        // 缓冲区
         if (diverse) {
             cache  =  new LinkedHashSet[maxServs];
             for ( int i = 0; i < maxServs; i ++ ) {
@@ -87,7 +88,7 @@ public abstract class Batch<T> extends CoreSerial implements AutoCloseable {
     protected void load(Object data) {
         tasks.addAll((Collection<T>) data);
     }
-    
+
     @Override
     protected Object save() {
         // 将缓冲区未来得及处理的写回队列

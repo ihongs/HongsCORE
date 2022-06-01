@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.PrintStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.BlockingQueue;
@@ -25,7 +26,7 @@ public abstract class Async<T> extends CoreSerial implements AutoCloseable {
 
     private transient File back = null;
     public  transient ExecutorService  servs;
-    public            BlockingQueue<T> tasks;
+    public  transient BlockingQueue<T> tasks;
 
     /**
      * @param name      任务集名称, 退出时保存现有任务待下次启动时执行, 为 null 则不保存
@@ -55,8 +56,6 @@ public abstract class Async<T> extends CoreSerial implements AutoCloseable {
         for(int i = 0; i < maxServs; i ++) {
             servs.execute(new Atask(this, "CORE-Async-"+name+"-"+i));
         }
-
-        //tasks.offer(null); // 放一个空对象促使其执行终止时未执行完的任务
     }
 
     @Override
@@ -65,14 +64,24 @@ public abstract class Async<T> extends CoreSerial implements AutoCloseable {
     }
 
     @Override
+    protected void load(Object data) {
+        tasks.addAll((Collection<T>) data);
+    }
+
+    @Override
+    protected Object save() {
+        return tasks;
+    }
+
+    @Override
     public void close() {
-        if (!servs.isShutdown( )) {
-            servs.shutdownNow( );
+        if (!servs.isShutdown()) {
+            servs.shutdownNow();
         }
 
         if (back == null) {
-            if (!tasks.isEmpty()) {
-                CoreLogger.error("There has {} task(s) not run.", tasks.size());
+            if (!isEmpty()) {
+                CoreLogger.error("There has {} task(s) not run.", size());
             }
             return;
         }
@@ -81,17 +90,34 @@ public abstract class Async<T> extends CoreSerial implements AutoCloseable {
         file = back;
         back = null;
 
-        if (!tasks.isEmpty()) {
+        if (!isEmpty()) {
             try {
-                save( file );
-                CoreLogger.trace("There has {} task(s) not run, save to '{}'.", tasks.size(), file.getPath());
-            } catch (HongsException ex) {
-                CoreLogger.error(   ex);
+                save(file);
+                CoreLogger.trace("There has {} task(s) not run, save to '{}'.", size(), file.getPath());
+            }
+            catch (HongsException ex) {
+                CoreLogger.error( ex);
             }
         } else
         if (file.exists()) {
             file.delete();
         }
+    }
+
+    /**
+     * 检查是否为空
+     * @return
+     */
+    public boolean isEmpty() {
+        return tasks.isEmpty();
+    }
+
+    /**
+     * 获取任务数量
+     * @return
+     */
+    public int size() {
+        return tasks.size();
     }
 
     /**
@@ -183,7 +209,7 @@ public abstract class Async<T> extends CoreSerial implements AutoCloseable {
             }
             a.add( x );
         }
-        int m = a.tasks.size();
+        int m = a.size ();
         System.out.println("end!!!"+(m>0?m:""));
     }
 

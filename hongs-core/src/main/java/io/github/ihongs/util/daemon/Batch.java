@@ -31,8 +31,8 @@ public abstract class Batch<T> extends CoreSerial implements AutoCloseable {
 
     private transient File back = null;
     public  transient ExecutorService     servs;
-    public            BlockingQueue  <T>  tasks;
-    public            List<Collection<T>> cache;
+    public  transient BlockingQueue  <T>  tasks;
+    public  transient List<Collection<T>> cache;
 
     /**
      * @param name      任务集名称, 退出时保存现有任务待下次启动时执行, 为 null 则不保存
@@ -80,46 +80,74 @@ public abstract class Batch<T> extends CoreSerial implements AutoCloseable {
     }
 
     @Override
+    protected void load(Object data) {
+        tasks.addAll((Collection<T>) data);
+    }
+    
+    @Override
+    protected Object save() {
+        // 将缓冲区未来得及处理的写回队列
+        Collection<T> c = new ArrayList(size());
+        for(Collection<T> taskz : cache) {
+            c.addAll(taskz);
+        }   c.addAll(tasks);
+        return c;
+    }
+
+    @Override
     public void close() {
-        if (!servs.isShutdown( )) {
-            servs.shutdownNow( );
+        if (!servs.isShutdown()) {
+            servs.shutdownNow();
         }
 
         if (back == null) {
-            if (!tasks.isEmpty()) {
-                CoreLogger.error("There has {} task(s) not run.", tasks.size());
+            if (!isEmpty()) {
+                CoreLogger.error("There has {} task(s) not run.", size());
             }
             return;
         }
-
-        /**
-         * 将缓冲区滞留的任务写回 tasks
-         * 即使重启后 servs 数量改变也没有关系
-         */
-        Collection<T> c = new ArrayList();
-        for (Collection<T> taskz : cache) {
-            c.addAll(taskz);
-            taskz.clear ( );
-        }
-        c.addAll(tasks);
-        tasks.clear ( );
-        tasks.addAll(c);
 
         File   file;
         file = back;
         back = null;
 
-        if (!tasks.isEmpty()) {
+        if (!isEmpty()) {
             try {
-                save( file );
-                CoreLogger.trace("There has {} task(s) not run, save to '{}'.", tasks.size(), back.getPath());
-            } catch (HongsException ex) {
-                CoreLogger.error(   ex);
+                save(file);
+                CoreLogger.trace("There has {} task(s) not run, save to '{}'.", size(), back.getPath());
+            }
+            catch (HongsException ex) {
+                CoreLogger.error( ex);
             }
         } else
         if (file.exists()) {
             file.delete();
         }
+    }
+
+    /**
+     * 检查是否为空 (含缓冲区)
+     * @return
+     */
+    public boolean isEmpty() {
+        for(Collection<T> x : cache) {
+            if (!x.isEmpty()) {
+                return false;
+            }
+        }
+        return  tasks.isEmpty();
+    }
+
+    /**
+     * 获取任务数量 (含缓冲区)
+     * @return
+     */
+    public int size() {
+        int m = tasks.size();
+        for(Collection<T> x : cache) {
+            m = m + x.size();
+        }
+        return  m;
     }
 
     /**
@@ -136,31 +164,6 @@ public abstract class Batch<T> extends CoreSerial implements AutoCloseable {
      * @param list
      */
     abstract public void run(Collection<T> list);
-
-    /**
-     * 获取缓冲区任务数量
-     * @return
-     */
-    public int getCacheSize() {
-        int m  = 0;
-        for(Collection<T> x : cache) {
-            m += x.size();
-        }
-        return m;
-    }
-
-    /**
-     * 检查缓冲区是否为空
-     * @return
-     */
-    public boolean isEmptyCache() {
-        for(Collection<T> x : cache) {
-            if (!x.isEmpty()) {
-                return false;
-            }
-        }
-        return true;
-    }
 
     private static class Btask implements Runnable {
 
@@ -261,7 +264,7 @@ public abstract class Batch<T> extends CoreSerial implements AutoCloseable {
             }
             a.add( x );
         }
-        int m = a.tasks.size()+a.getCacheSize();
+        int m = a.size ();
         System.out.println("end!!!"+(m>0?m:""));
     }
 

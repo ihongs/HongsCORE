@@ -149,10 +149,9 @@ public class AuthKit {
         ||  "_sign_info_".equals(r)
         ||  "-".equals(r)) {
             // 输出 JSON
-            String errno = "Ex" + Integer.toHexString(err.getErrno());
             helper.reply( Synt.mapOf (
                 "ok" , false,
-                "ern", errno,
+                "ern", err.getStage  (),
                 "err", err.getMessage(),
                 "msg", err.getLocalizedMessage()
             ));

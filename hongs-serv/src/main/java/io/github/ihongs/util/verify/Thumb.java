@@ -39,9 +39,9 @@ public class Thumb extends IsFile {
             String [][] hps = exec(href, path, kind, size, mode, col, pos);
             return hps[ idx ];
         } catch (IndexOutOfBoundsException ex) {
-            throw new Wrong( ex, "Thumb index out of bounds." );
+            throw new Wrong("Thumb index out of bounds. "+ex.getMessage());
         } catch (IOException ex) {
-            throw new Wrong( ex, "Can not create the thumbs." );
+            throw new Wrong("Can not create the thumbs. "+ex.getMessage());
         }
     }
 
@@ -66,9 +66,14 @@ public class Thumb extends IsFile {
 
         // 没有指定扩展名则无需改变格式
         if (ext.length() == 0) {
-            int idx = nrl.lastIndexOf('.');
+            String xrl = nrl;
+            int idx = xrl.lastIndexOf('/');
             if (idx > 0) {
-                ext = nrl.substring(1+idx);
+                xrl = xrl.substring(1+idx);
+            }
+                idx = xrl.lastIndexOf('.');
+            if (idx > 0) {
+                ext = xrl.substring(1+idx);
             } else {
                 ext = "png";
             }
@@ -148,13 +153,13 @@ public class Thumb extends IsFile {
             mod = "" ;
         }
 
-        List<String[]> hps = new ArrayList();
+        List<String[]> hps = new ArrayList ();
         Builder        bui = null;
         String         pre , pro ;
 
-        nrl = new File( nrl ).getAbsolutePath( );
-        pre = nrl.replaceFirst("\\.[^\\.]+$","");
-        pro = url.replaceFirst("\\.[^\\.]+$","");
+        nrl = new File(nrl).getAbsolutePath();
+        pre = nrl.replaceFirst("\\.[^\\./]+$", "");
+        pro = url.replaceFirst("\\.[^\\./]+$", "");
 
         if (suf.contains("*")
         ||  suf.contains("/")

@@ -763,7 +763,7 @@ public class Core
 
   /**
    * 维护资源
-   * 规避托管自身后递归调用, Core 不标示 Unuseable
+   * 规避托管自身后递归调用, Core 不标示 Reuseable
    */
   public void reuse()
   {

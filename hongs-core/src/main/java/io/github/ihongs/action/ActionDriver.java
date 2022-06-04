@@ -493,39 +493,15 @@ public class ActionDriver implements Filter, Servlet {
                  * 这对调试程序非常有帮助
                  */
 
-                if (Synt.declare(System.getProperty("show.request"), false)) {
-                    Map rd  = null;
-                    try {
-                        rd  = hlpr.getRequestData( );
-                    } catch ( RuntimeException ex  ) {
-                        CoreLogger.debug(ex.getMessage());
-                    }
-                    if (rd != null && !rd.isEmpty()) {
-                        sb.append("\r\n\tRequest     : ")
-                          .append(Syno.indent(Dawn.toString(rd)).substring(1));
-                    }
-                }
-
-                if (Synt.declare(System.getProperty("show.results"), false)) {
-                    Map xd  = hlpr.getResponseData();
-                    if (xd == null) {
-                        xd  = (Map) req.getAttribute(Cnst.RESPON_ATTR);
-                    }
-                    if (xd != null && !xd.isEmpty()) {
-                        sb.append("\r\n\tResults     : ")
-                          .append(Syno.indent(Dawn.toString(xd)).substring(1));
-                    }
-                }
-
-                if (Synt.declare(System.getProperty("show.session"), false) && ses != null) {
+                if (Synt.declare(System.getProperty("show.headers"), false)) {
                   Map         map = new HashMap();
-                  Enumeration<String> nms = ses.getAttributeNames();
+                  Enumeration<String> nms = req.getHeaderNames();
                   while (nms.hasMoreElements()) {
                       String  nme = nms.nextElement();
-                      map.put(nme , ses.getAttribute(nme));
+                      map.put(nme , req.getHeader(nme));
                   }
                   if (!map.isEmpty()) {
-                      sb.append("\r\n\tSession     : ")
+                      sb.append("\r\n\tHeaders     : ")
                         .append(Syno.indent(Dawn.toString(map)).substring(1));
                   }
                 }
@@ -543,15 +519,15 @@ public class ActionDriver implements Filter, Servlet {
                   }
                 }
 
-                if (Synt.declare(System.getProperty("show.headers"), false)) {
+                if (Synt.declare(System.getProperty("show.session"), false) && ses != null) {
                   Map         map = new HashMap();
-                  Enumeration<String> nms = req.getHeaderNames();
+                  Enumeration<String> nms = ses.getAttributeNames();
                   while (nms.hasMoreElements()) {
                       String  nme = nms.nextElement();
-                      map.put(nme , req.getHeader(nme));
+                      map.put(nme , ses.getAttribute(nme));
                   }
                   if (!map.isEmpty()) {
-                      sb.append("\r\n\tHeaders     : ")
+                      sb.append("\r\n\tSession     : ")
                         .append(Syno.indent(Dawn.toString(map)).substring(1));
                   }
                 }
@@ -566,6 +542,30 @@ public class ActionDriver implements Filter, Servlet {
                       sb.append("\r\n\tCookies     : ")
                         .append(Syno.indent(Dawn.toString(map)).substring(1));
                   }
+                }
+
+                if (Synt.declare(System.getProperty("show.request"), false)) {
+                    Map rd  = null;
+                    try {
+                        rd  = hlpr.getRequestData( );
+                    } catch ( RuntimeException ex  ) {
+                        CoreLogger.debug(ex.getMessage());
+                    }
+                    if (rd != null && !rd.isEmpty()) {
+                        sb.append("\r\n\tRequest     : ")
+                          .append(Syno.indent(Dawn.toString(rd)).substring(1));
+                    }
+                }
+
+                if (Synt.declare(System.getProperty("show.response"),false)) {
+                    Map xd  = hlpr.getResponseData();
+                    if (xd == null) {
+                        xd  = (Map) req.getAttribute(Cnst.RESPON_ATTR);
+                    }
+                    if (xd != null && !xd.isEmpty()) {
+                        sb.append("\r\n\tResponse    : ")
+                          .append(Syno.indent(Dawn.toString(xd)).substring(1));
+                    }
                 }
 
                 CoreLogger.debug(sb.toString());

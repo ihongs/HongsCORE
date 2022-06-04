@@ -35,28 +35,37 @@
         var context = H$("#centra-mima-form");
 
         context.on("click", ".new-password", function() {
-            newPassword();
+            newPassword(32);
         });
-        function newPassword() {
-            var pw = getPassword();
+        function newPassword(l) {
+            var pw = getPassword(l);
             $.hsMask({
                 mode : "warn",
                 html : "请务必牢记新的密码, 提交后将以不可逆加密的形式进行存储."
             }, {
-                label: "记住了",
+                label: "更换",
+                glass: "btn-default",
+                click: function(ev) {
+                    ev.preventDeault( );
+                    pw = getPassword(l);
+                    $(this).closest(".modal").find(".code").text(pw);
+                }
+            }, {
+                label: "复制",
+                glass: "btn-default",
+                click: function(ev) {
+                    ev.preventDeault( );
+                    $(this).closest(".modal").find(".code").hsCopy();
+                }
+            }, {
+                label: "确认",
                 glass: "btn-primary",
                 click: function() {
                     context.find("[name=password],[name=passcode]").val(pw);
                 }
-            }, {
-                label: "换一个",
-                glass: "btn-default",
-                click: function() {
-                    setTimeout( function( ) { newPassword(); }, 0 );
-                }
             }).find(".alert-title").html('新密码: <b class="code">'+ pw +'</b>');
         }
-        function getPassword() {
+        function getPassword(l) {
             var cs = [
                 ['A', 'B', 'C', 'D', 'E', 'F', 'G',
                  'H', 'I', 'G', 'K', 'M', 'N',
@@ -72,7 +81,7 @@
             var ps = [];
             var hasNum = false; // 至少含有一个数字
             var hasSym = false; // 至少含有一个符号
-            for(var i = 0; i < 9; i ++) {
+            for(var i = 0; i < l; i ++) {
                 var j = Math.floor(Math.random() * 100);
                 var x = j % cs.length;
                 if (x === 2 && !hasNum) {

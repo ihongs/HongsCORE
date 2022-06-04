@@ -1517,6 +1517,19 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
     //** 事务方法 **/
 
     /**
+     * 重置查询连接
+     */
+    public void reset() {
+        if (reader != null) {
+            try {
+                getReader();
+            } catch (HongsException ex) {
+               throw ex.toExemption ( );
+            }
+        }
+    }
+
+    /**
      * 销毁读写连接
      */
     @Override

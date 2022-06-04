@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.TreeSet;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -458,17 +459,17 @@ public class Core
 
   //** 核心方法 **/
 
-  protected Core ()
+  protected Core()
   {
     this(new HashMap());
   }
 
-  protected Core (Core core)
+  protected Core(Core core)
   {
-    this(core . SUPER );
+    this( core.sup( ) );
   }
 
-  protected Core (Map  sup )
+  protected Core( Map sup )
   {
     SUPER = sup ;
   }
@@ -757,6 +758,12 @@ public class Core
     @Override
     protected <T>T got(String cln, Class<T> cls)
     {
+      /**
+       * 查两遍
+       * 可以提高重复读取已有实例的效率
+       * 亦可规避读锁刚丢其他线程已写入
+       * 下同此
+       */
       RWL.readLock( ).lock();
       try {
         Object obj = super.get(cln);
@@ -769,9 +776,14 @@ public class Core
 
       RWL.writeLock().lock();
       try {
-        T obj = newInstance(cls);
-        super.set(cln, obj);
-        return obj;
+        Object obj = super.get(cln);
+        if ( null != obj ) {
+            return (T) obj;
+        }
+
+        T xbj = newInstance(cls);
+        super.set(cln, xbj);
+        return xbj;
       } finally {
         RWL.writeLock().unlock();
       }
@@ -793,9 +805,14 @@ public class Core
 
       RWL.writeLock().lock();
       try {
-        T obj  =  sup. get();
-        super.set(key, obj );
-        return obj;
+        Object obj = super.get(key);
+        if ( null != obj ) {
+            return (T) obj;
+        }
+
+        T xbj  =  sup. get();
+        super.set(key, xbj );
+        return xbj;
       } finally {
         RWL.writeLock().unlock();
       }
@@ -816,9 +833,14 @@ public class Core
 
       RWL.writeLock().lock();
       try {
-        T obj  =  sup. get();
-        super.set(key, obj );
-        return obj;
+        Object obj = super.get(key);
+        if ( null != obj ) {
+            return (T) obj;
+        }
+
+        T xbj  =  sup. get();
+        super.set(key, xbj );
+        return xbj;
       } finally {
         RWL.writeLock().unlock();
       }

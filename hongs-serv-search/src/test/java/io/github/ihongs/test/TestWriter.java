@@ -36,8 +36,8 @@ public class TestWriter {
             @Override
             public void run() {
                 try {
-                //  LuceneRecord se = new LuceneRecord(fields, "test-writer", "test-writer");
-                    SearchEntity se = new SearchEntity(fields, "test-writer", "test-writer");
+                //  LuceneRecord se = new LuceneRecord(fields, "test", "test");
+                    SearchEntity se = new SearchEntity(fields, "test", "test");
                     se.begin ();
                     se.create(Synt.mapOf(
                             "name" , "12ab",
@@ -58,8 +58,8 @@ public class TestWriter {
         es.awaitTermination(10, TimeUnit.SECONDS);
         
         // 检查写入的内容
-        SearchEntity se = new SearchEntity(fields, "test-writer", "test-writer");
-        assertEquals(10 , se.search(Synt.mapOf(), 0, 0).hits() );
+        SearchEntity se = new SearchEntity(fields, "test", "test");
+        assertEquals(10 , se.search( Synt.mapOf(), 0, 0 ).hits() );
         try {
             se.getWriter().close();
         } catch ( IOException ex ) {
@@ -67,7 +67,13 @@ public class TestWriter {
         }
         
         // 删除测试的目录
-        File dir = new File("test-writer");
+        File dir;
+        dir = new File("test");
+        for(File file : dir.listFiles()){
+            file.delete();
+        }
+        dir.delete();
+        dir = new File("null");
         for(File file : dir.listFiles()){
             file.delete();
         }

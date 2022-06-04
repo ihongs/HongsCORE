@@ -210,7 +210,7 @@ public class CombatRunner implements Runnable
 
     Core.THREAD_CORE.set(Core.GLOBAL_CORE);
     Core.ACTION_TIME.set(Core.STARTS_TIME);
-    Core.ACTION_NAME.set(args.length != 0 ? args[0] : null);
+    Core.ACTION_NAME.set(args.length != 0 ? args[0] : "");
 
     /** 核心属性配置 **/
 

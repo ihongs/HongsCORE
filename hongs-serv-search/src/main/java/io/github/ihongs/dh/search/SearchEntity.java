@@ -351,7 +351,7 @@ public class SearchEntity extends LuceneRecord {
         }
 
         synchronized public void clean() {
-            if (c >= 1 || t < System.currentTimeMillis() - Chore.getInstance().getTimed() * 1000) { // 一个周期内则不关闭
+            if (c >= 1 || t > System.currentTimeMillis() - Chore.getInstance().getTimed() * 1000) { // 一个周期内则不关闭
                 return;
             }
             cloze();

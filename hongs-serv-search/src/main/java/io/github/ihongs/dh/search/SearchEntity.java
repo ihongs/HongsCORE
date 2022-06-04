@@ -301,10 +301,10 @@ public class SearchEntity extends LuceneRecord {
             this.dbpath = dbpath;
             this.dbname = dbname;
 
-            start();
+            init();
         }
 
-        private void start() {
+        private void init() {
             try {
                 CoreConfig cc = CoreConfig.getInstance();
                 IndexWriterConfig iwc = new IndexWriterConfig();
@@ -324,13 +324,13 @@ public class SearchEntity extends LuceneRecord {
 
         synchronized public IndexWriter conn() {
             //  c += 0;
-            if ( ! writer.isOpen() ) start(); // 重连
+            if ( ! writer.isOpen() ) init(); // 重连
             return writer;
         }
 
         synchronized public IndexWriter open() {
                 c += 1;
-            if ( ! writer.isOpen() ) start(); // 重连
+            if ( ! writer.isOpen() ) init(); // 重连
             return writer;
         }
 
@@ -341,44 +341,49 @@ public class SearchEntity extends LuceneRecord {
         }
 
         @Override
-        synchronized public void unuse() {
+        public void unuse() {
             if (c <= 0) {
                 close();
             }
         }
 
         @Override
-        synchronized public void reuse() {
-            conn( );
+        public void close() {
+            Gate.Locker lk = Gate.getLocker(Writer.class.getName () + ":" + dbname);
+            try {
+                lk.lockInterruptibly();
+                if (! writer.isOpen()) {
+                    return;
+                }
+                writer.close( );
+            } catch (IOException x) {
+                CoreLogger.error(x);
+            } catch (InterruptedException x) {
+                CoreLogger.error(x);
+            }
+
+            CoreLogger.trace("Close the lucene writer for {}", dbname);
+        }
+
+        @Override
+        public void reuse() {
             long t = System.currentTimeMillis();
 
-            synchronized ( writer ) {
-                try {
-                    writer.maybeMerge();
-                } catch (IOException x) {
-                    CoreLogger.error(x);
+            Gate.Locker lk = Gate.getLocker(Writer.class.getName () + ":" + dbname);
+            try {
+                lk.lockInterruptibly();
+                if (! writer.isOpen()) {
+                    init();
                 }
+                writer.maybeMerge();
+            } catch (IOException x) {
+                CoreLogger.error(x);
+            } catch (InterruptedException x) {
+                CoreLogger.error(x);
             }
 
             t = System.currentTimeMillis() - t ;
             CoreLogger.trace("Merge lucene indexes: {} {}", dbname, t);
-        }
-
-        @Override
-        synchronized public void close() {
-            if (! writer.isOpen() ) {
-                return;
-            }
-
-            synchronized ( writer ) {
-                try {
-                    writer.close( );
-                } catch (IOException x) {
-                    CoreLogger.error(x);
-                }
-            }
-
-            CoreLogger.trace("Close the lucene writer for {}", dbname);
         }
 
     }

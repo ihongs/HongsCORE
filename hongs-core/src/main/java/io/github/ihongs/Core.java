@@ -730,7 +730,7 @@ public class Core
   /**
    * 释放资源
    * 规避托管自身后递归调用, Core 不标示 Unuseable
-   * 对于全局托管对象, 默认每隔一段时间执行, 由 core.daemon.run.timed 配置, 默认每十分钟 00:10
+   * 对于全局托管对象, 默认每隔一段时间执行, 由 core.daemon.run.timed 配置, 默认每十分钟
    */
   public void unuse()
   {
@@ -765,7 +765,7 @@ public class Core
   /**
    * 维护资源
    * 规避托管自身后递归调用, Core 不标示 Reuseable
-   * 对于全局托管对象, 默认每天固定时间执行, 由 core.daemon.run.daily 配置, 默认在每天的 00:00
+   * 对于全局托管对象, 默认每天固定时间执行, 由 core.daemon.run.daily 配置, 默认每天零点
    */
   public void reuse()
   {

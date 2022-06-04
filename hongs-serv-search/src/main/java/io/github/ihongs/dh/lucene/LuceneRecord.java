@@ -590,7 +590,6 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
     }
 
     public Document getDoc(String id) throws HongsException {
-        /* Maybe changed */ getReader( );
         IndexSearcher  ff = getFinder( );
         try {
                 Query  qq = new TermQuery(new Term("@"+Cnst.ID_KEY, id));
@@ -1517,19 +1516,6 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
     //** 事务方法 **/
 
     /**
-     * 重置查询连接
-     */
-    public void reset() {
-        if (reader != null) {
-            try {
-                getReader();
-            } catch (HongsException ex) {
-               throw ex.toExemption ( );
-            }
-        }
-    }
-
-    /**
      * 销毁读写连接
      */
     @Override
@@ -1649,18 +1635,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         return dbname;
     }
 
-    /**
-     * 获取查询器
-     * 由于 getReader 中发现数据变化会重开
-     * 如需 getReader 务必先于当前方法执行
-     * @return
-     * @throws HongsException
-     */
     public IndexSearcher getFinder() throws HongsException {
+        getReader();
         if (finder == null) {
-        if (reader == null) {
-            getReader(/**/);
-        }
             finder  = new IndexSearcher(reader);
         }
         return finder;
@@ -1686,8 +1663,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             try {
                 // 目录不存在需开写并提交从而建立索引
                 // 否则会抛出: IndexNotFoundException
-                if (! new File(path).exists())
+                if (! new File(path).exists()) {
                     getWriter (    ).commit();
+                }
 
                 Directory dir = FSDirectory.open(Paths.get(path));
 

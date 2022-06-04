@@ -19,8 +19,8 @@ import java.util.LinkedHashMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ScheduledFuture;
-import java.util.function.Supplier;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexWriter;
@@ -96,13 +96,10 @@ public class SearchEntity extends LuceneRecord {
     }
 
     /**
-     * 获取写锁, 如需使用 IndexWriter 务必加锁
+     * 索引写入, 务必调用 getLocker 进行加锁
      * @return
+     * @throws HongsException
      */
-    public Gate.Locker getLocker() {
-        return Gate.getLocker(Writer.class.getName () + ":" + getDbName());
-    }
-
     @Override
     public IndexWriter getWriter() throws HongsException {
         /**
@@ -144,6 +141,17 @@ public class SearchEntity extends LuceneRecord {
         } catch (HongsExemption x) {
             throw x.toException( );
         }
+    }
+
+    /**
+     * 获取写锁, 如需调用 getWriter 务必加锁
+     * @return
+     */
+    public Gate.Locker getLocker() {
+        if (WRITER != null) {
+            return WRITER.lock( );
+        }
+        return Gate.getLocker (Writer.class.getName() +":"+ getDbName());
     }
 
     @Override
@@ -300,17 +308,19 @@ public class SearchEntity extends LuceneRecord {
         private final String dbname;
         private final String lkname;
         private  IndexWriter writer;
-        private volatile int  c = 0;
+        private volatile int  c = 1;
         private volatile long t = 0;
 
         public Writer(String dbpath, String dbname) {
-            this.dbpath = dbpath;
-            this.dbname = dbname;
-            this.lkname = Writer.class.getName() + ":" + dbname;
-
             Chore timer = Chore.getInstance();
             this.cleans = timer.runTimed ( () -> this.clean() );
             this.merges = timer.runDaily ( () -> this.merge() );
+
+            this.lkname = Writer.class.getName() + ":" + dbname;
+            this.dbname = dbname;
+            this.dbpath = dbpath;
+
+            init();
         }
 
         private void init() {
@@ -331,8 +341,12 @@ public class SearchEntity extends LuceneRecord {
             CoreLogger.trace("Start the lucene writer for {}", dbname);
         }
 
+        public Gate.Locker lock() {
+            return Gate.getLocker( lkname );
+        }
+
         synchronized public IndexWriter conn() {
-                c  = 1;
+            //  c += 1;
             if ( ! writer.isOpen() ) init(); // 重连
             return writer;
         }
@@ -365,7 +379,7 @@ public class SearchEntity extends LuceneRecord {
         }
 
         public void cloze() {
-            Gate.Locker lk = Gate.getLocker(lkname);
+            Gate.Locker lk = lock();
             try {
                 lk.lockInterruptibly();
                 if (! writer.isOpen()) {
@@ -386,7 +400,7 @@ public class SearchEntity extends LuceneRecord {
         public void merge() {
             long t = System.currentTimeMillis();
 
-            Gate.Locker lk = Gate.getLocker(lkname);
+            Gate.Locker lk = lock();
             try {
                 lk.lockInterruptibly();
                 if (! writer.isOpen()) {

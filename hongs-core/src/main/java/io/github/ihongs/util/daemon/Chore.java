@@ -83,14 +83,22 @@ public final class Chore implements Core.Singleton, AutoCloseable {
         return SES;
     }
 
+    /**
+     * 获取每天执行时间, 单位秒
+     * @return
+     */
     public int getDaily() {
         return DDT;
     }
-    
+
+    /**
+     * 获取间隔执行时间, 单位秒
+     * @return
+     */
     public int getTimed() {
         return DTT;
     }
-    
+
     /**
      * 关闭容器
      * 请勿执行

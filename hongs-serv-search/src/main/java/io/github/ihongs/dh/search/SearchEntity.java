@@ -295,7 +295,7 @@ public class SearchEntity extends LuceneRecord {
         private final String dbpath;
         private final String dbname;
         private  IndexWriter writer;
-        private  int         c = 1 ;
+        private volatile int c = 1 ;
 
         public Writer(String dbpath, String dbname) {
             this.dbpath = dbpath;

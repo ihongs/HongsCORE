@@ -229,8 +229,8 @@ public final class Gate {
         @Override
         public void unlock() {
         //  synchronized(this) { // 已在锁内, 无需再锁, 下同
-                cite --;
                 time = System.currentTimeMillis();
+                cite --;
         //  }
             lock.unlock();
         }

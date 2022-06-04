@@ -51,7 +51,7 @@ public final class Gate {
      * @return 清理数量
      */
     public static int cleans() {
-        long tt = System.currentTimeMillis() - Chore.getInstance().getTimed(); // 超一个周期未使用即释放
+        long tt = System.currentTimeMillis() - Chore.getInstance().getTimed() *1000; // 超一个周期未使用即释放
         int  ct = 0;
         Lock loxk  ;
 

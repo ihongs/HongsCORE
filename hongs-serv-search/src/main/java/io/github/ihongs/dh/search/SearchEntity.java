@@ -300,7 +300,7 @@ public class SearchEntity extends LuceneRecord {
         private final String dbname;
         private final String lkname;
         private  IndexWriter writer;
-        private volatile int  c = 1;
+        private volatile int  c = 0;
         private volatile long t = 0;
 
         public Writer(String dbpath, String dbname) {
@@ -311,8 +311,6 @@ public class SearchEntity extends LuceneRecord {
             Chore timer = Chore.getInstance();
             this.cleans = timer.runTimed ( () -> this.clean() );
             this.merges = timer.runDaily ( () -> this.merge() );
-
-            init();
         }
 
         private void init() {
@@ -334,7 +332,7 @@ public class SearchEntity extends LuceneRecord {
         }
 
         synchronized public IndexWriter conn() {
-            //  c += 0;
+                c  = 1;
             if ( ! writer.isOpen() ) init(); // 重连
             return writer;
         }

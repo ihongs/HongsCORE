@@ -222,9 +222,18 @@ public final class Gate {
     public static final class Locker implements Lock {
         private final ReentrantLock lock = new ReentrantLock();
         private long  time = 0;
-        private  int  cite = 0;
+        private int   cite = 0;
 
         private Locker(){} // 避免外部 new
+
+        @Override
+        public void unlock() {
+        //  synchronized(this) { // 已在锁内, 无需再锁, 下同
+                cite --;
+                time = System.currentTimeMillis();
+        //  }
+            lock.unlock();
+        }
 
         @Override
         public void lock() {
@@ -232,15 +241,6 @@ public final class Gate {
         //  synchronized(this) {
                 cite ++;
         //  }
-        }
-
-        @Override
-        public void unlock() {
-        //  synchronized(this) {
-                cite --;
-                time = System.currentTimeMillis();
-        //  }
-            lock.unlock();
         }
 
         @Override
@@ -292,23 +292,9 @@ public final class Gate {
     public static final class Leader implements ReadWriteLock {
         private final ReadWriteLock lock = new ReentrantReadWriteLock();
         private long  time = 0;
-        private  int  cite = 0;
+        private int   cite = 0;
 
         private Leader() {} // 避免外部 new
-
-        public void lockr() {
-            lock. readLock().lock();
-            synchronized (this) {
-                cite ++;
-            }
-        }
-
-        public void lockw() {
-            lock.writeLock().lock();
-            synchronized (this) {
-                cite ++;
-            }
-        }
 
         public void unlockr() {
             lock. readLock().unlock();
@@ -326,46 +312,60 @@ public final class Gate {
             }
         }
 
-        public boolean tryLockr() {
-            if (lock. readLock().tryLock()) {
-                synchronized (this) {
-                    cite ++;
-                }
-                return true;
+        public void lockr() {
+            lock. readLock().lock();
+            synchronized (this) {
+                cite ++;
             }
-            return false;
+        }
+
+        public void lockw() {
+            lock.writeLock().lock();
+            synchronized (this) {
+                cite ++;
+            }
+        }
+
+        public boolean tryLockr() {
+            if (!lock. readLock().tryLock()) {
+                return false;
+            }
+            synchronized (this) {
+                cite ++;
+            }
+            return true;
         }
 
         public boolean tryLockw() {
-            if (lock.writeLock().tryLock()) {
-                synchronized (this) {
-                    cite ++;
-                }
-                return true;
+            if (!lock.writeLock().tryLock()) {
+                return false;
             }
-            return false;
+            synchronized (this) {
+                cite ++;
+            }
+            return true;
         }
 
         public boolean tryLockr(long time, TimeUnit unit)
         throws InterruptedException {
-            if (lock. readLock().tryLock(time , unit)) {
-                synchronized (this) {
-                    cite ++;
-                }
-                return true;
+            if (!lock. readLock().tryLock(time , unit)) {
+                return false;
             }
-            return false;
+            synchronized (this) {
+                cite ++;
+            }
+            return true;
         }
 
         public boolean tryLockw(long time, TimeUnit unit)
         throws InterruptedException {
-            if (lock.writeLock().tryLock(time , unit)) {
-                synchronized (this) {
-                    cite ++;
-                }
-                return true;
+            if (!lock.writeLock().tryLock(time, unit)) {
+                return false;
             }
-            return false;
+            synchronized (this) {
+                cite ++;
+            }
+            return true;
         }
 
         public void lockrInterruptibly()

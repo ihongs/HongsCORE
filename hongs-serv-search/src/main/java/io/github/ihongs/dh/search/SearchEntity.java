@@ -294,21 +294,23 @@ public class SearchEntity extends LuceneRecord {
 
     private static class Writer implements AutoCloseable, Core.Singleton {
 
-        private final ScheduledFuture cleanTask;
-        private final ScheduledFuture mergeTask;
+        private final ScheduledFuture cleans;
+        private final ScheduledFuture merges;
         private final String dbpath;
         private final String dbname;
+        private final String lkname;
         private  IndexWriter writer;
         private volatile int  c = 1;
         private volatile long t = 0;
 
         public Writer(String dbpath, String dbname) {
-            Chore ch  = Chore.getInstance();
-            cleanTask = ch.runTimed(() -> this.clean());
-            mergeTask = ch.runDaily(() -> this.merge());
-
             this.dbpath = dbpath;
             this.dbname = dbname;
+            this.lkname = Writer.class.getName() + ":" + dbname;
+
+            Chore timer = Chore.getInstance();
+            this.cleans = timer.runTimed ( () -> this.clean() );
+            this.merges = timer.runDaily ( () -> this.merge() );
 
             init();
         }
@@ -360,12 +362,12 @@ public class SearchEntity extends LuceneRecord {
         @Override
         public void close() {
             cloze();
-            cleanTask.cancel(false);
-            mergeTask.cancel(true );
+            cleans.cancel(false);
+            merges.cancel(true );
         }
 
         public void cloze() {
-            Gate.Locker lk = Gate.getLocker(Writer.class.getName () + ":" + dbname);
+            Gate.Locker lk = Gate.getLocker(lkname);
             try {
                 lk.lockInterruptibly();
                 if (! writer.isOpen()) {
@@ -386,7 +388,7 @@ public class SearchEntity extends LuceneRecord {
         public void merge() {
             long t = System.currentTimeMillis();
 
-            Gate.Locker lk = Gate.getLocker(Writer.class.getName () + ":" + dbname);
+            Gate.Locker lk = Gate.getLocker(lkname);
             try {
                 lk.lockInterruptibly();
                 if (! writer.isOpen()) {

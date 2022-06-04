@@ -727,74 +727,6 @@ public class Core
     }
   }
 
-  /**
-   * 释放资源
-   * 规避托管自身后递归调用, Core 不标示 Unuseable
-   */
-  public void unuse()
-  {
-    if (sup().isEmpty())
-    {
-      return;
-    }
-
-    /**
-     * 为规避 ConcurrentModificationException,
-     * 只能采用遍历数组而非迭代循环的方式进行.
-     * 不用迭代中的 Entry.remove 是因为实例的 cloze 中也可能变更 core.
-     */
-
-    Object[] a = sup().values().toArray();
-    for (Object o : a)
-    {
-      try
-      {
-        if (o instanceof Unuseable)
-        {
-           ((Unuseable) o ).unuse();
-        }
-      }
-      catch ( Throwable x )
-      {
-        x.printStackTrace(System.err);
-      }
-    }
-  }
-
-  /**
-   * 维护资源
-   * 规避托管自身后递归调用, Core 不标示 Reuseable
-   */
-  public void reuse()
-  {
-    if (sup().isEmpty())
-    {
-      return;
-    }
-
-    /**
-     * 为规避 ConcurrentModificationException,
-     * 只能采用遍历数组而非迭代循环的方式进行.
-     * 不用迭代中的 Entry.remove 是因为实例的 cloze 中也可能变更 core.
-     */
-
-    Object[] a = sup().values().toArray();
-    for (Object o : a)
-    {
-      try
-      {
-        if (o instanceof Reuseable)
-        {
-           ((Reuseable) o ).reuse();
-        }
-      }
-      catch ( Throwable x )
-      {
-        x.printStackTrace(System.err);
-      }
-    }
-  }
-
   @Override
   public String toString()
   {
@@ -936,28 +868,6 @@ public class Core
       }
     }
 
-    @Override
-    public void unuse()
-    {
-      RWL.writeLock().lock();
-      try {
-        super.unuse();
-      } finally {
-        RWL.writeLock().unlock();
-      }
-    }
-
-    @Override
-    public void reuse()
-    {
-      RWL.writeLock().lock();
-      try {
-        super.reuse();
-      } finally {
-        RWL.writeLock().unlock();
-      }
-    }
-
   }
 
   /**
@@ -1041,24 +951,6 @@ public class Core
   static public interface Provider<T>
   {
     public T get() throws HongsException, HongsExemption;
-  }
-
-  /**
-   * 清理资源
-   * 实现此接口, 并且放入全局托管, 将会间隔定时执行. 由 core.daemon.run.timed 配置, 默认每十分钟
-   */
-  static public interface Unuseable
-  {
-    public void unuse();
-  }
-
-  /**
-   * 维护资源
-   * 实现此接口, 并且放入全局托管, 将会每天定时执行. 由 core.daemon.run.daily 配置, 默认每天零点
-   */
-  static public interface Reuseable
-  {
-    public void reuse();
   }
 
   /**

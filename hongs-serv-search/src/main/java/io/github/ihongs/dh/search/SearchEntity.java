@@ -18,6 +18,7 @@ import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ScheduledFuture;
 import java.util.function.Supplier;
 import java.util.concurrent.TimeUnit;
 
@@ -291,8 +292,10 @@ public class SearchEntity extends LuceneRecord {
         DOCK = doc;
     }
 
-    private static class Writer implements AutoCloseable, Core.Unuseable, Core.Reuseable, Core.Singleton {
+    private static class Writer implements AutoCloseable, Core.Singleton {
 
+        private final ScheduledFuture cleanTask;
+        private final ScheduledFuture mergeTask;
         private final String dbpath;
         private final String dbname;
         private  IndexWriter writer;
@@ -300,6 +303,10 @@ public class SearchEntity extends LuceneRecord {
         private volatile long t = 0;
 
         public Writer(String dbpath, String dbname) {
+            Chore ch  = Chore.getInstance();
+            cleanTask = ch.runTimed(() -> this.clean());
+            mergeTask = ch.runDaily(() -> this.merge());
+
             this.dbpath = dbpath;
             this.dbname = dbname;
 
@@ -343,15 +350,21 @@ public class SearchEntity extends LuceneRecord {
             }
         }
 
-        @Override
-        public void unuse() {
-            if (c <= 0 && t < System.currentTimeMillis() - Chore.getInstance().getTimed() * 1000) { // 两个周期没用则关闭
-                close();
+        synchronized public void clean() {
+            if (c >= 1 || t < System.currentTimeMillis() - Chore.getInstance().getTimed() * 1000) { // 一个周期内则不关闭
+                return;
             }
+            cloze();
         }
 
         @Override
         public void close() {
+            cloze();
+            cleanTask.cancel(false);
+            mergeTask.cancel(true );
+        }
+
+        public void cloze() {
             Gate.Locker lk = Gate.getLocker(Writer.class.getName () + ":" + dbname);
             try {
                 lk.lockInterruptibly();
@@ -363,13 +376,14 @@ public class SearchEntity extends LuceneRecord {
                 CoreLogger.error(x);
             } catch (InterruptedException x) {
                 CoreLogger.error(x);
+            } finally {
+                lk.unlock();
             }
 
             CoreLogger.trace("Close the lucene writer for {}", dbname);
         }
 
-        @Override
-        public void reuse() {
+        public void merge() {
             long t = System.currentTimeMillis();
 
             Gate.Locker lk = Gate.getLocker(Writer.class.getName () + ":" + dbname);
@@ -383,6 +397,8 @@ public class SearchEntity extends LuceneRecord {
                 CoreLogger.error(x);
             } catch (InterruptedException x) {
                 CoreLogger.error(x);
+            } finally {
+                lk.unlock();
             }
 
             t = System.currentTimeMillis() - t ;

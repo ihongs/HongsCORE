@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.TimeZone;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -55,7 +56,6 @@ public final class Chore implements Core.Singleton, AutoCloseable {
         catch (ParseException e) {
             throw new Error("Wrong format for core.daemon.run.timed '"+tt+"'. It needs to be 'H:mm'");
         }
-
         if (DTT == 0) {
             throw new Error("Wrong config for core.daemon.run.timed '"+tt+"', must more than 00:00" );
         }
@@ -134,8 +134,9 @@ public final class Chore implements Core.Singleton, AutoCloseable {
      * 延时任务
      * @param task
      * @param delay 延迟秒数
+     * @return 
      */
-    public void run(Runnable task, int delay) {
+    public ScheduledFuture run(Runnable task, int delay) {
         if (4 == (4 & Core.DEBUG)) {
             Date   date = new Date(System.currentTimeMillis()+ delay * 1000L);
             String time = new SimpleDateFormat("MM-dd HH:mm:ss").format(date);
@@ -143,7 +144,7 @@ public final class Chore implements Core.Singleton, AutoCloseable {
             CoreLogger.trace("Will run {} at {}", name, time);
         }
 
-        SES.schedule(task , delay, TimeUnit.SECONDS);
+        return SES.schedule(task , delay, TimeUnit.SECONDS);
     }
 
     /**
@@ -151,8 +152,9 @@ public final class Chore implements Core.Singleton, AutoCloseable {
      * @param task
      * @param delay 延迟秒数
      * @param perio 间隔秒数
+     * @return 
      */
-    public void run(Runnable task, int delay, int perio) {
+    public ScheduledFuture run(Runnable task, int delay, int perio) {
         if (4 == (4 & Core.DEBUG)) {
             Date   date = new Date(System.currentTimeMillis()+ delay * 1000L);
             String time = new SimpleDateFormat("MM-dd HH:mm:ss").format(date);
@@ -160,29 +162,18 @@ public final class Chore implements Core.Singleton, AutoCloseable {
             CoreLogger.trace("Will run {} at {}", name, time);
         }
 
-        SES.scheduleAtFixedRate(task , delay, perio, TimeUnit.SECONDS);
+        return SES.scheduleAtFixedRate(task , delay, perio, TimeUnit.SECONDS);
     }
 
     /**
-     * 每日任务
+     * 常规定时任务
+     * 默认每隔十分钟运行
+     * 或在 default.properties 设置 core.daemon.run.timed=HH:mm
      * @param task
-     * @param hour 每天几点
-     * @param minu 几分执行
+     * @return 
      */
-    public void runDaily(Runnable task, int hour, int minu) {
-        // 计算延时
-        Calendar cal0 = Calendar.getInstance( );
-        Calendar cal1 = Calendar.getInstance( );
-        cal0.setTimeZone(TimeZone.getDefault());
-        cal1.setTimeZone(TimeZone.getDefault());
-        cal1.setTimeInMillis(hour * 3600000 + minu * 60000);
-        cal1.set(Calendar.MONTH, cal0.get(Calendar.MONTH) );
-        cal1.set(Calendar.YEAR , cal0.get(Calendar.YEAR ) );
-        cal1.set(Calendar.DATE , cal0.get(Calendar.DATE ) );
-        if ( cal1.before(cal0) ) cal1.add(Calendar.HOUR,24);
-        int ddt = (int) (cal1.getTimeInMillis() - cal0.getTimeInMillis()) / 1000 + 1;
-
-        run( task, ddt, DDP );
+    public ScheduledFuture runTimed(Runnable task) {
+        return run(task, DTT, DTT);
     }
 
     /**
@@ -190,8 +181,9 @@ public final class Chore implements Core.Singleton, AutoCloseable {
      * 默认每天零点时运行
      * 或在 default.properties 设置 core.daemon.run.daily=HH:mm
      * @param task
+     * @return 
      */
-    public void runDaily(Runnable task) {
+    public ScheduledFuture runDaily(Runnable task) {
         // 计算延时
         Calendar cal0 = Calendar.getInstance( );
         Calendar cal1 = Calendar.getInstance( );
@@ -204,17 +196,30 @@ public final class Chore implements Core.Singleton, AutoCloseable {
         if ( cal1.before(cal0) ) cal1.add(Calendar.HOUR,24);
         int ddt = (int) (cal1.getTimeInMillis() - cal0.getTimeInMillis()) / 1000 + 1;
 
-        run( task, ddt, DDP );
+        return run(task, ddt, DDP);
     }
 
     /**
-     * 常规定时任务
-     * 默认每隔十分钟运行
-     * 或在 default.properties 设置 core.daemon.run.timed=HH:mm
+     * 每日任务
      * @param task
+     * @param hour 每天几点
+     * @param minu 几分执行
+     * @return 
      */
-    public void runTimed(Runnable task) {
-        run( task, DTT, DTT );
+    public ScheduledFuture runDaily(Runnable task, int hour, int minu) {
+        // 计算延时
+        Calendar cal0 = Calendar.getInstance( );
+        Calendar cal1 = Calendar.getInstance( );
+        cal0.setTimeZone(TimeZone.getDefault());
+        cal1.setTimeZone(TimeZone.getDefault());
+        cal1.setTimeInMillis(hour * 3600000 + minu * 60000);
+        cal1.set(Calendar.MONTH, cal0.get(Calendar.MONTH) );
+        cal1.set(Calendar.YEAR , cal0.get(Calendar.YEAR ) );
+        cal1.set(Calendar.DATE , cal0.get(Calendar.DATE ) );
+        if ( cal1.before(cal0) ) cal1.add(Calendar.HOUR,24);
+        int ddt = (int) (cal1.getTimeInMillis() - cal0.getTimeInMillis()) / 1000 + 1;
+
+        return run(task, ddt, DDP);
     }
 
 }

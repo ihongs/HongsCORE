@@ -196,14 +196,12 @@ public class ActionDriver implements Filter, Servlet {
         // 调用一下可预加载动作类
         ActionRunner.getActions();
 
-        // 清空全局好准备重新开始
+        // 清空全局以准备重新开始
         Core.GLOBAL_CORE.reset( );
 
-        // 设置全局对象维护的任务
+        // 设置全局资源锁清理任务
         Chore ch = Chore.getInstance( );
         ch.runTimed(() -> Gate.clean());
-        ch.runTimed(() -> Core.GLOBAL_CORE.unuse());
-        ch.runDaily(() -> Core.GLOBAL_CORE.reuse());
 
         // 启动后需立即执行的任务
         String ss = cnf.getProperty( "serve.init" );

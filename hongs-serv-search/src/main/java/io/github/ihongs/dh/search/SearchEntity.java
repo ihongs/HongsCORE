@@ -9,6 +9,7 @@ import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.FormSet;
 import io.github.ihongs.dh.lucene.LuceneRecord;
 import io.github.ihongs.util.Syno;
+import io.github.ihongs.util.daemon.Chore;
 import io.github.ihongs.util.daemon.Gate;
 
 import java.io.File;
@@ -295,7 +296,8 @@ public class SearchEntity extends LuceneRecord {
         private final String dbpath;
         private final String dbname;
         private  IndexWriter writer;
-        private volatile int c = 1 ;
+        private volatile int  c = 1;
+        private volatile long t = 0;
 
         public Writer(String dbpath, String dbname) {
             this.dbpath = dbpath;
@@ -337,12 +339,13 @@ public class SearchEntity extends LuceneRecord {
         synchronized public void exit () {
             if (c >= 1) {
                 c -= 1;
+                t  = System.currentTimeMillis();
             }
         }
 
         @Override
         public void unuse() {
-            if (c <= 0) {
+            if (c <= 0 && t < System.currentTimeMillis() - Chore.getInstance().getTimed() * 1000) { // 两个周期没用则关闭
                 close();
             }
         }

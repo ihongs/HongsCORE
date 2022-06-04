@@ -40,6 +40,14 @@ public final class Chore implements Core.Singleton, AutoCloseable {
 
         SimpleDateFormat sdf = new SimpleDateFormat("H:m");
 
+        sdf.setTimeZone(TimeZone.getDefault (/* Local */));
+        try {
+            DDT = (int) ( sdf.parse(dt).getTime() / 1000 );
+        }
+        catch ( ParseException e ) {
+            throw new Error("Wrong format for core.daemon.run.daily '"+dt+"'. It needs to be 'H:mm'");
+        }
+
         sdf.setTimeZone(TimeZone.getTimeZone("GMT+00:00"));
         try {
             DTT = (int) ( sdf.parse(tt).getTime() / 1000 );
@@ -50,14 +58,6 @@ public final class Chore implements Core.Singleton, AutoCloseable {
 
         if (DTT == 0) {
             throw new Error("Wrong config for core.daemon.run.timed '"+tt+"', must more than 00:00" );
-        }
-
-        sdf.setTimeZone(TimeZone.getDefault (/* Local */));
-        try {
-            DDT = (int) ( sdf.parse(dt).getTime() / 1000 );
-        }
-        catch ( ParseException e ) {
-            throw new Error("Wrong format for core.daemon.run.daily '"+dt+"'. It needs to be 'H:mm'");
         }
 
         SES = Executors.newScheduledThreadPool(ps, new ThreadFactory() {
@@ -83,6 +83,14 @@ public final class Chore implements Core.Singleton, AutoCloseable {
         return SES;
     }
 
+    public int getDaily() {
+        return DDT;
+    }
+    
+    public int getTimed() {
+        return DTT;
+    }
+    
     /**
      * 关闭容器
      * 请勿执行

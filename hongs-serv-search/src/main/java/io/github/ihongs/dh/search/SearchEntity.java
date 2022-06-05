@@ -303,7 +303,7 @@ public class SearchEntity extends LuceneRecord {
         private final ScheduledFuture merges;
         private final String dbpath;
         private final String dbname;
-        private final String lkname;
+    //  private final String lkname;
         private  IndexWriter writer;
         private volatile int  c = 1;
         private volatile long t = 0;
@@ -313,7 +313,7 @@ public class SearchEntity extends LuceneRecord {
             this.cleans = timer.runTimed ( () -> this.clean() );
             this.merges = timer.runDaily ( () -> this.merge() );
 
-            this.lkname = Writer.class.getName() + ":" + dbname;
+        //  this.lkname = Writer.class.getName() + ":" + dbname;
             this.dbname = dbname;
             this.dbpath = dbpath;
 

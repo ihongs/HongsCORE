@@ -368,6 +368,7 @@ public class SearchEntity extends LuceneRecord {
 
     private static class Reader implements AutoCloseable, Core.Singleton {
 
+        private final ScheduledFuture cleans;
         private final String dbpath;
         private final String dbname;
         private  IndexReader reader;
@@ -376,6 +377,9 @@ public class SearchEntity extends LuceneRecord {
         private volatile long t = 0;
 
         public Reader(String dbpath, String dbname) {
+            Chore timer = Chore.getInstance();
+            this.cleans = timer.runTimed ( () -> this.clean() );
+
             this.dbname = dbname;
             this.dbpath = dbpath;
 
@@ -451,6 +455,7 @@ public class SearchEntity extends LuceneRecord {
 
         @Override
         public void close() {
+            cleans.cancel(false);
             if (reader != null ) {
                 try {
                     reader.close();
@@ -546,9 +551,9 @@ public class SearchEntity extends LuceneRecord {
 
         @Override
         public void close() {
-            cloze();
             cleans.cancel(false);
             merges.cancel(true );
+            cloze();
         }
 
         public void cloze() {

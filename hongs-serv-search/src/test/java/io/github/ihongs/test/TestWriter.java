@@ -1,5 +1,6 @@
 package io.github.ihongs.test;
 
+import io.github.ihongs.Cnst;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.dh.lucene.LuceneRecord;
 import io.github.ihongs.dh.search.SearchEntity;
@@ -53,7 +54,7 @@ public class TestWriter extends TestCase {
             )
         );
 
-        final ExecutorService es = Executors.newFixedThreadPool(40);
+        final ExecutorService es = Executors.newFixedThreadPool(100);
         final Runnable rn = new Runnable() {
             @Override
             public void run() {
@@ -61,18 +62,23 @@ public class TestWriter extends TestCase {
                 //  LuceneRecord se = new LuceneRecord(fields, "test", "test");
                     SearchEntity se = new SearchEntity(fields, "test", "test");
                     se.begin ();
-                    se.create(Synt.mapOf(
+                    String id = se.create(Synt.mapOf(
                         "name" , "12ab",
                         "time" , System.currentTimeMillis()
                     ));
                     se.commit();
+                    Map  info = se.getOne(Synt.mapOf(
+                        Cnst.ID_KEY, id,
+                        Cnst.RB_KEY, Synt.setOf(Cnst.ID_KEY)
+                    ));
+                    assertEquals(id, info. get (Cnst.ID_KEY));
                 }
                 catch (HongsException ex) {
                     ex.printStackTrace( );
                 }
             }
         };
-        for (int i = 0; i < 80; i ++) {
+        for (int i = 0; i < 200; i ++) {
             es.execute(() -> rn.run());
         }
 
@@ -82,7 +88,7 @@ public class TestWriter extends TestCase {
         // 检查写入的内容
     //  LuceneRecord se = new LuceneRecord(fields, "test", "test");
         SearchEntity se = new SearchEntity(fields, "test", "test");
-        assertEquals(80 , se.search( Synt.mapOf(), 0, 0 ).hits() );
+        assertEquals(200, se.search( Synt.mapOf(), 0, 0 ).hits() );
         se.getWriter().maybeMerge();
         se.getWriter().deleteUnusedFiles();
         se.getWriter().close();

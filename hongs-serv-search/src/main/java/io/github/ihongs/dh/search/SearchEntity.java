@@ -10,7 +10,6 @@ import io.github.ihongs.action.FormSet;
 import io.github.ihongs.dh.lucene.LuceneRecord;
 import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.daemon.Chore;
-import io.github.ihongs.util.daemon.Gate;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,13 +18,15 @@ import java.util.LinkedHashMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
@@ -41,6 +42,7 @@ public class SearchEntity extends LuceneRecord {
 
     private final Map<String, Document> WRITES = new LinkedHashMap();
     private Writer WRITER = null ;
+    private Reader READER = null ;
     private Document DOCK = null ;
 
     public SearchEntity(Map form , String path , String name) {
@@ -96,11 +98,73 @@ public class SearchEntity extends LuceneRecord {
     }
 
     @Override
+    public IndexSearcher getFinder() throws HongsException {
+        getReader();
+        return READER.find();
+    }
+
+    @Override
+    public IndexReader getReader() throws HongsException {
+        /**
+         * 依次检查当前对象和全部空间是否存在 Reader,
+         * 需从全局获取时调 Reader.open 计数,
+         * 当前实例退出时调 Reader.exit 减掉,
+         * 计数归零可被回收.
+         */
+
+        final SearchEntity  that = this;
+        final String path = getDbPath();
+        final String name = getDbName();
+        final boolean[] b = new boolean[] {false};
+
+        if (READER != null) {
+            b[ 0 ]  = true;
+        } else try {
+            READER  = Core.GLOBAL_CORE.get(
+                Reader.class.getName () + ":" + name ,
+                new Supplier<Reader> () {
+                    @Override
+                    public Reader get() {
+                        b[ 0 ]  = true;
+
+                        // 目录不存在需开写并提交从而建立索引
+                        // 否则会抛出: IndexNotFoundException
+                        try {
+                            if (! new File(path).exists()) {
+                                that.getWriter().commit();
+                            }
+                        } catch (HongsException e) {
+                            throw e.toExemption( );
+                        } catch (IOException e ) {
+                            throw new HongsExemption(e);
+                        }
+
+                        return new Reader(path, name);
+                    }
+                }
+            );
+        } catch (HongsExemption x) {
+            throw x.toException( );
+        }
+
+        try {
+            // 首次或重复调用无需计数
+            if (b[0] == true) {
+                return  READER.conn( );
+            } else {
+                return  READER.open( );
+            }
+        } catch (HongsExemption x) {
+            throw x.toException( );
+        }
+    }
+
+    @Override
     public IndexWriter getWriter() throws HongsException {
         /**
-         * 依次检查当前对象和全部空间是否存在 SearchWriter,
-         * 需从全局获取时调 SearchWriter.open 计数,
-         * 当前实例退出时调 SearchWriter.exit 减掉,
+         * 依次检查当前对象和全部空间是否存在 Writer,
+         * 需从全局获取时调 Writer.open 计数,
+         * 当前实例退出时调 Writer.exit 减掉,
          * 计数归零可被回收.
          */
 
@@ -127,7 +191,7 @@ public class SearchEntity extends LuceneRecord {
         }
 
         try {
-            // 首次进入无需计数
+            // 首次或重复调用无需计数
             if (b[0] == true) {
                 return  WRITER.conn( );
             } else {
@@ -181,6 +245,11 @@ public class SearchEntity extends LuceneRecord {
         if (WRITER != null) {
             WRITER.exit( );
             WRITER  = null;
+        }
+
+        if (READER != null) {
+            READER.exit( );
+            READER  = null;
         }
     }
 
@@ -297,6 +366,106 @@ public class SearchEntity extends LuceneRecord {
         DOCK = doc;
     }
 
+    private static class Reader implements AutoCloseable, Core.Singleton {
+
+        private final String dbpath;
+        private final String dbname;
+        private  IndexReader reader;
+        private  IndexSearcher finder;
+        private volatile int  c = 1;
+        private volatile long t = 0;
+
+        public Reader(String dbpath, String dbname) {
+            this.dbname = dbname;
+            this.dbpath = dbpath;
+
+            this.reader = null;
+            this.finder = null;
+
+            init();
+        }
+
+        private void init() {
+            if (reader != null) {
+                try {
+                    // 如果有更新数据则会重新打开查询接口
+                    // 这可以规避提交更新后却查不到的问题
+                    IndexReader  nred = DirectoryReader.openIfChanged((DirectoryReader) reader);
+                    if ( null != nred) {
+                    //  reader.close(); // 不要关, 其他线程可能在用, 其内引用计数, 关不关无所谓
+                        reader = nred ;
+                        finder = null ;
+                    }
+                } catch (IOException x) {
+                    throw new HongsExemption(x);
+                }
+            } else {
+                try {
+                    Directory dir = FSDirectory.open(Paths.get(dbpath));
+
+                    reader = DirectoryReader.open(dir);
+                } catch (IOException x) {
+                    throw new HongsExemption(x);
+                }
+
+                CoreLogger.trace("Start the lucene reader for {}", dbname);
+            }
+        }
+
+        synchronized public IndexSearcher find() {
+            if (null != finder) {
+                return  finder;
+            }
+        //  c += 1;
+            init();
+            finder = new IndexSearcher(reader);
+            return finder;
+        }
+
+        synchronized public IndexReader conn() {
+        //  c += 1;
+            init();
+            return reader;
+        }
+
+        synchronized public IndexReader open() {
+            c += 1;
+            init();
+            return reader;
+        }
+
+        synchronized public void exit () {
+            if (c >= 1) {
+                c -= 1;
+                t  = System.currentTimeMillis();
+            }
+        }
+
+        synchronized public void clean() {
+            if (c >= 1 || t > System.currentTimeMillis() - 3600000) { //  // 一小时内有用则不关闭
+                return;
+            }
+            c  =  0;
+            close();
+        }
+
+        @Override
+        public void close() {
+            if (reader != null ) {
+                try {
+                    reader.close();
+                } catch (IOException x) {
+                    CoreLogger.error(x);
+                } finally {
+                    reader = null ;
+                    finder = null ;
+                }
+            }
+            CoreLogger.trace("Close the lucene reader for {}", dbname);
+        }
+
+    }
+
     private static class Writer implements AutoCloseable, Core.Singleton {
 
         private final ScheduledFuture cleans;
@@ -346,13 +515,17 @@ public class SearchEntity extends LuceneRecord {
 
         synchronized public IndexWriter conn() {
             //  c += 1;
-            if ( ! writer.isOpen() ) init(); // 重连
+            if ( ! writer.isOpen() ) {
+                init();
+            }
             return writer;
         }
 
         synchronized public IndexWriter open() {
                 c += 1;
-            if ( ! writer.isOpen() ) init(); // 重连
+            if ( ! writer.isOpen() ) {
+                init();
+            }
             return writer;
         }
 
@@ -364,9 +537,10 @@ public class SearchEntity extends LuceneRecord {
         }
 
         synchronized public void clean() {
-            if (c >= 1 || t > System.currentTimeMillis() - Chore.getInstance().getTimed() * 1000) { // 一个周期内则不关闭
+            if (c >= 1 || t > System.currentTimeMillis() - 3600000) { // 一小时内有用则不关闭
                 return;
             }
+            c  =  0;
             cloze();
         }
 

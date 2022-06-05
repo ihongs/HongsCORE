@@ -1664,7 +1664,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 // 目录不存在需开写并提交从而建立索引
                 // 否则会抛出: IndexNotFoundException
                 if (! new File(path).exists()) {
-                    getWriter (    ).commit();
+                    this.getWriter().commit();
                 }
 
                 Directory dir = FSDirectory.open(Paths.get(path));

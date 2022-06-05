@@ -135,8 +135,8 @@ public class SearchEntity extends LuceneRecord {
                             }
                         } catch (HongsException e) {
                             throw e.toExemption( );
-                        } catch (IOException e ) {
-                            throw new HongsExemption(e);
+                        } catch (   IOException e) {
+                            throw new HongsExemption( e );
                         }
 
                         return new Reader(path, name);

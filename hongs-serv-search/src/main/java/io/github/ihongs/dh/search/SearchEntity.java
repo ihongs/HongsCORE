@@ -392,7 +392,7 @@ public class SearchEntity extends LuceneRecord {
                     // 这可以规避提交更新后却查不到的问题
                     IndexReader  nred = DirectoryReader.openIfChanged((DirectoryReader) reader);
                     if ( null != nred) {
-                    //  reader.close(); // 不要关, 其他线程可能在用, 其内引用计数, 关不关无所谓
+                    //  reader.close(); // 不要关, 其他线程可能在用. 其内引用计数, 关不关无所谓
                         reader = nred ;
                         finder = null ;
                     }

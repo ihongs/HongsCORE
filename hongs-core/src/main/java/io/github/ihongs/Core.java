@@ -263,6 +263,15 @@ public class Core
     return getInstance().got(name);
   }
 
+  /**
+   * 按类构建单例
+   *
+   * 注意; 未存储
+   *
+   * @param <T>
+   * @param clas
+   * @return
+   */
   public static final <T>T newInstance(Class<T> clas)
   {
     try
@@ -355,6 +364,14 @@ public class Core
     }
   }
 
+  /**
+   * 类名构建单例
+   *
+   * 注意: 未存储
+   *
+   * @param name
+   * @return
+   */
   public static final Object newInstance(String name)
   {
     Class klass;

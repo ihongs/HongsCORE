@@ -501,33 +501,33 @@ public class Core
   /**
    * 获取名对应的唯一对象
    *
-   * @param name 包路径.类名称
+   * @param cln 包路径.类名称
    * @return 唯一对象
    */
-  public Object got(String name)
+  public Object got(String cln)
   {
-    Class clas;
+    Class cls;
     try {
-      clas = Class.forName(name);
+      cls = Class.forName (cln);
     } catch (ClassNotFoundException x) {
       throw new HongsExemption(x, 821);
     }
 
-    return got(name, clas);
+    return got(cln, cls);
   }
 
   /**
    * 获取类对应的唯一对象
    *
    * @param <T>
-   * @param clas [包.]类.class
+   * @param cls [包.]类.class
    * @return 唯一对象
    */
-  public <T>T got(Class<T> clas)
+  public <T>T got(Class<T> cls)
   {
-    String name = clas.getName();
+    String cln = cls.getName( );
 
-    return got(name, clas);
+    return got(cln, cls);
   }
 
   /**
@@ -538,7 +538,7 @@ public class Core
    * @param cls 对应的类
    * @return
    */
-  protected <T>T got(String cln, Class<T> cls)
+  public <T>T got(String cln, Class<T> cls)
   {
     Object val = get(cln);
     if (null  != val)
@@ -556,38 +556,6 @@ public class Core
 
     T obj  = newInstance(cls);
     set(cln, obj);
-    return   obj ;
-  }
-
-  /**
-   * 获取指定对象
-   * 用函数式构造 core.got(xxx, () -> new Yyy(zzz))
-   * 可在构建时抛出异常
-   * @param <T>
-   * @param key 存储键名
-   * @param sup 供应方法
-   * @return
-   * @throws HongsException
-   */
-  public <T>T got(String key, Provider<T> sup)
-  throws HongsException, HongsExemption
-  {
-    Object val = get(key);
-    if (null  != val)
-    {
-      return (T) val;
-    }
-    if (Singleton.class.isAssignableFrom(sup.getClass()))
-    {
-      return Core.GLOBAL_CORE.got (key , sup);
-    }
-    if (Soliloquy.class.isAssignableFrom(sup.getClass()))
-    {
-      return sup.get();
-    }
-
-    T obj  = sup.get();
-    set(key, obj);
     return   obj ;
   }
 
@@ -755,7 +723,7 @@ public class Core
     private final ReentrantReadWriteLock RWL = new ReentrantReadWriteLock();
 
     @Override
-    protected <T>T got(String cln, Class<T> cls)
+    public <T>T got(String cln, Class<T> cls)
     {
       /**
        * 查两遍
@@ -782,35 +750,6 @@ public class Core
 
         T xbj = newInstance(cls);
         super.set(cln, xbj);
-        return xbj;
-      } finally {
-        RWL.writeLock().unlock();
-      }
-    }
-
-    @Override
-    public <T>T got(String key, Provider<T> sup)
-    throws HongsException, HongsExemption
-    {
-      RWL.readLock( ).lock();
-      try {
-        Object obj = super.get(key);
-        if ( null != obj ) {
-            return (T) obj;
-        }
-      } finally {
-        RWL.readLock( ).unlock();
-      }
-
-      RWL.writeLock().lock();
-      try {
-        Object obj = super.get(key);
-        if ( null != obj ) {
-            return (T) obj;
-        }
-
-        T xbj  =  sup. get();
-        super.set(key, xbj );
         return xbj;
       } finally {
         RWL.writeLock().unlock();
@@ -962,16 +901,6 @@ public class Core
     {
       return null;
     }
-  }
-
-  /**
-   * 构造工厂
-   * @param <T>
-   */
-  @FunctionalInterface
-  static public interface Provider<T>
-  {
-    public T get() throws HongsException, HongsExemption;
   }
 
   /**

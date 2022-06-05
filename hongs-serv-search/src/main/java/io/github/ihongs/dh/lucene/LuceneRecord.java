@@ -1520,21 +1520,6 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      */
     @Override
     public void close() {
-        if (reader != null ) {
-            try {
-                reader.close();
-            } catch (IOException x) {
-                CoreLogger.error(x);
-            } finally {
-                reader = null ;
-                finder = null ;
-            }
-
-            if (4 == (4 & Core.DEBUG)) {
-                CoreLogger.trace("Close the lucene reader for " + getDbName());
-            }
-        }
-
         if (writer != null ) {
         if (writer.isOpen()) {
             // 默认退出时提交
@@ -1565,6 +1550,21 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         } else {
             /**/writer = null ;
         }
+        }
+
+        if (reader != null ) {
+            try {
+                reader.close();
+            } catch (IOException x) {
+                CoreLogger.error(x);
+            } finally {
+                reader = null ;
+                finder = null ;
+            }
+
+            if (4 == (4 & Core.DEBUG)) {
+                CoreLogger.trace("Close the lucene reader for " + getDbName());
+            }
         }
     }
 

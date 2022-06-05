@@ -728,8 +728,7 @@ public class Core
       /**
        * 查两遍
        * 可以提高重复读取已有实例的效率
-       * 亦可规避读锁刚丢其他线程已写入
-       * 下同此
+       * 亦可规避读锁刚丢各线程重复写入
        */
       RWL.readLock( ).lock();
       try {
@@ -759,6 +758,11 @@ public class Core
     @Override
     public <T>T get(String key, Supplier<T> sup)
     {
+      /**
+       * 查两遍
+       * 可以提高重复读取已有实例的效率
+       * 亦可规避读锁刚丢各线程重复写入
+       */
       RWL.readLock( ).lock();
       try {
         Object obj = super.get(key);

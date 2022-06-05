@@ -258,13 +258,13 @@ public class CoreLocale
     CoreLocale  inst;
     Core core = Core.getInstance();
     inst = (CoreLocale) core.get(ck);
-    if (inst != null)
+    if (inst != null && inst.notModified())
     {
       return inst;
     }
     Core gore = Core.GLOBAL_CORE;
     inst = (CoreLocale) gore.get(ck);
-    if (inst != null)
+    if (inst != null && inst.notModified())
     {
       return inst;
     }

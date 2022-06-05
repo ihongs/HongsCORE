@@ -6,8 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Map;
 import java.util.Properties;
+import java.util.Map;
 
 /**
  * 配置信息读取工具
@@ -33,6 +33,9 @@ public class CoreConfig
   extends Properties
 {
 
+  private transient File fl = null;
+  private transient long ft = -1L ;
+
   /**
    * 加载指定名称的配置
    * @param name
@@ -44,6 +47,11 @@ public class CoreConfig
     if (null != name)
     {
       this.load(name);
+    }
+
+    if (ft == -1)
+    {
+        ft  =  0;
     }
   }
 
@@ -93,6 +101,10 @@ public class CoreConfig
         fn = Core.CONF_PATH + File.separator + name + ".properties";
         is = new FileInputStream(fn);
         this.load(is);
+        if (ft == -1) {
+            fl = new  File  ( fn );
+            ft = fl.lastModified();
+        }
         return;
     }
     catch (FileNotFoundException ex) {
@@ -107,6 +119,10 @@ public class CoreConfig
         fn = Core.CONF_PATH + File.separator + name + Cnst.PROP_EXT + ".xml";
         is = new FileInputStream(fn);
         this.loadFromXML(is);
+        if (ft == -1) {
+            fl = new  File  ( fn );
+            ft = fl.lastModified();
+        }
         return;
     }
     catch (FileNotFoundException ex) {
@@ -239,6 +255,15 @@ public class CoreConfig
   }
 
   /**
+   * 配置没有改变
+   * @return
+   */
+  public boolean notModified()
+  {
+    return  ft <= 0 || ft >= fl.lastModified();
+  }
+
+  /**
    * 获取默认配置
    * @return
    */
@@ -290,13 +315,13 @@ public class CoreConfig
     CoreConfig  inst;
     Core core = Core.getInstance();
     inst = (CoreConfig) core.get(ck);
-    if (inst != null)
+    if (inst != null && inst.notModified())
     {
       return inst;
     }
     Core gore = Core.GLOBAL_CORE;
     inst = (CoreConfig) gore.get(ck);
-    if (inst != null)
+    if (inst != null && inst.notModified())
     {
       return inst;
     }

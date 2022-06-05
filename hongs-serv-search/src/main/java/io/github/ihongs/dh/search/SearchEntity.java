@@ -95,11 +95,6 @@ public class SearchEntity extends LuceneRecord {
         return inst;
     }
 
-    /**
-     * 索引写入, 务必调用 getLocker 进行加锁
-     * @return
-     * @throws HongsException
-     */
     @Override
     public IndexWriter getWriter() throws HongsException {
         /**
@@ -143,16 +138,14 @@ public class SearchEntity extends LuceneRecord {
         }
     }
 
-    /**
-     * 获取写锁, 如需调用 getWriter 务必加锁
-     * @return
-     */
+    /*
     public Gate.Locker getLocker() {
         if (WRITER != null) {
             return WRITER.lock( );
         }
         return Gate.getLocker (Writer.class.getName() +":"+ getDbName());
     }
+    */
 
     @Override
     public void begin( ) {
@@ -200,19 +193,19 @@ public class SearchEntity extends LuceneRecord {
         }
         try {
             IndexWriter iw = getWriter();
-            Gate.Locker lk = getLocker();
+        //  Gate.Locker lk = getLocker();
 
-            long tt = CoreConfig.getInstance().getProperty("core.try.lock.save.timeout" , 0L);
-            if ( tt > 0L ) {
-                if (! lk.tryLock(tt , TimeUnit.MILLISECONDS)) {
-                    throw new HongsExemption(861, "Lucene try to commit timeout(${0}ms)", tt);
-                }
-            } else {
-                lk.lockInterruptibly();
-            }
+        //  long tt = CoreConfig.getInstance().getProperty("core.try.lock.save.timeout" , 0L);
+        //  if ( tt > 0L ) {
+        //      if (! lk.tryLock(tt , TimeUnit.MILLISECONDS)) {
+        //          throw new HongsExemption(861, "Lucene try to commit timeout(${0}ms)", tt);
+        //      }
+        //  } else {
+        //      lk.lockInterruptibly();
+        //  }
 
             // 此处才是真更新文档
-            try {
+        //  try {
                 for (Map.Entry<String, Document> et : WRITES.entrySet()) {
                     String   id = et.getKey  ();
                     Document dc = et.getValue();
@@ -223,16 +216,20 @@ public class SearchEntity extends LuceneRecord {
                     }
                 }
                 iw.commit();
-            } finally {
-                lk.unlock();
-            }
-        } catch ( HongsException e) {
-            throw  e.toExemption( );
-        } catch (InterruptedException e) {
-            throw new  HongsExemption(e, 860 );
-        } catch ( IOException e ) {
-            throw new  HongsExemption(e, 1055);
-        } finally {
+        //  } finally {
+        //      lk.unlock();
+        //  }
+        }
+        catch (HongsException e) {
+            throw e.toExemption( );
+        }
+        catch ( IOException e) {
+            throw new HongsExemption(e, 1055);
+        }/*
+        catch ( InterruptedException e) {
+            throw new HongsExemption(e, 860 );
+        }*/
+        finally {
             WRITES.clear();
             DOCK = null;
         }
@@ -341,9 +338,11 @@ public class SearchEntity extends LuceneRecord {
             CoreLogger.trace("Start the lucene writer for {}", dbname);
         }
 
+        /*
         public Gate.Locker lock() {
             return Gate.getLocker( lkname );
         }
+        */
 
         synchronized public IndexWriter conn() {
             //  c += 1;
@@ -379,19 +378,19 @@ public class SearchEntity extends LuceneRecord {
         }
 
         public void cloze() {
-            Gate.Locker lk = lock();
+        //  Gate.Locker lk = lock();
             try {
-                lk.lockInterruptibly();
+        //      lk.lockInterruptibly();
                 if (! writer.isOpen()) {
                     return;
                 }
                 writer.close( );
             } catch (IOException x) {
                 CoreLogger.error(x);
-            } catch (InterruptedException x) {
-                CoreLogger.error(x);
-            } finally {
-                lk.unlock();
+        //  } catch (InterruptedException x) {
+        //      CoreLogger.error(x);
+        //  } finally {
+        //      lk.unlock();
             }
 
             CoreLogger.trace("Close the lucene writer for {}", dbname);
@@ -400,19 +399,20 @@ public class SearchEntity extends LuceneRecord {
         public void merge() {
             long t = System.currentTimeMillis();
 
-            Gate.Locker lk = lock();
+        //  Gate.Locker lk = lock();
             try {
-                lk.lockInterruptibly();
+        //      lk.lockInterruptibly();
                 if (! writer.isOpen()) {
                     init();
                 }
                 writer.maybeMerge();
+                writer.deleteUnusedFiles();
             } catch (IOException x) {
                 CoreLogger.error(x);
-            } catch (InterruptedException x) {
-                CoreLogger.error(x);
-            } finally {
-                lk.unlock();
+        //  } catch (InterruptedException x) {
+        //      CoreLogger.error(x);
+        //  } finally {
+        //      lk.unlock();
             }
 
             t = System.currentTimeMillis() - t ;

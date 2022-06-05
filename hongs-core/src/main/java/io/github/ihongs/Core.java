@@ -818,11 +818,11 @@ public class Core
     }
 
     @Override
-    public void close()
+    public void reset()
     {
       RWL.writeLock().lock();
       try {
-        super.close();
+        super.reset();
       } finally {
         RWL.writeLock().unlock();
       }

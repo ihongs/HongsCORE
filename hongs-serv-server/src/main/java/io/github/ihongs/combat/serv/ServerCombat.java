@@ -229,6 +229,9 @@ public class ServerCombat {
                 if (Core.DEBUG == 0) {
                     System.err.println("HTTP server is stopped.");
                 }
+
+                // 核心重置, 释放资源
+                Core.GLOBAL_CORE.reset();
             } catch ( Exception  e ) {
                 throw new Error( e );
             } finally {
@@ -251,12 +254,12 @@ public class ServerCombat {
      * Win 的软链
      */
     public static class Linker implements Initer {
-        
+
         @Override
         public void init(ServletContextHandler sc) {
             sc.addAliasCheck(new SameFileAliasChecker());
         }
-        
+
     }
 
     /**

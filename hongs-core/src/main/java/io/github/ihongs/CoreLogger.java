@@ -225,7 +225,7 @@ public final class CoreLogger
         String text ;
         ByteArrayOutputStream buff = new ByteArrayOutputStream();
         flaw.printStackTrace( new  PrintStream (buff));
-        text = buff.toString().replaceAll("(\r\n|\r|\n)","$1\t");
+        text = buff.toString().replaceAll("\r\n|\r|\n", "$0\t" );
 
         if (1 == (1 & Core.DEBUG)) {
             getLogger(Cnst.LOG_NAME).error(mark(text));

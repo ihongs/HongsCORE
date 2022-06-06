@@ -9,6 +9,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ThreadFactory;
@@ -121,13 +122,27 @@ public final class Chore implements Core.Singleton, AutoCloseable {
      * 异步任务
      * @param task
      */
-    public void run(Runnable task) {
+    public void exe(Runnable task) {
         if (4 == (4 & Core.DEBUG)) {
             String name = task.getClass().getName();
             CoreLogger.trace("Will run {}" , name );
         }
 
-        SES.execute (task);
+        SES.execute(task);
+    }
+
+    /**
+     * 异步任务
+     * @param task
+     * @return 
+     */
+    public Future run(Runnable task) {
+        if (4 == (4 & Core.DEBUG)) {
+            String name = task.getClass().getName();
+            CoreLogger.trace("Will run {}" , name );
+        }
+
+        return SES.submit(task);
     }
 
     /**

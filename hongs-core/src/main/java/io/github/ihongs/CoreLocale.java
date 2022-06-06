@@ -30,7 +30,8 @@ import java.util.Map;
  * @author Hongs
  */
 public class CoreLocale
-  extends CoreConfig
+  extends    CoreConfig
+  implements CoreSerial.Mtimes
 {
 
   private     String lang ;
@@ -258,13 +259,13 @@ public class CoreLocale
     CoreLocale  inst;
     Core core = Core.getInstance();
     inst = (CoreLocale) core.get(ck);
-    if (inst != null && inst.notModified())
+    if (inst != null && inst.isModified() != true)
     {
       return inst;
     }
     Core gore = Core.GLOBAL_CORE;
     inst = (CoreLocale) gore.get(ck);
-    if (inst != null && inst.notModified())
+    if (inst != null && inst.isModified() != true)
     {
       return inst;
     }

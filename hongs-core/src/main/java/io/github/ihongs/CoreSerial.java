@@ -372,16 +372,25 @@ public abstract class CoreSerial
   {
 
     /**
+     * 缓存数据更新时间
+     * @return
+     */
+    public long dataModified();
+
+    /**
      * 缓存文件更新时间
      * @return
      */
     public long fileModified();
 
     /**
-     * 缓存数据更新时间
+     * 文件是否已经更新
      * @return
      */
-    public long dataModified();
+    public default boolean isModified() {
+        return  dataModified()
+            >=  fileModified();
+    }
 
   }
 

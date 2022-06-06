@@ -30,7 +30,8 @@ import java.util.Map;
  * @author Hongs
  */
 public class CoreConfig
-  extends Properties
+  extends    Properties
+  implements CoreSerial.Mtimes
 {
 
   private transient File fl = null;
@@ -61,6 +62,18 @@ public class CoreConfig
   public CoreConfig()
   {
     this("default");
+  }
+
+  @Override
+  public long dataModified()
+  {
+    return ft > 0 ? ft : 0;
+  }
+
+  @Override
+  public long fileModified()
+  {
+    return ft > 0 ? fl.lastModified() : 0;
   }
 
   @Override
@@ -255,15 +268,6 @@ public class CoreConfig
   }
 
   /**
-   * 配置没有改变
-   * @return
-   */
-  public boolean notModified()
-  {
-    return  ft <= 0 || ft >= fl.lastModified();
-  }
-
-  /**
    * 获取默认配置
    * @return
    */
@@ -315,13 +319,13 @@ public class CoreConfig
     CoreConfig  inst;
     Core core = Core.getInstance();
     inst = (CoreConfig) core.get(ck);
-    if (inst != null && inst.notModified())
+    if (inst != null && inst.isModified() != true)
     {
       return inst;
     }
     Core gore = Core.GLOBAL_CORE;
     inst = (CoreConfig) gore.get(ck);
-    if (inst != null && inst.notModified())
+    if (inst != null && inst.isModified() != true)
     {
       return inst;
     }

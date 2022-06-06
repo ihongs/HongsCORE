@@ -57,8 +57,8 @@ public final class Chore implements Core.Singleton, AutoCloseable {
         catch (ParseException e) {
             throw new Error("Wrong format for core.daemon.run.timed '"+tt+"'. It needs to be 'H:mm'");
         }
-        if (DTT == 0) {
-            throw new Error("Wrong config for core.daemon.run.timed '"+tt+"', must more than 00:00" );
+        if (DTT < 1 || DTT > 28800) {
+            throw new Error("Wrong config for core.daemon.run.timed '"+tt+"', must be 0:01 to 8:00" );
         }
 
         SES = Executors.newScheduledThreadPool(ps, new ThreadFactory() {

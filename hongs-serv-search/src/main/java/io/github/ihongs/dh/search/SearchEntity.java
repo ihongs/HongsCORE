@@ -18,6 +18,9 @@ import java.util.LinkedHashMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Supplier;
 
 import org.apache.lucene.document.Document;
@@ -42,7 +45,6 @@ public class SearchEntity extends LuceneRecord {
 
     private final Map<String, Document> WRITES = new LinkedHashMap();
     private Writer WRITER = null ;
-    private Reader READER = null ;
     private Document DOCK = null ;
 
     public SearchEntity(Map form , String path , String name) {
@@ -97,119 +99,53 @@ public class SearchEntity extends LuceneRecord {
         return inst;
     }
 
-    @Override
-    public IndexSearcher getFinder() throws HongsException {
-        getReader();
-        return READER.find();
-    }
+    private Writer gotWriter() {
+        if (WRITER == null) {
+            final String name = getDbName();
+            final String path = getDbPath();
 
-    @Override
-    public IndexReader getReader() throws HongsException {
-        /**
-         * 依次检查当前对象和全部空间是否存在 Reader,
-         * 需从全局获取时调 Reader.open 计数,
-         * 当前实例退出时调 Reader.exit 减掉,
-         * 计数归零可被回收.
-         */
-
-        final SearchEntity  that = this;
-        final String path = getDbPath();
-        final String name = getDbName();
-        final boolean[] b = new boolean[] {false};
-
-        if (READER != null) {
-            b[ 0 ]  = true;
-        } else try {
-            READER  = Core.GLOBAL_CORE.get(
-                Reader.class.getName () + ":" + name ,
-                new Supplier<Reader> () {
-                    @Override
-                    public Reader get() {
-                        b[ 0 ]  = true;
-
-                        // 目录不存在需开写并提交从而建立索引
-                        // 否则会抛出: IndexNotFoundException
-                        try {
-                            if (! new File(path).exists()) {
-                                that.getWriter().commit();
-                            }
-                        } catch (HongsException e) {
-                            throw e.toExemption( );
-                        } catch (   IOException e) {
-                            throw new HongsExemption( e );
-                        }
-
-                        return new Reader(path, name);
-                    }
-                }
-            );
-        } catch (HongsExemption x) {
-            throw x.toException( );
-        }
-
-        try {
-            // 首次或重复调用无需计数
-            if (b[0] == true) {
-                return  READER.conn( );
-            } else {
-                return  READER.open( );
-            }
-        } catch (HongsExemption x) {
-            throw x.toException( );
-        }
-    }
-
-    @Override
-    public IndexWriter getWriter() throws HongsException {
-        /**
-         * 依次检查当前对象和全部空间是否存在 Writer,
-         * 需从全局获取时调 Writer.open 计数,
-         * 当前实例退出时调 Writer.exit 减掉,
-         * 计数归零可被回收.
-         */
-
-        final String path = getDbPath();
-        final String name = getDbName();
-        final boolean[] b = new boolean[] {false};
-
-        if (WRITER != null) {
-            b[ 0 ]  = true;
-        } else try {
             WRITER  = Core.GLOBAL_CORE.get(
                 Writer.class.getName () + ":" + name ,
                 new Supplier<Writer> () {
                     @Override
                     public Writer get() {
-                        b[ 0 ]  = true;
-
                         return new Writer(path, name);
                     }
                 }
             );
-        } catch (HongsExemption x) {
-            throw x.toException( );
         }
+        return WRITER;
+    }
 
+    @Override
+    public IndexWriter getWriter() throws HongsException {
         try {
-            // 首次或重复调用无需计数
-            if (b[0] == true) {
-                return  WRITER.conn( );
-            } else {
-                return  WRITER.open( );
-            }
-        } catch (HongsExemption x) {
-            throw x.toException( );
+            return gotWriter().getWriter();
+        }
+        catch (IOException ex) {
+            throw new HongsException( ex );
         }
     }
 
-    /*
-    public Gate.Locker getLocker() {
-        if (WRITER != null) {
-            return WRITER.lock( );
+    @Override
+    public IndexReader getReader() throws HongsException {
+        try {
+            return gotWriter().getReader();
         }
-        return Gate.getLocker (Writer.class.getName() +":"+ getDbName());
+        catch (IOException ex) {
+            throw new HongsException( ex );
+        }
     }
-    */
+
+    @Override
+    public IndexSearcher getFinder() throws HongsException {
+        try {
+            return gotWriter().getFinder();
+        }
+        catch (IOException ex) {
+            throw new HongsException( ex );
+        }
+    }
 
     @Override
     public void begin( ) {
@@ -243,13 +179,7 @@ public class SearchEntity extends LuceneRecord {
         }
 
         if (WRITER != null) {
-            WRITER.exit( );
             WRITER  = null;
-        }
-
-        if (READER != null) {
-            READER.exit( );
-            READER  = null;
         }
     }
 
@@ -261,43 +191,11 @@ public class SearchEntity extends LuceneRecord {
             return;
         }
         try {
-            IndexWriter iw = getWriter();
-        //  Gate.Locker lk = getLocker();
-
-        //  long tt = CoreConfig.getInstance().getProperty("core.try.lock.save.timeout" , 0L);
-        //  if ( tt > 0L ) {
-        //      if (! lk.tryLock(tt , TimeUnit.MILLISECONDS)) {
-        //          throw new HongsExemption(861, "Lucene try to commit timeout(${0}ms)", tt);
-        //      }
-        //  } else {
-        //      lk.lockInterruptibly();
-        //  }
-
-            // 此处才是真更新文档
-        //  try {
-                for (Map.Entry<String, Document> et : WRITES.entrySet()) {
-                    String   id = et.getKey  ();
-                    Document dc = et.getValue();
-                    if (dc != null) {
-                        iw.updateDocument (new Term("@"+Cnst.ID_KEY, id), dc);
-                    } else {
-                        iw.deleteDocuments(new Term("@"+Cnst.ID_KEY, id)    );
-                    }
-                }
-                iw.commit();
-        //  } finally {
-        //      lk.unlock();
-        //  }
+            gotWriter().write(WRITES);
         }
-        catch (HongsException e) {
-            throw e.toExemption( );
-        }
-        catch ( IOException e) {
+        catch (IOException e ) {
             throw new HongsExemption(e, 1055);
-        }/*
-        catch ( InterruptedException e) {
-            throw new HongsExemption(e, 860 );
-        }*/
+        }
         finally {
             WRITES.clear();
             DOCK = null;
@@ -366,236 +264,195 @@ public class SearchEntity extends LuceneRecord {
         DOCK = doc;
     }
 
-    private static class Reader implements AutoCloseable, Core.Singleton {
-
-        private final ScheduledFuture cleans;
-        private final String dbpath;
-        private final String dbname;
-        private  IndexReader reader;
-        private  IndexSearcher finder;
-        private volatile int  c = 1;
-        private volatile long t = 0;
-
-        public Reader(String dbpath, String dbname) {
-            Chore timer = Chore.getInstance();
-            this.cleans = timer.runTimed ( () -> this.clean() );
-
-            this.dbname = dbname;
-            this.dbpath = dbpath;
-
-            this.reader = null;
-            this.finder = null;
-
-            init();
-        }
-
-        private void init() {
-            if (reader != null) {
-                try {
-                    // 如果有更新数据则会重新打开查询接口
-                    // 这可以规避提交更新后却查不到的问题
-                    IndexReader  nred = DirectoryReader.openIfChanged((DirectoryReader) reader);
-                    if ( null != nred) {
-                    //  reader.close(); // 不要关, 其他线程可能在用. 其内引用计数, 关不关无所谓
-                        reader = nred ;
-                        finder = null ;
-                    }
-                } catch (IOException x) {
-                    throw new HongsExemption(x);
-                }
-            } else {
-                try {
-                    Directory dir = FSDirectory.open(Paths.get(dbpath));
-
-                    reader = DirectoryReader.open(dir);
-                } catch (IOException x) {
-                    throw new HongsExemption(x);
-                }
-
-                CoreLogger.trace("Start the lucene reader for {}", dbname);
-            }
-        }
-
-        synchronized public IndexSearcher find() {
-            if (null != finder) {
-                return  finder;
-            }
-        //  c += 1;
-            init();
-            finder = new IndexSearcher(reader);
-            return finder;
-        }
-
-        synchronized public IndexReader conn() {
-        //  c += 1;
-            init();
-            return reader;
-        }
-
-        synchronized public IndexReader open() {
-            c += 1;
-            init();
-            return reader;
-        }
-
-        synchronized public void exit () {
-            if (c >= 1) {
-                c -= 1;
-                t  = System.currentTimeMillis();
-            }
-        }
-
-        synchronized public void clean() {
-            if (c >= 1 || t > System.currentTimeMillis() - 3600000) { //  // 一小时内有用则不关闭
-                return;
-            }
-            c  =  0;
-            close();
-        }
-
-        @Override
-        public void close() {
-            cleans.cancel(false);
-            if (reader != null ) {
-                try {
-                    reader.close();
-                } catch (IOException x) {
-                    CoreLogger.error(x);
-                } finally {
-                    reader = null ;
-                    finder = null ;
-                }
-            }
-            CoreLogger.trace("Close the lucene reader for {}", dbname);
-        }
-
-    }
-
     private static class Writer implements AutoCloseable, Core.Singleton {
 
-        private final ScheduledFuture cleans;
+        private final ReentrantReadWriteLock WL = new ReentrantReadWriteLock();
+        private final ReentrantReadWriteLock RL = new ReentrantReadWriteLock();
+        private final AtomicBoolean AB = new AtomicBoolean(false);
+        private final AtomicInteger AI = new AtomicInteger( 0x0 );
+        private final ScheduledFuture flushs;
         private final ScheduledFuture merges;
-        private final String dbpath;
-        private final String dbname;
-    //  private final String lkname;
-        private  IndexWriter writer;
-        private volatile int  c = 1;
-        private volatile long t = 0;
+        private final String   dbpath;
+        private final String   dbname;
+        private  IndexWriter   writer = null;
+        private  IndexReader   reader = null;
+        private  IndexSearcher finder = null;
 
         public Writer(String dbpath, String dbname) {
-            Chore timer = Chore.getInstance();
-            this.cleans = timer.runTimed ( () -> this.clean() );
-            this.merges = timer.runDaily ( () -> this.merge() );
-
-        //  this.lkname = Writer.class.getName() + ":" + dbname;
             this.dbname = dbname;
             this.dbpath = dbpath;
 
-            init();
+            Chore timer = Chore.getInstance();
+            this.flushs = timer.runTimed ( () -> this.flush() ); // 间隔时间提交
+            this.merges = timer.runDaily ( () -> this.merge() ); // 每天合并索引
         }
 
-        private void init() {
+        private IndexWriter getWriter() throws IOException {
+            WL.readLock().lock();
             try {
+                if (writer != null && writer.isOpen()) {
+                    return writer;
+                }
+            } finally {
+                WL.readLock().unlock();
+            }
+
+            WL.writeLock().lock();
+            try {
+                if (writer != null && writer.isOpen()) {
+                    return writer;
+                }
+
                 CoreConfig cc = CoreConfig.getInstance();
                 IndexWriterConfig iwc = new IndexWriterConfig();
-                iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
                 iwc.setMaxBufferedDocs(cc.getProperty("core.lucene.max.buf.docs", -1 ));
                 iwc.setRAMBufferSizeMB(cc.getProperty("core.lucene.ram.buf.size", 16D));
+                iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
+                iwc.setCommitOnClose(true);
 
                 Directory dir = FSDirectory.open(Paths.get(dbpath));
 
                 writer = new IndexWriter(dir, iwc);
-            } catch (IOException x) {
-                throw new HongsExemption(x);
-            }
+                if  (  ! new File(dbpath).exists()) {
+                    writer.commit();
+                }
 
-            CoreLogger.trace("Start the lucene writer for {}", dbname);
-        }
+                CoreLogger.trace("Start the lucene writer for {}", dbname);
 
-        /*
-        public Gate.Locker lock() {
-            return Gate.getLocker( lkname );
-        }
-        */
-
-        synchronized public IndexWriter conn() {
-            //  c += 1;
-            if ( ! writer.isOpen() ) {
-                init();
-            }
-            return writer;
-        }
-
-        synchronized public IndexWriter open() {
-                c += 1;
-            if ( ! writer.isOpen() ) {
-                init();
-            }
-            return writer;
-        }
-
-        synchronized public void exit () {
-            if (c >= 1) {
-                c -= 1;
-                t  = System.currentTimeMillis();
+                return writer;
+            } finally {
+                WL.writeLock().unlock();
             }
         }
 
-        synchronized public void clean() {
-            if (c >= 1 || t > System.currentTimeMillis() - 3600000) { // 一小时内有用则不关闭
-                return;
+        private IndexReader getReader() throws IOException {
+            RL.readLock().lock();
+            try {
+                if (reader != null && AB.get()) {
+                    return reader;
+                }
+            } finally {
+                RL.readLock().unlock();
             }
-            c  =  0;
-            cloze();
+
+            RL.writeLock().lock();
+            try {
+                if (reader != null && AB.get()) {
+                    return reader;
+                }
+
+                getWriter();
+
+                IndexReader readar;
+                if (reader != null) {
+                    readar  = DirectoryReader.openIfChanged(
+                         (DirectoryReader) reader , writer );
+                } else {
+                    readar  = DirectoryReader.open( writer );
+                }
+                if (readar != null) {
+                    finder  = new  IndexSearcher  ( readar );
+                    reader  = readar;
+                    AB.set  ( false);
+                }
+
+                CoreLogger.trace("Start the lucene reader for {}", dbname);
+
+                return reader;
+            } finally {
+                RL.writeLock().unlock();
+            }
+        }
+
+        public IndexSearcher getFinder() throws IOException {
+            getReader();
+
+            return finder;
+        }
+
+        public void write(Map<String, Document> WRITES) throws IOException {
+            IndexWriter iw = getWriter();
+
+            for (Map.Entry<String, Document> et : WRITES.entrySet()) {
+                String   id = et.getKey  ();
+                Document dc = et.getValue();
+                if (dc != null) {
+                    iw.updateDocument (new Term("@"+Cnst.ID_KEY, id), dc);
+                } else {
+                    iw.deleteDocuments(new Term("@"+Cnst.ID_KEY, id)    );
+                }
+            }
+
+            AI.addAndGet (WRITES.size());
+        }
+
+        public void flush() {
+            try {
+                if (writer == null
+                || !writer.isOpen()) {
+                    return;
+                }
+
+                long t = System.currentTimeMillis();
+
+                WL.writeLock().lock();
+                try {
+                    writer.commit();
+                    AB.set(true);
+                    AI.set( 00 );
+                } finally {
+                    WL.writeLock().unlock();
+                }
+
+                t = System.currentTimeMillis() - t ;
+                CoreLogger.trace("Flush lucene indexes: {} {}", dbname, t);
+            } catch (Exception x) {
+                CoreLogger.error(x);
+            }
+        }
+
+        public void merge() {
+            try {
+                if (writer == null
+                || !writer.isOpen()) {
+                    return;
+                }
+
+                long t = System.currentTimeMillis();
+
+                WL.writeLock().lock();
+                try {
+                    writer.maybeMerge ( /**/ );
+                    writer.deleteUnusedFiles();
+                } finally {
+                    WL.writeLock().unlock();
+                }
+
+                t = System.currentTimeMillis() - t ;
+                CoreLogger.trace("Merge lucene indexes: {} {}", dbname, t);
+            } catch (Exception x) {
+                CoreLogger.error(x);
+            }
         }
 
         @Override
         public void close() {
-            cleans.cancel(false);
-            merges.cancel(true );
-            cloze();
-        }
-
-        public void cloze() {
-        //  Gate.Locker lk = lock();
             try {
-        //      lk.lockInterruptibly();
-                if (! writer.isOpen()) {
-                    return;
+                flushs.cancel(false);
+                merges.cancel(true );
+
+                if (writer != null
+                &&  writer.isOpen()) {
+                    writer.close ( );
                 }
-                writer.close( );
-            } catch (IOException x) {
-                CoreLogger.error(x);
-        //  } catch (InterruptedException x) {
-        //      CoreLogger.error(x);
-        //  } finally {
-        //      lk.unlock();
-            }
-
-            CoreLogger.trace("Close the lucene writer for {}", dbname);
-        }
-
-        public void merge() {
-            long t = System.currentTimeMillis();
-
-        //  Gate.Locker lk = lock();
-            try {
-        //      lk.lockInterruptibly();
-                if (! writer.isOpen()) {
-                    init();
+                if (reader != null ) {
+                    reader.close ( );
                 }
-                writer.maybeMerge();
-                writer.deleteUnusedFiles();
-            } catch (IOException x) {
-                CoreLogger.error(x);
-        //  } catch (InterruptedException x) {
-        //      CoreLogger.error(x);
-        //  } finally {
-        //      lk.unlock();
-            }
 
-            t = System.currentTimeMillis() - t ;
-            CoreLogger.trace("Merge lucene indexes: {} {}", dbname, t);
+                CoreLogger.trace("Close the lucene writer for {}", dbname);
+            } catch (IOException ex) {
+                CoreLogger.error(ex);
+            }
         }
 
     }

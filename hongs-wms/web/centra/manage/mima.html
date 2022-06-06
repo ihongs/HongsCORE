@@ -44,7 +44,7 @@
                 label: "更换",
                 glass: "btn-default",
                 click: function(ev) {
-                    ev.preventDeault( );
+                    ev.preventDefault();
                     pw = getPassword(l);
                     $(this).closest(".modal").find(".code").text(pw);
                 }
@@ -52,7 +52,7 @@
                 label: "拷贝",
                 glass: "btn-default",
                 click: function(ev) {
-                    ev.preventDeault( );
+                    ev.preventDefault();
                     $(this).closest(".modal").find(".code").hsCopy();
                 }
             }, {

@@ -224,7 +224,7 @@ public final class CoreLogger
     public static void error(Throwable flaw) {
         String text ;
         ByteArrayOutputStream buff = new ByteArrayOutputStream();
-        flaw.printStackTrace( new PrintStream( buff ) ) ;
+        flaw.printStackTrace( new  PrintStream (buff));
         text = buff.toString().replaceAll("(\r\n|\r|\n)","$1\t");
 
         if (1 == (1 & Core.DEBUG)) {

@@ -181,7 +181,7 @@ public final class Chore implements Core.Singleton, AutoCloseable {
     }
 
     /**
-     * 常规定时任务
+     * 基础定时任务
      * 默认每隔十分钟运行
      * 或在 default.properties 设置 core.daemon.run.timed=HH:mm
      * @param task

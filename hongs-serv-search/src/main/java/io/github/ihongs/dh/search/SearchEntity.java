@@ -228,6 +228,7 @@ public class SearchEntity extends LuceneRecord {
         try {
             return super.search(rd, begin, lmimt);
         } catch (AlreadyClosedException e) {
+            CoreLogger.trace( "Search again..." );
             return super.search(rd, begin, lmimt);
         }
     }

@@ -13,38 +13,23 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import static junit.framework.Assert.assertEquals;
-import junit.framework.TestCase;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
-public class TestWriter extends TestCase {
+public class TestWriter {
 
     int dataSize = 600; // 测试数据数量
     int poolSize = 300; // 测试线程数量
     int waitTime = 30;  // 测试等待时间(秒)
 
-    @Before
-    @Override
-    public void setUp() {
+    //@Test
+    public void testWriter() throws HongsException, InterruptedException, IOException {
         // 必要全局变量
         if (Core.DATA_PATH == null) {
             Core.DATA_PATH = "target/test/var" ;
         }
-
         // 删除测试目录
         delDir(Core.DATA_PATH + "/lucene/test");
-    }
 
-    @After
-    @Override
-    public void tearDown() {
-        // 删除测试目录
-        delDir(Core.DATA_PATH + "/lucene/test");
-    }
-
-    @Test
-    public void testWriter() throws HongsException, InterruptedException, IOException {
         String dbName = "test";
         String dbPath = Core.DATA_PATH + "/lucene/" + dbName;
         Map fields = Synt.mapOf(

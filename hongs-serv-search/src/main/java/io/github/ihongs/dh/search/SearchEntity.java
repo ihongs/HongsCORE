@@ -277,12 +277,14 @@ public class SearchEntity extends LuceneRecord {
             return  DOCK ;
         }
 
+        // 查找对应文档, 遇错重查
         Document doc;
         try {
             doc = super.getDoc(id);
         } catch (AlreadyClosedException e) {
             doc = super.getDoc(id);
         }
+        
         DOCK = doc;
         return doc;
     }

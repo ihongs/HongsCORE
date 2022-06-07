@@ -76,14 +76,16 @@ public class ConfAction
       return;
     }
 
+    long m  = mk.modified( );
+    if ( m <= 0 ) {
+      m  =  Core.STARTS_TIME;
+    }
+    m =  m  / 1000L * 1000L ; // HTTP 时间精确到秒
+
     /**
      * 如果指定配置的数据并没有改变
      * 则直接返回 304 Not modified
      */
-    long m  = mk.modified();
-    if ( m <= 0 ) {
-      m = Core.STARTS_TIME ;
-    }
     long n  = helper.getRequest().getDateHeader("If-Modified-Since");
     if ( m <= n ) {
       helper.getResponse().  setStatus  ( SC_NOT_MODIFIED );

@@ -28,6 +28,7 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.store.AlreadyClosedException;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
@@ -217,6 +218,20 @@ public class SearchEntity extends LuceneRecord {
         }
     }
 
+    @Override
+    public Loop search(Map rd, int begin, int lmimt)
+    throws HongsException {
+        /**
+         * 遇到中途关闭情况再查一遍
+         * 还那么倒霉只好就这样算了
+         */
+        try {
+            return super.search(rd, begin, lmimt);
+        } catch (AlreadyClosedException e) {
+            return super.search(rd, begin, lmimt);
+        }
+    }
+    
     @Override
     public void addDoc(String id, Document doc)
     throws HongsException {

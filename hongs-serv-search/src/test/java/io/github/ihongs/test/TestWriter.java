@@ -20,9 +20,9 @@ import org.junit.Test;
 
 public class TestWriter extends TestCase {
 
-    int dataSize = 800; // 测试数据数量
-    int poolSize = 400; // 测试线程数量
-    int waitTime = 20;  // 测试等待时间(秒)
+    int dataSize = 600; // 测试数据数量
+    int poolSize = 300; // 测试线程数量
+    int waitTime = 30;  // 测试等待时间(秒)
 
     @Before
     @Override

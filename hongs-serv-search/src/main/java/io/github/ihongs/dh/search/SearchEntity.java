@@ -230,7 +230,7 @@ public class SearchEntity extends LuceneRecord {
          */
         try {
             super.permit(rd, ids, ern);
-        } catch (AlreadyClosedException e) {
+        } catch (Halt e) {
             super.permit(rd, ids, ern);
         }
     }
@@ -240,7 +240,7 @@ public class SearchEntity extends LuceneRecord {
     throws HongsException {
         try {
             return super.search(rd);
-        } catch (AlreadyClosedException e) {
+        } catch (Halt e) {
             return super.search(rd);
         }
     }
@@ -250,7 +250,7 @@ public class SearchEntity extends LuceneRecord {
     throws HongsException {
         try {
             return super.getOne(rd);
-        } catch (AlreadyClosedException e) {
+        } catch (Halt e) {
             return super.getOne(rd);
         }
     }
@@ -260,7 +260,7 @@ public class SearchEntity extends LuceneRecord {
     throws HongsException {
         try {
             return super.getAll(rd);
-        } catch (AlreadyClosedException e) {
+        } catch (Halt e) {
             return super.getAll(rd);
         }
     }
@@ -281,7 +281,7 @@ public class SearchEntity extends LuceneRecord {
         Document doc;
         try {
             doc = super.getDoc(id);
-        } catch (AlreadyClosedException e) {
+        } catch (Halt e) {
             doc = super.getDoc(id);
         }
         

@@ -58,6 +58,7 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.store.AlreadyClosedException;
 
 /**
  * Lucene 记录模型
@@ -2105,7 +2106,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 }
                 return i < h;
             } catch (IOException e) {
-                throw new HongsExemption(e);
+                throw new Halt ( e);
+            } catch (AlreadyClosedException e) {
+                throw new Halt ( e);
             }
         }
 
@@ -2121,7 +2124,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                         that.preDoc(dox   );
                 return  that.padDat(dox, r);
             } catch (IOException e) {
-                throw new HongsExemption(e);
+                throw new Halt ( e);
+            } catch (AlreadyClosedException e) {
+                throw new Halt ( e);
             }
         }
 
@@ -2203,6 +2208,21 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         public void remove() {
             throw new UnsupportedOperationException("Not supported remove in lucene loop.");
         }
+    }
+
+    /**
+     * 查询中断异常
+     */
+    public static class Halt extends HongsExemption {
+
+        public Halt( AlreadyClosedException cause ) {
+            super(cause, "fore.retries");
+        }
+
+        public Halt( IOException cause ) {
+            super(cause, "fore.retries");
+        }
+
     }
 
 }

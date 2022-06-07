@@ -59,6 +59,16 @@ public class SignAction extends io.github.ihongs.serv.centra.SignAction {
         String uhead = Synt.declare(rd.get("head"), "");
         String role  ;
 
+        // 加入公共部门
+        role = cc.getProperty("core.public.regs.unit", "");
+        if (!role.isEmpty()) {
+            Map  sd = new HashMap();
+            sd.put("user_id", uuid);
+            sd.put("unit_id", role);
+            sd.put("type"   ,  0  );
+            uo.db.getTable("unit_user").insert(sd);
+        }
+
         // 赋予公共权限
         role = cc.getProperty("core.public.regs.role", "");
         if (!role.isEmpty()) {
@@ -66,15 +76,6 @@ public class SignAction extends io.github.ihongs.serv.centra.SignAction {
             sd.put("user_id", uuid);
             sd.put("role"   , role);
             uo.db.getTable("user_role").insert(sd);
-        }
-
-        // 加入公共部门
-        role = cc.getProperty("core.public.regs.unit", "");
-        if (!role.isEmpty()) {
-            Map  sd = new HashMap();
-            sd.put("user_id", uuid);
-            sd.put("unit_id", role);
-            uo.db.getTable("unit_user").insert(sd);
         }
 
         Map  ad = AuthKit.userSign( ah, "*", uuid, uname, uhead ); // * 表示密码登录

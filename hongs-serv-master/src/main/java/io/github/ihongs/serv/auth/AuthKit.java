@@ -274,6 +274,16 @@ public class AuthKit {
             CoreConfig cc = CoreConfig.getInstance("master");
             /**/String rr ;
 
+            // 加入公共部门
+            rr  = cc.getProperty("core.public.regs.unit","");
+            if (! rr.isEmpty()) {
+                ud  =  new HashMap();
+                ud.put("user_id", uuid );
+                ud.put("unit_id",  rr  );
+                ud.put("type"   ,  00  );
+                db.getTable("unit_user").insert(ud);
+            }
+
             // 赋予公共权限
             rr  = cc.getProperty("core.public.regs.role","");
             if (! rr.isEmpty()) {
@@ -281,15 +291,6 @@ public class AuthKit {
                 ud.put("user_id", uuid );
                 ud.put("role"   ,  rr  );
                 db.getTable("user_role").insert(ud);
-            }
-
-            // 加入公共部门
-            rr  = cc.getProperty("core.public.regs.unit","");
-            if (! rr.isEmpty()) {
-                ud  =  new HashMap();
-                ud.put("user_id", uuid );
-                ud.put("unit_id",  rr  );
-                db.getTable("unit_user").insert(ud);
             }
         }
 

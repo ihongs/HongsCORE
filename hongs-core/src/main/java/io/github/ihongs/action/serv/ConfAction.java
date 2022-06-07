@@ -12,6 +12,7 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import static javax.servlet.http.HttpServletResponse.SC_NOT_MODIFIED;
 
 /**
  * 配置信息输出动作
@@ -79,21 +80,20 @@ public class ConfAction
      * 如果指定配置的数据并没有改变
      * 则直接返回 304 Not modified
      */
-    long m  =  helper.getRequest(  ).getDateHeader( "If-Modified-Since" );
-    if ( m >=  mk.modified() )
-    {
-      helper.getResponse().setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+    long m  = mk.modified();
+    if ( m <= 0 ) {
+      m = Core.STARTS_TIME ;
+    }
+    long n  = helper.getRequest().getDateHeader("If-Modified-Since");
+    if ( m <= n ) {
+      helper.getResponse().  setStatus  ( SC_NOT_MODIFIED );
       return;
+    } else {
+      helper.getResponse().setDateHeader("Last-Modified",m);
     }
 
-    String s;
-    m = mk.modified();
-    s = mk.toString();
-
-    // 标明修改时间
-    helper.getResponse().setDateHeader("Last-Modified", m);
-
     // 输出配置信息
+    String s = mk.toString();
     if ("json".equals(type))
     {
       helper.write("application/json", s);

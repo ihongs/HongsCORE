@@ -221,8 +221,8 @@ public final class Gate {
      */
     public static final class Locker implements Lock {
         private final ReentrantLock lock = new ReentrantLock();
-        private long  time = 0;
-        private int   cite = 0;
+        private volatile long  time = 0;
+        private volatile int   cite = 0;
 
         private Locker(){} // 避免外部 new
 
@@ -291,8 +291,8 @@ public final class Gate {
      */
     public static final class Leader implements ReadWriteLock {
         private final ReadWriteLock lock = new ReentrantReadWriteLock();
-        private long  time = 0;
-        private int   cite = 0;
+        private volatile long  time = 0;
+        private volatile int   cite = 0;
 
         private Leader() {} // 避免外部 new
 

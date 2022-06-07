@@ -76,9 +76,9 @@ public class LangAction
       return;
     }
 
-    long m  = mk.modified( );
-    if ( m <= 0 ) {
-      m  =  Core.STARTS_TIME;
+    long m = mk.modified ( );
+    if ( m < 1 ) {
+      m  = Core.STARTS_TIME ;
     }
     m =  m  / 1000L * 1000L ; // HTTP 时间精确到秒
 
@@ -86,12 +86,12 @@ public class LangAction
      * 如果指定语言的数据并没有改变
      * 则直接返回 304 Not modified
      */
-    long n  = helper.getRequest().getDateHeader("If-Modified-Since");
-    if ( m <= n ) {
+    long n = helper.getRequest().getDateHeader("If-Modified-Since");
+    if ( n < m ) {
+      helper.getResponse().setDateHeader("Last-Modified",m);
+    } else {
       helper.getResponse().  setStatus  ( SC_NOT_MODIFIED );
       return;
-    } else {
-      helper.getResponse().setDateHeader("Last-Modified",m);
     }
 
     // 输出语言信息

@@ -18,6 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -220,16 +221,26 @@ public class SearchEntity extends LuceneRecord {
     }
 
     @Override
-    public Map  search(Map rd)
+    protected void permit(Map rd, Set ids, int ern)
     throws HongsException {
         /**
          * 遇到中途关闭情况再查一遍
          * 还那么倒霉只好就这样算了
+         * 下同此
          */
         try {
+            super.permit(rd, ids, ern);
+        } catch (AlreadyClosedException e) {
+            super.permit(rd, ids, ern);
+        }
+    }
+
+    @Override
+    public Map  search(Map rd)
+    throws HongsException {
+        try {
             return super.search(rd);
-        } catch (AlreadyClosedException ex ) {
-        //  System.err.println ("re-search");
+        } catch (AlreadyClosedException e) {
             return super.search(rd);
         }
     }
@@ -237,14 +248,9 @@ public class SearchEntity extends LuceneRecord {
     @Override
     public Map  getOne(Map rd)
     throws HongsException {
-        /**
-         * 遇到中途关闭情况再查一遍
-         * 还那么倒霉只好就这样算了
-         */
         try {
             return super.getOne(rd);
-        } catch (AlreadyClosedException ex ) {
-        //  System.err.println ("re-search");
+        } catch (AlreadyClosedException e) {
             return super.getOne(rd);
         }
     }
@@ -252,14 +258,9 @@ public class SearchEntity extends LuceneRecord {
     @Override
     public List getAll(Map rd)
     throws HongsException {
-        /**
-         * 遇到中途关闭情况再查一遍
-         * 还那么倒霉只好就这样算了
-         */
         try {
             return super.getAll(rd);
-        } catch (AlreadyClosedException ex ) {
-        //  System.err.println ("re-search");
+        } catch (AlreadyClosedException e) {
             return super.getAll(rd);
         }
     }
@@ -279,17 +280,11 @@ public class SearchEntity extends LuceneRecord {
         Document doc;
         try {
             doc = super.getDoc(id);
-        } catch (AlreadyClosedException e ) {
-        //  System.err.println("re-search");
+        } catch (AlreadyClosedException e) {
             doc = super.getDoc(id);
         }
         DOCK = doc;
         return doc;
-    }
-
-    @Override
-    protected void preDoc(Document doc) {
-        DOCK = doc;
     }
 
     @Override
@@ -317,6 +312,11 @@ public class SearchEntity extends LuceneRecord {
         if (!REFLUX_MODE) {
             commit();
         }
+    }
+
+    @Override
+    protected void preDoc(Document doc) {
+        DOCK = doc;
     }
 
     /**

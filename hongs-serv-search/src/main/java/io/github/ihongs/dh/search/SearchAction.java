@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.lucene.store.AlreadyClosedException;
 
 /**
  * 搜索动作
@@ -63,7 +64,11 @@ public class SearchAction extends JAction {
             }
         }
 
-        super.search(helper);
+        try {
+            super.search(helper);
+        } catch (AlreadyClosedException x) {
+            throw new HongsException("fore.retries");
+        }
     }
 
     @Action("acount")

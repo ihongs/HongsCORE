@@ -8,8 +8,6 @@ import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.util.Dawn;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -35,8 +33,6 @@ import javax.servlet.http.HttpServletResponse;
 public class LangAction
   extends  ActionDriver
 {
-  private static final Map<String, String> CACHES = new HashMap();
-  private static final Map<String, Long  > MTIMES = new HashMap();
 
   /**
    * 服务方法
@@ -66,50 +62,36 @@ public class LangAction
     String type = name.substring(1 + p);
            name = name.substring(1 , p);
     if (!"js".equals(type) && !"json".equals(type)) {
-      helper.error(400, "Wrong file type: " + type);
+      helper.error(400, "Wrong file type: "+ type);
       return;
     }
 
     // 需要区分语言
     String lang = name+"_"+Core.ACTION_LANG.get( );
 
+    Maker mk;
+    try {
+      mk = new Maker( name );
+    }
+    catch (HongsExemption e) {
+      helper.error(404, e.getMessage());
+      return;
+    }
+
     /**
      * 如果指定语言的数据并没有改变
      * 则直接返回 304 Not modified
      */
     long m  =  helper.getRequest(  ).getDateHeader( "If-Modified-Since" );
-    if ( LangAction.MTIMES.containsKey(lang) && MTIMES.get( lang ) <= m )
+    if ( m >=  mk.modified() )
     {
       helper.getResponse().setStatus(HttpServletResponse.SC_NOT_MODIFIED);
       return;
     }
 
-    /**
-     * 如果没有语言
-     * 则调用工厂方法构造 JS 代码
-     */
     String s;
-    if (!LangAction.CACHES.containsKey(lang))
-    {
-      try
-      {
-        s = this.makeLang(name);
-      }
-      catch (HongsExemption ex) {
-        helper.error(404,ex.getMessage());
-        return;
-      }
-
-      m = System.currentTimeMillis( ) / 1000L * 1000L; // HTTP 时间精确到秒
-
-      LangAction.CACHES.put(lang , s);
-      LangAction.MTIMES.put(lang , m);
-    }
-    else
-    {
-      s = LangAction.CACHES.get(lang);
-      m = LangAction.MTIMES.get(lang);
-    }
+    m = mk.modified();
+    s = mk.toString();
 
     // 标明修改时间
     helper.getResponse().setDateHeader("Last-Modified", m);
@@ -139,80 +121,6 @@ public class LangAction
     }
   }
 
-  /**
-   * 销毁方法
-   * 清空配置信息和消息数据
-   */
-  @Override
-  public void destroy()
-  {
-    super.destroy();
-
-    // 销毁配置信息
-    LangAction.CACHES.clear();
-    LangAction.MTIMES.clear();
-  }
-
-  /**
-   * 按语言构造消息信息
-   * 配置类型按后缀划分为:
-   * .N 数字
-   * .B 布尔
-   * .C 代码
-   * 无后缀及其他为字符串
-   */
-  private String makeLang(String confName)
-  {
-    Maker         mk = new Maker(confName);
-    StringBuilder sb = new StringBuilder();
-
-    /** 配置代码 **/
-
-    sb.append("{\r\n");
-
-    // 公共语言
-    if ("default".equals(confName))
-    {
-      sb.append("\t\"lang\":\"")
-        .append(Core.ACTION_LANG.get())
-        .append("\",\r\n")
-        .append("\t\"zone\":\"")
-        .append(Core.ACTION_ZONE.get())
-        .append("\",\r\n");
-    }
-
-    // 查找扩展语言信息
-    for (String nk : mk.lang.stringPropertyNames())
-    {
-      if (nk.startsWith("fore."))
-      {
-          sb.append( mk.make(nk.substring(5), nk) );
-      }
-    }
-
-    // 查找共享语言信息
-    String x  = mk.lang.getProperty("core.fore.keys");
-    if (null !=  x ) for ( String k : x.split( ";" )) {
-        k = k.trim();
-        if (k.length()==0) {
-            continue;
-        }
-        String[] a = k.split("=", 2);
-        String   n ;
-        if (1  < a.length) {
-            n  = a[0];
-            k  = a[1];
-        } else {
-            n  = a[0];
-            k  = a[0];
-        }
-        sb.append(mk.make(n, k) );
-    }
-
-    sb.append("\t\"\":\"\"\r\n}");
-    return sb.toString();
-  }
-
   //** 辅助工具类 **/
 
   /**
@@ -220,17 +128,76 @@ public class LangAction
    */
   private static class Maker
   {
-    private final CoreLocale lang ;
+    private final     String name;
+    private final CoreLocale lang;
 
     public Maker(String name)
     {
-      lang = CoreLocale.getInstance(name);
+      this.name = name;
+      this.lang = CoreLocale.getInstance(name);
 
       // 未设置 core.fore.keys 不公开, 哪怕设置个空的都行
-      if ( lang.getProperty("core.fore.keys", null) == null )
+      if ( this.lang.getProperty("core.fore.keys", null) == null )
       {
         throw new HongsExemption(404, "Lang for "+name+" is non-public");
       }
+    }
+
+    public long modified()
+    {
+      return lang.fileModified();
+    }
+
+    @Override
+    public String toString()
+    {
+      StringBuilder sb = new StringBuilder();
+
+      /** 配置代码 **/
+
+      sb.append("{\r\n");
+
+      // 公共语言
+      if ("default".equals(name))
+      {
+        sb.append("\t\"lang\":\"")
+          .append(Core.ACTION_LANG.get())
+          .append("\",\r\n")
+          .append("\t\"zone\":\"")
+          .append(Core.ACTION_ZONE.get())
+          .append("\",\r\n");
+      }
+
+      // 查找扩展语言信息
+      for (String nk : lang.stringPropertyNames())
+      {
+        if (nk.startsWith("fore."))
+        {
+            sb.append( make(nk.substring(5), nk) );
+        }
+      }
+
+      // 查找共享语言信息
+      String x  = lang.getProperty("core.fore.keys");
+      if (null !=  x ) for (String k : x.split(";")) {
+          k = k.trim();
+          if (k.length()==0) {
+              continue;
+          }
+          String[] a = k.split("=", 2);
+          String   n ;
+          if (1  < a.length) {
+              n  = a[0];
+              k  = a[1];
+          } else {
+              n  = a[0];
+              k  = a[0];
+          }
+          sb.append ( make(n , k) );
+      }
+
+      sb.append("\t\"\":\"\"\r\n}");
+      return sb.toString();
     }
 
     public String make(String nam, String key)

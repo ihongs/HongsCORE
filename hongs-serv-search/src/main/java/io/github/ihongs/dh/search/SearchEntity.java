@@ -17,11 +17,9 @@ import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Supplier;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
@@ -147,18 +145,8 @@ public class SearchEntity extends LuceneRecord {
         }
     }
 
-    @Override
-    public void begin( ) {
-        /**
-         * 有尚未提交的变更
-         * 又不在全局事务内
-         */
-        if (REFLUX_MODE
-        && !WRITES.isEmpty()) {
-            throw new HongsExemption(1054, "Uncommitted changes");
-        }
-
-        super . begin( );
+    public void flush( ) {
+        gotWriter().flush();
     }
 
     @Override
@@ -184,6 +172,20 @@ public class SearchEntity extends LuceneRecord {
     }
 
     @Override
+    public void begin( ) {
+        /**
+         * 有尚未提交的变更
+         * 又不在全局事务内
+         */
+        if (REFLUX_MODE
+        && !WRITES.isEmpty()) {
+            throw new HongsExemption(1054, "Uncommitted changes");
+        }
+
+        super . begin( );
+    }
+
+    @Override
     public void commit() {
         super . commit();
 
@@ -206,10 +208,10 @@ public class SearchEntity extends LuceneRecord {
     public void revert() {
         super . revert();
 
+        // 清空内部缓存即可
         if (WRITES.isEmpty()) {
             return;
         } else {
-            // 此为缓存, 清空即可
             WRITES.clear();
             DOCK = null;
         }
@@ -264,12 +266,21 @@ public class SearchEntity extends LuceneRecord {
         DOCK = doc;
     }
 
+    /**
+     * 读写单例
+     *
+     * 几个问题, 记录备忘:
+     *
+     * Q: 如果需要立即存盘并立即读到应该怎么办?
+     * A: 注释上面 SearchEntity 的 getReader,getFinder 方法, 让其使用默认方法; 注释下方 Writer 中 write 的锁, 启用 iw.commit() 代码.
+     *
+     * Q: 更新标识 vary 为何用 volatile 而不用 AtomicBoolean?
+     * A: 本打算把 flush 用锁包裹, 这样 vary 读写全在锁内, 经测试发现 flush 加锁耗时长, 不锁也没事, 而更新标识在 flush 后无需很精确.
+     */
     private static class Writer implements AutoCloseable, Core.Singleton {
 
         private final ReentrantReadWriteLock WL = new ReentrantReadWriteLock();
         private final ReentrantReadWriteLock RL = new ReentrantReadWriteLock();
-        private final AtomicBoolean AB = new AtomicBoolean(false);
-        private final AtomicInteger AI = new AtomicInteger( 0x0 );
         private final ScheduledFuture flushs;
         private final ScheduledFuture merges;
         private final String   dbpath;
@@ -277,6 +288,7 @@ public class SearchEntity extends LuceneRecord {
         private  IndexWriter   writer = null;
         private  IndexReader   reader = null;
         private  IndexSearcher finder = null;
+        private volatile boolean vary = true;
 
         public Writer(String dbpath, String dbname) {
             this.dbname = dbname;
@@ -328,7 +340,7 @@ public class SearchEntity extends LuceneRecord {
         private IndexReader getReader() throws IOException {
             RL.readLock().lock();
             try {
-                if (reader != null && AB.get()) {
+                if (!vary && 0 < reader.getRefCount()) {
                     return reader;
                 }
             } finally {
@@ -337,23 +349,26 @@ public class SearchEntity extends LuceneRecord {
 
             RL.writeLock().lock();
             try {
-                if (reader != null && AB.get()) {
+                if (!vary && 0 < reader.getRefCount()) {
                     return reader;
                 }
 
                 getWriter();
 
-                IndexReader readar;
                 if (reader != null) {
-                    readar  = DirectoryReader.openIfChanged(
-                         (DirectoryReader) reader , writer );
-                } else {
-                    readar  = DirectoryReader.open( writer );
-                }
+                  IndexReader readar, readax;
+                    readar  = DirectoryReader.openIfChanged
+                      ( (DirectoryReader) reader , writer);
                 if (readar != null) {
-                    finder  = new  IndexSearcher  ( readar );
+                    readax  = reader;
                     reader  = readar;
-                    AB.set  ( false);
+                    readax.close( ) ;
+                    finder  = new  IndexSearcher  (reader);
+                    vary    = false ;
+                }} else {
+                    reader  = DirectoryReader.open(writer);
+                    finder  = new  IndexSearcher  (reader);
+                    vary    = false ;
                 }
 
                 CoreLogger.trace("Start the lucene reader for {}", dbname);
@@ -373,17 +388,22 @@ public class SearchEntity extends LuceneRecord {
         public void write(Map<String, Document> WRITES) throws IOException {
             IndexWriter iw = getWriter();
 
-            for (Map.Entry<String, Document> et : WRITES.entrySet()) {
-                String   id = et.getKey  ();
-                Document dc = et.getValue();
-                if (dc != null) {
-                    iw.updateDocument (new Term("@"+Cnst.ID_KEY, id), dc);
-                } else {
-                    iw.deleteDocuments(new Term("@"+Cnst.ID_KEY, id)    );
+            RL.writeLock().lock();
+            try {
+                for(Map.Entry<String, Document> et : WRITES.entrySet()) {
+                    String   id = et.getKey  ();
+                    Document dc = et.getValue();
+                    if (dc != null) {
+                        iw.updateDocument (new Term("@"+Cnst.ID_KEY, id), dc);
+                    } else {
+                        iw.deleteDocuments(new Term("@"+Cnst.ID_KEY, id)    );
+                    }
                 }
+            //  iw.commit();
+                vary = true;
+            } finally {
+                RL.writeLock().unlock();
             }
-
-            AI.addAndGet (WRITES.size());
         }
 
         public void flush() {
@@ -393,20 +413,14 @@ public class SearchEntity extends LuceneRecord {
                     return;
                 }
 
-                long t = System.currentTimeMillis();
+                long tt = System.currentTimeMillis();
 
-                WL.writeLock().lock();
-                try {
-                    writer.commit();
-                    AB.set(true);
-                    AI.set( 00 );
-                } finally {
-                    WL.writeLock().unlock();
-                }
+                writer.commit();
+                vary  =  true  ;
 
-                t = System.currentTimeMillis() - t ;
-                CoreLogger.trace("Flush lucene indexes: {} {}", dbname, t);
-            } catch (Exception x) {
+                tt = System.currentTimeMillis() - tt;
+                CoreLogger.trace("Flush lucene indexes: {}, TC: {} ms", dbname, tt);
+            } catch (IOException x) {
                 CoreLogger.error(x);
             }
         }
@@ -418,19 +432,14 @@ public class SearchEntity extends LuceneRecord {
                     return;
                 }
 
-                long t = System.currentTimeMillis();
+                long tt = System.currentTimeMillis();
 
-                WL.writeLock().lock();
-                try {
-                    writer.maybeMerge ( /**/ );
-                    writer.deleteUnusedFiles();
-                } finally {
-                    WL.writeLock().unlock();
-                }
+                writer.maybeMerge ( /**/ );
+                writer.deleteUnusedFiles();
 
-                t = System.currentTimeMillis() - t ;
-                CoreLogger.trace("Merge lucene indexes: {} {}", dbname, t);
-            } catch (Exception x) {
+                tt = System.currentTimeMillis() - tt;
+                CoreLogger.trace("Merge lucene indexes: {}, TC: {} ms", dbname, tt);
+            } catch (IOException x) {
                 CoreLogger.error(x);
             }
         }
@@ -450,8 +459,8 @@ public class SearchEntity extends LuceneRecord {
                 }
 
                 CoreLogger.trace("Close the lucene writer for {}", dbname);
-            } catch (IOException ex) {
-                CoreLogger.error(ex);
+            } catch (IOException x) {
+                CoreLogger.error(x);
             }
         }
 

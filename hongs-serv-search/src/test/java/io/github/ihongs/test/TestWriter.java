@@ -1,6 +1,7 @@
 package io.github.ihongs.test;
 
 import io.github.ihongs.Cnst;
+import io.github.ihongs.Core;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.dh.lucene.LuceneRecord;
 import io.github.ihongs.dh.search.SearchEntity;
@@ -19,26 +20,33 @@ import org.junit.Test;
 
 public class TestWriter extends TestCase {
 
+    int dataSize = 800; // 测试数据数量
+    int poolSize = 400; // 测试线程数量
+    int waitTime = 20;  // 测试等待时间(秒)
+
     @Before
     @Override
     public void setUp() {
-        // 删除测试的目录
-        delDir("test");
-        delDir("null");
+        // 必要全局变量
+        if (Core.DATA_PATH == null) {
+            Core.DATA_PATH = "target/test/var" ;
+        }
+
+        // 删除测试目录
+        delDir(Core.DATA_PATH + "/lucene/test");
     }
 
     @After
     @Override
     public void tearDown() {
-        // 删除测试的目录
-        delDir("test");
-        delDir("null");
+        // 删除测试目录
+        delDir(Core.DATA_PATH + "/lucene/test");
     }
 
     @Test
     public void testWriter() throws HongsException, InterruptedException, IOException {
-        if (1 == 1) return;
-        
+        String dbName = "test";
+        String dbPath = Core.DATA_PATH + "/lucene/" + dbName;
         Map fields = Synt.mapOf(
             "id"   , Synt.mapOf(
                 "__name__", "id",
@@ -54,19 +62,20 @@ public class TestWriter extends TestCase {
             )
         );
 
-        final ExecutorService es = Executors.newFixedThreadPool(100);
+        final ExecutorService es = Executors.newFixedThreadPool(poolSize);
         final Runnable rn = new Runnable() {
             @Override
             public void run() {
                 try {
-                //  LuceneRecord se = new LuceneRecord(fields, "test", "test");
-                    SearchEntity se = new SearchEntity(fields, "test", "test");
+                //  LuceneRecord se = new LuceneRecord(fields, dbPath, dbName);
+                    SearchEntity se = new SearchEntity(fields, dbPath, dbName);
                     se.begin ();
                     String id = se.create(Synt.mapOf(
-                        "name" , "12ab",
+                        "name" , "test",
                         "time" , System.currentTimeMillis()
                     ));
                     se.commit();
+                    se.flush();
                     Map  info = se.getOne(Synt.mapOf(
                         Cnst.ID_KEY, id,
                         Cnst.RB_KEY, Synt.setOf(Cnst.ID_KEY)
@@ -78,20 +87,20 @@ public class TestWriter extends TestCase {
                 }
             }
         };
-        for (int i = 0; i < 200; i ++) {
+
+        // 写入数据
+        for (int i = 0; i < dataSize; i ++) {
             es.execute(() -> rn.run());
         }
 
+        // 等待结束
         es.shutdown();
-        es.awaitTermination(20, TimeUnit.SECONDS);
+        es.awaitTermination(waitTime, TimeUnit.SECONDS);
 
-        // 检查写入的内容
-    //  LuceneRecord se = new LuceneRecord(fields, "test", "test");
-        SearchEntity se = new SearchEntity(fields, "test", "test");
-        assertEquals(200, se.search( Synt.mapOf(), 0, 0 ).hits() );
-        se.getWriter().maybeMerge();
-        se.getWriter().deleteUnusedFiles();
-        se.getWriter().close();
+        // 复查数量
+    //  LuceneRecord se = new LuceneRecord(fields, dbPath, dbName);
+        SearchEntity se = new SearchEntity(fields, dbPath, dbName);
+        assertEquals(dataSize, se.search(Synt.mapOf(), 0, 0).hits());
     }
 
     private void delDir(String path) {

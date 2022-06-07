@@ -16,21 +16,22 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.lucene.document.Document;
+import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.store.AlreadyClosedException;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.store.AlreadyClosedException;
 
 /**
  * 搜索记录
@@ -219,20 +220,78 @@ public class SearchEntity extends LuceneRecord {
     }
 
     @Override
-    public Loop search(Map rd, int begin, int lmimt)
+    public Map  search(Map rd)
     throws HongsException {
         /**
          * 遇到中途关闭情况再查一遍
          * 还那么倒霉只好就这样算了
          */
         try {
-            return super.search(rd, begin, lmimt);
-        } catch (AlreadyClosedException e) {
-            CoreLogger.trace( "Search again..." );
-            return super.search(rd, begin, lmimt);
+            return super.search(rd);
+        } catch (AlreadyClosedException ex ) {
+        //  System.err.println ("re-search");
+            return super.search(rd);
         }
     }
-    
+
+    @Override
+    public Map  getOne(Map rd)
+    throws HongsException {
+        /**
+         * 遇到中途关闭情况再查一遍
+         * 还那么倒霉只好就这样算了
+         */
+        try {
+            return super.getOne(rd);
+        } catch (AlreadyClosedException ex ) {
+        //  System.err.println ("re-search");
+            return super.getOne(rd);
+        }
+    }
+
+    @Override
+    public List getAll(Map rd)
+    throws HongsException {
+        /**
+         * 遇到中途关闭情况再查一遍
+         * 还那么倒霉只好就这样算了
+         */
+        try {
+            return super.getAll(rd);
+        } catch (AlreadyClosedException ex ) {
+        //  System.err.println ("re-search");
+            return super.getAll(rd);
+        }
+    }
+
+    @Override
+    public Document getDoc(String id)
+    throws HongsException {
+        if (WRITES.containsKey(id)) {
+            return  WRITES.get(id);
+        }
+
+        // 规避遍历更新时重复读取
+        if (null != DOCK && id.equals(DOCK.get(Cnst.ID_KEY))) {
+            return  DOCK ;
+        }
+
+        Document doc;
+        try {
+            doc = super.getDoc(id);
+        } catch (AlreadyClosedException e ) {
+        //  System.err.println("re-search");
+            doc = super.getDoc(id);
+        }
+        DOCK = doc;
+        return doc;
+    }
+
+    @Override
+    protected void preDoc(Document doc) {
+        DOCK = doc;
+    }
+
     @Override
     public void addDoc(String id, Document doc)
     throws HongsException {
@@ -258,28 +317,6 @@ public class SearchEntity extends LuceneRecord {
         if (!REFLUX_MODE) {
             commit();
         }
-    }
-
-    @Override
-    public Document getDoc(String id)
-    throws HongsException {
-        if (WRITES.containsKey(id)) {
-            return  WRITES.get(id);
-        }
-
-        // 规避遍历更新时重复读取
-        if (null != DOCK && id.equals(DOCK.get(Cnst.ID_KEY))) {
-            return  DOCK ;
-        }
-
-        Document doc = super.getDoc(id);
-        DOCK = doc;
-        return doc;
-    }
-
-    @Override
-    protected void preDoc(Document doc) {
-        DOCK = doc;
     }
 
     /**

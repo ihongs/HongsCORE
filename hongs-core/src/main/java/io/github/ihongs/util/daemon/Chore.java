@@ -196,10 +196,10 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
         Calendar cal1 = Calendar.getInstance( );
         cal0.setTimeZone(TimeZone.getDefault());
         cal1.setTimeZone(TimeZone.getDefault());
-        cal1.setTimeInMillis( 0L ); // 时钟复位
         cal1.set(Calendar.HOUR_OF_DAY, hour);
         cal1.set(Calendar.MINUTE     , min );
         cal1.set(Calendar.SECOND     , sec );
+        cal1.set(Calendar.MILLISECOND,  0  );
         cal1.set(Calendar.MONTH, cal0.get(Calendar.MONTH) );
         cal1.set(Calendar.YEAR , cal0.get(Calendar.YEAR ) );
         cal1.set(Calendar.DATE , cal0.get(Calendar.DATE ) );

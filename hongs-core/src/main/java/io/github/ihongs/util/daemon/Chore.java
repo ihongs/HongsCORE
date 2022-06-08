@@ -21,8 +21,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * 系统配置项(default.properties):
  *  core.daemon.pool.size=线程池的容量, 默认为处理器核数 - 1
- *  core.daemon.run.timed=常规定时间隔, 默认为十分钟(00:10)
- *  core.daemon.run.daily=日常维护时间, 默认每日零点(00:00)
+ *  core.daemon.run.timed=常规定时间隔, 默认为十分钟 (00:10)
+ *  core.daemon.run.daily=日常维护时间, 默认每日零点 (00:00)
  *
  * @author hongs
  */

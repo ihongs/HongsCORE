@@ -407,13 +407,13 @@ public final class Gate {
         }
 
         @Override
-        public void lock() {
-            lock.lockr();
+        public void unlock() {
+            lock.unlockr();
         }
 
         @Override
-        public void unlock() {
-            lock.unlockr();
+        public void lock() {
+            lock.lockr();
         }
 
         @Override
@@ -455,13 +455,13 @@ public final class Gate {
         }
 
         @Override
-        public void lock() {
-            lock.lockw();
+        public void unlock() {
+            lock.unlockw();
         }
 
         @Override
-        public void unlock() {
-            lock.unlockw();
+        public void lock() {
+            lock.lockw();
         }
 
         @Override

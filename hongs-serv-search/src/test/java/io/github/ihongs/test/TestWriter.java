@@ -17,7 +17,7 @@ import org.junit.Test;
 
 public class TestWriter {
 
-    int dataSize = 600; // 测试数据数量
+    int dataSize = 900; // 测试数据数量
     int poolSize = 300; // 测试线程数量
     int waitTime = 30;  // 测试等待时间(秒)
 
@@ -60,7 +60,7 @@ public class TestWriter {
                         "time" , System.currentTimeMillis()
                     ));
                     se.commit();
-                    se.flush();
+                //  se.flush ();
                     Map  info = se.getOne(Synt.mapOf(
                         Cnst.ID_KEY, id,
                         Cnst.RB_KEY, Synt.setOf(Cnst.ID_KEY)

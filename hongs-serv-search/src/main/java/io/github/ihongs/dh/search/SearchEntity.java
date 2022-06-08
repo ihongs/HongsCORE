@@ -25,14 +25,13 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.store.AlreadyClosedException;
 
 /**
  * 搜索记录
@@ -332,7 +331,7 @@ public class SearchEntity extends LuceneRecord {
      * Q: 更新标识 vary 为何用 volatile 而不用 AtomicBoolean?
      * A: 本打算把 flush 用锁包裹, 这样 vary 读写全在锁内, 经测试发现 flush 加锁耗时长, 不锁也没事, 而更新标识在 flush 后无需很精确.
      */
-    private static class Writer implements AutoCloseable, Core.Singleton {
+    private static class Writer implements AutoCloseable {
 
         private final ReentrantReadWriteLock WL = new ReentrantReadWriteLock();
         private final ReentrantReadWriteLock RL = new ReentrantReadWriteLock();

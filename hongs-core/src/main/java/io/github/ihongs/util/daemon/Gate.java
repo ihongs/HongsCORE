@@ -148,16 +148,21 @@ public final class Gate {
         loxk.lock();
         try {
             lock = ST_LOCKS.get(key);
+            if (null != lock) {
+                return  lock ;
+            }
         } finally {
             loxk.unlock();
-        }
-        if (null != lock) {
-            return  lock ;
         }
 
         loxk = ST_LOCKR.writeLock( );
         loxk.lock();
         try {
+            lock = ST_LOCKS.get(key);
+            if (null != lock) {
+                return  lock ;
+            }
+
             lock = new Locker(/***/);
             ST_LOCKS.put(key , lock);
         } finally {
@@ -179,16 +184,21 @@ public final class Gate {
         loxk.lock();
         try {
             lock = RW_LOCKS.get(key);
+            if (null != lock) {
+                return  lock ;
+            }
         } finally {
             loxk.unlock();
-        }
-        if (null != lock) {
-            return  lock ;
         }
 
         loxk = RW_LOCKR.writeLock( );
         loxk.lock();
         try {
+            lock = RW_LOCKS.get(key);
+            if (null != lock) {
+                return  lock ;
+            }
+
             lock = new Leader(/***/);
             RW_LOCKS.put(key , lock);
         } finally {

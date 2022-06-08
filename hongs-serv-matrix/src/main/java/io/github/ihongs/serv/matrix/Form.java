@@ -1168,10 +1168,10 @@ public class Form extends Model {
             Node node = list.item(i);
             switch ( node.getNodeType() ) {
                 case Node.ELEMENT_NODE:
-                    delBlankLinesInDocument((Element) node);
+                    delBlankLinesInDocument( (Element)  node  );
                     break;
                 case Node.TEXT_NODE:
-                    if (node.getTextContent( ).isBlank( ) ) {
+                    if (node.getTextContent( ).matches("\\s*")) {
                         elem.removeChild(node);
                     }
                     break;

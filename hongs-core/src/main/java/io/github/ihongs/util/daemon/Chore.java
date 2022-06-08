@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * @author hongs
  */
-public final class Chore implements Core.Singleton, AutoCloseable {
+public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloquy {
 
     private final ScheduledExecutorService SES;
     private final int DDP = 86400; // 24 小时
@@ -46,7 +46,7 @@ public final class Chore implements Core.Singleton, AutoCloseable {
         try {
             DDT = (int) ( sdf.parse(dt).getTime() / 1000 );
         }
-        catch ( ParseException e ) {
+        catch (ParseException e) {
             throw new Error("Wrong format for core.daemon.run.daily '"+dt+"'. It needs to be 'H:mm'");
         }
 
@@ -57,7 +57,7 @@ public final class Chore implements Core.Singleton, AutoCloseable {
         catch (ParseException e) {
             throw new Error("Wrong format for core.daemon.run.timed '"+tt+"'. It needs to be 'H:mm'");
         }
-        if (DTT < 1 || DTT > 28800) {
+        if (DTT < 60 || DTT > 28800) {
             throw new Error("Wrong config for core.daemon.run.timed '"+tt+"', must be 0:01 to 8:00" );
         }
 
@@ -75,11 +75,13 @@ public final class Chore implements Core.Singleton, AutoCloseable {
     }
 
     public static Chore getInstance() {
-        return Core.GLOBAL_CORE.get(Chore.class.getName( ),
-            ( )  ->  new  Chore( )
-        );
+        return Core.GLOBAL_CORE.get(Chore.class.getName(), () -> new Chore());
     }
 
+    /**
+     * 获取任务容器
+     * @return 
+     */
     public ScheduledExecutorService getExecutor() {
         return SES;
     }
@@ -88,7 +90,7 @@ public final class Chore implements Core.Singleton, AutoCloseable {
      * 获取每天执行时间, 单位秒
      * @return
      */
-    public int getDaily() {
+    public int getDailySec() {
         return DDT;
     }
 
@@ -96,7 +98,7 @@ public final class Chore implements Core.Singleton, AutoCloseable {
      * 获取间隔执行时间, 单位秒
      * @return
      */
-    public int getTimed() {
+    public int getTimedSec() {
         return DTT;
     }
 
@@ -125,7 +127,7 @@ public final class Chore implements Core.Singleton, AutoCloseable {
     public void exe(Runnable task) {
         if (4 == (4 & Core.DEBUG)) {
             String name = task.getClass().getName();
-            CoreLogger.trace("Will run {}" , name );
+            CoreLogger.trace("Will exe {}" , name );
         }
 
         SES.execute(task);
@@ -181,14 +183,30 @@ public final class Chore implements Core.Singleton, AutoCloseable {
     }
 
     /**
-     * 基础定时任务
-     * 默认每隔十分钟运行
-     * 或在 default.properties 设置 core.daemon.run.timed=HH:mm
+     * 每日任务
      * @param task
+     * @param hour 几点(0-23)
+     * @param min  几分
+     * @param sec  几秒
      * @return 
      */
-    public ScheduledFuture runTimed(Runnable task) {
-        return run(task, DTT, DTT);
+    public ScheduledFuture runDaily(Runnable task, int hour, int min, int sec) {
+        // 计算延时
+        Calendar cal0 = Calendar.getInstance( );
+        Calendar cal1 = Calendar.getInstance( );
+        cal0.setTimeZone(TimeZone.getDefault());
+        cal1.setTimeZone(TimeZone.getDefault());
+        cal1.setTimeInMillis( 0L ); // 时钟复位
+        cal1.set(Calendar.HOUR_OF_DAY, hour);
+        cal1.set(Calendar.MINUTE     , min );
+        cal1.set(Calendar.SECOND     , sec );
+        cal1.set(Calendar.MONTH, cal0.get(Calendar.MONTH) );
+        cal1.set(Calendar.YEAR , cal0.get(Calendar.YEAR ) );
+        cal1.set(Calendar.DATE , cal0.get(Calendar.DATE ) );
+        if ( cal1.before(cal0) ) cal1.add(Calendar.DATE, 1);
+        int ddt = (int) (cal1.getTimeInMillis() - cal0.getTimeInMillis()) / 1000 + 1;
+
+        return run(task, ddt, DDP);
     }
 
     /**
@@ -204,37 +222,25 @@ public final class Chore implements Core.Singleton, AutoCloseable {
         Calendar cal1 = Calendar.getInstance( );
         cal0.setTimeZone(TimeZone.getDefault());
         cal1.setTimeZone(TimeZone.getDefault());
-        cal1.setTimeInMillis  (  DDT * 1000L  );
+        cal1.setTimeInMillis( DDT * 1000L ); // 起始时间
         cal1.set(Calendar.MONTH, cal0.get(Calendar.MONTH) );
         cal1.set(Calendar.YEAR , cal0.get(Calendar.YEAR ) );
         cal1.set(Calendar.DATE , cal0.get(Calendar.DATE ) );
-        if ( cal1.before(cal0) ) cal1.add(Calendar.HOUR,24);
+        if ( cal1.before(cal0) ) cal1.add(Calendar.DATE, 1);
         int ddt = (int) (cal1.getTimeInMillis() - cal0.getTimeInMillis()) / 1000 + 1;
 
         return run(task, ddt, DDP);
     }
 
     /**
-     * 每日任务
+     * 基础定时任务
+     * 默认每隔十分钟运行
+     * 或在 default.properties 设置 core.daemon.run.timed=HH:mm
      * @param task
-     * @param hour 每天几点
-     * @param minu 几分执行
      * @return 
      */
-    public ScheduledFuture runDaily(Runnable task, int hour, int minu) {
-        // 计算延时
-        Calendar cal0 = Calendar.getInstance( );
-        Calendar cal1 = Calendar.getInstance( );
-        cal0.setTimeZone(TimeZone.getDefault());
-        cal1.setTimeZone(TimeZone.getDefault());
-        cal1.setTimeInMillis(hour * 3600000 + minu * 60000);
-        cal1.set(Calendar.MONTH, cal0.get(Calendar.MONTH) );
-        cal1.set(Calendar.YEAR , cal0.get(Calendar.YEAR ) );
-        cal1.set(Calendar.DATE , cal0.get(Calendar.DATE ) );
-        if ( cal1.before(cal0) ) cal1.add(Calendar.HOUR,24);
-        int ddt = (int) (cal1.getTimeInMillis() - cal0.getTimeInMillis()) / 1000 + 1;
-
-        return run(task, ddt, DDP);
+    public ScheduledFuture runTimed(Runnable task) {
+        return run(task, DTT, DTT);
     }
 
 }

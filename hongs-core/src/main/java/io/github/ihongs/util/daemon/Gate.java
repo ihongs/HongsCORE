@@ -243,7 +243,7 @@ public final class Gate {
      * @return
      */
     public static Reader getReader(String key) {
-        return new Reader(getLeader(key));
+        return getLeader(key). readLock();
     }
 
     /**
@@ -252,7 +252,7 @@ public final class Gate {
      * @return
      */
     public static Writer getWriter(String key) {
-        return new Writer(getLeader(key));
+        return getLeader(key).writeLock();
     }
 
     /**
@@ -352,6 +352,8 @@ public final class Gate {
         private final String   key  ;
         private volatile long  time = 0;
         private volatile int   cite = 0;
+        private Reader reader = null;
+        private Writer writer = null;
 
         private Leader(String key) {
             this.key = key;
@@ -375,13 +377,13 @@ public final class Gate {
          * 解锁时无引用则立即移除锁
          */
         public void delockw() {
-            synchronized (this) {
+        //  synchronized (this) { // 写锁是独占的, 此时不存在其他读写
                 time = System.currentTimeMillis();
                 cite --;
                 if (cite == 0 ) {
                     delLeader(key);
                 }
-            }
+        //  }
             lock.writeLock().unlock();
         }
 
@@ -394,10 +396,10 @@ public final class Gate {
         }
 
         public void unlockw() {
-            synchronized (this) {
+        //  synchronized (this) { // 写锁是独占的, 此时不存在其他读写
                 time = System.currentTimeMillis();
                 cite --;
-            }
+        //  }
             lock.writeLock().unlock();
         }
 
@@ -410,9 +412,9 @@ public final class Gate {
 
         public void lockw() {
             lock.writeLock().lock();
-            synchronized (this) {
+        //  synchronized (this) {
                 cite ++;
-            }
+        //  }
         }
 
         public boolean tryLockr() {
@@ -429,9 +431,9 @@ public final class Gate {
             if (!lock.writeLock().tryLock()) {
                 return false;
             }
-            synchronized (this) {
+        //  synchronized (this) {
                 cite ++;
-            }
+        //  }
             return true;
         }
 
@@ -451,9 +453,9 @@ public final class Gate {
             if (!lock.writeLock().tryLock(time, unit)) {
                 return false;
             }
-            synchronized (this) {
+        //  synchronized (this) {
                 cite ++;
-            }
+        //  }
             return true;
         }
 
@@ -468,19 +470,25 @@ public final class Gate {
         public void lockwInterruptibly()
         throws InterruptedException {
             lock.writeLock().lockInterruptibly();
-            synchronized (this) {
+        //  synchronized (this) {
                 cite ++;
+        //  }
+        }
+
+        @Override
+        public Reader  readLock() {
+            if (reader == null) {
+                reader  = new Reader(this);
             }
+            return reader;
         }
 
         @Override
-        public Lock  readLock() {
-            return new Reader(this);
-        }
-
-        @Override
-        public Lock writeLock() {
-            return new Writer(this);
+        public Writer writeLock() {
+            if (writer == null) {
+                writer  = new Writer(this);
+            }
+            return writer;
         }
     }
 

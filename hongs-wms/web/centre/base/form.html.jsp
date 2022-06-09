@@ -39,18 +39,14 @@
             boolean roly = Synt.declare(info.get(  "readonly"  ), false);
 
             /**
-             * 新增时只读字段无默认值的,
+             * 新增时只读字段未强制默认,
              * 转为非只读字段供首次输入.
              */
-            if (roly && "create".equals(_action)) {
-                Object defoult = info.get("default");
-                Object deforce = info.get("deforce");
-                if ((null == defoult || "".equals(defoult) )
-                && ( null == deforce || "".equals(deforce))) {
-                    roly = false;
-                } else {
+            if (roly && _action.equals("create")) {
+                if (info.containsKey( "deforce")) {
                     continue;
                 }
+                roly = false;
             }
         %>
         <%/****/ if ("hidden".equals(type)) {%>

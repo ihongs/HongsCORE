@@ -158,7 +158,7 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
         if (4 == (4 & Core.DEBUG)) {
             Date   date = new Date(System.currentTimeMillis() + delay * 1000);
             String time = new SimpleDateFormat("MM-dd HH:mm:ss").format(date);
-            String name = task. getClass( ).getName( );
+            String name = task.getClass ( ).getName( );
             CoreLogger.trace("Will run " + name + " at " + time);
         }
 
@@ -177,7 +177,7 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
             Date   date = new Date(System.currentTimeMillis() + delay * 1000);
             String time = new SimpleDateFormat("MM-dd HH:mm:ss").format(date);
             String timr = Syno.humanTime(perio * 1000);
-            String name = task. getClass( ).getName( );
+            String name = task.getClass ( ).getName( );
             CoreLogger.trace("Will run " + name + " at " + time + ", "+ timr);
         }
 

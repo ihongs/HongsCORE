@@ -15,7 +15,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * 全局资源锁
  *
  * 每隔一段时间自动清理锁, 以及释放可以关闭的对象;
- * 注意: 以下锁均不支持 tryLock/lockInterruptibly.
+ * 如果需要用完立即清除锁, 请用 delock 替代 unlock
  *
  * 异常代码:
  * Ex860=程序中断
@@ -136,6 +136,21 @@ public final class Gate {
     }
 
     /**
+     * 移除基础锁
+     * @param key
+     * @return
+     */
+    public static Locker delLocker(String key) {
+        Lock loxk = ST_LOCKR.writeLock();
+        loxk.lock();
+        try {
+            return  ST_LOCKS.remove(key);
+        } finally {
+            loxk.unlock();
+        }
+    }
+
+    /**
      * 获取基础锁
      * @param key
      * @return
@@ -163,12 +178,27 @@ public final class Gate {
                 return  lock ;
             }
 
-            lock = new Locker(/***/);
+            lock = new Locker( key );
             ST_LOCKS.put(key , lock);
         } finally {
             loxk.unlock();
         }
         return lock;
+    }
+
+    /**
+     * 移除基础锁
+     * @param key
+     * @return
+     */
+    public static Leader delLeader(String key) {
+        Lock loxk = RW_LOCKR.writeLock();
+        loxk.lock();
+        try {
+            return  RW_LOCKS.remove(key);
+        } finally {
+            loxk.unlock();
+        }
     }
 
     /**
@@ -199,7 +229,7 @@ public final class Gate {
                 return  lock ;
             }
 
-            lock = new Leader(/***/);
+            lock = new Leader( key );
             RW_LOCKS.put(key , lock);
         } finally {
             loxk.unlock();
@@ -229,12 +259,30 @@ public final class Gate {
      * 基础锁
      * 对 ReentrantLock 的封装
      */
-    public static final class Locker implements Lock {
+    public static final class Locker implements Delock, Lock {
         private final ReentrantLock lock = new ReentrantLock();
+        private final String   key  ;
         private volatile long  time = 0;
         private volatile int   cite = 0;
 
-        private Locker(){} // 避免外部 new
+        private Locker(String key) {
+            this.key = key;
+        }
+
+        /**
+         * 解锁时无引用则立即移除锁
+         */
+        @Override
+        public void delock() {
+        //  synchronized(this) { // 已在锁内, 无需再锁, 下同
+                time = System.currentTimeMillis();
+                cite --;
+                if (cite == 0) {
+                    delLocker(key);
+                }
+        //  }
+            lock.unlock();
+        }
 
         @Override
         public void unlock() {
@@ -301,25 +349,56 @@ public final class Gate {
      */
     public static final class Leader implements ReadWriteLock {
         private final ReadWriteLock lock = new ReentrantReadWriteLock();
+        private final String   key  ;
         private volatile long  time = 0;
         private volatile int   cite = 0;
 
-        private Leader() {} // 避免外部 new
+        private Leader(String key) {
+            this.key = key;
+        }
+
+        /**
+         * 解锁时无引用则立即移除锁
+         */
+        public void delockr() {
+            synchronized (this) {
+                time = System.currentTimeMillis();
+                cite --;
+                if (cite == 0 ) {
+                    delLeader(key);
+                }
+            }
+            lock. readLock().unlock();
+        }
+
+        /**
+         * 解锁时无引用则立即移除锁
+         */
+        public void delockw() {
+            synchronized (this) {
+                time = System.currentTimeMillis();
+                cite --;
+                if (cite == 0 ) {
+                    delLeader(key);
+                }
+            }
+            lock.writeLock().unlock();
+        }
 
         public void unlockr() {
-            lock. readLock().unlock();
             synchronized (this) {
-                cite --;
                 time = System.currentTimeMillis();
+                cite --;
             }
+            lock. readLock().unlock();
         }
 
         public void unlockw() {
-            lock.writeLock().unlock();
             synchronized (this) {
-                cite --;
                 time = System.currentTimeMillis();
+                cite --;
             }
+            lock.writeLock().unlock();
         }
 
         public void lockr() {
@@ -409,11 +488,19 @@ public final class Gate {
      * 读锁
      * 对 ReadWriteLock.readLock 的封装
      */
-    public static final class Reader implements Lock {
+    public static final class Reader implements Delock, Lock {
         private final  Leader lock;
 
         private Reader(Leader lock) {
             this.lock = lock;
+        }
+
+        /**
+         * 解锁时无引用则立即移除锁
+         */
+        @Override
+        public void delock() {
+            lock.delockr();
         }
 
         @Override
@@ -457,11 +544,19 @@ public final class Gate {
      * 写锁
      * 对 ReadWriteLock.writeLock 的封装
      */
-    public static final class Writer implements Lock {
+    public static final class Writer implements Delock, Lock {
         private final  Leader lock;
 
         private Writer(Leader lock) {
             this.lock = lock;
+        }
+
+        /**
+         * 解锁时无引用则立即移除锁
+         */
+        @Override
+        public void delock() {
+            lock.delockw();
         }
 
         @Override
@@ -499,6 +594,13 @@ public final class Gate {
         public Condition newCondition() {
             throw new UnsupportedOperationException("Not supported.");
         }
+    }
+
+    public static interface Delock {
+        /**
+         * 解锁时无引用则立即移除锁
+         */
+        public void delock();
     }
 
 }

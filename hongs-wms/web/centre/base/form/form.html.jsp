@@ -38,18 +38,15 @@
             boolean roly = Synt.declare(info.get(  "readonly"  ), false);
 
             /**
-             * 新增时只读字段无默认值的,
+             * 新增时只读字段未强制默认,
              * 转为非只读字段供首次输入.
              */
             if (roly) {
-                Object defoult = info.get("default");
-                Object deforce = info.get("deforce");
-                if ((null == defoult || "".equals(defoult) )
-                && ( null == deforce || "".equals(deforce))) {
-                    roly = false;
-                } else {
+                Object defo = info.get("deforce");
+                if (defo != null && ! defo.equals("blanks")) {
                     continue;
                 }
+                roly = false;
             }
 
             // 可以自定义字段显示文本

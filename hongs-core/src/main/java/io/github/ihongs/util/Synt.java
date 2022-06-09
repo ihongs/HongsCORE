@@ -1170,7 +1170,6 @@ public final class Synt {
      * 过滤 Set
      * @param data
      * @param leaf
-     * @return
      */
     public static void falter(Set data, Each leaf) {
         for (Object v : data) {

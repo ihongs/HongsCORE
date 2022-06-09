@@ -42,7 +42,8 @@
              * 转为非只读字段供首次输入.
              */
             if (roly && _action.equals("create")) {
-                if (info.containsKey( "deforce")) {
+                Object defo = info.get("deforce");
+                if (defo != null && ! defo.equals("blanks")) {
                     continue;
                 }
                 roly = false;

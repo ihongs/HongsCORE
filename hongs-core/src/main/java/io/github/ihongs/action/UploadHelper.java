@@ -146,9 +146,19 @@ public class UploadHelper {
         }
 
         /**
+         * 类型通配, 如 image/*
+         */
+        String  typa = null;
+        if (type != null) {
+            int gash = type.indexOf("/");
+            if (gash > 0) {
+                typa = type.substring(0 , 1 + gash) + "*";
+            }
+        }
+
+        /**
          * 检查文件类型
          */
-        String typa = type.replaceFirst("/.*", "/*");
         if (this.allowTypes != null
         && !this.allowTypes.contains(type)
         && !this.allowTypes.contains(typa)) {
@@ -233,7 +243,7 @@ public class UploadHelper {
     }
 
     private String getTypeByMime(String type) {
-        int pos  = type./**/indexOf(';');
+        int pos  = type. indexOf ( ';' );
         if (pos >= 1 ) {
             return type.substring(0,pos);
         } else {
@@ -242,7 +252,11 @@ public class UploadHelper {
     }
 
     private String getKindByName(String name) {
-        int pos  = name.lastIndexOf('.');
+        int pos  = name.lastIndexOf('/');
+        if (pos >= 0 ) {
+            name = name.substring(1+pos);
+        }
+            pos  = name.lastIndexOf('.');
         if (pos >= 1 ) {
             return name.substring(1+pos);
         } else {
@@ -415,7 +429,7 @@ public class UploadHelper {
         String type = part.getContentType( /**/ );
                type = getTypeByMime( type );
         String kind = part.getSubmittedFileName();
-               kind = getKindByName(kind );
+               kind = getKindByName( kind );
 
         try {
             return upload(part.getInputStream(), type, kind, lead);

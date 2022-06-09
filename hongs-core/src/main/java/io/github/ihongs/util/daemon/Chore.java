@@ -3,6 +3,7 @@ package io.github.ihongs.util.daemon;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLogger;
+import io.github.ihongs.util.Syno;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -127,7 +128,7 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
     public void exe(Runnable task) {
         if (4 == (4 & Core.DEBUG)) {
             String name = task.getClass().getName();
-            CoreLogger.trace("Will exe {}" , name );
+            CoreLogger.trace ( "Will run " + name );
         }
 
         SES.execute(task);
@@ -141,7 +142,7 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
     public Future run(Runnable task) {
         if (4 == (4 & Core.DEBUG)) {
             String name = task.getClass().getName();
-            CoreLogger.trace("Will run {}" , name );
+            CoreLogger.trace ( "Will run " + name );
         }
 
         return SES.submit(task);
@@ -155,10 +156,10 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
      */
     public ScheduledFuture run(Runnable task, int delay) {
         if (4 == (4 & Core.DEBUG)) {
-            Date   date = new Date(System.currentTimeMillis()+ delay * 1000L);
+            Date   date = new Date(System.currentTimeMillis() + delay * 1000);
             String time = new SimpleDateFormat("MM-dd HH:mm:ss").format(date);
-            String name = task.getClass().getName();
-            CoreLogger.trace("Will run {} at {}", name, time);
+            String name = task. getClass( ).getName( );
+            CoreLogger.trace("Will run " + name + " at " + time);
         }
 
         return SES.schedule(task , delay, TimeUnit.SECONDS);
@@ -173,10 +174,11 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
      */
     public ScheduledFuture run(Runnable task, int delay, int perio) {
         if (4 == (4 & Core.DEBUG)) {
-            Date   date = new Date(System.currentTimeMillis()+ delay * 1000L);
+            Date   date = new Date(System.currentTimeMillis() + delay * 1000);
             String time = new SimpleDateFormat("MM-dd HH:mm:ss").format(date);
-            String name = task.getClass().getName();
-            CoreLogger.trace("Will run {} at {}", name, time);
+            String timr = Syno.humanTime(perio * 1000);
+            String name = task. getClass( ).getName( );
+            CoreLogger.trace("Will run " + name + " at " + time + ", "+ timr);
         }
 
         return SES.scheduleAtFixedRate(task , delay, perio, TimeUnit.SECONDS);

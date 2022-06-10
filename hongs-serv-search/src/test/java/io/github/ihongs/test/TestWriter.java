@@ -70,11 +70,11 @@ public class TestWriter {
                     ));
                     assertEquals(id, info. get (Cnst.ID_KEY));
 
-                    int  size = se.search(Synt.mapOf(
+                    List list = se.search(Synt.mapOf(
                         Cnst.RB_KEY, Synt.setOf(Cnst.ID_KEY),
                         "name" , "test"
-                    ), 0, 20).hits();
-                    assertEquals(true, size > 0);
+                    ), 0, 20).toList();
+                    assertEquals(true , list.size() > 0);
                 }
                 catch (HongsException ex) {
                     ex.printStackTrace( );

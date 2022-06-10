@@ -200,15 +200,10 @@ public class VerifyHelper extends Verify {
          */
         Map fp  = (Map) fs.get("@");
         if (fp != null) {
-            String fn ;
+            Object ut = fp.get("data-ut");
+        if (ut != null) {
             Object uk ;
-            Object ut ;
-                ut = fp.get("data-ut");
-            if (ut == null) {
-                ut = fp.get("data-at");
-            if (ut == null) {
-                ut = conf +"/"+ form + "/search";
-            }}
+            String fn ;
 
             for(Object o : fp.entrySet()) {
                 Map.Entry e = (Map.Entry) o;
@@ -232,7 +227,7 @@ public class VerifyHelper extends Verify {
                     ));
                 this.addRule( fn , fr );
             }
-        }
+        }}
 
         return this;
     }

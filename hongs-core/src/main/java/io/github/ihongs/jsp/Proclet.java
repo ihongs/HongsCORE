@@ -70,33 +70,11 @@ abstract public class Proclet extends ActionDriver implements HttpJspPage
 
   /**
    * 获取动作方法名称
-   * @param hlp
    * @return
    */
-  public String getHandle(ActionHelper hlp)
+  public String getHandle()
   {
-    return getHandle(hlp.getRequest());
-  }
-
-  /**
-   * 获取协议方法名称
-   * @param hlp
-   * @return
-   */
-  public String getMethod(ActionHelper hlp)
-  {
-    return getMethod(hlp.getRequest());
-  }
-
-  /**
-   * 获取动作方法名称
-   * @param req
-   * @return
-   */
-  public String getHandle(HttpServletRequest req)
-  {
-    String rec = ActionDriver.getRecentPath (req)
-                          .substring(1  );
+    String rec = Core.ACTION_NAME.get();
     int p  = rec.lastIndexOf("/");
     if (p != -1) rec = rec.substring(0+p);
         p  = rec.lastIndexOf(".");
@@ -106,11 +84,16 @@ abstract public class Proclet extends ActionDriver implements HttpJspPage
 
   /**
    * 获取协议方法名称
-   * @param req
    * @return
    */
-  public String getMethod(HttpServletRequest req)
+  public String getMethod()
   {
+    HttpServletRequest req = ActionHelper
+           .getInstance( )
+           .getRequest ( );
+    if (req == null) {
+        return null;
+    }
     if (req instanceof Request) {
         Request raq = (Request) req;
         return  raq.getMathod();

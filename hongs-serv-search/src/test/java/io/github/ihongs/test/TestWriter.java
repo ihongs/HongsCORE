@@ -8,6 +8,7 @@ import io.github.ihongs.dh.search.SearchEntity;
 import io.github.ihongs.util.Synt;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -62,10 +63,15 @@ public class TestWriter {
                     se.commit();
                 //  se.flush ();
                     Map  info = se.getOne(Synt.mapOf(
-                        Cnst.ID_KEY, id,
-                        Cnst.RB_KEY, Synt.setOf(Cnst.ID_KEY)
+                        Cnst.RB_KEY, Synt.setOf(Cnst.ID_KEY),
+                        Cnst.ID_KEY, id
                     ));
                     assertEquals(id, info. get (Cnst.ID_KEY));
+                    int  size = se.search(Synt.mapOf(
+                        Cnst.RB_KEY, Synt.setOf(Cnst.ID_KEY),
+                        "name" , "test"
+                    ), 0, 20).hits();
+                    assertEquals(true, size > 0);
                 }
                 catch (HongsException ex) {
                     ex.printStackTrace( );

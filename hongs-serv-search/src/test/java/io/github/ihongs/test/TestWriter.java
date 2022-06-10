@@ -55,6 +55,7 @@ public class TestWriter {
                 try {
                 //  LuceneRecord se = new LuceneRecord(fields, dbPath, dbName);
                     SearchEntity se = new SearchEntity(fields, dbPath, dbName);
+
                     se.begin ();
                     String id = se.create(Synt.mapOf(
                         "name" , "test",
@@ -62,11 +63,13 @@ public class TestWriter {
                     ));
                     se.commit();
                 //  se.flush ();
+
                     Map  info = se.getOne(Synt.mapOf(
                         Cnst.RB_KEY, Synt.setOf(Cnst.ID_KEY),
                         Cnst.ID_KEY, id
                     ));
                     assertEquals(id, info. get (Cnst.ID_KEY));
+
                     int  size = se.search(Synt.mapOf(
                         Cnst.RB_KEY, Synt.setOf(Cnst.ID_KEY),
                         "name" , "test"

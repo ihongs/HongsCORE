@@ -341,7 +341,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      * @param rd
      * @param ids
      * @param ern
-     * @throws HongsException
+     * @throws HongsException 错误码 1096 更新, 1097 删除, 1098 查询
      */
     protected void permit(Map rd, Set ids, int ern) throws HongsException {
         if (rd  == null) {
@@ -389,6 +389,61 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         }
     }
 
+    /**
+     * 唯一键值约束
+     * @param nd
+     * @throws HongsException 错误码 1088
+     */
+    protected void unique(Map nd, String id) throws HongsException {
+        /**
+         * 有 data-ut 表示其由外部进行检查
+         * 多组唯一用 data-uk-xxx 进行定义
+         * 至少有一组 data-uk
+         */
+        Map fp = getParams();
+        if (fp.containsKey("data-ut")
+        || !fp.containsKey("data-uk")) {
+            return;
+        }
+
+        for(Object o : fp.entrySet( )) {
+            Map.Entry e = (Map.Entry) o;
+            String fn = e.getKey().toString();
+
+            if (fn.startsWith("data-uk-")) {
+                fn = "UK-"+fn.substring(8);
+            } else
+            if (fn.equals/**/("data-uk" )) {
+                fn = "UK";
+            } else {
+                continue ;
+            }
+
+            // 组织查询
+            Object uk = e.getValue( );
+            Set us = Synt.toTerms(uk);
+            Map rd = new HashMap (us.size());
+            for(Object n : us) {
+                Object v = nd.get(n );
+
+                if (v == null) {
+                    rd.put(n, Synt.mapOf(Cnst.IS_REL, "null"));
+                } else {
+                    rd.put(n, Synt.mapOf(Cnst.EQ_REL,   v   ));
+                }
+            }
+
+            // 排除主键
+            if (id != null) {
+                rd.put(Cnst.ID_KEY, Synt.mapOf(Cnst.NE_REL, id));
+            }
+
+            if (search(rd, 0, 1).hits() > 0) {
+                throw new HongsException(1088, "UNIQUE KEY $0 ($1)", fn, Syno.concat(",", us));
+            }
+        }
+    }
+
     //** 模型方法 **/
 
     /**
@@ -403,6 +458,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             id  =  Core.newIdentity();
             rd.put(Cnst.ID_KEY , id );
         }
+        unique(rd, null);
         addDoc(id, padDoc(rd) );
         return id;
     }
@@ -433,6 +489,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 rd = md;
         }
         rd.put(Cnst.ID_KEY , id );
+        unique( rd , id );
         setDoc( id , padDoc (rd)); // 总是新建 Document
         return  1;
     }
@@ -463,6 +520,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 rd = md;
         }
         rd.put(Cnst.ID_KEY , id );
+        unique( rd , id );
         setDoc( id , padDoc (rd)); // 总是新建 Document
         return  1;
     }

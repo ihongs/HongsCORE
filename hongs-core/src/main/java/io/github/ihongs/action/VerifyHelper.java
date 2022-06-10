@@ -210,7 +210,7 @@ public class VerifyHelper extends Verify {
                 fn = e.getKey().toString( );
 
                 if (fn.startsWith("data-uk-")) {
-                    fn = "UK-" + fn.substring(8);
+                    fn = "UK-"+fn.substring(8);
                 } else
                 if (fn.equals/**/("data-uk" )) {
                     fn = "UK";

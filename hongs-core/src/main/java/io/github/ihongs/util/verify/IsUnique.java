@@ -74,10 +74,12 @@ public class IsUnique extends Rule {
         if (uk == null || uk.isEmpty()) {
             uk = nk ;
         }
+        
+        Set us = Synt.toTerms(uk); // 唯一键字段
+        Set ns = new HashSet (us); // 缺值的字段
 
         // 请求数据
-        Map cd = new HashMap();
-        Map rd = new HashMap();
+        Map rd = new HashMap (us.size() + 4);
         rd.put(Cnst.PN_KEY, 0);
         rd.put(Cnst.RN_KEY, 1);
         rd.put(Cnst.RB_KEY, Synt.setOf(Cnst.ID_KEY));
@@ -90,8 +92,6 @@ public class IsUnique extends Rule {
         }
 
         // 参与唯一约束的字段
-        Set us = Synt.toTerms(uk);
-        Set ns = new HashSet (us);
         Iterator<String> it = ns.iterator( );
         while  (it.hasNext( )) {
             String n = it.next( );
@@ -109,11 +109,8 @@ public class IsUnique extends Rule {
 
             if (v == null) {
                 rd.put(n, Synt.mapOf(Cnst.IS_REL, "null"));
-            } else
-            if (v.equals("") ) {
-                rd.put(n, Synt.mapOf(Cnst.EQ_REL,   v   ));
             } else {
-                rd.put(n, v);
+                rd.put(n, Synt.mapOf(Cnst.EQ_REL,   v   ));
             }
         }
 
@@ -124,7 +121,8 @@ public class IsUnique extends Rule {
 
         // 补充缺的旧的字段值
         if (watch.isUpdate() && !ns.isEmpty()) {
-            Map ud = new HashMap( );
+            Map cd = new HashMap(0);
+            Map ud = new HashMap(3);
             ud.put(Cnst.ID_KEY, id);
             ud.put(Cnst.RB_KEY, ns);
             ud.put(Cnst.RN_KEY, 0 );
@@ -159,18 +157,15 @@ public class IsUnique extends Rule {
                     Object v = sd.get(n);
                     if (v == null) {
                         rd.put(n, Synt.mapOf(Cnst.IS_REL, "null"));
-                    } else
-                    if (v.equals("")) {
+                    } else {
                         rd.put(n, Synt.mapOf(Cnst.EQ_REL,   v   ));
-                    } else
-                    {
-                        rd.put(n, v);
                     }
                 }
             }
         }
 
         // 执行动作
+        Map cd = new HashMap(0);
         ActionHelper ah = ActionHelper.newInstance();
         ah.setContextData( cd );
         ah.setRequestData( rd );

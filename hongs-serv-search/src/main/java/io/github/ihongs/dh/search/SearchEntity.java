@@ -283,7 +283,7 @@ public class SearchEntity extends LuceneRecord {
         } catch (Halt e) {
             doc = super.getDoc(id);
         }
-        
+
         DOCK = doc;
         return doc;
     }
@@ -410,6 +410,15 @@ public class SearchEntity extends LuceneRecord {
                 getWriter();
 
                 if (reader != null) {
+                    reader.close( );
+                }
+                reader = DirectoryReader.open(writer);
+                finder = new  IndexSearcher  (reader);
+                vary   = false ;
+
+                /*
+                // 已明确知道有写入, 无需再做判断
+                if (reader != null) {
                   IndexReader readar, readax;
                     readar  = DirectoryReader.openIfChanged
                       ( (DirectoryReader) reader , writer);
@@ -424,6 +433,7 @@ public class SearchEntity extends LuceneRecord {
                     finder  = new  IndexSearcher  (reader);
                     vary    = false ;
                 }
+                */
 
                 CoreLogger.trace("Start the lucene reader for {}", dbname);
 

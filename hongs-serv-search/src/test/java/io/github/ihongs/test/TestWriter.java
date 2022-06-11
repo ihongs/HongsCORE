@@ -65,16 +65,10 @@ public class TestWriter {
                 //  se.flush ();
 
                     Map  info = se.getOne(Synt.mapOf(
-                        Cnst.RB_KEY, Synt.setOf(Cnst.ID_KEY),
-                        Cnst.ID_KEY, id
+                        Cnst.ID_KEY, id,
+                        Cnst.RB_KEY, Synt.setOf(Cnst.ID_KEY)
                     ));
                     assertEquals(id, info. get (Cnst.ID_KEY));
-
-                    List list = se.search(Synt.mapOf(
-                        Cnst.RB_KEY, Synt.setOf(Cnst.ID_KEY),
-                        "name" , "test"
-                    ), 0, 20).toList();
-                    assertEquals( true, list.size() > 0 );
                 }
                 catch (HongsException ex) {
                     ex.printStackTrace( );

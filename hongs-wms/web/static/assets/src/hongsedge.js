@@ -1142,6 +1142,71 @@ function hsFormWrapOpen(t) {
     };
 }
 
+/**
+ * 点击打开显示全文
+ * 适用列表多行文本
+ */
+function hsFillShowMore(x, v) {
+    if (! v) {
+        return;
+    }
+
+    var s = v;
+    var n = x.data("title" );
+    var t = x.data( "type" );
+    var d = $('<div></div>');
+    var a = $('<a href="javascript:;"></ a>');
+
+    if (! n) {
+        n = x.closest("td").index( );
+        n = x.closest("table")
+          .find("thead th,thead td")
+          .eq  (n)
+          .text( );
+    }
+
+    // 截取文字, 并留存原始文本以便拷贝
+    if (t ===  "html") {
+        s = $('<div></div>').html(s).text();
+        x.data("html", v);
+    } else {
+        x.data("text", v);
+    }
+        s = s.replace(/\s{2,}/g,' ');
+        s = $.trim( s );
+    if (s.length > 100) {
+        s = s.substr(0, 100) + "...";
+    }
+
+    // 填充表格, 设置提示
+    a.appendTo(d).text(  /***/   s );
+    d.appendTo(x).attr( "title", s );
+    d.css({
+        "overflow"      : "hidden",
+        "text-overflow" : "ellipsis",
+        "white-space"   : "nowrap",
+        "max-width"     : "150px" ,
+        "width"         : "100%"
+    });
+
+    // 查看全文
+    a.click(function () {
+        if (t === "html") {
+            $.hsMask({
+                html  : v,
+                title : n,
+                space : "pre-wrap"
+            });
+        } else {
+            $.hsMask({
+                text  : v,
+                title : n,
+                space : "pre-wrap"
+            });
+        }
+    });
+}
+
 //** 后台标准功能 **/
 
 /**

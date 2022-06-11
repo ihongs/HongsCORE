@@ -264,10 +264,14 @@
                         oc = "sortable";
                     }
 
-                    // Unix 时间戳类需乘 1000 以转换为毫秒
+                    if ("textarea".equals(type)
+                    ||  "textview".equals(type)) {
+                        ob += " data-type=" + Synt.declare(info.get("type"), "text");
+                    } else
                     if ("datetime".equals(type)
                     ||      "date".equals(type)
                     ||      "time".equals(type)) {
+                        // Unix 时间戳类需乘 1000 以转换为毫秒
                         Object typa = info.get("type");
                         if ("timestamp".equals( typa )
                         ||  "datestamp".equals( typa )) {
@@ -322,6 +326,8 @@
                     <th data-fn="<%=name%>" data-ft="_audio" <%=ob%> class="<%=oc%> text-center"><%=text%></th>
                 <%} else if ("file".equals(type)) {%>
                     <th data-fn="<%=name%>" data-ft="_files" <%=ob%> class="<%=oc%> text-center"><%=text%></th>
+                <%} else if ("textarea".equals(type) || "textview".equals(type)) {%>
+                    <th data-fn="<%=name%>" data-ft="_texts" <%=ob%> class="<%=oc%>"><%=text%></th>
                 <%} else if ("enum".equals(type) || "type".equals(type) || "check".equals(type) || "radio".equals(type) || "select".equals(type)) {%>
                     <%
                         if (name.endsWith( "." )) {
@@ -406,6 +412,8 @@
         <%if ("select".equals(_action)) {%>
         _fill__check: hsListFillSele,
         <%} /*End If */%>
+        // 多行文本, 富文本等
+        _fill__texts: hsFillShowMore,
         // 链接填充, 支持多值, 占格子窄
         _fill__ulink: hsListWrapOpen("link" ),
         _fill__files: hsListWrapOpen("file" ),

@@ -74,7 +74,7 @@ public class TestWriter {
                         Cnst.RB_KEY, Synt.setOf(Cnst.ID_KEY),
                         "name" , "test"
                     ), 0, 20).toList();
-                    assertEquals(true , list.size() > 0);
+                    assertEquals( true, list.size() > 0 );
                 }
                 catch (HongsException ex) {
                     ex.printStackTrace( );

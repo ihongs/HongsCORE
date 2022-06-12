@@ -497,7 +497,7 @@ public class SearchEntity extends LuceneRecord {
 
                 long tt = System.currentTimeMillis();
 
-                writer.maybeMerge ( /**/ );
+                writer.maybeMerge();
                 writer.deleteUnusedFiles();
 
                 tt = System.currentTimeMillis() - tt;

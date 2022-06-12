@@ -413,7 +413,7 @@
         _fill__check: hsListFillSele,
         <%} /*End If */%>
         // 多行文本, 富文本等
-        _fill__texts: hsFillShowMore,
+        _fill__texts: hsFillListMore,
         // 链接填充, 支持多值, 占格子窄
         _fill__ulink: hsListWrapOpen("link" ),
         _fill__files: hsListWrapOpen("file" ),

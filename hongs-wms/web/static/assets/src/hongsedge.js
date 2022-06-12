@@ -1146,7 +1146,7 @@ function hsFormWrapOpen(t) {
  * 点击打开显示全文
  * 适用列表多行文本
  */
-function hsFillShowMore(x, v) {
+function hsFillListMore(x, v) {
     if (! v) {
         return;
     }
@@ -1185,7 +1185,6 @@ function hsFillShowMore(x, v) {
         "overflow"      : "hidden",
         "text-overflow" : "ellipsis",
         "white-space"   : "nowrap",
-        "max-width"     : "150px" ,
         "width"         : "100%"
     });
 

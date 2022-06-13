@@ -2,10 +2,8 @@ package io.github.ihongs.util.verify;
 
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.FormSet;
-import io.github.ihongs.util.Synt;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * 单值约束

@@ -21,7 +21,8 @@ import java.util.regex.Pattern;
  *  minrepeat   最小数量
  *  defiant     需要忽略的取值列表
  *  diverse     为 true 则执行去重
- *  striped     为 true 则合成一串
+ *  ordered     为 true 在 fork 中再排序
+ *  spliced     为 true 在校验后并成字串
  *  split       按此给出的正则来拆分字串
  *  slice       按此给出的分隔来拆分字串, 或按此分隔符在最终做合并
  * </pre>
@@ -117,7 +118,7 @@ public class Repeated extends Rule implements Rulx {
         }
 
         // 将结果集串连起来
-        if (Synt.declare(getParam("striped"), false)) {
+        if (Synt.declare(getParam("spliced"), false)) {
             String s = Synt.declare(getParam("slice"),",");
             StringBuilder b = new StringBuilder();
             for(  Object v : value  ) {

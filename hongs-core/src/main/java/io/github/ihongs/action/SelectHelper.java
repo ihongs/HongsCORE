@@ -646,26 +646,70 @@ public class SelectHelper {
             if (ls == null) {
                 continue;
             }
-            if (Synt.declare(mt.get("__repeated__"), false)) {
+            if (Synt.declare(mt.get("__repeated__"), false) == false) {
                 // 预置数据
                 for (Map.Entry<Object, List> lr : ms.entrySet()) {
-                    List<Map> lst = lr.getValue();
+                    List<Map> lst = lr. getValue ( );
                     for (Map  row : lst) {
-                         row.put(ak, new ArrayList());
-                    }
-                }
-
-                mm.append(ls, ms, vk, ak);
-            } else {
-                // 预置数据
-                for (Map.Entry<Object, List> lr : ms.entrySet()) {
-                    List<Map> lst = lr.getValue();
-                    for (Map  row : lst) {
-                         row.put(ak, new  HashMap ());
+                        row.put(ak, new  HashMap ());
                     }
                 }
 
                 mm.extend(ls, ms, vk, ak);
+            } else
+            if (Synt.declare(mt.get("ordered"), false) == false) {
+                // 预置数据
+                for (Map.Entry<Object, List> lr : ms.entrySet()) {
+                    List<Map> lst = lr. getValue ( );
+                    for (Map  row : lst) {
+                        row.put(ak, new ArrayList());
+                    }
+                }
+
+                mm.append(ls, ms, vk, ak);
+            } else
+            {
+                Set <Map>          ros = new  HashSet (list.size());
+                List<Collection[]> fas = new ArrayList(list.size());
+
+                // 预置数据
+                for (Map.Entry<Object, List> lr : ms.entrySet()) {
+                    List<Map> lst = lr.getValue();
+                    for (Map  row : lst) {
+                        if (ros.contains(row)) {
+                            continue;
+                        }
+                        ros.add(row);
+                        row.put(ak, new ArrayList());
+                        fas.add(new Collection[] {
+                            Synt.asColl(row.get(fn)),
+                            Synt.asColl(row.get(ak))
+                        });
+                    }
+                }
+                ros = null;
+
+                mm.append(ls, ms, vk, ak);
+
+                // 重新排序
+                for (Collection[] fa : fas) {
+                     Collection fv = fa [0];
+                     Collection av = fa [1];
+                     if (av.isEmpty()) continue;
+                     Map am = new HashMap();
+                     for(Map r : (Collection<Map>) av) {
+                         am.put( r.get(vk), r );
+                     }
+                     av.clear(); // 清空准备按顺序重新写入
+                     for(Object v : fv) {
+                         Object r = am.get( v );
+                         if (r == null) {
+                             r  = new HashMap();
+                         }
+                         av.add(r);
+                     }
+                }
+                fas = null;
             }
         }
     }

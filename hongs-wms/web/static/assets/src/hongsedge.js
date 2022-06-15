@@ -369,7 +369,7 @@ HsStat.prototype = {
 
         for(var i = 0; i < data.length; i ++) {
             var v = data[i];
-            if (v[0] ==  "" )  continue;
+            if (v[0] === "" )  continue;
             if (v[1] == null)  v[1] = "#"+ v[0] ;
             label = $('<label></label>')
                 .attr("title", v[1] +" ("+ v[2] + ", "+ v[3] +")" );
@@ -395,7 +395,7 @@ HsStat.prototype = {
 
         for(var i = 0; i < data.length; i ++) {
             var v = data[i];
-            if (v[0] ==  "" )  continue;
+            if (v[0] === "" )  continue;
             if (v[1] == null)  v[1] = "#"+ v[0] ;
             label = $('<label></label>')
                 .attr("title", v[1] +" ("+ v[2] + ")");
@@ -416,7 +416,7 @@ HsStat.prototype = {
         var pData = [];
         for(var i = 0; i < data.length; i ++) {
             var v = data[i];
-            if (v[0] == "" || v[2] == 0) continue;
+            if (v[0] === "") continue ;
             xData.push(v[1]);
             bData.push(v[2]);
             pData.push({
@@ -525,7 +525,7 @@ HsStat.prototype = {
         var pData2 = []; // Sum
         for(var i = 0; i < data.length; i ++) {
             var v = data[i];
-            if (v[0] == "" || v[2] == 0) continue;
+            if (v[0] === "") continue ;
             xData.push(v[1]);
             bData1.push(v[2]);
             bData2.push(v[3]);
@@ -828,7 +828,7 @@ HsCate.prototype = {
 
         for(var i = 0; i < data.length; i ++) {
             var v = data[i];
-            if (v[0] == "" || v[2] == 0) continue;
+            if (v[0] === "") continue ;
             label = $('<label></label>')
                 .attr("title", v[1] +" ("+ v[2] + ")");
             check = $('<input type="checkbox" class="checkone2"/>')
@@ -860,7 +860,7 @@ HsCate.prototype = {
 
         for(var i = 0; i < data.length; i ++) {
             var v = data[i];
-            if (v[0] == "" || v[2] == 0) continue;
+            if (v[0] === "") continue ;
             label = $('<label></label>')
                 .attr("title", v[1] +" ("+ v[2] + ")");
             check = $('<input type="checkbox" class="checkone2"/>')

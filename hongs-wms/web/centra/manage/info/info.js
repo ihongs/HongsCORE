@@ -522,7 +522,7 @@
 
         context.find(".reload-core-and-lock").click(function() {
             $.hsAjax({
-                url: "centra/info/search.act?rb=core_info,lock_info,task_info",
+                url: "centra/info/search.act?rb=core_info,cron_info,lock_info,task_info",
                 dataType: "json",
                 success: function(rst) {
                     // 应用信息
@@ -538,6 +538,7 @@
                     }
                     rst.info.lock_info.Larder = a.sort( ).join("\r\n");
                     rst.info.core_info = rst.info.core_info.sort().join("\r\n");
+                    rst.info.cron_info = rst.info.cron_info.sort().join("\r\n");
                     rst.info.task_info = rst.info.task_info.sort().join("\r\n");
                     formObj.fillInfo(rst.info);
                 }

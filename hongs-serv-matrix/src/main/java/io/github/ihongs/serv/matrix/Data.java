@@ -673,7 +673,7 @@ public class Data extends SearchEntity {
         table.update(ud, where, param);
         table.insert(nd);
 
-        return 1 ;
+        return 1;
     }
 
     /**
@@ -753,7 +753,7 @@ public class Data extends SearchEntity {
         table.update(ud, where, param);
         table.insert(nd);
 
-        return 1 ;
+        return 1;
     }
 
     /**
@@ -1009,7 +1009,7 @@ public class Data extends SearchEntity {
         table.update(ud, where, param);
         table.insert(nd);
 
-        return 1 ;
+        return 1;
     }
 
     /**

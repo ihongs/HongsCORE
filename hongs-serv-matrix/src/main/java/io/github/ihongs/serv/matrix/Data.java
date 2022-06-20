@@ -911,14 +911,13 @@ public class Data extends SearchEntity {
             if (Synt.declare(od.get("state"), 0) > 0) {
                 Map dd = (Map) Dawn.toObject((String) od.get("data"));
                 dd.put(Cnst.ID_KEY , id);
-                Document     dc  ;
-                padInf( dd , dd );
-                dc = padDoc( dd );
-                setDoc( id , dc );
+                padInf(dd, dd);
+                Document dc = padDoc(dd);
+                setDoc(id, dc);
             } else {
-                delDoc( id );
+                delDoc(id);
             }
-            return 1;
+            return 0;
         }
 
         // 获取当前数据

@@ -70,7 +70,7 @@ CREATE TABLE `a_matrix_data` (
   `etime` INTEGER(10) NOT NULL,
   `rtime` INTEGER(10) DEFAULT NULL, /* 从哪个时间点恢复 */
   `state` TINYINT DEFAULT '1',
-  PRIMARY KEY (`id`,`form_id`,`etime`)
+  PRIMARY KEY (`id`,`form_id`,`ctime`)
 );
 
 CREATE INDEX `IK_a_matrix_data_id` ON `a_matrix_data` (`id`);

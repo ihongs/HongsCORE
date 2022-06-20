@@ -67,6 +67,7 @@ public class DataCombat {
 
         Map sd = new HashMap();
         sd.put( "memo", memo );
+        sd.put( "meno", "revert");
 
         Table  tb = dr.getTable();
         String tn = tb.tableName ;
@@ -155,16 +156,19 @@ public class DataCombat {
             if (Synt.declare(od.get("etime"), 0L) != 0L) {
             if (Synt.declare(od.get("state"), 1 ) >= 1 ) {
                 sd.put("rtime" , od.get("ctime"));
-                dr.rev(id,sd,tc);
+                od = Synt.toMap( od.get("data" ));
+                od.putAll(sd);
+                da.rev(id,od,tc);
             }  else {
-                dr.del(id,sd,tc);
+                da.del(id,sd,tc);
             }} else {
             if (Synt.declare(od.get("state"), 1 ) >= 1 ) {
-                od = Synt.toMap( od.get("data") );
+                sd.put("rtime" , od.get("ctime"));
+                od = Synt.toMap( od.get("data" ));
                 od.putAll(sd);
-                da.update(id , od);
+                da.rev(id,od);
             }  else {
-                dr.delDoc(id);
+                da.del(id,sd);
             }}
                 ds.remove(id);
                 i ++;
@@ -593,6 +597,10 @@ public class DataCombat {
 
     }
 
+    /**
+     * 级联操作代理类,
+     * 供恢复数据时用.
+     */
     public static class Casc {
 
         private final Data    that    ;
@@ -605,7 +613,53 @@ public class DataCombat {
             this.cascades = cascades;
         }
 
-        public void update(String id, Map od) throws HongsException {
+        public void del(String id, Map sd, long ctime) throws HongsException {
+            that.del(id, sd, ctime);
+        }
+
+        public void del(String id, Map sd) throws HongsException {
+            that.delDoc( id );
+        }
+
+        public void rev(String id, Map od, long ctime) throws HongsException {
+            String   uid   = that.getUserId();
+            String   fid   = that.getFormId();
+            Object[] param = new String[] {id, fid, "0"};
+            String   where = "`id`=? AND `form_id`=? AND `etime`=?";
+            long     rtime = Synt.declare (od. get( "rtime" ) , 0L);
+
+            if ( includes ) that.padInf(od, od);
+            that.setDoc(id, that.padDoc(od  ) );
+
+            Map ud = new HashMap();
+            ud.put("etime", ctime);
+
+            Map nd = new HashMap();
+            nd.put("ctime", ctime);
+            nd.put("rtime", rtime);
+            nd.put("etime",   0  );
+            nd.put("state",   3  );
+            nd.put("form_id", fid);
+            nd.put("user_id", uid);
+
+            // 数据快照和日志标题
+            nd.put("__data__", od);
+            nd.put("data", Dawn.toString(od,  true ));
+            nd.put("name", that.getText (od, "name"));
+
+            // 操作备注和终端代码
+            if (od.containsKey("memo")) {
+                nd.put("memo", that.getText(od, "memo"));
+            }
+            if (od.containsKey("meno")) {
+                nd.put("meno", that.getText(od, "meno"));
+            }
+
+            that.getTable().update(ud, where, param);
+            that.getTable().insert(nd);
+        }
+
+        public void rev(String id, Map od) throws HongsException {
             if ( includes ) that.padInf(od, od);
             that.setDoc(id, that.padDoc(od  ) );
         }

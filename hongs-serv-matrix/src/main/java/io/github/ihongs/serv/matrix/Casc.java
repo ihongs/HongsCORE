@@ -233,7 +233,7 @@ public class Casc {
         for (Map info : loop) {
             String id = (String) info.get(Cnst.ID_KEY);
             CoreLogger.debug("Delete cascade {} {}:{}", fn, fk, id);
-            inst.cut(id, Synt.mapOf(
+            inst.end(id, Synt.mapOf(
                 "__memo__" , "Delete cascade " + fn + ":" + id,
                 "__meno__" , "system.cascade"
             ) , ct);

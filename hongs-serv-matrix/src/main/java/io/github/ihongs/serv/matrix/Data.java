@@ -579,8 +579,8 @@ public class Data extends SearchEntity {
      * 保存记录
      *
      * 注意:
-     * 尽可能添加新节点,
-     * 有则更新无则添加.
+     * 有则更新无则添加,
+     * ctime = 0 仅更新.
      *
      * @param id
      * @param rd
@@ -612,9 +612,6 @@ public class Data extends SearchEntity {
         Object[] param = new String[] {id, fid, "0"};
         String   where = "`id`=? AND `form_id`=? AND `etime`=?";
 
-        Map ud = new HashMap();
-        ud.put("etime", ctime);
-
         Map od = table.fetchCase()
             .filter( where,param )
             .select("ctime,state")
@@ -625,9 +622,32 @@ public class Data extends SearchEntity {
             }
             if (Synt.declare(od.get("ctime"), 0L ) >= ctime) {
             //  throw new HongsException(400, "matrix:matrix.wait.one.second", getDbName(), id);
-                ud = null; // 太频繁则不添加新的节点
             }
         }
+
+        // 仅对最新节点作更新
+        if (ctime == 0) {
+            Map nd = new HashMap();
+
+            // 数据快照和日志标题
+            nd.put("__data__", dd);
+            nd.put("data", Dawn.toString(dd,  true ));
+            nd.put("name", this.getText (dd, "name"));
+
+            // 操作备注和终端代码
+            if (rd.containsKey("memo")) {
+                nd.put("memo", getText(rd, "memo"));
+            }
+            if (rd.containsKey("meno")) {
+                nd.put("meno", getText(rd, "meno"));
+            }
+
+            table.update(nd, where, param);
+            return 1;
+        }
+
+        Map ud = new HashMap();
+        ud.put("etime", ctime);
 
         Map nd = new HashMap();
         nd.put("ctime", ctime);
@@ -650,12 +670,8 @@ public class Data extends SearchEntity {
             nd.put("meno", getText(rd, "meno"));
         }
 
-        if (ud == null) {
-            table.update(nd, where, param);
-        } else {
-            table.update(ud, where, param);
-            table.insert(nd);
-        }
+        table.update(ud, where, param);
+        table.insert(nd);
 
         return 1 ;
     }
@@ -664,8 +680,8 @@ public class Data extends SearchEntity {
      * 更新记录
      *
      * 注意:
-     * 每次都产生新节点,
-     * 有则更新无则添加.
+     * 有则更新无则添加,
+     * 每次都产生新节点.
      *
      * @param id
      * @param rd
@@ -744,8 +760,8 @@ public class Data extends SearchEntity {
      * 终止记录
      *
      * 注意:
-     * 尽可能添加新节点,
-     * 重复调用不会多增.
+     * 有则删除无则跳过,
+     * ctime = 0 仅更新.
      *
      * @param id
      * @param rd
@@ -753,7 +769,7 @@ public class Data extends SearchEntity {
      * @return 有更新为 1, 无更新为 0
      * @throws HongsException
      */
-    public int cut(String id, Map rd, long ctime) throws HongsException {
+    public int end(String id, Map rd, long ctime) throws HongsException {
         delDoc(id);
 
         Table table = getTable();
@@ -766,9 +782,6 @@ public class Data extends SearchEntity {
         Object[] param = new String[] {id, fid, "0"};
         String   where = "`id`=? AND `form_id`=? AND `etime`=?";
 
-        Map ud = new HashMap();
-        ud.put("etime", ctime);
-
         Map od = table.fetchCase()
             .filter( where,param )
             .select("ctime,state,data,name")
@@ -779,8 +792,27 @@ public class Data extends SearchEntity {
         }
         if (Synt.declare(od.get("ctime"), 0L ) >= ctime) {
         //  throw new HongsException(400, "matrix:matrix.wait.one.second", getDbName(), id);
-            ud = null; // 太频繁则不添加新的节点
         }
+
+        // 仅对最新节点作更新
+        if (ctime == 0) {
+            Map nd = new HashMap();
+            nd.put("state",   0  );
+
+            // 操作备注和终端代码
+            if (rd.containsKey("memo")) {
+                nd.put("memo", getText(rd, "memo"));
+            }
+            if (rd.containsKey("meno")) {
+                nd.put("meno", getText(rd, "meno"));
+            }
+
+            table.update(nd, where, param);
+            return 1;
+        }
+
+        Map ud = new HashMap();
+        ud.put("etime", ctime);
 
         Map nd = new HashMap();
         nd.put("ctime", ctime);
@@ -802,12 +834,8 @@ public class Data extends SearchEntity {
             nd.put("meno", getText(rd, "meno"));
         }
 
-        if (ud == null) {
-            table.update(nd, where, param);
-        } else {
-            table.update(ud, where, param);
-            table.insert(nd);
-        }
+        table.update(ud, where, param);
+        table.insert(nd);
 
         return 1;
     }
@@ -816,8 +844,8 @@ public class Data extends SearchEntity {
      * 删除记录
      *
      * 注意:
-     * 删除时产生新节点,
-     * 重复调用不会多增.
+     * 有则删除无则跳过,
+     * 成功会产生新节点.
      *
      * @param id
      * @param rd

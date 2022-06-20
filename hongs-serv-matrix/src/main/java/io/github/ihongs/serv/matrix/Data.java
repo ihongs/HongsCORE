@@ -622,6 +622,7 @@ public class Data extends SearchEntity {
             }
             if (Synt.declare(od.get("ctime"), 0L ) >= ctime) {
             //  throw new HongsException(400, "matrix:matrix.wait.one.second", getDbName(), id);
+                ctime = 0;
             }
         }
 
@@ -788,10 +789,11 @@ public class Data extends SearchEntity {
             .getOne( );
         if (od.isEmpty()
         ||  Synt.declare(od.get("state"), 0  ) ==  0   ) {
-            return 0 ; // 删除是幂等的可重复调用
+            return 0; // 删除是幂等的可重复调用
         }
         if (Synt.declare(od.get("ctime"), 0L ) >= ctime) {
         //  throw new HongsException(400, "matrix:matrix.wait.one.second", getDbName(), id);
+            ctime  = 0;
         }
 
         // 仅对最新节点作更新
@@ -872,7 +874,7 @@ public class Data extends SearchEntity {
             .getOne( );
         if (od.isEmpty()
         ||  Synt.declare(od.get("state"), 0  ) ==  0   ) {
-            return 0 ; // 删除是幂等的可重复调用
+            return 0; // 删除是幂等的可重复调用
         }
         if (Synt.declare(od.get("ctime"), 0L ) >= ctime) {
             throw new HongsException(400, "matrix:matrix.wait.one.second", getDbName(), id);

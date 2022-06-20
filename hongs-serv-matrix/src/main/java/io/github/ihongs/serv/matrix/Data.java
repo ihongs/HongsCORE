@@ -779,7 +779,7 @@ public class Data extends SearchEntity {
         }
         if (Synt.declare(od.get("ctime"), 0L ) >= ctime) {
         //  throw new HongsException(400, "matrix:matrix.wait.one.second", getDbName(), id);
-            ud = null;
+            ud = null; // 操作有点儿频繁, 只更新当前记录
         }
 
         Map nd = new HashMap();

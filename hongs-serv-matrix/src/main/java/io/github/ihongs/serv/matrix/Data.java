@@ -625,7 +625,7 @@ public class Data extends SearchEntity {
             }
             if (Synt.declare(od.get("ctime"), 0L ) >= ctime) {
             //  throw new HongsException(400, "matrix:matrix.wait.one.second", getDbName(), id);
-                ud = null; // 操作有点儿频繁, 只更新当前记录
+                ud = null; // 太频繁则不添加新的节点
             }
         }
 
@@ -779,7 +779,7 @@ public class Data extends SearchEntity {
         }
         if (Synt.declare(od.get("ctime"), 0L ) >= ctime) {
         //  throw new HongsException(400, "matrix:matrix.wait.one.second", getDbName(), id);
-            ud = null; // 操作有点儿频繁, 只更新当前记录
+            ud = null; // 太频繁则不添加新的节点
         }
 
         Map nd = new HashMap();

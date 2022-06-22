@@ -33,9 +33,6 @@ public class FlashyConn implements Conn, Core.Singleton {
 
     public static class Getter implements ConnGetter, Core.Soliloquy {
 
-        private String mypath;
-        private String myname;
-
         @Override
         public Conn get(String dbpath, String dbname) {
             return Core.GLOBAL_CORE.get(

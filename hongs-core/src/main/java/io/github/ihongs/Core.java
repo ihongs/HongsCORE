@@ -241,6 +241,17 @@ public class Core
   }
 
   /**
+   * 类名获取单例
+   *
+   * @param name
+   * @return 类的对象
+   */
+  public static final Object getInstance(String name)
+  {
+    return getInstance().got(name);
+  }
+
+  /**
    * 按类获取单例
    *
    * @param <T>
@@ -253,14 +264,27 @@ public class Core
   }
 
   /**
-   * 类名获取单例
+   * 类名构建单例
+   *
+   * 注意: 未存储
    *
    * @param name
-   * @return 类的对象
+   * @return
    */
-  public static final Object getInstance(String name)
+  public static final Object newInstance(String name)
   {
-    return getInstance().got(name);
+    // 获取类
+    Class clas;
+    try
+    {
+      clas  =  Class.forName  ( name );
+    }
+    catch ( ClassNotFoundException e )
+    {
+      throw new HongsExemption(e, 821);
+    }
+
+    return  newInstance(clas);
   }
 
   /**
@@ -362,31 +386,6 @@ public class Core
     {
         throw new HongsExemption(se, 822, "Can not build "+clas.getName());
     }
-  }
-
-  /**
-   * 类名构建单例
-   *
-   * 注意: 未存储
-   *
-   * @param name
-   * @return
-   */
-  public static final Object newInstance(String name)
-  {
-    Class klass;
-
-    // 获取类
-    try
-    {
-      klass  =  Class.forName( name );
-    }
-    catch (ClassNotFoundException ex)
-    {
-      throw new HongsExemption(821, "Can not find class by name '" + name + "'.");
-    }
-
-    return newInstance(klass);
   }
 
   /**
@@ -523,11 +522,22 @@ public class Core
    */
   public Object got(String cln)
   {
-    Class cls;
-    try {
+    Object val;
+    Class  cls;
+
+    val  = get (cln);
+    if (null != val)
+    {
+        return  val;
+    }
+
+    try
+    {
       cls = Class.forName (cln);
-    } catch (ClassNotFoundException x) {
-      throw new HongsExemption(x, 821);
+    }
+    catch ( ClassNotFoundException e )
+    {
+      throw new HongsExemption(e, 821);
     }
 
     return got(cln, cls);

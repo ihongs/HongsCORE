@@ -95,7 +95,7 @@ public class CombatRunner implements Runnable
     } catch (InvocationTargetException ex) {
         CoreLogger.error( ex.getCause( ) );
     } finally {
-        Core.THREAD_CORE.get( ).reset( );
+        Core.getInstance().reset();
     }
   }
 

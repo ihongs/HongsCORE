@@ -10,6 +10,9 @@ import io.github.ihongs.action.FormSet;
 import io.github.ihongs.dh.IEntity;
 import io.github.ihongs.dh.JFigure;
 import io.github.ihongs.dh.IReflux;
+import io.github.ihongs.dh.lucene.conn.Conn;
+import io.github.ihongs.dh.lucene.conn.ConnGetter;
+import io.github.ihongs.dh.lucene.conn.DirectConn;
 import io.github.ihongs.dh.lucene.field.*;
 import io.github.ihongs.dh.lucene.value.*;
 import io.github.ihongs.dh.lucene.query.*;
@@ -18,9 +21,7 @@ import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -48,13 +49,9 @@ import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
-import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
@@ -83,17 +80,21 @@ import org.apache.lucene.store.AlreadyClosedException;
  *  lucene-parser-auto-generate-phrase-queries
  * 可以参阅 QueryParserBase 对应方法.
  *
+ * 可以在默认配置 default.properties 中的 core.lucene.conn.getter.class 指定连接工厂类, 现有:
+ *  io.github.ihongs.dh.lucene.conn.DirectConn$Getter 标准直连, 提交立即写入磁盘
+ *  io.github.ihongs.dh.lucene.conn.FlashyConn$Getter 近实时连, 间隔时间写入磁盘
+ *
  * @author Hongs
  */
 public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoCloseable {
 
     protected boolean REFLUX_MODE = false;
 
-    private IndexSearcher finder  = null ;
-    private IndexReader   reader  = null ;
-    private IndexWriter   writer  = null ;
-    private String        dbpath  = null ;
-    private String        dbname  = null ;
+    private String    dbpath = null;
+    private String    dbname = null;
+    private Conn      dbconn = null;
+    private Document  cursor = null;
+    private Map<String, Document> writes = new LinkedHashMap();
 
     /**
      * 构造方法
@@ -142,15 +143,6 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                     name  = p;
                 }
             }
-
-            // 进一步处理路径中的变量等
-            Map m = new HashMap();
-            m.put("SERVER_ID", Core.SERVER_ID);
-            m.put("CORE_PATH", Core.CORE_PATH);
-            m.put("DATA_PATH", Core.DATA_PATH);
-            path = Syno.inject(path, m);
-            if ( ! new File(path).isAbsolute())
-            path = Core.DATA_PATH+ "/lucene/" + path ;
 
             inst = new LuceneRecord(fxrm, path, name);
             core.set(code , inst);
@@ -613,6 +605,11 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
     //** 组件方法 **/
 
     public void addDoc(String id, Document doc) throws HongsException {
+        writes.put(id, doc);
+        if (!REFLUX_MODE) {
+            commit();
+        }
+        /* // 不再直接写入
         IndexWriter iw = getWriter();
         try {
             iw.addDocument (doc);
@@ -622,9 +619,15 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         if (!REFLUX_MODE) {
             commit();
         }
+        */
     }
 
     public void setDoc(String id, Document doc) throws HongsException {
+        writes.put(id, doc);
+        if (!REFLUX_MODE) {
+            commit();
+        }
+        /* // 不再直接写入
         IndexWriter iw = getWriter();
         try {
             iw.updateDocument (new Term("@"+Cnst.ID_KEY, id), doc);
@@ -634,25 +637,42 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         if (!REFLUX_MODE) {
             commit();
         }
+        */
     }
 
     public void delDoc(String id) throws HongsException {
+        writes.put(id,null);
+        if (!REFLUX_MODE) {
+            commit();
+        }
+        /* // 不再直接写入
         IndexWriter iw = getWriter();
         try {
-            iw.deleteDocuments(new Term("@"+Cnst.ID_KEY, id) /**/);
+            iw.deleteDocuments(new Term("@"+Cnst.ID_KEY, id)     );
         } catch (IOException ex) {
             throw new HongsException(ex);
         }
         if (!REFLUX_MODE) {
             commit();
         }
+        */
     }
 
     public Document getDoc(String id) throws HongsException {
+        // 从预备写入缓冲区中读取
+        if (writes.containsKey(id)) {
+            return  writes.get(id);
+        }
+
+        // 规避遍历更新时重复读取
+        if (null != cursor && id.equals(cursor.get(Cnst.ID_KEY))) {
+            return  cursor;
+        }
+
         IndexSearcher  ff = getFinder( );
         try {
                 Query  qq = new TermQuery(new Term("@"+Cnst.ID_KEY, id));
-              TopDocs  tt = ff.search(qq,  1  );
+              TopDocs  tt = ff.search(qq, 1);
             ScoreDoc[] hh = tt.scoreDocs;
             if  ( 0 != hh.length ) {
                 return ff.doc(hh[0].doc);
@@ -670,19 +690,20 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         return doc;
     }
 
-    public Document padDoc(Map map, Set rep) {
-        Document doc = new Document();
-        padDoc(doc, map, rep);
-        return doc;
-    }
-
     public Map padDat(Document doc) {
         Map map = new LinkedHashMap();
         padDat(doc, map, null);
         return map;
     }
 
-    public Map padDat(Document doc, Set rep) {
+    /**
+     * 解析文档(Loop.next 专用)
+     * @param doc
+     * @param rep
+     * @return
+     */
+    protected Map padDat(Document doc, Set rep) {
+        cursor  = doc; // 暂存文档
         Map map = new LinkedHashMap();
         padDat(doc, map, rep );
         return map;
@@ -714,16 +735,6 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
     }
 
     //** 组件封装 **/
-
-    /**
-     * 遍历暂存文档(供 Loop.next 专用)
-     * 可实现此方法用于中间缓存
-     *
-     * @param doc
-     */
-    protected void preDoc(Document doc) {
-        // Nothing to do.
-    }
 
     /**
      * 填充存储数据(将 map 填充到 doc)
@@ -1579,50 +1590,16 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      */
     @Override
     public void close() {
-        if (writer != null ) {
-        if (writer.isOpen()) {
-            // 默认退出时提交
-            if (REFLUX_MODE) {
-                try {
-                try {
-                    commit();
-                } catch (Throwable e) {
-                    revert();
-                    throw e ;
-                }
-                } catch (Throwable e) {
-                    CoreLogger.error(e);
-                }
-            }
-
+        if (REFLUX_MODE) {
             try {
-                writer.close();
-            } catch (IOException x) {
-                CoreLogger.error(x);
-            } finally {
-                writer = null ;
-            }
-
-            if (4 == (4 & Core.DEBUG)) {
-                CoreLogger.trace("Close the lucene writer for " + getDbName());
-            }
-        } else {
-            /**/writer = null ;
-        }
-        }
-
-        if (reader != null ) {
             try {
-                reader.close();
-            } catch (IOException x) {
-                CoreLogger.error(x);
-            } finally {
-                reader = null ;
-                finder = null ;
+                commit();
+            } catch (Throwable e) {
+                revert();
+                throw e ;
             }
-
-            if (4 == (4 & Core.DEBUG)) {
-                CoreLogger.trace("Close the lucene reader for " + getDbName());
+            } catch (Throwable e) {
+                CoreLogger.error(e);
             }
         }
     }
@@ -1633,11 +1610,10 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
     @Override
     public void begin() {
         if (REFLUX_MODE
-        &&  writer != null
-        &&  writer.hasUncommittedChanges()) {
+        && !writes.isEmpty()) {
             throw new HongsExemption(1054, "Uncommitted changes");
         }
-        REFLUX_MODE = true;
+        REFLUX_MODE = true ;
     }
 
     /**
@@ -1645,14 +1621,18 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      */
     @Override
     public void commit() {
-        try {
-            if (writer !=  null ) {
-                writer.commit ( );
-            }
-        } catch (IOException ex ) {
-            throw new HongsExemption(ex, 1055);
-        }
         REFLUX_MODE = false;
+        if (writes.isEmpty()) {
+            return;
+        }
+        try {
+            getDbConn().write(writes);
+        } catch (IOException ex) {
+            throw new HongsExemption(ex, 1055);
+        } finally {
+            writes.clear();
+            cursor = null ;
+        }
     }
 
     /**
@@ -1660,14 +1640,18 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      */
     @Override
     public void revert() {
-        try {
-            if (writer !=  null ) {
-                writer.rollback();
-            }
-        } catch (IOException ex ) {
-            throw new HongsExemption(ex, 1056);
-        }
         REFLUX_MODE = false;
+        if (writes.isEmpty()) {
+            return;
+        }
+    //  try {
+    //      getDbConn().write(writes);
+    //  } catch (IOException ex) {
+    //      throw new HongsExemption(ex, 1055);
+    //  } finally {
+            writes.clear();
+            cursor = null ;
+    //  }
     }
 
     //** 底层方法 **/
@@ -1694,82 +1678,61 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         return dbname;
     }
 
-    public IndexSearcher getFinder() throws HongsException {
-        getReader();
-        if (finder == null) {
-            finder  = new IndexSearcher(reader);
-        }
-        return finder;
-    }
+    public Conn getDbConn() {
+        if (dbconn == null) {
+        DO: {
+            String kn = Conn.class.getName() + ":" + getDbName();
 
-    public IndexReader getReader() throws HongsException {
-        if (reader != null) {
-            try {
-                // 如果有更新数据则会重新打开查询接口
-                // 这可以规避提交更新后却查不到的问题
-                IndexReader  nred = DirectoryReader.openIfChanged((DirectoryReader) reader);
-                if ( null != nred) {
-                    reader.close();
-                    reader = nred ;
-                    finder = null ;
-                }
-            } catch (IOException x) {
-                throw new HongsException(x);
-            }
-        } else {
-            String path = getDbPath();
-
-            try {
-                // 目录不存在需开写并提交从而建立索引
-                // 否则会抛出: IndexNotFoundException
-                if (! new File(path).exists()) {
-                    this.getWriter().commit();
-                }
-
-                Directory dir = FSDirectory.open(Paths.get(path));
-
-                reader = DirectoryReader.open(dir);
-            } catch (IOException x) {
-                throw new HongsException(x);
+            dbconn = (Conn) Core.THREAD_CORE.get().get(kn);
+            if (dbconn != null) {
+                break  DO;
             }
 
-            if (4 == (4 & Core.DEBUG)) {
-                CoreLogger.trace("Start the lucene reader for "+getDbName());
+            dbconn = (Conn) Core.GLOBAL_CORE.get(kn);
+            if (dbconn != null) {
+                break  DO;
             }
-        }
-        return reader;
+
+            String     cn;
+            CoreConfig cc;
+            ConnGetter cg;
+            cc = CoreConfig.getInstance();
+            cn = DirectConn.Getter.class.getName();
+            cn = cc.getProperty("core.lucene.conn.getter.class", cn);
+            cg = (ConnGetter) Core.newInstance(cn);
+
+            CoreLogger.trace("Lucene conn by {}" , cn);
+
+            dbconn = cg.get (getDbPath(), getDbName());
+        }}
+        return dbconn;
     }
 
     public IndexWriter getWriter() throws HongsException {
-        if (writer == null || writer.isOpen() == false ) {
-            String path = getDbPath();
-
-            try {
-                /**
-                 * 2021/04/18
-                 * 为在一个库里存多个表
-                 * 不再在开始预设分析器
-                 * 改为存字段时直接写入 TokenStream
-                 */
-                CoreConfig cc = CoreConfig.getInstance();
-                IndexWriterConfig iwc = new IndexWriterConfig();
-            //  IndexWriterConfig iwc = new IndexWriterConfig(getAnalyzer());
-                iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
-                iwc.setMaxBufferedDocs(cc.getProperty("core.lucene.max.buf.docs", -1 ));
-                iwc.setRAMBufferSizeMB(cc.getProperty("core.lucene.ram.buf.size", 16D));
-
-                Directory dir = FSDirectory.open(Paths.get(path));
-
-                writer = new IndexWriter(dir, iwc);
-            } catch (IOException x) {
-                throw new HongsException(x);
-            }
-
-            if (4 == (4 & Core.DEBUG)) {
-                CoreLogger.trace("Start the lucene writer for "+getDbName());
-            }
+        try {
+            return getDbConn().getWriter();
         }
-        return writer;
+        catch (IOException ex) {
+            throw  new  HongsException(ex);
+        }
+    }
+
+    public IndexReader getReader() throws HongsException {
+        try {
+            return getDbConn().getReader();
+        }
+        catch (IOException ex) {
+            throw  new  HongsException(ex);
+        }
+    }
+
+    public IndexSearcher getFinder() throws HongsException {
+        try {
+            return getDbConn().getFinder();
+        }
+        catch (IOException ex) {
+            throw  new  HongsException(ex);
+        }
     }
 
     //** 底层工具 **/
@@ -2164,9 +2127,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 }
                 return i < h;
             } catch (IOException e) {
-                throw new Halt ( e);
+                throw new Lost ( e);
             } catch (AlreadyClosedException e) {
-                throw new Halt ( e);
+                throw new Lost ( e);
             }
         }
 
@@ -2179,12 +2142,11 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 Document dox;
                 doc = docs[i ++];
                 dox = finder.doc( doc.doc );
-                        that.preDoc(dox   );
                 return  that.padDat(dox, r);
             } catch (IOException e) {
-                throw new Halt ( e);
+                throw new Lost ( e);
             } catch (AlreadyClosedException e) {
-                throw new Halt ( e);
+                throw new Lost ( e);
             }
         }
 
@@ -2271,13 +2233,13 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
     /**
      * 查询中断异常
      */
-    public static class Halt extends HongsExemption {
+    public static class Lost extends HongsExemption {
 
-        public Halt( AlreadyClosedException cause ) {
+        public Lost( AlreadyClosedException cause ) {
             super(cause, "fore.retries");
         }
 
-        public Halt( IOException cause ) {
+        public Lost( IOException cause ) {
             super(cause, "fore.retries");
         }
 

@@ -3,12 +3,12 @@ package io.github.ihongs.test;
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.HongsException;
-import io.github.ihongs.dh.lucene.LuceneRecord;
+import io.github.ihongs.dh.lucene.conn.Conn;
+import io.github.ihongs.dh.lucene.conn.FlashyConn;
 import io.github.ihongs.dh.search.SearchEntity;
 import io.github.ihongs.util.Synt;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -16,9 +16,9 @@ import java.util.concurrent.TimeUnit;
 import static junit.framework.Assert.assertEquals;
 import org.junit.Test;
 
-public class TestWriter {
+public class TestFlashyConn {
 
-    int dataSize = 900; // 测试数据数量
+    int dataSize = 600; // 测试数据数量
     int poolSize = 300; // 测试线程数量
     int waitTime = 30;  // 测试等待时间(秒)
 
@@ -26,13 +26,13 @@ public class TestWriter {
     public void testWriter() throws HongsException, InterruptedException, IOException {
         // 必要全局变量
         if (Core.DATA_PATH == null) {
-            Core.DATA_PATH = "target/test/var" ;
+            Core.DATA_PATH = "target/test/var";
         }
         // 删除测试目录
-        delDir(Core.DATA_PATH + "/lucene/test");
+        delDir(Core.DATA_PATH + "/lucene/test/flashy");
 
-        String dbName = "test";
-        String dbPath = Core.DATA_PATH + "/lucene/" + dbName;
+        String dbName = "test/flashy";
+        String dbPath = "test/flashy";
         Map fields = Synt.mapOf(
             "id"   , Synt.mapOf(
                 "__name__", "id",
@@ -53,8 +53,7 @@ public class TestWriter {
             @Override
             public void run() {
                 try {
-                //  LuceneRecord se = new LuceneRecord(fields, dbPath, dbName);
-                    SearchEntity se = new SearchEntity(fields, dbPath, dbName);
+                    SearchEntity se = new TestEntity(fields, dbPath, dbName);
 
                     se.begin ();
                     String id = se.create(Synt.mapOf(
@@ -62,7 +61,6 @@ public class TestWriter {
                         "time" , System.currentTimeMillis()
                     ));
                     se.commit();
-                //  se.flush ();
 
                     Map  info = se.getOne(Synt.mapOf(
                         Cnst.ID_KEY, id,
@@ -76,6 +74,9 @@ public class TestWriter {
             }
         };
 
+        // 预设连接
+        new TestEntity(fields, dbPath, dbName).getDbConn();
+
         // 写入数据
         for (int i = 0; i < dataSize; i ++) {
             es.execute(() -> rn.run());
@@ -86,8 +87,7 @@ public class TestWriter {
         es.awaitTermination(waitTime, TimeUnit.SECONDS);
 
         // 复查数量
-    //  LuceneRecord se = new LuceneRecord(fields, dbPath, dbName);
-        SearchEntity se = new SearchEntity(fields, dbPath, dbName);
+        SearchEntity se = new TestEntity( fields , dbPath , dbName );
         assertEquals(dataSize, se.search(Synt.mapOf(), 0, 0).hits());
     }
 
@@ -98,6 +98,24 @@ public class TestWriter {
                 file.delete();
             }   dir .delete();
         }
+    }
+
+    private static class TestEntity extends SearchEntity {
+
+
+        public TestEntity(Map form, String path, String name) {
+            super(form, path, name);
+        }
+
+        private Conn dbconn = null ;
+        @Override
+        public Conn getDbConn() {
+            if (dbconn == null) {
+                dbconn  = new  FlashyConn.Getter().get(getDbPath(), getDbName());
+            }
+            return dbconn;
+        }
+
     }
 
 }

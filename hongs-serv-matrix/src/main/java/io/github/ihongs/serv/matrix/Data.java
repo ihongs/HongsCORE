@@ -340,15 +340,6 @@ public class Data extends SearchEntity {
             }
         }
 
-        // 进一步处理路径
-        Map m = new HashMap();
-        m.put("SERVER_ID", Core.SERVER_ID);
-        m.put("CORE_PATH", Core.CORE_PATH);
-        m.put("DATA_PATH", Core.DATA_PATH);
-        path = Syno.inject(path, m);
-        if ( ! new File(path).isAbsolute())
-        path = Core.DATA_PATH +"/lucene/"+ path;
-
         setDbPath(path);
 
         return path;

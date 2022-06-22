@@ -26,6 +26,11 @@
             <version>${lucene.version}</version>
         </dependency>
         <dependency>
+            <artifactId>lucene-sandbox</artifactId>
+            <groupId>org.apache.lucene</groupId>
+            <version>${lucene.version}</version>
+        </dependency>
+        <dependency>
             <artifactId>lucene-queries</artifactId>
             <groupId>org.apache.lucene</groupId>
             <version>${lucene.version}</version>

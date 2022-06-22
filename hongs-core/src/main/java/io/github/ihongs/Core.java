@@ -523,14 +523,13 @@ public class Core
   public Object got(String cln)
   {
     Object val;
-    Class  cls;
-
     val  = get (cln);
     if (null != val)
     {
         return  val;
     }
 
+    Class  cls;
     try
     {
       cls = Class.forName (cln);

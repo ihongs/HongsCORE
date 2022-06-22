@@ -232,6 +232,15 @@ public class Core
   };
 
   /**
+   * 获取全局核心
+   * @return 核心对象
+   */
+  public static final Core getGlobCore()
+  {
+    return GLOBAL_CORE;
+  }
+
+  /**
    * 获取核心对象
    * @return 核心对象
    */

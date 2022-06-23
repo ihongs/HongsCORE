@@ -15,7 +15,6 @@ import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
 
-import java.io.File;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.InvocationTargetException;

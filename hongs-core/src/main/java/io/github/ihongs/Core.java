@@ -643,6 +643,7 @@ public class Core
 
   /**
    * 同 got(cln, cls)
+   * @deprecated
    * @param <T>
    * @param cln
    * @param cls

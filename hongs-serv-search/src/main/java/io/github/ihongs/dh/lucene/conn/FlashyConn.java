@@ -35,7 +35,7 @@ public class FlashyConn implements Conn, Core.Singleton {
 
         @Override
         public Conn get(String dbpath, String dbname) {
-            return Core.GLOBAL_CORE.get(
+            return Core.GLOBAL_CORE.got(
                 Conn.class.getName () + ":" + dbname,
                 new Supplier <Conn>() {
                     @Override

@@ -526,6 +526,10 @@ public class Core
   /**
    * 获取名对应的唯一对象
    *
+   * 注意:
+   * 目标类是 Singleton 将存入全局核心
+   * 目标类是 Soliloquy 将不会托管存放
+   *
    * @param cln 包路径.类名称
    * @return 唯一对象
    */
@@ -554,6 +558,10 @@ public class Core
   /**
    * 获取类对应的唯一对象
    *
+   * 注意:
+   * 目标类是 Singleton 将存入全局核心
+   * 目标类是 Soliloquy 将不会托管存放
+   *
    * @param <T>
    * @param cls [包.]类.class
    * @return 唯一对象
@@ -566,8 +574,12 @@ public class Core
   }
 
   /**
-   * 获取指定对象
-   * 缺失则在构建后存入
+   * 获取指定对象, 缺失则在构建后存入
+   *
+   * 注意:
+   * 目标类是 Singleton 将存入全局核心
+   * 目标类是 Soliloquy 将不会托管存放
+   *
    * @param <T>
    * @param cln 存储键名
    * @param cls 对应的类
@@ -595,15 +607,20 @@ public class Core
   }
 
   /**
-   * 获取指定对象
+   * 获取指定对象, 缺失则在构建后存入
+   *
+   * 注意:
+   * 供应类是 Singleton 将存入全局核心
+   * 供应类是 Soliloquy 将不会托管存放
+   *
    * 用函数式构造 core.get(xxx, () -> new Yyy(zzz))
-   * 缺失则在构建后存入
+   *
    * @param <T>
    * @param key 存储键名
    * @param sup 供应方法
    * @return
    */
-  public <T>T get(String key, Supplier<T> sup)
+  public <T>T got(String key, Supplier<T> sup)
   {
     Object val = get(key);
     if (null  != val)
@@ -612,7 +629,7 @@ public class Core
     }
     if (Singleton.class.isAssignableFrom(sup.getClass()))
     {
-      return Core.GLOBAL_CORE.get (key , sup);
+      return Core.GLOBAL_CORE.got (key , sup);
     }
     if (Soliloquy.class.isAssignableFrom(sup.getClass()))
     {
@@ -622,6 +639,31 @@ public class Core
     T obj  = sup.get();
     set(key, obj);
     return   obj ;
+  }
+
+  /**
+   * 同 got(cln, cls)
+   * @param <T>
+   * @param cln
+   * @param cls
+   * @return
+   */
+  public <T>T get(String cln, Class<T> cls)
+  {
+    return got(cln, cls);
+  }
+
+  /**
+   * 同 got(key, sup)
+   * @deprecated
+   * @param <T>
+   * @param key
+   * @param sup
+   * @return
+   */
+  public <T>T get(String key, Supplier<T> sup)
+  {
+    return got(key, sup);
   }
 
   /**
@@ -791,7 +833,7 @@ public class Core
     }
 
     @Override
-    public <T>T get(String key, Supplier<T> sup)
+    public <T>T got(String key, Supplier<T> sup)
     {
       /**
        * 查两遍

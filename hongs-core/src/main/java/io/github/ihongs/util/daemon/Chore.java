@@ -76,7 +76,7 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
     }
 
     public static Chore getInstance() {
-        return Core.GLOBAL_CORE.get(Chore.class.getName(), () -> new Chore());
+        return Core.GLOBAL_CORE.got(Chore.class.getName(), () -> new Chore());
     }
 
     /**

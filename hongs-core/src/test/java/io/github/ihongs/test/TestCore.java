@@ -18,17 +18,21 @@ public class TestCore {
     public void test() throws InterruptedException {
         final ExecutorService es = Executors.newFixedThreadPool(10);
         final AtomicInteger ai = new AtomicInteger();
-        final Runnable rn = new Runnable() {
+        final Runnable rn = new Runnable () {
             @Override
             public void run() {
-                Core.GLOBAL_CORE.get("test", () -> {
-                    ai.addAndGet(1);
-                    return new Object();
-                });
+                Core.GLOBAL_CORE.got(
+                    "test",
+                    () -> {
+                        ai.addAndGet(  1  );
+                        return new Object();
+                    }
+                );
             }
         };
-        for (int i = 0; i < 10; i ++) {
-            es.execute(() -> rn.run() );
+        
+        for(int i = 0; i < 10; i ++) {
+            es.execute(()->rn.run());
         }
         
         es.shutdown();

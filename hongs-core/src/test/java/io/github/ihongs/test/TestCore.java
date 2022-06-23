@@ -35,7 +35,7 @@ public class TestCore {
             es.execute(() -> rn.run());
         }
         
-        es.shutdown();
+        es.shutdown ();
         es.awaitTermination(10, TimeUnit.SECONDS);
         
         assertEquals(1, ai.get());

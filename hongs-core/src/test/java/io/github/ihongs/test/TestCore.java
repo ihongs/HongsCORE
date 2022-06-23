@@ -31,8 +31,8 @@ public class TestCore {
             }
         };
         
-        for(int i = 0; i < 99; i ++) {
-            es.execute(()->rn.run());
+        for(int i = 0; i < 100; i ++ ) {
+            es.execute(() -> rn.run());
         }
         
         es.shutdown();

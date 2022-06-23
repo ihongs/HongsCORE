@@ -1688,7 +1688,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 break  DO;
             }
 
-            dbconn = (Conn) Core.getGlobCore().get(kn);
+            dbconn = (Conn) Core.getInterior().get(kn);
             if (dbconn != null) {
                 break  DO;
             }

@@ -235,7 +235,7 @@ public class Core
    * 获取全局核心
    * @return 核心对象
    */
-  public static final Core getGlobCore()
+  public static final Core getInterior()
   {
     return GLOBAL_CORE;
   }

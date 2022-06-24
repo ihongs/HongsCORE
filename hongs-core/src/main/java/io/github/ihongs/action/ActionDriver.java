@@ -651,7 +651,7 @@ public class ActionDriver implements Filter, Servlet {
 
     //** 配置信息方法 **/
 
-    public String getConfigInfo() {
+    public String getFilterInfo() {
         return "";
     }
 

@@ -5,6 +5,7 @@ import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLocale;
 import io.github.ihongs.CoreLogger;
+import io.github.ihongs.HongsCause;
 import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
@@ -319,23 +320,35 @@ public class ActionDriver implements Filter, Servlet {
                 doCommit(core, hlpr, req, rsq );
             } catch (IOException ex) {
                 // 非调试模式忽略客户端中途断开
-                Throwable cx = ex.getCause();
-                if (cx != null && cx.getClass().getSimpleName().equalsIgnoreCase("EofException")
-                &&  4  != (4 & Core.DEBUG) ) {
+                Throwable cx = ex.getCause( );
+                if (cx != null
+                &&  4  != (4 & Core.DEBUG)
+                &&  cx.getClass().getSimpleName().equalsIgnoreCase("EofException")) {
+                    return;
+                }
+                if (4  != (4 & Core.DEBUG)
+                &&  ex.getClass().getSimpleName().equalsIgnoreCase("EofException")) {
                     return;
                 }
 
-                /**
-                 * 异常抛到这层了就必须记入日志
-                 * 继续抛出将被登记的错误页处理
-                 * 下同
-                 */
                 CoreLogger.error(ex);
                 throw ex;
-            } catch (ServletException ex ) {
-                CoreLogger.error(ex);
-                throw ex;
-            } catch (RuntimeException ex ) {
+            } catch (ServletException | RuntimeException ex) {
+                // 30x,40x 错误不需要记录到日志
+                Throwable cx = ex.getCause( );
+                if (cx instanceof HongsCause) {
+                    int   st = ( (HongsCause) cx).getState();
+                    if (300 <= st  &&  st <= 499) {
+                        throw  ex;
+                    }
+                }
+                if (ex instanceof HongsCause) {
+                    int   st = ( (HongsCause) ex).getState();
+                    if (300 <= st  &&  st <= 499) {
+                        throw  ex;
+                    }
+                }
+
                 CoreLogger.error(ex);
                 throw ex;
             } catch (Error er) {

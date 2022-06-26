@@ -670,7 +670,7 @@ public final class Synt {
     /**
      * 尝试转为 List
      * 尝试通过 JSON 解析或逗号分隔
-     * @param val
+     * @param txt
      * @return
      */
     public static List toList(String txt) {

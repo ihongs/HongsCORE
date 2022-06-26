@@ -752,15 +752,15 @@ public final class Synt {
         }
         // 有非字符串则逐个转换
         Set set = asSet(val);
-        try {
+        DO: {
             if (set != null) for (Object vxl : set /**/ ) {
             if (vxl != null && ! (vxl instanceof String)) {
-                throw  new  ClassCastException();
+                break DO;
             }}
             return set;
-        } catch ( ClassCastException e ) {
-            return filter(set, (v, k, i) -> asString (v));
         }
+            set = filter(set, (v, k, i) -> asString( v ));
+            return set;
     }
 
     /**
@@ -788,15 +788,15 @@ public final class Synt {
         }
         // 有非字符串则逐个转换
         Set set = asSet(val);
-        try {
+        DO: {
             if (set != null) for (Object vxl : set /**/ ) {
             if (vxl != null && ! (vxl instanceof String)) {
-                throw  new  ClassCastException();
+                break DO;
             }}
             return set;
-        } catch ( ClassCastException e ) {
-            return filter(set, (v, k, i) -> asString (v));
         }
+            set = filter(set, (v, k, i) -> asString( v ));
+            return set;
     }
 
     /**

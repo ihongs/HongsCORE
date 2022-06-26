@@ -750,7 +750,17 @@ public final class Synt {
             List   b = Arrays.asList(a);
             return new LinkedHashSet(b);
         }
-        return asSet(val);
+        // 有非字符串则逐个转换
+        Set set = asSet(val);
+        try {
+            if (set != null) for (Object vxl : set /**/ ) {
+            if (vxl != null && ! (vxl instanceof String)) {
+                throw  new  ClassCastException();
+            }}
+            return set;
+        } catch ( ClassCastException e ) {
+            return filter(set, (v, k, i) -> asString (v));
+        }
     }
 
     /**
@@ -776,7 +786,17 @@ public final class Synt {
             List   b = Arrays.asList(a);
             return new LinkedHashSet(b);
         }
-        return asSet(val);
+        // 有非字符串则逐个转换
+        Set set = asSet(val);
+        try {
+            if (set != null) for (Object vxl : set /**/ ) {
+            if (vxl != null && ! (vxl instanceof String)) {
+                throw  new  ClassCastException();
+            }}
+            return set;
+        } catch ( ClassCastException e ) {
+            return filter(set, (v, k, i) -> asString (v));
+        }
     }
 
     /**

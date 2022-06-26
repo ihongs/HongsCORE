@@ -44,4 +44,16 @@ public class TestUtilSynt extends TestCase {
         assertEquals(Synt.compare("a" , null, true ), -1);
     }
 
+    @Test
+    public void testToTerms() {
+        assertEquals(
+            Synt.toTerms(Synt.setOf(1, "a", "b", "c")),
+            Synt.toTerms(Synt.setOf(1, "a", Synt.setOf("b", "c"), Synt.mapOf("b", "c")))
+        );
+        assertEquals(
+            Synt.toTerms(Synt.setOf(1, "a", "b", "c")),
+            Synt.toWords(Synt.setOf(1, "a", Synt.setOf("b", "c"), Synt.mapOf("b", "c")))
+        );
+    }
+
 }

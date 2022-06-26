@@ -60,7 +60,7 @@ public class DBDeff
     }
     catch (HongsException ex)
     {
-      sdb.revert();
+      sdb.cancel();
       throw ex;
     }
   }

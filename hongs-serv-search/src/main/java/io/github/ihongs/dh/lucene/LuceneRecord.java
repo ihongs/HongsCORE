@@ -1595,7 +1595,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             try {
                 commit();
             } catch (Throwable e) {
-                revert();
+                cancel();
                 throw e ;
             }
             } catch (Throwable e) {
@@ -1639,7 +1639,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      * 回滚操作
      */
     @Override
-    public void revert() {
+    public void cancel() {
         REFLUX_MODE = false;
         if (writes.isEmpty()) {
             return;

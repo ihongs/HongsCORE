@@ -1022,8 +1022,8 @@ public class Data extends SearchEntity {
     }
 
     @Override
-    public void revert() {
-        super.revert();
+    public void cancel() {
+        super.cancel();
         setIds.clear();
         delIds.clear();
     }

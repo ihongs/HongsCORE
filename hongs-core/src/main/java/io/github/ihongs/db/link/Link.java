@@ -162,7 +162,7 @@ abstract public class Link
    * 事务回滚
    */
   @Override
-  public void revert()
+  public void cancel()
   {
     try {
         if (connection != null

@@ -57,7 +57,7 @@ public class TableDeff
     }
     catch (HongsException ex)
     {
-      sdb.revert();
+      sdb.cancel();
       throw ex;
     }
   }

@@ -10,6 +10,6 @@ public interface IReflux {
 
     public void commit();
 
-    public void revert();
+    public void cancel();
 
 }

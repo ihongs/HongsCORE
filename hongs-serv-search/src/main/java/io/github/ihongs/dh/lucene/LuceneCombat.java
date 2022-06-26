@@ -60,7 +60,7 @@ public class LuceneCombat {
             so.commit( );
         }
         catch (HongsException ex) {
-            so.revert( );
+            so.cancel( );
             throw ex;
         }
         finally {
@@ -92,7 +92,7 @@ public class LuceneCombat {
             so.commit( );
         }
         catch (HongsException ex) {
-            so.revert( );
+            so.cancel( );
             throw ex;
         }
         finally {
@@ -129,7 +129,7 @@ public class LuceneCombat {
             so.commit( );
         }
         catch (HongsException ex) {
-            so.revert( );
+            so.cancel( );
             throw ex;
         }
         finally {

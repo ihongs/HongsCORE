@@ -73,7 +73,7 @@ public final class CommitRunner {
                 // 回滚
                 for(Object o : crux.values().toArray()) {
                     if (o instanceof IReflux) {
-                        ((IReflux) o).revert();
+                        ((IReflux) o).cancel();
                     }
                 }
 

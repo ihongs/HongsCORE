@@ -46,7 +46,7 @@ public class UserCombat {
             uproot(uid , uids);
             db.commit();
         } catch (HongsException ex) {
-            db.revert();
+            db.cancel();
             throw ex;
         }
     }

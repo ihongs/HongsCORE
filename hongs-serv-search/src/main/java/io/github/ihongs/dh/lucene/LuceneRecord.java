@@ -255,8 +255,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
         Loop roll = search(rd, bn, rn);
 
-        long rc = (long) roll.hits(/* total rows */);
-        long pc = (long) Math.ceil((double) rc / rn);
+        long rc =        roll.tots(); // real rows
+        long vc = (long) roll.hits(); // view rows
+        long pc = (long) Math.ceil((double) vc / rn);
         int  st = rc > bn ? 1 : 0;
 
         Map  resp = new HashMap();

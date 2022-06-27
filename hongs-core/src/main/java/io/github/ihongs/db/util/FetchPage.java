@@ -205,14 +205,17 @@ public final class FetchPage
     Map row  = gotLink().fetchOne(sql, params);
     if (row != null && ! row.isEmpty())
     {
-      long rc, pc;
+      long rc, vc, pc;
       Object cc = row.get("__count__");
       if (cc instanceof Number) {
           rc = ((Number) cc).longValue ( );
       } else {
           rc = Long.valueOf(cc.toString());
       }
-      pc = (long) Math.ceil((double) rc / rows);
+      // 规避查询总数超两亿的问题
+      vc = rc < Integer.MAX_VALUE
+         ? rc : Integer.MAX_VALUE;
+      pc = (long) Math.ceil((double) vc / rows);
 
       /**
        * 查得数量与限制数量一致

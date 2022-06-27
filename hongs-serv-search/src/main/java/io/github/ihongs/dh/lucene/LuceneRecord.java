@@ -255,7 +255,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
         Loop roll = search(rd, bn, rn);
 
-        long rc = (long) roll.leng(/* total rows */);
+        long rc = (long) roll.hits(/* total rows */);
         long pc = (long) Math.ceil((double) rc / rn);
         int  st = rc > bn ? 1 : 0;
 
@@ -2070,10 +2070,6 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 t = false;
             } else {
                 t = true ;
-                // 最多 2G
-                if (b > Integer.MAX_VALUE - l) {
-                    b = Integer.MAX_VALUE - l;
-                }
             }
 
             this.that = that;
@@ -2154,9 +2150,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
          * 获取单次数量
          * @return
          */
-        public int size() {
+        public int  size() {
             if (docs == null) {
-                hasNext();
+                hasNext ();
             }
             int L;
             if (t) {
@@ -2171,9 +2167,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
          * 获取命中总数
          * @return
          */
-        public int hits() {
+        public int  hits() {
             if (docs == null) {
-                hasNext();
+                hasNext ();
             }
             // 最多 2G
             return H < Integer.MAX_VALUE
@@ -2184,9 +2180,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
          * 真实命中总数
          * @return
          */
-        public long leng() {
+        public long tots() {
             if (docs == null) {
-                hasNext();
+                hasNext ();
             }
             return H ;
         }

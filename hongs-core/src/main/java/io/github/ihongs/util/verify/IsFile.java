@@ -13,7 +13,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.net.URLDecoder;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -218,7 +218,7 @@ public class IsFile extends Rule {
         } else
         if (Synt.declare(getParam("drop-origin"), false)) {
             try {
-                if (! Files.isSameFile(Path.of(path), Path.of(hp[1]))) {
+                if (! Files.isSameFile(Paths.get(path), Paths.get(hp[1]))) {
                       new File ( path ).delete();
                 }
             } catch (IOException e) {
@@ -275,7 +275,7 @@ public class IsFile extends Rule {
                      d.mkdir ();
                 }
 
-                Files.createSymbolicLink(Path.of(path), Path.of(dist));
+                Files.createSymbolicLink(Paths.get(path), Paths.get(dist));
             }
             catch (StringIndexOutOfBoundsException ex) {
                 throw new HongsExemption("Wrong path/href setting");

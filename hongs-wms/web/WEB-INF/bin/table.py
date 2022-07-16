@@ -22,13 +22,13 @@ def hsFills(fs):
                 fv = ', '.join(fv)
             if  fv is None:
                 fv = ''
-            fv = str(fv).strip()
+            fv = str(fv).strip(  )
             ra . append (fv)
         sh.append(ra)
     return fil
 
 def hsFetch(fv, ks, i=0):
-    fv = fv.get(ks[i])
+    fv = fv.get(ks[ i ])
     if  fv is None:
         return fv
     if  len(ks) == i + 1:

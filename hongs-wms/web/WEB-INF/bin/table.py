@@ -15,16 +15,33 @@ def hsFills(fs):
     def fil(sh, row):
         ra = []
         for fn in fs:
-            fv = row.get(fn, '')
-            if fv is None:
+            fv = hsFetch (row, fn.split('.'))
+            if isinstance(fv,dict):
+                fv = fv.values(  )
+            if isinstance(fv,list):
+                fv = ', '.join(fv)
+            if  fv is None:
                 fv = ''
-            if isinstance(fv, list):
-                fv = ', '.join (fv)
             fv = str(fv).strip()
             ra . append (fv)
-    #   print('\t'.join (ra) )
         sh.append(ra)
     return fil
+
+def hsFetch(fv, ks, i=0):
+    fv = fv.get(ks[i])
+    if  fv is None:
+        return fv
+    if  len(ks) == i + 1:
+        return fv
+    if  isinstance(fv, dict):
+        return   hsFetch(fv, ks, i + 1)
+    if  isinstance(fv, list):
+        fa = [ ]
+        for fx in fv:
+            fx = hsFetch(fx, ks, i + 1)
+            fa . append (fx)
+        return fa
+    return  fv
 
 def hsTable(sh, url, cok, fil, prt=False):
     pn  = 0

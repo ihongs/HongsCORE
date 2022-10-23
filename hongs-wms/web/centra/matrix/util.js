@@ -750,6 +750,16 @@ $.fn.hsCols = function() {
     });
 };
 
+// 快捷拷贝表单配置
+H$.getFormCols = function() {
+    var conf = [];
+    gainFlds(conf, $(".target-area"), $(".widget-form"));
+    return   conf;
+};
+H$.setFormCols = function(conf) {
+    drawFlds(conf, $(".target-area"), $(".widget-form"));
+};
+
 //** 单元和表单互移动 **/
 
 function hsFormMove(treebox, listbox) {

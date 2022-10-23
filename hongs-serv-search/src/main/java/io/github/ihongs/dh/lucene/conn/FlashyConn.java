@@ -105,12 +105,12 @@ public class FlashyConn implements Conn, Core.Singleton {
             iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
             iwc.setCommitOnClose(true);
 
+            boolean   dix = new File(dbpath).exists();
             Directory dir = FSDirectory.open(Paths.get(dbpath));
 
             writer = new IndexWriter(dir, iwc);
-            if  (  ! new File(dbpath).exists()) {
-                writer.commit();
-            }
+
+            if (! dix) writer.commit(); // 初始化目录, 规避首次读报错
 
             CoreLogger.trace("Start the lucene writer for {}", dbname);
 

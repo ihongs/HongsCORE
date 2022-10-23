@@ -97,12 +97,12 @@ public class DirectConn implements Conn {
             iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
             iwc.setCommitOnClose(true);
 
+            boolean   dix = new File(dbpath).exists();
             Directory dir = FSDirectory.open(Paths.get(dbpath));
 
             writer = new IndexWriter(dir, iwc);
-            if ( ! new File(dbpath).exists() ) {
-                writer.commit();
-            }
+
+            if (! dix) writer.commit(); // 初始化目录, 规避首次读报错
 
             CoreLogger.trace("Start the lucene writer for {}", dbname);
 
@@ -131,7 +131,7 @@ public class DirectConn implements Conn {
 
             // 目录不存在需开写并提交从而建立索引
             // 否则会抛出: IndexNotFoundException
-            if ( ! new File(dbpath).exists() ) {
+            if (! new File(dbpath).exists()) {
                 getWriter ( );
             }
 

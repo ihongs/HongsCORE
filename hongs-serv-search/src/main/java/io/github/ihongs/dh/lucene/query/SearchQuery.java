@@ -80,7 +80,7 @@ public class SearchQuery extends StringQuery {
 
         // 是否转义
         if (des == null || !des) {
-            s = "\"" + QueryParser.escape(s) + "\"";
+            s = s.isEmpty() ? "[* TO *]" : "\"" + QueryParser.escape(s) + "\""; // 空串查不了
         }
 
         // 词间关系

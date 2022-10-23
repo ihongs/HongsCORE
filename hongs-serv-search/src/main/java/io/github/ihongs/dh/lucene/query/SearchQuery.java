@@ -70,20 +70,17 @@ public class SearchQuery extends StringQuery {
 
     @Override
     public Query wdr(String k, Object v) {
-        if (null  ==  v ) {
+        if (null == v) {
             throw new NullPointerException("Query for "+k+" must be string, but null");
         }
-        if ("".equals(v)) {
-            throw new NullPointerException("Query for "+k+" can not be empty string" );
-        }
+
+        String s = v.toString( ).trim( );
 
         QueryParser qp = new QueryParser("$" + k, ana != null ? ana : new StandardAnalyzer());
 
-        String s = v.toString( );
-
         // 是否转义
         if (des == null || !des) {
-            s = QueryParser.escape(s);
+            s = "\"" + QueryParser.escape(s) + "\"";
         }
 
         // 词间关系

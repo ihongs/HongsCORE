@@ -41,7 +41,7 @@
     String baseHref = Core.SERV_PATH;
 %>
 <h2><%=_locale.translate("fore.manual.title", _title)%></h2>
-<div id="<%=_pageId%>" class="swap-info board board-end">
+<div id="<%=_pageId%>" class="<%=_pageId%> swap-info board board-end">
     <div class="row">
     <div class="col-xs-6">
         <div class="table-responsive-revised">

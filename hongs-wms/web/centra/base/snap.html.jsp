@@ -1,11 +1,12 @@
 <%@page import="io.github.ihongs.Cnst"%>
+<%@page extends="io.github.ihongs.jsp.Pagelet"%>
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
-<%@include file="_base_.jsp"%>
+<%@include file="_boot_.jsp"%>
 <%
-    String _pageId = ($module + "-" + $entity + "-snap").replace('/', '-');
+    String _pageId = (_module + "-" + _entity + "-snap").replace('/', '-');
 %>
-<h2><%=$locale.translate("fore.record.title", $title)%></h2>
-<div id="<%=_pageId%>" class="snap-list board board-end">
+<h2><%=_locale.translate("fore.record.title", _title)%></h2>
+<div id="<%=_pageId%>" class="<%=_pageId%> snap-list board board-end">
     <form class="findbox">
         <ul class="nav nav-tabs board clearfix">
             <li class="active">
@@ -93,7 +94,7 @@
     context.find("[name='ctime.<%=Cnst.LE_REL%>']").val(hsGetSeria(loadpms, "ctime_le"));
 
     var listobj = context.hsList({
-        loadUrl : "<%=$module%>/<%=$entity%>/reveal.act?<%=Cnst.ID_KEY%>.=$<%=Cnst.ID_KEY%>&<%=Cnst.OB_KEY%>=ctime!,etime&<%=Cnst.RB_KEY%>=data!,user.*&user=$user&meno=$meno",
+        loadUrl : "<%=_module%>/<%=_entity%>/reveal.act?<%=Cnst.ID_KEY%>.=$<%=Cnst.ID_KEY%>&<%=Cnst.OB_KEY%>=ctime!,etime&<%=Cnst.RB_KEY%>=data!,user.*&user=$user&meno=$meno",
         send    : hsSendWithMemo,
         _fill_stat: function(td , stat) {
             var st = statmap['' + stat];
@@ -122,7 +123,7 @@
     }
 
     // 权限检查
-    if (! hsChkUri("<%=$module%>/<%=$entity%>/revert.act")) {
+    if (! hsChkUri("<%=_module%>/<%=_entity%>/revert.act")) {
         var btn = context.find(".revert");
         var spn = btn.siblings(  "span" );
         btn.remove();
@@ -135,7 +136,7 @@
         var id =      tr.data(   "id");
         var ct =      tr.data("ctime");
         if (0  ==     tr.data("etime")) ct = 0;
-        listobj.send (tr, ms, "<%=$module%>/<%=$entity%>/revert.act"    , {id: id, rtime: ct});
+        listobj.send (tr, ms, "<%=_module%>/<%=_entity%>/revert.act"    , {id: id, rtime: ct});
     });
 
     context.on("click", ".review", function() {
@@ -143,7 +144,7 @@
         var tr = $(this).closest("tr");
         var id =      tr.data(   "id");
         var ct =      tr.data("ctime");
-        listobj.open (tr, lo, "<%=$module%>/<%=$entity%>/info_snap.html", {id: id, ctime: ct});
+        listobj.open (tr, lo, "<%=_module%>/<%=_entity%>/info_snap.html", {id: id, ctime: ct});
     });
 
     context.on("click", ".same-r", function() {
@@ -153,7 +154,7 @@
         var id =    tr.data(     "id");
         var ge = context.find("[name='ctime.<%=Cnst.GE_REL%>']").val();
         var le = context.find("[name='ctime.<%=Cnst.LE_REL%>']").val();
-        lo.hsOpen ("<%=$module%>/<%=$entity%>/snap.html", { id : id, ctime_ge: ge, ctime_le: le}, function() { $(this).hsL10n(tt); });
+        lo.hsOpen ("<%=_module%>/<%=_entity%>/snap.html", { id : id, ctime_ge: ge, ctime_le: le}, function() { $(this).hsL10n(tt); });
     });
 
     context.on("click", ".same-u", function() {
@@ -163,7 +164,7 @@
         var id =    tr.data("user_id");
         var ge = context.find("[name='ctime.<%=Cnst.GE_REL%>']").val();
         var le = context.find("[name='ctime.<%=Cnst.LE_REL%>']").val();
-        lo.hsOpen ("<%=$module%>/<%=$entity%>/snap.html", {user: id, ctime_ge: ge, ctime_le: le}, function() { $(this).hsL10n(tt); });
+        lo.hsOpen ("<%=_module%>/<%=_entity%>/snap.html", {user: id, ctime_ge: ge, ctime_le: le}, function() { $(this).hsL10n(tt); });
     });
 
     context.on("click", ".same-m", function() {
@@ -173,7 +174,7 @@
         var id =    tr.data(   "meno");
         var ge = context.find("[name='ctime.<%=Cnst.GE_REL%>']").val();
         var le = context.find("[name='ctime.<%=Cnst.LE_REL%>']").val();
-        lo.hsOpen ("<%=$module%>/<%=$entity%>/snap.html", {meno: id, ctime_ge: ge, ctime_le: le}, function() { $(this).hsL10n(tt); });
+        lo.hsOpen ("<%=_module%>/<%=_entity%>/snap.html", {meno: id, ctime_ge: ge, ctime_le: le}, function() { $(this).hsL10n(tt); });
     });
 
     context.on("click", ".nav li", function() {

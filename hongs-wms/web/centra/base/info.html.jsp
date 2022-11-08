@@ -253,9 +253,8 @@
 
     hsRequires("<%=_module%>/<%=_entity%>/defines.js", function() {
         // 外部定制
-        if (window["<%=_funcId%>"]) {
-            window["<%=_funcId%>"](context, formobj);
-        }
+        Promise.resolve(window["<%=_funcId%>"] && window["<%=_funcId%>"](context, formobj))
+               .then(function() {
 
         // 外部限制
         $.each(denycss ? denycss.split(",") : []
@@ -263,8 +262,7 @@
             if (/^item\./.test(n)) {
                 n = ".form-group[data-name='"+n.substring(5)+"']";
                 formbox.find(n).remove();
-            } else
-            {
+            } else {
                 context.find(n).remove();
             }
         });
@@ -274,6 +272,8 @@
 
         // 加载数据
         formobj.load();
+
+        }); // End Promise
     });
-})( jQuery );
+})(jQuery);
 </script>

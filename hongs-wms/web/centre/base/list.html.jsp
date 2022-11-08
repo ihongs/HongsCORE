@@ -341,9 +341,8 @@
 
     hsRequires("<%=_module%>/<%=_entity%>/defines.js", function() {
         // 外部定制
-        if (window["<%=_funcId%>"]) {
-            window["<%=_funcId%>"](context, listobj, filtobj, statobj);
-        }
+        Promise.resolve(window["<%=_funcId%>"] && window["<%=_funcId%>"](context, listobj, filtobj, statobj))
+               .then(function() {
 
         // 权限控制
         $.each({"create":".create", "update":".update", "delete":".delete"}
@@ -383,6 +382,8 @@
 
         // 加载数据
         listobj.load(null, findbox);
+
+        )); // End Promise
     });
 })(jQuery);
 </script>

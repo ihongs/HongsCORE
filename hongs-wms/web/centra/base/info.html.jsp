@@ -247,7 +247,7 @@
     });
     context.on("click", ".newer,.older", function( ) {
         var loadbox = formobj.loadBox;
-        loadbox.hsLoad("<%=_module%>/<%=_entity%>/info_snap.html", $(this).data());
+        loadbox.hsLoad(loadbox.data("href"), $(this).data());
     });
     <%} /*End If */%>
 

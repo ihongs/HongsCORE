@@ -1,6 +1,7 @@
 package io.github.ihongs.dh.lucene.query;
 
 import io.github.ihongs.HongsExemption;
+import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
 import java.util.Map;
 import org.apache.lucene.analysis.Analyzer;
@@ -74,14 +75,20 @@ public class SearchQuery extends StringQuery {
             throw new NullPointerException("Query for "+k+" must be string, but null");
         }
 
-        String s = v.toString( ).trim( );
-
-        QueryParser qp = new QueryParser("$" + k, ana != null ? ana : new StandardAnalyzer());
+        String  s = v.toString().trim();
 
         // 是否转义
         if (des == null || !des) {
-            s = s.isEmpty() ? "[* TO *]" : "\"" + QueryParser.escape(s) + "\""; // 空串查全部
+            if (s . isEmpty( ) ) {
+                // 空串查全部
+                s = "[* TO *]" ;
+            } else {
+                // 拆分关键词
+                s = "\""+Syno.concat("\" \"", Synt.toWords(s))+"\"" ;
+            }
         }
+
+        QueryParser qp = new QueryParser("$" + k, ana != null ? ana : new StandardAnalyzer());
 
         // 词间关系
         if (dor == null || !dor) {

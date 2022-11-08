@@ -88,7 +88,7 @@ public final class Synt {
     /**
      * 拆分字符: 空字符 或 ,;|.:!?&# 等及全角的标点
      */
-    private static final Pattern WEXP = Pattern.compile("\\s*[\\p{Space}\\p{Punct}\\u3000-\\u303F&&[^\\-+_]]\\s*");
+    private static final Pattern WEXP = Pattern.compile("[\\p{Space}\\p{Punct}\\u3000-\\u303F]+"); // &&[^\\-+_] 原排除
 
     /**
      * 区间参数: [min,max] (min,max) 类似数学表达式

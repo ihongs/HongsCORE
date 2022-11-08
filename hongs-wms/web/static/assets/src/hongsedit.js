@@ -53,16 +53,16 @@ function setInfoItems(formbox, loadbox) {
 
 //** 一般输入组件 **/
 
+function forSuggInput(func) {
+    hsRequires([
+        "static/addons/bootstrap-suggest/suggest.min.js"
+    ] , func);
+}
+
 function forDateInput(func) {
     hsRequires([
         "static/addons/bootstrap-datetimepicker/css/datetimepicker.min.css",
         "static/addons/bootstrap-datetimepicker/datetimepicker.min.js"
-    ] , func);
-}
-
-function forSuggInput(func) {
-    hsRequires([
-        "static/addons/bootstrap-suggest/suggest.min.js"
     ] , func);
 }
 

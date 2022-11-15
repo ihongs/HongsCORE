@@ -548,7 +548,7 @@ public class ActionHelper implements Cloneable
 
   /**
    * 设置容器属性
-   * 当 value 为 null 时 name 对应的会话属性将删除
+   * 当 value 为 null 时 name 对应的属性将删除
    * @param name
    * @param value
    */
@@ -592,7 +592,7 @@ public class ActionHelper implements Cloneable
 
   /**
    * 设置会话取值
-   * 当 value 为 null 时 name 对应的会话属性将删除
+   * 当 value 为 null 时 name 对应的数据将删除
    * @param name
    * @param value
    */
@@ -619,6 +619,7 @@ public class ActionHelper implements Cloneable
 
   /**
    * 获取跟踪参数
+   * @return 当前取值, 没有则为 null
    * @param name
    * @return
    */
@@ -647,6 +648,7 @@ public class ActionHelper implements Cloneable
 
   /**
    * 设置跟踪参数
+   * 当 value 为 null 时 name 对应的数据将删除
    * @param name
    * @param value
    */

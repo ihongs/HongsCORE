@@ -184,7 +184,7 @@
                     <div class="form-control-static" data-fn="<%=name%>" data-ft="<%=kind%>"></div>
                 <%} /*End If */%>
                     <%
-                        hist = Synt.declare(info.get("dint") , hist != null ? hist : "");
+                        hist = Synt.declare(info.get("hist") , hist != null ? hist : "");
                     %>
                     <div class="help-block text-muted form-control-static"><%=hist%></div>
                 </div>

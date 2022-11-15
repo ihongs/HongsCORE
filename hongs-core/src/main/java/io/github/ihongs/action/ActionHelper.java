@@ -884,11 +884,8 @@ public class ActionHelper implements Cloneable
         if (null != rs) {
             rs.setStatus(ero);
         }
-        if (2 == (2 &Core.DEBUG)) {
-            CoreLogger.warn (ta.getMessage());
-        } else
         if (4 == (4 &Core.DEBUG)) {
-            CoreLogger.debug(ta.getMessage());
+            CoreLogger.debug(ta.toString());
         }
     } else
     // 内部错误

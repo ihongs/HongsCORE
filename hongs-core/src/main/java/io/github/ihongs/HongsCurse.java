@@ -31,7 +31,7 @@ public final class HongsCurse {
     HongsCurse (Throwable cause, int errno, String error, Object[] cases) {
         // 从描述里提取配置名称
         if (error != null
-        &&  error.length( ) >= 1
+        &&  error.length( ) >= 2
         &&  error.length( ) <= 128
         &&  error.charAt(0) == '@') {
             int  p = error.indexOf(":");

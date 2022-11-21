@@ -94,7 +94,7 @@ extends Grade {
                 req.put("id",set);
             } else
             if (set.contains(pid) == false) {
-                throw new HongsException(400, "master:master.unit.area.error");
+                throw new HongsException(400, "@master:master.unit.area.error");
             }
             }
         }
@@ -141,7 +141,7 @@ extends Grade {
                 List list = Synt.asList(data.get( "roles" ));
                 AuthKit.cleanUnitRoles (list, id);
             //  if ( list.isEmpty() ) {
-            //      throw new HongsException(400, "master.master.user.unit.error");
+            //      throw new HongsException(400, "@master:master.user.unit.error");
             //  }
                 data.put("roles", list);
             }
@@ -155,7 +155,7 @@ extends Grade {
                 .limit (1)
                 .getAll( );
             if (!list.isEmpty() ) {
-                throw new HongsException(400, "master:master.unit.have.units");
+                throw new HongsException(400, "@master:master.unit.have.units");
             }
 
             // 删除限制, 如果部门下有用户则中止当前操作
@@ -164,7 +164,7 @@ extends Grade {
                 .limit (1)
                 .getAll( );
             if (!list.isEmpty() ) {
-                throw new HongsException(400, "master:master.unit.have.users");
+                throw new HongsException(400, "@master:master.unit.have.users");
             }
         }
 
@@ -186,7 +186,7 @@ extends Grade {
                 return;
             }
 
-            throw new HongsException(400, "master:master.unit.area.error");
+            throw new HongsException(400, "@master:master.unit.area.error");
         }
     }
 

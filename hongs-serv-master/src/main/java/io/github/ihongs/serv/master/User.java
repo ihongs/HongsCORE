@@ -97,7 +97,7 @@ extends Model {
                     .filter ("`units2`.`unit_id` IN (?)" , set );
             } else
             if (set.contains(pid) == false) {
-                throw new HongsException(400, "master:master.user.area.error");
+                throw new HongsException(400, "@master:master.user.area.error");
             }
             }
         }
@@ -167,7 +167,7 @@ extends Model {
                 List list = Synt.asList(data.get( "roles" ));
                 AuthKit.cleanUserRoles (list, id);
             //  if ( list.isEmpty() ) {
-            //      throw new HongsException(400, "master:master.user.role.error");
+            //      throw new HongsException(400, "@master:master.user.role.error");
             //  }
                 data.put("roles", list);
             }
@@ -178,7 +178,7 @@ extends Model {
                 List list = Synt.asList(data.get( "units" ));
                 AuthKit.cleanUserUnits (list, id);
                 if ( list.isEmpty() ) {
-                    throw new HongsException(400, "master:master.user.unit.error");
+                    throw new HongsException(400, "@master:master.user.unit.error");
                 }
                 data.put("units", list);
             }
@@ -200,7 +200,7 @@ extends Model {
                 return;
             }}
 
-            throw new HongsException(400, "master:master.user.area.error");
+            throw new HongsException(400, "@master:master.user.area.error");
         }
     }
 

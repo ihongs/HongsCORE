@@ -32,16 +32,16 @@ public final class HongsCurse {
     HongsCurse (Throwable cause, int errno, String error, Object[] cases) {
         // 从描述里提取配置名称
         if (error != null
-        &&  error.length() >= 0x1
-        &&  error.length() <= 128
-        &&  error.matches("^[0-9A-Za-z_.:/]+$")) {
-            int  p  =  error. indexOf (":");
-            if ( p  >  0 ) {
-                conf = error.substring(0,p);
+        &&  error.length( ) >= 1
+        &&  error.length( ) <= 128
+        &&  error.charAt(0) == '@') {
+            int  p = error.indexOf(":");
+            if ( p > 0 ) {
                 mark = error.substring(1+p);
+                conf = error.substring(1,p);
             } else {
+                mark = error.substring(1  );
                 conf = "default";
-                mark = error;
             }
         } else {
                 conf = "default";

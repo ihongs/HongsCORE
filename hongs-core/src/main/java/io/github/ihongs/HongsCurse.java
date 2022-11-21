@@ -5,10 +5,9 @@ import io.github.ihongs.util.Syno;
 /**
  * 异常本地化工具
  *
- * 当 error 长在 128 以内,
- * 且由字母、数字、点、冒号、下划线组成时,
+ * 当 error 长在 128 以内, 且以 @ 开头,
  * 表示将从对应的配置文件和语言资源里读取,
- * 如 default:my.error 为默认配置自定语句,
+ * 如 @default:my.term 为默认配置自定语句,
  * 若省略配置名称前缀则会默认设为 default.
  *
  * @author Hongs

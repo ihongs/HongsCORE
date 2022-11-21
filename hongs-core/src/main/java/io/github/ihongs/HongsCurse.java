@@ -34,7 +34,7 @@ public final class HongsCurse {
         if (error != null
         &&  error.length() >= 0x1
         &&  error.length() <= 128
-        &&  error.matches("^[0-9A-Za-z_.:]+$")) {
+        &&  error.matches("^[0-9A-Za-z_.:/]+$")) {
             int  p  =  error. indexOf (":");
             if ( p  >  0 ) {
                 conf = error.substring(0,p);

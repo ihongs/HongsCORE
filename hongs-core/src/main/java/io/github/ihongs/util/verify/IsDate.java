@@ -60,13 +60,13 @@ public class IsDate extends Rule {
         if (!"".equals(min)) {
             long tim = getTime(min, now);
             if ( tim > day.getTime( ) ) {
-                throw new Wrong("fore.form.lt.mindate", new SimpleDateFormat(fwt).format(new Date(tim)));
+                throw new Wrong("@fore.form.lt.mindate", new SimpleDateFormat(fwt).format(new Date(tim)));
             }
         }
         if (!"".equals(max)) {
             long tim = getTime(max, now);
             if ( tim < day.getTime( ) ) {
-                throw new Wrong("fore.form.gt.maxdate", new SimpleDateFormat(fwt).format(new Date(tim)));
+                throw new Wrong("@fore.form.gt.maxdate", new SimpleDateFormat(fwt).format(new Date(tim)));
             }
         }
 
@@ -143,7 +143,7 @@ public class IsDate extends Rule {
             }
         }
 
-        throw new Wrong("fore.form.is.not."+ typa);
+        throw new Wrong("@fore.form.is.not."+ typa);
     }
 
     private long getTime(String tim, long now) {

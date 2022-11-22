@@ -204,7 +204,7 @@ public class IsFile extends Rule {
         // 大小检查, 超限报错
         long max = getParam("size" , Long.MAX_VALUE);
         if ( max < size ) {
-            throw new Wrong("core.file.size.invalid", String.valueOf(max));
+            throw new Wrong("@core.file.size.invalid", String.valueOf(max));
         }
 
         /**
@@ -234,10 +234,10 @@ public class IsFile extends Rule {
         if (getParam("keep-naming", false)) {
             // 检查外部文件名是否合法
             if (name.getBytes( ).length > 256 ) {
-                throw new Wrong("fore.file.name.toolong", name);
+                throw new Wrong("@fore.file.name.toolong", name);
             }
             if (NAME_PATT.matcher(name).find()) {
-                throw new Wrong("fore.file.name.illegal", name);
+                throw new Wrong("@fore.file.name.illegal", name);
             }
 
             try {

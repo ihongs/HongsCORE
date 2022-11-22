@@ -35,7 +35,7 @@ public class Ordinary extends Rule {
          */
         if (value instanceof Map) {
             try {
-                Object type = getParam ("__type__");
+                Object type = getParam("__type__");
                 if ("json".equals(type)
                 ||"object".equals(type)) {
                     return value;
@@ -48,7 +48,7 @@ public class Ordinary extends Rule {
                 throw ex.toExemption(  );
             }
 
-            throw new Wrong ("fore.form.ordinary");
+            throw new Wrong("@fore.form.ordinary");
         }
 
         return  STAND;

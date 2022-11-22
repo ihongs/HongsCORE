@@ -56,11 +56,11 @@ public class IsString extends Rule {
         // 长度限制
         len = Synt.declare(getParam("minlength"), 0);
         if (len > 0 && len > str.length()) {
-            throw new Wrong("fore.form.lt.minlength", Integer.toString(len), Integer.toString(str.length()));
+            throw new Wrong("@fore.form.lt.minlength", Integer.toString(len), Integer.toString(str.length()));
         }
         len = Synt.declare(getParam("maxlength"), 0);
         if (len > 0 && len < str.length()) {
-            throw new Wrong("fore.form.gt.maxlength", Integer.toString(len), Integer.toString(str.length()));
+            throw new Wrong("@fore.form.gt.maxlength", Integer.toString(len), Integer.toString(str.length()));
         }
 
         if (str.length() == 0) {
@@ -80,11 +80,11 @@ public class IsString extends Rule {
             String patl = pats.get(patt);
             if (patl != null && patl.length() != 0) {
                 if (!Pattern.compile(patl).matcher(str).matches()) {
-                    throw new Wrong("fore.form.is.not."+patt);
+                    throw new Wrong ("@fore.form.is.not."+patt);
                 }
             } else {
                 if (!Pattern.compile(patt).matcher(str).matches()) {
-                    throw new Wrong("fore.form.is.not.match");
+                    throw new Wrong ("@fore.form.is.not.match");
                 }
             }
         } else
@@ -92,7 +92,7 @@ public class IsString extends Rule {
             String patl = pats.get(type);
             if (patl != null && patl.length() != 0) {
                 if (!Pattern.compile(patl).matcher(str).matches()) {
-                    throw new Wrong("fore.form.is.not."+type);
+                    throw new Wrong ("@fore.form.is.not."+type);
                 }
             }
         }

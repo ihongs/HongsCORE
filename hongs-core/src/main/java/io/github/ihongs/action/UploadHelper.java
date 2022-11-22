@@ -142,7 +142,7 @@ public class UploadHelper {
         if (this.allowKinds != null
         && !this.allowKinds.contains(kind)) {
             // 扩展名不对
-            throw new Wrong("core.file.kind.invalid", Syno.concat(",", this.allowKinds));
+            throw new Wrong("@core.file.kind.invalid", Syno.concat(",", this.allowKinds));
         }
 
         /**
@@ -163,7 +163,7 @@ public class UploadHelper {
         && !this.allowTypes.contains(type)
         && !this.allowTypes.contains(typa)) {
             // 文件类型不对
-            throw new Wrong("core.file.type.invalid", Syno.concat(",", this.allowTypes));
+            throw new Wrong("@core.file.type.invalid", Syno.concat(",", this.allowTypes));
         }
     }
 
@@ -386,7 +386,7 @@ public class UploadHelper {
                 }
             }
         } catch (IOException ex) {
-            throw new Wrong(ex, "fore.form.upload.failed");
+            throw new Wrong(ex, "@fore.form.upload.failed");
         }
 
         return file;
@@ -435,7 +435,7 @@ public class UploadHelper {
             return upload(part.getInputStream(), type, kind, lead);
         }
         catch ( IOException ex) {
-            throw new Wrong(ex, "fore.form.upload.failed");
+            throw new Wrong(ex, "@fore.form.upload.failed");
         }
     }
 
@@ -470,7 +470,7 @@ public class UploadHelper {
         }
 
         if (file.exists() == false) {
-            throw new Wrong("core.file.upload.not.exists");
+            throw new Wrong("@core.file.upload.not.exists");
         }
 
         /**
@@ -549,7 +549,7 @@ public class UploadHelper {
             if (name.startsWith(href)) {
                 lead = name.substring(href.length());
                 if (lead.contains("./" )) {
-                    throw new Wrong("core.file.upload.not.allows");
+                    throw new Wrong("@core.file.upload.not.allows");
                 }
                 name = path + lead;
                 break;
@@ -558,7 +558,7 @@ public class UploadHelper {
             if (name.startsWith(path)) {
                 lead = name.substring(path.length());
                 if (lead.contains("./" )) {
-                    throw new Wrong("core.file.upload.not.allows");
+                    throw new Wrong("@core.file.upload.not.allows");
                 }
             //  name = path + lead;
                 break;
@@ -568,7 +568,7 @@ public class UploadHelper {
 
             {
                 if (name.contains("./" )) {
-                    throw new Wrong("core.file.upload.not.allows");
+                    throw new Wrong("@core.file.upload.not.allows");
                 }
                 name = temp + name;
                 lead = getDigestName(new File(name));

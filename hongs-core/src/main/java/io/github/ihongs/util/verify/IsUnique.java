@@ -207,7 +207,7 @@ public class IsUnique extends Rule {
             }
         }
 
-        throw new Wrong("fore.form.is.not.unique");
+        throw new Wrong("@fore.form.is.not.unique");
     }
 
 }

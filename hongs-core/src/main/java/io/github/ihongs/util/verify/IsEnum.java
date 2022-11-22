@@ -41,8 +41,8 @@ public class IsEnum extends Rule {
         } catch (HongsException ex) {
             throw ex.toExemption( );
         }
-        if (! data.containsKey( value.toString() ) ) {
-            throw new Wrong("fore.form.not.in.enum");
+        if (! data.containsKey( value.toString( ) ) ) {
+            throw new Wrong("@fore.form.not.in.enum");
         }
 
         return  value;

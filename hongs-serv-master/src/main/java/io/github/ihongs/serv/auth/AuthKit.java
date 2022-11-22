@@ -243,7 +243,7 @@ public class AuthKit {
             // 锁定或系统账号
             if (stat <= 0) {
                 throw new Wrongs(Synt.mapOf("state" ,
-                      new Wrong ("master:core.sign.state.invalid")
+                      new Wrong ("@master:core.sign.state.invalid")
                 ));
             }
 

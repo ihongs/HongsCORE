@@ -47,18 +47,18 @@ public class IsNumber extends Rule {
                 num = Synt.declare(value, 0D);
             }
         } catch (ClassCastException er) {
-            throw new Wrong("fore.form.conv.to."+type+".failed");
+            throw new Wrong("@fore.form.conv.to."+type+".failed");
         }
 
         // 取值范围
         Double m;
         m = Synt.asDouble(getParam("min"));
         if (m != null && m > num.doubleValue()) {
-            throw new Wrong("fore.form.lt.min", Double.toString(m));
+            throw new Wrong("@fore.form.lt.min", Double.toString(m));
         }
         m = Synt.asDouble(getParam("max"));
         if (m != null && m < num.doubleValue()) {
-            throw new Wrong("fore.form.lt.max", Double.toString(m));
+            throw new Wrong("@fore.form.lt.max", Double.toString(m));
         }
 
         // 小数位数
@@ -68,7 +68,7 @@ public class IsNumber extends Rule {
             double n = num.doubleValue() - num.longValue();
             n  = n * Math.pow ( 10 , s );
             if ( n > (long) n ) {
-                throw new Wrong("fore.form.gt.scale", s.toString());
+                throw new Wrong("@fore.form.gt.scale", s.toString());
             }
         }
 

@@ -99,6 +99,6 @@ public class IsFork extends Rule {
             }
         }
 
-        throw new Wrong("fore.form.is.not.exists");
+        throw new Wrong("@fore.form.is.not.exists");
     }
 }

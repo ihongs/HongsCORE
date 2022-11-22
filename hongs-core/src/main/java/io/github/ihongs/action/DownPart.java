@@ -35,9 +35,9 @@ public class DownPart implements Part {
             this. href = href;
             this. conn = new URL(href).openConnection();
         } catch (MalformedURLException ex) {
-            throw new Wrong( ex, "core.file.url.has.error", href );
+            throw new Wrong( ex, "@core.file.url.has.error", href );
         } catch (IOException ex) {
-            throw new Wrong( ex, "core.file.url.get.error", href );
+            throw new Wrong( ex, "@core.file.url.get.error", href );
         }
     }
 

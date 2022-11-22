@@ -30,10 +30,10 @@ public class Capts extends Rule {
         try {
             // 人机校验
             if (cc.equals("") || !cc.equalsIgnoreCase( vs )) {
-                throw new Wrong("fore.capt.invalid");
+                throw new Wrong("@fore.capt.invalid");
             }
             if (ct + xt * 1000 < System.currentTimeMillis()) {
-                throw new Wrong("fore.capt.timeout");
+                throw new Wrong("@fore.capt.timeout");
             }
         }
         finally {

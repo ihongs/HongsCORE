@@ -79,7 +79,7 @@ public class Repeated extends Rule implements Rulx {
                 return  a;
             }
 
-            throw new Wrong ("fore.form.repeated");
+            throw new Wrong("@fore.form.repeated");
         }
 
         if (value instanceof Object [ ]) {
@@ -92,7 +92,7 @@ public class Repeated extends Rule implements Rulx {
             return value;
         }
 
-            throw new Wrong ("fore.form.repeated");
+            throw new Wrong("@fore.form.repeated");
     }
 
     /**
@@ -108,12 +108,12 @@ public class Repeated extends Rule implements Rulx {
         int n, c = value.size();
         n = Synt.declare(getParam("minrepeat"), 0);
         if (n != 0 && c < n) {
-            throw new Wrong("fore.form.lt.minrepeat",
+            throw new Wrong("@fore.form.lt.minrepeat",
                     String.valueOf(n), String.valueOf(c) );
         }
         n = Synt.declare(getParam("maxrepeat"), 0);
         if (n != 0 && c > n) {
-            throw new Wrong("fore.form.gt.maxrepeat",
+            throw new Wrong("@fore.form.gt.maxrepeat",
                     String.valueOf(n), String.valueOf(c) );
         }
 

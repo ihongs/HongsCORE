@@ -18,7 +18,7 @@ public class Wrongs extends HongsException {
   private Causes caus = null;
 
     public Wrongs(Map<String,Wrong> wrongs) {
-        super ("fore.form.invalid");
+        super( "@fore.form.invalid" );
         this.wrongs = wrongs;
     }
 

@@ -2233,11 +2233,11 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
     public static class Lost extends HongsExemption {
 
         public Lost( AlreadyClosedException cause ) {
-            super(cause, "fore.retries");
+            super(cause, "@fore.retries");
         }
 
         public Lost( IOException cause ) {
-            super(cause, "fore.retries");
+            super(cause, "@fore.retries");
         }
 
     }

@@ -1064,6 +1064,13 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 continue;
             }
 
+            /**
+             * 注意: 此处并未像排序那样检查 findable,srchable,rankable.
+             * 若字段不支持查询、搜索或区间,
+             * 在调用查询类方法时自然会报错,
+             * 是否可查完全由写入时进行处理.
+             */
+
             // 自定义条件
             if (! padQry(qr, rd, k,v)) {
                 continue;
@@ -1107,8 +1114,10 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 }
                 break;
             default:
+                CoreLogger.warn("Field type {} for {} in {} can not be queried", t, k, dbname);
                 continue;
             } else {
+                CoreLogger.warn("Field {} in {} can not be queried", k, dbname);
                 continue;
             }
 
@@ -1562,8 +1571,10 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 st = SortField.Type.LONG; // 专用排序类型
                 break;
             default:
+                CoreLogger.warn("Field type {} for {} in {} can not be sorted", t, fn, dbname);
                 continue;
             } else {
+                CoreLogger.warn("Field {} in {} can not be sorted", fn, dbname);
                 continue;
             }
 

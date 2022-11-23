@@ -685,18 +685,6 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         }
     }
 
-    public Document padDoc(Map map) {
-        Document doc = new Document();
-        padDoc(doc, map, null);
-        return doc;
-    }
-
-    public Map padDat(Document doc) {
-        Map map = new LinkedHashMap();
-        padDat(doc, map, null);
-        return map;
-    }
-
     /**
      * 解析文档(Loop.next 专用)
      * @param doc
@@ -708,6 +696,18 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         Map map = new LinkedHashMap();
         padDat(doc, map, rep );
         return map;
+    }
+
+    public Map padDat(Document doc) {
+        Map map = new LinkedHashMap();
+        padDat(doc, map, null);
+        return map;
+    }
+
+    public Document padDoc(Map map) {
+        Document doc = new Document();
+        padDoc(doc, map, null);
+        return doc;
     }
 
     public Query padQry(Map rd) throws HongsException {
@@ -736,6 +736,98 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
     }
 
     //** 组件封装 **/
+
+    /**
+     * 填充返回数据(将 doc 填充到 map)
+     * 可覆盖此方法补充额外数据
+     *
+     * @param doc
+     * @param map
+     * @param rep
+     */
+    protected void padDat(Document doc, Map map, Set rep) {
+        if (rep != null && rep.isEmpty( )) {
+            rep  = null;
+        }
+
+        Map<String, Map> fields = getFields();
+        for(Map.Entry<String, Map> e : fields.entrySet()) {
+            Map    m = e.getValue();
+            String k = e.getKey  ();
+
+            if (rep != null
+            && !rep.contains(k)) {
+                continue;
+            }
+
+            if (k == null
+            ||  k.equals("@")
+            ||  unstored( m )
+            ||  inviable( m )
+            ||  invisble( m )) {
+                continue;
+            }
+
+            IValue  v ;
+            String  t = datatype(m);
+            boolean r = repeated(m);
+            IndexableField[] fs = doc.getFields(k);
+
+            if (t != null) switch (t) {
+            case "search":
+            case "sorted":
+                continue; // 纯功能字段无可见值
+            case "date":
+                /**
+                 * 有格式则返回时间字串
+                 * 没格式则返回时间对象
+                 * 时间戳类型则返回数值
+                 */
+                String y = Synt.declare( m.get( "type" ), "");
+                if ("date".equals(y) || "datestamp".equals(y)) {
+                String f = Synt.declare( m.get("format"), "");
+                if (f != null && !f.isEmpty()) {
+                    v  = new DatextValue(m);
+                } else {
+                    v  = new DatimeValue(m);
+                }
+                } else {
+                    v  = new NumberValue( );
+                }
+                break;
+            case "int":
+            case "long":
+            case "float":
+            case "double":
+            case "number":
+                v = new NumberValue();
+                break;
+            case "object":
+                v = new ObjectValue();
+                break;
+            default:
+                v = new StringValue();
+            } else {
+                v = new StringValue();
+            }
+
+            if (r) {
+                if (fs.length > 0) {
+                    for(IndexableField f : fs ) {
+                        Dict.put(map , v.get(f), k, null);
+                    }
+                } else {
+                    map.put(k , new ArrayList());
+                }
+            } else {
+                if (fs.length > 0) {
+                    map.put(k , v.get ( fs[0] ));
+                } else {
+                    map.put(k , null);
+                }
+            }
+        }
+    }
 
     /**
      * 填充存储数据(将 map 填充到 doc)
@@ -930,98 +1022,6 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
     }
 
     /**
-     * 填充返回数据(将 doc 填充到 map)
-     * 可覆盖此方法补充额外数据
-     *
-     * @param doc
-     * @param map
-     * @param rep
-     */
-    protected void padDat(Document doc, Map map, Set rep) {
-        if (rep != null && rep.isEmpty( )) {
-            rep  = null;
-        }
-
-        Map<String, Map> fields = getFields();
-        for(Map.Entry<String, Map> e : fields.entrySet()) {
-            Map    m = e.getValue();
-            String k = e.getKey  ();
-
-            if (rep != null
-            && !rep.contains(k)) {
-                continue;
-            }
-
-            if (k == null
-            ||  k.equals("@")
-            ||  unstored( m )
-            ||  inviable( m )
-            ||  invisble( m )) {
-                continue;
-            }
-
-            IValue  v ;
-            String  t = datatype(m);
-            boolean r = repeated(m);
-            IndexableField[] fs = doc.getFields(k);
-
-            if (t != null) switch (t) {
-            case "search":
-            case "sorted":
-                continue; // 纯功能字段无可见值
-            case "date":
-                /**
-                 * 有格式则返回时间字串
-                 * 没格式则返回时间对象
-                 * 时间戳类型则返回数值
-                 */
-                String y = Synt.declare( m.get( "type" ), "");
-                if ("date".equals(y) || "datestamp".equals(y)) {
-                String f = Synt.declare( m.get("format"), "");
-                if (f != null && !f.isEmpty()) {
-                    v  = new DatextValue(m);
-                } else {
-                    v  = new DatimeValue(m);
-                }
-                } else {
-                    v  = new NumberValue( );
-                }
-                break;
-            case "int":
-            case "long":
-            case "float":
-            case "double":
-            case "number":
-                v = new NumberValue();
-                break;
-            case "object":
-                v = new ObjectValue();
-                break;
-            default:
-                v = new StringValue();
-            } else {
-                v = new StringValue();
-            }
-
-            if (r) {
-                if (fs.length > 0) {
-                    for(IndexableField f : fs ) {
-                        Dict.put(map , v.get(f), k, null);
-                    }
-                } else {
-                    map.put(k , new ArrayList());
-                }
-            } else {
-                if (fs.length > 0) {
-                    map.put(k , v.get ( fs[0] ));
-                } else {
-                    map.put(k , null);
-                }
-            }
-        }
-    }
-
-    /**
      * 组织查询条件
      * 可覆盖此方法扩展顶层条件
      *
@@ -1055,15 +1055,16 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
         for(String k : ks) {
             Object v = rd.get(k);
-            Map m =fields.get(k);
 
-            if (m == null
-            ||  v == null) {
+            // 自定义条件
+            if (! padQry(qr, rd, k, v)) {
                 continue;
             }
 
-            // 自定义条件
-            if (!padQry(qr, rd, k,v)) {
+            Map m  = fields.get( k );
+            if (v == null
+            ||  m == null
+            ||  ! findable(m)) {
                 continue;
             }
 
@@ -1084,16 +1085,25 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             case "number":
                 qa = new DoubleQuery();
                 break;
+            case "object":
+            case "stored":
+                // 可以查询有无
+                qa = new StringQuery();
+                break;
             case "string":
             case "search":
-            if (!srchable(m)) {
-                qa = new StringQuery();
-            } else {
-                SearchQuery qs;
-                qa = qs = new SearchQuery();
-                qs.analyser(getAnalyser(m));
-                qs.settings(m);
-            }
+                // 区分能否搜索
+                if (! srchable(m)) {
+                    qa = new StringQuery();
+                } else {
+                    SearchQuery qs;
+                    Analyzer    a ;
+                    qs = new SearchQuery();
+                    a  = getAnalyser(m);
+                    qs.analyser(a);
+                    qs.settings(m);
+                    qa = qs;
+                }
                 break;
             default:
                 continue;
@@ -1488,6 +1498,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         }
 
         Map<String, Map> fields = getFields();
+
         for (String fn: ob) {
             // 相关
             if (fn.equals("-")) {
@@ -1515,45 +1526,43 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             }
 
             // 自定义排序
-            if (! padSrt (of, rd, fn, rv) ) {
+            if (! padSrt(of, rd, fn, rv)) {
                 continue;
             }
 
-            Map m  = (Map) fields.get(fn);
-            if (m == null) {
-                continue ;
-            }
-            if (! sortable(m)) {
-                continue ;
+            Map m  = fields.get( fn );
+            if (m == null
+            ||  ! sortable(m)) {
+                continue;
             }
 
             SortField.Type st;
-            String t = datatype(m);
-            if (   "int".equals(t)) {
+            String t  =  datatype (m);
+            if (t != null) switch (t) {
+            case "int":
                 st = SortField.Type.INT;
-            } else
-            if (  "long".equals(t)) {
+                break;
+            case "long":
+            case "date":
                 st = SortField.Type.LONG;
-            } else
-            if ( "float".equals(t)) {
+                break;
+            case "float":
                 st = SortField.Type.FLOAT;
-            } else
-            if ("double".equals(t)) {
+                break;
+            case "double":
+            case "number":
                 st = SortField.Type.DOUBLE;
-            } else
-            if (  "date".equals(t)) {
-                st = SortField.Type.LONG;
-            } else
-            if ("sorted".equals(t)) {
-                st = SortField.Type.LONG;
-            } else
-            if ("search".equals(t)) {
+                break;
+            case "string":
+            case "search":
                 st = SortField.Type.STRING;
-            } else
-            if ("string".equals(t)) {
-                st = SortField.Type.STRING;
-            } else
-            {
+                break;
+            case "sorted":
+                st = SortField.Type.LONG; // 专用排序类型
+                break;
+            default:
+                continue;
+            } else {
                 continue;
             }
 
@@ -1986,10 +1995,8 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             case  "fork" :
                 return Synt.declare(fc.get("type"), "string");
             case  "file" :
-            case  "path" :
                 return "string";
             case  "form" :
-            case  "json" :
                 return "object";
             default:
                 return t ;

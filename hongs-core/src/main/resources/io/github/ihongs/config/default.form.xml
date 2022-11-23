@@ -64,15 +64,19 @@
         <value code="radio">enum</value>
         <!-- File -->
         <value code="file">file</value>
+        <value code="path">file</value>
         <value code="image">file</value>
-        <value code="audio">file</value>
         <value code="video">file</value>
+        <value code="audio">file</value>
         <!-- Fork -->
         <value code="fork">fork</value>
         <value code="pick">fork</value><!-- fork 的别名 -->
         <!-- Form -->
         <value code="form">form</value>
         <value code="part">form</value><!-- form 的别名 -->
+        <!-- Object -->
+        <value code="json">object</value>
+        <value code="object">object</value>
     </enum>
     <!-- 文本校验正则映射 -->
     <enum name="__typos__">

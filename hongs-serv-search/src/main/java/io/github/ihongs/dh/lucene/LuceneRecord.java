@@ -1054,17 +1054,18 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                     ks.retainAll(rd.keySet());
 
         for(String k : ks) {
-            Object v = rd.get(k);
-
-            // 自定义条件
-            if (! padQry(qr, rd, k, v)) {
+            Object v = rd .get(k);
+            if (v == null) {
                 continue;
             }
 
-            Map m  = fields.get( k );
-            if (v == null
-            ||  m == null
-            ||  ! findable(m)) {
+            Map m = fields.get(k);
+            if (m == null) {
+                continue;
+            }
+
+            // 自定义条件
+            if (! padQry(qr, rd, k,v)) {
                 continue;
             }
 
@@ -1093,7 +1094,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             case "string":
             case "search":
                 // 区分能否搜索
-                if (! srchable(m)) {
+                if ( ! srchable(m)) {
                     qa = new StringQuery();
                 } else {
                     SearchQuery qs;

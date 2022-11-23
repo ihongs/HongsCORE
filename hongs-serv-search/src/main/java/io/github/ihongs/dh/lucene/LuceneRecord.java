@@ -1068,7 +1068,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
              * 注意: 此处并未像排序那样检查 findable,srchable,rankable.
              * 若字段不支持查询、搜索或区间,
              * 在调用查询类方法时自然会报错,
-             * 是否可查完全由写入时进行处理.
+             * 是否可查完全由存储时分类处理.
              */
 
             // 自定义条件

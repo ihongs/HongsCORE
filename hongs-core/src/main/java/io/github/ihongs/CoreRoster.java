@@ -263,13 +263,13 @@ public class CoreRoster {
              * [2] jar 还要去掉 file: 和 !/
              */
             switch (prot) {
-                case "jar" :
-                    root = root.substring(5, root.length() - pack.length() - 2); // [2]
-                    names.addAll(getClassNamesInJar(root, pack, recu));
-                    break;
                 case "file":
                     root = root.substring(0, root.length() - pack.length() - 0); // [1]
                     names.addAll(getClassNamesInDir(root, pack, recu));
+                    break;
+                case "jar" :
+                    root = root.substring(5, root.length() - pack.length() - 2); // [2]
+                    names.addAll(getClassNamesInJar(root, pack, recu));
                     break;
                 default:
                     throw new IOException("Can not get class names in "+ link.toString());
@@ -353,15 +353,15 @@ public class CoreRoster {
         }
         switch (link.getProtocol()) {
             case "file":
-                return new File (
-                    link.getPath()
-                ) . lastModified();
+                String  h = link.getPath();
+                return new File(h).lastModified();
             case "jar" :
-                return new File (
-                    link.getPath()
-                        .replaceFirst("^[^:]+:", "") // 去掉开头的 xxx:
-                        .replaceFirst("![^!]+$", "") // 去掉后面的 !/xx
-                ) . lastModified();
+                String  l = link.getPath();
+                int p = l.indexOf(":");
+                if (p > -1) l = l.substring(1+ p); // 去掉开头的 xxxx:
+                p = l.lastIndexOf("!");
+                if (p > -1) l = l.substring(0, p); // 去掉结尾的 !xxxx
+                return new File(l).lastModified();
             default :
                 try {
                     return link.openConnection ()

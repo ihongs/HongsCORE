@@ -227,12 +227,12 @@ HsList.prototype = {
 
         this._list = list;
         for (i = 0; i < list.length; i ++) {
-            this._info = list[i];
-            tr = jQuery('<tr></tr>').appendTo(tb);
+        this._info = list[i];
 
+                tr = jQuery('<tr></tr>').appendTo(tb);
             for (j = 0; j < ths .length; j ++) {
-                th = jQuery(ths[j]);
                 td = jQuery('<td></td>').appendTo(tr);
+                th = jQuery(ths[j]);
                 td.attr( "class" , th.attr("class") );
                 td.attr( "style" , th.attr("style") );
                 td.data(th.data( ));
@@ -262,6 +262,7 @@ HsList.prototype = {
                 if (t && this["_fill_"+t] !== undefined) {
                     v  = this["_fill_"+t].call(this, td, v, n);
                 }
+
                 // 无值不理会
                 if (! v && v !== 0 && v !== "") {
                     continue;
@@ -275,10 +276,8 @@ HsList.prototype = {
             }
         }
 
-            delete this._list;
-        if (typeof(this._info) !== "undefined") {
-            delete this._info;
-        }
+        delete this._list;
+        delete this._info;
     },
     fillPage : function(page) {
         /**
@@ -599,23 +598,39 @@ HsList.prototype = {
             return;
         }
 
+        var inp;
+
         // 链接,图片,视频,音频
-        if (td.is("a,img,video,audio")) {
+        inp = ! td.is ("a,img,video,audio")
+            ? td.find ("a,img,video,audio")
+            : td;
+        if (inp.length) {
             var u = ! v ? v : hsFixUri( v );
-            td.filter("a:empty").text ( v );
-            td.filter("a").attr("href", u );
-            td.filter("a.a-email").attr("href", "mailto:"+v);
-            td.filter("a.a-tel").attr("href", "tel:"+v);
-            td.filter("a.a-sms").attr("href", "sms:"+v);
-            td.filter("img,video,audio").attr("src", u);
+            inp.filter("a:empty").text( v );
+            inp.filter("a").attr("href",u );
+            inp.filter("a.a-email").attr("href", "mailto:"+v);
+            inp.filter("a.a-tel").attr("href", "tel:"+v);
+            inp.filter("a.a-sms").attr("href", "sms:"+v);
+            inp.filter("img,video,audio").attr("src", u);
             return;
         }
 
-        if (! td.is("input,select,textarea")) {
-            v = this._fill__format(td, v, n);
-            if (jQuery.isArray(v)) {
-                v = v.join( ", ");
+        // 表单项
+        inp = ! td.is ("input,select,textarea")
+            ? td.find ("input,select,textarea")
+            : td;
+        if (inp.length) {
+            if (inp.is(":radio,:checkbox")
+            &&  ! jQuery.isArray(v)) {
+                v = [v];
             }
+            inp.val (v);
+            return;
+        }
+
+        // 多个值
+        if (jQuery.isArray(v)) {
+            v = v .join(", ");
         }
 
         return  v ;
@@ -726,11 +741,13 @@ HsList.prototype = {
     },
     _fill__html : function(td, v, n) {
         if (v === undefined) return v;
-        jQuery(td).html( v );return false;
+        if (v === null ) v = "" ;
+        jQuery(td).html( v );
     },
     _fill__text : function(td, v, n) {
         if (v === undefined) return v;
-        jQuery(td).text( v );return false;
+        if (v === null ) v = "" ;
+        jQuery(td).text( v );
     },
 
     _fill__sort : function(th, s, n) {

@@ -276,19 +276,23 @@ HsForm.prototype = {
             if (t && this["_fill_"+t] !== undefined) {
                 v  = this["_fill_"+t].call(this, i, v, n);
             }
+
             // 无值不理会
             if (! v && v !== 0 && v !== "") {
                 continue;
             }
 
             if (i.is(":file")) {
+                if ( jQuery.isArray( v )) {
+                    v = v.join(',');
+                }
                 i.attr("data-value", v ).change();
             } else
-            if (i.is(":checkbox,:radio")) {
+            if (i.is(":radio,:checkbox")) {
                 if (!jQuery.isArray( v )) {
                     v = [v];
                 }
-                i.val (v).change();
+                i.val (v).first ().change();
             } else
             if (i.is("input,select,textarea")) {
                 i.val (v).change();
@@ -540,9 +544,9 @@ HsForm.prototype = {
 
         // 链接,图片,视频,音频
         if (inp.is("a,img,video,audio")) {
-            var u = ! v ? v : hsFixUri(  v );
-            inp.filter("a:empty").text(  v );
-            inp.filter("a").attr("href", u );
+            var u = ! v ? v : hsFixUri( v );
+            inp.filter("a:empty").text( v );
+            inp.filter("a").attr("href",u );
             inp.filter("a.a-email").attr("href", "mailto:"+v);
             inp.filter("a.a-tel").attr("href", "tel:"+v);
             inp.filter("a.a-sms").attr("href", "sms:"+v);
@@ -550,11 +554,14 @@ HsForm.prototype = {
             return;
         }
 
-        if (! inp.is("input,select,textarea")) {
-            v = this._fill__format(inp, v, n);
-            if (jQuery.isArray(v)) {
-                v = v.join( ", ");
-            }
+        // 表单项
+        if (inp.is("input,select,textarea")) {
+            return v;
+        }
+
+        // 多个值
+        if (jQuery.isArray(v)) {
+            v = v .join(", ");
         }
 
         return  v ;
@@ -773,11 +780,13 @@ HsForm.prototype = {
     },
     _fill__html : function(td, v, n) {
         if (v === undefined) return v;
-        jQuery(td).html( v );return false;
+        if (v === null ) v = "" ;
+        jQuery(td).html( v );
     },
     _fill__text : function(td, v, n) {
         if (v === undefined) return v;
-        jQuery(td).text( v );return false;
+        if (v === null ) v = "" ;
+        jQuery(td).text( v );
     },
 
     valiInit : function() {

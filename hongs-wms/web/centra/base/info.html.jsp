@@ -51,53 +51,53 @@
         <%} else if ("legend".equals(type)) {%>
             <legend class="text-center"><%=text%></legend>
         <%} else {%>
-            <%
-                String kind = "_review";
-
-                if ("datetime".equals(type)
-                ||      "date".equals(type)
-                ||      "time".equals(type)) {
-                    kind = "_" + type;
-                    // 日期类需注意 Unix 时间戳需要乘 1000
-                    Object typa = info.get("type");
-                    if ("timestamp".equals( typa )
-                    ||  "datestamp".equals( typa )) {
-                        kind += "\" data-fl=\"!v?v:v*1000";
-                    }
-                    // 自定义格式化
-                    String frmt = (String) info.get("format");
-                    if (frmt != null && frmt.length( ) != 0 ) {
-                        kind += "\" data-format=\"" + frmt;
-                    }
-                } else
-                if (  "number".equals(type)
-                ||     "range".equals(type)
-                ||     "color".equals(type)) {
-                    // 自定义格式化
-                    String frmt = (String) info.get("format");
-                    if (frmt != null && frmt.length( ) != 0 ) {
-                        kind += "\" data-format=\"" + frmt;
-                    }
-                } else
-                if (  "select".equals(type)
-                ||     "check".equals(type)
-                ||     "radio".equals(type)
-                ||      "type".equals(type)
-                ||      "enum".equals(type)) {
-                    // 选项类字段在查看页仅需读取其文本即可
-                    name += "_text";
-                }
-
-                if (Synt.declare(info.get("__repeated__"), false)) {
-                    // 为与表单一致而对多值字段的名称后加点
-                    name += ".";
-                }
-            %>
             <div class="form-group row" data-name="<%=name%>">
                 <label class="col-xs-3 col-md-2 text-right control-label form-control-static">
                     <%=text != null ? text : ""%>
                 </label>
                 <div class="col-xs-9 col-md-8">
+                <%
+                    String kind = "_review";
+
+                    if ("datetime".equals(type)
+                    ||      "date".equals(type)
+                    ||      "time".equals(type)) {
+                        kind = "_" + type;
+                        // 日期类需注意 Unix 时间戳需要乘 1000
+                        Object typa = info.get("type");
+                        if ("timestamp".equals( typa )
+                        ||  "datestamp".equals( typa )) {
+                            kind += "\" data-fl=\"!v?v:v*1000";
+                        }
+                        // 自定义格式化
+                        String frmt = (String) info.get("format");
+                        if (frmt != null && frmt.length( ) != 0 ) {
+                            kind += "\" data-format=\"" + frmt;
+                        }
+                    } else
+                    if (  "number".equals(type)
+                    ||     "range".equals(type)
+                    ||     "color".equals(type)) {
+                        // 自定义格式化
+                        String frmt = (String) info.get("format");
+                        if (frmt != null && frmt.length( ) != 0 ) {
+                            kind += "\" data-format=\"" + frmt;
+                        }
+                    } else
+                    if (  "select".equals(type)
+                    ||     "check".equals(type)
+                    ||     "radio".equals(type)
+                    ||      "type".equals(type)
+                    ||      "enum".equals(type)) {
+                        // 选项类字段在查看页仅需读取其文本即可
+                        name += "_text";
+                    }
+
+                    if (Synt.declare(info.get("__repeated__"), false)) {
+                        // 为与表单一致而对多值字段的名称后加点
+                        name += ".";
+                    }
+                %>
                 <%if ("textarea".equals(type) || "textview".equals(type)) {%>
                     <%
                         String typa = (String) info.get("type");

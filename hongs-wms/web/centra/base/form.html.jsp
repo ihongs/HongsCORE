@@ -53,55 +53,53 @@
             <input type="hidden" name="<%=name%>" />
         <%} else if ("legend".equals(type)) {%>
             <legend class="text-center" data-name="<%=name%>"><%=text%></legend>
-        <%} else if ( roly ) {%>
-            <%
-                //** 此部分来自 info.jsp **/
-
-                String kind = "_review";
-
-                if ("datetime".equals(type)
-                ||      "date".equals(type)
-                ||      "time".equals(type)) {
-                    kind = "_" + type;
-                    // 日期类需注意 Unix 时间戳需要乘 1000
-                    Object typa = info.get("type");
-                    if ("timestamp".equals( typa )
-                    ||  "datestamp".equals( typa )) {
-                        kind += "\" data-fl=\"!v?v:v*1000";
-                    }
-                    // 自定义格式化
-                    String frmt = (String) info.get("format");
-                    if (frmt != null && frmt.length( ) != 0 ) {
-                        kind += "\" data-format=\"" + frmt;
-                    }
-                } else
-                if (  "number".equals(type)
-                ||     "range".equals(type)
-                ||     "color".equals(type)) {
-                    // 自定义格式化
-                    String frmt = (String) info.get("format");
-                    if (frmt != null && frmt.length( ) != 0 ) {
-                        kind += "\" data-format=\"" + frmt;
-                    }
-                } else
-                if (  "select".equals(type)
-                ||     "check".equals(type)
-                ||     "radio".equals(type)
-                ||      "type".equals(type)
-                ||      "enum".equals(type)) {
-                    // 选项类字段在查看页仅需读取其文本即可
-                    name += "_text";
-                }
-
-                if (rptd) {
-                    name += "." ; // 后缀点表示可以有多个值
-                }
-            %>
+        <%} else if ( roly ) { //** 此部分来自 info.jsp **/ %>
             <div class="form-group row" data-name="<%=name%>">
                 <label class="col-xs-3 col-md-2 text-right control-label form-control-static">
                     <%=text != null ? text : ""%>
                 </label>
                 <div class="col-xs-9 col-md-8">
+                <%
+                    String kind = "_review";
+
+                    if ("datetime".equals(type)
+                    ||      "date".equals(type)
+                    ||      "time".equals(type)) {
+                        kind = "_" + type;
+                        // 日期类需注意 Unix 时间戳需要乘 1000
+                        Object typa = info.get("type");
+                        if ("timestamp".equals( typa )
+                        ||  "datestamp".equals( typa )) {
+                            kind += "\" data-fl=\"!v?v:v*1000";
+                        }
+                        // 自定义格式化
+                        String frmt = (String) info.get("format");
+                        if (frmt != null && frmt.length( ) != 0 ) {
+                            kind += "\" data-format=\"" + frmt;
+                        }
+                    } else
+                    if (  "number".equals(type)
+                    ||     "range".equals(type)
+                    ||     "color".equals(type)) {
+                        // 自定义格式化
+                        String frmt = (String) info.get("format");
+                        if (frmt != null && frmt.length( ) != 0 ) {
+                            kind += "\" data-format=\"" + frmt;
+                        }
+                    } else
+                    if (  "select".equals(type)
+                    ||     "check".equals(type)
+                    ||     "radio".equals(type)
+                    ||      "type".equals(type)
+                    ||      "enum".equals(type)) {
+                        // 选项类字段在查看页仅需读取其文本即可
+                        name += "_text";
+                    }
+
+                    if (rptd) {
+                        name += "." ; // 后缀点表示可以有多个值
+                    }
+                %>
                 <%if ("textarea".equals(type) || "textview".equals(type)) {%>
                     <%
                         String typa = (String) info.get("type");

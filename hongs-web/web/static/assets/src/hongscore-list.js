@@ -621,7 +621,7 @@ HsList.prototype = {
             : td;
         if (inp.length) {
             if (inp.is(":radio,:checkbox")
-            &&  ! jQuery.isArray(v)) {
+            && ! jQuery.isArray(v)) {
                 v = [v];
             }
             inp.val (v);

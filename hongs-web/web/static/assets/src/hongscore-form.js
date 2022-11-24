@@ -556,8 +556,8 @@ HsForm.prototype = {
 
         // 表单项
         if (inp.is("input,select,textarea")) {
-            if (inp.is( ":radio,:checkbox" )
-            &&  ! jQuery.isArray(v)) {
+            if (inp.is (":radio,:checkbox")
+            && ! jQuery.isArray(v)) {
                 return [v];
             } else {
                 return  v ;

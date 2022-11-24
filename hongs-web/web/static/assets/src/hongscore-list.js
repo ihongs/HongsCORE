@@ -628,6 +628,9 @@ HsList.prototype = {
             return;
         }
 
+        // 格式化
+        v = this._fill__format (td, v, n );
+
         // 多个值
         if (jQuery.isArray(v)) {
             v = v .join(", ");

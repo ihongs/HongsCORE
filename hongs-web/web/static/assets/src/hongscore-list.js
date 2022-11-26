@@ -405,11 +405,11 @@ HsList.prototype = {
     gotoPage : function(pn, rn) {
         var that = this;
         jQuery.hsMask({
-            title: hsGetLang('list.goto.page'),
+            title: hsGetLang('list.goto.title'),
             mode : "warn",
             html : '<form autocomplete="off" novalidate="novalidate">'
-                 + '<span> '+hsGetLang('list.give.page')+' </span><input type="number" name="pn" value="'+pn+'" class="form-control" style="display:inline-block;width:6em;" step="1"  min="1"  '   +   '/>'
-                 + '<span> '+hsGetLang('list.give.rows')+' </span><input type="number" name="rn" value="'+rn+'" class="form-control" style="display:inline-block;width:6em;" step="10" min="10" max="100"/>'
+                 + '<span> '+hsGetLang('list.goto.page')+' </span><input type="number" name="pn" value="'+pn+'" class="form-control" style="display:inline-block;width:6em;" step="1"  min="1"  '   +   '/>'
+                 + '<span> '+hsGetLang('list.goto.rows')+' </span><input type="number" name="rn" value="'+rn+'" class="form-control" style="display:inline-block;width:6em;" step="10" min="10" max="100"/>'
                  + '<button type="submit" class="invisible"></button>'
                  + '</form>'
         }, {
@@ -420,7 +420,7 @@ HsList.prototype = {
                 var rn = parseInt(fo.find("[name='rn']").val());
                 var pn = parseInt(fo.find("[name='pn']").val());
                 if (isNaN(pn) || isNaN(rn) || pn < 1 || rn < 10 || rn > 100) {
-                    alert( hsGetLang('list.give.fail') );
+                    alert(hsGetLang('list.give.wrong'));
                     return false;
                 }
                 jQuery(this).closest(".modal").find(":submit").click();

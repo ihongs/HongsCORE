@@ -1321,7 +1321,7 @@ function hsFixPms(uri, pms) {
 
 /**
  * 格式文本
- * 类似 rintf(FORMAT, ARG1, ARG2...)
+ * 类似 printf(FORMAT, ARG1, ARG2...)
  * @returns {String}
  */
 function hsFormat() {
@@ -1371,22 +1371,33 @@ function hsFormat() {
 
                 // 进制
                 switch (t) {
-                    case 'o': r =  8; x = '0' ; break;
-                    case 'x': r = 16; x = '0x'; break;
-                    case 'X': r = 16; x = '0X'; break;
-                    default : r = 10; x = ''  ; break;
+                    case 'X': r = 16; x = '0X'; n = Math.abs(parseInt(n)); break;
+                    case 'x': r = 16; x = '0x'; n = Math.abs(parseInt(n)); break;
+                    case 'o': r =  8; x = '0' ; n = Math.abs(parseInt(n)); break;
+                    case 'u': r = 10; x = ''  ; n = Math.abs(parseInt(n)); break;
+                    case 'i': r = 10; x = ''  ; n = parseInt( n ); break;
+                    default : r = 10; x = ''  ; n = parseFloat(n); break;
                 }
 
                 // 四舍五入
-                n = parseFloat(s);
                 if (d >= 0) {
                     var p;
                     p = Math.pow  (r, d);
                     n = Math.round(n* p) / p;
                 }
+
+                // 转字符串
                 s = n.toString(r);
                 if (t === 'X') {
-                    s = s.toUpperCase( );
+                    s = s.toUpperCase( ); /*
+                } else {
+                    s = s.toLowerCase( ); */
+                }
+                if (n <  0) {
+                    s = s. substring (1);
+                    z = "-";
+                } else {
+                    z = "+";
                 }
 
                 // 小数补位
@@ -1403,14 +1414,8 @@ function hsFormat() {
                     }
                 }
 
-                // 补位
-                if (n < 0) {
-                    s = s.substring(1);
-                    z = "-";
-                } else
-                if (f.indexOf('+') !== -1) {
-                    z = "+";
-                } else {
+                // 补位拼接
+                if (f.indexOf('+') === -1) {
                     z = '' ;
                 }
                 if (f.indexOf('#') === -1) {

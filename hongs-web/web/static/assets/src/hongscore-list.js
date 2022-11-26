@@ -177,12 +177,20 @@ HsList.prototype = {
         var list = rst["list"] || [];
         var page = rst["page"] || {};
 
-        if (! rst.page) {
-        if (! rst.list || ! rst.list.length) {
-            page = {state: 1}; // 空列表
+        // page state 取值: 0 分页错误, 1 分页正常, 2 估算数量
+        if (rst.list.length) {
+            if (page[this._ps_key] === undefined)
+                page[this._ps_key] = 1;
+            if (page[this._pc_key] === undefined
+            &&  page[this._rc_key] === undefined)
+                page[this._rc_key] = 0;
         } else {
-            page = {state:-1}; // 估算量
-        }}
+            if (page[this._ps_key] === undefined)
+                page[this._ps_key] = 0;
+            if (page[this._pc_key] === undefined
+            &&  page[this._rc_key] === undefined)
+                page[this._rc_key] = 0;
+        }
 
         this.fillList(list);
         this.fillPage(page);
@@ -280,38 +288,47 @@ HsList.prototype = {
         delete this._info;
     },
     fillPage : function(page) {
-        /**
-         * 用字符串零是因为
-         * "0" != undefined
-         * "0" == 0
-         */
-        if (page[this._ps_key] != "0") {
-            this.pageBox.empty();
-            this.listBox.show( );
-        } else
-        if (page[this._rc_key] == "0"
-        ||  page[this._pc_key] == "0") {
-            this.pageBox.empty().append('<div class="alert alert-warning" style="width: 100%;">'
-                    + (this._empty_err || hsGetLang('list.empty')) + '</div>');
-            this.listBox.hide( );
-            return;
-        } else
-        {
-            this.pageBox.empty().append('<div class="alert alert-warning" style="width: 100%;">'
-                    + (this._above_err || hsGetLang('list.above')) + '</div>');
-            this.listBox.hide( );
-            var that = this;
-            hsSetSeria(this._data, this.pageKey);
-            setTimeout(function( ) {
-                that.load();
-            }, 5000);
-            return;
+        if (page[this._ps_key] <= 0) {
+            if (page[this._pc_key] > 0 ||  page[this._rc_key] > 0) {
+                this.pageBox.empty().append('<div class="alert alert-warning" style="width: 100%;">'
+                    + (page.msg || this._above_err || hsGetLang('list.above')) + '</div>');
+                this.listBox.hide( );
+                // 返回第一页
+                var that = this;
+                hsSetSeria(this._data, this.pageKey);
+                setTimeout(function( ) {
+                    that.load();
+                }, 5000);
+                return;
+            }  else {
+                this.pageBox.empty().append('<div class="alert alert-warning" style="width: 100%;">'
+                    + (page.msg || this._empty_err || hsGetLang('list.empty')) + '</div>');
+                this.listBox.hide( );
+                return;
+            }
+        } else {
+            if (page[this._pc_key] > 0 ||  page[this._rc_key] > 0) {
+                this.pageBox.empty();
+                this.listBox.show( );
+            }  else {
+                this.pageBox.hide( );
+                this.listBox.show( );
+                return;
+            }
         }
 
         var i, r, p, t, pmin, pmax, that = this;
         r = page[this.rowsKey] ? parseInt(page[this.rowsKey]) : this.rowsNum;
         p = page[this.pageKey] ? parseInt(page[this.pageKey]) : 1;
-        t = page[this._pc_key] ? parseInt(page[this._pc_key]) : 1;
+        if (page[this._pc_key]) {
+            t = parseInt(page[this._pc_key]);
+        } else
+        if (page[this._rc_key]) {
+            t = parseInt(page[this._rc_key]);
+            t = Math.ceil( t / r );
+        } else {
+            t = 1;
+        }
         pmin = p - Math.floor(this.pugsNum / 2);
         if (pmin < 1) pmin = 1;
         pmax = pmin + this.pugsNum - 1;
@@ -324,7 +341,7 @@ HsList.prototype = {
         var nums = pbox; //jQuery('<ul class="pagination pull-left "></ul>').appendTo(this.pageBox);
         var btns = pbox; //jQuery('<ul class="pagination pull-right"></ul>').appendTo(this.pageBox);
 
-        if (page[this._ps_key] == "2") {
+        if (page[this._ps_key] == 2) {
             qbox.text(hsGetLang("list.page.unfo", page));
         } else {
             qbox.text(hsGetLang("list.page.info", page));

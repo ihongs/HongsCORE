@@ -318,8 +318,6 @@ HsList.prototype = {
             return;
         }
 
-        this.pageBox.empty();
-
         var i, r, p, t, pmin, pmax;
         r = page[this.rowsKey] ? parseInt(page[this.rowsKey]) : this.rowsNum;
         p = page[this.pageKey] ? parseInt(page[this.pageKey]) : 1;
@@ -334,6 +332,8 @@ HsList.prototype = {
         if (pmax > t) pmax = t;
         pmin = pmax - this.pugsNum + 1;
         if (pmin < 1) pmin = 1;
+
+        this.pageBox.empty ( );
 
         var pbox = jQuery('<ul class="pagination pull-left"></ul>').appendTo(this.pageBox);
         var qbox = jQuery('<em class="page-text pull-right"></em>').appendTo(this.pageBox);

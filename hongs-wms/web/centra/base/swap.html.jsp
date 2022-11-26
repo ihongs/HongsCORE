@@ -190,7 +190,7 @@
     "page": {
         "<%=Cnst.PN_KEY%>": "页码参数",
         "<%=Cnst.RN_KEY%>": "行数参数",
-        "pages": "总页数",
+        "total": "总页数",
         "count": "总行数",
         "state": "1 正常, 0 错误: count 等于 0 表示列表为空, count 大于 0 表示页码超出"
     },

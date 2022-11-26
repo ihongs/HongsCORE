@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
  * 参数 versions 取值:
  * 0.9.0 将 :xx 操作符换成 xx
  * 1.0.0 将 enum/menu 换成 enfo, create 增加 info, update 返回 size
- * 1.0.5 在 acount/amount 统计接口默认添加逆序 rb=-
+ * 1.0.5 在 acount/amount 统计接口默认添加逆序 rb=!
  *
  * @deprecated 仅为兼容
  * @author Hongs
@@ -198,6 +198,9 @@ public class VersFilter extends ActionDriver {
                 if (ab.contains(".rn")) {
                     nf+= 2;
                 }
+                if (ab.contains(".total")) {
+                    nf+= 4;
+                }
             }
         }
 
@@ -231,6 +234,14 @@ public class VersFilter extends ActionDriver {
                 &&  sd.containsKey(Cnst.RN_KEY)) {
                     Object ct = sd.get(Cnst.RN_KEY);
                     sd.put("size", ct);
+                }
+                if (4 != (4 & nf)
+                &&  sd.containsKey("page")) {
+                    Map page = (Map) sd.get("page");
+                    if (page.containsKey("total")
+                    && !page.containsKey("pages") ) {
+                        page.put("pages", page.get("total"));
+                    }
                 }
             }
         }

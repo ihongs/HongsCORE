@@ -51,7 +51,7 @@ def hsTable(sh, url, cok, fil, prt=False):
         rsp = request.urlopen(req)
         rst = rsp.read().decode('utf-8')
         rst = json.loads(rst)
-        tn  = int (rst["page"]["pages"])
+        tn  = int (rst["page"]["total"])
 
         print('%d%% Page %d/%d' % (0, 0, tn), end='')
 

@@ -117,15 +117,20 @@ HsForm.prototype = {
         });
     },
     loadBack : function(rst) {
-        rst = hsResponse(rst);
-        if (rst["ok"] === false) return;
+        rst = hsResponse(rst, 1);
 
         this.formBox.trigger("loadBack", [rst, this]);
 
-        var page = rst["page"] || {};
-        var enfo = rst["enfo"] || {};
-        var info = rst["info"] ||
-                 ( rst["list"] && rst.list[0] ) || {};
+        var page = rst.page || {};
+        var enfo = rst.enfo || {};
+        var info = rst.info || (rst.list && rst.list[0]) || {};
+
+        if (page.state === undefined) {
+            page.state = ! jQuery.isEmptyObject(info) ? 1 : 0 ;
+        }
+        if (page.msg === undefined) {
+            page.msg = rst.msg;
+        }
 
         // 填充预置数据
         if (this._init) {
@@ -305,32 +310,33 @@ HsForm.prototype = {
     fillPage : function(page) {
         var formBox = this.formBox;
         var pageBox = this.pageBox;
-        if (page.state === undefined
-        ||  page.state === null
-        ||  page.state > 0) {
-            formBox.show( );
-            pageBox.hide( );
+        if (page[this._ps_key] != 0) {
+            formBox.show();
+            pageBox.hide();
         }  else
         if (pageBox.size()) {
-            formBox.hide( );
-            pageBox.show( );
+            formBox.hide();
+            pageBox.show();
 
-            // 显示警示框
-            if (page.count && page.count > 0) {
-                pageBox.empty().append('<div class="alert alert-warning" style="width: 100%;">'
-                           + (this._above_err || hsGetLang('info.above')) + '</div>');
+            // 显示警示区
+            if (page[this._rc_key] != 0) {
+                pageBox.empty( ).append('<div class="alert alert-warning" style="width: 100%;">'
+                           + (page.msg || this._above_err || hsGetLang('info.above')) + '</div>');
             } else {
-                pageBox.empty().append('<div class="alert alert-warning" style="width: 100%;">'
-                           + (this._empty_err || hsGetLang('info.empty')) + '</div>');
+                pageBox.empty( ).append('<div class="alert alert-warning" style="width: 100%;">'
+                           + (page.msg || this._empty_err || hsGetLang('info.empty')) + '</div>');
             }
         } else {
-            if (page.count && page.count > 0) {
-                jQuery.hsWarn(this._above_err || hsGetLang('info.above') , "warning");
+            // 弹出警示框
+            if (page[this._rc_key] != 0) {
+                jQuery.hsWarn(page.msg || this._above_err || hsGetLang('info.above') , "warning");
             } else {
-                jQuery.hsWarn(this._empty_err || hsGetLang('info.empty') , "warning");
+                jQuery.hsWarn(page.msg || this._empty_err || hsGetLang('info.empty') , "warning");
             }
         }
     },
+    _ps_key  : "state" ,
+    _rc_key  : "count" ,
 
     saveInit : function() {
         var that = this;

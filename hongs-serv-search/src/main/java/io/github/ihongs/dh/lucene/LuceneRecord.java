@@ -265,7 +265,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         page.put(Cnst.RN_KEY, rn);
         page.put(Cnst.PN_KEY, pn);
         page.put("count", rc);
-        page.put("pages", pc);
+        page.put("total", pc);
         page.put("state", st);
 
         if (! nl) {

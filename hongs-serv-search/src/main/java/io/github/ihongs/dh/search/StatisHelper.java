@@ -559,7 +559,7 @@ public class StatisHelper {
         int rc = list.size();
         if (rc == 0) {
             page.put("count", 0 );
-            page.put("pages", 0 );
+            page.put("total", 0 );
             page.put("state", 0 );
         } else
         if (rn <= 0) { // rn 为 0 不要分页只要列表
@@ -570,13 +570,13 @@ public class StatisHelper {
 
             int p = (int) Math.ceil(((double) rc) / ((double) rn));
             page.put("count", rc);
-            page.put("pages", p );
+            page.put("total", p );
             page.put("state", 1 );
         } else
         {
             int p = (int) Math.ceil(((double) rc) / ((double) rn));
             page.put("count", rc);
-            page.put("pages", p );
+            page.put("total", p );
 
             int b = rn * (pn - 1);
             int d = rn +  b ;

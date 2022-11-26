@@ -77,7 +77,7 @@ public class FileAction implements IAction {
                     "list" , new  ArrayList(),
                     "page" , Synt.mapOf(
                         "count" , 0,
-                        "pages" , 0,
+                        "total" , 0,
                         "state" , 1
                     )
                 ));
@@ -86,7 +86,7 @@ public class FileAction implements IAction {
                     "list" , ROOT_LIST ,
                     "page" , Synt.mapOf(
                         "count" , ROOT_LIST.size(),
-                        "pages" , 1,
+                        "total" , 1,
                         "state" , 0
                     )
                 ));
@@ -220,7 +220,7 @@ public class FileAction implements IAction {
             Map rsp = new HashMap();
             rsp.put("list", filez );
             rsp.put("page", Synt.mapOf(
-                "pages", 1,
+                "total", 1,
                 "count", filez.size(),
                 "state", filez.size() > 0 ? 0 : 1
             ));

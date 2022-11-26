@@ -169,27 +169,19 @@ HsList.prototype = {
         });
     },
     loadBack : function(rst) {
-        rst = hsResponse(rst);
-        if (rst.ok === false) return;
+        rst = hsResponse(rst, 1);
 
         this.listBox.trigger("loadBack", [rst, this]);
 
         var list = rst["list"] || [];
         var page = rst["page"] || {};
 
-        // page state 取值: 0 分页错误, 1 分页正常, 2 估算数量
-        if (rst.list.length) {
-            if (page[this._ps_key] === undefined)
-                page[this._ps_key] = 1;
-            if (page[this._pc_key] === undefined
-            &&  page[this._rc_key] === undefined)
-                page[this._rc_key] = 0;
-        } else {
-            if (page[this._ps_key] === undefined)
-                page[this._ps_key] = 0;
-            if (page[this._pc_key] === undefined
-            &&  page[this._rc_key] === undefined)
-                page[this._rc_key] = 0;
+        // page state 取值: 0 错误, 1 正常, 2 非精确数量
+        if (page[this._ps_key] === undefined) {
+            page[this._ps_key] = rst.list.length ? 1 : 0;
+        }
+        if (page.msg === undefined) {
+            page.mag = rst.msg;
         }
 
         this.fillList(list);
@@ -288,46 +280,53 @@ HsList.prototype = {
         delete this._info;
     },
     fillPage : function(page) {
-        if (page[this._ps_key] <= 0) {
+        var that = this;
+        var listBox = this.listBox;
+        var pageBox = this.pageBox;
+        if (page[this._ps_key] != 0) {
+            pageBox.show();
+            listBox.show();
+        }  else
+        if (pageBox.size()) {
+            pageBox.show();
+            listBox.hide();
+
+            // 显示警示区
             if (page[this._pc_key] > 0 ||  page[this._rc_key] > 0) {
-                this.pageBox.empty().append('<div class="alert alert-warning" style="width: 100%;">'
-                    + (page.msg || this._above_err || hsGetLang('list.above')) + '</div>');
-                this.listBox.hide( );
-                // 返回第一页
-                var that = this;
-                hsSetSeria(this._data, this.pageKey);
+                pageBox.empty( ).append('<div class="alert alert-warning" style="width: 100%;">'
+                           + (page.msg || this._above_err || hsGetLang('list.above')) + '</div>');
                 setTimeout(function( ) {
-                    that.load();
+                    hsSetSeria(that._data, that.pageKey);
+                    that.load( ); // 返回第一页
                 }, 5000);
-                return;
-            }  else {
-                this.pageBox.empty().append('<div class="alert alert-warning" style="width: 100%;">'
-                    + (page.msg || this._empty_err || hsGetLang('list.empty')) + '</div>');
-                this.listBox.hide( );
-                return;
+            } else {
+                pageBox.empty( ).append('<div class="alert alert-warning" style="width: 100%;">'
+                           + (page.msg || this._empty_err || hsGetLang('list.empty')) + '</div>');
             }
+            return;
         } else {
+            // 弹出警示框
             if (page[this._pc_key] > 0 ||  page[this._rc_key] > 0) {
-                this.pageBox.empty();
-                this.listBox.show( );
-            }  else {
-                this.pageBox.hide( );
-                this.listBox.show( );
-                return;
+                jQuery.hsWarn(page.msg || this._above_err || hsGetLang('list.above') , "warning" ,
+                function ( ) {
+                    hsSetSeria(that._data, that.pageKey);
+                    that.load( ); // 返回第一页
+                });
+            } else {
+                jQuery.hsWarn(page.msg || this._empty_err || hsGetLang('list.empty') , "warning");
             }
+            return;
         }
 
-        var i, r, p, t, pmin, pmax, that = this;
+        this.pageBox.empty();
+
+        var i, r, p, t, pmin, pmax;
         r = page[this.rowsKey] ? parseInt(page[this.rowsKey]) : this.rowsNum;
         p = page[this.pageKey] ? parseInt(page[this.pageKey]) : 1;
-        if (page[this._pc_key]) {
-            t = parseInt(page[this._pc_key]);
-        } else
-        if (page[this._rc_key]) {
-            t = parseInt(page[this._rc_key]);
-            t = Math.ceil( t / r );
-        } else {
-            t = 1;
+        t = page[this._pc_key] ? parseInt(page[this._pc_key]) : 0;
+        if (t < 1) { // 用总数量算总页数
+        t = page[this._rc_key] ? parseInt(page[this._rc_key]) : 0;
+        t = Math.ceil( t / r );
         }
         pmin = p - Math.floor(this.pugsNum / 2);
         if (pmin < 1) pmin = 1;
@@ -442,7 +441,7 @@ HsList.prototype = {
         });
     },
     _ps_key  : "state" ,
-    _pc_key  : "pages" ,
+    _pc_key  : "total" ,
     _rc_key  : "count" ,
 
     send     : function(btn, msg, url, data) {

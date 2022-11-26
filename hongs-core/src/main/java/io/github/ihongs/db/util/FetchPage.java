@@ -152,7 +152,7 @@ public final class FetchPage
     {
       this.info.put("state",0); // 列表为空
       this.info.put("count",0);
-      this.info.put("pages",0);
+      this.info.put("total",0);
     }
 
     return list;
@@ -167,7 +167,7 @@ public final class FetchPage
 
     // 列表为空则不用再计算了
     if (this.info.containsKey("count")
-    ||  this.info.containsKey("pages"))
+    ||  this.info.containsKey("total"))
     {
       return this.info;
     }
@@ -232,7 +232,7 @@ public final class FetchPage
       }
 
       this.info.put("count", rc);
-      this.info.put("pages", pc);
+      this.info.put("total", pc);
     }
 
     return this.info;

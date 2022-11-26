@@ -173,15 +173,14 @@ HsList.prototype = {
 
         this.listBox.trigger("loadBack", [rst, this]);
 
-        var list = rst["list"] || [];
         var page = rst["page"] || {};
+        var list = rst["list"] || [];
 
-        // page state 取值: 0 错误, 1 正常, 2 非精确数量
         if (page[this._ps_key] === undefined) {
-            page[this._ps_key] = rst.list.length ? 1 : 0;
+            page[this._ps_key] = rst.list.length ?1:0;
         }
-        if (page.msg === undefined) {
-            page.mag = rst.msg;
+        if (page["msg"] === undefined) {
+            page["msg"] = rst["msg"];
         }
 
         this.fillList(list);

@@ -121,15 +121,15 @@ HsForm.prototype = {
 
         this.formBox.trigger("loadBack", [rst, this]);
 
-        var page = rst.page || {};
-        var enfo = rst.enfo || {};
-        var info = rst.info || (rst.list && rst.list[0]) || {};
+        var page = rst["page"] || {};
+        var enfo = rst["enfo"] || {};
+        var info = rst["info"] || (rst.list && rst.list[0]) || {};
 
-        if (page.state === undefined) {
-            page.state = ! jQuery.isEmptyObject(info) ? 1 : 0 ;
+        if (page[this._ps_key] === undefined) {
+            page[this._ps_key] = jQuery.isEmptyObject(info) ? 0:1;
         }
-        if (page.msg === undefined) {
-            page.msg = rst.msg;
+        if (page["msg"] === undefined) {
+            page["msg"] = rst["msg"];
         }
 
         // 填充预置数据

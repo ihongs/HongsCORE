@@ -198,11 +198,11 @@ public class IsUnique extends Rule {
                 return FORCE;
             } else
             if (page.containsKey("state")
-            &&  Synt.declare(page.get("pages"), 0) <= 0) {
+            &&  Synt.declare(page.get("state"), 0) <= 0) {
                 return FORCE;
             } else
             if (page.containsKey("count")
-            &&  Synt.declare(page.get("count"), 0) == 0) {
+            &&  Synt.declare(page.get("count"), 0) <= 0) {
                 return FORCE;
             }
         }

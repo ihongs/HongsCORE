@@ -25,7 +25,6 @@ function HsForm(context, opts) {
     this.formBox = formBox;
     this._url  = "";
     this._data = [];
-    this._opt_group_start = "#"; // 选项分组起始符
 
     if (opts) for ( var k in opts ) {
         if ('_'===k.substring(0,1 )
@@ -96,7 +95,7 @@ function HsForm(context, opts) {
     ||  hsGetParam(loadUrl, abKey))) {
         this.load (loadUrl, loadDat);
     } else if (! this._url) {
-        this.loadBack( {} );
+        this.loadBack( {ok : true} );
     }
 }
 HsForm.prototype = {
@@ -117,19 +116,22 @@ HsForm.prototype = {
         });
     },
     loadBack : function(rst) {
-        rst = hsResponse(rst, 1);
+        rst = hsResponse (rst, 1);
 
         this.formBox.trigger("loadBack", [rst, this]);
 
-        var page = rst["page"] || {};
-        var enfo = rst["enfo"] || {};
-        var info = rst["info"] || (rst.list && rst.list[0]) || {};
+        var info = rst.info || {};
+        var enfo = rst.enfo || {};
+        var page = rst.page || {};
+        page.msg = page.msg || rst.msg;
 
         if (page[this._ps_key] === undefined) {
-            page[this._ps_key] = jQuery.isEmptyObject(info) ? 0:1;
+            page[this._ps_key]  =  rst.ok ? 1 : 0;
         }
-        if (page["msg"] === undefined) {
-            page["msg"] = rst["msg"];
+
+        // 兼容列表方式
+        if (! rst.info && rst.list && rst.list.length) {
+            info = rst.list[0];
         }
 
         // 填充预置数据
@@ -591,6 +593,8 @@ HsForm.prototype = {
         Array.prototype.push.apply(a, v);
         return hsFormat.apply(window, a);
     },
+
+    _opt_group_start: "#", // 选项分组起始符
 
     _doll__select : function(inp, v, n) {
         if (v === undefined) return ;

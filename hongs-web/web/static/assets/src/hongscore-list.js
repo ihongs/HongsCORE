@@ -169,18 +169,16 @@ HsList.prototype = {
         });
     },
     loadBack : function(rst) {
-        rst = hsResponse(rst, 1);
+        rst = hsResponse (rst, 1);
 
         this.listBox.trigger("loadBack", [rst, this]);
 
-        var page = rst["page"] || {};
-        var list = rst["list"] || [];
+        var list = rst.list || [];
+        var page = rst.page || {};
+        page.msg = page.msg || rst.msg;
 
         if (page[this._ps_key] === undefined) {
-            page[this._ps_key] = rst.list.length ?1:0;
-        }
-        if (page["msg"] === undefined) {
-            page["msg"] = rst["msg"];
+            page[this._ps_key]  =  rst.ok ? (list.length ? 1 : 0) : 0;
         }
 
         this.fillList(list);

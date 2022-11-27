@@ -3045,6 +3045,21 @@ function(evt) {
 
 // 快捷开启和关闭
 $(document)
+.on("mouseover", "[data-toggle=hsMenu],[data-toggle=hsMenu]~.dropdown-menu",
+function(evt) {
+    var cd = $(this).parent(".dropdown");
+        cd.   addClass("open").children("[aria-expanded]").attr("aria-expanded", "true" );
+    var od = $(".dropdown.open").not(cd);
+        od.removeClass("open").children("[aria-expanded]").attr("aria-expanded", "false");
+    if (window._hsMenuOut) clearTimeout(window._hsMenuOut);
+})
+.on("mouseout" , "[data-toggle=hsMenu],[data-toggle=hsMenu]~.dropdown-menu",
+function(evt) {
+    var cd = $(this).parent(".dropdown");
+    window._hsMenuOut = setTimeout(function() {
+        cd.removeClass("open").children("[aria-expanded]").attr("aria-expanded", "false");
+    }, 500);
+})
 .on("click", "[data-toggle=hsDrop]",
 function(evt) {
     if ($(this).siblings(".dropdown-body,.dropdown-list").size()

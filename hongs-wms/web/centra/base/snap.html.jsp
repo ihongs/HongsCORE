@@ -61,11 +61,11 @@
                         </div>
                     </th>
                     <th data-fn="ctime" data-ft="time" class="sortable" style="width: 7em;">时间</th>
-                    <th data-fn="user">用户</th>
+                    <th data-fn="user.name" data-ft="text">用户</th>
                     <th data-fn="state" data-ft="stat" class="sortable" style="width: 4em;">行为</th>
-                    <th data-fn="name">资源题要</th>
-                    <th data-fn="memo">操作备注</th>
-                    <th data-fn="meno">终端标识</th>
+                    <th data-fn="name"  data-ft="text">资源题要</th>
+                    <th data-fn="memo"  data-ft="text">操作备注</th>
+                    <th data-fn="meno"  data-ft="text">终端标识</th>
                     <th data-fn="etime" data-ft="time" class="sortable" style="width: 7em;">截止时间</th>
                     <th data-fn="rtime" data-ft="time" class="sortable" style="width: 7em;">恢复起源</th>
                 </tr>
@@ -107,11 +107,9 @@
             }
             return '-';
         },
-        _fill_user: function(td , user) {
-            if (user && user.name) {
-                return  user.name;
-            }
-            return '-';
+        _fill_text: function(td , text) {
+            return text
+                || '-';
         }
     });
 

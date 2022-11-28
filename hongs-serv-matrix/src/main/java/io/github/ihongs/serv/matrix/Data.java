@@ -982,6 +982,7 @@ public class Data extends SearchEntity {
         nd.put("rtime", rtime);
         nd.put("etime",   0  );
         nd.put("state",   3  );
+        nd.put(     "id", id );
         nd.put("form_id", fid);
         nd.put("user_id", uid);
 

@@ -538,6 +538,10 @@ public class UploadHelper {
          *
          * 反之将其视为传递来的临时文件名,
          * 此时不得含斜杠从而规避同上问题.
+         *
+         * 问: 为何此处不支持非 uploadHerf 或 uploadPath 之外的本服务器路径?
+         * 答: 虽然内部能够读到, 但也可能会对文件访问设置过滤器进行权限校验;
+         * 故, 为保安全, 只能访问 uploadHref,uploadPath,uploadTemp 三个位置.
          */
 
         String  lead;

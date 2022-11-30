@@ -16,6 +16,9 @@ import java.io.IOException;
 import java.net.URLConnection;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -457,7 +460,10 @@ public class UploadHelper {
 
     /**
      * 检查文件对象并写入目标目录
-     * 检查当前文件
+     *
+     * 文件在临时目录里则移动过去
+     * 文件不在上传目录则复制过去
+     *
      * @param file
      * @param lead
      * @return
@@ -483,19 +489,20 @@ public class UploadHelper {
         chkTypeOrKind(type, kind);
         setResultName(lead, kind);
 
-        /**
-         * 原始文件与目标文件不同才需移动
-         */
-        File dist = new File(getResultPath());
-        if (!dist.equals(file)) {
-            File dirt = dist.getParentFile( );
-            if (!dirt.isDirectory()) {
-                 dirt.mkdirs( );
-            }
-            file.renameTo(dist);
+        try {
+            Path dist = Paths.get(getResultPath()).toAbsolutePath();
+            Path temp = Paths.get(getUploadTemp(uploadTemp)).toAbsolutePath();
+            if ( dist.startsWith (temp) ) {
+                Files.move(file.toPath( ), dist);
+            } else {
+            Path path = Paths.get(getResultPath(uploadPath)).toAbsolutePath();
+            if (!dist.startsWith (path) ) {
+                Files.copy(file.toPath( ), dist);
+            }}
+            return dist.toFile();
+        } catch (IOException ex) {
+            throw new Wrong( ex , "@core.file.upload.failed");
         }
-
-        return dist;
     }
 
     /**
@@ -544,44 +551,39 @@ public class UploadHelper {
          * 故, 为保安全, 只能处理 uploadHref,uploadPath,uploadTemp 三个位置.
          */
 
-        String  lead;
+        String href = getResultHref(uploadHref) + "/";
+        String path = getResultPath(uploadPath) + "/";
+        String lead ;
 
-        do {
-            String href = getResultHref(uploadHref) + "/";
-            String path = getResultPath(uploadPath) + "/";
-
-            if (name.startsWith(href)) {
-                lead = name.substring(href.length());
-                if (lead.contains("./" )) {
-                    throw new Wrong("@core.file.upload.not.allows");
-                }
-                name = path + lead;
-                break;
+        if (name.startsWith(href)) {
+            lead = name.substring(href.length());
+            if (lead.contains("./" )) {
+                throw new Wrong("@core.file.upload.not.allows");
             }
-
-            if (name.startsWith(path)) {
-                lead = name.substring(path.length());
-                if (lead.contains("./" )) {
-                    throw new Wrong("@core.file.upload.not.allows");
-                }
-            //  name = path + lead;
-                break;
-            }
-
-            String temp = getUploadTemp(uploadTemp) + "/";
-
-            {
-                if (name.contains("./" )) {
-                    throw new Wrong("@core.file.upload.not.allows");
-                }
-                name = temp + name;
-                lead = getDigestName(new File(name));
-                break;
-            }
+            name = path + lead;
+            return upload(new File(name), lead );
         }
-        while (false);
 
-        return upload(new File(name), lead);
+        if (name.startsWith(path)) {
+            lead = name.substring(path.length());
+            if (lead.contains("./" )) {
+                throw new Wrong("@core.file.upload.not.allows");
+            }
+        //  name = path + lead;
+            return upload(new File(name), lead );
+        }
+
+        /* 临时文件 */
+
+        String temp = getUploadTemp(uploadTemp) + "/";
+
+        {
+            if (name.contains("./" )) {
+                throw new Wrong("@core.file.upload.not.allows");
+            }
+            name = temp + name;
+            return upload(new File(name));
+        }
     }
 
     /**

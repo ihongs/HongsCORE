@@ -23,8 +23,8 @@ import javax.servlet.http.Part;
  * 文件校验
  * <pre>
  * 规则参数:
- *  pass-source yes|no 是否跳过资源链接(存在有"/"的字符)
- *  pass-remote yes|no 是否跳过远程链接(开头为"http://")
+ *  pass-locals yes|no 是否跳过本地路径(本地网络存在的)
+ *  pass-remote yes|no 是否跳过远程链接(开头为 http://)
  *  down-remote yes|no 是否下载远程文件
  *  drop-origin yes|no 抛弃原始文件, 仅使用 checks 中新创建的
  *  keep-origin yes|no 返回原始路径, 不理会 checks 中新创建的
@@ -56,10 +56,10 @@ public class IsFile extends Rule {
         if (value instanceof String) {
 
         // 跳过资源路径
-        if (Synt.declare(getParam("pass-source"), false)) {
+        if (Synt.declare(getParam("pass-locals"), false)) {
             String u = value.toString( );
-            if (u.indexOf( '/' ) != -1 ) {
-                return value;
+            if (new File(Core.BASE_PATH +"/"+u).isFile()) {
+                return u;
             }
         }
 
@@ -416,7 +416,7 @@ public class IsFile extends Rule {
         return path;
     }
 
-    private static final Pattern HREF_PATT = Pattern.compile("^(\\w+:)?//.*");
-    private static final Pattern NAME_PATT = Pattern.compile("[\"\\/<>*:?|]");
+    private static final Pattern HREF_PATT = Pattern.compile("^(https?:)?//.*");
+    private static final Pattern NAME_PATT = Pattern.compile( "[\"\\/<>*:?|]" );
 
 }

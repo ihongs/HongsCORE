@@ -20,10 +20,10 @@ public class IsForm extends Rule {
         // 跳过空值和空串
         Object value = watch.get();
         if (value  ==  null ) {
-            return STAND;
+            return PASS;
         }
         if (value.equals("")) {
-            return null ;
+            return null;
         }
 
         String conf = Synt.asString(getParam("conf"));

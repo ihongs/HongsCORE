@@ -1,8 +1,8 @@
 package io.github.ihongs.util.verify;
 
-import static io.github.ihongs.util.verify.Rule.BLANK;
-import static io.github.ihongs.util.verify.Rule.STAND;
 import java.util.Map;
+import static io.github.ihongs.util.verify.Rule.PASS;
+import static io.github.ihongs.util.verify.Rule.NONE;
 
 /**
  * 校验过程助手
@@ -34,7 +34,7 @@ public class Values implements Value {
      * @param value 
      */
     public void set(Object value) {
-        if (value == STAND || value == BLANK) {
+        if (value == PASS || value == NONE) {
             this.value  = null ;
             this.valued = false;
         } else {

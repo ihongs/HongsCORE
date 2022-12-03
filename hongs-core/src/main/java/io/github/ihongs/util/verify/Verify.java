@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import static io.github.ihongs.util.verify.Rule.BLANK;
-import static io.github.ihongs.util.verify.Rule.STAND;
+import static io.github.ihongs.util.verify.Rule.PASS;
+import static io.github.ihongs.util.verify.Rule.NONE;
 
 /**
  * 数据校验助手
@@ -100,16 +100,16 @@ public class Verify {
             Object[]   keys  ;
 
             keys = Dict.splitKeys(name);
-            data = Dict.get(values, STAND, keys);
+            data = Dict.get(values, PASS, keys);
             data = verify(values, cleans, wrongz, veriby, name, data, rulez);
 
             if (prompt && ! wrongz.isEmpty()) {
                 break;
             } else
-            if (data == BLANK) {
+            if (data == NONE) {
                 continue;
             } else
-            if (data == STAND) {
+            if (data == PASS) {
                 continue;
             }
 
@@ -159,15 +159,15 @@ public class Verify {
 
             Object dist = verify(wrongz, veri, rule, name, data);
 
-            if (dist == BLANK) {
-                return  BLANK;
+            if (dist == NONE) {
+                return  NONE;
             }
-            if (dist != STAND) {
+            if (dist != PASS) {
                 data  = dist ;
             }
 
             if (rule instanceof Rulx) {
-            if (data != STAND) {
+            if (data != PASS) {
                 data  = verify(values, cleans, wrongz, veri, name, data, rulez.subList(i, j), (Rulx) rule);
             }
                 break;
@@ -178,9 +178,9 @@ public class Verify {
          * 未给值且为更新
          * 则跳过当前取值
          */
-        if (data == STAND) {
+        if (data == PASS) {
         if (veri.isUpdate( ) ) {
-            return  STAND;
+            return  PASS;
         }
             return  null ;
         }
@@ -222,12 +222,12 @@ public class Verify {
                 Object dist3 = verify(values, cleans, wrongz, veri, name3, data3, rulez);
 
                 if (veri.isPrompt() && !wrongz.isEmpty()) {
-                    return   BLANK;
+                    return   NONE;
                 }
-                if (dist3 == BLANK) {
+                if (dist3 == NONE) {
                     continue;
                 }
-                if (dist3 != STAND) {
+                if (dist3 != PASS) {
                     data3  = dist3;
                 }
 
@@ -247,12 +247,12 @@ public class Verify {
                 Object dist3 = verify(values, cleans, wrongz, veri, name3, data3, rulez);
 
                 if (veri.isPrompt() && !wrongz.isEmpty()) {
-                    return   BLANK;
+                    return   NONE;
                 }
-                if (dist3 == BLANK) {
+                if (dist3 == NONE) {
                     continue;
                 }
-                if (dist3 != STAND) {
+                if (dist3 != PASS) {
                     data3  = dist3;
                 }
 
@@ -292,10 +292,10 @@ public class Verify {
                 }
             }
             fail(wrongz, w, name);
-            return BLANK;
+            return NONE;
         } catch (Wrongs  w) {
             fail(wrongz, w, name);
-            return BLANK;
+            return NONE;
         }
     }
 
@@ -327,10 +327,10 @@ public class Verify {
                 }
             }
             fail(wrongz, w, name);
-            return BLANK;
+            return NONE;
         } catch (Wrongs  w) {
             fail(wrongz, w, name);
-            return BLANK;
+            return NONE;
         }
     }
 

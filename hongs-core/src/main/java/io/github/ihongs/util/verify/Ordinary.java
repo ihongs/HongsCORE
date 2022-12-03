@@ -51,6 +51,6 @@ public class Ordinary extends Rule {
             throw new Wrong("@fore.form.ordinary");
         }
 
-        return  STAND;
+        return PASS;
     }
 }

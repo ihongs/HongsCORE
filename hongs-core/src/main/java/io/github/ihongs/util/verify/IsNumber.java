@@ -18,10 +18,10 @@ public class IsNumber extends Rule {
         // 跳过空值和空串
         Object value = watch.get();
         if (value  ==  null ) {
-            return STAND;
+            return PASS;
         }
         if (value.equals("")) {
-            return null ;
+            return null;
         }
 
         // 类型转换

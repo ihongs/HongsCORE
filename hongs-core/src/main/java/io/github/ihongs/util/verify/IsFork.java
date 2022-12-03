@@ -31,10 +31,10 @@ public class IsFork extends Rule {
         // 跳过空值和空串
         Object value = watch.get();
         if (value  ==  null ) {
-            return STAND;
+            return PASS;
         }
         if (value.equals("")) {
-            return STAND;
+            return PASS;
         }
 
         // 如果像 id 一样只是基本字符组成则跳过

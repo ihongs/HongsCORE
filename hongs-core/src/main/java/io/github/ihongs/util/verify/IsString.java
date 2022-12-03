@@ -25,7 +25,7 @@ public class IsString extends Rule {
         // 跳过空值
         Object value = watch.get();
         if (null == value) {
-            return  STAND;
+            return  PASS;
         }
 
         String str = Synt.declare(value, "");

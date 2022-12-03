@@ -9,9 +9,9 @@ public class Optional extends Rule {
     public Object verify(Value watch) throws Wrong {
         // 未给值则跳过此项目
         if (watch.isDefined()) {
-            return  STAND;
+            return  PASS;
         } else {
-            return  BLANK;
+            return  NONE;
         }
     }
  }

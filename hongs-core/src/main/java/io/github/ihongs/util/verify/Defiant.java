@@ -23,11 +23,11 @@ public class Defiant extends Rule {
     public Object verify(Value watch) {
         Object value = watch.get( );
         if (null== value) {
-            return STAND;
+            return PASS;
         }
         Object fiant = getParam("defiant");
         if (null== fiant) {
-            return STAND;
+            return PASS;
         }
 
         Set def ;

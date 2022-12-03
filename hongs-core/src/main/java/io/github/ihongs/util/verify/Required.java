@@ -15,7 +15,7 @@ public class Required extends Rule {
             // 更新而未给值则跳过
             if (watch.isUpdate ( )
             && !watch.isDefined()) {
-                return  BLANK;
+                return  NONE;
             }
             throw new Wrong("@fore.form.required");
         }

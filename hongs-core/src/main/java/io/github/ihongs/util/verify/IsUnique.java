@@ -33,17 +33,17 @@ public class IsUnique extends Rule {
 
     public IsUnique(boolean force) {
         if (force) {
-            FORCE = BLANK;
+            FORCE = NONE;
         } else {
-            FORCE = STAND;
+            FORCE = PASS;
         }
     }
 
     public IsUnique() {
         if ("unique".equals(getParam("__type__"))) {
-            FORCE = BLANK;
+            FORCE = NONE;
         } else {
-            FORCE = STAND;
+            FORCE = PASS;
         }
     }
 
@@ -51,12 +51,12 @@ public class IsUnique extends Rule {
     public Object verify(Value watch) throws Wrong {
         // 跳过空值和空串
         Object  value  = watch.get( );
-        if (FORCE == STAND) {
+        if (FORCE == PASS) {
             if (value  ==  null ) {
-                return STAND;
+                return PASS;
             }
             if (value.equals("")) {
-                return STAND;
+                return PASS;
             }
         }
 

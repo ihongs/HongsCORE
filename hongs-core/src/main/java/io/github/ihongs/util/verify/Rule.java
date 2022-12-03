@@ -5,6 +5,9 @@ import java.util.Map;
 
 /**
  * 常用规则
+ * 
+ * 在 verify 中返回
+ * 
  * @author Hongs
  */
 public abstract class Rule implements Ruly {
@@ -12,12 +15,12 @@ public abstract class Rule implements Ruly {
     /**
      * 未处理值
      */
-    public static final Object STAND = Synt.LOOP.NEXT;
+    public static final Object PASS = Synt.LOOP.NEXT;
 
     /**
      * 丢弃取值
      */
-    public static final Object BLANK = Synt.LOOP.LAST;
+    public static final Object NONE = Synt.LOOP.LAST;
 
     /**
      * 校验参数

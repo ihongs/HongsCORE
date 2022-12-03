@@ -20,10 +20,10 @@ public class IsEnum extends Rule {
         // 跳过空值和空串
         Object value = watch.get();
         if (value  ==  null ) {
-            return STAND;
+            return PASS;
         }
         if (value.equals("")) {
-            return STAND;
+            return PASS;
         }
 
         String conf = Synt.asString(getParam("conf"));
@@ -45,6 +45,6 @@ public class IsEnum extends Rule {
             throw new Wrong("@fore.form.not.in.enum");
         }
 
-        return  value;
+        return value;
     }
 }

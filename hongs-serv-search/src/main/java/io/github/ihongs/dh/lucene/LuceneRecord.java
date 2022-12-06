@@ -1098,8 +1098,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 // 可以查询有无
                 qa = new StringQuery();
                 break;
-            case "string":
-            case "search":
+            default:
                 // 区分能否搜索
                 if ( ! srchable(m)) {
                     qa = new StringQuery();
@@ -1112,13 +1111,19 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                     qs.settings(m);
                     qa = qs;
                 }
-                break;
-            default:
-                CoreLogger.warn("Field type {} for {} in {} can not be queried", t, k, dbname);
-                continue;
             } else {
-                CoreLogger.warn("Field {} in {} can not be queried", k, dbname);
-                continue;
+                // 区分能否搜索
+                if ( ! srchable(m)) {
+                    qa = new StringQuery();
+                } else {
+                    SearchQuery qs;
+                    Analyzer    a ;
+                    qs = new SearchQuery();
+                    a  = getAnalyser(m);
+                    qs.analyser(a);
+                    qs.settings(m);
+                    qa = qs;
+                }
             }
 
             //** 常规查询 **/
@@ -1172,28 +1177,45 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
             v = vd.get(Cnst.IS_REL);
             if ( v != null && !"".equals(v) ) {
-                String b = qa instanceof SearchQuery ? "$" : "@";
-                String a = Synt.asString(v).toUpperCase();
+                String a = Synt.asString(v).toUpperCase( );
+                String b = srchable(m) && ! findable(m) ? "$" : "@";
                 Query  p ;
                 try {
-                    p = new QueryParser(b + k, new StandardAnalyzer()).parse("[* TO *]");
-                }
-                catch  ( ParseException e ) {
-                    throw new HongsExemption(e);
-                }
-                switch ( a ) {
+                switch (a) {
                     case "WELL" :
                     case "NOT-NULL" :
+                        p = new QueryParser(b + k, new StandardAnalyzer()).parse("[* TO *]");
                         qr.add(p, BooleanClause.Occur.MUST);
                         i ++ ;
                         break;
                     case "NULL" :
                     case "NOT-WELL" :
+                        p = new QueryParser(b + k, new StandardAnalyzer()).parse("[* TO *]");
                         qr.add(p, BooleanClause.Occur.MUST_NOT);
+                        i ++ ; j ++ ;
+                        break;
+                    case "VALID":
+                    case "NOT-EMPTY":
+                        p = new QueryParser(b + k, new StandardAnalyzer()).parse("[* TO *]");
+                        qr.add(p, BooleanClause.Occur.MUST);
+                        p = new  TermQuery (new Term(b + k,""));
+                        qr.add(p, BooleanClause.Occur.MUST_NOT);
+                        i ++ ;
+                        break;
+                    case "EMPTY":
+                    case "NOT-VALID":
+                        BooleanQuery.Builder  qx = new BooleanQuery.Builder();
+                        p = new QueryParser(b + k, new StandardAnalyzer()).parse("[* TO *]");
+                        qx.add(p, BooleanClause.Occur.MUST);
+                        p = new  TermQuery (new Term(b + k,""));
+                        qx.add(p, BooleanClause.Occur.MUST_NOT);
+                        qr.add(qx.build() , BooleanClause.Occur.MUST_NOT );
                         i ++ ; j ++ ;
                         break;
                     default:
                         throw new HongsException(400, "Unsupported `is`: "+v);
+                }} catch (ParseException e) {
+                    throw new HongsExemption(e);
                 }
             }
 
@@ -1474,7 +1496,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
          * 如果全部条件都是 MUST_NOT 会导致取不到数据
          * 故有必要增加一个 MUST all 从而规避这个问题
          */
-        if (i > 0 & i == j) {
+        if (i > 0 && i == j) {
             qr.add(new MatchAllDocsQuery(), BooleanClause.Occur.MUST);
         }
     }
@@ -1571,7 +1593,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 st = SortField.Type.LONG; // 专用排序类型
                 break;
             default:
-                CoreLogger.warn("Field type {} for {} in {} can not be sorted", t, fn, dbname);
+                CoreLogger.warn("Field {} in {} can not be sorted", fn, dbname);
                 continue;
             } else {
                 CoreLogger.warn("Field {} in {} can not be sorted", fn, dbname);

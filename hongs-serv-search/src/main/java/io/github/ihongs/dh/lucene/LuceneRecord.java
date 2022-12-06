@@ -1158,17 +1158,16 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             v = vd.get(Cnst.OR_REL);
             if (Cnst.OR_KEY.equals(v )
             ||  Cnst.NR_KEY.equals(v)) {
-                List r2 = new ArrayList(vd.size() - 1);
+                List a = new ArrayList ( vd.size() - 1 );
                 for(Object ot : vd.entrySet()) {
-                    Map.Entry et = (Map.Entry) ot;
+                    Map.Entry et = (Map.Entry) ot ;
                     Object k2 = et.getKey  ();
-                    if (! Cnst.OR_KEY.equals(k2)) {
+                    if (Cnst.OR_KEY.equals(k2)) continue;
                     Object v2 = et.getValue();
-                        r2.add(Synt.mapOf(k, Synt.mapOf(k2, v2)));
-                    }
+                    a.add(Synt.mapOf(k, Synt.mapOf(k2, v2)));
                 }
-                if ( !  r2.isEmpty( )) {
-                    padQry(qr, Synt.mapOf(v, r2), r-1);
+                if (! a.isEmpty() ) {
+                    padQry(qr, Synt.mapOf(v,a), r);
                 }
                 continue;
             }

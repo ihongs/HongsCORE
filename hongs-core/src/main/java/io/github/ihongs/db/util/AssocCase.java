@@ -558,6 +558,14 @@ public class AssocCase {
                     case "NOT-WELL":
                         caze.filter(fn+" IS NULL");
                         break;
+                    case "VALID":
+                    case "NOT-EMPTY":
+                        caze.filter("("+fn+" IS NOT NULL AND "+fn+" != '')");
+                        break;
+                    case "EMTPY":
+                    case "NOT-VALID":
+                        caze.filter("("+fn+" IS NULL OR "+fn+" = '')");
+                        break;
                     default:
                         throw new UnsupportedOperationException("Unsupported `is`: "+vo);
                 }

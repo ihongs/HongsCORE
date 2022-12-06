@@ -30,12 +30,12 @@ public class Default extends Rule {
         Object force = getParam("deforce");
         if ("create".equals(force)) {
             if (watch.isUpdate() == true ) {
-                return NONE;
+                return QUIT;
             }
         } else
         if ("update".equals(force)) {
             if (watch.isUpdate() == false) {
-                return NONE;
+                return QUIT;
             }
         } else
         if ("always".equals(force) == false) { // 非 always
@@ -49,7 +49,7 @@ public class Default extends Rule {
                 return value;
             }
             if (watch.isUpdate() && !watch.isDefined()) {
-                return NONE;
+                return QUIT;
             }
         } else {
             /**
@@ -61,7 +61,7 @@ public class Default extends Rule {
                 return value;
             }
             if (watch.isUpdate() && !watch.isDefined()) {
-                return NONE;
+                return QUIT;
             } else {
                 return null;
             }
@@ -99,7 +99,7 @@ public class Default extends Rule {
                 return null ;
             }
             if (def.equals("=%void")) {
-                return NONE;
+                return QUIT;
             }
 
             // 动作选项
@@ -189,9 +189,9 @@ public class Default extends Rule {
     private static final Pattern INJ = Pattern.compile ("\\$(\\$|\\w+|\\{.+?\\})");
 
     public static Object alias(Value watch, String param) {
-        Object v = Dict.getParam(watch.getCleans(), NONE, param);
-        if (v == NONE) {
-            return NONE;
+        Object v = Dict.getParam(watch.getCleans(), QUIT, param);
+        if (v == QUIT) {
+            return QUIT;
         }
         if (v == null) {
             return "";
@@ -200,9 +200,9 @@ public class Default extends Rule {
     }
 
     public static Object count(Value watch, String param) {
-        Object v = Dict.getParam(watch.getCleans(), NONE, param);
-        if (v == NONE) {
-            return NONE;
+        Object v = Dict.getParam(watch.getCleans(), QUIT, param);
+        if (v == QUIT) {
+            return QUIT;
         }
         if (v == null) {
             return 0 ;
@@ -280,7 +280,7 @@ public class Default extends Rule {
             if (i != j) {
                 throw new Wrong("Default merge need vars: "+a.toString());
             } else {
-                return NONE;
+                return QUIT;
             }
         }
 
@@ -289,9 +289,9 @@ public class Default extends Rule {
     }
 
     public static Object max(Value watch, String param) throws Wrong {
-        Object v = Dict.getParam(watch.getCleans(), NONE, param);
-        if (v == NONE) {
-            return NONE;
+        Object v = Dict.getParam(watch.getCleans(), QUIT, param);
+        if (v == QUIT) {
+            return QUIT;
         }
         List l = Synt.asList(v);
         if (l == null || l.isEmpty( ) ) {
@@ -310,9 +310,9 @@ public class Default extends Rule {
     }
 
     public static Object min(Value watch, String param) throws Wrong {
-        Object v = Dict.getParam(watch.getCleans(), NONE, param);
-        if (v == NONE) {
-            return NONE;
+        Object v = Dict.getParam(watch.getCleans(), QUIT, param);
+        if (v == QUIT) {
+            return QUIT;
         }
         List l = Synt.asList(v);
         if (l == null || l.isEmpty( ) ) {
@@ -331,9 +331,9 @@ public class Default extends Rule {
     }
 
     public static Object sum(Value watch, String param) throws Wrong {
-        Object v = Dict.getParam(watch.getCleans(), NONE, param);
-        if (v == NONE) {
-            return NONE;
+        Object v = Dict.getParam(watch.getCleans(), QUIT, param);
+        if (v == QUIT) {
+            return QUIT;
         }
         List l = Synt.asList(v);
         if (l == null || l.isEmpty( ) ) {
@@ -353,9 +353,9 @@ public class Default extends Rule {
     }
 
     public static Object avg(Value watch, String param) throws Wrong {
-        Object v = Dict.getParam(watch.getCleans(), NONE, param);
-        if (v == NONE) {
-            return NONE;
+        Object v = Dict.getParam(watch.getCleans(), QUIT, param);
+        if (v == QUIT) {
+            return QUIT;
         }
         List l = Synt.asList(v);
         if (l == null || l.isEmpty( ) ) {

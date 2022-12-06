@@ -2,7 +2,7 @@ package io.github.ihongs.util.verify;
 
 import java.util.Map;
 import static io.github.ihongs.util.verify.Rule.PASS;
-import static io.github.ihongs.util.verify.Rule.NONE;
+import static io.github.ihongs.util.verify.Rule.QUIT;
 
 /**
  * 校验过程助手
@@ -34,7 +34,7 @@ public class Values implements Value {
      * @param value 
      */
     public void set(Object value) {
-        if (value == PASS || value == NONE) {
+        if (value == PASS || value == QUIT) {
             this.value  = null ;
             this.valued = false;
         } else {

@@ -13,14 +13,14 @@ import java.util.Map;
 public abstract class Rule implements Ruly {
 
     /**
-     * 未处理值
+     * 跳过校验
      */
     public static final Object PASS = Synt.LOOP.NEXT;
 
     /**
-     * 丢弃取值
+     * 终止校验
      */
-    public static final Object NONE = Synt.LOOP.LAST;
+    public static final Object QUIT = Synt.LOOP.LAST;
 
     /**
      * 校验参数

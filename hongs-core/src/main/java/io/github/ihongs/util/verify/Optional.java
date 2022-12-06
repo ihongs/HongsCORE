@@ -11,7 +11,7 @@ public class Optional extends Rule {
         if (watch.isDefined()) {
             return  PASS;
         } else {
-            return  NONE;
+            return  QUIT;
         }
     }
  }

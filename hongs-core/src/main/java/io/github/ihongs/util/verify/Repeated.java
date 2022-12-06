@@ -42,7 +42,7 @@ public class Repeated extends Rule implements Rulx {
             // 更新而未给值则跳过
             if (watch.isUpdate ( )
             && !watch.isDefined()) {
-                return  NONE;
+                return  QUIT;
             } else {
                 return  PASS;
             }

@@ -33,7 +33,7 @@ public class IsUnique extends Rule {
 
     public IsUnique(boolean force) {
         if (force) {
-            FORCE = NONE;
+            FORCE = QUIT;
         } else {
             FORCE = PASS;
         }
@@ -41,7 +41,7 @@ public class IsUnique extends Rule {
 
     public IsUnique() {
         if ("unique".equals(getParam("__type__"))) {
-            FORCE = NONE;
+            FORCE = QUIT;
         } else {
             FORCE = PASS;
         }

@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import static io.github.ihongs.util.verify.Rule.PASS;
-import static io.github.ihongs.util.verify.Rule.NONE;
+import static io.github.ihongs.util.verify.Rule.QUIT;
 
 /**
  * 数据校验助手
@@ -106,7 +106,7 @@ public class Verify {
             if (prompt && ! wrongz.isEmpty()) {
                 break;
             } else
-            if (data == NONE) {
+            if (data == QUIT) {
                 continue;
             } else
             if (data == PASS) {
@@ -159,8 +159,8 @@ public class Verify {
 
             Object dist = verify(wrongz, veri, rule, name, data);
 
-            if (dist == NONE) {
-                return  NONE;
+            if (dist == QUIT) {
+                return  QUIT;
             }
             if (dist != PASS) {
                 data  = dist ;
@@ -222,9 +222,9 @@ public class Verify {
                 Object dist3 = verify(values, cleans, wrongz, veri, name3, data3, rulez);
 
                 if (veri.isPrompt() && !wrongz.isEmpty()) {
-                    return   NONE;
+                    return   QUIT;
                 }
-                if (dist3 == NONE) {
+                if (dist3 == QUIT) {
                     continue;
                 }
                 if (dist3 != PASS) {
@@ -247,9 +247,9 @@ public class Verify {
                 Object dist3 = verify(values, cleans, wrongz, veri, name3, data3, rulez);
 
                 if (veri.isPrompt() && !wrongz.isEmpty()) {
-                    return   NONE;
+                    return   QUIT;
                 }
-                if (dist3 == NONE) {
+                if (dist3 == QUIT) {
                     continue;
                 }
                 if (dist3 != PASS) {
@@ -292,10 +292,10 @@ public class Verify {
                 }
             }
             fail(wrongz, w, name);
-            return NONE;
+            return QUIT;
         } catch (Wrongs  w) {
             fail(wrongz, w, name);
-            return NONE;
+            return QUIT;
         }
     }
 
@@ -327,10 +327,10 @@ public class Verify {
                 }
             }
             fail(wrongz, w, name);
-            return NONE;
+            return QUIT;
         } catch (Wrongs  w) {
             fail(wrongz, w, name);
-            return NONE;
+            return QUIT;
         }
     }
 

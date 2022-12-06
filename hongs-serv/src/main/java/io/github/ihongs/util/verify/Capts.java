@@ -42,7 +42,7 @@ public class Capts extends Rule {
             ah.setSessibute(ss + "_time", null);
         }
 
-        return NONE;
+        return QUIT;
     }
 
 }

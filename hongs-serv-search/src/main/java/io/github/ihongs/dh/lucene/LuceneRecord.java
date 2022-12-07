@@ -1185,14 +1185,14 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                     case "WELL" :
                     case "NOT-NULL" :
                         // p = new QueryParser(b + k, new StandardAnalyzer()).parse("[* TO *]");
-                        p = new IsAnyValue(b + k);
+                        p = new IsNotNull (b + k);
                         qr.add(p, BooleanClause.Occur.MUST);
                         i ++ ;
                         break;
                     case "NULL" :
                     case "NOT-WELL" :
                         // p = new QueryParser(b + k, new StandardAnalyzer()).parse("[* TO *]");
-                        p = new IsAnyValue(b + k);
+                        p = new IsNotNull (b + k);
                         qr.add(p, BooleanClause.Occur.MUST_NOT);
                         i ++ ; j ++ ;
                         break;

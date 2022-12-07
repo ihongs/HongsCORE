@@ -9,7 +9,7 @@ import org.apache.lucene.search.FieldComparatorSource;
 
 /**
  * 相对值排序器
- 用法 new SortField(FIELD_NAME, new RelativeSorter(DIST), DESC)
+ * 用法 new SortField(FIELD_NAME, new RelativeSorter(DIST), DESC)
  * @author Hongs
  */
 public class RelativeSorter extends FieldComparatorSource {

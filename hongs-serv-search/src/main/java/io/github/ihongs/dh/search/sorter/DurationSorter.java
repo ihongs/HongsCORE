@@ -10,8 +10,8 @@ import org.apache.lucene.util.BytesRef;
 
 /**
  * 平面距离排序
- 用法 new SortField(FIELD_NAME, new DurationSorter(X, Y), DESC)
- 字段取值 X,Y
+ * 用法 new SortField(FIELD_NAME, new DurationSorter(X, Y), DESC)
+ * 字段取值 X,Y
  * @author Hongs
  */
 public class DurationSorter extends FieldComparatorSource {

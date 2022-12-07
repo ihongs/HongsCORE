@@ -13,8 +13,8 @@ import org.apache.lucene.util.BytesRef;
 
 /**
  * 集合顺序排序
- 用法 new SortField(FIELD_NAME, new SequenceSorter(DIST), DESC)
- 类似 MySQL 的 ORDER BY FIND_IN_SET(col, set)
+ * 用法 new SortField(FIELD_NAME, new SequenceSorter(DIST), DESC)
+ * 类似 MySQL 的 ORDER BY FIND_IN_SET(col, set)
  * @author Hongs
  */
 public class SequenceSorter extends FieldComparatorSource {

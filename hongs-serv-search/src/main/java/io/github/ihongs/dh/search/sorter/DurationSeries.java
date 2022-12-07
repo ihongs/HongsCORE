@@ -9,7 +9,7 @@ import org.apache.lucene.search.FieldComparatorSource;
 
 /**
  * 平面距离排序
- 用法 new SortField("横标字段,纵标字段", new DurationSeries(横标,纵标), DESC)
+ * 用法 new SortField("横标字段,纵标字段", new DurationSeries(横标,纵标), DESC)
  * @author Hongs
  */
 public class DurationSeries extends FieldComparatorSource {

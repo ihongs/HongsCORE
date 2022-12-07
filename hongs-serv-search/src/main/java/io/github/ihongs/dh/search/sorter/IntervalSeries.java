@@ -9,7 +9,7 @@ import org.apache.lucene.search.FieldComparatorSource;
 
 /**
  * 区间近邻排序
- 用法 new SortField("开始字段,结束字段", new IntervalSeries(DIST), DESC)
+ * 用法 new SortField("开始字段,结束字段", new IntervalSeries(DIST), DESC)
  * @author Hongs
  */
 public class IntervalSeries extends FieldComparatorSource {

@@ -10,8 +10,8 @@ import org.apache.lucene.util.BytesRef;
 
 /**
  * 区间近邻排序
- 用法 new SortField(FIELD_NAME, new IntervalSorter(DIST), DESC)
- 字段取值 B,E
+ * 用法 new SortField(FIELD_NAME, new IntervalSorter(DIST), DESC)
+ * 字段取值 B,E
  * @author Hongs
  */
 public class IntervalSorter extends FieldComparatorSource {

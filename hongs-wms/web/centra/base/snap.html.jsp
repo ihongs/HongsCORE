@@ -133,7 +133,8 @@
         var tr = $(this).closest("tr");
         var id =      tr.data(   "id");
         var ct =      tr.data("ctime");
-        if (0  ==     tr.data("etime")) ct = 0;
+        if (0 ==      tr.data("etime")
+        &&  0 !=      tr.data("state")) ct = 0;
         listobj.send (tr, ms, "<%=_module%>/<%=_entity%>/revert.act"    , {id: id, rtime: ct});
     });
 

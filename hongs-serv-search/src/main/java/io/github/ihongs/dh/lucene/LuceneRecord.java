@@ -1260,9 +1260,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
             //** 集合查询 **/
 
-            v = vd.get(Cnst.AI_REL);
+            v = vd.get(Cnst.MI_REL);
             if ( v != null ) {
-                Set vs = Synt.asSet(v);
+                Set vs = Synt.toTerms(v);
                 if(!vs.isEmpty( )) {
                     for(Object vv : vs) {
                         qr.add(qa.whr(k, vv), BooleanClause.Occur.MUST);
@@ -1272,7 +1272,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             }
             v = vd.get(Cnst.NI_REL);
             if ( v != null ) {
-                Set vs = Synt.asSet(v);
+                Set vs = Synt.toTerms(v);
                 if(!vs.isEmpty( )) {
                     for(Object vv : vs) {
                         qr.add(qa.whr(k, vv), BooleanClause.Occur.MUST_NOT);
@@ -1282,7 +1282,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             }
             v = vd.get(Cnst.IN_REL);
             if ( v != null ) {
-                Set vs = Synt.asSet(v);
+                Set vs = Synt.toTerms(v);
                 if(!vs.isEmpty( )) {
                     BooleanQuery.Builder  qx = new BooleanQuery.Builder();
                     for(Object vv : vs) {

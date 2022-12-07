@@ -74,7 +74,7 @@ public final class Cnst {
 
     public static final String NI_REL = "ni"; // 不包含    (not in)
 
-    public static final String AI_REL = "ai"; // 全包含    (all in, DB 未实现)
+    public static final String MI_REL = "mi"; // 全包含    (max in, DB 未实现)
 
     public static final String WT_REL = "wt"; // 权重      (weight, DB 未实现)
 

@@ -1,4 +1,4 @@
-package io.github.ihongs.dh.lucene.field;
+package io.github.ihongs.dh.lucene.stock;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Field;
@@ -13,7 +13,7 @@ import org.apache.lucene.util.BytesRef;
  *
  * @author Hongs
  */
-public class StringFiald implements IField {
+public class StringStock implements IStock {
     private Analyzer ana = null;
     public void  analyser(Analyzer a) {
         this.ana = a;

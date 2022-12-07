@@ -1,4 +1,4 @@
-package io.github.ihongs.dh.search.sorter;
+package io.github.ihongs.dh.search.order;
 
 import java.io.IOException;
 import org.apache.lucene.index.DocValues;
@@ -9,14 +9,14 @@ import org.apache.lucene.search.FieldComparatorSource;
 
 /**
  * 相对值排序器
- * 用法 new SortField(FIELD_NAME, new RelativeSorter(DIST), DESC)
+ * 用法 new SortField(FIELD_NAME, new RelativeOrder(DIST), DESC)
  * @author Hongs
  */
-public class RelativeSorter extends FieldComparatorSource {
+public class RelativeOrder extends FieldComparatorSource {
 
     final long dist;
 
-    public RelativeSorter(long dist) {
+    public RelativeOrder(long dist) {
         this.dist = dist;
     }
 

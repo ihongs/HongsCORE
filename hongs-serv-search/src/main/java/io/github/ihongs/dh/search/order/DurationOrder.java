@@ -1,4 +1,4 @@
-package io.github.ihongs.dh.search.sorter;
+package io.github.ihongs.dh.search.order;
 
 import java.io.IOException;
 import org.apache.lucene.index.BinaryDocValues;
@@ -10,15 +10,15 @@ import org.apache.lucene.util.BytesRef;
 
 /**
  * 平面距离排序
- * 用法 new SortField(FIELD_NAME, new DurationSorter(X, Y), DESC)
+ * 用法 new SortField(FIELD_NAME, new DurationOrder(X, Y), DESC)
  * 字段取值 X,Y
  * @author Hongs
  */
-public class DurationSorter extends FieldComparatorSource {
+public class DurationOrder extends FieldComparatorSource {
 
     final long x, y;
 
-    public DurationSorter(long x, long y) {
+    public DurationOrder(long x, long y) {
         this.x = x;
         this.y = y;
     }

@@ -1,33 +1,32 @@
-package io.github.ihongs.dh.lucene.field;
+package io.github.ihongs.dh.lucene.stock;
 
 import io.github.ihongs.util.Synt;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.document.DoublePoint;
+import org.apache.lucene.document.LongPoint;
 import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.NumericDocValuesField;
 import org.apache.lucene.document.SortedNumericDocValuesField;
-import org.apache.lucene.util.NumericUtils;
 
 /**
  *
  * @author Hongs
  */
-public class DoubleField implements IField {
+public class LongStock implements IStock {
     @Override
     public Field get(String k, Object v) {
-        return new StoredField(/**/k, Synt.declare(v, 0D));
+        return new StoredField(/**/k, Synt.declare(v, 0L));
     }
     @Override
     public Field whr(String k, Object v) {
-        return new DoublePoint("@"+k, Synt.declare(v, 0D));
+        return new   LongPoint("@"+k, Synt.declare(v, 0L));
     }
     @Override
     public Field odr(String k, Object v) {
-        return new NumericDocValuesField("#"+k, Double.doubleToRawLongBits(Synt.declare(v, 0.0D)));
+        return new NumericDocValuesField("#"+k, Synt.declare(v, 0L));
     }
     @Override
     public Field ods(String k, Object v) {
-        return new SortedNumericDocValuesField("%"+k, NumericUtils.doubleToSortableLong(Synt.declare(v, 0.0D)));
+        return new SortedNumericDocValuesField("%"+k, Synt.declare(v, 0L));
     }
     @Override
     public Field wdr(String k, Object v) {

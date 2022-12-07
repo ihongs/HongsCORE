@@ -1,4 +1,4 @@
-package io.github.ihongs.dh.search.stoker;
+package io.github.ihongs.dh.search.token;
 
 import java.io.IOException;
 import java.io.StringReader;

@@ -1,4 +1,4 @@
-package io.github.ihongs.dh.search.sorter;
+package io.github.ihongs.dh.search.order;
 
 import java.io.IOException;
 import org.apache.lucene.index.LeafReader;

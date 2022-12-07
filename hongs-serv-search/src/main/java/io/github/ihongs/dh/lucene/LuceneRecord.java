@@ -13,9 +13,10 @@ import io.github.ihongs.dh.IReflux;
 import io.github.ihongs.dh.lucene.conn.Conn;
 import io.github.ihongs.dh.lucene.conn.ConnGetter;
 import io.github.ihongs.dh.lucene.conn.DirectConn;
-import io.github.ihongs.dh.lucene.field.*;
-import io.github.ihongs.dh.lucene.value.*;
 import io.github.ihongs.dh.lucene.query.*;
+import io.github.ihongs.dh.lucene.quest.*;
+import io.github.ihongs.dh.lucene.stock.*;
+import io.github.ihongs.dh.lucene.value.*;
 import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Syno;
@@ -38,8 +39,8 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.custom.CustomAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
-import org.apache.lucene.search.Query;
 import org.apache.lucene.search.MatchAllDocsQuery;
+import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.BoostQuery;
 import org.apache.lucene.search.BooleanQuery;
@@ -53,9 +54,9 @@ import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.store.AlreadyClosedException;
+import io.github.ihongs.dh.lucene.quest.IQuest;
+import io.github.ihongs.dh.lucene.stock.IStock;
 
 /**
  * Lucene 记录模型
@@ -862,7 +863,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 continue;
             }
 
-            IField  f ;
+            IStock  f ;
             String  t = datatype(m);
             boolean r = repeated(m);
             boolean s = sortable(m);
@@ -878,43 +879,43 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             if (t != null) switch (t)  {
             case "int":
                 if ("".equals(v)) continue;
-                f = new IntField();
+                f = new IntStock();
                 p = false;
                 break;
             case "long":
             case "date":
                 if ("".equals(v)) continue;
-                f = new LongField();
+                f = new LongStock();
                 p = false;
                 break;
             case "float":
                 if ("".equals(v)) continue;
-                f = new FloatField();
+                f = new FloatStock();
                 p = false;
                 break;
             case "double":
             case "number":
                 if ("".equals(v)) continue;
-                f = new DoubleField();
+                f = new DoubleStock();
                 p = false;
                 break;
             case "sorted":
                 if ("".equals(v)) continue;
-                f = new LongField();
+                f = new LongStock();
                 s = true ;
                 g = false; // 排序类型无需存储
                 p = false; // 排序类型无法搜索
                 q = false; // 排序类型无法筛选
                 break;
             case "search":
-                f = new StringFiald();
+                f = new StringStock();
                 p = true ;
                 g = false; // 搜索类型无需存储
                 q = false; // 搜索类型无法筛选
                 s = false; // 搜索类型无法排序
                 break;
             case "stored":
-                f = new StringFiald();
+                f = new StringStock();
                 g = true ;
                 p = false; // 存储类型无法搜索
                 q = false; // 存储类型无法筛选
@@ -922,16 +923,16 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 break;
             case "object":
                 if ("".equals(v)) continue;
-                f = new ObjectFiald();
+                f = new ObjectStock();
                 g = true ;
                 p = false; // 对象类型无法搜索
                 q = false; // 对象类型无法筛选
                 s = false; // 对象类型无法排序
                 break;
             default:
-                f = new StringFiald();
+                f = new StringStock();
             } else {
-                f = new StringFiald();
+                f = new StringStock();
             }
 
             /**
@@ -940,9 +941,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
              * 不再在开始预设分析器
              * 改为存字段时直接写入 TokenStream
              */
-            if (p && f instanceof StringFiald) {
+            if (p && f instanceof StringStock) {
                 try {
-                    ( ( StringFiald ) f).analyser(getAnalyzer(m));
+                    ( ( StringStock ) f).analyser(getAnalyzer(m));
                 }
                 catch (HongsException x) {
                     throw x.toExemption( );
@@ -988,7 +989,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 if (p) {
                     doc.add(f.wdr(k, getSrchText(m, a)));
                 }
-                if (!q && !p) { // 不可过滤时仍可判断空/非空/空串
+                if (g && !p && !q && !s) { // 仅存储的仍可判断空/非空/空串
                     doc.add(f.whr(k, v.equals("") ? "" : "0"));
                 }}
             } else
@@ -1005,7 +1006,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 if (p) {
                     doc.add(f.wdr(k, getSrchText(m, v)));
                 }
-                if (!q && !p) { // 不可过滤时仍可判断空/非空/空串
+                if (g && !p && !q && !s) { // 仅存储的仍可判断空/非空/空串
                     doc.add(f.whr(k, v.equals("") ? "" : "0"));
                 }
             }
@@ -1076,36 +1077,36 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 continue;
             }
 
-            IQuery qa ;
+            IQuest qa ;
             String t  =  datatype (m);
             if (t != null) switch (t) {
             case "int":
-                qa = new IntQuery();
+                qa = new IntQuest();
                 break;
             case "long":
             case "date":
-                qa = new LongQuery();
+                qa = new LongQuest();
                 break;
             case "float":
-                qa = new FloatQuery();
+                qa = new FloatQuest();
                 break;
             case "double":
             case "number":
-                qa = new DoubleQuery();
+                qa = new DoubleQuest();
                 break;
             case "object":
             case "stored":
                 // 可以查询有无
-                qa = new StringQuery();
+                qa = new StringQuest();
                 break;
             default:
                 // 区分能否搜索
                 if ( ! srchable(m)) {
-                    qa = new StringQuery();
+                    qa = new StringQuest();
                 } else {
-                    SearchQuery qs;
+                    SearchQuest qs;
                     Analyzer    a ;
-                    qs = new SearchQuery();
+                    qs = new SearchQuest();
                     a  = getAnalyser(m);
                     qs.analyser(a);
                     qs.settings(m);
@@ -1114,11 +1115,11 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             } else {
                 // 区分能否搜索
                 if ( ! srchable(m)) {
-                    qa = new StringQuery();
+                    qa = new StringQuest();
                 } else {
-                    SearchQuery qs;
+                    SearchQuest qs;
                     Analyzer    a ;
-                    qs = new SearchQuery();
+                    qs = new SearchQuest();
                     a  = getAnalyser(m);
                     qs.analyser(a);
                     qs.settings(m);
@@ -1179,43 +1180,56 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 String a = Synt.asString(v).toUpperCase( );
                 String b = srchable(m) && ! findable(m) ? "$" : "@";
                 Query  p ;
-                try {
+                // try {
                 switch (a) {
                     case "WELL" :
                     case "NOT-NULL" :
-                        p = new QueryParser(b + k, new StandardAnalyzer()).parse("[* TO *]");
+                        // p = new QueryParser(b + k, new StandardAnalyzer()).parse("[* TO *]");
+                        p = new IsAnyValue(b + k);
                         qr.add(p, BooleanClause.Occur.MUST);
                         i ++ ;
                         break;
                     case "NULL" :
                     case "NOT-WELL" :
-                        p = new QueryParser(b + k, new StandardAnalyzer()).parse("[* TO *]");
+                        // p = new QueryParser(b + k, new StandardAnalyzer()).parse("[* TO *]");
+                        p = new IsAnyValue(b + k);
                         qr.add(p, BooleanClause.Occur.MUST_NOT);
                         i ++ ; j ++ ;
                         break;
                     case "VALID":
                     case "NOT-EMPTY":
-                        p = new QueryParser(b + k, new StandardAnalyzer()).parse("[* TO *]");
-                        qr.add(p, BooleanClause.Occur.MUST);
-                        p = new  TermQuery (new Term(b + k,""));
-                        qr.add(p, BooleanClause.Occur.MUST_NOT);
-                        i ++ ;
-                        break;
-                    case "EMPTY":
-                    case "NOT-VALID":
+                        /*
                         BooleanQuery.Builder  qx = new BooleanQuery.Builder();
                         p = new QueryParser(b + k, new StandardAnalyzer()).parse("[* TO *]");
                         qx.add(p, BooleanClause.Occur.MUST);
                         p = new  TermQuery (new Term(b + k,""));
                         qx.add(p, BooleanClause.Occur.MUST_NOT);
-                        qr.add(qx.build() , BooleanClause.Occur.MUST_NOT );
+                        qr.add(qx.build(), BooleanClause.Occur.MUST);
+                        */
+                        p = new IsNotEmpty(b + k);
+                        qr.add(p, BooleanClause.Occur.MUST);
+                        i ++ ;
+                        break;
+                    case "EMPTY":
+                    case "NOT-VALID":
+                        /*
+                        BooleanQuery.Builder  qz = new BooleanQuery.Builder();
+                        p = new QueryParser(b + k, new StandardAnalyzer()).parse("[* TO *]");
+                        qz.add(p, BooleanClause.Occur.MUST);
+                        p = new  TermQuery (new Term(b + k,""));
+                        qz.add(p, BooleanClause.Occur.MUST_NOT);
+                        qr.add(qz.build(), BooleanClause.Occur.MUST_NOT);
+                        */
+                        p = new IsNotEmpty(b + k);
+                        qr.add(p, BooleanClause.Occur.MUST_NOT);
                         i ++ ; j ++ ;
                         break;
                     default:
                         throw new HongsException(400, "Unsupported `is`: "+v);
-                }} catch (ParseException e) {
+                }/*
+                } catch (ParseException e) {
                     throw new HongsExemption(e);
-                }
+                }*/
             }
 
             //** 精确匹配 **/
@@ -1379,7 +1393,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             Set<String> fs = getRschable();
             if (fs.size() > 0) {
                 BooleanQuery.Builder qx = new BooleanQuery.Builder();
-                 SearchQuery         qs = new  SearchQuery        ();
+                 SearchQuest         qs = new  SearchQuest        ();
 
                 for(String fn : fs) {
                     Map fc  = fields.get(fn);

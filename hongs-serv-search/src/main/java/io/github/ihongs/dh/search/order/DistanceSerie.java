@@ -1,4 +1,4 @@
-package io.github.ihongs.dh.search.sorter;
+package io.github.ihongs.dh.search.order;
 
 import java.io.IOException;
 import org.apache.lucene.index.DocValues;
@@ -9,20 +9,20 @@ import org.apache.lucene.search.FieldComparatorSource;
 
 /**
  * 球面距离排序
- * 用法 new SortField("经度字段,纬度字段", new DurationSorter(经度,纬度), DESC)
+ * 用法 new SortField("经度字段,纬度字段", new DistanceSerie(经度,纬度), DESC)
  * @author Hongs
  */
-public class DistanceSeries extends FieldComparatorSource {
+public class DistanceSerie extends FieldComparatorSource {
 
     final float  o;
     final float  a;
     final  long  w;
 
-    public DistanceSeries(float o, float a) {
+    public DistanceSerie(float o, float a) {
         this(o , a, 12756000L); // 地球直径(米)
     }
 
-    public DistanceSeries(float o, float a, long w) {
+    public DistanceSerie(float o, float a, long w) {
         this.o = o;
         this.a = a;
         this.w = w;

@@ -1,14 +1,14 @@
-package io.github.ihongs.dh.lucene.query;
+package io.github.ihongs.dh.lucene.quest;
 
 import io.github.ihongs.util.Synt;
-import org.apache.lucene.document.FloatPoint;
+import org.apache.lucene.document.LongPoint;
 import org.apache.lucene.search.Query;
 
 /**
  *
  * @author Hongs
  */
-public class FloatQuery implements IQuery {
+public class LongQuest implements IQuest {
     @Override
     public Query wdr(String k, Object v) {
         throw new UnsupportedOperationException("Field "+k+" does not support search");
@@ -18,8 +18,8 @@ public class FloatQuery implements IQuery {
         if (v == null || "".equals(v)) {
             throw new NullPointerException("Query for "+k+" must be number, but null");
         }
-        float   n2 = Synt.asFloat(v);
-        Query   q2 = FloatPoint.newExactQuery("@"+k, n2);
+        long    n2 = Synt.asLong(v);
+        Query   q2 = LongPoint.newExactQuery("@"+k, n2);
         return  q2;
     }
     @Override
@@ -27,24 +27,24 @@ public class FloatQuery implements IQuery {
         if (n == null && x == null) {
             throw new NullPointerException("Range for "+k+" must be number, but null");
         }
-        float n2, x2;
+        long n2, x2;
         if (n == null || "".equals(n)) {
-            n2 = Float.MIN_VALUE;
+            n2 = Long.MIN_VALUE;
         } else {
-            n2 = Synt.asFloat(n);
+            n2 = Synt.asLong(n);
             if (!l) {
-                n2 = FloatPoint.nextUp  (n2);
+                n2 = n2 + 1;
             }
         }
         if (x == null || "".equals(x)) {
-            x2 = Float.MAX_VALUE;
+            x2 = Long.MAX_VALUE;
         } else {
-            x2 = Synt.asFloat(x);
+            x2 = Synt.asLong(x);
             if (!g) {
-                x2 = FloatPoint.nextDown(x2);
+                x2 = x2 - 1;
             }
         }
-        Query   q2 = FloatPoint.newRangeQuery("@"+k, n2, x2);
+        Query   q2 = LongPoint.newRangeQuery("@"+k, n2, x2);
         return  q2;
     }
 }

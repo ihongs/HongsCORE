@@ -1,4 +1,4 @@
-package io.github.ihongs.dh.search.sorter;
+package io.github.ihongs.dh.search.order;
 
 import java.io.IOException;
 import org.apache.lucene.index.BinaryDocValues;
@@ -10,15 +10,15 @@ import org.apache.lucene.util.BytesRef;
 
 /**
  * 区间近邻排序
- * 用法 new SortField(FIELD_NAME, new IntervalSorter(DIST), DESC)
+ * 用法 new SortField(FIELD_NAME, new IntervalOrder(DIST), DESC)
  * 字段取值 B,E
  * @author Hongs
  */
-public class IntervalSorter extends FieldComparatorSource {
+public class IntervalOrder extends FieldComparatorSource {
 
     final long dist;
 
-    public IntervalSorter(long dist) {
+    public IntervalOrder(long dist) {
         this.dist = dist;
     }
 

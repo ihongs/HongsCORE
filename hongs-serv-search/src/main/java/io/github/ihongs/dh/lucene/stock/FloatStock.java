@@ -1,32 +1,33 @@
-package io.github.ihongs.dh.lucene.field;
+package io.github.ihongs.dh.lucene.stock;
 
 import io.github.ihongs.util.Synt;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.document.IntPoint;
+import org.apache.lucene.document.FloatPoint;
 import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.NumericDocValuesField;
 import org.apache.lucene.document.SortedNumericDocValuesField;
+import org.apache.lucene.util.NumericUtils;
 
 /**
  *
  * @author Hongs
  */
-public class IntField implements IField {
+public class FloatStock implements IStock {
     @Override
     public Field get(String k, Object v) {
-        return new StoredField(/**/k, Synt.declare(v, 0));
+        return new StoredField(/**/k, Synt.declare(v, 0F));
     }
     @Override
     public Field whr(String k, Object v) {
-        return new    IntPoint("@"+k, Synt.declare(v, 0));
+        return new  FloatPoint("@"+k, Synt.declare(v, 0F));
     }
     @Override
     public Field odr(String k, Object v) {
-        return new NumericDocValuesField("#"+k, Synt.declare(v, 0));
+        return new NumericDocValuesField("#"+k, Float.floatToRawIntBits(Synt.declare(v, 0.0F)));
     }
     @Override
     public Field ods(String k, Object v) {
-        return new SortedNumericDocValuesField("%"+k, Synt.declare(v, 0));
+        return new SortedNumericDocValuesField("%"+k, NumericUtils.floatToSortableInt(Synt.declare(v, 0.0F)));
     }
     @Override
     public Field wdr(String k, Object v) {

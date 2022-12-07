@@ -1,4 +1,4 @@
-package io.github.ihongs.dh.lucene.query;
+package io.github.ihongs.dh.lucene.quest;
 
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.util.Syno;
@@ -14,7 +14,7 @@ import org.apache.lucene.search.Query;
  *
  * @author Hongs
  */
-public class SearchQuery extends StringQuery {
+public class SearchQuest extends StringQuest {
     private Analyzer ana = null;
     private Boolean  des = null;
     private Boolean  dor = null;

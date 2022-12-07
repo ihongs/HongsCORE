@@ -1,4 +1,4 @@
-package io.github.ihongs.dh.lucene.query;
+package io.github.ihongs.dh.lucene.quest;
 
 import io.github.ihongs.util.Synt;
 import org.apache.lucene.index.Term;
@@ -10,7 +10,7 @@ import org.apache.lucene.search.TermRangeQuery;
  *
  * @author Hongs
  */
-public class StringQuery implements IQuery {
+public class StringQuest implements IQuest {
     @Override
     public Query wdr(String k, Object v) {
         throw new UnsupportedOperationException("Field "+k+" does not support search");

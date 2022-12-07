@@ -1,4 +1,4 @@
-package io.github.ihongs.dh.search.sorter;
+package io.github.ihongs.dh.search.order;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -13,15 +13,15 @@ import org.apache.lucene.util.BytesRef;
 
 /**
  * 集合顺序排序
- * 用法 new SortField(FIELD_NAME, new SequenceSorter(DIST), DESC)
+ * 用法 new SortField(FIELD_NAME, new SequenceOrder(DIST), DESC)
  * 类似 MySQL 的 ORDER BY FIND_IN_SET(col, set)
  * @author Hongs
  */
-public class SequenceSorter extends FieldComparatorSource {
+public class SequenceOrder extends FieldComparatorSource {
 
     final Map <String, Long> dist ;
 
-    public SequenceSorter(Collection<String> vals) {
+    public SequenceOrder(Collection<String> vals) {
         long  i  = 0 - vals.size();
             dist = new HashMap ( );
         for ( String  val : vals ) {

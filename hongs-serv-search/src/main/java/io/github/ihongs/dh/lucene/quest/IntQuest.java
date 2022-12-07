@@ -1,4 +1,4 @@
-package io.github.ihongs.dh.lucene.query;
+package io.github.ihongs.dh.lucene.quest;
 
 import io.github.ihongs.util.Synt;
 import org.apache.lucene.document.IntPoint;
@@ -8,7 +8,7 @@ import org.apache.lucene.search.Query;
  *
  * @author Hongs
  */
-public class IntQuery implements IQuery {
+public class IntQuest implements IQuest {
     @Override
     public Query wdr(String k, Object v) {
         throw new UnsupportedOperationException("Field "+k+" does not support search");

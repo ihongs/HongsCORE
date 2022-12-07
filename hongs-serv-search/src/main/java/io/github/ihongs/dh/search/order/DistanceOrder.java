@@ -1,4 +1,4 @@
-package io.github.ihongs.dh.search.sorter;
+package io.github.ihongs.dh.search.order;
 
 import java.io.IOException;
 import org.apache.lucene.index.BinaryDocValues;
@@ -10,21 +10,21 @@ import org.apache.lucene.util.BytesRef;
 
 /**
  * 球面距离排序
- * 用法 new SortField(FIELD_NAME, new SortByDids(O, A), DESC)
+ * 用法 new SortField(FIELD_NAME, new DistanceOrder(O, A), DESC)
  * 字段取值 O,A
  * @author Hongs
  */
-public class DistanceSorter extends FieldComparatorSource {
+public class DistanceOrder extends FieldComparatorSource {
 
     final float  o;
     final float  a;
     final  long  w;
 
-    public DistanceSorter(float o, float a) {
+    public DistanceOrder(float o, float a) {
         this(o , a, 12756000L); // 地球直径(米)
     }
 
-    public DistanceSorter(float o, float a, long w) {
+    public DistanceOrder(float o, float a, long w) {
         this.o = o;
         this.a = a;
         this.w = w;

@@ -1,4 +1,4 @@
-package io.github.ihongs.dh.search.sorter;
+package io.github.ihongs.dh.search.order;
 
 import java.io.IOException;
 import org.apache.lucene.index.DocValues;
@@ -9,14 +9,14 @@ import org.apache.lucene.search.FieldComparatorSource;
 
 /**
  * 区间近邻排序
- * 用法 new SortField("开始字段,结束字段", new IntervalSeries(DIST), DESC)
+ * 用法 new SortField("开始字段,结束字段", new IntervalSerie(DIST), DESC)
  * @author Hongs
  */
-public class IntervalSeries extends FieldComparatorSource {
+public class IntervalSerie extends FieldComparatorSource {
 
     final long dist;
 
-    public IntervalSeries(long dist) {
+    public IntervalSerie(long dist) {
         this.dist = dist;
     }
 

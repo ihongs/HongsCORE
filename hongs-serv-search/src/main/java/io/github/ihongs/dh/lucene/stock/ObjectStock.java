@@ -1,4 +1,4 @@
-package io.github.ihongs.dh.lucene.field;
+package io.github.ihongs.dh.lucene.stock;
 
 import io.github.ihongs.util.Dawn;
 import org.apache.lucene.document.Field;
@@ -9,7 +9,7 @@ import org.apache.lucene.document.StringField;
  *
  * @author Hongs
  */
-public class ObjectFiald implements IField {
+public class ObjectStock implements IStock {
     @Override
     public Field get(String k, Object v) {
         if (v == null || "".equals(v)) {

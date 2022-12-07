@@ -508,6 +508,7 @@ public class AssocCase {
 
             if ( vv instanceof Collection
             ||   vv instanceof Object[] ) {
+                // 与 IN 不同, 与 ON 相同
                 Set vs = Synt.asSet( vv );
                     vs.remove("");
                 if(!vs.isEmpty( )) {
@@ -575,8 +576,9 @@ public class AssocCase {
             if ( vo != null ) {
             if ( vo instanceof Collection
             ||   vo instanceof Object[] ) {
+                // 与 in 不同, 会忽略空串
                 Set vz = Synt.asSet( vo );
-                    vz.remove(""); // 与 in 不同
+                    vz.remove("");
                 if(!vz.isEmpty( )) {
                     caze.filter(fn+" IN (?)", vz );
                 }

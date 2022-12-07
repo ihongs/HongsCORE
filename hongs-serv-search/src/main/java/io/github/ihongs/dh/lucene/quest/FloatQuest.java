@@ -5,7 +5,7 @@ import org.apache.lucene.document.FloatPoint;
 import org.apache.lucene.search.Query;
 
 /**
- *
+ * 数值查询
  * @author Hongs
  */
 public class FloatQuest implements IQuest {

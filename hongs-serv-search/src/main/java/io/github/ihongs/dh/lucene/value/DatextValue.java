@@ -10,7 +10,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 /**
- *
+ * 日期格式化值
  * @author Hongs
  */
 public class DatextValue implements IValue {

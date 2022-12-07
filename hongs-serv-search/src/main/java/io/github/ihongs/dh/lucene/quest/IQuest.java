@@ -3,7 +3,7 @@ package io.github.ihongs.dh.lucene.quest;
 import org.apache.lucene.search.Query;
 
 /**
- *
+ * 查询接口
  * @author Hongs
  */
 public interface IQuest {

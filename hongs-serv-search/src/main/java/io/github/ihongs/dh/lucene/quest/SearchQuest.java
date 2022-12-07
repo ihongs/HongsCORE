@@ -11,7 +11,7 @@ import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.Query;
 
 /**
- *
+ * 全文检索
  * @author Hongs
  */
 public class SearchQuest extends StringQuest {

@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Date;
 
 /**
- *
+ * 日期时间戳值
  * @author Hongs
  */
 public class DatimeValue implements IValue {

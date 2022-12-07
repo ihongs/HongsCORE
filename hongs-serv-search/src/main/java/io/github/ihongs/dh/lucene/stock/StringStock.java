@@ -10,7 +10,7 @@ import org.apache.lucene.document.TextField;
 import org.apache.lucene.util.BytesRef;
 
 /**
- *
+ * 字串存储
  * @author Hongs
  */
 public class StringStock implements IStock {

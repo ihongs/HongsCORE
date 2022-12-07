@@ -8,7 +8,7 @@ import org.apache.lucene.document.NumericDocValuesField;
 import org.apache.lucene.document.SortedNumericDocValuesField;
 
 /**
- *
+ * 数值存储
  * @author Hongs
  */
 public class LongStock implements IStock {

@@ -5,7 +5,7 @@ import org.apache.lucene.document.DoublePoint;
 import org.apache.lucene.search.Query;
 
 /**
- *
+ * 数值查询
  * @author Hongs
  */
 public class DoubleQuest implements IQuest {

@@ -4,7 +4,7 @@ import io.github.ihongs.util.Dawn;
 import org.apache.lucene.index.IndexableField;
 
 /**
- *
+ * 对象取值
  * @author Hongs
  */
 public class ObjectValue implements IValue {

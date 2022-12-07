@@ -6,7 +6,7 @@ import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.StringField;
 
 /**
- *
+ * 对象存储
  * @author Hongs
  */
 public class ObjectStock implements IStock {

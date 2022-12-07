@@ -3,7 +3,7 @@ package io.github.ihongs.dh.lucene.stock;
 import org.apache.lucene.document.Field;
 
 /**
- *
+ * 存储接口
  * @author Hongs
  */
 public interface IStock {

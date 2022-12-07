@@ -9,7 +9,7 @@ import org.apache.lucene.document.SortedNumericDocValuesField;
 import org.apache.lucene.util.NumericUtils;
 
 /**
- *
+ * 数值存储
  * @author Hongs
  */
 public class FloatStock implements IStock {

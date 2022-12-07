@@ -7,7 +7,7 @@ import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TermRangeQuery;
 
 /**
- *
+ * 字串查询
  * @author Hongs
  */
 public class StringQuest implements IQuest {

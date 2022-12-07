@@ -127,12 +127,14 @@ public class DataAction extends SearchAction {
 
         // 详情数据转换
         if (rsp.containsKey("info")) {
-            Map df = (Map) rsp.remove("info");
-            Map dt = (Map) Dawn.toObject(
-                  (String)  df.remove("data")
+            Map inf = (Map) rsp.get("info");
+        if (inf.containsKey("data")) {
+            Map dat = (Map) Dawn.toObject(
+                   (String) inf.get("data")
             );
-            rsp.put("snap", df);
-            rsp.put("info", dt);
+            rsp.put("info", dat);
+            rsp.put("snap", inf);
+            inf.remove( "data" );
 
             // 补充枚举和关联
             Set ab = Synt.toTerms(req.get(Cnst.AB_KEY));
@@ -152,16 +154,16 @@ public class DataAction extends SearchAction {
                 // 新的和旧的
                 if (ab.contains("older")
                 ||  ab.contains("newer")) {
-                    Object  id = df.get(/**/ "id");
-                    Object fid = df.get("form_id");
-                    long ctime = Synt.declare(df.get("ctime"), 0L);
+                    Object  id = inf.get(/**/ "id");
+                    Object fid = inf.get("form_id");
+                    long ctime = Synt.declare(inf.get("ctime"), 0L);
                     if (ab.contains("older")) {
                         Map row = ett.getModel().table.fetchCase()
                            .filter("`id` = ? AND `form_id` = ? AND `ctime` < ?", id, fid, ctime)
                            .assort("`ctime` DESC")
                            .select("`ctime`")
                            .getOne();
-                        df.put("older" , ! row.isEmpty() ? row.get("ctime") : null);
+                        inf.put("older" , ! row.isEmpty() ? row.get("ctime") : null);
                     }
                     if (ab.contains("newer")) {
                         Map row = ett.getModel().table.fetchCase()
@@ -169,11 +171,11 @@ public class DataAction extends SearchAction {
                            .assort("`ctime`  ASC")
                            .select("`ctime`")
                            .getOne();
-                        df.put("newer" , ! row.isEmpty() ? row.get("ctime") : null);
+                        inf.put("newer" , ! row.isEmpty() ? row.get("ctime") : null);
                     }
                 }
             }
-        }
+        }}
 
         helper.reply(rsp);
     }

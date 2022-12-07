@@ -586,14 +586,19 @@ public class AssocCase {
                 }
             }}
 
+            // IN/NI 可以拆字符串, 如 fn.in=1,2 同 fn.in.=1&fn.in.=2
             vo = vm.get(Cnst.IN_REL);
             if ( vo != null ) {
-                caze.filter(fn+/**/" IN (?)", vo );
-            }
+            Set  vs  = Synt.toSet (vo);
+            if (!vs.isEmpty() ) {
+                caze.filter(fn+/**/" IN (?)", vs );
+            }}
             vo = vm.get(Cnst.NI_REL);
             if ( vo != null ) {
-                caze.filter(fn+" NOT IN (?)", vo );
-            }
+            Set  vs  = Synt.toSet (vo);
+            if (!vs.isEmpty() ) {
+                caze.filter(fn+" NOT IN (?)", vs );
+            }}
 
             vo = vm.get(Cnst.EQ_REL);
             if ( vo != null ) {

@@ -1127,7 +1127,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 }
             }
 
-            //** 常规查询 **/
+            //** 常规查询, 同 ON **/
 
             Map vd;
             if (v instanceof Map) {
@@ -1260,9 +1260,10 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
             //** 集合查询 **/
 
+            // IN/NI/MI 可以拆字符串, 如 fn.in=1,2 同 fn.in.=1&fn.in.=2
             v = vd.get(Cnst.MI_REL);
             if ( v != null ) {
-                Set vs = Synt.toTerms(v);
+                Set vs = Synt.toSet(v);
                 if(!vs.isEmpty( )) {
                     for(Object vv : vs) {
                         qr.add(qa.whr(k, vv), BooleanClause.Occur.MUST);
@@ -1272,7 +1273,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             }
             v = vd.get(Cnst.NI_REL);
             if ( v != null ) {
-                Set vs = Synt.toTerms(v);
+                Set vs = Synt.toSet(v);
                 if(!vs.isEmpty( )) {
                     for(Object vv : vs) {
                         qr.add(qa.whr(k, vv), BooleanClause.Occur.MUST_NOT);
@@ -1282,7 +1283,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             }
             v = vd.get(Cnst.IN_REL);
             if ( v != null ) {
-                Set vs = Synt.toTerms(v);
+                Set vs = Synt.toSet(v);
                 if(!vs.isEmpty( )) {
                     BooleanQuery.Builder  qx = new BooleanQuery.Builder();
                     for(Object vv : vs) {

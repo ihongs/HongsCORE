@@ -1127,23 +1127,24 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 }
             }
 
-            //** 常规查询, 同 ON **/
+            //** 常规查询 **/
 
-            Map vd;
+            Map vd ;
             if (v instanceof Map) {
                 vd = (Map) v ;
             } else
             if (v instanceof Collection
             ||  v instanceof Object[ ]) {
-                Set  a = Synt.asSet(v);
-                     a.remove("");
-                if (!a.isEmpty( )) {
-                    BooleanQuery.Builder qx = new BooleanQuery.Builder();
-                    for( Object b : a ) {
-                        qx.add(qa.whr(k, b), BooleanClause.Occur.SHOULD);
+                // 与 IN 不同, 与 ON 相同
+                Set vs = Synt.asSet(v);
+                    vs.remove("");
+                if(!vs.isEmpty( )) {
+                    BooleanQuery.Builder  qx = new BooleanQuery.Builder();
+                    for(Object vv : vs) {
+                        qx.add(qa.whr(k, vv), BooleanClause.Occur.SHOULD);
                     }
-                    qr.add(qx.build(  ), BooleanClause.Occur.MUST);
-                    i ++;
+                        qr.add(qx.build (  ), BooleanClause.Occur.MUST  );
+                        i ++;
                 }
                 continue;
             } else {
@@ -1298,15 +1299,16 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             if ( v != null ) {
             if ( v instanceof Collection
             ||   v instanceof Object[]) {
-                Set  a = Synt.asSet (v);
-                     a.remove(""); // 与 in 不同
-                if (!a.isEmpty( )) {
-                    BooleanQuery.Builder qx = new BooleanQuery.Builder();
-                    for( Object b : a ) {
-                        qx.add(qa.whr(k, b), BooleanClause.Occur.SHOULD);
+                // 与 IN 不同, 会忽略空串
+                Set vs = Synt.asSet(v);
+                    vs.remove("");
+                if(!vs.isEmpty( )) {
+                    BooleanQuery.Builder  qx = new BooleanQuery.Builder();
+                    for(Object vv : vs) {
+                        qx.add(qa.whr(k, vv), BooleanClause.Occur.SHOULD);
                     }
-                    qr.add(qx.build(  ), BooleanClause.Occur.MUST);
-                    i ++;
+                        qr.add(qx.build (  ), BooleanClause.Occur.MUST  );
+                        i ++;
                 }
             } else {
                 if (!v.equals("")) {

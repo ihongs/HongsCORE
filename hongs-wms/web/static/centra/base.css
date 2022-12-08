@@ -67,7 +67,8 @@ body {
 .sider-open #head-handler {
     left   : 240px;
 }
-.sider-open #body-handler {
+.sider-open #body-top-handler ,
+.sider-open #body-bot-handler {
     left   : calc(50% - -120px);
 }
 /*  等同 calc(50% + 120px), 规避 yuicompressor 会把 + 边空格去掉的问题  */
@@ -331,7 +332,7 @@ body {
     border-color: transparent #fff transparent transparent;
 }
 
-#body-handler {
+#body-top-handler {
     cursor: pointer;
     position: fixed;
     z-index : 99;
@@ -343,10 +344,10 @@ body {
     border-radius: 0 0 5px 5px;
     background: rgba(210,210,210,0.5);
 }
-#body-handler:hover {
+#body-top-handler:hover {
     background: rgba(210,210,210,1.0);
 }
-#body-handler a {
+#body-top-handler a {
     width : 0;
     height: 0;
     display: block;
@@ -354,6 +355,33 @@ body {
     border-width: 4px;
     border-style: solid;
     border-color: transparent transparent #fff transparent;
+    margin-top: 0px;
+}
+
+#body-bot-handler {
+    cursor: pointer;
+    position: fixed;
+    z-index : 99;
+    bottom:  0px;
+    left  :  50%;
+    width : 30px;
+    height: 14px;
+    margin-left  : -15px;
+    border-radius: 5px 5px 0 0;
+    background: rgba(210,210,210,0.5);
+}
+#body-bot-handler:hover {
+    background: rgba(210,210,210,1.0);
+}
+#body-bot-handler a {
+    width : 0;
+    height: 0;
+    display: block;
+    margin-left: 11px;
+    border-width: 4px;
+    border-style: solid;
+    border-color: #fff transparent transparent transparent;
+    margin-top: 5px;
 }
 
 #headbox a#logout {

@@ -44,110 +44,109 @@
 <div id="<%=_pageId%>" class="<%=_pageId%> swap-info board board-end">
     <div class="row">
     <div class="col-xs-6">
-        <div class="table-responsive-revised">
-        <div class="table-responsive listbox">
-        <table class="table table-hover table-striped">
-            <thead>
-                <tr>
-                    <th>字段</th>
-                    <th>类型</th>
-                    <th>名称</th>
-                    <th>标识</th>
-                </tr>
-            </thead>
-            <tbody>
-            <%
-            Map ts = FormSet.getInstance("default")
-                            .getEnum ( "__types__");
+        <div class="listbox panel panel-default table-responsive">
+            <table class="table table-hover table-striped table-compressed">
+                <thead>
+                    <tr>
+                        <th>字段</th>
+                        <th>类型</th>
+                        <th>名称</th>
+                        <th>标识</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <%
+                Map ts = FormSet.getInstance("default")
+                                .getEnum ( "__types__");
 
-            it = _fields.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry et = (Map.Entry)it.next();
-                Map     info = (Map ) et.getValue();
-                String  name = (String) et.getKey();
-                if ( "@".equals(name) )  continue  ;
-                String  type = (String) ts.get(info.get("__type__"));
-            %>
-                <tr>
-                    <td>
-                    <%if ("enum".equals(type)) {%>
-                        <a href="javascript:;" class="view-enum"><%=name%></a>
-                    <%} else if ("form".equals(type)) {%>
-                        <%
-                            String conf = Synt.declare(info.get("conf"), _config);
-                            String form = Synt.declare(info.get("form"),  name  );
-                            Map fs = FormSet.getInstance(conf).getFormTranslated(form);
-                            List<Object[]> fl = new ArrayList(fs.size());
-                            for(Object ot : fs.entrySet()) {
-                                Map.Entry xt = (Map.Entry) ot;
-                                Map fc = (Map) xt.getValue( );
-                                Object n = xt.getKey();
-                                if ( "@".equals(n) ) continue;
-                                Object t = fc.get("__type__");
-                                Object l = fc.get("__text__");
-                                fl.add(new Object[]{n, t, l});
-                            }
-                        %>
-                        <a href="javascript:;" class="show-form" data-data="<%=escape(Dawn.toString(fl, true))%>"><%=name%></a>
-                    <%} else if ("fork".equals(type)) {%>
-                        <%
-                            String ak = Synt.declare(info.get("data-ak"), "" );
-                            String at = Synt.declare(info.get("data-at"), "" );
-                            String sb = Synt.declare(info.get("data-rb"), "" );
-                            String rb ;
-                            // 关联名称
-                            if (ak.isEmpty()) {
-                                ak = ! name.endsWith("_id") ? name + "_fork"
-                                     : name.substring(0, -3 + name.length( ) );
-                            }
-                            // 内部字段
-                            Matcher m0 = FORK_RB.matcher(at);
-                            if (m0.find()) rb = m0.group(01);
-                            else rb = Synt.declare(info.get("data-vk"), "id" )
-                                +","+ Synt.declare(info.get("data-tk"),"name");
-                            // 关联资源
-                            Matcher m1 = FORK_AT.matcher(at);
-                            if (m1.find()) at = m1.group(01);
-                            else at = Synt.declare(info.get("conf"), _config )
-                                +"/"+ Synt.declare(info.get("form"),   name  );
-                        %>
-                        <a href="javascript:;" class="show-fork" data-ak="<%=ak%>" data-at="<%=at%>" data-rb="<%=rb%>" data-sb="<%=sb%>"><%=name%></a>
-                    <%} else if ("file".equals(type)) {%>
-                        <%
-                            String ft = Synt.declare(info.get("type"), "" );
-                            String fx = Synt.declare(info.get("kind"), "" );
-                            String fz = Synt.declare(info.get("size"), "");
-                            String tm = Synt.declare(info.get("thumb-mode"), "");
-                            String tx = Synt.declare(info.get("thumb-kind"), "");
-                            String tz = Synt.declare(info.get("thumb-size"), "");
-                        %>
-                        <a href="javascript:;" class="show-file" data-file-type="<%=ft%>" data-file-kind="<%=fx%>" data-file-size="<%=fz%>" data-thumb-mode="<%=tm%>" data-thumb-kind="<%=tx%>" data-thumb-size="<%=tz%>"><%=name%></a>
-                    <%} else { %>
-                        <%=name%>
-                    <%}%>
-                    </td>
-                    <td><%=info.get("__type__")%></td>
-                    <td><%=info.get("__text__")%></td>
-                    <td>
-                        <%if (Synt.declare(info.get("__required__"), false)) {%><span class="label label-primary" style="margin-right: 2px;">必填</span><%}%>
-                        <%if (Synt.declare(info.get("__repeated__"), false)) {%><span class="label label-primary" style="margin-right: 2px;">多值</span><%}%>
-                        <%if (Synt.declare(info.get(  "listable"  ), false)) {%><span class="label label-default" style="margin-right: 2px;">列举</span><%}%>
-                        <%if (Synt.declare(info.get(  "sortable"  ), false)) {%><span class="label label-default" style="margin-right: 2px;">排序</span><%}%>
-                        <%if (Synt.declare(info.get(  "statable"  ), false)) {%><span class="label label-default" style="margin-right: 2px;">统计</span><%}%>
-                        <%if (Synt.declare(info.get(  "findable"  ), false)) {%><span class="label label-default" style="margin-right: 2px;">筛选</span><%}%>
-                        <%if (Synt.declare(info.get(  "rankable"  ), false)) {%><span class="label label-default" style="margin-right: 2px;">区间</span><%}%>
-                        <%if (Synt.declare(info.get(  "srchable"  ), false)) {%><span class="label label-default" style="margin-right: 2px;">匹配</span><%}%>
-                        <%if (Synt.declare(info.get(  "wordable"  ), false)) {%><span class="label label-default" style="margin-right: 2px;">搜索</span><%}%>
-                        <%if (Synt.declare(info.get(  "readonly"  ), false)) {%><span class="label label-success" style="margin-right: 2px;">只读</span><%}%>
-                        <%if (Synt.declare(info.get(  "disabled"  ), false)) {%><span class="label label-warning" style="margin-right: 2px;">内部</span><%}%>
-                        <%if (Synt.declare(info.get( "unreadable" ), false)) {%><span class="label label-danger " style="margin-right: 2px;">禁查看</span><%}%>
-                        <%if (Synt.declare(info.get( "unwritable" ), false)) {%><span class="label label-danger " style="margin-right: 2px;">禁编辑</span><%}%>
-                    </td>
-                </tr>
-            <%} /*End For*/%>
-            </tbody>
-        </table>
-        </div></div>
+                it = _fields.entrySet().iterator();
+                while (it.hasNext()) {
+                    Map.Entry et = (Map.Entry)it.next();
+                    Map     info = (Map ) et.getValue();
+                    String  name = (String) et.getKey();
+                    if ( "@".equals(name) )  continue  ;
+                    String  type = (String) ts.get(info.get("__type__"));
+                %>
+                    <tr>
+                        <td>
+                        <%if ("enum".equals(type)) {%>
+                            <a href="javascript:;" class="view-enum"><%=name%></a>
+                        <%} else if ("form".equals(type)) {%>
+                            <%
+                                String conf = Synt.declare(info.get("conf"), _config);
+                                String form = Synt.declare(info.get("form"),  name  );
+                                Map fs = FormSet.getInstance(conf).getFormTranslated(form);
+                                List<Object[]> fl = new ArrayList(fs.size());
+                                for(Object ot : fs.entrySet()) {
+                                    Map.Entry xt = (Map.Entry) ot;
+                                    Map fc = (Map) xt.getValue( );
+                                    Object n = xt.getKey();
+                                    if ( "@".equals(n) ) continue;
+                                    Object t = fc.get("__type__");
+                                    Object l = fc.get("__text__");
+                                    fl.add(new Object[]{n, t, l});
+                                }
+                            %>
+                            <a href="javascript:;" class="show-form" data-data="<%=escape(Dawn.toString(fl, true))%>"><%=name%></a>
+                        <%} else if ("fork".equals(type)) {%>
+                            <%
+                                String ak = Synt.declare(info.get("data-ak"), "" );
+                                String at = Synt.declare(info.get("data-at"), "" );
+                                String sb = Synt.declare(info.get("data-rb"), "" );
+                                String rb ;
+                                // 关联名称
+                                if (ak.isEmpty()) {
+                                    ak = ! name.endsWith("_id") ? name + "_fork"
+                                         : name.substring(0, -3 + name.length( ) );
+                                }
+                                // 内部字段
+                                Matcher m0 = FORK_RB.matcher(at);
+                                if (m0.find()) rb = m0.group(01);
+                                else rb = Synt.declare(info.get("data-vk"), "id" )
+                                    +","+ Synt.declare(info.get("data-tk"),"name");
+                                // 关联资源
+                                Matcher m1 = FORK_AT.matcher(at);
+                                if (m1.find()) at = m1.group(01);
+                                else at = Synt.declare(info.get("conf"), _config )
+                                    +"/"+ Synt.declare(info.get("form"),   name  );
+                            %>
+                            <a href="javascript:;" class="show-fork" data-ak="<%=ak%>" data-at="<%=at%>" data-rb="<%=rb%>" data-sb="<%=sb%>"><%=name%></a>
+                        <%} else if ("file".equals(type)) {%>
+                            <%
+                                String ft = Synt.declare(info.get("type"), "" );
+                                String fx = Synt.declare(info.get("kind"), "" );
+                                String fz = Synt.declare(info.get("size"), "");
+                                String tm = Synt.declare(info.get("thumb-mode"), "");
+                                String tx = Synt.declare(info.get("thumb-kind"), "");
+                                String tz = Synt.declare(info.get("thumb-size"), "");
+                            %>
+                            <a href="javascript:;" class="show-file" data-file-type="<%=ft%>" data-file-kind="<%=fx%>" data-file-size="<%=fz%>" data-thumb-mode="<%=tm%>" data-thumb-kind="<%=tx%>" data-thumb-size="<%=tz%>"><%=name%></a>
+                        <%} else { %>
+                            <%=name%>
+                        <%}%>
+                        </td>
+                        <td><%=info.get("__type__")%></td>
+                        <td><%=info.get("__text__")%></td>
+                        <td>
+                            <%if (Synt.declare(info.get("__required__"), false)) {%><span class="label label-primary" style="margin-right: 2px;">必填</span><%}%>
+                            <%if (Synt.declare(info.get("__repeated__"), false)) {%><span class="label label-primary" style="margin-right: 2px;">多值</span><%}%>
+                            <%if (Synt.declare(info.get(  "listable"  ), false)) {%><span class="label label-default" style="margin-right: 2px;">列举</span><%}%>
+                            <%if (Synt.declare(info.get(  "sortable"  ), false)) {%><span class="label label-default" style="margin-right: 2px;">排序</span><%}%>
+                            <%if (Synt.declare(info.get(  "statable"  ), false)) {%><span class="label label-default" style="margin-right: 2px;">统计</span><%}%>
+                            <%if (Synt.declare(info.get(  "findable"  ), false)) {%><span class="label label-default" style="margin-right: 2px;">筛选</span><%}%>
+                            <%if (Synt.declare(info.get(  "rankable"  ), false)) {%><span class="label label-default" style="margin-right: 2px;">区间</span><%}%>
+                            <%if (Synt.declare(info.get(  "srchable"  ), false)) {%><span class="label label-default" style="margin-right: 2px;">匹配</span><%}%>
+                            <%if (Synt.declare(info.get(  "wordable"  ), false)) {%><span class="label label-default" style="margin-right: 2px;">搜索</span><%}%>
+                            <%if (Synt.declare(info.get(  "readonly"  ), false)) {%><span class="label label-success" style="margin-right: 2px;">只读</span><%}%>
+                            <%if (Synt.declare(info.get(  "disabled"  ), false)) {%><span class="label label-warning" style="margin-right: 2px;">内部</span><%}%>
+                            <%if (Synt.declare(info.get( "unreadable" ), false)) {%><span class="label label-danger " style="margin-right: 2px;">禁查看</span><%}%>
+                            <%if (Synt.declare(info.get( "unwritable" ), false)) {%><span class="label label-danger " style="margin-right: 2px;">禁编辑</span><%}%>
+                        </td>
+                    </tr>
+                <%} /*End For*/%>
+                </tbody>
+            </table>
+        </div>
     </div>
     <div class="col-xs-6">
         <fieldset>

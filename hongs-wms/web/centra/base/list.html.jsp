@@ -218,9 +218,8 @@
         </div>
     </form>
     <!-- 列表 -->
-    <div class="table-responsive-revised">
-    <div class="table-responsive listbox">
-        <table class="table table-hover table-striped">
+    <div class="listbox panel panel-default table-responsive">
+        <table class="table table-hover table-striped table-compressed">
             <thead>
                 <tr>
                     <th data-fn="id." data-ft="_check" class="_check">
@@ -372,7 +371,7 @@
             <tbody>
             </tbody>
         </table>
-    </div></div>
+    </div>
     <div class="pagebox clearfix"></div>
 </div>
 <script type="text/javascript">

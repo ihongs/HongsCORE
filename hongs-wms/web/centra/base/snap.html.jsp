@@ -42,9 +42,8 @@
             </div>
         </ul>
     </form>
-    <div class="table-responsive-revised">
-    <div class="table-responsive listbox">
-        <table class="table table-hover table-striped">
+    <div class="listbox panel panel-default table-responsive">
+        <table class="table table-hover table-striped table-compressed">
             <thead>
                 <tr>
                     <th data-fn="_" data-ft="_admin" class="_admin _amenu">
@@ -70,9 +69,9 @@
                     <th data-fn="rtime" data-ft="time" class="sortable" style="width: 7em;">恢复起源</th>
                 </tr>
             </thead>
-            <tbody></tbody>
+            <tbody>
+            </tbody>
         </table>
-    </div>
     </div>
     <div class="pagebox clearfix"></div>
 </div>

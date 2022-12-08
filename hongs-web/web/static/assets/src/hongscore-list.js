@@ -1006,7 +1006,7 @@ jQuery.fn.hsList = function(opts) {
 
 (function($) {
     $(document)
-    .on("mouseover", ".table-responsive-revised th,.table-responsive-revised td",
+    .on("mouseover", ".table-compressed th,.table-compressed td,.table-responsive-revised th,.table-responsive-revised td",
     function(evt) {
         if ($(this).children().not("a,b,i,sub,sup,span").size()) {
             return;
@@ -1026,7 +1026,7 @@ jQuery.fn.hsList = function(opts) {
             $(this).attr("title", "");
         }
     })
-    .on("mouseout" , ".table-responsive-revised th,.table-responsive-revised td",
+    .on("mouseout" , ".table-compressed th,.table-compressed td,.table-responsive-revised th,.table-responsive-revised td",
     function(evt) {
         if ($(this).children().not("a,b,i,sub,sup,span").size()) {
             return;

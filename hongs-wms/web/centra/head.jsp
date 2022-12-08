@@ -121,7 +121,10 @@
 <div id="head-handler">
     <a href="javascript:;"></a>
 </div>
-<div id="body-handler">
+<div id="body-top-handler">
+    <a href="javascript:;"></a>
+</div>
+<div id="body-bot-handler">
     <a href="javascript:;"></a>
 </div>
 
@@ -131,7 +134,7 @@
     <div><%=CoreLocale.getInstance().translate("fore.centra.sub.title")%></div>
 </div>
 
-<hr />
+<div style="height: 100%; overflow: auto;">
 
 <div id="user-menubar">
     <a href="javascript:;" style="display: block;">
@@ -179,6 +182,8 @@
     </p>
     <p>Powered by <a href="<%=Core.SERV_PATH%>/power.html" target="_blank">HongsCORE</a></p>
 </blockquote>
+
+</div>
 
 <script type="text/javascript">
     (function($) {
@@ -246,10 +251,17 @@
         });
 
         // 页面滚动回顶部
-        $("#body-handler")
+        $("#body-top-handler")
         .insertAfter($("#bodybox"))
         .click(function( ) {
             context.scrollTop( 0 );
+        });
+
+        // 页面滚动到底部
+        $("#body-bot-handler")
+        .insertAfter($("#bodybox"))
+        .click(function( ) {
+            context.scrollTop(context.height());
         });
 
         // 边栏隐藏与显示

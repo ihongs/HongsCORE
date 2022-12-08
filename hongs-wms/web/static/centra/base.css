@@ -42,7 +42,7 @@ body {
     height: 100%;
 }
 #menu-context {
-    padding-top: 95px;
+    padding-top: 96px;
 }
 #main-context {
     padding-top: 20px;
@@ -399,6 +399,9 @@ body {
     border-radius: 0px;
     border-bottom: 1px solid #aaa;
     background-color: transparent;
+    overflow-x : auto;
+    overflow-y : hidden;
+    white-space: nowrap;
 }
 #main-context > .laps.tabs.breadcrumb .active a {
     text-decoration: none;

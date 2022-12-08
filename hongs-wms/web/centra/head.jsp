@@ -134,7 +134,7 @@
     <div><%=CoreLocale.getInstance().translate("fore.centra.sub.title")%></div>
 </div>
 
-<div style="height: 100%; overflow: auto;">
+<div style="height: 100%; overflow: auto; position: relative;">
 
 <div id="user-menubar">
     <a href="javascript:;" style="display: block;">
@@ -188,10 +188,10 @@
 <script type="text/javascript">
     (function($) {
         var context = $("#main-context");
+        var namebar = $("#main-namebar");
         var menubar = $("#main-menubar");
         var userbar = $("#user-menubar");
-        var menubox = $("#menu-context");
-        var namebar = $("#main-namebar");
+        var menubox =  menubar.parent( );
 
         $(function() {
             if (menubar.find("li.active").size()) {
@@ -289,8 +289,8 @@
 
         // 定位到当前菜单
         var actived = menubar.find("li.active");
-        if (actived.size() && actived.offset().top + actived.height() > $( window ).height()) {
-            menubox.scrollTop(actived.offset().top - actived.height() * 2 - namebar.height());
+        if (actived.size() && actived.offset().top + actived.height() > menubox.height() ) {
+            menubox.scrollTop(actived.offset().top - actived.height() - namebar.height() * 2);
         }
 
         // 回退复位滚动条

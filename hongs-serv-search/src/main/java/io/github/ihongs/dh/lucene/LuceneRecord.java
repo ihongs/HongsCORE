@@ -989,7 +989,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 if (p) {
                     doc.add(f.wdr(k, getSrchText(m, a)));
                 }
-                if (g && !p && !q && !s) { // 仅存储的仍可判断空/非空/空串
+                if (g && !q) { // 仅存储的仍可判断空/非空/空串
                     doc.add(f.whr(k, v.equals("") ? "" : "0"));
                 }}
             } else
@@ -1006,7 +1006,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 if (p) {
                     doc.add(f.wdr(k, getSrchText(m, v)));
                 }
-                if (g && !p && !q && !s) { // 仅存储的仍可判断空/非空/空串
+                if (g && !q) { // 仅存储的仍可判断空/非空/空串
                     doc.add(f.whr(k, v.equals("") ? "" : "0"));
                 }
             }
@@ -1179,7 +1179,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             v = vd.get(Cnst.IS_REL);
             if ( v != null && !"".equals(v) ) {
                 String a = Synt.asString(v).toUpperCase( );
-                String b = srchable(m) && ! findable(m) ? "$" : "@";
+                String b = inviable(m) && srchable(m) && ! findable(m) ? "$" : "@"; // 可搜素、不可见、不可查询，则用搜素字段
                 Query  p ;
                 // try {
                 switch (a) {

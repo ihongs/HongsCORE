@@ -3164,9 +3164,13 @@ function() {
     // 联动关闭
     if (nav.is(".tabs.laps" )
     && !tab.is(".hook-crumb,.hold-crumb")) {
-        tab.nextAll( ).find("a").each( function( ) {
-            $(this).hsClose();
-        });
+        var lis = tab.nextAll().find("a");
+        if (lis.size()) {
+            for(var i = lis.size() -1; i>-1; i --) {
+              $(lis[i]).hsClose( );
+            }
+            return;
+        }
     }
     // 延迟加载
     if (lnk.is("[data-href]")

@@ -19,6 +19,7 @@ import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -490,14 +491,23 @@ public class UploadHelper {
         setResultName(lead, kind);
 
         try {
+            Path srce = file.toPath().toAbsolutePath();
             Path dist = Paths.get(getResultPath()).toAbsolutePath();
             Path temp = Paths.get(getUploadTemp(uploadTemp)).toAbsolutePath();
-            if ( dist.startsWith (temp) ) {
-                Files.move(file.toPath( ), dist);
+            if ( srce.startsWith (temp) ) {
+                File  dir = dist.getParent( ).toFile();
+                if (! dir.exists ()) {
+                      dir.mkdirs ();
+                }
+                Files.move( srce, dist, StandardCopyOption.REPLACE_EXISTING );
             } else {
             Path path = Paths.get(getResultPath(uploadPath)).toAbsolutePath();
-            if (!dist.startsWith (path) ) {
-                Files.copy(file.toPath( ), dist);
+            if (!srce.startsWith (path) ) {
+                File  dir = dist.getParent( ).toFile();
+                if (! dir.exists ()) {
+                      dir.mkdirs ();
+                }
+                Files.copy( srce, dist, StandardCopyOption.REPLACE_EXISTING );
             }}
             return dist.toFile();
         } catch (IOException ex) {

@@ -343,6 +343,13 @@ body {
     overflow-y : hidden;
     white-space: nowrap;
 }
+#main-context > .laps.tabs.breadcrumb::-webkit-scrollbar {
+    max-width : 14px;
+    max-height: 14px;
+}
+#main-context > .laps.tabs.breadcrumb::-webkit-scrollbar-thumb {
+    background: rgba(200,200,200,0.8);
+}
 .toper-open #main-context > .laps.tabs.breadcrumb {
     position: fixed;
     top  : 0;

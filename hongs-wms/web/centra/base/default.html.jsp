@@ -34,7 +34,7 @@
         <script type="text/javascript" src="common/auth/centra.js" ></script>
         <script type="text/javascript" src="<%=$module%>/<%=$entity%>/defines.js"></script>
     </head>
-    <body class="sider-open">
+    <body class="sider-open toper-open">
         <div id="context">
             <%if (!"!HIDE".equals($hrel) && !"HIDE".equals($hrel)) {%>
             <div id="headbox">

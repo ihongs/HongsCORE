@@ -129,8 +129,9 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a href="<%=Core.SERV_PATH%>/centre/" class="navbar-brand" style="font-size: 16px;"
-                title="<%=CoreLocale.getInstance().translate("fore.centre.sub.title")%>">
+            <a class="navbar-brand" href="<%=Core.SERV_PATH%>/centre/"
+               title="<%=CoreLocale.getInstance().translate("fore.centre.sub.title")%>">
+                <span class="ulogo img" style="background-image:url(<%=CoreLocale.getInstance().translate("fore.centre.logo")%>);"></span>
                 <%=CoreLocale.getInstance().translate("fore.centre.title")%>
             </a>
         </div>

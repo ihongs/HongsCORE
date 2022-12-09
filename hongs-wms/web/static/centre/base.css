@@ -38,7 +38,16 @@ body {
     width :  36px;
     height:  36px;
     margin: -13px  4px;
-    border-radius: 4px;
+    border-radius: 50%;
+    background-size  : 100% 100%;
+    background-repeat: no-repeat;
+    background-position:  center;
+    display: inline-block;
+}
+#headbox .ulogo {
+    width :  46px;
+    height:  46px;
+    margin: -13px 0 -13px -13px ;
     background-size  : 100% 100%;
     background-repeat: no-repeat;
     background-position:  center;

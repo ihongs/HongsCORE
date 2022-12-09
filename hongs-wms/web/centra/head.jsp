@@ -110,6 +110,7 @@
     List    menu = curr.getMenuTranslated("common/menu.act?m=centra", 2, role);
 
     String  acti = helper.getParameter("active");
+    String  titl = helper.getParameter("title" );
     String  name = (String) helper.getSessibute("uname");
     String  head = (String) helper.getSessibute("uhead");
 
@@ -128,42 +129,56 @@
     <a href="javascript:;"></a>
 </div>
 
-<div id="main-namebar">
-    <div><a href="<%=Core.SERV_PATH%>/centra/">
-         <%=CoreLocale.getInstance().translate("fore.centra.title")%></a></div>
-    <div><%=CoreLocale.getInstance().translate("fore.centra.sub.title")%></div>
-</div>
-
-<div style="height: 100%; overflow: auto; position: relative;">
-
-<div id="user-menubar">
-    <a href="javascript:;" style="display: block;">
-        <div class="uhead img" style="background-image: url(<%=head%>);"></div>
-        <div class="uname" title="<%=name%>"><%=name%></div>
-        <div class="caret"></div>
-        <div class="badge"></div>
-    </a>
-    <ul>
-        <li><a href="javascript:;" id="manage-morn">
-            <span class="bi bi-hi-morn"></span>
-            <%=CoreLocale.getInstance().translate("fore.manage.morn")%>
-        </a></li>
-        <li><a href="javascript:;" id="manage-mine">
-            <span class="bi bi-hi-mine"></span>
-            <%=CoreLocale.getInstance().translate("fore.manage.mine")%>
-        </a></li>
-        <li><a href="javascript:;" id="manage-mima">
-            <span class="bi bi-hi-mima"></span>
-            <%=CoreLocale.getInstance().translate("fore.manage.mima")%>
-        </a></li>
-        <li><a href="javascript:;" id="logout">
-            <span class="bi bi-hi-logout"></span>
-            <%=CoreLocale.getInstance().translate("fore.logout")%>
-        </a></li>
-    </ul>
-</div>
-
-<hr />
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation" id="headbar">
+    <div>
+        <div class="navbar-header">
+            <a class="navbar-brand" href="<%=Core.SERV_PATH%>/centra/"
+               title="<%=CoreLocale.getInstance().translate("fore.centra.sub.title")%>">
+                <span class="ulogo img" style="background-image:url(<%=CoreLocale.getInstance().translate("fore.centra.logo")%>);"></span>
+                <%=CoreLocale.getInstance().translate("fore.centra.title")%>
+            </a>
+        </div>
+        <div>
+            <ul class="nav navbar-nav navbar-left " id="navi-menubar">
+                <%if (titl != null && ! titl.isEmpty()) {%>
+                <li class="actual active ">
+                    <a href="javascript:;"><%=titl%></a>
+                </li>
+                <%} else {%>
+                <li><a href="javascript:;">&nbsp;</a></li>
+                <%} /* End If */%>
+            </ul>
+            <ul class="nav navbar-nav navbar-right" id="user-menubar">
+                <li class="dropdown pull-right">
+                    <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+                        <span class="uhead img" style="background-image:url(<%=head%>);" title="<%=name%>"></span>
+                        <span class="badge"></span>
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="javascript:;" id="manage-morn">
+                            <span class="bi bi-hi-morn"></span>
+                            <%=CoreLocale.getInstance().translate("fore.manage.morn")%>
+                        </a></li>
+                        <li><a href="javascript:;" id="manage-mine">
+                            <span class="bi bi-hi-mine"></span>
+                            <%=CoreLocale.getInstance().translate("fore.manage.mine")%>
+                        </a></li>
+                        <li><a href="javascript:;" id="manage-mima">
+                            <span class="bi bi-hi-mima"></span>
+                            <%=CoreLocale.getInstance().translate("fore.manage.mima")%>
+                        </a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="javascript:;" id="logout">
+                            <span class="bi bi-hi-logout"></span>
+                            <%=CoreLocale.getInstance().translate("fore.logout")%>
+                        </a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
 
 <div id="main-menubar">
     <ul>
@@ -175,6 +190,10 @@
 
 <blockquote>
     <p>
+        <span style="font-weight: 600;"><%=CoreLocale.getInstance().translate("fore.centra.title")%></span><br>
+        <span style="font-weight: 400;"><%=CoreLocale.getInstance().translate("fore.centra.sub.title")%></span>
+    </p>
+    <p>
         <span>&copy;&nbsp;</span>
         <span class="copy-right"><%=CoreLocale.getInstance().translate("fore.copy.right")%></span>
         <br/>
@@ -183,15 +202,27 @@
     <p>Powered by <a href="<%=Core.SERV_PATH%>/power.html" target="_blank">HongsCORE</a></p>
 </blockquote>
 
-</div>
-
 <script type="text/javascript">
     (function($) {
         var context = $("#main-context");
-        var namebar = $("#main-namebar");
         var menubar = $("#main-menubar");
-        var userbar = $("#user-menubar");
+        var navibar = $("#navi-menubar");
+//      var userbar = $("#user-menubar");
         var menubox =  menubar.parent( );
+
+        $(function() {
+            if (navibar.find("li.active").size()) {
+                return;
+            }
+
+            var t, a;
+            t = navibar.closest(".loadbox").data( "title");
+            if (t) {
+                a = $( '<a href="javascript:;"> </a>' ). text (t);
+                a = $('<li class="actual active"</li>').append(a);
+                a.prependTo(navibar);
+            }
+        });
 
         $(function() {
             if (menubar.find("li.active").size()) {
@@ -272,12 +303,10 @@
         }); $(document.body).   addClass("sider-open");
 
         // 菜单折叠和展开
-        userbar.children("ul").hide();
         menubar.find("li> ul").hide();
         menubar.find("li.acting> ul").toggle( );
         menubar.find("li.acting> a ").toggleClass("dropup");
-        $().add(menubar).add(userbar)
-           .on ("click", "a", function() {
+        menubar.on("click", "a", function() {
             var la = $(this);
             var ul = la.siblings( "ul" );
             if (ul.size( ) ) {
@@ -290,7 +319,7 @@
         // 定位到当前菜单
         var actived = menubar.find("li.active");
         if (actived.size() && actived.offset().top + actived.height() > menubox.height() ) {
-            menubox.scrollTop(actived.offset().top - actived.height() - namebar.height() * 2);
+            menubox.scrollTop(actived.offset().top - actived.height() - menubox.height() / 2);
         }
 
         // 回退复位滚动条

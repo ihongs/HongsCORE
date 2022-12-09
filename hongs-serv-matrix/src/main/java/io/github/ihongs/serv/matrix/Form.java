@@ -450,19 +450,22 @@ public class Form extends Model {
         if (tan != null) {
             Table tab = db.getTable(tan);
             tab.insert(Synt.mapOf("user_id", uid,
-                "role"   , centra + "/" + id + "/search"
+                "role", centra + "/" + id + "/search"
             ));
             tab.insert(Synt.mapOf("user_id", uid,
-                "role"   , centra + "/" + id + "/create"
+                "role", centra + "/" + id + "/create"
             ));
             tab.insert(Synt.mapOf("user_id", uid,
-                "role"   , centra + "/" + id + "/update"
+                "role", centra + "/" + id + "/update"
             ));
             tab.insert(Synt.mapOf("user_id", uid,
-                "role"   , centra + "/" + id + "/delete"
+                "role", centra + "/" + id + "/delete"
             ));
             tab.insert(Synt.mapOf("user_id", uid,
-                "role"   , centra + "/" + id + "/revert"
+                "role", centra + "/" + id + "/reveal"
+            ));
+            tab.insert(Synt.mapOf("user_id", uid,
+                "role", centra + "/" + id + "/revert"
             ));
         }
 
@@ -485,10 +488,12 @@ public class Form extends Model {
         tan = (String) table.getParams().get("role.table");
         if (tan != null) {
             Table tab = db.getTable(tan);
-            tab.remove("`role` IN (?)", Synt.setOf(centra + "/" + id + "/search",
+            tab.remove("`role` IN (?)", Synt.setOf(
+                centra + "/" + id + "/search",
                 centra + "/" + id + "/create",
                 centra + "/" + id + "/update",
                 centra + "/" + id + "/delete",
+                centra + "/" + id + "/reveal",
                 centra + "/" + id + "/revert"
             ));
         }

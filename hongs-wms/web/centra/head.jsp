@@ -279,11 +279,14 @@
             }
         });
 
-        // 页面滚动回顶部
-        $("#body-top-handler")
-        .insertAfter($("#bodybox"))
+        $(document.body).addClass("toper-open");
+        $(document.body).addClass("sider-open");
+
+        // 边栏隐藏与显示
+        $("#head-handler")
+        .insertAfter($("#headbox"))
         .click(function( ) {
-            context.scrollTop( 0 );
+            $(document.body).toggleClass("sider-open");
         });
 
         // 页面滚动到底部
@@ -293,15 +296,12 @@
             context.scrollTop(context.height());
         });
 
-        // 边栏隐藏与显示
-        $("#head-handler")
-        .insertAfter($("#headbox"))
+        // 页面滚动回顶部
+        $("#body-top-handler")
+        .insertAfter($("#bodybox"))
         .click(function( ) {
-            $(document.body).toggleClass("sider-open");
+            context.scrollTop( 0 );
         });
-
-        $(document.body).addClass("toper-open");
-        $(document.body).addClass("sider-open");
 
         // 菜单折叠和展开
         menubar.find("li> ul").hide();
@@ -325,15 +325,17 @@
 
         // 回退复位滚动条
         context
-            .on("hsRetir", ">.labs.laps>div", function ( ) {
+            .on("hsHide", ">.labs.laps>div", function(ev) {
+                if (this !== ev.target) return ;
                 if ($(this).data("top") === undefined) {
                     $(this).data("top", context.scrollTop());
                 }
             })
-            .on("hsRecur", ">.labs.laps>div", function ( ) {
+            .on("hsShow", ">.labs.laps>div", function(ev) {
+                if (this !== ev.target) return ;
                 if ($(this).data("top") !== undefined) {
-                    context.scrollTop( $(this).data("top") );
-                    $(this).removeData ( "top" );
+                    context.scrollTop($(this).data( "top" ));
+                    $(this).removeData( "top" );
                 }
             })
             .on( "click" , ">.tabs.laps>li" , function ( ) {

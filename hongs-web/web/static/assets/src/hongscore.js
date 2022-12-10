@@ -2393,8 +2393,8 @@ $.fn.hsLoad = function(url, data, complete) {
 $.fn.hsOpen = function(url, data, complete) {
     var prt = $(this);
     var box;
-    var tab;
     var bak;
+    var tab;
 
     /**
      * 获取标签页或面包屑的导航条和对应的区块;
@@ -2422,23 +2422,22 @@ $.fn.hsOpen = function(url, data, complete) {
 
     if (tab) {
         bak = tab.parent().children().filter(".active");
-        tab.show( ).find("a").click();
-        tab.find("a:empty,b:empty,.title")
-           .text("...");
+        tab.find("a:empty,b:empty,.title").text ("...");
+        tab.find("a").click(); // 这将触发 hsHide/hsShow
         // 关闭关联的页签
         if (prt.children().size( ) ) {
             prt.children().hsCloze();
             prt.empty();
         }
     } else {
-        // 触发其隐退事件
-        prt.trigger("hsRetir");
-        bak = $('<div class="openbak"></div>').hide()
-            .append(prt.contents( )).appendTo ( prt );
+        prt.trigger("hsHide"); // 触发事件
+        tab = prt.contents( ); // 原始内容
+        bak = $('<div class="openbak"></div>');
+        bak.hide().append(tab).appendTo( prt );
     }
 
-    box = $('<div class="openbox"></div>')
-        .appendTo(prt).data("hrev" , bak );
+    box = $('<div class="openbox"></div>');
+    box.data("hrev", bak ).appendTo( prt );
     box.hsLoad(url , data, complete);
     return box;
 };
@@ -2509,17 +2508,20 @@ $.fn.hsClose = function() {
         var idx = box.data("hrev") ? box.data("hrev").index() : 0 ;
         var tbs = tab.parent().children();
         var pns = prt.parent().children();
+        var tb1 = tbs.filter(".active");
+        var pn1 = pns.eq(tb1.index( ) );
         var tb2 = tbs.eq(idx);
         var pn2 = pns.eq(idx);
-        tbs.removeClass("active");
-        tb2.   addClass("active").css("display" , "");
-        pns.hide();
-        pn2.show();
+        tb1.removeClass("active");
+        tb2.   addClass("active")
+           .   css("display", "");
+        pn1.trigger("hsHide").hide();
+        pn2.show().trigger("hsShow");
+        // 移除可关闭的页签
         if (tab.has(".close").size()) {
             tab.remove();
             prt.remove();
         }
-        pn2.trigger("hsRecur"); // 触发重现事件
     } else
     // 恢复内容
     if (box.data("hrev")) {
@@ -2527,7 +2529,7 @@ $.fn.hsClose = function() {
         prt.append(bak.contents ( ) );
         box.remove();
         bak.remove();
-        prt.trigger("hsRecur"); // 触发重现事件
+        prt.trigger("hsShow"); // 触发事件
     } else
     // 关闭浮窗
     if (box.closest(".modal").size()) {
@@ -3148,7 +3150,7 @@ function() {
 
 // 导航条和选项卡
 $(document)
-.on("click", ".tabs > li > a",
+.on("click", ".tabs>li>a" ,
 function() {
     var lnk = $(this);
     var tab = lnk.parent();
@@ -3180,11 +3182,12 @@ function() {
         pne.append (box);
         box.hsLoad (ref);
     }
+    // 切换页签
     tao.removeClass("active");
     tab.   addClass("active")
        .   css("display", "");
-    pno.hide( ).trigger("hsRetir");
-    pne.show( ).trigger("hsRecur");
+    pno.trigger("hsHide").hide();
+    pne.show().trigger("hsShow");
 })
 .on("click", ".back-crumb a",
 function() {
@@ -3194,7 +3197,7 @@ function() {
         nav.find('li:last a').  click();
     }
 })
-.on("hsReady hsRecur", ".labs.laps",
+.on("hsShow", ".labs.laps",
 function() {
     var nav = $(this).data("tabs")
            || $(this).siblings('.tabs.laps');

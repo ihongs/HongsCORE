@@ -325,20 +325,20 @@
 
         // 回退复位滚动条
         context
-            .on("hsHide", ">.labs.laps>div", function(ev) {
+            .on("hsHide", ">.labs.laps>div", function (ev) {
                 if (this !== ev.target) return ;
                 if ($(this).data("top") === undefined) {
                     $(this).data("top", context.scrollTop());
                 }
             })
-            .on("hsShow", ">.labs.laps>div", function(ev) {
+            .on("hsShow", ">.labs.laps>div", function (ev) {
                 if (this !== ev.target) return ;
                 if ($(this).data("top") !== undefined) {
                     context.scrollTop($(this).data( "top" ));
                     $(this).removeData( "top" );
                 }
             })
-            .on( "click" , ">.tabs.laps>li" , function ( ) {
+            .on("click" , ">.tabs.laps>li" , function (ev) {
                 if ($(this).is(".dont-close,.dont-crumb")) {
                     return;
                 }

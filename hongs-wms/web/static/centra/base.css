@@ -55,6 +55,11 @@ body {
     border-left : 1px solid #e5e5e5;
     border-right: 1px solid #e5e5e5;
 }
+#headbar .navbar-right > li ,
+#headbar .navbar-right > li > a {
+    text-align : right;
+    width : 100%;
+}
 
 /* 菜单显隐 */
 #bodybox {
@@ -99,9 +104,12 @@ body {
 
 /** 菜单 **/
 
+#main-menubar {
+    margin-top: -5px;
+}
 #main-menubar ul {
-    padding: 0;
     margin : 0;
+    padding: 0;
     list-style: none;
 }
 #main-menubar ul ul {
@@ -114,11 +122,11 @@ body {
 }
 #main-menubar li a {
     font-weight: 600;
-    padding: 9px 16px 9px 39px;
+    padding: 7px 16px 7px 39px;
 }
 #main-menubar li li a {
     font-weight: 400;
-    padding: 9px 16px 9px 39px;
+    padding: 7px 16px 7px 39px;
 }
 #main-menubar li a ,
 #main-menubar li.acting > a.dropup {
@@ -173,9 +181,9 @@ body {
     display: inline-block;
 }
 #headbox .ulogo {
-    width :  46px;
-    height:  46px;
-    margin: -18px 0 -18px -12px ;
+    width :  50px;
+    height:  50px;
+    margin: -19px 0 -19px -15px ;
     background-size  : 100% 100%;
     background-repeat: no-repeat;
     background-position:  center;

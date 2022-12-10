@@ -149,7 +149,7 @@
                 <%} /* End If */%>
             </ul>
             <ul class="nav navbar-nav navbar-right" id="user-menubar">
-                <li class="dropdown pull-right">
+                <li class="dropdown">
                     <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
                         <span class="uhead img" style="background-image:url(<%=head%>);" title="<%=name%>"></span>
                         <span class="badge"></span>
@@ -185,8 +185,6 @@
 <%=makeMenu(menu, acti)%>
     </ul>
 </div>
-
-<hr />
 
 <blockquote>
     <p>
@@ -300,7 +298,10 @@
         .insertAfter($("#headbox"))
         .click(function( ) {
             $(document.body).toggleClass("sider-open");
-        }); $(document.body).   addClass("sider-open");
+        });
+
+        $(document.body).addClass("toper-open");
+        $(document.body).addClass("sider-open");
 
         // 菜单折叠和展开
         menubar.find("li> ul").hide();

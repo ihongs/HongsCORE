@@ -3128,23 +3128,24 @@ function() {
     if (tab.is(".active,.inactive") ) {
         return;
     }
-    // 后退一页
-    if (tab.is(".back-crumb") ) {
-            nav.find('li:last a').hsClose();
-        if (nav.find(".active").size() < 1) {
-            nav.find('li:last a').  click();
-        }
-        return;
-    }
-    // 联动关闭
-    if (nav.is(".tabs.laps" )
-    && !tab.is(".hook-crumb,.hold-crumb")) {
-        var lis = tab.nextAll().find("a");
-        if (lis.size()) {
-            for(var i = lis.size() -1; i>-1; i --) {
-              $(lis[i]).hsClose( );
+    if (nav.is(".tabs.laps")) {
+        // 后退一页
+        if ( tab.is(".back-crumb")) {
+                nav.find('li:last a').hsClose();
+            if (nav.find(".active").size() < 1) {
+                nav.find('li:last a').  click();
             }
             return;
+        } else
+        // 联动关闭
+        if (!tab.is(".hook-crumb,.hold-crumb")) {
+            var lis = tab.nextAll().find( "a" );
+            if (lis.size()) {
+                for(var i = lis.size() -1; i>-1; i --) {
+                  $(lis[i]).hsClose( );
+                }
+                return;
+            }
         }
     }
     // 延迟加载

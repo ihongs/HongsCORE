@@ -2401,23 +2401,20 @@ $.fn.hsOpen = function(url, data, complete) {
      * 可后退的导航条可打开多个相同链接的页面,
      * 即 hsTadd(undefined), 这将总是新加页签.
      */
-    if (prt.is(".labs")) {
-        prt = prt.data("tabs");
-        prt = prt.hsTadd(prt.is(".laps") ? undefined : url);
-        tab = prt[0];
-        prt = prt[1];
-    } else
+    if (prt.parent().is(".tabs")
+    ||  prt.parent().is(".labs")) {
+        prt = prt.parent();
+    }
     if (prt.is(".tabs")) {
         prt = prt.hsTadd(prt.is(".laps") ? undefined : url);
         tab = prt[0];
         prt = prt[1];
     } else
-    if (prt.parent().is(".tabs")) {
-        tab = prt;
-        prt = prt.parent().data( "labs").children().eq(tab.index());
-    } else
-    if (prt.parent().is(".labs")) {
-        tab = prt.parent().data( "tabs").children().eq(prt.index());
+    if (prt.is(".labs")) {
+        prt = prt.data("tabs");
+        prt = prt.hsTadd(prt.is(".laps") ? undefined : url);
+        tab = prt[0];
+        prt = prt[1];
     }
 
     if (tab) {
@@ -2488,13 +2485,22 @@ $.fn.hsClose = function() {
     var box = $(this);
     var tab;
 
-    if (prt.parent().is(".tabs")) {
-        tab = prt;
-        prt = prt.parent().data("labs").children().eq(tab.index());
-        box = prt.children(".openbox" ); // Get the following boxes
+    if (prt.parent().is(".tabs")
+    ||  prt.parent().is(".labs")) {
+        box = prt;
+        prt = prt.parent();
+    }
+    if (prt.is(".tabs")) {
+        prt = prt.data("labs").children().eq(box.index());
+        tab = box;
+        box = prt.children(".openbox");
+        if (! box.size( ) ) box = prt ;
     } else
-    if (prt.parent().is(".labs")) {
-        tab = prt.parent().data("tabs").children().eq(prt.index());
+    if (prt.is(".labs")) {
+        tab = prt.data("tabs").children().eq(box.index());
+        prt = box;
+        box = prt.children(".openbox");
+        if (! box.size( ) ) box = prt ;
     }
 
     // 触发事件
@@ -2786,9 +2792,9 @@ $.fn.hsFind = function(selr) {
         case '@':
             do {
                 var x;
-                x = elem.closest(".laps");
+                x = elem.closest(".laps>*" );
                 if (x.size()) { elem = x; break; }
-                x = elem.closest(".labs");
+                x = elem.closest(".labs>*" );
                 if (x.size()) { elem = x; break; }
                 x = elem.closest(".openbox");
                 if (x.size()) { elem = x; break; }
@@ -2800,9 +2806,8 @@ $.fn.hsFind = function(selr) {
         case '%':
             do {
                 var x;
-                x = elem.closest(".loadbox");
-                if (x.size()) { elem = x; break; }
-                x = elem.closest(".openbox");
+                // 与上面的不同, 找最近的那个
+                x = elem.closest(".loadbox,.openbox,.labs>*,.laps>*");
                 if (x.size()) { elem = x; break; }
                 elem = $(document.body);
             } while (false);
@@ -3102,55 +3107,15 @@ function() {
 function() {
     var box = $(this).attr("data-target");
     $(this).hsFind(box || "@").hsClose( );
-})
-.on("click", ".close,.cancel",
-function() {
-    var box;
-    var ths = $(this);
-    do {
-        // 标签项
-        if (ths.is("li>.close")) {
-            return;
-        }
-        // 选项卡
-        if (ths.is("li .close")) {
-            box = ths.closest("a");
-            break ;
-        }
-        // 标题栏
-        box = ths.closest(".modal-header").next();
-        if (box.is( ".openbox")) {
-            box = box.closest(".modal");
-            break ;
-        }
-        // 模态框和警示框
-        box = ths.closest( ".openbox" );
-        if (box.is( ".modal-body")) {
-            box = box.closest(".modal");
-            break ;
-        }
-        if (box.is( ".alert-body")) {
-            box = box.closest(".alert");
-            break ;
-        }
-        if (box.size()
-        &&  box.closest(".modal,.alert").size()) {
-            break ;
-        }
-        if (ths.closest(".modal,.alert").size()) {
-            return;
-        }
-    } while(false);
-    // 禁止关闭
-    if(ths.closest(".dont-close",box[0]).size()) {
-            return;
-    }
-    box.hsClose( );
 });
 
-// 导航条和选项卡
+// 选项卡和导航条
 $(document)
-.on("click", ".tabs>li>a" ,
+.on("click", ".tabs>li>a .close",
+function() {
+    $(this).closest("a").hsClose();
+})
+.on("click", ".tabs>li>a",
 function() {
     var lnk = $(this);
     var tab = lnk.parent();
@@ -3160,7 +3125,15 @@ function() {
     var tao = nav.children(".active");
     var pno = pns ? pns.children().eq(tao.index()) : $();
     var pne = pns ? pns.children().eq(tab.index()) : $();
-    if (tab.is(".active,.dont-close,.back-crumb")) {
+    if (tab.is(".active,.inactive") ) {
+        return;
+    }
+    // 后退一页
+    if (tab.is(".back-crumb") ) {
+            nav.find('li:last a').hsClose();
+        if (nav.find(".active").size() < 1) {
+            nav.find('li:last a').  click();
+        }
         return;
     }
     // 联动关闭
@@ -3189,15 +3162,7 @@ function() {
     pno.trigger("hsHide").hide();
     pne.show().trigger("hsShow");
 })
-.on("click", ".back-crumb a",
-function() {
-    var nav = $(this).closest ('.tabs.laps');
-        nav.find('li:last a').hsClose();
-    if (nav.find(".active").size() < 1) {
-        nav.find('li:last a').  click();
-    }
-})
-.on("hsShow", ".labs.laps",
+.on("hsShow hsReady", ".labs.laps",
 function() {
     var nav = $(this).data("tabs")
            || $(this).siblings('.tabs.laps');

@@ -45,7 +45,7 @@
             <div id="bodybox">
                 <div id="main-context" class="container">
                     <ol class="breadcrumb hide-first tabs laps" data-topple="hsTabs">
-                        <li class="back-crumb dont-close pull-right">
+                        <li class="back-crumb pull-right">
                             <a href="javascript:;">
                                 <i class="bi bi-hi-close"></i>
                             </a>

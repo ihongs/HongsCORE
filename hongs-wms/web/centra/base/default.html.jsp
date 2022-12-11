@@ -44,13 +44,13 @@
             <div id="bodybox">
                 <div id="main-context" class="container-fluid">
                     <ol class="breadcrumb show-close tabs laps" data-topple="hsTabs">
-                        <li class="hook-crumb dont-crumb pull-right" data-eval="H$('!<%=$module%>/<%=$entity%>/select.act') || $(this).hide()">
+                        <li class="hook-crumb pull-right" data-eval="H$('!<%=$module%>/<%=$entity%>/select.act') || $(this).hide()">
                             <a href="javascript:;" data-href="<%=$module+"/"+$entity+"/swap.html"%>" title="<%=$locale.translate("fore.manual.title", $title)%>">
                                 <i class="bi bi-hi-manual"></i>
                                 <span class="title hide">...</span>
                             </a>
                         </li>
-                        <li class="hook-crumb dont-crumb pull-right" data-eval="H$('!<%=$module%>/<%=$entity%>/reveal.act') || $(this).hide()">
+                        <li class="hook-crumb pull-right" data-eval="H$('!<%=$module%>/<%=$entity%>/reveal.act') || $(this).hide()">
                             <a href="javascript:;" data-href="<%=$module+"/"+$entity+"/snap.html"%>" title="<%=$locale.translate("fore.record.title", $title)%>">
                                 <i class="bi bi-hi-reveal"></i>
                                 <span class="title hide">...</span>

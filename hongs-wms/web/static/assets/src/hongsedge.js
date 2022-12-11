@@ -1717,6 +1717,19 @@ $(window).on("popstate", function(ev) {
 }); history.pushState({crumb: true}, null, null);
 
 /**
+ * 关闭按钮事件处理
+ */
+$(document).on("click", ".cancel", function (ev) {
+    var b0 = $(this).closest(".dont-close")
+                    .hsFind ("@");
+    var b1 = $(this).hsFind ("@");
+    if (b0 !== b1) {
+        b1.hsClose();
+    console.log(b0, b1, b0 !== b1, '-----')
+    }
+});
+
+/**
  * 筛选重置事件处理
  */
 $(document).on("reset", ".HsList .findbox", function() {

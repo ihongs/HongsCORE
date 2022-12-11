@@ -339,9 +339,6 @@
                 }
             })
             .on("click" , ">.tabs.laps>li" , function (ev) {
-                if ($(this).is(".dont-close,.dont-crumb")) {
-                    return;
-                }
                 // 直接点击导航不要自动滚动
                 var i = $(this).index ( );
                 var l = $(this).parent( ).data("labs");

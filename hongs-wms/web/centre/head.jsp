@@ -164,7 +164,7 @@
 </nav>
 
 <div id="footbox">
-<nav class="navbar navbar-default">
+<nav class="navbar navbar-default navbar-fixed-bottom">
     <div class="container">
         <blockquote><p class="clearfix">
             <span>&copy;&nbsp;</span><span class="copy-right"><%=CoreLocale.getInstance().translate("fore.copy.right")%></span>

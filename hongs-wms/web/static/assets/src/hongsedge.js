@@ -1707,16 +1707,6 @@ if (!$(document.documentElement).hasClass( "deny-dark" )) {
 }
 
 /**
- * 返回键联动导航条
- */
-$(window).on("popstate", function(ev) {
-    ev = ev.originalEvent;
-    if (!ev || !ev.state || !ev.state.crumb) { return; }
-    $("#main-context>.breadcrumb>.back-crumb:visible>a").click();
-    history.pushState({crumb: true}, null, null);
-}); history.pushState({crumb: true}, null, null);
-
-/**
  * 关闭按钮事件处理
  */
 $(document).on("click", ".cancel", function (ev) {
@@ -1725,7 +1715,6 @@ $(document).on("click", ".cancel", function (ev) {
     var b1 = $(this).hsFind ("@");
     if (b0 !== b1) {
         b1.hsClose();
-    console.log(b0, b1, b0 !== b1, '-----')
     }
 });
 
@@ -1742,5 +1731,15 @@ $(document).on("reset", ".HsList .findbox", function() {
                .first().click();
     } , 500);
 });
+
+/**
+ * 返回键联动导航条
+ */
+$(window).on("popstate", function(ev) {
+    ev = ev.originalEvent;
+    if (!ev || !ev.state || !ev.state.crumb) { return; }
+    $("#main-context>.breadcrumb>.back-crumb:visible>a").click();
+    history.pushState({crumb: true}, null, null);
+}); history.pushState({crumb: true}, null, null);
 
 })(jQuery);

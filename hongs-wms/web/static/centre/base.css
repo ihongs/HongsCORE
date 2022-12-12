@@ -27,6 +27,9 @@ body {
 #headbox {
     height : 71px;
 }
+#footbox {
+    height:  39px;
+}
 #footbox .navbar ,
 #footbox .navbar blockquote {
     min-height: 0;

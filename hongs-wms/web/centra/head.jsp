@@ -286,14 +286,14 @@
         $("#head-handler")
         .insertAfter($("#headbox"))
         .click(function( ) {
-            $(document.body).toggleClass("sider-open");
+            $( document.body ).toggleClass( "sider-open" ) ;
         });
 
         // 页面滚动到底部
         $("#body-bot-handler")
         .insertAfter($("#bodybox"))
         .click(function( ) {
-            context.scrollTop(context.height());
+            context.scrollTop(context.prop("scrollHeight"));
         });
 
         // 页面滚动回顶部
@@ -319,8 +319,8 @@
 
         // 定位到当前菜单
         var actived = menubar.find("li.active");
-        if (actived.size() && actived.offset().top + actived.height() > menubox.height() ) {
-            menubox.scrollTop(actived.offset().top - actived.height() - menubox.height() / 2);
+        if (actived.size() && actived.offset().top + actived.height()   > menubox.height()  ) {
+            menubox.scrollTop(actived.offset().top - actived.height()/2 - menubox.height()/2);
         }
 
         // 回退复位滚动条

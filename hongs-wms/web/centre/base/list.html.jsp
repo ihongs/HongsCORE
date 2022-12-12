@@ -383,7 +383,7 @@
         // 加载数据
         listobj.load(null, findbox);
 
-        )); // End Promise
+        }); // End Promise
     });
 })(jQuery);
 </script>

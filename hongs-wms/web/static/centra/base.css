@@ -36,9 +36,6 @@ body {
 }
 
 /* 顶部菜单 */
-#headbar.navbar {
-    border: 0;
-}
 #headbar .navbar-header a {
     margin: 0;
 }
@@ -121,16 +118,14 @@ body {
     text-decoration: none;
 }
 #main-menubar li a {
-    font-weight: 600;
-    padding: 7px 16px 7px 39px;
+    padding: 11px 16px 11px 39px;
 }
 #main-menubar li li a {
-    font-weight: 400;
-    padding: 7px 16px 7px 39px;
+    padding:  7px 16px  7px 39px;
 }
 #main-menubar li a ,
 #main-menubar li.acting > a.dropup {
-    color: #555;
+    color: #333;
     background: transparent;
     border-left: 5px solid transparent;
 }
@@ -168,84 +163,7 @@ body {
     margin-right: -10px; /* 修正上层内补误差 */
 }
 
-/* 头像 */
-
-#headbox .uhead {
-    width :  36px;
-    height:  36px;
-    margin: -13px  4px;
-    border-radius: 50%;
-    background-size  : 100% 100%;
-    background-repeat: no-repeat;
-    background-position:  center;
-    display: inline-block;
-}
-#headbox .ulogo {
-    width :  50px;
-    height:  50px;
-    margin: -19px 0 -19px -15px ;
-    background-size  : 100% 100%;
-    background-repeat: no-repeat;
-    background-position:  center;
-    display: inline-block;
-}
-
-/* 图标 */
-
-#main-menubar ul li a:before {
-    width       :  26px;
-    margin-left : -26px;
-    display     : inline-block;
-    font-family : bootstrap-icons !important;
-    font-weight : normal !important;
-    font-style  : normal;
-    font-variant: normal;
-    text-transform: none;
-    line-height: 1;
-    vertical-align: -.125em;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
-#main-menubar>ul>li>a:before {
-    content: "\f3fb";
-}
-#main-menubar>ul>li.actual>a:before {
-    content: "\f2ef";
-}
-#main-menubar>ul>li>a[href="/centra/#manage"]:before {
-    content: "\f424";
-}
-#main-menubar>ul>li>a[href="/common/menu.act?m=centra&n=system"]:before {
-    content: "\f3e2";
-}
-
-/* 其他 */
-
-#headbox blockquote .copy-right {
-    white-space: inherit ;
-}
-#headbox blockquote .site-links {
-    white-space: pre-line;
-}
-#headbox blockquote .site-links a:after {
-    content: "\A";
-}
-#headbox blockquote a , 
-#headbox blockquote {
-    color  : #888;
-}
-#headbox blockquote {
-    border-color : #d5d5d5;
-    padding-left : 10px;
-    padding-right: 15px;
-    font-weight: normal;
-    font-size: 12px;
-    margin : 20px 0;
-}
-#headbox hr {
-    border-color : #d5d5d5;
-    margin : 0 15px;
-}
+/* 抓手 */
 
 #head-handler {
     cursor: pointer;
@@ -329,6 +247,85 @@ body {
     border-style: solid;
     border-color: #fff transparent transparent transparent;
     margin-top: 5px;
+}
+
+/* 头像 */
+
+#headbox .uhead {
+    width :  36px;
+    height:  36px;
+    margin: -13px  4px;
+    border-radius: 50%;
+    background-size  : 100% 100%;
+    background-repeat: no-repeat;
+    background-position:  center;
+    display: inline-block;
+}
+#headbox .ulogo {
+    width :  50px;
+    height:  50px;
+    margin: -19px 0 -19px -15px ;
+    background-size  : 100% 100%;
+    background-repeat: no-repeat;
+    background-position:  center;
+    display: inline-block;
+}
+
+/* 图标 */
+
+#main-menubar ul li a:before {
+    width       :  26px;
+    margin-left : -26px;
+    display     : inline-block;
+    font-family : bootstrap-icons !important;
+    font-weight : normal !important;
+    font-style  : normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    vertical-align: -.125em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+#main-menubar>ul>li>a:before {
+    content: "\f3fb";
+}
+#main-menubar>ul>li.actual>a:before {
+    content: "\f2ef";
+}
+#main-menubar>ul>li>a[href="/centra/#manage"]:before {
+    content: "\f424";
+}
+#main-menubar>ul>li>a[href="/common/menu.act?m=centra&n=system"]:before {
+    content: "\f3e2";
+}
+
+/* 其他 */
+
+#headbox blockquote .copy-right {
+    white-space: inherit ;
+}
+#headbox blockquote .site-links {
+    white-space: pre-line;
+}
+#headbox blockquote .site-links a:after {
+    content: "\A";
+}
+#headbox blockquote a , 
+#headbox blockquote {
+    color  : #888;
+}
+#headbox blockquote {
+    border-color : #d5d5d5;
+    padding-left : 10px;
+    padding-right: 15px;
+    font-weight: normal;
+    font-size: 12px;
+    margin : 20px 0;
+}
+#headbox hr {
+    border-color : #d5d5d5;
+    margin : 0 15px;
 }
 
 #headbox a#logout {

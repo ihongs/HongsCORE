@@ -677,7 +677,11 @@ public class NaviMap
           return false;
       }
 
-      return chkMenu(menu,getRoleSet());
+      Set<String> roleset = getRoleSet( );
+      if (null != roleset) {
+          roleset = new HashSet (0);
+      }
+      return chkMenu(menu, roleset);
   }
   private boolean chkMenu(Map menu, Set rolez) {
       Set r  = (Set) menu.get("roles");

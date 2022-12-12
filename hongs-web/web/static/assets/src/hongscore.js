@@ -1371,12 +1371,12 @@ function hsFormat() {
 
                 // 进制
                 switch (t) {
-                    case 'X': r = 16; x = '0X'; n = Math.abs(parseInt(n)); break;
-                    case 'x': r = 16; x = '0x'; n = Math.abs(parseInt(n)); break;
-                    case 'o': r =  8; x = '0' ; n = Math.abs(parseInt(n)); break;
-                    case 'u': r = 10; x = ''  ; n = Math.abs(parseInt(n)); break;
-                    case 'i': r = 10; x = ''  ; n = parseInt( n ); break;
-                    default : r = 10; x = ''  ; n = parseFloat(n); break;
+                    case 'X': r = 16; x = '0X'; n = Math.abs(parseInt(s)); break;
+                    case 'x': r = 16; x = '0x'; n = Math.abs(parseInt(s)); break;
+                    case 'o': r =  8; x = '0' ; n = Math.abs(parseInt(s)); break;
+                    case 'u': r = 10; x = ''  ; n = Math.abs(parseInt(s)); break;
+                    case 'i': r = 10; x = ''  ; n = parseInt( s ); break;
+                    default : r = 10; x = ''  ; n = parseFloat(s); break;
                 }
 
                 // 四舍五入

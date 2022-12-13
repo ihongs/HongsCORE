@@ -279,30 +279,6 @@
             }
         });
 
-        $(document.body).addClass("toper-open");
-        $(document.body).addClass("sider-open");
-
-        // 边栏隐藏与显示
-        $("#head-handler")
-        .insertAfter($("#headbox"))
-        .click(function( ) {
-            $( document.body ).toggleClass( "sider-open" ) ;
-        });
-
-        // 页面滚动到底部
-        $("#body-bot-handler")
-        .insertAfter($("#bodybox"))
-        .click(function( ) {
-            context.scrollTop(context.prop("scrollHeight"));
-        });
-
-        // 页面滚动回顶部
-        $("#body-top-handler")
-        .insertAfter($("#bodybox"))
-        .click(function( ) {
-            context.scrollTop( 0 );
-        });
-
         // 菜单折叠和展开
         menubar.find("li> ul").hide();
         menubar.find("li.acting> ul").toggle( );
@@ -322,6 +298,46 @@
         if (actived.size() && actived.offset().top + actived.height()   > menubox.height()  ) {
             menubox.scrollTop(actived.offset().top - actived.height()/2 - menubox.height()/2);
         }
+
+        $(document.body).addClass("toper-open");
+        $(document.body).addClass("sider-open");
+
+        // 边栏隐藏与显示
+        $("#head-handler")
+        .insertAfter($("#headbox"))
+        .click(function( ) {
+            $( document.body ).toggleClass( "sider-open" ) ;
+        });
+
+        // 页面滚动到上下
+        $("#body-bot-handler")
+        .insertAfter($("#bodybox"))
+        .click(function( ) {
+            context.scrollTop(context.prop("scrollHeight"));
+        });
+        $("#body-top-handler")
+        .insertAfter($("#bodybox"))
+        .click(function( ) {
+            context.scrollTop( 0 );
+        });
+
+        // 滚动及尺寸变化
+        context.on("scroll resize", function() {
+            var st = $(this).prop("scrollTop") || 0;
+            var sh = $(this).prop("scrollHeight") || 0;
+            var ch = $(this).prop("clientHeight") || 0;
+            var sb = sh - ch - st;
+            $("#body-top-handler").toggle(st > 20);
+            $("#body-bot-handler").toggle(sb > 20);
+        }); var ch = sh = 0;
+        setInterval(function() {
+            var eh = context.prop("clientHeight") || 0;
+            var zh = context.prop("scrollHeight") || 0;
+            if (ch !== eh || sh !== zh) {
+                ch  =  eh;   sh  =  zh;
+                context.trigger("resize");
+            }
+        }, 1000);
 
         // 回退复位滚动条
         context

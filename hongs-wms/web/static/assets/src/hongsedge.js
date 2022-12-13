@@ -1637,6 +1637,38 @@ function hsListInitSort(x, v, n) {
 //** 其他 **/
 
 /**
+ * 自适滚动
+ * @param part 适配区块
+ * @param body 外部容器
+ * @param setHeight false: max-height, true: height
+ * @param minHeight 默认为 300, 低于此不设置 height
+ */
+function hsAutoRoll(part, body, setHeight, minHeight) {
+    if (! body) body = part.closest(".body,body");
+    part.css("overflow-y", "auto");
+    part.css("max-height", "none");
+    var viewHeight = parseInt(body.prop("clientHeight") || 0);
+    part.height ( viewHeight ); // 规避容器底部存在空余
+    var bodyHeight = parseInt(body.prop("scrollHeight") || 0);
+    var partHeight = parseInt(part.prop("offsetHeight") || 0);
+    var rollHeight = viewHeight - bodyHeight + partHeight;
+    // max height 需区分是否包含 border
+    if (part.css("box-sizing") !== "border-box" ) {
+        rollHeight = rollHeight
+            -  parseInt(part.css("border-top-width"   ) || 0)
+            -  parseInt(part.css("border-bottom-width") || 0);
+    }
+    part.css("height", "auto");
+    if (rollHeight > (minHeight || 300)) {
+        if (setHeight) {
+            part.css(/**/"height", rollHeight + "px");
+        } else {
+            part.css("max-height", rollHeight + "px");
+        }
+    }
+}
+
+/**
  * 暗黑模式
  * @param mode 0:系统, 1:开启, 2:定时, 3:关闭
  * @param time 开启时间范围, 格式为: HHmmHHmm

@@ -289,7 +289,7 @@ HsList.prototype = {
             listBox.hide();
 
             // 显示警示区
-            if (page[this._pc_key] > 0 ||  page[this._rc_key] > 0) {
+            if (page[this._pc_key] > 0 &&  page[this._rc_key] > 0) {
                 pageBox.empty( ).append('<div class="alert alert-warning" style="width: 100%;">'
                            + (page.msg || this._above_err || hsGetLang('list.above')) + '</div>');
                 setTimeout(function( ) {
@@ -303,7 +303,7 @@ HsList.prototype = {
             return;
         } else {
             // 弹出警示框
-            if (page[this._pc_key] > 0 ||  page[this._rc_key] > 0) {
+            if (page[this._pc_key] > 0 &&  page[this._rc_key] > 0) {
                 jQuery.hsWarn(page.msg || this._above_err || hsGetLang('list.above') , "warning" ,
                 function ( ) {
                     hsSetSeria(that._data, that.pageKey);

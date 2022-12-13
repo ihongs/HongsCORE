@@ -5,20 +5,19 @@
     <form action="" method="POST">
         <input type="hidden" name="path"/>
         <input type="hidden" name="type" value="file"/>
-        <div class="form-group row">
-            <label class="col-xs-3 control-label form-control-static text-right">文件名</label>
-            <div class="col-xs-6">
-                <input type="text" name="name" class="form-control" required="required"/>
+        <div class="form-group row" style="padding: 0 15px;">
+            <div class="col-md-10 col-lg-8 center-block" style="padding: 0;">
+                <input type="text" name="name" class="form-control" required="required" placeholder="文件名"/>
             </div>
         </div>
-        <div class="form-group row">
-            <div class="center-block" style="width:800px; border:1px solid #ccc;">
+        <div class="form-group row" style="padding: 0 15px;">
+            <div class="col-md-10 col-lg-8 center-block" style="padding: 0; border: 1px solid #ccc; border-radius: 4px;">
                 <textarea name="text" rows="20" class="form-control invisible"></textarea>
             </div>
         </div>
         <hr/>
         <div class="row">
-            <div class="col-xs-6 col-xs-offset-3">
+            <div class="col-md-10 col-lg-8 center-block text-center">
                 <button type="submit" class="commit btn btn-primary">保存</button>
                 <button type="button" class="cancel btn btn-link"   >取消</button>
             </div>
@@ -38,7 +37,7 @@
             }
 
             setTimeout(function() {
-                var ch = $(window).height() - 50 - 80 - 95; // 文件名,顶部,底部
+                var ch = $(window).height() - 70 - 50 - 96; // 顶部,文件名,底部
                 var cm = CodeMirror.fromTextArea(inp[0], {
                     lineNumbers : true,
                     smartIndent : true,

@@ -30,6 +30,9 @@ function hsUserMove(treebox, listbox) {
             listbox.find(".listbox").addClass("on-top");
         }}
 
+        // 自适滚动
+        hsAutoRoll(listbox.find(".listbox"), $("#main-context"));
+
         // 拖拽用户
         listbox.find(".listbox tbody tr td:nth-child(3)"
                    +",.listbox tbody tr td:nth-child(4)")
@@ -66,6 +69,9 @@ function hsUserMove(treebox, listbox) {
             mod.toggle (pid);
         //  mod.getNode("0").children("table").hide();
         }
+
+        // 自适滚动
+        hsAutoRoll(treebox.find(".treebox"), $("#main-context"));
 
         // 拖拽分组
         treebox.find(".tree-node .tree-name" )

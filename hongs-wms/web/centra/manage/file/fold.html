@@ -28,12 +28,12 @@
                  data-cnum-key="size"
                  data-root-id="6666cd76f96956469e7be39d750cc7d9"
                  data-root-name="目录结构">
-                <div class="toolbox btn-group board">
+                <div class="toolbox board btn-group">
                     <button type="button" class="create for-create btn btn-default">添加</button>
                     <button type="button" class="modify for-select btn btn-default">修改</button>
                     <button type="button" class="delete for-select btn btn-danger " title="删除"><span class="bi bi-hi-remove"></span></button>
                 </div>
-                <div class="treebox"></div>
+                <div class="treebox panel panel-body panel-default"></div>
             </div>
         </div>
         <div class="col-xs-9 main-context"></div>
@@ -107,5 +107,8 @@
                    .siblings(".main-context")
                    .hsLoad  ( url );
         });
+
+        // 自适滚动
+        hsAutoRoll(context.find(".treebox"), $("#main-context"));
     })(jQuery);
 </script>

@@ -15,8 +15,8 @@
             <button type="button" class="delete for-checks btn btn-danger " title="删除"><span class="bi bi-hi-remove"></span></button>
         </div>
     </div>
-    <div class="listbox table-responsive">
-        <table class="table table-hover table-striped">
+    <div class="listbox panel panel-default table-responsive">
+        <table class="table table-hover table-striped table-compressed">
             <thead>
                 <tr>
                     <th data-fn="path[]" data-ft="_check" class="_check">
@@ -70,7 +70,7 @@
         }
 
         context.data("fillPage", function(page) {
-            if (page.state == 0) {
+            if (page.state > 0 ) {
                 context.find(".pagebox").hide();
                 return ;
             }
@@ -114,5 +114,8 @@
         context.on("click", ".upload,.dnload", function() {
             $.hsWarn("抱歉, 暂不支持上传和下载", "warning");
         });
+
+        // 自适滚动
+        hsAutoRoll(context.find(".listbox"), $("#main-context"));
     })(jQuery);
 </script>

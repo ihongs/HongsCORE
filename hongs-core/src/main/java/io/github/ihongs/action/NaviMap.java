@@ -673,12 +673,12 @@ public class NaviMap
    */
   public boolean chkMenu(String name) throws HongsException {
       Map menu = getMenu(name);
-      if (menu == null) {
+      if (null == menu) {
           return false;
       }
 
       Set<String> roleset = getRoleSet( );
-      if (null != roleset) {
+      if (null == roleset) {
           roleset = new HashSet (0);
       }
       return chkMenu(menu, roleset);

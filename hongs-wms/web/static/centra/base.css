@@ -36,6 +36,7 @@ body {
 }
 
 /* 顶部菜单 */
+
 #headbar .navbar-header a {
     margin: 0;
 }
@@ -59,6 +60,7 @@ body {
 }
 
 /* 菜单显隐 */
+
 #bodybox {
     width : 100%;
     height: 100%;
@@ -90,80 +92,8 @@ body {
 .sider-open #headbox {
     width: 240px;
 }
-.sider-open #head-handler {
-    left : 240px;
-}
-.sider-open #body-top-handler ,
-.sider-open #body-bot-handler {
-    left : calc(50% - -120px);
-}
-/*  等同 calc(50% + 120px), 规避 yuicompressor 会把 + 边空格去掉的问题  */
 
-/** 菜单 **/
-
-#main-menubar {
-    margin-top: -5px;
-}
-#main-menubar ul {
-    margin : 0;
-    padding: 0;
-    list-style: none;
-}
-#main-menubar ul ul {
-    background: #e8e8e8;
-    background: linear-gradient(to top, #e8e8e8 0, #e0e0e0 100%);
-}
-#main-menubar li a {
-    display: block;
-    text-decoration: none;
-}
-#main-menubar li a {
-    padding: 11px 16px 11px 39px;
-}
-#main-menubar li li a {
-    padding:  7px 16px  7px 39px;
-}
-#main-menubar li a ,
-#main-menubar li.acting > a.dropup {
-    color: #333;
-    background: transparent;
-    border-left: 5px solid transparent;
-}
-#main-menubar li a:hover,
-#main-menubar li.acting > a.dropup:hover {
-    color: #37b;
-    background: transparent;
-    border-left: 5px solid transparent;
-}
-#main-menubar li.acting > a ,
-#main-menubar li.active > a ,
-#main-menubar li.active > a.dropup {
-    color: #eee;
-    background: #37b;
-    background: linear-gradient(to bottom, #37b 0, #26a 100%);
-    border-left: 5px solid #048;
-}
-
-#main-menubar>ul>li {
-    margin:  5px 0px;
-}
-
-#main-menubar .caret {
-    margin:  9px 0px;
-}
-#main-menubar .caret {
-    float: right;
-    color: rgba(51,51,51,0.0);
-}
-#main-menubar:hover .caret {
-    float: right;
-    color: rgba(51,51,51,0.8);
-}
-#main-menubar .caret {
-    margin-right: -10px; /* 修正上层内补误差 */
-}
-
-/* 抓手 */
+/* 显隐抓手 */
 
 #head-handler {
     cursor: pointer;
@@ -247,6 +177,85 @@ body {
     border-style: solid;
     border-color: #fff transparent transparent transparent;
     margin-top: 5px;
+}
+
+.sider-open #head-handler {
+    left : 240px;
+}
+.toper-open #head-handler {
+    top  : calc(50% -  -25px);
+}
+.toper-open #body-top-handler {
+    top  :  50px;
+}
+.sider-open #body-top-handler ,
+.sider-open #body-bot-handler {
+    left : calc(50% - -120px);
+}
+/*  等同 calc(50% + 120px), 规避 yuicompressor 会把 + 边空格去掉的问题  */
+
+/** 侧边菜单 **/
+
+#main-menubar {
+    margin-top: -5px;
+}
+#main-menubar ul {
+    margin : 0;
+    padding: 0;
+    list-style: none;
+}
+#main-menubar ul ul {
+    background: #e8e8e8;
+    background: linear-gradient(to top, #e8e8e8 0, #e0e0e0 100%);
+}
+#main-menubar li a {
+    display: block;
+    text-decoration: none;
+}
+#main-menubar li a {
+    padding: 11px 16px 11px 39px;
+}
+#main-menubar li li a {
+    padding:  7px 16px  7px 39px;
+}
+#main-menubar li a ,
+#main-menubar li.acting > a.dropup {
+    color: #333;
+    background: transparent;
+    border-left: 5px solid transparent;
+}
+#main-menubar li a:hover,
+#main-menubar li.acting > a.dropup:hover {
+    color: #37b;
+    background: transparent;
+    border-left: 5px solid transparent;
+}
+#main-menubar li.acting > a ,
+#main-menubar li.active > a ,
+#main-menubar li.active > a.dropup {
+    color: #eee;
+    background: #37b;
+    background: linear-gradient(to bottom, #37b 0, #26a 100%);
+    border-left: 5px solid #048;
+}
+
+#main-menubar>ul>li {
+    margin:  5px 0px;
+}
+
+#main-menubar .caret {
+    margin:  9px 0px;
+}
+#main-menubar .caret {
+    float: right;
+    color: rgba(51,51,51,0.0);
+}
+#main-menubar:hover .caret {
+    float: right;
+    color: rgba(51,51,51,0.8);
+}
+#main-menubar .caret {
+    margin-right: -10px; /* 修正上层内补误差 */
 }
 
 /* 头像 */
@@ -425,6 +434,22 @@ body {
      text-align: center;
 }
 
+/* 标准表单分块布局 */
+.form-body {
+    padding: 15px 15px 0px 15px;
+}
+.form-foot {
+    padding: 20px 15px 5px 15px;
+}
+.board + .form-foot ,
+.panel + .form-foot {
+    margin-top: -20px;
+}
+.form-body>:last-child:is(hr) ,
+.form-foot>:last-child:is(br) {
+    display: none; /* 兼容占位 */
+}
+
 /* 筛选表单紧凑布局 */
 @media (min-width : 992px) {
 .row.form-group.filt-group {
@@ -432,9 +457,5 @@ body {
     width: 50% ;
     margin-left : 0;
     margin-right: 0;
-}
-.well.filtbox {
-    padding-left : 5px;
-    padding-right: 5px;
 }
 }

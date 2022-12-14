@@ -13,9 +13,11 @@
     String _funcId = "in_"+(_module + "_" + _entity + "_info").replace('/', '_');
 %>
 <h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
-<div id="<%=_pageId%>" class="<%=_pageId+" "+_action%>-info board board-end">
+<div id="<%=_pageId%>" class="<%=_pageId+" "+_action%>-info">
     <form action="" onsubmit="return false"
           method="POST" enctype="multipart/form-data" class="form-horizontal">
+        <div class="rollbox panel panel-default">
+        <div class="form-body">
         <%
         Iterator it = _fields.entrySet().iterator();
         while (it.hasNext()) {
@@ -188,19 +190,23 @@
             </div>
         <%} /*End if */%>
         <%} /*End For*/%>
-        <hr/>
-        <div class="btns-group row">
-            <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2">
-                <button type="button" class="cancel btn btn-primary"><%=_locale.translate("fore.goback")%></button>
-                <%if ("reveal".equals(_action)) {%>
-                <div class="btn-group pull-right">
-                    <button type="button" class="newer btn btn-default" disabled="disabled">更新</button>
-                    <button type="button" class="older btn btn-default" disabled="disabled">更旧</button>
+            <hr/><!-- 兼容占位 -->
+        </div><!-- end form-body -->
+        </div><!-- end panel -->
+        <div class="form-foot">
+            <div class="form-group row">
+                <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2">
+                    <button type="button" class="cancel btn btn-primary"><%=_locale.translate("fore.goback")%></button>
+                    <%if ("reveal".equals(_action)) {%>
+                    <div class="btn-group pull-right">
+                        <button type="button" class="newer btn btn-default" disabled="disabled">更新</button>
+                        <button type="button" class="older btn btn-default" disabled="disabled">更旧</button>
+                    </div>
+                    <%} /*End If */%>
                 </div>
-                <%} /*End If */%>
             </div>
-        </div>
-        <br/>
+            <br/><!-- 兼容占位 -->
+        </div><!-- end form-foot -->
     </form>
     <div class="pagebox"></div>
 </div>
@@ -266,6 +272,9 @@
                 context.find(n).remove();
             }
         });
+
+        // 自适滚动
+        hsFlexRoll(formbox.children(".rollbox"), $("#main-context"));
 
         // 特殊控件
         setInfoItems(formbox, loadbox);

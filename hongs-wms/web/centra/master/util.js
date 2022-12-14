@@ -31,7 +31,7 @@ function hsUserMove(treebox, listbox) {
         }}
 
         // 自适滚动
-        hsAutoRoll(listbox.find(".listbox"), $("#main-context"));
+        hsFlexRoll(listbox.find(".listbox"), $("#main-context"));
 
         // 拖拽用户
         listbox.find(".listbox tbody tr td:nth-child(3)"
@@ -71,7 +71,7 @@ function hsUserMove(treebox, listbox) {
         }
 
         // 自适滚动
-        hsAutoRoll(treebox.find(".treebox"), $("#main-context"));
+        hsFlexRoll(treebox.find(".treebox"), $("#main-context"));
 
         // 拖拽分组
         treebox.find(".tree-node .tree-name" )

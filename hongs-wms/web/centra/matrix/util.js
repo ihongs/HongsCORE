@@ -767,7 +767,7 @@ function hsFormMove(treebox, listbox) {
         var uid = hsGetParam(mod._url , "furl_id");
 
         // 自适滚动
-        hsAutoRoll(listbox.find(".listbox"), $("#main-context"));
+        hsFlexRoll(listbox.find(".listbox"), $("#main-context"));
 
         // 拖拽表单
         listbox.find(".listbox tbody tr td:nth-child(3)")
@@ -792,7 +792,7 @@ function hsFormMove(treebox, listbox) {
 
     treebox.on("loadOver", function(evt, rst, mod) {
         // 自适滚动
-        hsAutoRoll(treebox.find(".treebox"), $("#main-context"));
+        hsFlexRoll(treebox.find(".treebox"), $("#main-context"));
 
         // 拖拽单元
         treebox.find(".tree-node .tree-name" )

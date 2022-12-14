@@ -6,7 +6,7 @@
     String _pageId = (_module + "-" + _entity + "-snap").replace('/', '-');
 %>
 <h2><%=_locale.translate("fore.record.title", _title)%></h2>
-<div id="<%=_pageId%>" class="<%=_pageId%> snap-list board board-end">
+<div id="<%=_pageId%>" class="<%=_pageId%> snap-list">
     <form class="findbox">
         <ul class="nav nav-tabs board clearfix">
             <li class="active">
@@ -42,7 +42,7 @@
             </div>
         </ul>
     </form>
-    <div class="listbox panel panel-default table-responsive">
+    <div class="listbox rollbox panel panel-default table-responsive">
         <table class="table table-hover table-striped table-compressed">
             <thead>
                 <tr>
@@ -73,7 +73,13 @@
             </tbody>
         </table>
     </div>
-    <div class="pagebox clearfix"></div>
+    <div class="pagebox clearfix">
+        <ul class="pagination">
+            <li class="disabled">
+                <a href="javascript:;">Loading...</a>
+            </li>
+        </ul>
+    </div>
 </div>
 
 <script type="text/javascript">
@@ -193,5 +199,8 @@
                .addClass("active");
         $(this).addClass("active");
     });
+
+    // 自适滚动
+    hsFlexRoll(context.find(".rollbox"), $("#main-context"));
 })(jQuery);
 </script>

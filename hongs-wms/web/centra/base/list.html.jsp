@@ -20,9 +20,9 @@
     Set<String>   _sd = getSrchable (_fields);
 %>
 <h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
-<div id="<%=_pageId%>" class="<%=_pageId+" "+_action%>-list board board-end">
+<div id="<%=_pageId%>" class="<%=_pageId+" "+_action%>-list">
     <form class="findbox toolbox board row">
-        <div class="col-xs-6">
+        <div class="col-xs-7">
             <div class="btn-group">
                 <%if ("select".equals(_action)) {%>
                 <button type="button" class="commit btn btn-primary"><%=_locale.translate("fore.select", _title)%></button>
@@ -41,7 +41,7 @@
             <div class="for-checks for-choose invisible"></div>
             <%} // End If %>
         </div>
-        <div class="col-xs-6">
+        <div class="col-xs-5">
             <div class="input-group">
                 <%
                     StringBuilder sp = new StringBuilder( );
@@ -65,7 +65,8 @@
         </div>
     </form>
     <!-- 筛选 -->
-    <form class="findbox filtbox invisible well group-end form-horizontal">
+    <form class="findbox filtbox invisible well form-horizontal">
+        <div class="group-end">
         <%
         Iterator it2 = _fields.entrySet().iterator();
         while (it2.hasNext()) {
@@ -148,7 +149,7 @@
             </div>
         </div>
         <%} /*End For*/%>
-        <hr  style="border-color: #ddd; clear: both;"/>
+        <hr  style="clear: both;"/>
         <div class="btns-group form-group form-group-sm row">
             <div class="col-xs-12 text-center">
                 <button type="submit" class="btn btn-primary">过滤</button>
@@ -156,10 +157,11 @@
                 <button type="reset"  class="btn btn-default">重置</button>
             </div>
         </div>
+        </div>
     </form>
     <!-- 统计 -->
-    <form class="findbox statbox invisible well board-end">
-        <div class="row">
+    <form class="findbox statbox invisible well">
+        <div class="board-end row">
         <%
         Iterator it3 = _fields.entrySet().iterator();
         while (it3.hasNext()) {
@@ -218,7 +220,7 @@
         </div>
     </form>
     <!-- 列表 -->
-    <div class="listbox panel panel-default table-responsive">
+    <div class="listbox rollbox panel panel-default table-responsive">
         <table class="table table-hover table-striped table-compressed">
             <thead>
                 <tr>
@@ -372,7 +374,13 @@
             </tbody>
         </table>
     </div>
-    <div class="pagebox clearfix"></div>
+    <div class="pagebox clearfix">
+        <ul class="pagination">
+            <li class="disabled">
+                <a href="javascript:;">Loading...</a>
+            </li>
+        </ul>
+    </div>
 </div>
 <script type="text/javascript">
 (function($) {
@@ -531,9 +539,18 @@
             findbox.find(".statis").remove();
         }
 
+        // 自适滚动
+        var h = hsFlexRoll(listbox.filter(".rollbox"), $("#main-context"));
+        if (h > 0) {
+            filtbox.css("max-height", h+"px");
+            filtbox.css("overflow-y", "auto");
+            statbox.css("max-height", h+"px");
+            statbox.css("overflow-y", "auto");
+        }
+
         // 加载数据
         listobj.load(null, findbox);
-        
+
         }); // End Promise
     });
 })(jQuery);

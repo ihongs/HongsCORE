@@ -279,6 +279,9 @@
             }
         });
 
+        $(document.body).addClass("toper-open");
+        $(document.body).addClass("sider-open");
+
         // 菜单折叠和展开
         menubar.find("li> ul").hide();
         menubar.find("li.acting> ul").toggle( );
@@ -295,12 +298,12 @@
 
         // 定位到当前菜单
         var actived = menubar.find("li.active");
-        if (actived.size() && actived.offset().top + actived.height()   > menubox.height()  ) {
-            menubox.scrollTop(actived.offset().top - actived.height()/2 - menubox.height()/2);
+        var at = actived.offset().top - menubox.offset().top;
+        var ah = actived.prop("offsetHeight");
+        var mh = menubox.prop("clientHeight");
+        if (at + ah > mh) {
+            menubox.scrollTop(at + ah/2 - mh/2);
         }
-
-        $(document.body).addClass("toper-open");
-        $(document.body).addClass("sider-open");
 
         // 边栏隐藏与显示
         $("#head-handler")

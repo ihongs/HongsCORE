@@ -41,9 +41,9 @@
     String baseHref = Core.SERV_PATH;
 %>
 <h2><%=_locale.translate("fore.manual.title", _title)%></h2>
-<div id="<%=_pageId%>" class="<%=_pageId%> swap-info board board-end">
-    <div class="row">
-    <div class="col-xs-6">
+<div id="<%=_pageId%>" class="<%=_pageId%> swap-info">
+    <div class="row board">
+    <div class="col-xs-6 cols-info">
         <div class="listbox panel panel-default table-responsive">
             <table class="table table-hover table-striped table-compressed">
                 <thead>
@@ -148,7 +148,7 @@
             </table>
         </div>
     </div>
-    <div class="col-xs-6">
+    <div class="col-xs-6 apis-info">
         <fieldset>
             <legend data-toggle="hsDrop">获取列表或详情 <span class="caret"></span></legend>
             <div class="dropdown-body">
@@ -581,5 +581,9 @@ id=ID 或 id.=ID1&id.=ID2...
             'node' : table
         });
     });
+
+    // 自适滚动
+    hsFlexRoll(context.find(".cols-info"), $("#main-context"));
+    hsFlexRoll(context.find(".apis-info"), $("#main-context"));
 })(jQuery);
 </script>

@@ -13,9 +13,11 @@
     String _funcId = "in_"+(_module + "_" + _entity + "_form").replace('/', '_');
 %>
 <h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
-<div id="<%=_pageId%>" class="<%=_pageId+" "+_action%>-form board board-end">
+<div id="<%=_pageId%>" class="<%=_pageId+" "+_action%>-form">
     <form action="<%=_module%>/<%=_entity%>/<%=_action%>.act"
           method="POST" enctype="multipart/form-data" class="form-horizontal">
+        <div class="rollbox panel panel-default">
+        <div class="form-body">
         <%
         Iterator it = _fields.entrySet().iterator();
         while (it.hasNext()) {
@@ -443,14 +445,18 @@
             </div>
         <%} /*End If */%>
         <%} /*End For*/%>
-        <hr/>
-        <div class="btns-group row">
-            <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2">
-                <button type="submit" class="commit btn btn-primary"><%=_locale.translate("fore.commit")%></button>
-                <button type="button" class="cancel btn btn-link"   ><%=_locale.translate("fore.cancel")%></button>
+            <hr/><!-- 兼容占位 -->
+        </div><!-- end form-body -->
+        </div><!-- end panel -->
+        <div class="form-foot">
+            <div class="form-group row">
+                <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2">
+                    <button type="submit" class="commit btn btn-primary"><%=_locale.translate("fore.commit")%></button>
+                    <button type="button" class="cancel btn btn-link"   ><%=_locale.translate("fore.cancel")%></button>
+                </div>
             </div>
-        </div>
-        <br/>
+            <br/><!-- 兼容占位 -->
+        </div><!-- end form-foot -->
     </form>
     <div class="pagebox"></div>
 </div>
@@ -493,6 +499,9 @@
                 context.find(n).remove();
             }
         });
+
+        // 自适滚动
+        hsFlexRoll(formbox.children(".rollbox"), $("#main-context"));
 
         // 特殊控件
         setFormItems(formbox, loadbox);

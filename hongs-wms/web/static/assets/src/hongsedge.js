@@ -1640,49 +1640,50 @@ function hsListInitSort(x, v, n) {
  * 自适滚动
  * @param part 适配区块
  * @param body 外部容器
- * @param minHeight 默认为 400, 低于此不设置 height
  * @param setHeight false: max-height, true: height
+ * @param minHeight 默认为 0.5, 0~1 为容器比例, 低于此不设
  * @return 适配高度 无则为 0
  */
-function hsFlexRoll(part, body, minHeight, setHeight) {
+function hsFlexRoll(part, body, setHeight, minHeight) {
     if (! part || ! part.size()) return 0;
     if (! body || ! body.size()) {
         body = part.closest(".body,body");
     }
-    if (! minHeight) {
-        minHeight = parseFloat(
-               part.css ("minHeight")
-            || part.data("minHeight")
-            || 400 );
+    if (minHeight === undefined) {
+        minHeight  =  0.5;
     }
 
     part.css("overflow-y", "auto");
     part.css("max-height", "none");
     var viewHeight = parseFloat(body.prop("clientHeight") || 0);
-    part.height ( viewHeight ); // 规避容器底部存在空余
+    part.height ( viewHeight ); // 规避内容不够而计算不对
     var bodyHeight = parseFloat(body.prop("scrollHeight") || 0);
     var partHeight = parseFloat(part.prop("offsetHeight") || 0);
-    var maxHeight = viewHeight - bodyHeight + partHeight;
+    var rollHeight = viewHeight - bodyHeight + partHeight;
 
-    // max height 需区分是否包含 border
-    if (part.css("box-sizing") !== "border-box" ) {
-        maxHeight = maxHeight
+    // 需区分是否包含 border
+    if (part.css("box-sizing") !== "border-box") {
+        rollHeight = rollHeight
             -  parseFloat(part.css("border-top-width"   ) || 0)
             -  parseFloat(part.css("border-bottom-width") || 0);
     }
 
-    part.css("height", "auto");
-    if (maxHeight > minHeight) {
+    // 可以是容器比例
+    if (minHeight >= 0 && minHeight <= 1) {
+        minHeight  =  minHeight * viewHeight ;
+    }
+
+    part.css ("height" , "auto");
+    if (minHeight <= rollHeight) {
         if (setHeight) {
-            part.css(/**/"height" , Math.floor(maxHeight)+"px");
+            part.css(/**/"height", Math.floor(rollHeight)+"px");
         } else {
-            part.css("max-height" , Math.floor(maxHeight)+"px");
+            part.css("max-height", Math.floor(rollHeight)+"px");
         }
-        return maxHeight;
+        return rollHeight;
     }
     return 0;
 }
-var hsAutoRoll = hsFlexRoll; // 兼容
 
 /**
  * 暗黑模式

@@ -562,15 +562,18 @@ div.bootstrap-tagsinput .tag [data-role="remove"]:after {
 .pagebox .pagination {
     margin-top : 0;
 }
-.pagebox .page-text a {
-    margin-left: 10px;
-}
-.pagebox .page-text   {
-    line-height: 36px;
-}
 .pagebox .alert {
     text-align : center;
     background-image: none;
+}
+.pagebox .page-text {
+    display: block;
+    padding: 7px 0;
+    margin-bottom: 20px;
+}
+.pagebox .page-text span {
+    margin-right: 0.5em;
+    margin-left : 0.5em;
 }
 
 .listbox ._amenu,
@@ -834,6 +837,11 @@ ol.repeated ,
 }
 .group-end:after {
     margin-bottom: -15px;
+    display: table;
+    content: "";
+}
+.parag-end:after {
+    margin-bottom: -10px;
     display: table;
     content: "";
 }

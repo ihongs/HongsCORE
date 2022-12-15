@@ -338,9 +338,9 @@ HsList.prototype = {
         var btns = pbox; //jQuery('<ul class="pagination pull-right"></ul>').appendTo(this.pageBox);
 
         if (page[this._ps_key] == 2) {
-            qbox.text(hsGetLang("list.page.unfo", page));
+            qbox.append(jQuery('<span></span>').text(hsGetLang("list.page.unfo", page)));
         } else {
-            qbox.text(hsGetLang("list.page.info", page));
+            qbox.append(jQuery('<span></span>').text(hsGetLang("list.page.info", page)));
         }
 ///     if (t >  this.pugsNum) {
             qbox.append(jQuery('<a href="javascript:;" class="bi bi-hi-page"></a>'));
@@ -825,10 +825,8 @@ function hsListFillLess(page) {
     this.pageBox.find(".pagination").removeClass("pull-left" )
                                     .removeClass("pagination")
                                     .   addClass("pager"     );
-    this.pageBox.find(".page-prev" ).addClass("previous")
-                .find( "a" ).text(hsGetLang('list.prev.page'));
-    this.pageBox.find(".page-next" ).addClass("next"    )
-                .find( "a" ).text(hsGetLang('list.next.page'));
+    this.pageBox.find( "a" ).text(hsGetLang('list.prev.page'));
+    this.pageBox.find( "a" ).text(hsGetLang('list.next.page'));
 }
 
 /**
@@ -839,14 +837,13 @@ function hsListFillLess(page) {
  * @return {undefined}
  */
 function hsListFillNext(page) {
-    if (page[this._ps_key] == "0") {
-    if (page[this._pc_key] == "0"
-    ||  page[this._rc_key] == "0") {
-        this.warn(this._empty_err || hsGetLang('list.empty'), "warning");
-        return;
-    } else {
+    if (page[this._ps_key] == 0) {
+    if (page[this._pc_key] >  0
+    &&  page[this._rc_key] >  0) {
+        var  that=this;
         this.warn(this._above_err || hsGetLang('list.above'), "warning");
-        return;
+    } else {
+        this.warn(this._empty_err || hsGetLang('list.empty'), "warning");
     }}
 
     var r = page[this.rowsKey] ? parseInt(page[this.rowsKey]) : this.rowsNum;
@@ -880,7 +877,7 @@ function hsListFillNext(page) {
     if (pag.size() === 0) {
         pag = this.pageBox.find(".page-curr"  );
     }
-    if (page[this._ps_key] == "2") {
+    if (page[this._ps_key] == 2) {
         pag.text(   p   );
     } else {
         pag.text(p+"/"+t);

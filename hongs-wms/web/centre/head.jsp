@@ -163,23 +163,18 @@
     </div>
 </nav>
 
-<div id="footbox">
-<nav class="navbar navbar-default navbar-fixed-bottom">
-    <div class="container">
-        <blockquote><p class="clearfix">
+<nav class="navbar navbar-default navbar-fixed-bottom container">
+    <blockquote>
+        <p class="clearfix">
             <span>&copy;&nbsp;</span><span class="copy-right"><%=CoreLocale.getInstance().translate("fore.copy.right")%></span>
             <span>&nbsp;&nbsp;</span><span class="site-links"><%=CoreLocale.getInstance().translate("fore.site.links")%></span>
             <span class="pull-right text-muted">Powered by <a href="<%=request.getContextPath()%>/power.html" target="_blank">HongsCORE</a></span>
-        </p></blockquote>
-    </div>
+        </p>
+    </blockquote>
 </nav>
-</div>
 
 <script type="text/javascript">
     (function($) {
-        // 挪动页尾到外部
-        $("#context").append($("#footbox"));
-
         var context = $("#main-context");
         var menubar = $("#main-menubar");
 //      var userbar = $("#user-menubar");

@@ -110,3 +110,13 @@ body {
 .input-group .input-search:disabled+.input-group-btn>.btn>.bi-hi-search:before {
     content: "\f130";
 }
+
+/* 标准表单分块布局 */
+.form-foot {
+    border-top: 1px solid #ddd;
+    margin : 20px 0 0 0;
+    padding: 20px 0 0 0;
+}
+.form-foot .form-group {
+    margin-bottom: 20px;
+}

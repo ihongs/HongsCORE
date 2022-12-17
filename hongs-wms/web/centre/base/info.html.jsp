@@ -16,6 +16,7 @@
 <div id="<%=_pageId%>" class="<%=_pageId+" "+_action%>-info board board-end">
     <form action="" onsubmit="return false"
           method="POST" enctype="multipart/form-data" class="form-horizontal">
+        <div class="form-body">
         <%
         Iterator it = _fields.entrySet().iterator();
         while (it.hasNext()) {
@@ -187,15 +188,16 @@
                     <div class="help-block text-muted form-control-static"><%=hist%></div>
                 </div>
             </div>
-        <%} /*End if */%>
+        <%} /*End If */%>
         <%} /*End For*/%>
-        <hr/>
-        <div class="btns-group row">
-            <div class="col-sm-9 col-md-8 col-sm-offset-3 col-md-offset-2">
-                <button type="button" class="cancel btn btn-primary"><%=_locale.translate("fore.goback")%></button>
+        </div><!-- end form-body -->
+        <div class="form-foot">
+            <div class="form-group row">
+                <div class="col-sm-9 col-md-8 col-sm-offset-3 col-md-offset-2">
+                    <button type="button" class="cancel btn btn-primary"><%=_locale.translate("fore.goback")%></button>
+                </div>
             </div>
-        </div>
-        <br/>
+        </div><!-- end form-foot -->
     </form>
     <div class="pagebox"></div>
 </div>

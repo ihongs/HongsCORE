@@ -825,8 +825,8 @@ function hsListFillLess(page) {
     this.pageBox.find(".pagination").removeClass("pull-left" )
                                     .removeClass("pagination")
                                     .   addClass("pager"     );
-    this.pageBox.find( "a" ).text(hsGetLang('list.prev.page'));
-    this.pageBox.find( "a" ).text(hsGetLang('list.next.page'));
+    this.pageBox.find(".page-prev a").text(hsGetLang('list.prev.page'));
+    this.pageBox.find(".page-next a").text(hsGetLang('list.next.page'));
 }
 
 /**

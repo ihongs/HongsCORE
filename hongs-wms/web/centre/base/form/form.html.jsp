@@ -15,6 +15,7 @@
 <div id="<%=_pageId%>" class="<%=_action%>-form">
     <form class="form-horizontal <%=Synt.declare(_params.get("page-form-class"), "")%>"
           method="POST" enctype="multipart/form-data">
+        <div class="form-body">
         <%
         int ii = 0;
         Iterator it = _fields.entrySet().iterator();
@@ -326,15 +327,14 @@
             </div>
         <%} /*End If */%>
         <%} /*End For*/%>
-        <br/>
-        <div class="btns-group">
-            <div>
+        </div><!-- end form-body -->
+        <div class="form-foot">
+            <div class="form-group">
                 <button type="submit" class="commit btn btn-success form-control text-center">
                     <%=Synt.defxult((String) _params.get("page-form-commit"), _locale.translate("fore.commit"))%>
                 </button>
             </div>
-        </div>
-        <br/>
+        </div><!-- end form-foot -->
     </form>
 </div>
 <script type="text/javascript">

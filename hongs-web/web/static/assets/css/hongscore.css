@@ -566,6 +566,18 @@ div.bootstrap-tagsinput .tag [data-role="remove"]:after {
     text-align : center;
     background-image: none;
 }
+.pagebox .pager {
+    margin-left : -2px;
+    margin-right: -2px;
+}
+.pagebox .pager li {
+    margin-left :  2px;
+    margin-right:  2px;
+}
+.pagebox .pager li.active a {
+    color: #777;
+    background: #eee;
+}
 .pagebox .page-text {
     display: block;
     padding: 7px 0;

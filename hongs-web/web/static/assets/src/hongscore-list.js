@@ -280,39 +280,41 @@ HsList.prototype = {
         var that = this;
         var listBox = this.listBox;
         var pageBox = this.pageBox;
-        if (page[this._ps_key] != 0) {
-            pageBox.show();
-            listBox.show();
-        }  else
-        if (pageBox.size()) {
-            pageBox.show();
-            listBox.hide();
-
-            // 显示警示区
-            if (page[this._pc_key] > 0 &&  page[this._rc_key] > 0) {
-                pageBox.empty( ).append('<div class="alert alert-warning" style="width: 100%;">'
-                           + (page.msg || this._above_err || hsGetLang('list.above')) + '</div>');
-                setTimeout(function( ) {
-                    hsSetSeria(that._data, that.pageKey);
-                    that.load( ); // 返回第一页
-                }, 5000);
-            } else {
-                pageBox.empty( ).append('<div class="alert alert-warning" style="width: 100%;">'
-                           + (page.msg || this._empty_err || hsGetLang('list.empty')) + '</div>');
+        if (pageBox.size() == 0) {
+            if (page[this._ps_key] == 0) {
+                // 弹出警示
+                if (page[this._pc_key] > 0 &&  page[this._rc_key] > 0) {
+                    jQuery.hsWarn(page.msg || this._above_err || hsGetLang('list.above') , "warning" ,
+                    function ( ) {
+                        hsSetSeria(that._data, that.pageKey);
+                        that.load( ); // 返回第一页
+                    });
+                } else {
+                    jQuery.hsWarn(page.msg || this._empty_err || hsGetLang('list.empty') , "warning");
+                }
             }
             return;
         } else {
-            // 弹出警示框
-            if (page[this._pc_key] > 0 &&  page[this._rc_key] > 0) {
-                jQuery.hsWarn(page.msg || this._above_err || hsGetLang('list.above') , "warning" ,
-                function ( ) {
-                    hsSetSeria(that._data, that.pageKey);
-                    that.load( ); // 返回第一页
-                });
+            if (page[this._ps_key] == 0) {
+                // 显示警示
+                if (page[this._pc_key] > 0 &&  page[this._rc_key] > 0) {
+                    pageBox.empty( ).append('<div class="alert alert-warning" style="width: 100%;">'
+                               + (page.msg || this._above_err || hsGetLang('list.above')) + '</div>');
+                    setTimeout(function( ) {
+                        hsSetSeria(that._data, that.pageKey);
+                        that.load( ); // 返回第一页
+                    }, 5000);
+                } else {
+                    pageBox.empty( ).append('<div class="alert alert-warning" style="width: 100%;">'
+                               + (page.msg || this._empty_err || hsGetLang('list.empty')) + '</div>');
+                }
+                pageBox.show();
+                listBox.hide();
+                return;
             } else {
-                jQuery.hsWarn(page.msg || this._empty_err || hsGetLang('list.empty') , "warning");
+                pageBox.show();
+                listBox.show();
             }
-            return;
         }
 
         var i, r, p, t, pmin, pmax;
@@ -807,6 +809,7 @@ HsList.prototype = {
 
 /**
  * 列表填充分页按钮
+ * 没有总页数总条数
  */
 function hsListFillMore(page) {
     HsList.prototype.fillPage.call(this, page);
@@ -816,107 +819,34 @@ function hsListFillMore(page) {
 
 /**
  * 列表填充分页按钮
+ * 只有上一页下一页
  */
 function hsListFillLess(page) {
     HsList.prototype.fillPage.call(this, page);
     this.pageBox.find(".page-text" ).remove( );
     this.pageBox.find(".page-link" ).remove( );
     this.pageBox.find(".page-curr" ).remove( );
-    this.pageBox.find(".pagination").removeClass("pull-left" )
+    this.pageBox.find(".pagination").addClass("pager")
                                     .removeClass("pagination")
-                                    .   addClass("pager"     );
+                                    .removeClass("pull-left" );
     this.pageBox.find(".page-prev a").text(hsGetLang('list.prev.page'));
     this.pageBox.find(".page-next a").text(hsGetLang('list.next.page'));
 }
 
 /**
- * 这是比 fillPage 更简单的上下页导航方式
- * 需替代 fillPage 时, 在初始化参数中加入
- * fillPage: hsListFillNext
- * @param {type} page
- * @return {undefined}
+ * 列表填充分页按钮
+ * 按屏幕宽显隐页码
  */
-function hsListFillNext(page) {
-    if (page[this._ps_key] == 0) {
-    if (page[this._pc_key] >  0
-    &&  page[this._rc_key] >  0) {
-        var  that=this;
-        this.warn(this._above_err || hsGetLang('list.above'), "warning");
-    } else {
-        this.warn(this._empty_err || hsGetLang('list.empty'), "warning");
-    }}
-
-    var r = page[this.rowsKey] ? parseInt(page[this.rowsKey]) : this.rowsNum;
-    var p = page[this.pageKey] ? parseInt(page[this.pageKey]) :  1  ;
-    var t = page[this._pc_key] ? parseInt(page[this._pc_key])
-        : ( page[this._rc_key] == 0 ? p - 1
-        : ( page[this._rc_key] == r ? p + 1
-        : p ) );
-
-    // 添加翻页按钮
-    var btn = this.pageBox.find("[data-pn]");
-    if (btn.size() === 0) {
-        this.pageBox
-        .append(jQuery(
-            '<ul class="pager"></ul>'
-        )
-        .append(jQuery(
-            '<li class="page-prev"><a href="javascript:;" data-pn="">'+hsGetLang('list.prev.page')+'</a></li>'
-        ))
-        .append(jQuery(
-            '<li class="page-curr active"><a href="javascript:;"></a></li>'
-        ))
-        .append(jQuery(
-            '<li class="page-next"><a href="javascript:;" data-pn="">'+hsGetLang('list.next.page')+'</a></li>'
-        )));
-        btn = this.pageBox.find("[data-pn]");
-    }
-
-    // 设置页码参数
-    var pag = this.pageBox.find(".page-curr a");
-    if (pag.size() === 0) {
-        pag = this.pageBox.find(".page-curr"  );
-    }
-    if (page[this._ps_key] == 2) {
-        pag.text(   p   );
-    } else {
-        pag.text(p+"/"+t);
-    }
-    if (p > 1) {
-        pag = btn.closest(".page-prev").removeClass("disabled");
-        pag.filter("[data-pn]").attr("data-pn", p-1);
-        pag.find  ("[data-pn]").attr("data-pn", p-1);
-    } else {
-        pag = btn.closest(".page-prev").   addClass("disabled");
-        pag.filter("[data-pn]").attr("data-pn", 1  );
-        pag.find  ("[data-pn]").attr("data-pn", 1  );
-    }
-    if (p < t) {
-        pag = btn.closest(".page-next").removeClass("disabled");
-        pag.filter("[data-pn]").attr("data-pn", p+1);
-        pag.find  ("[data-pn]").attr("data-pn", p+1);
-    } else {
-        pag = btn.closest(".page-next").   addClass("disabled");
-        pag.filter("[data-pn]").attr("data-pn", t  );
-        pag.find  ("[data-pn]").attr("data-pn", t  );
-    }
-
-    // 翻页点击事件
-    if (! this.pageBox.data("inited")) {
-        this.pageBox.data("inited", 1);
-        var that = this;
-        this.pageBox.on("click", "[data-pn]", function(evt) {
-            evt.preventDefault ( );
-            var po = jQuery (this);
-            var pn = po.data("pn");
-            var pk = that.pageKey ;
-            if (po.prop( "disabled" )) {
-                return;
-            }
-            hsSetSeria(that._data, pk, pn);
-            that.load();
-        });
-    }
+function hsListFillPage(page) {
+    HsList.prototype.fillPage.call(this, page);
+    this.pageBox.find(".page-text" ).remove( );
+    this.pageBox.find(".page-link" ).addClass("hidden-xs hidden-sm");
+    this.pageBox.find(".page-curr" ).addClass("hidden-xs hidden-sm");
+    this.pageBox.find(".pagination").addClass("pager")
+                                    .removeClass("pagination")
+                                    .removeClass("pull-left" );
+    this.pageBox.find(".page-prev a").text(hsGetLang('list.prev.page'));
+    this.pageBox.find(".page-next a").text(hsGetLang('list.next.page'));
 }
 
 /**

@@ -291,7 +291,7 @@
               '.review', '@' ]
         ],
         fillList    : hsListFillItem,
-        fillPage    : hsListFillLess,
+        fillPage    : hsListFillPage,
         _fill__logo : hsListFillLogo,
         _fill__edit : hsListShowEdit
     });

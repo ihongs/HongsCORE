@@ -773,19 +773,19 @@ public class Form extends Model {
             defi.appendChild ( docm.createTextNode("(void)"));
             */
 
-            // 保护写接口
+            // 限定读范围
             defs = docm.createElement("enum");
             root.appendChild ( defs );
-            defs.setAttribute("name", id+".defence");
+            defs.setAttribute("name", id+".defense");
             defi = docm.createElement("value");
             defs.appendChild ( defi );
             defi.setAttribute("code", Cnst.AR_KEY+".x.cuser");
             defi.appendChild ( docm.createTextNode("($session.uid)"));
 
-            // 我所创建的
+            // 保护写接口
             defs = docm.createElement("enum");
             root.appendChild ( defs );
-            defs.setAttribute("name", id+".def.own");
+            defs.setAttribute("name", id+".defence");
             defi = docm.createElement("value");
             defs.appendChild ( defi );
             defi.setAttribute("code", Cnst.AR_KEY+".x.cuser");

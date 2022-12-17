@@ -176,7 +176,7 @@
         </div>
         <%} /*End If */%>
         <%} /*End For*/%>
-        <div class="mine-group form-group form-group-sm row" data-name="cuser">
+        <div class="mine-group form-group form-group-sm row hide" data-name="cuser">
             <label class="col-md-3 col-sm-2 control-label text-right">属主</label>
             <div class="col-md-6 col-sm-8">
                 <input type="hidden" name="cuser" value="" data-ft="_mine"/>

@@ -112,16 +112,56 @@ public class UploadHelper {
     }
 
     /**
+     * 设置许可的类型
+     * 可以使用扩展名, 如 .png
+     * 也可用MimeType, 如 image/png 或 image/*
+     * @param types
+     * @return
+     */
+    public UploadHelper setAccept(String  ...  types) {
+        Set<String> typez = new HashSet(types.length);
+        Set<String> kindz = new HashSet(types.length);
+        for(String  type  : types) {
+            if (type.startsWith( "." ) ) {
+                kindz.add(type);
+            } else {
+                typez.add(type);
+            }
+        }
+        this.allowTypes = typez.isEmpty() ? null : typez;
+        this.allowKinds = kindz.isEmpty() ? null : kindz;
+        return this;
+    }
+    public UploadHelper setAccept(Set <String> types) {
+        Set<String> typez = new HashSet(types.size());
+        Set<String> kindz = new HashSet(types.size());
+        for(String  type  : types) {
+            if (type.startsWith( "." ) ) {
+                kindz.add(type);
+            } else {
+                typez.add(type);
+            }
+        }
+        this.allowTypes = typez.isEmpty() ? null : typez;
+        this.allowKinds = kindz.isEmpty() ? null : kindz;
+        return this;
+    }
+
+    /**
      * 设置许可的类型(Mime-Type)
      * @param type
      * @return
+     * @deprecated 改用 setAccept
+     */
+    public UploadHelper setAllowTypes(String ...  type) {
+        this.allowTypes = new HashSet(Arrays.asList(type));
+        return this;
+    }
+    /**
+     * @deprecated 改用 setAccept
      */
     public UploadHelper setAllowTypes(Set<String> type) {
         this.allowTypes = type;
-        return this;
-    }
-    public UploadHelper setAllowTypes(String ...  type) {
-        this.allowTypes = new HashSet(Arrays.asList(type));
         return this;
     }
 
@@ -129,13 +169,17 @@ public class UploadHelper {
      * 设置许可的类型(Extension)
      * @param kind
      * @return
+     * @deprecated 改用 setAccept
+     */
+    public UploadHelper setAllowKinds(String ...  kind) {
+        this.allowKinds = new HashSet(Arrays.asList(kind));
+        return this;
+    }
+    /**
+     * @deprecated 改用 setAccept
      */
     public UploadHelper setAllowKinds(Set<String> kind) {
         this.allowKinds = kind;
-        return this;
-    }
-    public UploadHelper setAllowKinds(String ...  kind) {
-        this.allowKinds = new HashSet(Arrays.asList(kind));
         return this;
     }
 
@@ -262,7 +306,7 @@ public class UploadHelper {
         }
             pos  = name.lastIndexOf('.');
         if (pos >= 1 ) {
-            return name.substring(1+pos);
+            return name.substring(0+pos);
         } else {
             return  "" ;
         }
@@ -353,8 +397,8 @@ public class UploadHelper {
     /**
      * 检查文件流并写入目标目录
      * @param xis  上传文件输入流
-     * @param type 上传文件类型
-     * @param kind 上传文件扩展
+     * @param type 上传文件类型, 如 image/png 或 image/*
+     * @param kind 上传文件扩展, 如 .png
      * @param lead 目标文件名称
      * @return
      * @throws Wrong
@@ -364,7 +408,7 @@ public class UploadHelper {
             type = type.substring(0 , type./**/indexOf(";"));
         }
         if (kind.contains( "." )) {
-            kind = kind.substring(1 + kind.lastIndexOf('.'));
+            kind = kind.substring(0 + kind.lastIndexOf('.'));
         }
 
         chkTypeOrKind(type, kind);
@@ -399,8 +443,8 @@ public class UploadHelper {
     /**
      * 检查文件流并写入目标目录
      * @param xis  上传文件输入流
-     * @param type 上传文件类型
-     * @param kind 上传文件扩展
+     * @param type 上传文件类型, 如 image/png 或 image/*
+     * @param kind 上传文件扩展, 如 .png
      * @return
      * @throws Wrong
      */

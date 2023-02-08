@@ -119,10 +119,8 @@ public class IsFile extends Rule {
         String name;
         long   size;
 
-        para = getParam("type");
-        if (para != null && !"".equals(para)) hlpr.setAllowTypes(Synt.toSet(para));
-        para = getParam("kind");
-        if (para != null && !"".equals(para)) hlpr.setAllowKinds(Synt.toSet(para));
+        para = getParam("accept");
+        if (para != null && !"".equals(para)) hlpr.setAccept(Synt.toSet(para));
         para = getParam("temp");
         if (para != null && !"".equals(para)) hlpr.setUploadTemp(Synt.declare(para, String.class));
         para = getParam("path");

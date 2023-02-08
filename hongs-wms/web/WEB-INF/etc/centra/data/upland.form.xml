@@ -230,7 +230,7 @@
             <!-- 文件处于后台保护范围内 -->
             <param name="path">centra/data/upland/data/image</param>
             <param name="href">centra/data/upland/data/image</param>
-            <param name="kind">jpeg,jpg,png,gif,bmp</param>
+            <param name="accept">image/*</param>
             <param name="name-digest">MD5</param>
             <param name="pass-source">yes</param>
         </field>

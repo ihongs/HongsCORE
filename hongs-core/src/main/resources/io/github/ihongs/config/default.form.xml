@@ -119,8 +119,7 @@
             <param name="path"></param>
             <param name="href"></param>
             <param name="name"></param>
-            <param name="type"></param>
-            <param name="kind"></param>
+            <param name="accept">image/*,.jpg,.png</param>
         </field>
         <field name="fork" text="关联" type="fork,pick">
             <param name="data-at">assoc/action</param>

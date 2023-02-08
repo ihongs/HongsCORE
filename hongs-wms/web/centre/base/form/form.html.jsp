@@ -250,9 +250,9 @@
                         String extr = "";
                         String mode = "hsFile";
                         String kind =  "_file";
-                        String typa = (String) info.get("type");
+                        String typa = (String) info.get("accept");
                         if (typa == null || typa.length() == 0) {
-                            typa  = type +"/*";
+                            typa  = ! "file".equals(type) ? type+"/*" : "*/*";
                         }
                         if (rptd) {
                             name  = name + "."; // 多选末尾加点

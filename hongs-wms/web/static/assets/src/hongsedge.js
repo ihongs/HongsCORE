@@ -1257,7 +1257,7 @@ function hsHideListCols(box) {
             return;
         }
         var ch = cho.clone().appendTo(chs);
-        ch.find("span" ).text( $(this).text(/**/) );
+        ch.find("span" ).text( $(this).text()||' ');
         ch.find("input").val ( $(this).data("fn") );
         ch.find("input").prop("checked", !$(this).is(".hidden"));
     });

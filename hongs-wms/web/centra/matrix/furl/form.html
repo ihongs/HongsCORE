@@ -3,8 +3,9 @@
      class="board"
      data-topple="hsForm"
      data-load-url="centra/matrix/furl/info.act?id=${id}"
-     data-save-url="centra/matrix/furl/save.act"
-     data--0="_fill_icon: (hsFormFillView) ">
+     data-save-url="centra/matrix/furl/save.act?id=${id}"
+     data--0="initInfo:($(this).hsFind('%'))">
+     data--1="_fill_icon:(hsFormFillView)">
     <form action="" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="id" />
         <input type="hidden" name="pid"/>

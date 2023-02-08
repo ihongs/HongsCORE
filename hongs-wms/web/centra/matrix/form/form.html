@@ -7,7 +7,8 @@
         <div class="row">
             <div data-topple="hsForm"
                  data-load-url="centra/matrix/form/info.act?id=${id}"
-                 data-save-url="centra/matrix/form/save.act">
+                 data-save-url="centra/matrix/form/save.act?id=${id}"
+                 data--0="initInfo:($(this).hsFind('%'))">
                 <form class="record-form">
                     <input type="hidden" name="id"/>
                     <input type="hidden" name="furl_id"/>
@@ -743,7 +744,7 @@
             </div>
             <div class="form-group">
                 <label class="control-label">文件类型</label>
-                <input class="form-control" type="text" name="ul|data-kind" value="" placeholder="逗号分隔, 如 png,jpg,gif"/>
+                <input class="form-control" type="text" name="ul|data-accept" value="" placeholder="逗号分隔, 如 image/png,.png"/>
             </div>
             <div class="checkbox">
                 <label>

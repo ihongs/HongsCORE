@@ -194,7 +194,9 @@
         <div class="form-foot">
             <div class="form-group row">
                 <div class="col-sm-9 col-md-8 col-sm-offset-3 col-md-offset-2">
-                    <button type="button" class="cancel btn btn-primary"><%=_locale.translate("fore.goback")%></button>
+                    <div class="btn-toolbar">
+                        <button type="button" class="cancel btn btn-default"><%=_locale.translate("fore.goback")%></button>
+                    </div>
                 </div>
             </div>
         </div><!-- end form-foot -->

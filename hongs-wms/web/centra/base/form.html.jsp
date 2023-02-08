@@ -451,8 +451,10 @@
         <div class="form-foot">
             <div class="form-group row">
                 <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2">
-                    <button type="submit" class="commit btn btn-primary"><%=_locale.translate("fore.commit")%></button>
-                    <button type="button" class="cancel btn btn-link"   ><%=_locale.translate("fore.cancel")%></button>
+                    <div class="btn-toolbar">
+                        <button type="submit" class="commit btn btn-primary"><%=_locale.translate("fore.commit")%></button>
+                        <button type="button" class="cancel btn btn-default"><%=_locale.translate("fore.cancel")%></button>
+                    </div>
                 </div>
             </div>
             <br/><!-- 兼容占位 -->
@@ -467,8 +469,17 @@
     var formbox = context.find("form").first( );
 
     var loadres = hsSerialDic(loadbox);
+    var initres = hsSerialArr(loadres);
     var denycss = loadres['.deny'];
         delete    loadres['.deny'];
+
+    // 清理参数
+    for(var j = initres.length-1; j > -1; j --) {
+        var n = initres[j];
+        if (! n.name || ! n.value) {
+            initres.splice( j, 1 );
+        }
+    }
 
     var formobj = context.hsForm({
         <%if ("create".equals(_action)) {%>
@@ -479,6 +490,7 @@
          save: hsSaveWithMemo('<%=_locale.translate("fore.update.confirm", _title)%>'),
         <%}} /* End if */%>
         _data: loadres,
+        initInfo: initres,
         _fill__fork: hsFormFillFork,
         _fill__file: hsFormFillFile,
         _fill__view: hsFormFillView

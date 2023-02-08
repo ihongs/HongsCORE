@@ -120,10 +120,10 @@ data-fl,data-dl 的取值为表达式, 参数可使用 this,form|list,v,n; data-
     <h2>{DO}部门</h2>
     <div id="master-unit-form"
          data-topple="hsForm"
-         data-load-url="centra/master/unit/info.act"
-         data-save-url="centra/master/unit/save.act">
+         data-load-url="centra/master/unit/info.act?id=${id}"
+         data-save-url="centra/master/unit/save.act?id=${id}"
+         data--0="initInfo:($(this).hsFind('%'))">
         <form action="" method="POST">
-            <input type="hidden" name="id"/>
             <input type="hidden" name="pid"/>
             <div class="row">
                 <div class="col-md-6 center-block">

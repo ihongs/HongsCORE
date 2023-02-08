@@ -2,8 +2,9 @@
 <div id="master-unit-form"
      class="hide-roles board"
      data-topple="hsForm"
-     data-load-url="centra/master/unit/info.act?ab=.enfo&amp;with-roles=default"
-     data-save-url="centra/master/unit/save.act">
+     data-load-url="centra/master/unit/info.act?id=${id}&amp;ab=.enfo&amp;with-roles=default"
+     data-save-url="centra/master/unit/save.act?id=${id}"
+     data--0="initInfo:($(this).hsFind('%'))">
     <form action="" method="POST">
         <input type="hidden" name="id" />
         <input type="hidden" name="pid"/>

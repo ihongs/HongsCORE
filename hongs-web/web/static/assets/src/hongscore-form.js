@@ -13,7 +13,8 @@ function HsForm(context, opts) {
     var loadUrl  = hsGetValue(opts, "loadUrl");
     var saveUrl  = hsGetValue(opts, "saveUrl");
     var loadDat  = hsGetValue(opts, "loadData");
-    var initDat  = hsGetValue(opts, "initData");
+    var initInf  = hsGetValue(opts, "initInfo");
+    var initEnf  = hsGetValue(opts, "initEnfo");
     var idKey    = hsGetValue(opts, "idKey", "id"); // id参数名, 用于判断编辑还是创建
     var abKey    = hsGetValue(opts, "abKey", "ab"); // ab参数名, 用于判断是否要枚举表
 
@@ -52,36 +53,17 @@ function HsForm(context, opts) {
         this.formBox.attr("action", saveUrl);
     }
 
-    /**
-     * 没有指定 id 尝试从加载参数中提取
-     */
-    if (! loadDat) {
-        var id = hsGetParam(loadUrl , idKey);
-        if (! id ) {
-            id = hsGetSeria(loadArr , idKey);
-            loadDat        = {};
-            loadDat[idKey] = id;
-        }
+    // 预置数据
+    if (initInf) {
+    if (typeof initInf === "string") {
+        initInf = hsFixPms(initInf, loadArr);
+    }   this.initInfo = hsSerialDic(initInf);
+    }console.log(initInf, this.initInfo)
+    if (initEnf) {
+    if (typeof initEnf === "string") {
+        initEnf = hsFixPms(initEnf, loadArr);
+    }   this.initEnfo = hsSerialDic(initEnf);
     }
-
-    /**
-     * 表单初始数据可以从加载参数中提取
-     */
-    if (initDat) {
-        initDat = hsSerialDic(initDat);
-    } else {
-        initDat = hsSerialDic(  [ ]  );
-        for(var i = 0; i < loadArr.length; i ++ ) {
-            var n = loadArr [i];
-            if (n.name && (n.value||n.value===0)) {
-                var v = n.value;
-                var k = n.name ;
-                k = _hsGetDkeys (k);
-                _hsSetPoint(initDat, k,v);
-            }
-        }
-    }
-    this._init = initDat;
 
     this.valiInit();
     this.saveInit();
@@ -135,12 +117,20 @@ HsForm.prototype = {
         }
 
         // 填充预置数据
-        if (this._init) {
-            var d = hsSerialDic(this._init);
+        if (this.initInfo) {
+            var d = hsSerialDic(this.initInfo);
             for(var k in d ) {
                 var v  = d [k];
             k = k.replace(/(\[\]|\.)$/, ''); // 规避数组键影响
                 hsSetValue ( info , k , v );
+            }
+        }
+        if (this.initEnfo) {
+            var d = hsSerialDic(this.initEnfo);
+            for(var k in d ) {
+                var v  = d [k];
+            k = k.replace(/(\[\]|\.)$/, ''); // 规避数组键影响
+                hsSetValue ( enfo , k , v );
             }
         }
 

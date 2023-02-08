@@ -196,13 +196,15 @@
         <div class="form-foot">
             <div class="form-group row">
                 <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2">
-                    <button type="button" class="cancel btn btn-primary"><%=_locale.translate("fore.goback")%></button>
-                    <%if ("reveal".equals(_action)) {%>
-                    <div class="btn-group pull-right">
-                        <button type="button" class="newer btn btn-default" disabled="disabled">更新</button>
-                        <button type="button" class="older btn btn-default" disabled="disabled">更旧</button>
+                    <div class="btn-toolbar">
+                        <button type="button" class="cancel btn btn-default"><%=_locale.translate("fore.goback")%></button>
+                        <%if ("reveal".equals(_action)) {%>
+                        <div class="btn-group">
+                            <button type="button" class="newer btn btn-default" disabled="disabled">更新</button>
+                            <button type="button" class="older btn btn-default" disabled="disabled">更旧</button>
+                        </div>
+                        <%} /*End If */%>
                     </div>
-                    <%} /*End If */%>
                 </div>
             </div>
             <br/><!-- 兼容占位 -->

@@ -2471,11 +2471,13 @@ $.fn.hsReady = function() {
 
     // 执行
     box.find("[data-eval]").each(function() {
-        eval('(false||function(){'+$(this).attr("data-eval")+'})').call(this);
+        //eval 效率低且不安全
+        //eval('( false||function(){'+$(this).attr("data-eval")+'} )').call(this);
+        Function('return function(){'+$(this).attr("data-eval")+'}')().call(this);
     });
     // 加载
     box.find("[data-load]").each(function() {
-        $(this).hsLoad($(this).attr("data-load") , $(this).attr("data-data"));
+        $(this).hsLoad($(this).attr("data-load"), $(this).attr("data-data"));
     });
 
     return box;
@@ -2726,10 +2728,8 @@ $.fn.hsData = function(vals) {
         return n.substring(1).toUpperCase();
     };
     var vrep = function(v) {
-        if (/^(\{.*\}|\[.*\])$/.test(v)) {
-            return eval('('+v+')');
-        } else if (/^(\(.*\))$/.test(v)) {
-            return eval(v);
+        if (/^(\{.*\}|\[.*\]|\(.*\))$/.test(v)) {
+            return Function('return function(){return '+v+'}')().call(this);
         }
         return v ;
     };

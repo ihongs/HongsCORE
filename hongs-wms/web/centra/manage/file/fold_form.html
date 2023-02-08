@@ -24,6 +24,11 @@
 <script type="text/javascript">
     (function($) {
         var context = H$("#manage-file-fold-create");
+        var loadbox = context.closest(".loadbox");
+        var loadpms = hsSerialArr(loadbox       );
+        var path    = hsGetSeria (loadpms,"path");
+
+        context.find("[name=path]").val( path );
 
         context.find("form").on("submit", function(evt) {
             var form = $(this);

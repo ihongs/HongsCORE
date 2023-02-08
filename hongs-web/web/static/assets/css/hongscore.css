@@ -195,6 +195,23 @@ input[type="time"].form-control {
     content: '\2731';
 }
 
+/* 修正 panel 和 modal 中内容底部多余空隙 */
+.well>.board ,
+.panel-body>.board ,
+.modal-body>.board {
+    margin-bottom: 0px;
+}
+.panel-body>.board-end ,
+.modal-body>.board-end {
+    margin-bottom: 5px;
+}
+.panel-body>.panel
+.modal-body>.panel {
+    border : 0;
+    padding: 0;
+    box-shadow: none;
+}
+
 /** 响应式表格区 **/
 
 /* 修正响应式表格在移动端不出滚动条的问题 */
@@ -457,6 +474,32 @@ div.bootstrap-tagsinput .tag [data-role="remove"]:after {
 .alert.dialog .btn-link:hover ,
 .alert.dialog .btn-link:focus {
     color : #ddd;
+}
+
+/* 类似 panel 和 form-group, 但无边框无背景 */
+.board {
+    margin-bottom: 20px;
+}
+.board-top {
+    margin-top: 20px;
+}
+.board-pad {
+   padding-top: 20px;
+}
+.board-end:after {
+    margin-bottom: -20px;
+    display: table;
+    content: "";
+}
+.group-end:after {
+    margin-bottom: -15px;
+    display: table;
+    content: "";
+}
+.parag-end:after {
+    margin-bottom: -10px;
+    display: table;
+    content: "";
 }
 
 /** 适配 **/
@@ -830,69 +873,7 @@ ol.repeated ,
     padding: 4px 6px;
 }
 
-/** 其他 **/
-
-/* 类似 panel 和 form-group, 但无边框无背景 */
-.board {
-    margin-bottom: 20px;
-}
-.board-top {
-    margin-top: 20px;
-}
-.board-pad {
-   padding-top: 20px;
-}
-.board-end:after {
-    margin-bottom: -20px;
-    display: table;
-    content: "";
-}
-.group-end:after {
-    margin-bottom: -15px;
-    display: table;
-    content: "";
-}
-.parag-end:after {
-    margin-bottom: -10px;
-    display: table;
-    content: "";
-}
-
-/* 修正 panel 和 modal 中内容底部多余的空隙 */
-.well>.board ,
-.panel-body>.board ,
-.modal-body>.board {
-    margin-bottom: 0px;
-}
-.panel-body>.board-end ,
-.modal-body>.board-end {
-    margin-bottom: 5px;
-}
-.panel-body>.panel
-.modal-body>.panel {
-    border : 0;
-    padding: 0;
-    box-shadow: none;
-}
-
-hr {
-    border-color: #e5e5e5;
-}
-hr.gap {
-    border-top-width: 3px;
-    border-color: #c5c5c5;
-    border-style: double;
-}
-hr.double {
-    border-top-width: 3px;
-    border-style: double;
-}
-hr.dashed {
-    border-style: dashed;
-}
-hr.dotted {
-    border-style: dotted;
-}
+/** 选择 **/
 
 ul.pickbox {
     margin : 0;
@@ -1014,6 +995,8 @@ ul.pickrol > li.btn-default.form-control {
 .preview .close:focus {
     box-shadow: 0 0 0.5em #000;
 }
+
+/** 时间 **/
 
 .datebox.input-group {
     background-color: #eee;

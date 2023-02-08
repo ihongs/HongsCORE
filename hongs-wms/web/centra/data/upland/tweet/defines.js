@@ -1,5 +1,19 @@
 
+function in_centra_data_upland_tweet(context) {
+    // 去掉额外功能
+    context.find(".bi-hi-manual").closest("li").hide();
+    context.find(".bi-hi-reveal").closest("li").hide();
+}
+
 function in_centra_data_upland_tweet_list(context, listobj) {
+    var req = listobj._data;
+    context.find(".toolbox .create").text("发表评论")
+        .removeClass("create")
+        .addClass("create2")
+        .click(function() {
+            listobj.open(this, null, "centra/data/upland/tweet/form_init.html", req);
+        });
+
     // 去掉批量操作
     context.find(".toolbox .for-choose").remove();
     context.find(".toolbox .for-checks").remove();
@@ -9,9 +23,12 @@ function in_centra_data_upland_tweet_list(context, listobj) {
            .attr("data-fn", /**/"id")
            .attr( "class" , "_rowid");
 
-    // 增加删除评论
+    // 增加评论操作
     context.find(".listbox thead tr").append(
         '<th data-fn="_" data-ft="_admin" class="_admin _amenu">'
+      + '<a href="javascript:;" class="retort" title="回复评论">'
+      + '<i class="bi bi-hi-create"></i>'
+      + '</a>'
       + '<a href="javascript:;" class="delete" title="删除评论">'
       + '<i class="bi bi-hi-remove"></i>'
       + '</a>'

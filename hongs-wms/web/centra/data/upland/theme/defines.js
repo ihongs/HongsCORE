@@ -1,4 +1,10 @@
 
+function in_centra_data_upland_theme(context) {
+    // 去掉额外功能
+    context.find(".bi-hi-manual").closest("li").hide();
+    context.find(".bi-hi-reveal").closest("li").hide();
+}
+
 function in_centra_data_upland_theme_list(context, listobj) {
     context.find(".toolbox .create").text("新建主题");
 
@@ -20,8 +26,8 @@ function in_centra_data_upland_theme_list(context, listobj) {
 }
 
 function in_centra_data_upland_theme_info(context, formobj) {
-    context.find(".btns-group" ).hide();
-    context.on("loadOver", function(evt, rst) {
+    if (context.is(".review-info"))
+    context.one("loadOver", function(evt, rst) {
         var adm = H$("!centra/data/upland/admin");
         var uid = H$('%HsCUID' );
         var tid = rst.info.id   ;
@@ -38,77 +44,70 @@ function in_centra_data_upland_theme_info(context, formobj) {
         }
         window._THEME_ADMIN_ = adm;
 
-        // 加入话题列表, 重建操作按钮
-        var box = context.children('.loadbox');
-        if (box.size() === 0) {
-            box = $('<div class="loadbox"></div>')
-                . appendTo(context);
-            box.on("loadOver", function(e) {
-                e.stopPropagation(); // 避免引起上级重载
-            });
-            box.on("click", ".cancel2", function() {
-                context.hsFind("%").hsClose();
-            });
-            box.on("click", ".delete2", function() {
-                $.hsAjax({
-                    url : "centra/data/upland/theme/delete.act?id=" + tid,
-                    success: function (sd) {
-                        if (sd.ok) {
-                            context.hsFind("%").hsClose();
-                        }
-                    }
-                });
-            });
-            box.on("click", ".update2", function() {
-                context.hsFind("@").hsOpen("centra/data/upland/theme/form.html?id=" + tid,
-                function( ) {
-                    $(this).on("saveBack", function(ev, sd) {
-                        if (sd.ok) {
-                            formobj.load();
-                        }
+        // 建立分栏页签
+        var tabs = $(
+            '<ul class="nav nav-tabs board">'
+          + '<li class="active"><a href="javascript:;">主题</a></li>'
+          + '<li><a href="javascript:;" data-href="centra/data/upland/topic/list.html?theme_id='+tid+'">话题列表</a></li>'
+          + '</ul>'
+        );
+        var labs = $(
+            '<div></div>'
+        );
+        var pane  = $(
+            '<div></div>'
+        );
+        tabs.insertBefore(context);
+        labs.insertBefore(context);
+        labs.append(context);
+        labs.append(pane);
+        tabs.hsTabs(labs);
+
+        // 追加操作按钮
+        if (adm) {
+            context.find(".form-foot .btn-toolbar")
+                .append('<div class="btn-group">'
+                    + '<button type="button" class="update2 btn btn-default">修改主题</button>'
+                    + '<button type="button" class="reveal2 btn btn-default">历史记录</button>'
+                    + '<button type="button" class="delete2 btn btn-danger ">删除</button>'
+                + '</div>')
+                .on("click", ".update2", function() {
+                    context.hsFind("@").hsOpen("centra/data/upland/theme/form.html?id=" + tid,
+                    function( ) {
+                        $(this).on("saveBack", function(ev, sd) {
+                            if (sd.ok) {
+                                formobj.load();
+                            }
+                        });
                     });
-                });
-            });
-            box.on("click", ".reveal2", function() {
-                context.hsFind("@").hsOpen("centra/data/upland/theme/snap.html?id=" + tid,
-                function( ) {
-                    $(this).on("sendBack", function(ev, sd) {
-                        if (sd.ok) {
-                            formobj.load();
-                        }
+                })
+                .on("click", ".reveal2", function() {
+                    context.hsFind("@").hsOpen("centra/data/upland/theme/snap.html?id=" + tid,
+                    function( ) {
+                        $(this).on("sendBack", function(ev, sd) {
+                            if (sd.ok) {
+                                formobj.load();
+                            }
+                        });
                     });
+                })
+                .on("click", ".delete2", function() {
+                    $.hsWarn("确定要删除这个主题吗?", "warning",
+                        function() {
+                            $.hsAjax({
+                                url : "centra/data/upland/theme/delete.act?id=" + tid,
+                                success: function (sd) {
+                                    if (sd.ok) {
+                                        context.trigger("saveBack")
+                                            .hsFind("@").hsClose( );
+                                    }
+                                }
+                            });
+                        } ,
+                        function() {
+                            // Cancel
+                        });
                 });
-            });
         }
-        box.hsLoad("centra/data/upland/topic/list.html?theme_id=" + tid,
-        function( ) {
-            $(this).children( "h1,h2" ).hide( );
-            $(this).find(".toolbox .btn-group")
-            .empty ()
-            .append('<button type="button" class="btn btn-default cancel2">'
-                  + '返回'
-                  + '</button>'
-            )
-            .append('<button type="button" class="btn btn-default create ">'
-                  + '发布话题'
-                  + '</button>'
-            )
-            .append('<button type="button" class="btn btn-default manage2 dropdown-toggle" data-toggle="dropdown">'
-                  + '<span class="caret"></span>'
-                  + '</button>'
-            )
-            .append('<ul class="dropdown-menu">'
-                  + '<li><a href="javascript:;" class="update2">修改当前主题</a></li>'
-                  + '<li><a href="javascript:;" class="delete2">删除当前主题</a></li>'
-                  + '<li><a href="javascript:;" class="reveal2">浏览主题历史</a></li>'
-                  + '</ul>'
-            );
-            if (! adm && grd != 1 ) {
-                $(this).find("button.create" ).remove();
-            }
-            if (! adm ) {
-                $(this).find("button.manage2").remove();
-            }
-        });
     });
 }

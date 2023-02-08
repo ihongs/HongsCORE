@@ -276,6 +276,7 @@
     //** 列表、搜索表单 **/
 
     var listobj = context.hsList({
+        _data : loadres,
         _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.AB_KEY%>=_text,_fork&<%=Cnst.OB_KEY%>=<%=_ob%>&<%=Cnst.RB_KEY%>=<%=_rb%>",
         sendUrls: [
             [ '<%=_module%>/<%=_entity%>/delete.act',

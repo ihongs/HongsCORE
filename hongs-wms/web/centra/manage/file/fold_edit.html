@@ -27,9 +27,10 @@
         var loadbox = context.closest(".loadbox");
         var loadpms = hsSerialArr(loadbox       );
         var path    = hsGetSeria (loadpms,"path");
+        var name    = path.replace (/^.*\// , '');
 
-        // 目录修改无需请求, 直接从路径取即可
-        context.find("[name=name]").val( path.replace(/^.*\//, '') );
+        context.find("[name=path]").val( path );
+        context.find("[name=name]").val( name );
 
         context.find("form").on("submit", function(evt) {
             var form = $(this);

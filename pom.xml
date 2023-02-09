@@ -6,9 +6,6 @@
     <artifactId>hongs-base</artifactId>
     <groupId>io.github.ihongs</groupId>
     <version>1.0-SNAPSHOT</version>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
     <modules>
         <module>hongs-core</module>
         <module>hongs-serv</module>
@@ -20,6 +17,9 @@
         <module>hongs-web</module>
         <module>hongs-wms</module>
     </modules>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
     <build>
         <plugins>
             <plugin>

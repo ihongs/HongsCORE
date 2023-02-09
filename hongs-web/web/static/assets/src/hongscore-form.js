@@ -55,14 +55,10 @@ function HsForm(context, opts) {
 
     // 预置数据
     if (initInf) {
-    if (typeof initInf === "string") {
-        initInf = hsFixPms(initInf, loadArr);
-    }   this.initInfo = hsSerialDic(initInf);
-    }console.log(initInf, this.initInfo)
+        this.initInfo = hsSerialDic(initInf);
+    }
     if (initEnf) {
-    if (typeof initEnf === "string") {
-        initEnf = hsFixPms(initEnf, loadArr);
-    }   this.initEnfo = hsSerialDic(initEnf);
+        this.initEnfo = hsSerialDic(initEnf);
     }
 
     this.valiInit();

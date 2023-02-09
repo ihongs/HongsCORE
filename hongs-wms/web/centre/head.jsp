@@ -189,8 +189,16 @@
             h = menubar.closest(".loadbox").data("active")
             || location.href.replace(/^\w+:\/\/[^\/]+/,'');
             a = menubar.find("a[href='"+hsFixUri(h) +"']");
-            h = menubar.find("a").attr("href");
             b = menubar;
+
+            // 可能因参数、锚而找不到
+            if (a.size() === 0) {
+                h = h.replace( /#.*/, '');
+                a = menubar.find("a[href='"+h+"']");
+            if (a.size() === 0) {
+                h = h.replace(/\?.*/, '');
+                a = menubar.find("a[href='"+h+"']");
+            }}
 
             b.find("li").removeClass("active");
             a.parents("li").addClass("active");
@@ -206,6 +214,7 @@
                 return;
             }
 
+            h = menubar.find("a").attr("href");
             l = a.data("href");
             if (l && l != '/') {
                 context .hsLoad(l);
@@ -221,8 +230,17 @@
             a = menubar .find("a[href='"+h+"']");
             b = menubar ;
 
-            b.find("li").removeClass( "active" );
-            a.parents("li").addClass( "active" );
+            // 可能因参数、锚而找不到
+            if (a.size() === 0) {
+                h = h.replace( /#.*/, '');
+                a = menubar.find("a[href='"+h+"']");
+            if (a.size() === 0) {
+                h = h.replace(/\?.*/, '');
+                a = menubar.find("a[href='"+h+"']");
+            }}
+
+            b.find("li").removeClass("active");
+            a.parents("li").addClass("active");
 
             l = a.data("href");
             if (l && l != '/') {

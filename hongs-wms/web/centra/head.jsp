@@ -232,8 +232,16 @@
             h = menubar.closest(".loadbox").data("active")
             || location.href.replace(/^\w+:\/\/[^\/]+/,'');
             a = menubar.find("a[href='"+hsFixUri(h) +"']");
-            h = menubar.find("a").attr("href");
             b = menubar;
+
+            // 可能因参数、锚而找不到
+            if (a.size() === 0) {
+                h = h.replace( /#.*/, '');
+                a = menubar.find("a[href='"+h+"']");
+            if (a.size() === 0) {
+                h = h.replace(/\?.*/, '');
+                a = menubar.find("a[href='"+h+"']");
+            }}
 
             b.find("li").removeClass("active")
                         .removeClass("acting");
@@ -251,6 +259,7 @@
                 return ;
             }
 
+            h = menubar.find("a").attr("href");
             l = a.data ("href");
             if (l && l !== '/') {
                 context .hsLoad(l);
@@ -265,6 +274,15 @@
             h = location.href.replace(/^\w+:\/\/[^\/]+/, '');
             a = menubar .find("a[href='"+h+"']");
             b = menubar ;
+
+            // 可能因参数、锚而找不到
+            if (a.size() === 0) {
+                h = h.replace( /#.*/, '');
+                a = menubar.find("a[href='"+h+"']");
+            if (a.size() === 0) {
+                h = h.replace(/\?.*/, '');
+                a = menubar.find("a[href='"+h+"']");
+            }}
 
             b.find("li").removeClass("active")
                         .removeClass("acting");
@@ -298,11 +316,13 @@
 
         // 定位到当前菜单
         var actived = menubar.find("li.active");
-        var at = actived.offset().top - menubox.offset().top;
-        var ah = actived.prop("offsetHeight");
-        var mh = menubox.prop("clientHeight");
-        if (at + ah > mh) {
-            menubox.scrollTop(at + ah/2 - mh/2);
+        if (actived.size()) {
+            var at = actived.offset().top - menubox.offset().top;
+            var ah = actived.prop("offsetHeight");
+            var mh = menubox.prop("clientHeight");
+            if (at + ah > mh) {
+                menubox.scrollTop(at + ah / 2 - mh / 2);
+            }
         }
 
         // 边栏隐藏与显示

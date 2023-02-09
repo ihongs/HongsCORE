@@ -321,28 +321,17 @@ public class ActionHelper implements Cloneable
   final Map getRequestPart() {
     CoreConfig conf = CoreConfig.getInstance();
 
-    String x;
-    Set<String> allowTypes = null;
-    x = conf.getProperty("fore.upload.allow.types", null);
-    if (x != null) {
-        allowTypes = new HashSet(Arrays.asList(x.split(",")));
+    long  sizeLimit = conf.getProperty("fore.upload.size.limit", 0L);
+    Set<String> accept = null;
+    String a = conf.getProperty("fore.upload.accept", null);
+    if (a != null) {
+        accept = new HashSet(Arrays.asList(a.trim().split("\\s*,\\s*")));
     }
-    Set<String>  denyTypes = null;
-    x = conf.getProperty("fore.upload.deny.types" , null);
-    if (x != null) {
-         denyTypes = new HashSet(Arrays.asList(x.split(",")));
+    Set<String> reject = null;
+    String r = conf.getProperty("fore.upload.reject", null);
+    if (r != null) {
+        reject = new HashSet(Arrays.asList(r.trim().split("\\s*,\\s*")));
     }
-    Set<String> allowKinds = null;
-    x = conf.getProperty("fore.upload.allow.kinds", null);
-    if (x != null) {
-        allowKinds = new HashSet(Arrays.asList(x.split(",")));
-    }
-    Set<String>  denyKinds = null;
-    x = conf.getProperty("fore.upload.deny.kinds" , null);
-    if (x != null) {
-         denyKinds = new HashSet(Arrays.asList(x.split(",")));
-    }
-    long sizeLimit = conf.getProperty("fore.upload.size.limit", 0L);
 
     //** 解析数据 **/
 
@@ -377,31 +366,42 @@ public class ActionHelper implements Cloneable
                 throw new HongsExemption(400, "File size must not exceed "+ sizeLimit);
             }
 
-            // 检查类型
-            int pos  = type.indexOf(',');
+            if (accept != null || reject != null ) {
+
+            // 从原始的文件名中提取出扩展名
+            int pos  = kind.lastIndexOf('.');
             if (pos != -1) {
-                type = type.substring(0 , pos);
-            }
-            if (allowTypes != null && !allowTypes.contains(type)) {
-                throw new HongsExemption(400, "File type '" +type+ "' is not allowed");
-            }
-            if ( denyTypes != null &&   denyTypes.contains(type)) {
-                throw new HongsExemption(400, "File type '" +type+ "' is denied");
+                kind = kind.substring(1+pos);
+            } else {
+                kind = null;
             }
 
-            // 检查扩展
-            pos  = kind.lastIndexOf('.');
+            // 从文件类型中拆分得到通配类型
+            String typa = null;
+            pos  = type.indexOf(';');
             if (pos != -1) {
-                kind = kind.substring(1 + pos);
-            } else {
-                kind = "";
+                type = type.substring(0,pos);
             }
-            if (allowKinds != null && !allowKinds.contains(kind)) {
-                throw new HongsExemption(400, "Extension '" +kind+ "' is not allowed");
+            pos  = type.indexOf('/');
+            if (pos != -1) {
+                typa = type.substring(0,pos) + "/*";
             }
-            if ( denyKinds != null &&   denyKinds.contains(kind)) {
-                throw new HongsExemption(400, "Extension '" +kind+ "' is denied");
+
+            // 检查类型
+            if (accept != null
+            && !accept.contains(kind)
+            && !accept.contains(type)
+            && !accept.contains(typa) ) {
+                throw new HongsExemption(400, "File type is not allowed");
             }
+            if (reject != null
+            && (reject.contains(kind)
+            ||  reject.contains(type)
+            ||  reject.contains(typa))) {
+                throw new HongsExemption(400, "File type is denied");
+            }
+
+            } // End if accept or reject
 
             Dict.setValue( ud, part, name  , null );
             Dict.setParam( rd, part, name );

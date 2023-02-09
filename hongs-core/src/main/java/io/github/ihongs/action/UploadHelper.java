@@ -51,8 +51,8 @@ public class UploadHelper {
     private String digestType = null;
     private String resultName = null;
     private String requestKey = null;
-    private Set<String> allowTypes = null;
-    private Set<String> allowKinds = null;
+    private Set <String> accept = null ;
+    private Set <String> reject = null ;
 
     private static final char[] DIGITS = {
         '0', '1', '2', '3', '4', '5', '6', '7',
@@ -119,99 +119,60 @@ public class UploadHelper {
      * @return
      */
     public UploadHelper setAccept(String  ...  types) {
-        Set<String> typez = new HashSet(types.length);
-        Set<String> kindz = new HashSet(types.length);
-        for(String  type  : types) {
-            if (type.startsWith( "." ) ) {
-                kindz.add(type);
-            } else {
-                typez.add(type);
-            }
-        }
-        this.allowTypes = typez.isEmpty() ? null : typez;
-        this.allowKinds = kindz.isEmpty() ? null : kindz;
-        return this;
+        return setAccept(new HashSet(Arrays.asList(types)));
     }
     public UploadHelper setAccept(Set <String> types) {
-        Set<String> typez = new HashSet(types.size());
-        Set<String> kindz = new HashSet(types.size());
-        for(String  type  : types) {
-            if (type.startsWith( "." ) ) {
-                kindz.add(type);
-            } else {
-                typez.add(type);
-            }
-        }
-        this.allowTypes = typez.isEmpty() ? null : typez;
-        this.allowKinds = kindz.isEmpty() ? null : kindz;
+        this.accept = types;
         return this;
     }
 
     /**
-     * 设置许可的类型(Mime-Type)
-     * @param type
+     * 设置拒绝的类型
+     * 可以使用扩展名, 如 .png
+     * 也可用MimeType, 如 image/png 或 image/*
+     * @param types
      * @return
-     * @deprecated 改用 setAccept
      */
-    public UploadHelper setAllowTypes(String ...  type) {
-        this.allowTypes = new HashSet(Arrays.asList(type));
-        return this;
+    public UploadHelper setReject(String  ...  types) {
+        return setReject(new HashSet(Arrays.asList(types)));
     }
-    /**
-     * @deprecated 改用 setAccept
-     */
-    public UploadHelper setAllowTypes(Set<String> type) {
-        this.allowTypes = type;
-        return this;
-    }
-
-    /**
-     * 设置许可的类型(Extension)
-     * @param kind
-     * @return
-     * @deprecated 改用 setAccept
-     */
-    public UploadHelper setAllowKinds(String ...  kind) {
-        this.allowKinds = new HashSet(Arrays.asList(kind));
-        return this;
-    }
-    /**
-     * @deprecated 改用 setAccept
-     */
-    public UploadHelper setAllowKinds(Set<String> kind) {
-        this.allowKinds = kind;
+    public UploadHelper setReject(Set <String> types) {
+        this.reject = types;
         return this;
     }
 
     private void chkTypeOrKind(String type, String kind) throws Wrong {
         /**
-         * 检查扩展名
-         */
-        if (this.allowKinds != null
-        && !this.allowKinds.contains(kind)) {
-            // 扩展名不对
-            throw new Wrong("@core.file.kind.invalid", Syno.concat(",", this.allowKinds));
-        }
-
-        /**
-         * 类型通配, 如 image/*
+         * 通配类型, 如 image/*
          */
         String  typa = null;
-        if (type != null) {
-            int gash = type.indexOf("/");
+        if (type != null
+        && (this.accept != null
+        ||  this.reject != null ) )  {
+            int gash = type.indexOf  (  "/"  );
             if (gash > 0) {
-                typa = type.substring(0 , 1 + gash) + "*";
+                typa = type.substring(0, gash) + "/*";
             }
         }
 
         /**
-         * 检查文件类型
+         * 许可类型
          */
-        if (this.allowTypes != null
-        && !this.allowTypes.contains(type)
-        && !this.allowTypes.contains(typa)) {
-            // 文件类型不对
-            throw new Wrong("@core.file.type.invalid", Syno.concat(",", this.allowTypes));
+        if (this.accept != null
+        && !this.accept.contains(kind)
+        && !this.accept.contains(type)
+        && !this.accept.contains(typa) ) {
+            throw new Wrong("@core.file.type.invalid", Syno.concat(",", this.accept));
+        }
+
+        /**
+         * 禁止类型
+         */
+        if (this.reject != null
+        && (this.reject.contains(kind)
+        ||  this.reject.contains(type)
+        ||  this.reject.contains(typa))) {
+            throw new Wrong("@core.file.type.illegal", Syno.concat(",", this.reject));
         }
     }
 
@@ -233,9 +194,8 @@ public class UploadHelper {
             kind  = null;
         }
 
-        if (kind != null
-        &&  kind.length() != 0) {
-            name += "." + kind;
+        if (kind != null && ! kind.isEmpty()) {
+            name += kind;
         }
 
         this.resultName = name;
@@ -308,7 +268,7 @@ public class UploadHelper {
         if (pos >= 1 ) {
             return name.substring(0+pos);
         } else {
-            return  "" ;
+            return null;
         }
     }
 
@@ -397,18 +357,20 @@ public class UploadHelper {
     /**
      * 检查文件流并写入目标目录
      * @param xis  上传文件输入流
-     * @param type 上传文件类型, 如 image/png 或 image/*
+     * @param type 上传文件类型, 如 image/png
      * @param kind 上传文件扩展, 如 .png
      * @param lead 目标文件名称
      * @return
      * @throws Wrong
      */
     public File upload(InputStream xis, String type, String kind, String lead) throws Wrong {
-        if (type.contains( ";" )) {
-            type = type.substring(0 , type./**/indexOf(";"));
+        int p  = type.indexOf(';');
+        if (p != -1) {
+            type = type.substring(0 , p);
         }
-        if (kind.contains( "." )) {
-            kind = kind.substring(0 + kind.lastIndexOf('.'));
+        p  = kind.lastIndexOf('.');
+        if (p != -1) {
+            kind = kind.substring(0 + p);
         }
 
         chkTypeOrKind(type, kind);
@@ -443,7 +405,7 @@ public class UploadHelper {
     /**
      * 检查文件流并写入目标目录
      * @param xis  上传文件输入流
-     * @param type 上传文件类型, 如 image/png 或 image/*
+     * @param type 上传文件类型, 如 image/png
      * @param kind 上传文件扩展, 如 .png
      * @return
      * @throws Wrong

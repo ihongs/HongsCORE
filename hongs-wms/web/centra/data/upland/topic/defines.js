@@ -28,14 +28,28 @@ function in_centra_data_upland_topic_list(context, listobj) {
 function in_centra_data_upland_topic_info(context, formobj) {
     if (context.is(".review-info"))
     context.one("loadOver", function(evt, rst) {
+        var adm = H$("!centra/data/upland/admin") || window._THEME_ADMIN_;
         var uid = H$('%HsCUID' );
         var tid = rst.info.id   ;
-        var own = rst.info.cuser;
+        var pid = rst.info.theme_id;
+        var own = rst.info.owner;
         var grd = rst.info.grade;
 
-        // 管理员或作者
-        var adm = window._THEME_ADMIN_ || uid == own;
-        /*Global*/window._TOPIC_ADMIN_     =     adm;
+        // 网址附加上ID
+        location.hash = "#"+ pid +"/"+ tid;
+        formobj.loadBox.parent().on("hsShow", function() {
+        location.hash = "#"+ pid +"/"+ tid;
+        });
+
+        // 话题管理标识
+        if (! adm && own ) {
+            $.each ( own , function() {
+                if ( uid == this.id ) {
+                     adm =  true;
+                }
+            });
+        }
+        window._TOPIC_ADMIN_ = adm;
 
         // 建立分栏页签
         var tabs = $(
@@ -103,4 +117,8 @@ function in_centra_data_upland_topic_info(context, formobj) {
                 });
         }
     });
+}
+
+function in_centra_data_upland_topic_form(context, formobj) {
+    context.find("textarea[name=body]").css({height: "30em", maxHeight: "90em"});
 }

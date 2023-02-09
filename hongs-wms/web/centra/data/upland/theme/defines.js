@@ -3,6 +3,25 @@ function in_centra_data_upland_theme(context) {
     // 去掉额外功能
     context.find(".bi-hi-manual").closest("li").hide();
     context.find(".bi-hi-reveal").closest("li").hide();
+
+    // 首页清空参数
+    context.find(".labs>:last").on("hsShow",function() {
+        location.hash = "";
+    });
+    // 直接进入内页
+    if (location.hash && location.hash.length > 1) {
+        var ps = location.hash.substring(1).split('/');
+        var la = context.find (".labs");
+        setTimeout(function() {
+            if (ps.length > 0 && ps[0]) {
+                la.children().last().hsOpen("centra/data/upland/theme/info.html", {id: ps[0]}, function() {
+                    if (ps.length > 1 && ps[1]) {
+                        la.children().last().hsOpen("centra/data/upland/topic/info.html", {id: ps[1]});
+                    }
+                });
+            }
+        }, 1);
+    }
 }
 
 function in_centra_data_upland_theme_list(context, listobj) {
@@ -33,6 +52,12 @@ function in_centra_data_upland_theme_info(context, formobj) {
         var tid = rst.info.id   ;
         var own = rst.info.owner;
         var grd = rst.info.grade;
+
+        // 网址附加上ID
+        location.hash = "#"+ tid;
+        formobj.loadBox.parent().on("hsShow", function() {
+        location.hash = "#"+ tid;
+        });
 
         // 主题管理标识
         if (! adm && own ) {

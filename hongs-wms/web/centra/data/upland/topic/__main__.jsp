@@ -14,6 +14,7 @@
 <%@page contentType="application/json" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%!
     private static final String THEME_ID_FN = "theme_id";
+    private static final String TOPIC_ID_FN = "topic_id";
 
     /**
      * 获取用户所属的全部部门ID
@@ -64,7 +65,7 @@
                     .getInstance("centra/data/upland", "topic")
                     .getOne(Synt.mapOf(
                         Cnst.RB_KEY, Synt.setOf(THEME_ID_FN),
-                        Cnst.ID_KEY, tid
+                        Cnst.ID_KEY, oid
                     ));
                 if (row == null || row.isEmpty()) {
                     throw  new  HongsException(404, "不存在对应的话题" );
@@ -142,13 +143,57 @@
                 .getInstance("centra/data/upland", "topic")
                 .getOne(Synt.mapOf(
                     Cnst.ID_KEY, oid,
-                    "cuser"    , uid
+                    "owner"    , uid
                 ));
             if (row == null || row.isEmpty()) {
-                throw  new  HongsException(403, "无权修改当前话题" );
+                throw  new  HongsException(403, "话题没有指派给您" );
             }
         }
     }
 
+    if ("create".equals(met)) {
+        /**
+         * 默认管理员设为自己
+         */
+        Set owner  = Synt.asSet(req.get("owner"));
+        if (owner != null )  owner.remove("");
+        if (owner == null || owner.isEmpty()) {
+            owner  = Synt.setOf(helper.getSessibute(Cnst.UID_SES));
+            req.put("owner", owner);
+        }
+    }
+
     ActionRunner.newInstance(helper, "centra/data/upland/topic/" + met).doAction();
+
+    if ("craete".equals(met)
+    ||  "update".equals(met)) {
+        /**
+         * 将备注作为评论写入
+         */
+        Map  rsp  = helper.getResponseData();
+        Set  ids  = Synt.asSet(
+             rsp.containsKey(Cnst.ID_KEY)
+          ?  rsp.get(Cnst.ID_KEY)
+          :  req.get(Cnst.ID_KEY)
+        );
+        String memo = Synt.asString(req.get("memo"));
+        if ( ids != null && !  ids.isEmpty()
+        &&  memo != null && ! memo.isEmpty()) {
+            if (Synt.declare(rsp.get("ok"), false )
+            &&  Synt.declare(rsp.get("rn"), 0) > 0) {
+                Object uid = helper.getSessibute(Cnst.UID_SES);
+                long   now = System.currentTimeMillis() / 1000;
+                Data   mod = Data.getInstance("centra/data/upland","tweet");
+                for(Object oid : ids) {
+                    mod.create(Synt.mapOf(
+                        TOPIC_ID_FN, oid,
+                         "note", memo,
+                        "cuser", uid ,
+                        "ctime", now ,
+                        "boost", 0
+                    ));
+                }
+            }
+        }
+    }
 %>

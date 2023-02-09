@@ -80,5 +80,17 @@
         }
     }
 
+    if ("create".equals(met)) {
+        /**
+         * 默认管理员设为自己
+         */
+        Set owner  = Synt.asSet(req.get("owner"));
+        if (owner != null )  owner.remove("");
+        if (owner == null || owner.isEmpty()) {
+            owner  = Synt.setOf(helper.getSessibute(Cnst.UID_SES));
+            req.put("owner", owner);
+        }
+    }
+
     ActionRunner.newInstance(helper, "centra/data/upland/theme/" + met).doAction();
 %>

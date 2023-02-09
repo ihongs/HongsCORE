@@ -30,11 +30,13 @@
         </field>
         <field text="管理员" name="owner" type="fork" repeated="yes">
             <param name="listable">yes</param>
+            <param name="filtable">yes</param>
+            <param name="statable">yes</param>
             <param name="data-vk">id</param>
             <param name="data-tk">name</param>
             <param name="data-ak">owner</param>
             <param name="data-at">centra/master/user/list</param>
-            <param name="data-al">centra/master/user/pick.html</param>
+            <param name="data-al">centra/master/user/pick.html?unit_id=CENTRA&amp;find-depth=1</param>
         </field>
         <field text="限用户" name="users" type="fork" repeated="yes">
             <param name="listable">no</param>
@@ -42,7 +44,7 @@
             <param name="data-tk">name</param>
             <param name="data-ak">users</param>
             <param name="data-at">centra/master/user/list</param>
-            <param name="data-al">centra/master/user/pick.html</param>
+            <param name="data-al">centra/master/user/pick.html?unit_id=CENTRA&amp;find-depth=1</param>
         </field>
         <field text="限部门" name="units" type="fork" repeated="yes">
             <param name="listable">no</param>
@@ -50,7 +52,7 @@
             <param name="data-tk">name</param>
             <param name="data-ak">units</param>
             <param name="data-at">centra/master/unit/list</param>
-            <param name="data-al">centra/master/unit/pick.html</param>
+            <param name="data-al">centra/master/unit/pick.html?pid=CENTRA&amp;find-depth=1</param>
         </field>
         <field text="发帖" name="grade" type="select">
             <param name="conf">centra/data/upland</param>
@@ -131,16 +133,15 @@
             <param name="keep-naming">yes</param>
             <param name="pass-source">yes</param>
         </field>
-        <field text="作者" name="cuser" type="fork">
+        <field text="负责人" name="owner" type="fork" repeated="yes">
             <param name="listable">yes</param>
-            <param name="readonly">yes</param>
+            <param name="filtable">yes</param>
+            <param name="statable">yes</param>
             <param name="data-vk">id</param>
             <param name="data-tk">name</param>
-            <param name="data-ak">cuser</param>
-            <param name="data-at">centra/master/user/list?rb=id,name,head</param>
-            <param name="data-al">centra/master/user/pick.html</param>
-            <param name="default">=$uid</param>
-            <param name="deforce">create</param>
+            <param name="data-ak">users</param>
+            <param name="data-at">centra/master/user/list</param>
+            <param name="data-al">centra/master/user/pick.html?unit_id=CENTRA&amp;find-depth=1</param>
         </field>
         <field text="评论" name="grade" type="select">
             <param name="conf">centra/data/upland</param>

@@ -241,13 +241,6 @@
 
             b.find("li").removeClass("active");
             a.parents("li").addClass("active");
-
-            l = a.data("href");
-            if (l && l != '/') {
-                context .hsLoad(l);
-            } else {
-                location.assign(h);
-            }
         });
 
         // 标识顶部导航已开启, 悬浮组件需避免层叠

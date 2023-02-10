@@ -110,12 +110,14 @@ extends Model {
         Object pid = req.get("unit_id");
         if (null != pid && ! "".equals(pid)) {
             if ( "-".equals (pid ) ) {
+                caze.by     (FetchCase.DISTINCT  ); // 去重复
                 caze.gotJoin("units2")
                     .from   ("a_master_unit_user")
                     .by     (FetchCase.INNER)
                     .on     ("`units2`.`user_id` = `user`.`id`")
                     .filter ("`units2`.`unit_id` IS NULL" /**/ );
             } else {
+                caze.by     (FetchCase.DISTINCT  ); // 去重复
                 caze.gotJoin("units2")
                     .from   ("a_master_unit_user")
                     .by     (FetchCase.INNER)

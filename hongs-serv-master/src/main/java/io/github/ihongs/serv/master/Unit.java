@@ -107,12 +107,14 @@ extends Grade {
         Object uid = req.get("user_id");
         if (null != uid && ! "".equals(uid)) {
             if ( "-".equals (uid)) {
+                caze.by     (FetchCase.DISTINCT  ); // 去重复
                 caze.gotJoin("users2")
                     .from   ("a_master_unit_user")
                     .by     (FetchCase.INNER)
                     .on     ("`users2`.`unit_id` = `unit`.`id`")
                     .filter ("`users2`.`user_id` IS NULL" /**/ );
             } else {
+                caze.by     (FetchCase.DISTINCT  ); // 去重复
                 caze.gotJoin("users2")
                     .from   ("a_master_unit_user")
                     .by     (FetchCase.INNER)

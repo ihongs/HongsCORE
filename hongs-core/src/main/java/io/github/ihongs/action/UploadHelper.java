@@ -396,7 +396,7 @@ public class UploadHelper {
                 }
             }
         } catch (IOException ex) {
-            throw new Wrong(ex, "@fore.form.upload.failed");
+            throw new Wrong(ex, "@fore.file.upload.failed");
         }
 
         return file;
@@ -445,7 +445,7 @@ public class UploadHelper {
             return upload(part.getInputStream(), type, kind, lead);
         }
         catch ( IOException ex) {
-            throw new Wrong(ex, "@fore.form.upload.failed");
+            throw new Wrong(ex, "@fore.file.upload.failed");
         }
     }
 

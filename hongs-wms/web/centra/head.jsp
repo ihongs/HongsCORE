@@ -288,13 +288,6 @@
                         .removeClass("acting");
             a.closest("li").addClass("active")
              .parents("li").addClass("acting");
-
-            l = a.data ("href");
-            if (l && l !== '/') {
-                context .hsLoad(l);
-            } else {
-                location.assign(h);
-            }
         });
 
         $(document.body).addClass("toper-open");

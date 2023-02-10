@@ -125,7 +125,15 @@
             <param name="strip">html</param>
             <param name="limit">100 </param>
         </field>
-        <field text="附件" name="file" type="file" repeated="yes">
+        <field text="图片" name="pics" type="file" repeated="yes">
+            <!-- 文件处于后台保护范围内 -->
+            <param name="path">centra/data/upland/data/file</param>
+            <param name="href">centra/data/upland/data/file</param>
+            <param naem="name-digest">md5</param>
+            <param name="keep-naming">yes</param>
+            <param name="pass-source">yes</param>
+        </field>
+        <field text="附件" name="docs" type="file" repeated="yes">
             <!-- 文件处于后台保护范围内 -->
             <param name="path">centra/data/upland/data/file</param>
             <param name="href">centra/data/upland/data/file</param>

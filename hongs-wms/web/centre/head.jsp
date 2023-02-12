@@ -220,6 +220,7 @@
                 context .hsLoad(l);
             } else if ( !  l ) {
                 location.assign(h);
+                location.reload( ); // 规避只有 hash 变了
             }
         });
 

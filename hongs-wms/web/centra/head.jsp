@@ -265,6 +265,7 @@
                 context .hsLoad(l);
             } else {
                 location.assign(h);
+                location.reload( ); // 规避只有 hash 变了
             }
         });
 

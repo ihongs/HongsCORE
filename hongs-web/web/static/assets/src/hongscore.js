@@ -2451,7 +2451,24 @@ $.fn.hsReady = function() {
         $(this).addClass("input-"+$(this).attr("type"));
     });
 
-    // 组件化
+    // 国际化, 取标题
+    box.find("[data-i18n]").each(function() {
+        $(this).hsI18n();
+    }); $( box).hsL10n();
+
+    // 加载
+    box.find("[data-load]").each(function() {
+        $(this).hsLoad($(this).attr("data-load"), $(this).attr("data-data"));
+    });
+
+    // 执行
+    box.find("[data-eval]").each(function() {
+        //eval 效率低且不安全
+        //eval('( false||function(){'+$(this).attr("data-eval")+'} )').call(this);
+        Function('return function(){'+$(this).attr("data-eval")+'}')().call(this);
+    });
+
+    // 组件
     box.find("[data-topple]").each( function() {
         var func = $(this).attr("data-topple");
         if ($.fn[func]) {
@@ -2461,24 +2478,8 @@ $.fn.hsReady = function() {
         }
     });
 
-    // 国际化, 取标题
-    box.find("[data-i18n]").each(function() {
-        $(this).hsI18n();
-    }); $( box).hsL10n();
-
     // 加载前触发事件
     box.trigger("hsReady");
-
-    // 执行
-    box.find("[data-eval]").each(function() {
-        //eval 效率低且不安全
-        //eval('( false||function(){'+$(this).attr("data-eval")+'} )').call(this);
-        Function('return function(){'+$(this).attr("data-eval")+'}')().call(this);
-    });
-    // 加载
-    box.find("[data-load]").each(function() {
-        $(this).hsLoad($(this).attr("data-load"), $(this).attr("data-data"));
-    });
 
     return box;
 };

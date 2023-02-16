@@ -111,6 +111,7 @@
 
     String  acti = helper.getParameter("active");
     String  titl = helper.getParameter("title" );
+    String  icon = helper.getParameter("icon"  );
     String  name = (String) helper.getSessibute("uname");
     String  head = (String) helper.getSessibute("uhead");
 
@@ -139,16 +140,15 @@
             </a>
         </div>
         <div>
-            <ul class="nav navbar-nav navbar-left " id="navi-menubar">
-                <%if (titl != null && ! titl.isEmpty()) {%>
-                <li class="actual active ">
-                    <a href="javascript:;"><%=titl%></a>
+            <ol id="navi-menubar" class="navbar-left breadcrumb tabs laps acti-close" data-topple="hsTabs" data-target="#main-context">
+                <li class="home-crumb active">
+                    <a href="javascript:;">
+                        <i class="bi <%=Synt.defxult(icon, "bi-hi-path")%>"></i>
+                        <b class="title"><%=Synt.defxult(titl, "")%></b>
+                    </a>
                 </li>
-                <%} else {%>
-                <li><a href="javascript:;">&nbsp;</a></li>
-                <%} /* End If */%>
-            </ul>
-            <ul class="nav navbar-nav navbar-right" id="user-menubar">
+            </ol>
+            <ul id="user-menubar" class="navbar-right navbar-nav nav">
                 <li class="dropdown">
                     <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
                         <span class="uhead img" style="background-image:url(<%=head%>);" title="<%=name%>"></span>
@@ -202,23 +202,22 @@
 
 <script type="text/javascript">
     (function($) {
-        var context = $("#main-context");
+        var context = $("#main-context>:last");
         var menubar = $("#main-menubar");
         var navibar = $("#navi-menubar");
 //      var userbar = $("#user-menubar");
         var menubox =  menubar.parent( );
 
         $(function() {
-            if (navibar.find("li.active").size()) {
-                return;
+            var a, x;
+            a = navibar.find(".home-crumb");
+            x = navibar.closest(".loadbox").data("icon"  );
+            if (x) {
+                a.find("i").addClass(x);
             }
-
-            var t, a;
-            t = navibar.closest(".loadbox").data( "title");
-            if (t) {
-                a = $( '<a href="javascript:;"> </a>' ). text (t);
-                a = $('<li class="actual active"</li>').append(a);
-                a.prependTo(navibar);
+            x = navibar.closest(".loadbox").data("title" );
+            if (x) {
+                a.find("b").  text  (x);
             }
         });
 

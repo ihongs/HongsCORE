@@ -309,7 +309,7 @@ body {
 #headbox blockquote .site-links a:after {
     content: "\A";
 }
-#headbox blockquote a , 
+#headbox blockquote a ,
 #headbox blockquote {
     color  : #888;
 }
@@ -335,44 +335,60 @@ body {
 }
 
 /* 主导航条默认样式 */
-#main-context > .laps.tabs.breadcrumb {
-    margin-top : -12px;
-    padding-left : 1px;
-    padding-right: 1px;
-    border-radius: 0px;
-    border-bottom: 1px solid #aaa;
-    background-color: transparent;
+#headbox .breadcrumb {
+    width  : calc(100% - 240px - 120px);
+    margin : 0;
+    border : 0;
+    padding: 15px;
+    padding-bottom: 0;
+    line-height: 20px;
     overflow-x : auto;
     overflow-y : hidden;
     white-space: nowrap;
+    background-color: transparent;
 }
-#main-context > .laps.tabs.breadcrumb::-webkit-scrollbar {
+#headbox .breadcrumb::-webkit-scrollbar {
     max-width : 14px;
     max-height: 14px;
 }
-#main-context > .laps.tabs.breadcrumb::-webkit-scrollbar-thumb {
+#headbox .breadcrumb::-webkit-scrollbar-thumb {
     background: rgba(200,200,200,0.8);
 }
-.toper-open #main-context > .laps.tabs.breadcrumb {
-    position: fixed;
-    top  : 0;
-    left : 240px;
-    width: calc(100% - 240px - 120px);
-    padding: 15px 15px 0 15px;
-    line-height: 20px;
-    z-index: 1030;
-    margin: 0;
-    border: 0;
-}
-#main-context > .laps.tabs.breadcrumb .active a {
+#headbox .breadcrumb .active a {
     text-decoration: none;
     color: #333;
 }
-#main-context > .laps.tabs.breadcrumb .home-crumb .bi {
+#headbox .breadcrumb .home-crumb .bi {
     color: #555;
 }
-#main-context > .laps.tabs.breadcrumb .back-crumb .bi {
+#headbox .breadcrumb .back-crumb .bi {
     color: #d55;
+}
+
+/* 标准表单分块布局 */
+.form-body {
+    padding: 15px 15px 0px 15px;
+}
+.form-foot {
+    padding: 20px 15px 5px 15px;
+}
+.board + .form-foot ,
+.panel + .form-foot {
+    margin-top: -20px;
+}
+.form-body>:last-child:is(hr) ,
+.form-foot>:last-child:is(br) {
+    display: none; /* 兼容占位 */
+}
+
+/* 筛选表单紧凑布局 */
+@media (min-width : 992px) {
+.row.form-group.filt-group {
+    float: left;
+    width: 50% ;
+    margin-left : 0;
+    margin-right: 0;
+}
 }
 
 /* 隐藏受限的搜索框 */
@@ -421,30 +437,4 @@ body {
 .statbox .alertbox>div {
     width   : 100%;
      text-align: center;
-}
-
-/* 标准表单分块布局 */
-.form-body {
-    padding: 15px 15px 0px 15px;
-}
-.form-foot {
-    padding: 20px 15px 5px 15px;
-}
-.board + .form-foot ,
-.panel + .form-foot {
-    margin-top: -20px;
-}
-.form-body>:last-child:is(hr) ,
-.form-foot>:last-child:is(br) {
-    display: none; /* 兼容占位 */
-}
-
-/* 筛选表单紧凑布局 */
-@media (min-width : 992px) {
-.row.form-group.filt-group {
-    float: left;
-    width: 50% ;
-    margin-left : 0;
-    margin-right: 0;
-}
 }

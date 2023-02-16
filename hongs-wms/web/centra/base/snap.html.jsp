@@ -5,7 +5,7 @@
 <%
     String _pageId = (_module + "-" + _entity + "-snap").replace('/', '-');
 %>
-<h2><%=_locale.translate("fore.record.title", _title)%></h2>
+<h2 class="hide"><%=_locale.translate("fore.record.title", _title)%></h2>
 <div id="<%=_pageId%>" class="<%=_pageId%> snap-list">
     <form class="findbox">
         <ul class="nav nav-tabs board clearfix">

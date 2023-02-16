@@ -1,43 +1,26 @@
-<ol class="breadcrumb show-close tabs laps" data-topple="hsTabs">
-    <!--
-    <li class="back-crumb pull-right">
-        <a href="javascript:;">
-            <i class="bi bi-hi-close"></i>
-        </a>
-    </li>
-    //-->
-    <li class="home-crumb active">
-        <a href="javascript:;">
-            <i class="bi bi-hi-path"></i>
-            <b>部门及用户</b>
-        </a>
-    </li>
-</ol>
-<div class="labs laps">
-    <!--div></div-->
-    <div class="row">
-        <div class="col-xs-3 side-context">
-            <div id="master-unit-tree"
-                 data-topple="hsTree"
-                 data-load-url="centra/master/unit/list.act?ob=boost!,ctime&amp;bind-scope=1"
-                 data-send-urls-0="['centra/master/unit/delete.act','.delete','您确定要删除此部门?']"
-                 data-open-urls-0="['centra/master/unit/form.html?id={ID}' ,'.modify','@']"
-                 data-open-urls-1="['centra/master/unit/form.html?pid={ID}','.create','@']"
-                 data-link-urls-0="['centra/master/user/list.html?unit_id={ID}','$.main-context']"
-                 data-root-name="组织架构">
-                <div class="toolbox board btn-group">
-                    <button type="button" class="create btn btn-default">添加</button>
-                    <button type="button" class="modify for-select btn btn-default">修改</button>
-                    <button type="button" class="delete for-select btn btn-danger " title="删除"><span class="bi bi-hi-remove"></span></button>
-                </div>
-                <div class="treebox panel panel-body panel-default"></div>
+<h1 class="hide">部门及用户</h1>
+<div class="row">
+    <div class="col-xs-3 side-context">
+        <div id="master-unit-tree"
+             data-topple="hsTree"
+             data-load-url="centra/master/unit/list.act?ob=boost!,ctime&amp;bind-scope=1"
+             data-send-urls-0="['centra/master/unit/delete.act','.delete','您确定要删除此部门?']"
+             data-open-urls-0="['centra/master/unit/form.html?id={ID}' ,'.modify','@']"
+             data-open-urls-1="['centra/master/unit/form.html?pid={ID}','.create','@']"
+             data-link-urls-0="['centra/master/user/list.html?unit_id={ID}','$.main-context']"
+             data-root-name="组织架构">
+            <div class="toolbox board btn-group">
+                <button type="button" class="create btn btn-default">添加</button>
+                <button type="button" class="modify for-select btn btn-default">修改</button>
+                <button type="button" class="delete for-select btn btn-danger " title="删除"><span class="bi bi-hi-remove"></span></button>
             </div>
+            <div class="treebox panel panel-body panel-default"></div>
         </div>
-        <div class="col-xs-9 main-context"></div>
-        <script type="text/javascript">
-        (function($) {
-            hsUserMove($(".side-context"), $(".main-context"));
-        })( jQuery );
-        </script>
     </div>
+    <div class="col-xs-9 main-context"></div>
 </div>
+<script type="text/javascript">
+    (function($) {
+        hsUserMove($(".side-context"), $(".main-context"));
+    })(jQuery);
+</script>

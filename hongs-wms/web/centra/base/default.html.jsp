@@ -10,6 +10,41 @@
     String $href = $hrel == null || $hrel.isEmpty()
                  ? $module+"/"+$entity+"/list.html"
                  : $hrel ;
+
+    // 下级内部菜单
+    StringBuilder $tabs = new StringBuilder ();
+    Map menus  = (Map) $menu.get("menus");
+    if (menus != null && ! menus.isEmpty ()) {
+        boolean _acti = false;
+        String  _href = $href;
+        for ( Object  ot : menus.entrySet()) {
+            Map.Entry et = (Map.Entry) ot ;
+            Map menu = (Map) et.getValue();
+            String href = (String) et.getKey ();
+            String hrel = (String) menu.get("hrel");
+            String text = (String) menu.get("text");
+            if (href != null &&  href.startsWith("!")
+            &&  hrel != null && !hrel.startsWith("!")) {
+                text  = $locale.translate(text);
+                if (hrel.isEmpty()
+                ||  hrel.startsWith("?")
+                ||  hrel.startsWith("#")) {
+                    hrel = _href + hrel ;
+                }
+                $tabs.append("<li");
+                if (_acti == false) {
+                    _acti  =  true;
+                    $href  =  hrel;
+                    $tabs.append(" class=\"active\"");
+                }
+                $tabs.append("><a href=\"javascript:;\" data-href=\"")
+                     .append(hrel )
+                     .append("\">")
+                     .append(text )
+                     .append("</a></li>");
+            }
+        }
+    }
 %>
 <!doctype html>
 <html>
@@ -38,77 +73,37 @@
         <div id="context">
             <%if (!"!HIDE".equals($hrel) && !"HIDE".equals($hrel)) {%>
             <div id="headbox">
-                <div id="menu-context" data-load="centra/head.jsp" data-active="<%=$module+"/"+$entity+"/"%>"></div>
+                <div id="menu-context" data-load="centra/head.jsp" data-active="<%=$module+"/"+$entity+"/"%>" data-title="<%=$title%>"></div>
             </div>
             <%} /* End if */%>
             <div id="bodybox">
-                <div id="main-context" class="container-fluid">
-                    <ol class="breadcrumb show-close tabs laps" data-topple="hsTabs">
-                        <li class="hook-crumb pull-right" data-eval="H$('!<%=$module%>/<%=$entity%>/select.act') || $(this).hide()">
-                            <a href="javascript:;" data-href="<%=$module+"/"+$entity+"/swap.html"%>" title="<%=$locale.translate("fore.manual.title", $title)%>">
-                                <i class="bi bi-hi-manual"></i>
-                                <span class="title hide">...</span>
-                            </a>
-                        </li>
-                        <li class="hook-crumb pull-right" data-eval="H$('!<%=$module%>/<%=$entity%>/reveal.act') || $(this).hide()">
-                            <a href="javascript:;" data-href="<%=$module+"/"+$entity+"/snap.html"%>" title="<%=$locale.translate("fore.record.title", $title)%>">
-                                <i class="bi bi-hi-reveal"></i>
-                                <span class="title hide">...</span>
-                            </a>
-                        </li>
-                        <li class="home-crumb active">
-                            <a href="javascript:;">
-                                <i class="bi bi-hi-path"></i>
-                                <b><%=$title%></b>
-                            </a>
-                        </li>
-                    </ol>
-                    <div class="labs laps">
-                        <div></div>
-                        <div></div>
-                        <div>
-                            <%
-                            Map menus  = (Map) $menu.get("menus");
-                            if (menus != null && ! menus.isEmpty ()) {
-                                boolean _acti = false;
-                                String  _href = $href;
-                                StringBuilder sb = new StringBuilder ();
-                                for ( Object  ot : menus.entrySet()) {
-                                    Map.Entry et = (Map.Entry) ot ;
-                                    Map menu = (Map) et.getValue();
-                                    String href = (String) et.getKey ();
-                                    String hrel = (String) menu.get("hrel");
-                                    String text = (String) menu.get("text");
-                                    if (href != null &&  href.startsWith("!")
-                                    &&  hrel != null && !hrel.startsWith("!")) {
-                                        text  = $locale.translate(text);
-                                        if (hrel.isEmpty()
-                                        ||  hrel.startsWith("?")
-                                        ||  hrel.startsWith("#")) {
-                                            hrel = _href + hrel ;
-                                        }
-                                        sb.append("<li");
-                                        if (_acti == false) {
-                                            _acti  =  true;
-                                            $href  =  hrel;
-                                            sb.append(" class=\"active\"");
-                                        }
-                                        sb.append("><a href=\"javascript:;\" data-href=\"")
-                                          .append(hrel )
-                                          .append("\">")
-                                          .append(text )
-                                          .append("</a></li>");
-                                    }
-                                }
-                            if ( _acti ) {
-                            %>
-                            <ul class="nav nav-tabs board">
-                                <%=sb%>
-                            </ul>
-                            <%}} /* End menus */%>
-                            <div data-load="<%=$href%>"></div>
-                        </div>
-                    </div>
+                <div id="main-context" class="container-fluid labs laps">
+                    <div><div>
+                        <ul class="nav nav-tabs tabs acti-title board">
+                        <%if ( $tabs.length() > 0 ) {%>
+                            <%=$tabs%>
+                        <%} else {%>
+                            <li class="active">
+                                <a href="javascript:;" data-href="<%=$href%>">
+                                    <span class="title"><%=$locale.translate("fore.entire.title", $title)%></span>
+                                </a>
+                            </li>
+                        <%} /* End if */%>
+                            <li class="pull-right" data-eval="H$('!<%=$module%>/<%=$entity%>/select.act') || $(this).hide()">
+                                <a href="javascript:;" data-href="<%=$module+"/"+$entity+"/swap.html"%>" title="<%=$locale.translate("fore.manual.title", $title)%>">
+                                    <i class="bi bi-hi-manual"></i>
+                                    <span class="title"><%=$locale.translate("fore.manual.title", $title)%></span>
+                                </a>
+                            </li>
+                            <li class="pull-right" data-eval="H$('!<%=$module%>/<%=$entity%>/reveal.act') || $(this).hide()">
+                                <a href="javascript:;" data-href="<%=$module+"/"+$entity+"/snap.html"%>" title="<%=$locale.translate("fore.record.title", $title)%>">
+                                    <i class="bi bi-hi-reveal"></i>
+                                    <span class="title"><%=$locale.translate("fore.record.title", $title)%></span>
+                                </a>
+                            </li>
+                        </ul>
+                        <div data-load="<%=$href%>"></div>
+                    </div></div>
                 </div>
             </div>
         </div>

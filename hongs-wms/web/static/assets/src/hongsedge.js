@@ -77,7 +77,6 @@ function HsStat(context, opts) {
 
     var  statBox = context.find(".statbox");
     var  findBox = context.find(".findbox");
-    var  toolBox = context.find(".toolbox");
 
     this.context = context;
     this.statBox = statBox;
@@ -92,7 +91,7 @@ function HsStat(context, opts) {
 
     statBox.data("changed", statBox.is(".invisible"));
 
-    toolBox.on("saveBack", function() {
+    context.on("saveBack sendBack", function() {
         if (statBox.is(".invisible")) {
             statBox.data("changed", true );
         } else {
@@ -662,7 +661,6 @@ function HsCate(context, opts) {
 
     var  statBox = context.find(".statbox");
     var  findBox = context.find(".findbox");
-    var  toolBox = context.find(".toolbox");
 
     this.context = context;
     this.statBox = statBox;
@@ -677,7 +675,7 @@ function HsCate(context, opts) {
 
     statBox.data("changed", statBox.is(".invisible"));
 
-    toolBox.on("saveBack", function() {
+    context.on("saveBack sendBack", function() {
         if (statBox.is(".invisible")) {
             statBox.data("changed", true );
         } else {
@@ -883,19 +881,16 @@ jQuery.fn.hsCate = function(opts) {
  * @return {HsPops}
  */
 function HsPops (context, urls) {
-    var tabsBox, labsBox, urlz ;
     context = jQuery( context );
-    tabsBox = context.children(".tabs");
-    labsBox = context.children(".labs");
 
     // 反转映射
-    urlz  = { };
+    var urlz  = { };
     jQuery.each(urls, function( k , v ) {
         urlz[v] = k ;
     });
 
-    labsBox.on("hsReady" , ".loadbox" , function () {
-        if (!$(this).parent().parent().is(labsBox)) {
+    context.on("hsReady" , ".loadbox" , function () {
+        if (!$(this).parent().parent().is(context)) {
             return;
         }
 
@@ -928,8 +923,8 @@ function HsPops (context, urls) {
 
         history.replaceState({}, '', location.pathname + location.search + hash);
     });
-    labsBox.on("hsClose" , ".loadbox" , function () {
-        if (!$(this).parent().parent().is(labsBox)) {
+    context.on("hsClose" , ".loadbox" , function () {
+        if (!$(this).parent().parent().is(context)) {
             return;
         }
 
@@ -943,8 +938,15 @@ function HsPops (context, urls) {
         if (href) {
             href = href+(hash[2] || '' );
             href = href.replace('&','?');
-            tabsBox.hsTabs (    );
-            tabsBox.hsOpen (href);
+            var timo = function() {
+                var tabs = context.data("tabs");
+                if (tabs && tabs.size()) {
+                    tabs.hsOpen(href /**/);
+                } else {
+                    setTimeout (timo, 500);
+                }
+            }
+            timo(context);
         }
     }
 }

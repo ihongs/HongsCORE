@@ -16,12 +16,10 @@ body {
 }
 #bodybox {
     flex: 1;
-    padding-top   : 51px;
     padding-bottom: 39px;
 }
-#bodybox>.container {
-    padding-top   : 20px;
-    background : #ffffff;
+#headbox {
+    padding-top: 51px;
 }
 
 #headbox .uhead {
@@ -68,10 +66,7 @@ body {
 }
 @media (min-width: 768px) {
     #bodybox>.container {
-        box-shadow: 0px 1px 5px rgba(0,0,0,0.1), inset 0px 1px 0px rgba(255,255,255,0.15);
-        margin-top   : 20px;
-        margin-bottom: 20px;
-        border-radius:  4px;
+        margin-top: 20px;
     }
     #headbox .navbar-fixed-bottom {
         border-top-left-radius : 4px;
@@ -80,33 +75,50 @@ body {
 }
 
 /* 主导航条默认样式 */
-#main-context > .laps.tabs.breadcrumb {
-    margin-top  : -20px;
-    margin-left : -15px;
-    margin-right: -15px;
-    padding-left : 15px;
-    padding-right: 15px;
-    border-bottom-left-radius : 0;
-    border-bottom-right-radius: 0;
+#headbox .breadcrumb {
+    margin-top   :  20px;
+    margin-left  : -15px;
+    margin-right : -15px;
+    margin-bottom:   0px;
+    padding-left :  15px;
+    padding-right:  15px;
 }
-#main-context > .laps.tabs.breadcrumb .active a {
+#headbox .breadcrumb .active a {
     text-decoration: none;
     color: #333;
 }
-#main-context > .laps.tabs.breadcrumb .home-crumb .bi {
+#headbox .breadcrumb .home-crumb .bi {
     color: #555;
 }
-#main-context > .laps.tabs.breadcrumb .back-crumb .bi {
+#headbox .breadcrumb .back-crumb .bi {
     color: #d55;
 }
 
-/* 下级页签默认样式 */
-#main-context > .labs > * > .nav-tabs {
-    text-align: center;
+/* 标准表单分块布局 */
+.form-body {
+    padding: 15px 15px 0px 15px;
 }
-#main-context > .labs > * > .nav-tabs > li {
-    display: inline-block;
-    float: none;
+.form-foot {
+    padding: 20px 15px 5px 15px;
+    border-top: 1px solid #ddd ;
+}
+.board + .form-foot ,
+.panel + .form-foot {
+    margin-top: -20px;
+}
+.form-body>:last-child:is(hr) ,
+.form-foot>:last-child:is(br) {
+    display: none; /* 兼容占位 */
+}
+
+/* 筛选表单紧凑布局 */
+@media (min-width : 992px) {
+.row.form-group.filt-group {
+    float: left;
+    width: 50% ;
+    margin-left : 0;
+    margin-right: 0;
+}
 }
 
 /* 隐藏受限的搜索框 */
@@ -118,14 +130,4 @@ body {
 }
 .input-group .input-search:disabled+.input-group-btn>.btn>.bi-hi-search:before {
     content: "\f130";
-}
-
-/* 标准表单分块布局 */
-.form-foot {
-    border-top: 1px solid #ddd;
-    margin-top: 20px;
-   padding-top: 20px;
-}
-.form-foot .form-group {
-    margin-bottom: 20px;
 }

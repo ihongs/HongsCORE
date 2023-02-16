@@ -12,10 +12,11 @@
     String _pageId = (_module + "-" + _entity + "-" + _action).replace('/', '-');
     String _funcId = "in_"+(_module + "_" + _entity + "_info").replace('/', '_');
 %>
-<h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
+<h2 class="hide"><%=_locale.translate("fore."+_action+".title", _title)%></h2>
 <div id="<%=_pageId%>" class="<%=_pageId+" "+_action%>-info board board-end">
     <form action="" onsubmit="return false"
           method="POST" enctype="multipart/form-data" class="form-horizontal">
+        <div class="panel panel-default">
         <div class="form-body">
         <%
         Iterator it = _fields.entrySet().iterator();
@@ -200,6 +201,7 @@
                 </div>
             </div>
         </div><!-- end form-foot -->
+        </div><!-- end panel -->
     </form>
     <div class="pagebox"></div>
 </div>

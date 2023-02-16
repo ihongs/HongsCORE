@@ -112,6 +112,8 @@
     List    menu = curr.getMenuTranslated("common/menu.act?m=centre", 2, role);
 
     String  acti = helper.getParameter("active");
+    String  titl = helper.getParameter("title" );
+    String  icon = helper.getParameter("icon"  );
     String  name = (String) helper.getSessibute("uname");
     String  head = (String) helper.getSessibute("uhead");
 
@@ -173,11 +175,41 @@
     </blockquote>
 </nav>
 
+<div class="container">
+    <ol class="tabs laps breadcrumb bread-home hide-first hide-close panel panel-default" id="navi-menubar" data-target="#main-context" data-topple="hsTabs">
+        <li class="back-crumb pull-right">
+            <a href="javascript:;">
+                <i class="bi bi-hi-close"></i>
+            </a>
+        </li>
+        <li class="home-crumb active">
+            <a href="javascript:;">
+                <i class="bi <%=Synt.defxult(icon, "bi-hi-path")%>"></i>
+                <b class="title"><%=Synt.defxult(titl, "")%></b>
+            </a>
+        </li>
+    </ol>
+</div>
+
 <script type="text/javascript">
     (function($) {
-        var context = $("#main-context");
+        var context = $("#main-context>:last");
         var menubar = $("#main-menubar");
+        var navibar = $("#navi-menubar");
 //      var userbar = $("#user-menubar");
+
+        $(function() {
+            var a, x;
+            a = navibar.find(".home-crumb");
+            x = navibar.closest(".loadbox").data("icon"  );
+            if (x) {
+                a.find("i").addClass(x);
+            }
+            x = navibar.closest(".loadbox").data("title" );
+            if (x) {
+                a.find("b").  text  (x);
+            }
+        });
 
         $(function() {
             if (menubar.find("li.active").size()) {

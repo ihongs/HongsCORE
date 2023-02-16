@@ -1,43 +1,25 @@
-<ol class="breadcrumb show-close tabs laps" data-topple="hsTabs">
-    <!--
-    <li class="back-crumb pull-right">
-        <a href="javascript:;">
-            <i class="bi bi-hi-close"></i>
-        </a>
-    </li>
-    //-->
-    <li class="home-crumb active">
-        <a href="javascript:;">
-            <i class="bi bi-hi-path"></i>
-            <b>文件列表</b>
-        </a>
-    </li>
-</ol>
-<div class="labs laps">
-    <!--div></div-->
-    <div class="row">
-        <div class="col-xs-3 side-context">
-            <div id="centra-fold-tree"
-                 data-topple="hsTree"
-                 data-load-url="centra/file/search.act?type=dir"
-                 data-send-urls-0="['centra/file/delete.act','.delete','您确定要删除此目录?']"
-                 data-open-urls-0="['centra/manage/file/fold_form.html?path={ID}','.create','@']"
-                 data-open-urls-1="['centra/manage/file/fold_edit.html?path={ID}','.modify','@']"
-                 data-id-key="path"
-                 data-pid-key="path"
-                 data-cnum-key="size"
-                 data-root-id="6666cd76f96956469e7be39d750cc7d9"
-                 data-root-name="目录结构">
-                <div class="toolbox board btn-group">
-                    <button type="button" class="create for-create btn btn-default">添加</button>
-                    <button type="button" class="modify for-select btn btn-default">修改</button>
-                    <button type="button" class="delete for-select btn btn-danger " title="删除"><span class="bi bi-hi-remove"></span></button>
-                </div>
-                <div class="treebox panel panel-body panel-default"></div>
+<div class="row">
+    <div class="col-xs-3 side-context">
+        <div id="centra-fold-tree"
+             data-topple="hsTree"
+             data-load-url="centra/file/search.act?type=dir"
+             data-send-urls-0="['centra/file/delete.act','.delete','您确定要删除此目录?']"
+             data-open-urls-0="['centra/manage/file/fold_form.html?path={ID}','.create','@']"
+             data-open-urls-1="['centra/manage/file/fold_edit.html?path={ID}','.modify','@']"
+             data-id-key="path"
+             data-pid-key="path"
+             data-cnum-key="size"
+             data-root-id="6666cd76f96956469e7be39d750cc7d9"
+             data-root-name="目录结构">
+            <div class="toolbox board btn-group">
+                <button type="button" class="create for-create btn btn-default">添加</button>
+                <button type="button" class="modify for-select btn btn-default">修改</button>
+                <button type="button" class="delete for-select btn btn-danger " title="删除"><span class="bi bi-hi-remove"></span></button>
             </div>
+            <div class="treebox panel panel-body panel-default"></div>
         </div>
-        <div class="col-xs-9 main-context"></div>
     </div>
+    <div class="col-xs-9 main-context"></div>
 </div>
 <script type="text/javascript">
     (function($) {

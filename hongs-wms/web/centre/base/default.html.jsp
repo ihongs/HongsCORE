@@ -10,6 +10,41 @@
     String $href = $hrel == null || $hrel.isEmpty()
                  ? $module+"/"+$entity+"/list.html"
                  : $hrel ;
+
+    // 下级内部菜单
+    StringBuilder $tabs = new StringBuilder ();
+    Map menus  = (Map) $menu.get("menus");
+    if (menus != null && ! menus.isEmpty ()) {
+        boolean _acti = false;
+        String  _href = $href;
+        for ( Object  ot : menus.entrySet()) {
+            Map.Entry et = (Map.Entry) ot ;
+            Map menu = (Map) et.getValue();
+            String href = (String) et.getKey ();
+            String hrel = (String) menu.get("hrel");
+            String text = (String) menu.get("text");
+            if (href != null &&  href.startsWith("!")
+            &&  hrel != null && !hrel.startsWith("!")) {
+                text  = $locale.translate(text);
+                if (hrel.isEmpty()
+                ||  hrel.startsWith("?")
+                ||  hrel.startsWith("#")) {
+                    hrel = _href + hrel ;
+                }
+                $tabs.append("<li");
+                if (_acti == false) {
+                    _acti  =  true;
+                    $href  =  hrel;
+                    $tabs.append(" class=\"active\"");
+                }
+                $tabs.append("><a href=\"javascript:;\" data-href=\"")
+                     .append(hrel )
+                     .append("\">")
+                     .append(text )
+                     .append("</a></li>");
+            }
+        }
+    }
 %>
 <!doctype html>
 <html>
@@ -39,69 +74,20 @@
         <div id="context">
             <%if (!"!HIDE".equals($hrel) && !"HIDE".equals($hrel)) {%>
             <div id="headbox">
-                <div id="menu-context" data-load="centre/head.jsp" data-active="<%=$module+"/"+$entity+"/"%>"></div>
+                <div id="menu-context" data-load="centre/head.jsp" data-active="<%=$module+"/"+$entity+"/"%>" data-title="<%=$title%>"></div>
             </div>
             <%} /* End if */%>
             <div id="bodybox">
-                <div id="main-context" class="container">
-                    <ol class="breadcrumb hide-first tabs laps" data-topple="hsTabs">
-                        <li class="back-crumb pull-right">
-                            <a href="javascript:;">
-                                <i class="bi bi-hi-close"></i>
-                            </a>
-                        </li>
-                        <li class="home-crumb active">
-                            <a href="javascript:;">
-                                <i class="bi bi-hi-path"></i>
-                                <b></b>
-                            </a>
-                        </li>
-                    </ol>
-                    <div class="labs laps">
-                        <div></div>
-                        <div>
-                            <%
-                            Map menus  = (Map) $menu.get("menus");
-                            if (menus != null && ! menus.isEmpty ()) {
-                                boolean _acti = false;
-                                String  _href = $href;
-                                StringBuilder sb = new StringBuilder ();
-                                for ( Object  ot : menus.entrySet()) {
-                                    Map.Entry et = (Map.Entry) ot ;
-                                    Map menu = (Map) et.getValue();
-                                    String href = (String) et.getKey ();
-                                    String hrel = (String) menu.get("hrel");
-                                    String text = (String) menu.get("text");
-                                    if (href != null &&  href.startsWith("!")
-                                    &&  hrel != null && !hrel.startsWith("!")) {
-                                        text  = $locale.translate(text);
-                                        if (hrel.isEmpty()
-                                        ||  hrel.startsWith("?")
-                                        ||  hrel.startsWith("#")) {
-                                            hrel = _href + hrel ;
-                                        }
-                                        sb.append("<li");
-                                        if (_acti == false) {
-                                            _acti  =  true;
-                                            $href  =  hrel;
-                                            sb.append(" class=\"active\"");
-                                        }
-                                        sb.append("><a href=\"javascript:;\" data-href=\"")
-                                          .append(hrel )
-                                          .append("\">")
-                                          .append(text )
-                                          .append("</a></li>");
-                                    }
-                                }
-                            if ( _acti ) {
-                            %>
-                            <ul class="nav nav-tabs board">
-                                <%=sb%>
-                            </ul>
-                            <%}} /* End menus */%>
-                            <div data-load="<%=$href%>"></div>
-                        </div>
-                    </div>
+                <div id="main-context" class="container labs laps">
+                    <div></div>
+                    <div><div>
+                        <%if ( $tabs.length() > 0 ) {%>
+                        <ul class="nav nav-tabs tabs acti-title panel">
+                            <%=$tabs%>
+                        </ul>
+                        <%} /* End if */%>
+                        <div data-load="<%=$href%>"></div>
+                    </div></div>
                 </div>
             </div>
         </div>

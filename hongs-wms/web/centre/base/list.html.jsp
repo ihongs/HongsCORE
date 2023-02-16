@@ -24,7 +24,7 @@
     Set<String>   _wd = getWordable (_fields);
     Set<String>   _sd = getSrchable (_fields);
 %>
-<h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
+<h2 class="hide"><%=_locale.translate("fore."+_action+".title", _title)%></h2>
 <div id="<%=_pageId%>" class="<%=_pageId+" "+_action%>-list board board-end">
     <form class="findbox toolbox board row">
         <div class="col-md-6 col-sm-8 center-block">

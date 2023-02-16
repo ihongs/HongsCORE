@@ -100,11 +100,13 @@ body {
 }
 .form-foot {
     padding: 20px 15px 5px 15px;
-    border-top: 1px solid #ddd ;
+}
+.form-body + .form-foot {
+    border-top : solid 1px #ddd;
 }
 .board + .form-foot ,
 .panel + .form-foot {
-    margin-top: -20px;
+    margin-top : -20px;
 }
 .form-body>:last-child:is(hr) ,
 .form-foot>:last-child:is(br) {

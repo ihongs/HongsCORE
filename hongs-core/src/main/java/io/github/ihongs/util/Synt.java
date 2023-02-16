@@ -1062,7 +1062,7 @@ public final class Synt {
                 return val ;
             }
         }
-        return  null;
+        return  vals.length > 0 ? vals[vals.length - 1] : null;
     }
 
     /**
@@ -1077,7 +1077,7 @@ public final class Synt {
                 return val ;
             }
         }
-        return  null;
+        return  vals.length > 0 ? vals[vals.length - 1] : null;
     }
 
     /**

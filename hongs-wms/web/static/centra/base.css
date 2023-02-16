@@ -45,15 +45,18 @@ body {
 #headbar .navbar-header {
     margin: 0;
     width : 240px;
+    float : left ;
+    box-shadow:  1px 0 #e5e5e5;
 }
 #headbar .navbar-right {
     margin: 0;
     width : 120px;
+    float : right;
+    box-shadow: -1px 0 #e5e5e5;
 }
 #headbar .navbar-left {
     width : calc(100% - 240px - 120px);
-    border-left : 1px solid #e5e5e5;
-    border-right: 1px solid #e5e5e5;
+    float : left ;
 }
 #headbar .navbar-right > li ,
 #headbar .navbar-right > li > a {
@@ -336,9 +339,7 @@ body {
 
 /* 主导航条默认样式 */
 #headbox .breadcrumb {
-    width  : calc(100% - 240px - 120px);
     margin : 0;
-    border : 0;
     padding: 15px;
     padding-bottom: 0;
     line-height: 20px;

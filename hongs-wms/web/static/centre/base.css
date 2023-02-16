@@ -76,12 +76,8 @@ body {
 
 /* 主导航条默认样式 */
 #headbox .breadcrumb {
-    margin-top   :  20px;
-    margin-left  : -15px;
-    margin-right : -15px;
-    margin-bottom:   0px;
-    padding-left :  15px;
-    padding-right:  15px;
+    margin-top: 20px;
+    margin-bottom: 0;
 }
 #headbox .breadcrumb .active a {
     text-decoration: none;

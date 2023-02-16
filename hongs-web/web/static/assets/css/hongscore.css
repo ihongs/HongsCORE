@@ -256,9 +256,6 @@ input[type="time"].form-control {
 
 /** 可后退导航条 **/
 
-.laps.tabs .active .hide.title {
-    display: inline !important;
-}
 .laps.tabs            .back-crumb ,
 .laps.tabs.bread-home .hook-crumb ,
 .laps.tabs.bread-hook .hook-crumb {
@@ -277,26 +274,30 @@ input[type="time"].form-control {
     display: none ;
 }
 
-.laps.tabs .close {
+.tabs.hide-close .close {
     display: none ;
 }
-.laps.tabs.show-close .active .close {
-    display: block;
+.tabs.acti-close li:not(.active) .close {
+    display: none ;
+}
+.tabs.acti-title li:not(.active) .bi~.close ,
+.tabs.acti-title li:not(.active) .bi~.title {
+    display: none ;
 }
 
-.nav-tabs   .close,
-.nav-pills  .close,
+.nav-tabs   .close ,
+.nav-pills  .close ,
 .breadcrumb .close {
     font-size: 20px;
     line-height: 1.0em;
     margin-left: 0.3em;
 }
-.breadcrumb.laps > li i + * {
+.nav-tabs   .bi+ * ,
+.nav-pills  .bi+ * ,
+.breadcrumb .bi+ * {
     margin-left: 0.5em;
 }
-.breadcrumb.laps > li.pull-right {
-    margin-left: 1.0em;
-}
+
 .breadcrumb.laps > li.home-crumb::before ,
 .breadcrumb.laps > li.back-crumb::before ,
 .breadcrumb.laps > li.hook-crumb::before ,
@@ -394,6 +395,8 @@ div.bootstrap-tagsinput .tag [data-role="remove"]:after {
 .labs>*>h2,
 .labs>*>.loadbox>h1,
 .labs>*>.loadbox>h2,
+.tabs + .loadbox>h1,
+.tabs + .loadbox>h2,
 .modal-body.loadbox>h1 ,
 .modal-body.loadbox>h2 {
     display: none;

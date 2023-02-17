@@ -79,7 +79,7 @@
             <div id="bodybox">
                 <div id="main-context" class="container-fluid labs laps">
                     <div><div>
-                        <ul class="nav nav-tabs tabs acti-title board">
+                        <ul class="nav nav-tabs tabs halt-title board" data-toggle="hsTabs" data-target="+">
                         <%if ( $tabs.length() > 0 ) {%>
                             <%=$tabs%>
                         <%} else {%>
@@ -110,16 +110,6 @@
         <script type="text/javascript">
             (function($) {
                 var context = $("#main-context");
-
-                // 子级菜单
-                var loadBox = context.find("[data-load]").first();
-                var tabsBox = context.find( ".nav-tabs" ).first();
-                tabsBox.on("click", "a", function() {
-                    if ( $(this).parent().is(".active") ) return ;
-                    loadBox.hsLoad($(this).data("href") );
-                    $(this).parent().addClass("active")
-                      .siblings().removeClass("active");
-                });
 
                 // 外部定制
                 window["<%=$func%>"] && window["<%=$func%>"](context);

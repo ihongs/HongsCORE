@@ -255,11 +255,19 @@ HsStat.prototype = {
             return;
         }
 
+        var fn  = itemBox.attr("data-name");
+        var fx  = itemBox.attr("data-text");
+        var ft  = itemBox.attr("data-type");
+        var url = ft==="amount"? this.murl
+              : ( ft==="acount"? this.curl
+              :                  this.eurl);
+        var rn  = hsGetParam(url, "rn", 20);
+
         // 复制提示
         var set = [{
             mode : "warn",
             glass: "alert-default",
-            text : "为了降低网络延迟, 图表按从多到少排, 仅取前 20 条; 而此功能将调取完整统计数据, 以便导入 Office/WPS 等应用中.",
+            text : "为了降低网络延迟, 图表按从多到少排, 仅取前 "+rn+" 条; 这将会调取完整统计数据, 以便导入 Office/WPS 等应用中.",
             title: "正在获取完整统计数据, 请稍等...",
             topic: "已经取得完整统计数据, 请拷贝吧!",
             note : "拷贝成功, 去粘贴吧!"
@@ -297,14 +305,7 @@ HsStat.prototype = {
             return;
         }
 
-        var fx  = itemBox.attr("data-text");
-        var fn  = itemBox.attr("data-name");
-        var ft  = itemBox.attr("data-type");
-        var url = ft==="amount"? this.murl
-              : ( ft==="acount"? this.curl
-              :                  this.eurl);
         var dat = this.findBox.serialize( );
-
         url = hsSetParam(url, "rb", fn ); // 单字段
         url = hsSetParam(url, "rn", "0"); // 不分页
 

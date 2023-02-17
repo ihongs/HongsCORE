@@ -111,7 +111,6 @@
 
     String  acti = helper.getParameter("active");
     String  titl = helper.getParameter("title" );
-    String  icon = helper.getParameter("icon"  );
     String  name = (String) helper.getSessibute("uname");
     String  head = (String) helper.getSessibute("uhead");
 
@@ -140,10 +139,10 @@
             </a>
         </div>
         <div>
-            <ol id="navi-menubar" class="navbar-left breadcrumb tabs laps acti-close" data-topple="hsTabs" data-target="#main-context">
+            <ol id="navi-menubar" class="navbar-left breadcrumb tabs laps halt-close" data-topple="hsTabs" data-target="#main-context">
                 <li class="home-crumb active">
                     <a href="javascript:;">
-                        <i class="bi <%=Synt.defxult(icon, "bi-hi-path")%>"></i>
+                        <i class="bi bi-hi-path"></i>
                         <b class="title"><%=Synt.defxult(titl, "")%></b>
                     </a>
                 </li>
@@ -202,24 +201,11 @@
 
 <script type="text/javascript">
     (function($) {
-        var context = $("#main-context>:last");
-        var menubar = $("#main-menubar");
         var navibar = $("#navi-menubar");
-//      var userbar = $("#user-menubar");
-        var menubox =  menubar.parent( );
-
-        $(function() {
-            var a, x;
-            a = navibar.find(".home-crumb");
-            x = navibar.closest(".loadbox").data("icon"  );
-            if (x) {
-                a.find("i").addClass(x);
-            }
-            x = navibar.closest(".loadbox").data("title" );
-            if (x) {
-                a.find("b").  text  (x);
-            }
-        });
+        var menubar = $("#main-menubar");
+        var menubox = $("#menu-context");
+        var context = $("#main-context");
+        var content = context.children( ).last( );
 
         $(function() {
             if (menubar.find("li.active").size()) {
@@ -252,20 +238,34 @@
              * 则无需重复载入内容页面;
              * 没有则最终转向首个链接.
              */
-            if (context.size() === 0
-            ||  context.data("load")
-            ||  context.children().size()) {
+            if (content.size() === 0
+            ||  content.data("load")
+            || !content.is(":empty")) {
                 return ;
             }
 
             h = menubar.find("a").attr("href");
-            l = a.data ("href");
-            if (l && l !== '/') {
-                context .hsLoad(l);
-            } else {
+            l = a.data("href");
+            if (l && l != '/') {
+                content .hsLoad(l);
+            } else if ( !  l ) {
                 location.assign(h);
                 location.reload( ); // 规避只有 hash 变了
             }
+        });
+
+        $(function() {
+            // 获取并设置当前模块标题
+            var b, t;
+            b = navibar.find(".home-crumb .title");
+            t = b.text( );
+            if (t) {  return;  }
+            t = navibar.closest(".loadbox").data("title");
+            if (t) {  b.text(t); return;  }
+            t = menubar.find(".active > a").text();
+            if (t) {  b.text(t); return;  }
+            t = menubar.find(".acting > a").text();
+            if (t) {  b.text(t); return;  }
         });
 
         $(window).on("hashchange" , function() {
@@ -290,6 +290,7 @@
              .parents("li").addClass("acting");
         });
 
+        // 标识导航组件已开启, 悬浮组件需避免层叠
         $(document.body).addClass("toper-open");
         $(document.body).addClass("sider-open");
 
@@ -357,20 +358,21 @@
 
         // 回退复位滚动条
         context
-            .on("hsHide", ">.labs.laps>div", function (ev) {
+            .on("hsHide", ">div", function (ev) {
                 if (this !== ev.target) return ;
                 if ($(this).data("top") === undefined) {
                     $(this).data("top", context.scrollTop());
                 }
             })
-            .on("hsShow", ">.labs.laps>div", function (ev) {
+            .on("hsShow", ">div", function (ev) {
                 if (this !== ev.target) return ;
                 if ($(this).data("top") !== undefined) {
                     context.scrollTop($(this).data( "top" ));
                     $(this).removeData( "top" );
                 }
-            })
-            .on("click" , ">.tabs.laps>li" , function (ev) {
+            });
+        navibar
+            .on("click" , ">li" , function (ev) {
                 // 直接点击导航不要自动滚动
                 var i = $(this).index ( );
                 var l = $(this).parent( ).data("labs");

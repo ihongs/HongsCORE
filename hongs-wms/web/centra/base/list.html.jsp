@@ -375,7 +375,7 @@
         </table>
     </div>
     <div class="pagebox clearfix">
-        <em class="page-text">Loading...</em>
+        <em class="page-text">...</em>
     </div>
 </div>
 <script type="text/javascript">

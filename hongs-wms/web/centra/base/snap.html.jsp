@@ -74,11 +74,7 @@
         </table>
     </div>
     <div class="pagebox clearfix">
-        <ul class="pagination">
-            <li class="disabled">
-                <a href="javascript:;">Loading...</a>
-            </li>
-        </ul>
+        <em class="page-text">...</em>
     </div>
 </div>
 

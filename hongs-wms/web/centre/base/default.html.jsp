@@ -79,10 +79,9 @@
             <%} /* End if */%>
             <div id="bodybox">
                 <div id="main-context" class="container labs laps">
-                    <div></div>
                     <div><div>
                         <%if ( $tabs.length() > 0 ) {%>
-                        <ul class="nav nav-tabs tabs acti-title panel">
+                        <ul class="nav nav-tabs tabs halt-title panel" data-toggle="hsTabs" data-target="+">
                             <%=$tabs%>
                         </ul>
                         <%} /* End if */%>
@@ -95,16 +94,6 @@
             (function($) {
                 var context = $("#main-context");
 
-                // 子级菜单
-                var loadBox = context.find("[data-load]").first();
-                var tabsBox = context.find( ".nav-tabs" ).first();
-                tabsBox.on("click", "a", function() {
-                    if ( $(this).parent().is(".active") ) return ;
-                    loadBox.hsLoad($(this).data("href") );
-                    $(this).parent().addClass("active")
-                      .siblings().removeClass("active");
-                });
-
                 // 外部定制
                 window["<%=$func%>"] && window["<%=$func%>"](context);
 
@@ -112,7 +101,7 @@
                 context.hsPops({
                     info: "<%=$module%>/<%=$entity%>/info.html",
                     form: "<%=$module%>/<%=$entity%>/form.html",
-                    adds: "<%=$module%>/<%=$entity%>/form_init.html"
+                    init: "<%=$module%>/<%=$entity%>/form_init.html"
                 });
             })(jQuery);
         </script>

@@ -2,13 +2,13 @@
 <div id="master-user-list"
      class="board board-end"
      data-topple="hsList"
-     data--0="load:(hsUserLoad)"
-     data--1="send:(hsUserSend)"
      data-load-url="centra/master/user/list.act?unit_id=${unit_id}&amp;ob=mtime!,ctime!&amp;ab=_text&amp;with-units=2&amp;bind-scope=1"
-     data-send-urls-0="['centra/master/user/save.act'  ,'.remove', '您确定要移出此用户?']"
-     data-send-urls-1="['centra/master/user/delete.act','.delete', '您确定要删除此用户?']"
-     data-open-urls-0="['centra/master/user/form.html?id={ID}','.modify','@']"
-     data-open-urls-1="['centra/master/user/form.html?unit_id=${unit_id}','.create','@']">
+     data-send-urls-0="['centra/master/user/save.act'  ,'.remove','您确定要移出此用户?']"
+     data-send-urls-1="['centra/master/user/delete.act','.delete','您确定要删除此用户?']"
+     data-open-urls-0="['centra/master/user/form.html?unit_id=${unit_id}','.create','@']"
+     data-open-urls-1="['centra/master/user/form.html?id={ID}','.modify','@']"
+     data--1="load:(hsUserLoad)"
+     data--2="send:(hsUserSend)">
     <form class="findbox toolbox board row" action="" method="POST">
         <div class="col-xs-7">
             <div class="btn-group">

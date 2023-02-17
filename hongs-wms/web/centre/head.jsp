@@ -113,7 +113,6 @@
 
     String  acti = helper.getParameter("active");
     String  titl = helper.getParameter("title" );
-    String  icon = helper.getParameter("icon"  );
     String  name = (String) helper.getSessibute("uname");
     String  head = (String) helper.getSessibute("uhead");
 
@@ -176,15 +175,10 @@
 </nav>
 
 <div class="container">
-    <ol class="tabs laps breadcrumb bread-home hide-first hide-close panel panel-default" id="navi-menubar" data-target="#main-context" data-topple="hsTabs">
-        <li class="back-crumb pull-right">
-            <a href="javascript:;">
-                <i class="bi bi-hi-close"></i>
-            </a>
-        </li>
+    <ol class="breadcrumb tabs laps hold-close hide-first home-bread panel panel-default" id="navi-menubar" data-target="#main-context" data-topple="hsTabs">
         <li class="home-crumb active">
             <a href="javascript:;">
-                <i class="bi <%=Synt.defxult(icon, "bi-hi-path")%>"></i>
+                <i class="bi bi-hi-path "></i>
                 <b class="title"><%=Synt.defxult(titl, "")%></b>
             </a>
         </li>
@@ -193,23 +187,10 @@
 
 <script type="text/javascript">
     (function($) {
-        var context = $("#main-context>:last");
-        var menubar = $("#main-menubar");
         var navibar = $("#navi-menubar");
-//      var userbar = $("#user-menubar");
-
-        $(function() {
-            var a, x;
-            a = navibar.find(".home-crumb");
-            x = navibar.closest(".loadbox").data("icon"  );
-            if (x) {
-                a.find("i").addClass(x);
-            }
-            x = navibar.closest(".loadbox").data("title" );
-            if (x) {
-                a.find("b").  text  (x);
-            }
-        });
+        var menubar = $("#main-menubar");
+        var context = $("#main-context");
+        var content = context.children( ).last( );
 
         $(function() {
             if (menubar.find("li.active").size()) {
@@ -240,20 +221,34 @@
              * 则无需重复载入内容页面;
              * 没有则最终转向首个链接.
              */
-            if (context .size() === 0
-            ||  context .data("load")
-            ||  context .children().size()) {
+            if (content .size() === 0
+            ||  content .data("load")
+            ||  content .children().size()) {
                 return;
             }
 
             h = menubar.find("a").attr("href");
             l = a.data("href");
             if (l && l != '/') {
-                context .hsLoad(l);
+                content .hsLoad(l);
             } else if ( !  l ) {
                 location.assign(h);
                 location.reload( ); // 规避只有 hash 变了
             }
+        });
+
+        $(function() {
+            // 获取并设置当前模块标题
+            var b, t;
+            b = navibar.find(".home-crumb .title");
+            t = b.text( );
+            if (t) {  return;  }
+            t = navibar.closest(".loadbox").data("title");
+            if (t) {  b.text(t); return;  }
+            t = menubar.find(".active > a").text();
+            if (t) {  b.text(t); return;  }
+            t = menubar.find(".acting > a").text();
+            if (t) {  b.text(t); return;  }
         });
 
         $(window).on("hashchange" , function() {
@@ -276,26 +271,8 @@
             a.parents("li").addClass("active");
         });
 
-        // 标识顶部导航已开启, 悬浮组件需避免层叠
+        // 标识导航组件已开启, 悬浮组件需避免层叠
         $(document.body).addClass("toper-open");
-
-        /*
-        var badge = userbar.find(".badge" );
-        var timer = setInterval (function() {
-            if (! badge.is(":visible")) {
-                clearInterval( timer );
-                return;
-            }
-            $.ajax({
-                url     : hsFixUri("centre/medium/suggest/search.act?unit=message"),
-                type    : "GET" ,
-                dataType: 'JSON',
-                complete: function(rst) {
-                    badge.text(rst.size ? rst.size : "");
-                }
-            });
-        }, 10000);
-        */
 
         $("#login" )
             .click(function() {

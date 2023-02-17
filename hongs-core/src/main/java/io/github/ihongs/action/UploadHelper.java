@@ -268,7 +268,7 @@ public class UploadHelper {
         if (pos >= 1 ) {
             return name.substring(0+pos);
         } else {
-            return null;
+            return  "" ;
         }
     }
 

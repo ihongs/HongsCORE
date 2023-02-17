@@ -23,6 +23,7 @@ function HsTree(context, opts) {
     this.noteKey = hsGetValue(opts, "noteKey");
     this.typeKey = hsGetValue(opts, "typeKey");
     this.cnumKey = hsGetValue(opts, "cnumKey");
+    this.rowsKey = hsGetValue(opts, "rowsKey" , hsGetConf("rn.key", "rn"));
 
     // 根节点信息
     var rootInfo = {
@@ -204,7 +205,9 @@ HsTree.prototype = {
         if (pid ) this._pid  = pid ;
         if (url ) this._url  = url ;
         if (data) this._data = data;
-      hsSetSeria (this._data, this.pidKey, this._pid);
+        if (undefined === hsGetParam(this._url, this.rowsKey)) {
+            this._url  =  hsSetParam(this._url, this.rowsKey, "0");
+        }   this._data =  hsSetSeria(this._data, this.pidKey, this._pid);
         this.ajax({
             "url"      : this._url ,
             "data"     : this._data,

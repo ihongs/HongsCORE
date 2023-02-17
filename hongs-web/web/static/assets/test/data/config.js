@@ -58,8 +58,6 @@ if(!window.HsLANG)window.HsLANG={};$.extend(window.HsLANG,{
 	"tree.root.name":"根节点",
 	"tree.root.note":"根节点",
 
-	"form.create":"创建",
-	"form.update":"修改",
 	"form.sending":"保存中...",
 	"form.invalid":"操作失败, 请查看错误信息并修正后重试",
 	"form.haserror":"输入错误",

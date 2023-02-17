@@ -156,6 +156,9 @@ HsList.prototype = {
         data =  hsSerialObj (data) ;
         if (url ) this._url  = url ;
         if (data) this._data = data;
+        if (undefined === hsGetParam(this._url, this.rowsKey)) {
+            this._url  =  hsSetParam(this._url, this.rowsKey, this.rowsNum);
+        }
         this.ajax({
             "url"      : this._url ,
             "data"     : this._data,

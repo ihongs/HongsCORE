@@ -720,7 +720,7 @@ function hsBeFormData (elem) {
 
 /**
  * 获取序列值
- * @param {Array} arr hsSerialArr 或 HsSerialDic,HsSerialDat
+ * @param {Array|Object} arr hsSerialArr 或 HsSerialDic,HsSerialDat
  * @param {String} name
  * @return {String|Array}
  */
@@ -751,22 +751,23 @@ function hsGetSeria (arr, name) {
 
 /**
  * 设置序列值
- * @param {Array} arr hsSerialArr 或 HsSerialDic,HsSerialDat
+ * @param {Array|Object} arr hsSerialArr 或 HsSerialDic,HsSerialDat
  * @param {String} name
  * @param {String|Array} value
+ * @return {Array|Object} 同 arr
  */
 function hsSetSeria (arr, name, value) {
     if (arr instanceof HsSerialDic) {
         _hsSetPoint (arr, _hsGetDkeyz(name), value);
-        return;
+        return arr;
     }
     if (arr instanceof HsSerialDat) {
         _hsSetPoint (arr, _hsGetPkeyz(name), value);
-        return;
+        return arr;
     }
     if ( jQuery.isPlainObject(arr)) {
         arr[name] = value;
-        return;
+        return arr;
     }
     if (!jQuery.isArray(value)) {
         value =  value !== undefined
@@ -781,11 +782,12 @@ function hsSetSeria (arr, name, value) {
     for(var i = 0 ; i < value.length; i ++) {
         arr.push({name: name, value: value[i]});
     }
+    return arr;
 }
 
 /**
  * 获取多个序列值
- * @param {Array} arr hsSerialArr 或 HsSerialDic,HsSerialDat
+ * @param {Array|Object} arr hsSerialArr 或 HsSerialDic,HsSerialDat
  * @param {String} name
  * @return {Array}
  * @deprecated 只用 hsGetSeria 即可
@@ -803,9 +805,10 @@ function hsGetSerias(arr, name) {
 
 /**
  * 设置多个序列值
- * @param {Array} arr hsSerialArr 或 HsSerialDic,HsSerialDat
+ * @param {Array|Object} arr hsSerialArr 或 HsSerialDic,HsSerialDat
  * @param {String} name
  * @param {Array} value
+ * @return {Array|Object} 同 arr
  * @deprecated 只用 hsSetSeria 即可
  */
 function hsSetSerias(arr, name, value) {
@@ -841,6 +844,7 @@ function hsGetParam (url, name) {
  * @param {String} url
  * @param {String} name
  * @param {String|Array} value
+ * @return {String} 同 url
  */
 function hsSetParam(url, name, value) {
     name = encodeURIComponent( name );
@@ -885,6 +889,7 @@ function hsGetParams(url, name) {
  * @param {String} url
  * @param {String} name
  * @param {Array} value
+ * @return {String} 同 url
  * @deprecated 只用 hsSetParam 即可
  */
 function hsSetParams(url, name, value) {
@@ -2418,8 +2423,7 @@ $.fn.hsOpen = function(url, data, complete) {
     }
 
     if (tab) {
-        bak = tab.parent().children().filter(".active");
-        tab.find("a:empty,b:empty,.title").text ("...");
+        bak = tab.parent().children(".active");
         tab.find("a").click(); // 这将触发 hsHide/hsShow
         // 关闭关联的页签
         if (prt.children().size( ) ) {
@@ -2524,6 +2528,7 @@ $.fn.hsClose = function() {
         tb1.removeClass("active");
         tb2.   addClass("active")
            .   css("display", "");
+        tb2.trigger("hsStab");
         pn1.trigger("hsHide").hide();
         pn2.show().trigger("hsShow");
         // 移除可关闭的页签
@@ -2576,13 +2581,16 @@ $.fn.hsTabs = function(tar) {
     box.data("labs", tar);
     tar.addClass( "labs");
     tar.data("tabs", box);
+    box.attr("data-toggle", "hsTabs" );
 
     var act = box.children(".active" );
     if (act.size() === 0) {
         act = box.children("li:first");
     }
-    tar.children(/***/).hide()
-       .eq(act.index()).show();
+    var idx = act.index();
+    act.trigger("hsStab");
+    tar.children().hide()
+       .eq ( idx ).show();
 
     return [box, tar];
 };
@@ -2591,7 +2599,7 @@ $.fn.hsTadd = function(ref) {
     var tab;
     var lab;
     if (! ref || ! box.find("[data-hrel='"+ref+"']").size() ) {
-        tab = $('<li><a href="javascript:;"><span class="title">...</span><span class="close">&times;</span></a></li>')
+        tab = $('<li><a href="javascript:;"><span class="title"></span><span class="close">&times;</span></a></li>')
                               .appendTo( box  );
         lab = $('<div></div>').appendTo( box.data( "labs" ) );
         tab.find("a").attr("data-hrel" , ref  );
@@ -2631,16 +2639,19 @@ $.fn.hsL10n = function(tit) {
     }
 
     // 针对共用的表单, 有 ID 即为更新
-    tit = H$("?id", box)
-        ? tit.replace('{DO}', hsGetLang("form.update"))
-        : tit.replace('{DO}', hsGetLang("form.create"));
+    if (/^\{DO\}.*/.test(tit)) {
+        tit = $.trim(tit.substring(4));
+        tit = H$("?id", box)
+            ? hsGetLang("update.title", [ tit ])
+            : hsGetLang("create.title", [ tit ]);
+    }
 
     if (box.parent(".labs").size()
     ||  prt.parent(".labs").size()) {
-        var tbs = box.closest(".labs").data("tabs");
+        var tbs = box.closest(".labs").data("tabs") || $();
         var idx = box.closest(".labs>*").index();
         var tab = tbs.children().eq(idx);
-        tab.find(".title,b:empty,a:empty")
+        tab.find(".title:empty,b:empty,a:empty")
            .text( tit );
     } else
     if (box.is(".modal-body")) {
@@ -3076,7 +3087,7 @@ function(evt) {
     }
 })
 .on("click", "[data-toggle=hsDisp]",
-function() {
+function(evt) {
     var btn = $(this);
     var tit = btn.data("title");
     var txt = btn.data("text");
@@ -3087,8 +3098,22 @@ function() {
         html : htm
     });
 })
+.on("click", "[data-toggle=hsLoad]",
+function(evt) {
+    var btn = $(this);
+    var box = btn.data("target");
+    var url = btn.data("href");
+    var dat = btn.data("data");
+    if (box) {
+        box = btn.hsFind(box);
+        box.hsLoad(url , dat);
+    } else {
+        box = btn.hsFind("~");
+        box.hsLoad(url , dat);
+    }
+})
 .on("click", "[data-toggle=hsOpen]",
-function() {
+function(evt) {
     var btn = $(this);
     var box = btn.data("target");
     var url = btn.data("href");
@@ -3097,33 +3122,30 @@ function() {
     if (box) {
         box = btn.hsFind(box);
         box.hsOpen(url , dat);
-    } else { var b;
-        b=$.hsOpen(url , dat);
+    } else {
+    var b=$.hsOpen(url , dat);
     if (siz) {
         b.closest ("modal-dialog")
          .addClass("modal-"+ siz );
     }}
 })
 .on("cilck", "[data-toggle=hsExit]",
-function() {
-    var box = $(this).attr("data-target");
-    $(this).hsFind(box || "@").hsClose( );
+function(evt) {
+    var btn = $(this);
+    var box = btn.data("target");
+        box = btn.find(box||"@");
+        box.hsClose();
 });
 
 // 选项卡和导航条
 $(document)
-.on("click", ".tabs>li>a .close",
-function() {
-    $(this).closest("a").hsClose();
-})
-.on("click", ".tabs>li>a",
+.on("click", "[data-toggle=hsTabs]>li>a",
 function() {
     var lnk = $(this);
     var tab = lnk.parent();
     var nav = tab.parent();
-    var pns = nav.data( "labs")
-           || nav.next(".labs");
-    var tao = nav.children(".active");
+    var tao = tab.siblings(".active");
+    var pns = nav.data("labs") || nav.next();
     var pno = pns ? pns.children().eq(tao.index()) : $();
     var pne = pns ? pns.children().eq(tab.index()) : $();
     if (tab.is(".active,.inactive") ) {
@@ -3131,7 +3153,7 @@ function() {
     }
     if (nav.is(".tabs.laps")) {
         // 后退一页
-        if ( tab.is(".back-crumb")) {
+        if ( tab.is(".back-crumb" ) ) {
                 nav.find('li:last a').hsClose();
             if (nav.find(".active").size() < 1) {
                 nav.find('li:last a').  click();
@@ -3150,27 +3172,36 @@ function() {
         }
     }
     // 延迟加载
-    if (lnk.is("[data-href]")
-    && !pne.children().size()) {
-        var ref = lnk.data("href");
-        var box = $('<div></div>');
-        pne.append (box);
-        box.hsLoad (ref);
+    var ref = lnk.data("href");
+    if (ref) {
+        if (pns.is(".labs" )) {
+        if (pne.is(":empty")) {
+            var box = $('<div></div>');
+            pne.append(box);
+            box.hsLoad(ref);
+        }} else {
+            pno = pne = $();
+            pns.hsLoad(ref);
+        }
     }
     // 切换页签
     tao.removeClass("active");
     tab.   addClass("active")
        .   css("display", "");
+    tab.trigger("hsStab");
     pno.trigger("hsHide").hide();
     pne.show().trigger("hsShow");
 })
-.on("hsShow hsReady", ".labs.laps",
+.on("click", "[data-toggle=hsTabs]>li>a .close",
 function() {
-    var nav = $(this).data("tabs")
-           || $(this).siblings('.tabs.laps');
-    nav.toggleClass("bread-home", nav.children('.home-crumb').is(".active")); // 主页
-    nav.toggleClass("bread-hook", nav.children('.hook-crumb').is(".active")); // 主页显示
-    nav.toggleClass("bread-hold", nav.children('.hold-crumb').is(".active")); // 总是显示
+    $(this).closest("a").hsClose();
+})
+.on("hsStab" , "[data-toggle=hsTabs].tabs.laps",
+function() {
+    var nav = $(this);
+    nav.toggleClass("home-bread", nav.children('.home-crumb').is(".active")); // 主页
+    nav.toggleClass("hook-bread", nav.children('.hook-crumb').is(".active")); // 主页显示
+    nav.toggleClass("hold-bread", nav.children('.hold-crumb').is(".active")); // 总是显示
 });
 
 $(function() {$(document).hsReady();});

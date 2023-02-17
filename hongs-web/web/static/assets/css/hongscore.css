@@ -256,33 +256,42 @@ input[type="time"].form-control {
 
 /** 可后退导航条 **/
 
-.laps.tabs            .back-crumb ,
-.laps.tabs.bread-home .hook-crumb ,
-.laps.tabs.bread-hook .hook-crumb {
-    display: block;
-}
-.laps.tabs            .hook-crumb ,
-.laps.tabs.bread-home .back-crumb ,
-.laps.tabs.bread-hook .back-crumb ,
-.laps.tabs.bread-hold .back-crumb {
-    display: none ;
+.tabs.home-bread.hide-first {
+    display: none;
 }
 
-.laps.tabs.hide-first.bread-home ,
-.laps.tabs.hide-first.bread-hook ,
-.laps.tabs.hide-first.bread-hold {
-    display: none ;
+.tabs.home-bread .back-crumb ,
+.tabs.hook-bread .back-crumb ,
+.tabs.hold-bread .back-crumb ,
+.tabs:not(.home-bread):not(.hook-bread) .hook-crumb {
+    display: none;
 }
 
-.tabs.hide-close .close {
-    display: none ;
+.tabs.hide-close .close ,
+.tabs.hold-close li:not(.active) .close ,
+.tabs.halt-close li:not(.active) .close ,
+.tabs.halt-title li:not(.active) .bi~.close ,
+.tabs.halt-title li:not(.active) .bi~.title {
+    display: none;
 }
-.tabs.acti-close li:not(.active) .close {
-    display: none ;
+
+.tabs.hold-close {
+    position: relative;
 }
-.tabs.acti-title li:not(.active) .bi~.close ,
-.tabs.acti-title li:not(.active) .bi~.title {
-    display: none ;
+.tabs.hold-close li.active .close {
+    position: absolute;
+    right : 15px;
+    width : 20px;
+    height: 20px;
+    border-radius: 50%;
+    text-align: center;
+    background: #d55;
+}
+
+.tabs li a:empty:before ,
+.tabs li b:empty:before ,
+.tabs li .title:empty:before {
+    content: "..." ;
 }
 
 .nav-tabs   .close ,
@@ -298,10 +307,10 @@ input[type="time"].form-control {
     margin-left: 0.5em;
 }
 
-.breadcrumb.laps > li.home-crumb::before ,
-.breadcrumb.laps > li.back-crumb::before ,
-.breadcrumb.laps > li.hook-crumb::before ,
-.breadcrumb.laps > li.hold-crumb::before {
+.breadcrumb > li.home-crumb::before ,
+.breadcrumb > li.back-crumb::before ,
+.breadcrumb > li.hook-crumb::before ,
+.breadcrumb > li.hold-crumb::before {
     padding: 0 ;
     content: "";
 }
@@ -1099,7 +1108,7 @@ input[type=file].form-control {
 .bi-hi-column::before { content: "\f465"; }
 .bi-hi-manual::before { content: "\f2d1"; }
 .bi-hi-logout::before { content: "\f307"; }
-.bi-hi-path::before   { content: "\f585"; }
+.bi-hi-path::before   { content: "\f422"; }
 .bi-hi-page::before   { content: "\f199"; }
 .bi-hi-next::before   { content: "\f551"; }
 .bi-hi-prev::before   { content: "\f55d"; }

@@ -490,7 +490,7 @@
          save: hsSaveWithMemo('<%=_locale.translate("fore.update.confirm", _title)%>'),
         <%}} /* End if */%>
         _data: loadres,
-        initInfo: initres,
+         initInfo: initres,
         _fill__fork: hsFormFillFork,
         _fill__file: hsFormFillFile,
         _fill__view: hsFormFillView

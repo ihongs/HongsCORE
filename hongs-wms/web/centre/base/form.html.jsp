@@ -487,7 +487,7 @@
         _url : "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.AB_KEY%>=.enfo,.info,.fall,_fork,_text",
         <%} /* End if */ %>
         _data: loadres,
-        initInfo: initres,
+         initInfo: initres,
         _fill__fork: hsFormFillFork,
         _fill__file: hsFormFillFile,
         _fill__view: hsFormFillView

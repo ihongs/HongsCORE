@@ -149,10 +149,10 @@ public class VarsFilter extends ActionDriver {
 
         if (wd_split != null && !wd_split.isEmpty()) {
             String wd = Synt.asString(rd.get(Cnst.WD_KEY));
-            if (wd != null && wd.isEmpty())
+            if (wd != null && !wd.isEmpty())
             try {
-                wd  = wdSplit(wd, wd_split);
-                rd.put ( Cnst.WD_KEY , wd );
+                wd  = wdSplit (wd, wd_split);
+                rd. put ( Cnst.WD_KEY , wd );
             }
             catch (HongsException|HongsExemption ex) {
                 hlpr.fault( ex );

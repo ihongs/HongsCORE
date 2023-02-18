@@ -16,9 +16,9 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class SaclAction extends ActionDriver {
 
+    AuthAction auth = new AuthAction();
     ConfAction conf = new ConfAction();
     LangAction lang = new LangAction();
-    AuthAction auth = new AuthAction();
 
     @Override
     public void service(HttpServletRequest req, HttpServletResponse rsp)
@@ -26,16 +26,22 @@ public class SaclAction extends ActionDriver {
     {
         String name = req.getServletPath();
                name = name.substring(name.lastIndexOf("/"));
-        if ("/conf".equals( name )) {
-            conf.service(req, rsp);
-        } else
-        if ("/lang".equals( name )) {
-            lang.service(req, rsp);
-        } else
-        if ("/auth".equals( name )) {
+        if (null != name)
+            switch (name) {
+        case "/auth":
             auth.service(req, rsp);
-        } else
-        {
+            break;
+        case "/conf":
+            conf.service(req, rsp);
+            break;
+        case "/lang":
+            lang.service(req, rsp);
+            break;
+        default:
+            rsp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            rsp.getWriter().print("Unsupported name "+name);
+            break;
+        } else {
             rsp.setStatus(HttpServletResponse.SC_NOT_FOUND);
             rsp.getWriter().print("Unsupported name "+name);
         }

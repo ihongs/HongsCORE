@@ -25,6 +25,11 @@ import org.xml.sax.SAXException;
 
 /**
  * 单页应用路由
+ * 
+ * 设置参数:
+ * index-file 默认使用 welcome-file-list
+ * 支持 url-include 和 url-exclude
+ * 
  * @author Hongs
  */
 public class SparFilter implements Filter {

@@ -18,6 +18,16 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * 会话状态过滤
+ *
+ * 设置参数:
+ * request-attr 会话请求属性名称
+ * request-name 会话请求参数名称
+ *  cookie-name 会话 Cookie 键名
+ *  cookie-path 会话 Cookie 路径
+ *  cookie-max-age 过期 Cookie (秒)
+ *  record-max-age 会话过期时间(秒)
+ * 支持 url-include 和 url-exclude
+ *
  * @author Hongs
  * @deprecated 改用 Jetty 的 SessionManager
  */

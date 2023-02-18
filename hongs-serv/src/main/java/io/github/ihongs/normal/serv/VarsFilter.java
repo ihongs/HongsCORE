@@ -30,7 +30,8 @@ import javax.servlet.http.HttpServletResponse;
  * rn-limit 列表查询数量限定, 如 100
  * sr-limit 复合条件数量限定, 如 2
  * sr-level 复合条件层数限定, 如 1
- * illegals 非法参数, 如 or,nr,ar
+ * illegals 非法参数, 如: or,nr,ar
+ * 支持 url-include 和 url-exclude
  *
  * @author Hongs
  */

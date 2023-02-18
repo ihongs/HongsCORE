@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
  * 0.9.0 将 :xx 操作符换成 xx
  * 1.0.0 将 enum/menu 换成 enfo, create 增加 info, update 返回 size
  * 1.0.5 在 acount/amount 统计接口默认添加逆序 rb=!
+ * 支持 url-include 和 url-exclude
  *
  * @deprecated 仅为兼容
  * @author Hongs

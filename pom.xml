@@ -9,7 +9,7 @@
     <modules>
         <module>hongs-core</module>
         <module>hongs-serv</module>
-        <module>hongs-serv-system</module>
+        <module>hongs-serv-source</module>
         <module>hongs-serv-server</module>
         <module>hongs-serv-search</module>
         <module>hongs-serv-master</module>

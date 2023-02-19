@@ -27,6 +27,6 @@ RUN apt-get -y update &&\
     chmod 600    /var/spool/cron/crontabs/root &&\
     chmod 755 -R /opt/HongsWMS/bin &&\
     chmod 777 -R /opt/HongsWMS/var &&\
-    /opt/HongsWMS/bin/hdo system.setup --DEBUG 13
+    /opt/HongsWMS/bin/hdo source.setup --DEBUG 13
 
 CMD ["/usr/bin/supervisord"]

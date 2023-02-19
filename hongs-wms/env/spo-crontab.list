@@ -1,2 +1,2 @@
 
-1 1 * * * /opt/HongsWMS/bin/hdo system.serve --DEBUG 2 >> /dev/null 2>&1
+1 1 * * * /opt/HongsWMS/bin/hdo source.serve --DEBUG 2 >> /dev/null 2>&1

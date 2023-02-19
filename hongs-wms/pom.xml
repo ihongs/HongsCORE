@@ -267,7 +267,7 @@
                                         <exclude name="web.*" />
                                         <exclude name="*.war" />
                                     </fileset>
-                                    <fileset dir="${basedir}/../hongs-serv-system">
+                                    <fileset dir="${basedir}/../hongs-serv-source">
                                         <include name="*.bat" />
                                     </fileset>
                                     <fileset dir="${basedir}/../hongs-serv-server">

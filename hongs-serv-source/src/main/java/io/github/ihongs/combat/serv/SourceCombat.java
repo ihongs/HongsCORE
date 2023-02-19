@@ -59,8 +59,8 @@ import org.xml.sax.SAXException;
  *
  * @author Hongs
  */
-@Combat("system")
-public class SystemCombat {
+@Combat("source")
+public class SourceCombat {
 
     private static final Pattern SQL_CMN_PAT = Pattern.compile("(^|[\r\n])--[^\r\n]*");
     private static final Pattern SQL_SET_PAT = Pattern.compile("(^|[\r\n])--(\\S+)=(\\S+)");

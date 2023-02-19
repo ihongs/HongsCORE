@@ -94,6 +94,7 @@
                 </executions>
             </plugin>
             <!-- Minify css and js -->
+            <!--
             <plugin>
                 <artifactId>yuicompressor-maven-plugin</artifactId>
                 <groupId>net.alchim31.maven</groupId>
@@ -117,7 +118,6 @@
                             <includes>
                                 <include>*/hongscore*.js</include>
                                 <include>*/hongscore.css</include>
-                                <!--include>*/bootstrap-icons.css</include-->
                             </includes>
                             <aggregations>
                                 <aggregation>
@@ -140,6 +140,7 @@
                     </execution>
                 </executions>
             </plugin>
+            //-->
             <!-- Build target system -->
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>

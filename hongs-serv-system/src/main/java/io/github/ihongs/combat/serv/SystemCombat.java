@@ -110,8 +110,8 @@ public class SystemCombat {
         Map<String, Object> opts;
         opts = CombatHelper.getOpts(args, "date:s", "!A");
         args = ( String[] ) opts.remove("");
-        if ( 0 == args.length ) {
-            System.err.println("Serve name required!");
+        if (0 == args.length) {
+            CombatHelper.println ("Serve name required!");
             return;
         }
 

@@ -93,54 +93,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- Minify css and js -->
-            <!--
-            <plugin>
-                <artifactId>yuicompressor-maven-plugin</artifactId>
-                <groupId>net.alchim31.maven</groupId>
-                <version>1.5.1</version>
-                <executions>
-                    <execution>
-                        <id>build-hongs-core</id>
-                        <goals>
-                            <goal>compress</goal>
-                        </goals>
-                        <configuration>
-                            <encoding>UTF-8</encoding>
-                            <force>true</force>
-                            <jswarn>false</jswarn>
-                            <suffix>.min</suffix>
-                            <sourceDirectory>web/static/assets</sourceDirectory>
-                            <outputDirectory>web/static/assets</outputDirectory>
-                            <excludes>
-                                <exclude>*/*.min.*</exclude>
-                            </excludes>
-                            <includes>
-                                <include>*/hongscore*.js</include>
-                                <include>*/hongscore.css</include>
-                            </includes>
-                            <aggregations>
-                                <aggregation>
-                                    <insertNewLine>true</insertNewLine>
-                                    <removeIncluded>true</removeIncluded>
-                                    <output>web/static/assets/hongscore.min.js</output>
-                                    <inputDir>web/static/assets/src</inputDir>
-                                    <includes>
-                                        <include>hongscore.min.js</include>
-                                        <include>hongscore-form.min.js</include>
-                                        <include>hongscore-list.min.js</include>
-                                        <include>hongscore-tree.min.js</include>
-                                        <include>hongscore-fork.min.js</include>
-                                        <include>hongscore-file.min.js</include>
-                                        <include>hongscore-date.min.js</include>
-                                    </includes>
-                                </aggregation>
-                            </aggregations>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            //-->
             <!-- Build target system -->
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>

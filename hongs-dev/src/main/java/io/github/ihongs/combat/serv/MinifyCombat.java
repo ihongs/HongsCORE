@@ -4,19 +4,17 @@ import com.yahoo.platform.yui.compressor.CssCompressor;
 import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
 import io.github.ihongs.combat.CombatHelper;
 import io.github.ihongs.combat.anno.Combat;
-import io.github.ihongs.util.Synt;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.io.IOException;
 import java.util.Map;
 import org.mozilla.javascript.ErrorReporter;
 import org.mozilla.javascript.EvaluatorException;
@@ -99,7 +97,8 @@ public class MinifyCombat {
     @Combat("build")
     public static void build(String[] args) {
         if (args.length == 0) {
-            CombatHelper.println("Usage: minify.build FILE1 FILE2 ... [--output OUTPUT_FILE|--suffix FILE_SUFFIX]");
+            CombatHelper.println("Usage: minify.build FILE1 FILE2 ... [--output OUTPUT_FILE]");
+            CombatHelper.println("\tOUTPUT_FILE is '*xxx' will compress one by one");
             return;
         }
 
@@ -111,44 +110,44 @@ public class MinifyCombat {
             return;
         }
 
-        String out = Synt.declare(opts.get("output"),   ""  );
-        String suf = Synt.declare(opts.get("suffix"), ".min");
+        String fn = (String) opts.get("output");
+        char[] ln = "\r\n".toCharArray (  );
+        Reader fr ;
+        Writer fw ;
+        PrintStream eo = CombatHelper.ERR.get();
 
-        PrintStream err = CombatHelper.ERR.get();
-        FileReader  fr;
-        FileWriter  fw;
-
-        if (out.isEmpty()) {
-            for(String src : args) {
-                out  = src.replaceAll("\\.\\w+$", suf + "$0");
+        if (fn != null && fn.startsWith ("*.")) {
+                String fe = fn.substring(1);
+            for(String fm : args) {
+                fn  =  fm.replaceAll("\\.\\w+$", fe + "$0");
 
                 try {
-                    fw = new FileWriter(new File(out));
+                    fw = new OutputStreamWriter(new FileOutputStream(fn), "UTF-8");
                 } catch (IOException ex) {
-                    CombatHelper.println("Output file '"+out+"' can not write. "+ex.getMessage());
+                    CombatHelper.println("Output file '"+fn+"' can not write. "+ex.getMessage());
                     continue;
                 }
 
                 try {
-                    fr = new FileReader(new File(src));
-                } catch (FileNotFoundException ex) {
-                    CombatHelper.println("Source file '"+src+"' is not exists. "+ex.getMessage());
+                    fr = new  InputStreamReader(new  FileInputStream(fm), "UTF-8");
+                } catch (IOException ex) {
+                    CombatHelper.println("Source file '"+fm+"' is not exists. "+ex.getMessage());
                     continue;
                 }
 
                 try {
-                    if (out.endsWith(".js" )) {
-                        buildJs (src, fr, fw, err);
+                    if (fm.endsWith(".js" )) {
+                        buildJs (fr, fw, eo, fm);
                     } else
-                    if (out.endsWith(".css")) {
-                        buildCss(src, fr, fw, err);
+                    if (fm.endsWith(".css")) {
+                        buildCss(fr, fw, eo, fm);
                     } else {
-                        CombatHelper.println("Source file '"+src+"' not support, must be '.js' or '.css'");
+                        CombatHelper.println("Source file '"+fm+"' not support, must be '.js' or '.css'");
                         continue;
                     }
-                    fw.append("\r\n"); // 结尾换行
+                    fw.write(ln); // 结尾换行
                 } catch (IOException|EvaluatorException ex) {
-                    CombatHelper.println("Compress '"+src+"' to '"+out+"' error. "+ex.getMessage());
+                    ex.printStackTrace(eo);
                     continue;
                 }
 
@@ -156,38 +155,42 @@ public class MinifyCombat {
                     fw.close();
                 }
                 catch (IOException ex) {
-                    ex.printStackTrace(err);
+                    ex.printStackTrace(eo);
                 }
             }
         } else {
+            if (fn == null) {
+                fw = new OutputStreamWriter(CombatHelper.OUT.get());
+            } else {
                 try {
-                    fw = new FileWriter(new File(out));
+                    fw = new OutputStreamWriter(new FileOutputStream(fn), "UTF-8");
                 } catch (IOException ex) {
-                    CombatHelper.println("Output file '"+out+"' can not write. "+ex.getMessage());
+                    CombatHelper.println("Output file '"+fn+"' can not write. "+ex.getMessage());
                     return;
                 }
+            }
 
-            for(String src : args) {
+            for(String fm : args) {
                 try {
-                    fr = new FileReader(new File(src));
-                } catch (FileNotFoundException ex) {
-                    CombatHelper.println("Source file '"+src+"' is not exists. "+ex.getMessage());
+                    fr = new  InputStreamReader(new  FileInputStream(fm), "UTF-8");
+                } catch (IOException ex) {
+                    CombatHelper.println("Source file '"+fm+"' is not exists. "+ex.getMessage());
                     continue;
                 }
 
                 try {
-                    if (out.endsWith(".js" )) {
-                        buildJs (src, fr, fw, err);
+                    if (fm.endsWith(".js" )) {
+                        buildJs (fr, fw, eo, fm);
                     } else
-                    if (out.endsWith(".css")) {
-                        buildCss(src, fr, fw, err);
+                    if (fm.endsWith(".css")) {
+                        buildCss(fr, fw, eo, fm);
                     } else {
-                        CombatHelper.println("Output file '"+out+"' not support, must be '.js' or '.css'");
+                        CombatHelper.println("Output file '"+fn+"' not support, must be '.js' or '.css'");
                         continue;
                     }
-                    fw.append("\r\n"); // 结尾换行
+                    fw.write(ln); // 结尾换行
                 } catch (IOException|EvaluatorException ex) {
-                    CombatHelper.println("Compress '"+src+"' to '"+out+"' error. "+ex.getMessage());
+                    ex.printStackTrace(eo);
                     continue;
                 }
             }
@@ -196,55 +199,63 @@ public class MinifyCombat {
                     fw.close();
                 }
                 catch (IOException ex) {
-                    ex.printStackTrace(err);
+                    ex.printStackTrace(eo);
                 }
         }
     }
 
-    private static void buildJs (String fn, Reader in, Writer out, final PrintStream err) throws IOException, EvaluatorException {
-        JavaScriptCompressor compressor = new JavaScriptCompressor(in, new ErrorReporter() {
+    private static void buildJs (Reader in, Writer out, final PrintStream err, final String fn) throws IOException, EvaluatorException {
+        try {
+            JavaScriptCompressor compressor = new JavaScriptCompressor(in, new ErrorReporter() {
 
-            @Override
-            public void warning(String message, String sourceName, int line, String lineSource, int lineOffset) {
-                err.println("\n[WARNING] in " + fn);
-                if (line < 0 ) {
-                    err.println("  " + message);
-                } else {
-                    err.println("  " + line + ':' + lineOffset + ':' + message);
+                @Override
+                public void warning(String message, String sourceName, int line, String lineSource, int lineOffset) {
+                    err.println("\n[WARNING] in " + fn);
+                    if (line < 0 ) {
+                        err.println("  " + message);
+                    } else {
+                        err.println("  " + line + ':' + lineOffset + ':' + message);
+                    }
                 }
-            }
 
-            @Override
-            public void   error(String message, String sourceName, int line, String lineSource, int lineOffset) {
-                err.println(  "\n[ERROR] in " + fn);
-                if (line < 0 ) {
-                    err.println("  " + message);
-                } else {
-                    err.println("  " + line + ':' + lineOffset + ':' + message);
+                @Override
+                public void   error(String message, String sourceName, int line, String lineSource, int lineOffset) {
+                    err.println(  "\n[ERROR] in " + fn);
+                    if (line < 0 ) {
+                        err.println("  " + message);
+                    } else {
+                        err.println("  " + line + ':' + lineOffset + ':' + message);
+                    }
                 }
-            }
 
-            @Override
-            public EvaluatorException runtimeError(String message, String sourceName, int line, String lineSource, int lineOffset) {
-                error(message, sourceName, line, lineSource, lineOffset);
-                return new EvaluatorException(message);
-            }
+                @Override
+                public EvaluatorException runtimeError(String message, String sourceName, int line, String lineSource, int lineOffset) {
+                    error(message, sourceName, line, lineSource, lineOffset);
+                    return new EvaluatorException(message);
+                }
 
-        });
+            });
 
-        in.close();
-        in = null ;
+            in.close();
+            in = null ;
 
-        compressor.compress(out, -1, true, false, false, false);
+            compressor.compress(out, -1, true, false, false, false);
+        } catch (EvaluatorException  ee) {
+            ee.printStackTrace (err);
+        }
     }
 
-    private static void buildCss(String fn, Reader in, Writer out, final PrintStream err) throws IOException {
-        CssCompressor compressor = new CssCompressor(in);
+    private static void buildCss(Reader in, Writer out, final PrintStream err, final String fn) throws IOException {
+        try {
+            CssCompressor compressor = new CssCompressor(in);
 
-        in.close();
-        in = null ;
+            in.close();
+            in = null ;
 
-        compressor.compress(out, -1);
+            compressor.compress(out, -1);
+        } catch (EvaluatorException  ee) {
+            ee.printStackTrace (err);
+        }
     }
 
 }

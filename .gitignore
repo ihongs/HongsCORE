@@ -4,6 +4,8 @@
 **/WEB-INF/lib
 **/WEB-INF/var
 **/WEB-INF/classes
+/hongs-dev/lib
+/hongs-dev/var
 /hongs-env/*.tar.gz
 
 *.pyc

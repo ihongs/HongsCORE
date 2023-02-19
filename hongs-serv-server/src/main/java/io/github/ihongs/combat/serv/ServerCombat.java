@@ -58,6 +58,83 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 @Combat("server")
 public class ServerCombat {
 
+    @Combat("share")
+    public static void share(String[] args) throws HongsException {
+        int    port = args.length >0 ? Integer.parseInt(args[0]) : 8080;
+        String conf = Core.CORE_PATH + File.separator + "web.xml";
+        if ( ! (new File(conf)).exists( ) ) {
+               conf = Core.CONF_PATH + File.separator + "web.xml";
+        }
+
+        /**
+         * 取消名称
+         * 日志中将记录各独立的线程名
+         * 以便于区分不同的非动作任务
+         */
+        Core.ACTION_NAME.remove();
+        Core.BASE_PATH = System.getProperty("user.dir");
+
+        Server          server;
+        WebAppContext   webapp;
+        ServerConnector conner;
+        Connector[]     connes;
+
+        server = new Server (new QueuedThreadPool());
+        webapp = new WebAppContext( );
+        conner = new ServerConnector(server);
+        connes = new Connector[/**/]{conner};
+
+        conner.setPort(port);
+        conner.setHost(null);
+        server.setConnectors(connes);
+
+        webapp.setDescriptor( conf );
+        webapp.setContextPath  (Core.SERV_PATH);
+        webapp.setResourceBase (Core.BASE_PATH);
+        webapp.setTempDirectory( new File(Core.DATA_PATH + "/server/temp"));
+        webapp.setPersistTempDirectory ( true );
+        webapp.setParentLoaderPriority ( true );
+        webapp.setThrowUnavailableOnStartupException(true);
+        webapp.addAliasCheck( new SameFileAliasChecker() ); // 开启软链支持
+        server.setHandler   (webapp);
+
+        String x;
+
+        // 默认微调
+        x = org.eclipse.jetty.servlet.DefaultServlet.CONTEXT_INIT;
+        webapp.setInitParameter(x+"useFileMappedBuffer", "false");
+        webapp.setInitParameter(x+"dirAllowed"         , "true" );
+
+        // 中止机制
+        Runtime.getRuntime( ).addShutdownHook( new Stoper(server, null) );
+
+        // 启动服务
+        try {
+            server.start();
+
+            if (Core.DEBUG == 0 ) {
+                System.err.println("HTTP server is started.");
+            }
+
+            /**
+             * URL 会话参数等同于对应的 Cookie, 总是小写
+             * server.start_ 执行之前 web.xml 还没解析
+             */
+                x = webapp.getInitParameter (SessionHandler.__SessionIdPathParameterNameProperty);
+            if (x == null || x.isEmpty()) {
+                x = webapp.getServletContext().getSessionCookieConfig().getName();
+                x = x.toLowerCase( );
+                    webapp.getSessionHandler().setSessionIdPathParameterName( x );
+            }
+
+            server.join( );
+        } catch (Exception e) {
+            throw new HongsException(e);
+        } catch (Error     e) {
+            throw new HongsExemption(e);
+        }
+    }
+
     @Combat("start")
     public static void start(String[] args) throws HongsException {
         int    port = args.length >0 ? Integer.parseInt(args[0]) : 8080;
@@ -170,7 +247,7 @@ public class ServerCombat {
         }
 
         // 中止机制
-        Runtime.getRuntime( ).addShutdownHook( new Stoper(server, ppid) );
+        Runtime.getRuntime().addShutdownHook(new Stoper(server, ppid));
 
         // 启动服务
         try {
@@ -235,7 +312,9 @@ public class ServerCombat {
             } catch ( Exception  e ) {
                 throw new Error( e );
             } finally {
-                ppid.delete();
+                if (ppid != null) {
+                    ppid.delete();
+                }
             }
         }
 

@@ -52,8 +52,8 @@
         <link rel="icon" href="favicon.ico" type="image/x-icon"/>
         <link rel="stylesheet" type="text/css" href="static/assets/css/bootstrap.min.css"/>
         <link rel="stylesheet" type="text/css" href="static/assets/css/hongscore.min.css"/>
-        <link rel="stylesheet" type="text/css" href="static/centre/base.min.css"/>
-        <link rel="stylesheet" type="text/css" href="static/centre/form.min.css"/>
+        <link rel="stylesheet" type="text/css" href="static/centre/css/base.min.css"/>
+        <link rel="stylesheet" type="text/css" href="static/centre/css/form.min.css"/>
         <link rel="stylesheet" type="text/css" href="<%=_module%>/<%=_entity%>/form/defines.css"/>
         <!--[if glt IE8.0]>
         <script type="text/javascript" src="static/addons/respond/respond.min.js"></script>

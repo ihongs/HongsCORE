@@ -55,7 +55,7 @@
         <link rel="icon" href="favicon.ico" type="image/x-icon"/>
         <link rel="stylesheet" type="text/css" href="static/assets/css/bootstrap.min.css"/>
         <link rel="stylesheet" type="text/css" href="static/assets/css/hongscore.min.css"/>
-        <link rel="stylesheet" type="text/css" href="static/centra/base.min.css"/>
+        <link rel="stylesheet" type="text/css" href="static/centra/css/base.min.css"/>
         <link rel="stylesheet" type="text/css" href="<%=$module%>/<%=$entity%>/defines.css"/>
         <!--[if glt IE8.0]>
         <script type="text/javascript" src="static/addons/respond/respond.min.js"></script>

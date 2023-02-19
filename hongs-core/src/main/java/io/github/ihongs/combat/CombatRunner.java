@@ -332,7 +332,7 @@ public class CombatRunner implements Runnable
       }
       else
       {
-          lang = cnf.getProperty("core.language.default", Cnst.ZONE_DEF);
+          lang = cnf.getProperty("core.language.default", Cnst.LANG_DEF);
       }
     }
     else

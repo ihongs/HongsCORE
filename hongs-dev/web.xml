@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app
+    xmlns="http://java.sun.com/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+    version="3.1"
+    metadata-complete="true">
+    <display-name>Hongs CORE Framework</display-name>
+    <context-param>
+        <param-name>debug</param-name>
+        <param-value>3</param-value>
+    </context-param>
+    <!-- Session Sets -->
+    <session-config>
+        <session-timeout>1440</session-timeout>
+        <!--tracking-mode>SSL</tracking-mode-->
+        <!--tracking-mode>URL</tracking-mode-->
+        <tracking-mode>COOKIE</tracking-mode>
+        <cookie-config>
+            <http-only>true</http-only>
+            <name>SID</name>
+        </cookie-config>
+    </session-config>
+    <!-- Default Tags -->
+    <jsp-config>
+        <taglib>
+            <taglib-uri>/hongs.tag</taglib-uri>
+            <taglib-location>web.tld</taglib-location>
+        </taglib>
+    </jsp-config>
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+        <welcome-file>index.html</welcome-file>
+        <welcome-file>default.jsp</welcome-file>
+        <welcome-file>default.html</welcome-file>
+    </welcome-file-list>
+</web-app>

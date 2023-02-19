@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <combat system="no">
+        <cmd>minify.build</cmd>
+        <arg>{{$CORE_PATH}}/../hongs-web/web/static/assets/css/hongscore.css</arg>
+    </combat>
+    <combat system="no">
+        <cmd>minify.build</cmd>
+        <arg opt="output">{{$CORE_PATH}}/../hongs-web/web/static/assets/hongscore.min.js</arg>
+        <arg>{{$CORE_PATH}}/../hongs-web/web/static/assets/src/hongscore.js</arg>
+        <arg>{{$CORE_PATH}}/../hongs-web/web/static/assets/src/hongscore-form.js</arg>
+        <arg>{{$CORE_PATH}}/../hongs-web/web/static/assets/src/hongscore-list.js</arg>
+        <arg>{{$CORE_PATH}}/../hongs-web/web/static/assets/src/hongscore-tree.js</arg>
+        <arg>{{$CORE_PATH}}/../hongs-web/web/static/assets/src/hongscore-date.js</arg>
+        <arg>{{$CORE_PATH}}/../hongs-web/web/static/assets/src/hongscore-file.js</arg>
+        <arg>{{$CORE_PATH}}/../hongs-web/web/static/assets/src/hongscore-fork.js</arg>
+    </combat>
+</root>

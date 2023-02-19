@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <combat system="no">
+        <cmd>minify.build</cmd>
+        <arg>{{$CORE_PATH}}/../hongs-wms/web/static/centra/css/base.css</arg>
+        <arg>{{$CORE_PATH}}/../hongs-wms/web/static/centre/css/base.css</arg>
+    </combat>
+    <combat system="no">
+        <cmd>minify.build</cmd>
+        <arg opt="output">{{$CORE_PATH}}/../hongs-wms/web/static/assets/hongsedge.min.js</arg>
+        <arg>{{$CORE_PATH}}/../hongs-web/web/static/assets/src/hongsedge.js</arg>
+        <arg>{{$CORE_PATH}}/../hongs-web/web/static/assets/src/hongsedit.js</arg>
+    </combat>
+    <!-- Merge -->
+    <combat system="no">
+        <cmd>minify.merge</cmd>
+        <arg opt="output">{{$CORE_PATH}}/../hongs-wms/web/static/centra/css/base.all.css</arg>
+        <arg>{{$CORE_PATH}}/../hongs-web/web/static/assets/css/bootstrap.min.css</arg>
+        <arg>{{$CORE_PATH}}/../hongs-web/web/static/assets/css/hongscore.min.css</arg>
+        <arg>{{$CORE_PATH}}/../hongs-wms/web/static/centra/css/base.min.css</arg>
+    </combat>
+    <combat system="no">
+        <cmd>minify.merge</cmd>
+        <arg opt="output">{{$CORE_PATH}}/../hongs-wms/web/static/centre/css/base.all.css</arg>
+        <arg>{{$CORE_PATH}}/../hongs-web/web/static/assets/css/bootstrap.min.css</arg>
+        <arg>{{$CORE_PATH}}/../hongs-web/web/static/assets/css/hongscore.min.css</arg>
+        <arg>{{$CORE_PATH}}/../hongs-wms/web/static/centre/css/base.min.css</arg>
+    </combat>
+    <combat system="no">
+        <cmd>minify.merge</cmd>
+        <arg opt="output">{{$CORE_PATH}}/../hongs-wms/web/static/centre/css/form.all.css</arg>
+        <arg>{{$CORE_PATH}}/../hongs-web/web/static/assets/css/bootstrap.min.css</arg>
+        <arg>{{$CORE_PATH}}/../hongs-web/web/static/assets/css/hongscore.min.css</arg>
+        <arg>{{$CORE_PATH}}/../hongs-wms/web/static/centre/css/form.min.css</arg>
+    </combat>
+    <combat system="no">
+        <cmd>minify.merge</cmd>
+        <arg opt="output">{{$CORE_PATH}}/../hongs-wms/web/static/centra/base.all.js</arg>
+        <arg>{{$CORE_PATH}}/../hongs-wms/web/static/assets/jquery.min.js</arg>
+        <arg>{{$CORE_PATH}}/../hongs-web/web/static/assets/bootstrap.min.js</arg>
+        <arg>{{$CORE_PATH}}/../hongs-web/web/static/assets/hongscore.min.js</arg>
+    </combat>
+    <combat system="no">
+        <cmd>minify.merge</cmd>
+        <arg opt="output">{{$CORE_PATH}}/../hongs-wms/web/static/centre/base.all.js</arg>
+        <arg>{{$CORE_PATH}}/../hongs-wms/web/static/assets/jquery.min.js</arg>
+        <arg>{{$CORE_PATH}}/../hongs-web/web/static/assets/bootstrap.min.js</arg>
+        <arg>{{$CORE_PATH}}/../hongs-web/web/static/assets/hongscore.min.js</arg>
+    </combat>
+    <combat system="no">
+        <cmd>minify.merge</cmd>
+        <arg opt="output">{{$CORE_PATH}}/../hongs-wms/web/static/centre/form.all.js</arg>
+        <arg>{{$CORE_PATH}}/../hongs-wms/web/static/assets/jquery.min.js</arg>
+        <arg>{{$CORE_PATH}}/../hongs-web/web/static/assets/bootstrap.min.js</arg>
+        <arg>{{$CORE_PATH}}/../hongs-web/web/static/assets/hongscore.min.js</arg>
+    </combat>
+</root>

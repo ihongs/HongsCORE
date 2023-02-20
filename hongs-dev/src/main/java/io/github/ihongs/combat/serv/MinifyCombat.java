@@ -98,7 +98,7 @@ public class MinifyCombat {
     public static void build(String[] args) {
         if (args.length == 0) {
             CombatHelper.println("Usage: minify.build FILE1 FILE2 ... [--output OUTPUT_FILE]");
-            CombatHelper.println("\tOUTPUT_FILE is '*xxx' will compress one by one");
+            CombatHelper.println("\tOUTPUT_FILE is '*xxx' will compress one by one, with suffix 'xxx'");
             return;
         }
 

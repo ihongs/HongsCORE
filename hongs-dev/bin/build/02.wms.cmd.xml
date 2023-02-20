@@ -9,24 +9,23 @@
     <combat system="no">
         <cmd>minify.build</cmd>
         <arg opt="output">*.min</arg>
-        <arg>{{$CORE_PATH}}/../hongs-wms/web/static/centra/css/base.css</arg>
-        <arg>{{$CORE_PATH}}/../hongs-wms/web/static/centre/css/base.css</arg>
+        <arg>{{$CORE_PATH}}/../hongs-wms/web/static/assets/css/centra.css</arg>
+        <arg>{{$CORE_PATH}}/../hongs-wms/web/static/assets/css/centre.css</arg>
     </combat>
     <!-- Merge -->
-    <!--
     <combat system="no">
         <cmd>minify.merge</cmd>
-        <arg opt="output">{{$CORE_PATH}}/../hongs-wms/web/static/assets/base.min.js</arg>
-        <arg>{{$CORE_PATH}}/../hongs-wms/web/static/assets/jquery.min.js</arg>
+        <arg opt="output">{{$CORE_PATH}}/../hongs-wms/web/static/assets/common.min.js</arg>
+        <arg>{{$CORE_PATH}}/../hongs-web/web/static/assets/jquery.min.js</arg>
+        <arg>{{$CORE_PATH}}/../hongs-web/web/static/assets/jquery-ui.min.js</arg>
         <arg>{{$CORE_PATH}}/../hongs-web/web/static/assets/bootstrap.min.js</arg>
         <arg>{{$CORE_PATH}}/../hongs-web/web/static/assets/hongscore.min.js</arg>
-        <arg>{{$CORE_PATH}}/../hongs-web/web/static/assets/hongsedge.min.js</arg>
+        <arg>{{$CORE_PATH}}/../hongs-wms/web/static/assets/hongsedge.min.js</arg>
     </combat>
     <combat system="no">
         <cmd>minify.merge</cmd>
-        <arg opt="output">{{$CORE_PATH}}/../hongs-wms/web/static/assets/css/base.min.css</arg>
+        <arg opt="output">{{$CORE_PATH}}/../hongs-wms/web/static/assets/css/common.min.css</arg>
         <arg>{{$CORE_PATH}}/../hongs-web/web/static/assets/css/bootstrap.min.css</arg>
         <arg>{{$CORE_PATH}}/../hongs-web/web/static/assets/css/hongscore.min.css</arg>
     </combat>
-    //-->
 </root>

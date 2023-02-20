@@ -43,11 +43,11 @@ body {
 }
 
 #headbox a#logout {
-    color: #a44;
+    color: #c22;
 }
 #headbox a#logout:hover ,
 #headbox a#logout:hover {
-    color: #d55;
+    color: #e44;
 }
 
 /* 底部导航菜单样式 */

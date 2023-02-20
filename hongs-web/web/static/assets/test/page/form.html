@@ -13,108 +13,115 @@
         <input type="hidden" name="temp" value="default"/>
         <input type="hidden" name="kind" value="html"/>
         <input type="hidden" name="stave" value="0"/>
-        <div class="form-group row">
-            <label class="col-sm-3 col-md-2 control-label form-control-static text-right">名称</label>
-            <div class="col-sm-9 col-md-8">
-                <input type="text" name="name" class="form-control" required="required">
-            </div>
-            <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
-            <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static">这是一行说明文字</div>
-        </div>
-        <div class="form-group row">
-            <label class="col-sm-3 col-md-2 control-label form-control-static text-right">备注</label>
-            <div class="col-sm-9 col-md-8">
-                <textarea name="note" class="form-control"/></textarea>
-            </div>
-            <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
-            <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"></div>
-        </div>
-        <div class="form-group row">
-            <label class="col-sm-3 col-md-2 control-label form-control-static text-right">类型</label>
-            <div class="col-sm-9 col-md-8">
-                <input type="hidden" name="type." value="" class="form-ignored"/>
-                <select name="type." class="form-control" required="required" multiple="multiple">
-                </select>
-            </div>
-            <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
-            <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"></div>
-        </div>
-        <div class="form-group row">
-            <label class="col-sm-3 col-md-2 control-label form-control-static text-right">权限</label>
-            <div class="col-sm-9 col-md-8">
-                <input type="hidden" name="auth." value="" class="form-ignored"/>
-                <div class="checkbox" data-fn="auth." data-ft="_check" data-required="required">
+        <div class="panel panel-default">
+            <div class="form-body">
+                <div class="form-group row">
+                    <label class="col-sm-3 col-md-2 control-label form-control-static text-right">名称</label>
+                    <div class="col-sm-9 col-md-8">
+                        <input type="text" name="name" class="form-control" required="required">
+                    </div>
+                    <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
+                    <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static">这是一行说明文字</div>
                 </div>
-            </div>
-            <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
-            <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"></div>
-        </div>
-        <div class="form-group row dont-close">
-            <label class="col-sm-3 col-md-2 control-label form-control-static text-right">日期</label>
-            <div class="col-sm-9 col-md-8">
-                <div class="input-group">
-                    <span class="input-group-addon">从</span>
-                    <input type="text" name="mtime" class="form-control" data-toggle="hsDate" data-type="timestamp" data-fl="v || new Date().getTime() / 1000" placeholder="开始时间" readonly/>
-                    <span class="input-group-addon">&nbsp;</span>
+                <div class="form-group row">
+                    <label class="col-sm-3 col-md-2 control-label form-control-static text-right">备注</label>
+                    <div class="col-sm-9 col-md-8">
+                        <textarea name="note" class="form-control"/></textarea>
+                    </div>
+                    <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
+                    <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"></div>
                 </div>
-                <div class="input-group">
-                    <span class="input-group-addon">到</span>
-                    <input type="text" name="ctime" class="form-control" data-toggle="hsDate" data-type="timestamp" data-fl="v || new Date().getTime() / 1000" placeholder="结束时间" readonly/>
-                    <span class="input-group-addon">&nbsp;</span>
+                <div class="form-group row">
+                    <label class="col-sm-3 col-md-2 control-label form-control-static text-right">类型</label>
+                    <div class="col-sm-9 col-md-8">
+                        <input type="hidden" name="type." value="" class="form-ignored"/>
+                        <select name="type." class="form-control" required="required" multiple="multiple">
+                        </select>
+                    </div>
+                    <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
+                    <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"></div>
                 </div>
-            </div>
-            <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
-            <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"></div>
-        </div>
-        <div class="form-group row">
-            <label class="col-sm-3 col-md-2 control-label form-control-static text-right">关联</label>
-            <div class="col-sm-9 col-md-8">
-                <input type="hidden" name="sect_id" class="form-ignored"/>
-                <ul class="pickbox" data-ft="_fork" data-fn="sect_id" data-ak="section" data-tk="name" data-vk="id" data-required="required" data-unpicked-error="尚未选择分类"></ul>
-                <button type="button" class="btn btn-default form-control" data-toggle="hsFork" data-target="@" data-href="page/pick.html">选择分类</button>
-            </div>
-            <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
-            <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"></div>
-        </div>
-        <div class="form-group row dont-close">
-            <label class="col-sm-3 col-md-2 control-label form-control-static text-right">文件</label>
-            <div class="col-sm-9 col-md-8">
-                <input type="text" name="file." class="form-ignored invisible"/>
-                <input type="file" name="file." class="form-ignored invisible"/>
-                <ul class="pickbox" data-ft="_file" data-fn="file." data-required="required" data-unpicked-error="尚未选择附件"></ul>
-                <button type="button" class="btn btn-default form-control" data-toggle="hsFile">选择附件</button>
-            </div>
-            <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
-            <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"></div>
-        </div>
-        <div class="form-group row dont-close">
-            <label class="col-sm-3 col-md-2 control-label form-control-static text-right">图片</label>
-            <div class="col-sm-9 col-md-8">
-                <input type="text" name="snap." class="form-ignored invisible"/>
-                <input type="file" name="snap." class="form-ignored invisible" accept="image/*"/>
-                <ul class="pickbox" data-ft="_view" data-fn="snap." data-size="100*100" data-required="required" data-unpicked-error="尚未选择图片"></ul>
-                <button type="button" class="btn btn-default form-control" data-toggle="hsView">选择图片</button>
-            </div>
-            <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
-            <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"></div>
-        </div>
-        <div class="form-group row">
-            <label class="col-sm-3 col-md-2 control-label form-control-static text-right">标准文件上传</label>
-            <div class="col-sm-9 col-md-8">
-                <input type="file" name="base_file" class="form-control"/>
-                <div class="checkbox">
-                    <label><input type="checkbox" name="base_file" value=""/> 清除旧的文件</label>
+                <div class="form-group row">
+                    <label class="col-sm-3 col-md-2 control-label form-control-static text-right">权限</label>
+                    <div class="col-sm-9 col-md-8">
+                        <input type="hidden" name="auth." value="" class="form-ignored"/>
+                        <div class="checkbox" data-fn="auth." data-ft="_check" data-required="required">
+                        </div>
+                    </div>
+                    <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
+                    <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"></div>
                 </div>
-            </div>
-            <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
-            <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"></div>
-        </div>
-        <hr/>
-        <div class="row">
-            <div class="col-sm-9 col-md-8 col-sm-offset-3 col-md-offset-2">
-                <button type="submit" class="commit btn btn-primary">提交</button>
-                <button type="button" class="cancel btn btn-link"   >取消</button>
-            </div>
-        </div>
+                <div class="form-group row dont-close">
+                    <label class="col-sm-3 col-md-2 control-label form-control-static text-right">日期</label>
+                    <div class="col-sm-9 col-md-8">
+                        <div class="input-group">
+                            <span class="input-group-addon">从</span>
+                            <input type="text" name="mtime" class="form-control" data-toggle="hsDate" data-type="timestamp" data-fl="v || new Date().getTime() / 1000" placeholder="开始时间" readonly/>
+                            <span class="input-group-addon">&nbsp;</span>
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-addon">到</span>
+                            <input type="text" name="ctime" class="form-control" data-toggle="hsDate" data-type="timestamp" data-fl="v || new Date().getTime() / 1000" placeholder="结束时间" readonly/>
+                            <span class="input-group-addon">&nbsp;</span>
+                        </div>
+                    </div>
+                    <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
+                    <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"></div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-3 col-md-2 control-label form-control-static text-right">关联</label>
+                    <div class="col-sm-9 col-md-8">
+                        <input type="hidden" name="sect_id" class="form-ignored"/>
+                        <ul class="pickbox" data-ft="_fork" data-fn="sect_id" data-ak="section" data-tk="name" data-vk="id" data-required="required" data-unpicked-error="尚未选择分类"></ul>
+                        <button type="button" class="btn btn-default form-control" data-toggle="hsFork" data-target="@" data-href="page/pick.html">选择分类</button>
+                    </div>
+                    <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
+                    <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"></div>
+                </div>
+                <div class="form-group row dont-close">
+                    <label class="col-sm-3 col-md-2 control-label form-control-static text-right">文件</label>
+                    <div class="col-sm-9 col-md-8">
+                        <input type="text" name="file." class="form-ignored invisible"/>
+                        <input type="file" name="file." class="form-ignored invisible"/>
+                        <ul class="pickbox" data-ft="_file" data-fn="file." data-required="required" data-unpicked-error="尚未选择附件"></ul>
+                        <button type="button" class="btn btn-default form-control" data-toggle="hsFile">选择附件</button>
+                    </div>
+                    <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
+                    <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"></div>
+                </div>
+                <div class="form-group row dont-close">
+                    <label class="col-sm-3 col-md-2 control-label form-control-static text-right">图片</label>
+                    <div class="col-sm-9 col-md-8">
+                        <input type="text" name="snap." class="form-ignored invisible"/>
+                        <input type="file" name="snap." class="form-ignored invisible" accept="image/*"/>
+                        <ul class="pickbox" data-ft="_view" data-fn="snap." data-size="100*100" data-required="required" data-unpicked-error="尚未选择图片"></ul>
+                        <button type="button" class="btn btn-default form-control" data-toggle="hsView">选择图片</button>
+                    </div>
+                    <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
+                    <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"></div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-3 col-md-2 control-label form-control-static text-right">标准文件上传</label>
+                    <div class="col-sm-9 col-md-8">
+                        <input type="file" name="base_file" class="form-control"/>
+                        <div class="checkbox">
+                            <label><input type="checkbox" name="base_file" value=""/> 清除旧的文件</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
+                    <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"></div>
+                </div>
+            </div><!-- End form-body -->
+            <div class="form-foot">
+                <div class="form-group row">
+                    <div class="col-sm-9 col-md-8 col-sm-offset-3 col-md-offset-2">
+                        <div class="btn-toolbar">
+                            <button type="submit" class="commit btn btn-primary">提交</button>
+                            <button type="button" class="cancel btn btn-link"   >取消</button>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- End form-foot -->
+        </div><!-- End panel -->
     </form>
 </div>

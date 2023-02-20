@@ -4,20 +4,24 @@
      data-load-url="data/sections.json"
      data-open-urls-0="['page/form.html','.create','@']"
      data--0="_fill__fork:(hsListFillFork)">
-    <div class="row">
-        <div class="toolbox col-md-8 btn-group">
+    <form class="findbox toolbox board row" onsubmit="return false;">
+        <div class="col-md-6">
+            <div class="btn-group">
             <button type="button" class="commit btn btn-primary">确认选择</button>
             <button type="button" class="create btn btn-default">添加</button>
+            </div>
         </div>
-        <form class="findbox col-md-4 input-group" action="" method="POST">
-            <input type="search" name="wd" class="form-control input-search"/>
-            <span class="input-group-btn">
-                <button type="submit" class="btn btn-default"><span class="bi bi-hi-search"></span></button>
-            </span>
-        </form>
-    </div>
-    <div class="listbox table-responsive">
-        <table class="table table-hover table-striped">
+        <div class="col-md-6">
+            <div class="input-group">
+                <input type="search" name="wd" class="form-control input-search"/>
+                <span class="input-group-btn">
+                    <button type="submit" class="btn btn-default"><span class="bi bi-hi-search"></span></button>
+                </span>
+            </div>
+        </div>
+    </form>
+    <div class="listbox panel panel-default table-responsive">
+        <table class="table table-hover table-striped table-compressed">
             <thead>
                 <tr>
                     <th data-fn="id[]" data-ft="_fork" class="_check">

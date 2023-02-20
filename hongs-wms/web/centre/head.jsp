@@ -175,7 +175,7 @@
 </nav>
 
 <div class="container">
-    <ol class="breadcrumb tabs laps hold-close hide-first home-bread panel panel-default" id="navi-menubar" data-target="#main-context" data-topple="hsTabs">
+    <ol class="breadcrumb tabs laps home-bread hold-live-close hide-less-bread panel panel-default" id="navi-menubar" data-target="#main-context" data-topple="hsTabs">
         <li class="home-crumb active">
             <a href="javascript:;">
                 <i class="bi bi-hi-path "></i>

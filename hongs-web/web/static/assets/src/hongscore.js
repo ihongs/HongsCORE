@@ -3139,6 +3139,10 @@ function(evt) {
 
 // 选项卡和导航条
 $(document)
+.on("click", "[data-toggle=hsTabs]>li>a .close",
+function() {
+    $(this).closest("a").hsClose();
+})
 .on("click", "[data-toggle=hsTabs]>li>a",
 function() {
     var lnk = $(this);
@@ -3151,24 +3155,14 @@ function() {
     if (tab.is(".active,.inactive") ) {
         return;
     }
-    if (nav.is(".tabs.laps")) {
-        // 后退一页
-        if ( tab.is(".back-crumb" ) ) {
-                nav.find('li:last a').hsClose();
-            if (nav.find(".active").size() < 1) {
-                nav.find('li:last a').  click();
+    // 联动关闭
+    if (nav.is(".tabs.laps") && ! tab.is(".host-crumb,.hold-crumb")) {
+        var lis = tab.nextAll().find("a");
+        if (lis.size()) {
+            for(var i = lis.size() -1; i > -1; i --) {
+              $(lis[i]).hsClose( );
             }
             return;
-        } else
-        // 联动关闭
-        if (!tab.is(".hook-crumb,.hold-crumb")) {
-            var lis = tab.nextAll().find( "a" );
-            if (lis.size()) {
-                for(var i = lis.size() -1; i>-1; i --) {
-                  $(lis[i]).hsClose( );
-                }
-                return;
-            }
         }
     }
     // 延迟加载
@@ -3192,15 +3186,12 @@ function() {
     pno.trigger("hsHide").hide();
     pne.show().trigger("hsShow");
 })
-.on("click", "[data-toggle=hsTabs]>li>a .close",
-function() {
-    $(this).closest("a").hsClose();
-})
-.on("hsStab" , "[data-toggle=hsTabs].tabs.laps",
+.on("hsStab", "[data-toggle=hsTabs]",
 function() {
     var nav = $(this);
+    nav.toggleClass("less-bread", nav.children().size() <= 1); // 单一页签
     nav.toggleClass("home-bread", nav.children('.home-crumb').is(".active")); // 主页
-    nav.toggleClass("hook-bread", nav.children('.hook-crumb').is(".active")); // 主页显示
+    nav.toggleClass("host-bread", nav.children('.host-crumb').is(".active")); // 主页显示
     nav.toggleClass("hold-bread", nav.children('.hold-crumb').is(".active")); // 总是显示
 });
 

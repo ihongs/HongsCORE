@@ -50,18 +50,13 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <base href="<%=request.getContextPath()%>/">
         <link rel="icon" href="favicon.ico" type="image/x-icon"/>
-        <link rel="stylesheet" type="text/css" href="static/assets/css/bootstrap.min.css"/>
-        <link rel="stylesheet" type="text/css" href="static/assets/css/hongscore.min.css"/>
-        <link rel="stylesheet" type="text/css" href="static/centre/css/base.min.css"/>
-        <link rel="stylesheet" type="text/css" href="static/centre/css/form.min.css"/>
+        <link rel="stylesheet" type="text/css" href="static/assets/css/common.min.css"/>
+        <link rel="stylesheet" type="text/css" href="static/assets/css/centre.min.css"/>
         <link rel="stylesheet" type="text/css" href="<%=_module%>/<%=_entity%>/form/defines.css"/>
         <!--[if glt IE8.0]>
         <script type="text/javascript" src="static/addons/respond/respond.min.js"></script>
         <![endif]-->
-        <script type="text/javascript" src="static/assets/jquery.min.js"></script>
-        <script type="text/javascript" src="static/assets/bootstrap.min.js"></script>
-        <script type="text/javascript" src="static/assets/hongscore.min.js"></script>
-        <script type="text/javascript" src="static/assets/hongsedge.min.js"></script>
+        <script type="text/javascript" src="static/assets/common.min.js"></script>
         <script type="text/javascript" src="common/conf/default.js"></script>
         <script type="text/javascript" src="common/lang/default.js"></script>
         <script type="text/javascript" src="common/auth/centre.js" ></script>
@@ -73,7 +68,7 @@
         <script type="text/javascript"><%=_script%></script>
         <%}%>
     </head>
-    <body>
+    <body class="plain-page">
         <div id="context" class="container">
             <%if (_heading != null && !_heading.isEmpty()) {%>
             <h1 class="page-heading"><%=_heading%></h1>

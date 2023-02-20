@@ -54,17 +54,13 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <base href="<%=request.getContextPath()%>/">
         <link rel="icon" href="favicon.ico" type="image/x-icon"/>
-        <link rel="stylesheet" type="text/css" href="static/assets/css/bootstrap.min.css"/>
-        <link rel="stylesheet" type="text/css" href="static/assets/css/hongscore.min.css"/>
-        <link rel="stylesheet" type="text/css" href="static/centre/css/base.min.css"/>
+        <link rel="stylesheet" type="text/css" href="static/assets/css/common.min.css"/>
+        <link rel="stylesheet" type="text/css" href="static/assets/css/centre.min.css"/>
         <link rel="stylesheet" type="text/css" href="<%=$module%>/<%=$entity%>/defines.css"/>
         <!--[if glt IE8.0]>
         <script type="text/javascript" src="static/addons/respond/respond.min.js"></script>
         <![endif]-->
-        <script type="text/javascript" src="static/assets/jquery.min.js"></script>
-        <script type="text/javascript" src="static/assets/bootstrap.min.js"></script>
-        <script type="text/javascript" src="static/assets/hongscore.min.js"></script>
-        <script type="text/javascript" src="static/assets/hongsedge.min.js"></script>
+        <script type="text/javascript" src="static/assets/common.min.js"></script>
         <script type="text/javascript" src="common/conf/default.js"></script>
         <script type="text/javascript" src="common/lang/default.js"></script>
         <script type="text/javascript" src="common/auth/centre.js" ></script>
@@ -79,20 +75,29 @@
             <%} /* End if */%>
             <div id="bodybox">
                 <div id="main-context" class="container labs laps">
-                    <div><div>
+                    <div>
+                        <ul class="nav nav-tabs tabs hide-less-bread hide-icon-after board" data-toggle="hsTabs" data-target="+">
                         <%if ( $tabs.length() > 0 ) {%>
-                        <ul class="nav nav-tabs tabs halt-title panel" data-toggle="hsTabs" data-target="+">
                             <%=$tabs%>
-                        </ul>
+                        <%} else {%>
+                            <li class="active">
+                                <a href="javascript:;" data-href="<%=$href%>">
+                                    <span class="title"><%=$locale.translate("fore.entire.title", $title)%></span>
+                                </a>
+                            </li>
                         <%} /* End if */%>
+                        </ul>
                         <div data-load="<%=$href%>"></div>
-                    </div></div>
+                    </div>
                 </div>
             </div>
         </div>
         <script type="text/javascript">
             (function($) {
-                var context = $("#main-context");
+                var context = $("#main-context>:last");
+                
+                // 激活页签
+                context.find(">ul" ).trigger("hsStab");
 
                 // 外部定制
                 window["<%=$func%>"] && window["<%=$func%>"](context);

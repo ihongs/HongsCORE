@@ -139,7 +139,7 @@
             </a>
         </div>
         <div>
-            <ol id="navi-menubar" class="navbar-left breadcrumb tabs laps halt-close" data-topple="hsTabs" data-target="#main-context">
+            <ol id="navi-menubar" class="navbar-left breadcrumb tabs laps home-bread hide-idle-close" data-topple="hsTabs" data-target="#main-context">
                 <li class="home-crumb active">
                     <a href="javascript:;">
                         <i class="bi bi-hi-path"></i>

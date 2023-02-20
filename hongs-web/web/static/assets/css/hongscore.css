@@ -256,29 +256,27 @@ input[type="time"].form-control {
 
 /** 可后退导航条 **/
 
-.tabs.home-bread.hide-first {
+/**
+ * hide-less-bread 空或只有一个页签时隐藏
+ * hold-live-close 固定活动页签的关闭按钮
+ * hide-idle-close 隐藏非活动页签关闭按钮
+ * hide-icon-after 有图标非活动的隐藏其他
+ */
+
+.tabs.hide-less-bread:empty ,
+.tabs.hide-less-bread.less-bread ,
+.tabs.hold-live-close li:not(.active) .close ,
+.tabs.hide-idle-close li:not(.active) .close ,
+.tabs.hide-icon-after li:not(.active) .bi~.title ,
+.tabs.hide-icon-after li:not(.active) .bi~.close ,
+.tabs:not(.home-bread):not(.host-bread) .host-crumb {
     display: none;
 }
 
-.tabs.home-bread .back-crumb ,
-.tabs.hook-bread .back-crumb ,
-.tabs.hold-bread .back-crumb ,
-.tabs:not(.home-bread):not(.hook-bread) .hook-crumb {
-    display: none;
-}
-
-.tabs.hide-close .close ,
-.tabs.hold-close li:not(.active) .close ,
-.tabs.halt-close li:not(.active) .close ,
-.tabs.halt-title li:not(.active) .bi~.close ,
-.tabs.halt-title li:not(.active) .bi~.title {
-    display: none;
-}
-
-.tabs.hold-close {
+.tabs.hold-live-close {
     position: relative;
 }
-.tabs.hold-close li.active .close {
+.tabs.hold-live-close li.active .close {
     position: absolute;
     right : 15px;
     width : 20px;
@@ -308,8 +306,7 @@ input[type="time"].form-control {
 }
 
 .breadcrumb > li.home-crumb::before ,
-.breadcrumb > li.back-crumb::before ,
-.breadcrumb > li.hook-crumb::before ,
+.breadcrumb > li.host-crumb::before ,
 .breadcrumb > li.hold-crumb::before {
     padding: 0 ;
     content: "";

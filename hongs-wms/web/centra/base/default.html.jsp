@@ -53,17 +53,13 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <base href="<%=request.getContextPath()%>/">
         <link rel="icon" href="favicon.ico" type="image/x-icon"/>
-        <link rel="stylesheet" type="text/css" href="static/assets/css/bootstrap.min.css"/>
-        <link rel="stylesheet" type="text/css" href="static/assets/css/hongscore.min.css"/>
-        <link rel="stylesheet" type="text/css" href="static/centra/css/base.min.css"/>
+        <link rel="stylesheet" type="text/css" href="static/assets/css/common.min.css"/>
+        <link rel="stylesheet" type="text/css" href="static/assets/css/centra.min.css"/>
         <link rel="stylesheet" type="text/css" href="<%=$module%>/<%=$entity%>/defines.css"/>
         <!--[if glt IE8.0]>
         <script type="text/javascript" src="static/addons/respond/respond.min.js"></script>
         <![endif]-->
-        <script type="text/javascript" src="static/assets/jquery.min.js"></script>
-        <script type="text/javascript" src="static/assets/bootstrap.min.js"></script>
-        <script type="text/javascript" src="static/assets/hongscore.min.js"></script>
-        <script type="text/javascript" src="static/assets/hongsedge.min.js"></script>
+        <script type="text/javascript" src="static/assets/common.min.js"></script>
         <script type="text/javascript" src="common/conf/default.js"></script>
         <script type="text/javascript" src="common/lang/default.js"></script>
         <script type="text/javascript" src="common/auth/centra.js" ></script>
@@ -78,8 +74,8 @@
             <%} /* End if */%>
             <div id="bodybox">
                 <div id="main-context" class="container-fluid labs laps">
-                    <div><div>
-                        <ul class="nav nav-tabs tabs halt-title board" data-toggle="hsTabs" data-target="+">
+                    <div>
+                        <ul class="nav nav-tabs tabs hide-less-bread hide-icon-after board" data-toggle="hsTabs" data-target="+">
                         <%if ( $tabs.length() > 0 ) {%>
                             <%=$tabs%>
                         <%} else {%>
@@ -89,13 +85,13 @@
                                 </a>
                             </li>
                         <%} /* End if */%>
-                            <li class="pull-right" data-eval="H$('!<%=$module%>/<%=$entity%>/select.act') || $(this).hide()">
+                            <li class="pull-right" data-tab="swap">
                                 <a href="javascript:;" data-href="<%=$module+"/"+$entity+"/swap.html"%>" title="<%=$locale.translate("fore.manual.title", $title)%>">
                                     <i class="bi bi-hi-manual"></i>
                                     <span class="title"><%=$locale.translate("fore.manual.title", $title)%></span>
                                 </a>
                             </li>
-                            <li class="pull-right" data-eval="H$('!<%=$module%>/<%=$entity%>/reveal.act') || $(this).hide()">
+                            <li class="pull-right" data-tab="snap">
                                 <a href="javascript:;" data-href="<%=$module+"/"+$entity+"/snap.html"%>" title="<%=$locale.translate("fore.record.title", $title)%>">
                                     <i class="bi bi-hi-reveal"></i>
                                     <span class="title"><%=$locale.translate("fore.record.title", $title)%></span>
@@ -103,13 +99,22 @@
                             </li>
                         </ul>
                         <div data-load="<%=$href%>"></div>
-                    </div></div>
+                    </div>
                 </div>
             </div>
         </div>
         <script type="text/javascript">
             (function($) {
-                var context = $("#main-context");
+                var context = $("#main-context>:last");
+
+                // 权限检查
+                if (! H$('!<%=$module%>/<%=$entity%>/select.act')) {
+                    context.find(">ul>li[data-tab=swap]").remove();
+                }
+                if (! H$('!<%=$module%>/<%=$entity%>/reveal.act')) {
+                    context.find(">ul>li[data-tab=snap]").remove();
+                }
+                context.find(">ul" ).trigger("hsStab");
 
                 // 外部定制
                 window["<%=$func%>"] && window["<%=$func%>"](context);

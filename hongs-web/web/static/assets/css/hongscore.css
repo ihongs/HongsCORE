@@ -191,7 +191,7 @@ input[type="time"].form-control {
 /* 必填标识 */
 .form-icon-required::before ,
 .form-icon-requires::before {
-    color: #a44;
+    color: #c22;
     content: '\2731';
 }
 
@@ -283,7 +283,7 @@ input[type="time"].form-control {
     height: 20px;
     border-radius: 50%;
     text-align: center;
-    background: #d55;
+    background: #c22;
 }
 
 .tabs li a:empty:before ,
@@ -707,10 +707,10 @@ div.bootstrap-tagsinput .tag [data-role="remove"]:after {
     -moz-osx-font-smoothing: grayscale;
 }
 .listbox thead .sort-asc .sort-ico {
-    color  : #4a4;
+    color  : #22c;
 }
 .listbox thead .sort-esc .sort-ico {
-    color  : #a44;
+    color  : #c22;
 }
 .listbox thead .sort-ico::before {
     content: "\f14c";

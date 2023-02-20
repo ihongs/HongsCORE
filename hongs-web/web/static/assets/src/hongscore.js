@@ -2525,25 +2525,25 @@ $.fn.hsClose = function() {
         var pn1 = pns.eq(tb1.index( ) );
         var tb2 = tbs.eq(idx);
         var pn2 = pns.eq(idx);
-        tb1.removeClass("active");
-        tb2.   addClass("active")
-           .   css("display", "");
-        tb2.trigger("hsStab");
-        pn1.trigger("hsHide").hide();
-        pn2.show().trigger("hsShow");
         // 移除可关闭的页签
-        if (tab.has(".close").size()) {
+        if (tab.has(".close").size( ) ) {
             tab.remove();
             prt.remove();
         }
+        tb1.removeClass("active");
+        tb2.   addClass("active")
+           .   css("display", "");
+        tb2.trigger("hsStab"); // 切换事件
+        pn1.trigger("hsHide").hide();
+        pn2.show().trigger("hsShow");
     } else
     // 恢复内容
     if (box.data("hrev")) {
-        var bak =  box.data( "hrev" );
-        prt.append(bak.contents ( ) );
+        var bak =  box.data ("hrev");
+        prt.append(bak.contents( ) );
         box.remove();
         bak.remove();
-        prt.trigger("hsShow"); // 触发事件
+        prt.trigger("hsShow"); // 重现事件
     } else
     // 关闭浮窗
     if (box.closest(".modal").size()) {

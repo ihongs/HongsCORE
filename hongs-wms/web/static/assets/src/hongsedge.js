@@ -983,14 +983,14 @@ HsVeil.prototype = {
         }
     },
     toggle: function() {
-        if (this.sup.parent().size() === 0 ) {
+        if (this.sup.parent().size() === 0) {
             this.show();
         } else {
             this.hide();
         }
     }
 };
-jQuery.fn.hsVeil = function(hide) {
+jQuery.fn.hsToggleInput = function(show) {
     $(this).each(function() {
         var inst = $(this).hsBind(HsVeil, function() {
             var sup = $(this);
@@ -1008,17 +1008,39 @@ jQuery.fn.hsVeil = function(hide) {
             }
             return  sub;
         });
-        if (hide === undefined) {
+        if (show === undefined) {
             inst.toggle();
         } else
-        if (hide) {
-            inst.hide();
-        } else {
+        if (show) {
             inst.show();
+        } else {
+            inst.hide();
         }
     });
     return  this;
 };
+jQuery.fn.hsShowInput = function() {
+    return  this. hsToggleInput (true);
+};
+jQuery.fn.hsHideInput = function() {
+    return  this. hsToggleInput (null);
+};
+jQuery.fn.hsHideValue = function(data) {
+    data = hsSerialArr(data);
+    var hide = $('<input type="hidden" class="form-ignored"/>');
+    this.empty( );
+    for(var i = 0; i < data.length; i ++) {
+        var item = data [i];
+        var node = hide.clone();
+        node.attr("name" , item.name );
+        node.attr("value", item.value);
+        node.appendTo(this);
+    }
+    return  this;
+};
+// 兼容旧版
+jQuery.fn.hsVeil = function(hide) { this.hsToggleInput(hide !== undefined ? ! hide : hide) };
+jQuery.fn.hsHide = jQuery.fn.hsHideValue;
 
 /**
  * 筛选列表填充数据
@@ -1640,52 +1662,11 @@ function hsListInitSort(x, v, n) {
 //** 其他 **/
 
 /**
- * 自适滚动
- * @param part 适配区块
- * @param body 外部容器
- * @param setHeight false: max-height, true: height
- * @param minHeight 默认为 0.5, 0~1 为容器比例, 低于此不设
- * @return 适配高度 无则为 0
+ * 自适滚动(兼容旧版)
+ * @see $.fn.hsRoll
  */
 function hsFlexRoll(part, body, setHeight, minHeight) {
-    if (! part || ! part.size()) return 0;
-    if (! body || ! body.size()) {
-        body = part.closest(".body,body");
-    }
-    if (minHeight === undefined) {
-        minHeight  =  0.5;
-    }
-
-    part.css("overflow-y", "auto");
-    part.css("max-height", "none");
-    var viewHeight = parseFloat(body.prop("clientHeight") || 0);
-    part.height ( viewHeight ); // 规避内容不够而计算不对
-    var bodyHeight = parseFloat(body.prop("scrollHeight") || 0);
-    var partHeight = parseFloat(part.prop("offsetHeight") || 0);
-    var rollHeight = viewHeight - bodyHeight + partHeight;
-
-    // 需区分是否包含 border
-    if (part.css("box-sizing") !== "border-box") {
-        rollHeight = rollHeight
-            -  parseFloat(part.css("border-top-width"   ) || 0)
-            -  parseFloat(part.css("border-bottom-width") || 0);
-    }
-
-    // 可以是容器比例
-    if (minHeight >= 0 && minHeight <= 1) {
-        minHeight  =  minHeight * viewHeight ;
-    }
-
-    part.css ("height" , "auto");
-    if (minHeight <= rollHeight) {
-        if (setHeight) {
-            part.css(/**/"height", Math.floor(rollHeight)+"px");
-        } else {
-            part.css("max-height", Math.floor(rollHeight)+"px");
-        }
-        return rollHeight;
-    }
-    return 0;
+    return $(part).hsRoll(body, setHeight, minHeight);
 }
 
 /**

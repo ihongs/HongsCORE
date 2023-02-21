@@ -1,3 +1,4 @@
+<%@page import="io.github.ihongs.action.FormSet"%>
 <%@page extends="io.github.ihongs.jsp.Pagelet"%>
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@include file="_base_.jsp"%>
@@ -45,6 +46,21 @@
             }
         }
     }
+
+    // 表单是否存在
+    Boolean $form = false;
+    for (String n : new String [ ] {$module +"/"+ $entity , $module} ) {
+        try {
+            FormSet.getInstance(n).getForm( $entity );
+            $form = true ;
+            break ;
+        } catch (HongsException e) {
+            if (910!=e.getErrno( )
+            &&  912!=e.getErrno()) {
+                throw  e ; // 非表单缺失
+            }
+        }
+    }
 %>
 <!doctype html>
 <html>
@@ -85,6 +101,7 @@
                                 </a>
                             </li>
                         <%} /* End if */%>
+                        <%if ( $form ) {%>
                             <li class="pull-right" data-tab="swap">
                                 <a href="javascript:;" data-href="<%=$module+"/"+$entity+"/swap.html"%>" title="<%=$locale.translate("fore.manual.title", $title)%>">
                                     <i class="bi bi-hi-manual"></i>
@@ -97,6 +114,7 @@
                                     <span class="title"><%=$locale.translate("fore.record.title", $title)%></span>
                                 </a>
                             </li>
+                        <%} /* End if */%>
                         </ul>
                         <div data-load="<%=$href%>"></div>
                     </div>

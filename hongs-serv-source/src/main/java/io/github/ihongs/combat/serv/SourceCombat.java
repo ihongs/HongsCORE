@@ -9,6 +9,7 @@ import io.github.ihongs.combat.CombatHelper;
 import io.github.ihongs.combat.CombatRunner;
 import io.github.ihongs.combat.anno.Combat;
 import io.github.ihongs.db.DB;
+import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
 
 import java.io.File;
@@ -43,19 +44,7 @@ import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 /**
- * 管理命令
- *
- * <p>
- * 除了通过命令执行内部命令和 SQL,
- * 还可添加以下启动项启用计划任务:<br/>
- * io.github.ihongs.combat.serv.SystemCombat.Schedu<br/>
- * bin/serve 下以下文件为任务设置:<br/>
- * </p>
- * <pre>
- * !m.cmd.xml 每分钟0秒执行
- * !h.cmd.xml 每小时0分执行
- * !d.cmd.xml 每天的0时执行
- * </pre>
+ * 批量执行命令
  *
  * @author Hongs
  */
@@ -77,31 +66,7 @@ public class SourceCombat {
     );
 
     /**
-     * 维护命令
-     * @param args
-     * @throws HongsException
-     */
-    @Combat( "serve" )
-    public static void serve(String[] args) throws HongsException {
-        List<String> argz = Synt.listOf(args);
-                     argz.add( 0, "serve" );
-        exec( argz.toArray(new String[0]) );
-    }
-
-    /**
-     * 设置命令
-     * @param args
-     * @throws HongsException
-     */
-    @Combat( "setup" )
-    public static void setup(String[] args) throws HongsException {
-        List<String> argz = Synt.listOf(args);
-                     argz.add( 0, "setup" );
-        exec( argz.toArray(new String[0]) );
-    }
-
-    /**
-     * 维护命令
+     * 执行命令
      * @param args
      * @throws HongsException
      */
@@ -376,7 +341,7 @@ public class SourceCombat {
         if (system) {
             runCmd(a.toArray(new String[0]), lg);
         } else {
-            runLet(a.toArray(new String[0]), lg);
+            runBat(a.toArray(new String[0]), lg);
         }
     }
 
@@ -428,10 +393,14 @@ public class SourceCombat {
             }
         }
 
-        runLet(a.toArray(new String[0]), lg);
+        runBat(a.toArray(new String[0]), lg);
     }
 
     private static void runCmd(String[] cs, Looker lg) {
+        if (4 == (4 & Core.DEBUG)) {
+            CoreLogger.trace("SYSTEM " + Syno.concat(" ", (Object[]) cs));
+        }
+        
         // 命令路径相对当前 bin 目录
         String  c = cs[0];
         if (!(new File(c).isAbsolute())) {
@@ -465,7 +434,10 @@ public class SourceCombat {
         }
     }
 
-    private static void runLet(String[] cs, Looker lg) {
+    private static void runBat(String[] cs, Looker lg) {
+        if (4 == (4 & Core.DEBUG)) {
+            CoreLogger.trace("COMBAT " + Syno.concat(" ", (Object[]) cs));
+        }
         try {
             CombatRunner.exec(cs);
         }

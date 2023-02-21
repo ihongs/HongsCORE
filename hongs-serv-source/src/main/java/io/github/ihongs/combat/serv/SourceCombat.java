@@ -402,7 +402,7 @@ public class SourceCombat {
         if (4 == (4 & Core.DEBUG)) {
             CoreLogger.trace("SYSTEM " + Syno.concat(" ", (Object[]) cs));
         }
-        
+
         // 命令路径相对当前 bin 目录
         String  c = cs[0];
         if (!(new File(c).isAbsolute())) {
@@ -469,10 +469,10 @@ public class SourceCombat {
             // 时间格式
             mxp = mxt.group(1);
             if (mxp.startsWith("$")) {
-                mxp = CORE_PATH_REPS.get (mxp.substring(1));
+                mxp = getEnv(mxp.substring(1));
             } else
             if (mxp.startsWith("%")) {
-                mxp = System.getProperty (mxp.substring(1));
+                mxp = getPro(mxp.substring(1));
             } else
             if ("T".equals(mxp)) {
                 mxp = String.valueOf(dst.getTime( ) /***/ );
@@ -592,6 +592,21 @@ public class SourceCombat {
         } catch (ParseException ex) {
             throw new HongsExemption(ex);
         }
+    }
+
+    private static String getEnv(String key) {
+        switch (key) {
+            case "SERVER_ID": return Core.SERVER_ID;
+            case "BASE_PATH": return Core.BASE_PATH;
+            case "CORE_PATH": return Core.CORE_PATH;
+            case "CONF_PATH": return Core.CONF_PATH;
+            case "DATA_PATH": return Core.DATA_PATH;
+        }
+        return System.getenv(key);
+    }
+
+    private static String getPro(String key) {
+        return System.getProperty(key);
     }
 
     private static class Looker {

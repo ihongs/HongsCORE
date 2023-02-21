@@ -229,6 +229,8 @@ public class SourceCombat {
             throw new HongsException(ex);
         }
 
+        CombatHelper.println("Run '" + fo.getName() + "'" );
+
         NodeList l = doc.getDocumentElement()
                         .getChildNodes ();
         for (int i = 0; i < l.getLength(); i ++ ) {

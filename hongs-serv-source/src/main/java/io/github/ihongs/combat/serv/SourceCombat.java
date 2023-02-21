@@ -399,8 +399,8 @@ public class SourceCombat {
     }
 
     private static void runCmd(String[] cs, Looker lg) {
-        if (4 == (4 & Core.DEBUG)) {
-            CoreLogger.trace("SYSTEM " + Syno.concat(" ", (Object[]) cs));
+        if (Core.DEBUG > 1 ) {
+            CombatHelper.println("+ " + Syno.concat(" ", (Object[]) cs));
         }
 
         // 命令路径相对当前 bin 目录
@@ -437,8 +437,8 @@ public class SourceCombat {
     }
 
     private static void runBat(String[] cs, Looker lg) {
-        if (4 == (4 & Core.DEBUG)) {
-            CoreLogger.trace("COMBAT " + Syno.concat(" ", (Object[]) cs));
+        if (Core.DEBUG > 1 ) {
+            CombatHelper.println("- " + Syno.concat(" ", (Object[]) cs));
         }
         try {
             CombatRunner.exec(cs);

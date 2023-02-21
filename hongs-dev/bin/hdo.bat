@@ -9,6 +9,7 @@ set KLASSPATH=%CLASSPATH%;%CORE_PATH%\lib\*
 
 "%JAVA_PATH%" %JAVA_OPTS% ^
   -classpath "%KLASSPATH%"^
+  -Dlog4j.configurationFile="\\%CORE_PATH%\etc\log.xml"^
   -Dlogs.dir="\\%CORE_PATH%\var\log"^
   -Dtmps.dir="\\%CORE_PATH%\var\tmp"^
   io.github.ihongs.combat.CombatRunner %*^

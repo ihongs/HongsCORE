@@ -72,9 +72,7 @@ public class CombatHelper
     }
   };
 
-  private static class Env extends HashMap<String, String>
-  {
-
+  private static final class Env extends HashMap<String, String> {
     @Override
     public String get(Object key) {
       String kay = Synt.asString(key);
@@ -83,7 +81,6 @@ public class CombatHelper
       }
       return System.getenv (kay);
     }
-
     @Override
     public boolean containsKey(Object key) {
       String kay = Synt.asString(key);
@@ -92,7 +89,6 @@ public class CombatHelper
       }
       return System.getenv (kay) != null;
     }
-
   }
 
   /**

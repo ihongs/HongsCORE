@@ -72,6 +72,29 @@ public class CombatHelper
     }
   };
 
+  private static class Env extends HashMap<String, String>
+  {
+
+    @Override
+    public String get(Object key) {
+      String kay = Synt.asString(key);
+      if (super.containsKey(kay)) {
+          return super.get (key);
+      }
+      return System.getenv (kay);
+    }
+
+    @Override
+    public boolean containsKey(Object key) {
+      String kay = Synt.asString(key);
+      if (super.containsKey(kay)) {
+          return true ;
+      }
+      return System.getenv (kay) != null;
+    }
+
+  }
+
   /**
    * 参数处理正则
    */
@@ -549,29 +572,6 @@ public class CombatHelper
   public static void progres()
   {
     ERR.get().println();
-  }
-
-  private static class Env extends HashMap<String, String>
-  {
-
-    @Override
-    public String get(Object key) {
-      String kay = Synt.asString(key);
-      if (super.containsKey(kay)) {
-          return super.get (key);
-      }
-      return System.getenv (kay);
-    }
-
-    @Override
-    public boolean containsKey(Object key) {
-      String kay = Synt.asString(key);
-      if (super.containsKey(kay)) {
-          return true ;
-      }
-      return System.getenv (kay) != null;
-    }
-
   }
 
 }

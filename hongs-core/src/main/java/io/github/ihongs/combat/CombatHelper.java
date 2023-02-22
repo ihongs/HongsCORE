@@ -560,19 +560,6 @@ public class CombatHelper
       if (super.containsKey(kay)) {
           return super.get (key);
       }
-      if (null != kay)
-          switch (kay) {
-        case "SERVER_ID":
-          return Core.SERVER_ID ;
-        case "BASE_PATH":
-          return Core.BASE_PATH ;
-        case "CORE_PATH":
-          return Core.CORE_PATH ;
-        case "CONF_PATH":
-          return Core.CONF_PATH ;
-        case "DATA_PATH":
-          return Core.DATA_PATH ;
-      }
       return System.getenv (kay);
     }
 
@@ -580,16 +567,7 @@ public class CombatHelper
     public boolean containsKey(Object key) {
       String kay = Synt.asString(key);
       if (super.containsKey(kay)) {
-          return true;
-      }
-      if (null != kay)
-          switch (kay)  {
-        case "SERVER_ID":
-        case "BASE_PATH":
-        case "CORE_PATH":
-        case "CONF_PATH":
-        case "DATA_PATH":
-          return true;
+          return true ;
       }
       return System.getenv (kay) != null;
     }

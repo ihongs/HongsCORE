@@ -72,6 +72,10 @@ public class CombatHelper
     }
   };
 
+  /**
+   * 环境变量容器
+   * 缺省从系统取
+   */
   private static final class Env extends HashMap<String, String> {
     @Override
     public String get(Object key) {

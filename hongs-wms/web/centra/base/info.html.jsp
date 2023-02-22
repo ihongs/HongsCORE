@@ -267,7 +267,7 @@
         // 外部限制
         $.each(denycss ? denycss.split(",") : []
         , function(i, n) {
-            if (/^item\./.test(n)) {
+            if (/^form\./.test(n)) {
                 n = ".form-group[data-name='"+n.substring(5)+"']";
                 formbox.find(n).remove();
             } else {

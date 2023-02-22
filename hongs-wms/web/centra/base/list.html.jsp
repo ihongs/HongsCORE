@@ -500,19 +500,19 @@
         $.each(denycss ? denycss . split (",") : [ ]
         , function(i, n) {
             if (/^stat\./.test(n)) {
-                n = ".statbox .form-group[data-name='"+n.substring(5)+"']";
+                n = ".form-group[data-name='"+n.substring(5)+"']";
                 statbox.find(n).remove();
             } else
             if (/^filt\./.test(n)) {
-                n = ".filtbox .form-group[data-name='"+n.substring(5)+"']";
+                n = ".form-group[data-name='"+n.substring(5)+"']";
                 filtbox.find(n).remove();
             } else
             if (/^find\./.test(n)) {
-                n = ".findbox .form-group[data-name='"+n.substring(5)+"']";
+                n = ".form-group[data-name='"+n.substring(5)+"']";
                 findbox.find(n).remove();
             } else
             if (/^list\./.test(n)) {
-                n = ".listbox th[data-fn='"+n.substring(5)+"']";
+                n = "th[data-fn='"+n.substring(5)+"']";
                 listbox.find(n).remove();
             } else
             {

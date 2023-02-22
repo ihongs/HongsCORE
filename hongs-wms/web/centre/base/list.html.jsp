@@ -356,7 +356,7 @@
         $.each(denycss ? denycss . split (",") : [ ]
         , function(i, n) {
             if (/^find\./.test(n)) {
-                n = ".findbox .form-group[data-name='"+n.substring(5)+"']";
+                n = ".form-group[data-name='"+n.substring(5)+"']";
                 findbox.find(n).remove();
             } else
             {

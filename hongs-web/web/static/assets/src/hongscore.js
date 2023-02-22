@@ -2968,6 +2968,7 @@ $.fn.hsCopy = function() {
             }
         }
         document.execCommand("Copy");
+        sel.removeAllRanges();
     } else
     {
         throw new Error("hsCopy: Copy is not supported");

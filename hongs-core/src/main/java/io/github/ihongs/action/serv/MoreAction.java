@@ -15,6 +15,7 @@ import io.github.ihongs.dh.MergeMore;
 import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Synt;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -352,14 +353,15 @@ public class MoreAction {
         args[0] = cmd;
 
         try {
+            InputStream in  = req.getInputStream();
             PrintStream out = new PrintStream(rsp.getOutputStream(), true);
             rsp.setContentType("text/plain" );
             rsp.setCharacterEncoding("utf-8");
 
             try {
-                CombatHelper.ENV.set((byte)1);
                 CombatHelper.ERR.set(out);
                 CombatHelper.OUT.set(out);
+                CombatHelper.IN .set(in );
 
                 CombatRunner.exec( args );
             }
@@ -367,9 +369,9 @@ public class MoreAction {
                 out.print ("ERROR: "+ e.getMessage());
             }
             finally {
+                CombatHelper.IN .remove();
                 CombatHelper.OUT.remove();
                 CombatHelper.ERR.remove();
-                CombatHelper.ENV.remove();
             }
         }
         catch (IOException e) {

@@ -1,7 +1,6 @@
 package io.github.ihongs.combat;
 
 import io.github.ihongs.Core;
-import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Syno;
@@ -63,13 +62,13 @@ public class CombatHelper
   };
 
   /**
-   * 运行环境: 0 Cmd, 1 Web
-   * 默认同 Core.ENVIR
+   * 环境变量
+   * 默认同 System.getenv
    */
-  public static final Core.Variable<Byte> ENV = new Core.Variable("!SYSTEM_ENV") {
+  public static final Core.Variable<Map<String, String>> ENV = new Core.Variable("!SYSTEM_ENV") {
     @Override
-    protected Byte initialValue() {
-      return Core.ENVIR;
+    protected Map<String, String> initialValue() {
+      return new Env();
     }
   };
 
@@ -382,11 +381,7 @@ public class CombatHelper
    */
   public static void paintln(String text)
   {
-    if (ENV.get() == 0) {
-        OUT.get().println(text);
-    } else {
-        CoreLogger. info (text);
-    }
+    OUT.get().println(text);
   }
 
   /**
@@ -397,11 +392,7 @@ public class CombatHelper
    */
   public static void println(String text)
   {
-    if (ENV.get() == 0) {
-        ERR.get().println(text);
-    } else {
-        CoreLogger.trace (text);
-    }
+    ERR.get().println(text);
   }
 
   /**
@@ -558,6 +549,51 @@ public class CombatHelper
   public static void progres()
   {
     ERR.get().println();
+  }
+
+  private static class Env extends HashMap<String, String>
+  {
+
+    @Override
+    public String get(Object key) {
+      String kay = Synt.asString(key);
+      if (super.containsKey(kay)) {
+          return super.get (key);
+      }
+      if (null != kay)
+          switch (kay) {
+        case "SERVER_ID":
+          return Core.SERVER_ID ;
+        case "BASE_PATH":
+          return Core.BASE_PATH ;
+        case "CORE_PATH":
+          return Core.CORE_PATH ;
+        case "CONF_PATH":
+          return Core.CONF_PATH ;
+        case "DATA_PATH":
+          return Core.DATA_PATH ;
+      }
+      return System.getenv (kay);
+    }
+
+    @Override
+    public boolean containsKey(Object key) {
+      String kay = Synt.asString(key);
+      if (super.containsKey(kay)) {
+          return true;
+      }
+      if (null != kay)
+          switch (kay)  {
+        case "SERVER_ID":
+        case "BASE_PATH":
+        case "CORE_PATH":
+        case "CONF_PATH":
+        case "DATA_PATH":
+          return true;
+      }
+      return System.getenv (kay) != null;
+    }
+
   }
 
 }

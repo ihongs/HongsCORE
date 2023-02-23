@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
+    <set var="DST_DIR">$CORE_PATH/../hongs-web/web/static/assets</set>
+    <set var="SRC_DIR">$CORE_PATH/../hongs-web/web/static/assets/src</set>
+    <set var="CSS_DIR">$CORE_PATH/../hongs-web/web/static/assets/css</set>
     <combat system="no">
         <cmd>minify.build</cmd>
-        <arg opt="output">{{$CORE_PATH}}/../hongs-web/web/static/assets/hongscore.min.js</arg>
-        <arg>{{$CORE_PATH}}/../hongs-web/web/static/assets/src/hongscore.js</arg>
-        <arg>{{$CORE_PATH}}/../hongs-web/web/static/assets/src/hongscore-form.js</arg>
-        <arg>{{$CORE_PATH}}/../hongs-web/web/static/assets/src/hongscore-list.js</arg>
-        <arg>{{$CORE_PATH}}/../hongs-web/web/static/assets/src/hongscore-tree.js</arg>
-        <arg>{{$CORE_PATH}}/../hongs-web/web/static/assets/src/hongscore-fork.js</arg>
-        <arg>{{$CORE_PATH}}/../hongs-web/web/static/assets/src/hongscore-file.js</arg>
-        <arg>{{$CORE_PATH}}/../hongs-web/web/static/assets/src/hongscore-date.js</arg>
+        <arg opt="output">$DST_DIR/hongscore.min.js</arg>
+        <arg>$SRC_DIR/hongscore.js</arg>
+        <arg>$SRC_DIR/hongscore-form.js</arg>
+        <arg>$SRC_DIR/hongscore-list.js</arg>
+        <arg>$SRC_DIR/hongscore-tree.js</arg>
+        <arg>$SRC_DIR/hongscore-fork.js</arg>
+        <arg>$SRC_DIR/hongscore-file.js</arg>
+        <arg>$SRC_DIR/hongscore-date.js</arg>
     </combat>
     <combat system="no">
         <cmd>minify.build</cmd>
         <arg opt="output">*.min</arg>
-        <arg>{{$CORE_PATH}}/../hongs-web/web/static/assets/css/hongscore.css</arg>
+        <arg>$CSS_DIR/hongscore.css</arg>
     </combat>
 </root>

@@ -260,6 +260,7 @@ public class SourceCombat {
                     String var = e.getAttribute("var");
                     String val = repVar (e.getTextContent());
                     CombatHelper.ENV.get( ).put( var , val );
+                    break;
                 default:
                     throw new HongsException("Wrong tagName: " + t );
             }

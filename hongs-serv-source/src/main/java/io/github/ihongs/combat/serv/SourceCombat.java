@@ -125,15 +125,15 @@ public class SourceCombat {
 
     private static void runSql(Date dt, File fo)
             throws HongsException {
-        CombatHelper.println("Run '" + fo.getName() + "'");
+        CombatHelper.println("Run "+fo.getName() );
 
         try (
             Scanner in = new Scanner(fo);
         ) {
             DB db = DB.getInstance("default");
-            StringBuilder sb = new StringBuilder( );
+            StringBuilder sb = new StringBuilder();
 
-            long st = System. currentTimeMillis ( );
+            long st = System. currentTimeMillis ();
             long al = fo.length();
             long rl = 0; // 处理进度
             long ok = 0; // 成功计数
@@ -229,7 +229,7 @@ public class SourceCombat {
             throw new HongsException(ex);
         }
 
-        CombatHelper.println("Run '" + fo.getName() + "'" );
+        CombatHelper.println("Run "+fo.getName());
 
         NodeList l = doc.getDocumentElement()
                         .getChildNodes ();
@@ -257,9 +257,9 @@ public class SourceCombat {
                     CombatHelper.println(txt);
                     break;
                 case "set":
-                    String var = e.getAttribute("var");
+                    String key = e.getAttribute("env");
                     String val = repVar (e.getTextContent());
-                    CombatHelper.ENV.get( ).put( var , val );
+                    CombatHelper.ENV.get( ).put( key , val );
                     break;
                 default:
                     throw new HongsException("Wrong tagName: " + t );
@@ -465,18 +465,18 @@ public class SourceCombat {
     private static String repVar(String ss) {
         StringBuffer buf = new StringBuffer(  );
         Matcher      mxt = VAR_PAT.matcher (ss);
-        String       var ;
+        String       key ;
         String       val ;
 
         while ( mxt.find( ) ) {
-            var=mxt.group (1);
-            if (var.charAt(0) == '{') {
-                var = var.substring(1, var.length() - 1);
+            key=mxt.group (1);
+            if (key.charAt(0) == '{') {
+                key = key.substring(1, key.length() - 1);
             }
 
-            val = CombatHelper.ENV.get().get(var);
+            val = CombatHelper.ENV.get().get(key);
             if (null == val) {
-                switch (var) {
+                switch (key) {
                     case "SERVER_ID": val = Core.SERVER_ID; break;
                     case "BASE_PATH": val = Core.BASE_PATH; break;
                     case "CORE_PATH": val = Core.CORE_PATH; break;
@@ -484,7 +484,7 @@ public class SourceCombat {
                     case "DATA_PATH": val = Core.DATA_PATH; break;
                     default:
                         // 时间处理
-                        Matcher mat = TIM_PAT.matcher(var);
+                        Matcher mat = TIM_PAT.matcher(key);
                         if (mat.matches()) {
                             String add = mat.group(1);
                             String fmt = mat.group(2);

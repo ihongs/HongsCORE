@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
-    <set var="DST_DIR">$CORE_PATH/../hongs-web/web/static/assets</set>
-    <set var="SRC_DIR">$CORE_PATH/../hongs-web/web/static/assets/src</set>
-    <set var="CSS_DIR">$CORE_PATH/../hongs-web/web/static/assets/css</set>
+    <set env="DST_DIR">$CORE_PATH/../hongs-web/web/static/assets</set>
+    <set env="SRC_DIR">$CORE_PATH/../hongs-web/web/static/assets/src</set>
+    <set env="CSS_DIR">$CORE_PATH/../hongs-web/web/static/assets/css</set>
     <combat system="no">
         <cmd>minify.build</cmd>
         <arg opt="output">$DST_DIR/hongscore.min.js</arg>
@@ -19,4 +19,5 @@
         <arg opt="output">*.min</arg>
         <arg>$CSS_DIR/hongscore.css</arg>
     </combat>
+    <say>${TIME|yyyy-MM-dd HH:mm:ss} web build done</say>
 </root>

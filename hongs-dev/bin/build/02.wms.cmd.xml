@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
-    <set var="DST_DIR">$CORE_PATH/../hongs-wms/web/static/assets</set>
-    <set var="SRC_DIR">$CORE_PATH/../hongs-wms/web/static/assets/src</set>
-    <set var="CSS_DIR">$CORE_PATH/../hongs-wms/web/static/assets/css</set>
-    <set var="WEB_DST_DIR">$CORE_PATH/../hongs-web/web/static/assets</set>
-    <set var="WEB_CSS_DIR">$CORE_PATH/../hongs-web/web/static/assets/css</set>
+    <set env="DST_DIR">$CORE_PATH/../hongs-wms/web/static/assets</set>
+    <set env="SRC_DIR">$CORE_PATH/../hongs-wms/web/static/assets/src</set>
+    <set env="CSS_DIR">$CORE_PATH/../hongs-wms/web/static/assets/css</set>
+    <set env="WEB_DST_DIR">$CORE_PATH/../hongs-web/web/static/assets</set>
+    <set env="WEB_CSS_DIR">$CORE_PATH/../hongs-web/web/static/assets/css</set>
     <combat system="no">
         <cmd>minify.build</cmd>
         <arg opt="output">$DST_DIR/hongsedge.min.js</arg>
@@ -33,5 +33,5 @@
         <arg>$WEB_CSS_DIR/bootstrap.min.css</arg>
         <arg>$WEB_CSS_DIR/hongscore.min.css</arg>
     </combat>
-    <say>All ok ${TIME|yyyy-MM-dd HH:mm:ss}</say>
+    <say>${TIME|yyyy-MM-dd HH:mm:ss} wms build done</say>
 </root>

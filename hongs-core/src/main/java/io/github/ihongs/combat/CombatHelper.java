@@ -436,17 +436,19 @@ public class CombatHelper
    * 将输出到 ERR
    * 由于大部分的终端(命令行)默认宽度普遍为 80 个字符,
    * 故请将 text 控制在 50 个字符以内, 一个中文占两位.
+   * @param rate 完成比例, 0~1的浮点数
    * @param text 说明文本
-   * @param rate 完成比例, 0~100的浮点数
    */
-  public static void progres(String text, float rate)
+  public static void progres(float rate, String text)
   {
     StringBuilder sb = new StringBuilder();
     Formatter     ft = new Formatter( sb );
 
-    if (text == null) text = "" ;
-    if (rate <    0 ) rate =   0;
-    if (rate >  100 ) rate = 100;
+    if (text == null) text = "";
+    if (rate  <  0  ) rate = 0 ;
+    if (rate  >  1  ) rate = 1 ;
+
+    rate = rate * 100; // 百分比
 
     sb.append("[");
     for(int i = 0 ; i < 100; i += 5)
@@ -489,8 +491,8 @@ public class CombatHelper
   {
     if (0 == n) return;
     String notes = String.format("Ok(%d)", ok);
-    float  scale = (float) ok / n * 100;
-    CombatHelper.progres(notes , scale);
+    float  scale = (float) ok / n;
+    CombatHelper.progres(scale, notes);
   }
 
   /**
@@ -503,8 +505,8 @@ public class CombatHelper
   {
     if (0 == n) return;
     String notes = String.format("Ok(%d) Er(%d)", ok, er);
-    float  scale = (float) (er + ok) / n * 100;
-    CombatHelper.progres(notes , scale);
+    float  scale = (float) (er + ok) / n;
+    CombatHelper.progres(scale, notes);
   }
 
   /**
@@ -519,7 +521,7 @@ public class CombatHelper
         return ;
     }
     String notes ;
-    float  scale = (float) ok / n * 100;
+    float  scale = (float) ok / n;
     if (0 == ok) {
         notes = String.format("Ok(%d) ET: -" , ok);
     } else
@@ -528,10 +530,10 @@ public class CombatHelper
         notes = String.format("Ok(%d) TT: %s", ok, Syno.humanTime(t));
     } else {
         t = System.currentTimeMillis() - t;
-        t = (long) ( t / scale * 100 - t );
+        t = (long) (t / scale - t);
         notes = String.format("Ok(%d) ET: %s", ok, Syno.humanTime(t));
     }
-    CombatHelper.progres(notes , scale);
+    CombatHelper.progres(scale, notes);
   }
 
   /**
@@ -547,7 +549,7 @@ public class CombatHelper
         return ;
     }
     String notes ;
-    float  scale = (float) (er + ok) / n * 100;
+    float  scale = (float) (er + ok) / n;
     if (0 == ok + er) {
         notes = String.format("Ok(%d) Er(%d) ET: -" , ok, er);
     } else
@@ -556,10 +558,10 @@ public class CombatHelper
         notes = String.format("Ok(%d) Er(%d) TT: %s", ok, er, Syno.humanTime(t));
     } else {
         t = System.currentTimeMillis() - t;
-        t = (long) ( t / scale * 100 - t );
+        t = (long) (t / scale - t);
         notes = String.format("Ok(%d) Er(%d) ET: %s", ok, er, Syno.humanTime(t));
     }
-    CombatHelper.progres(notes , scale);
+    CombatHelper.progres(scale, notes);
   }
 
   /**

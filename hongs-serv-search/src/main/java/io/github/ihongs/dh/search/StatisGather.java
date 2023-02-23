@@ -4,14 +4,17 @@ import io.github.ihongs.dh.search.StatisHandle.TYPE;
 import io.github.ihongs.dh.search.StatisHandle.Field;
 import io.github.ihongs.dh.search.StatisGrader.Range;
 import io.github.ihongs.dh.search.StatisHandle.Valuer;
+import io.github.ihongs.util.Synt;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 import org.apache.lucene.index.LeafReader;
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.NumericDocValues;
@@ -340,23 +343,21 @@ public class StatisGather {
     /**
      * 去重计数
      */
-    public static class Crowd extends Index<Integer> {
-
-        private Set a;
+    public static class Crowd extends Index<Cnt> {
 
         public Crowd(TYPE type, String field, String alias) {
             super(type, field, alias);
         }
 
         @Override
-        public Object collect(int i, Integer v) throws IOException {
+        public Object collect(int i, Cnt v) throws IOException {
             if (v == null) {
-                a  = new LinkedHashSet();
+                v  = new Cnt();
             }
             for(Object o : getValues() ) {
-                a.add( o );
+                v.add( o );
             }
-            return a.size( );
+            return v;
         }
 
     }
@@ -1009,6 +1010,40 @@ public class StatisGather {
         }
         public static int  max(int a, int b) {
             return Integer.max(a , b);
+        }
+    }
+
+    /**
+     * 去重计数容器
+     */
+    private static final class Cnt extends Number implements Supplier<Integer> {
+        public Set a = new HashSet();
+        public void add(Object v) {
+            a.add (v);
+        }
+        @Override
+        public Integer get() {
+            return a.size ();
+        }
+        @Override
+        public int intValue() {
+            return get();
+        }
+        @Override
+        public long longValue() {
+            return get().longValue();
+        }
+        @Override
+        public float floatValue() {
+            return get().floatValue();
+        }
+        @Override
+        public double doubleValue() {
+            return get().doubleValue();
+        }
+        @Override
+        public String toString() {
+            return Synt.asString(get());
         }
     }
 

@@ -124,7 +124,7 @@ public class Default extends Rule {
                 }
                 if (plus != null) {
                    Long msc = Long.valueOf(plus.substring(1));
-                    if ("+".equals(plus.substring(0,1))) {
+                    if (plus.charAt(0) == '+') {
                         now.setTime(now.getTime() + msc);
                     } else {
                         now.setTime(now.getTime() - msc);

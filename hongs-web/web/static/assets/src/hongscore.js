@@ -2795,8 +2795,8 @@ $.fn.hsFind = function(selr) {
     if (typeof selr != "string") {
         return $ (selr);
     }
-    var elem = this;
     selr = $.trim(selr);
+    var elem = this;
     var flag = selr.charAt   (0);
     var salr = selr.substring(1);
     salr = $.trim(salr);
@@ -2845,6 +2845,8 @@ $.fn.hsFind = function(selr) {
             return $(salr);
         case '#':
             return $(selr);
+        case '' :
+            return $();
         default : // .:[
             /**
              * 往下找不到节点时,
@@ -3186,7 +3188,8 @@ function() {
     var tab = lnk.parent();
     var nav = tab.parent();
     var tao = tab.siblings(".active");
-    var pns = nav.data("labs") || nav.next();
+    var pns = tab.attr("data-target");
+        pas = pns ? tab.hsFind(pns) : nav.next ( ) ;
     var pno = pns ? pns.children().eq(tao.index()) : $();
     var pne = pns ? pns.children().eq(tab.index()) : $();
     if (tab.is(".active,.inactive") ) {

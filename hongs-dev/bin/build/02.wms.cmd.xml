@@ -33,5 +33,5 @@
         <arg>$WEB_CSS_DIR/bootstrap.min.css</arg>
         <arg>$WEB_CSS_DIR/hongscore.min.css</arg>
     </combat>
-    <say>${TIME|yyyy-MM-dd HH:mm:ss} wms build done</say>
+    <say>${CURR_TIME|yyyy-MM-dd HH:mm:ss} WMS build done</say>
 </root>

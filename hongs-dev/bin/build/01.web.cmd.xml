@@ -19,5 +19,5 @@
         <arg opt="output">*.min</arg>
         <arg>$CSS_DIR/hongscore.css</arg>
     </combat>
-    <say>${TIME|yyyy-MM-dd HH:mm:ss} web build done</say>
+    <say>${CURR_TIME|yyyy-MM-dd HH:mm:ss} Web build done</say>
 </root>

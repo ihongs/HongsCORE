@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <sql db="master">
+        <![CDATA[ DELETE FROM `a_master_user` WHERE (`state` = 0 AND `mtime` < ? ]]>
+        <arg>${EXEC_TIME-7776000}</arg><!-- 3 months -->
+    </sql>
+</root>

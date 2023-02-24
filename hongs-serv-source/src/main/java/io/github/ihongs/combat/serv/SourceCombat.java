@@ -4,7 +4,6 @@ import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsException;
-import io.github.ihongs.HongsExemption;
 import io.github.ihongs.combat.CombatHelper;
 import io.github.ihongs.combat.CombatRunner;
 import io.github.ihongs.combat.anno.Combat;
@@ -19,12 +18,14 @@ import java.io.InputStreamReader;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -49,7 +50,7 @@ import org.xml.sax.SAXException;
 public class SourceCombat {
 
     private static final Pattern VAR_PAT = Pattern.compile("\\$(\\w+|\\{.*?\\})");
-    private static final Pattern TIM_PAT = Pattern.compile("^TIME([\\-\\+]\\d+)?(\\|.*)?$");
+    private static final Pattern TIM_PAT = Pattern.compile("^(CURR_TIME|EXEC_TIME)(_MS)?([\\-\\+]\\d+)?(\\|.*)?$");
 
     /**
      * 执行命令
@@ -59,76 +60,86 @@ public class SourceCombat {
     @Combat("__main__")
     public static void exec (String[] args) throws HongsException {
         if (0 == args.length) {
-            CombatHelper.println ("Serve name required!");
+            CombatHelper.println ("Usage: source FILE_OR_DIR1 FILE_OR_DIR2 ...");
             return;
         }
+        
+        for(String fn : args) {
+            File   fu = new File(fn);
 
-        String fn = args[0];
-        File   fu = new File(fn);
-        Date   dt = new Date(  );
-
-        // 相对且不存在则看作内部目录
-        if (! fu.isAbsolute() && ! fu.exists()) {
-            fn = Core.CORE_PATH
-               + File.separator + "bin"
-               + File.separator +  fn ;
-            fu = new File(fn);
-        }
-
-        // 获取目录下全部待执行的文件
-        List<File> fxs = new ArrayList();
-        if (! fu.isFile()) {
-            File[] fus = fu. listFiles();
-            for (File fo : fus) {
-                if (! fo.isFile()) {
-                    continue;
-                }
-                String fp = fo.getName();
-                if (fp.startsWith(".")
-                ||  fp.startsWith("!")
-                ||  fp.  endsWith("~")) {
-                    continue;
-                }
-                fxs.add (fo);
+            // 相对且不存在则看作内部目录
+            if (! fu.isAbsolute() && ! fu.exists()) {
+                fn = Core.CORE_PATH
+                   + File.separator + "bin"
+                   + File.separator +  fn ;
+                fu = new File(fn);
             }
-            Collections.sort(fxs, new Sorter());
-        } else {
-                fxs.add (fu);
-        }
 
-        Looker lgr = new Looker();
-        String act = Core.ACTION_NAME.get();
-        long   now = Core.ACTION_TIME.get();
-
-        // 逐个执行
-        for ( File fo : fxs ) {
-            String fp = fo.getPath();
-            try {
-                if (fp.endsWith(".xml")) {
-                    runXml(dt, fo, lgr);
-                } else
-                if (fp.endsWith(".sql")) {
-                    runSql(dt, fo);
+            // 获取目录下全部待执行的文件
+            List<File> fxs ;
+            if (fu.isDirectory()) {
+                File[] fus = fu.listFiles ();
+                fxs = new ArrayList(fus.length);
+                for (File fo : fus) {
+                    if (! fo.isFile()) {
+                        continue;
+                    }
+                    String fp = fo.getName();
+                    if (fp.startsWith(".")
+                    ||  fp.startsWith("!")
+                    ||  fp.  endsWith("~")) {
+                        continue;
+                    }
+                    fxs.add (fo);
                 }
-            } catch (Exception ex) {
-                lgr.error(ex);
-            } catch (Error     ex) {
-                lgr.error(ex);
-            } finally {
-                // 放回名称和开始时间
-                // 避免时间或日志模糊
-                Core.ACTION_NAME.set(act);
-                Core.ACTION_TIME.set(now);
+                Collections.sort(fxs, new Sorter());
+            } else
+            if (fu.isFile()) {
+                fxs = new ArrayList(1);
+                fxs.add (fu);
+            } else {
+                continue;
+            }
+
+            Looker lgr = new Looker();
+            String act = Core.ACTION_NAME.get();
+            Map    env = CombatHelper.ENV.get();
+
+            /**
+             * 依次逐个执行脚本
+             * 脚本环境变量独立
+             */
+            for ( File fo : fxs ) {
+                String fp = fo.getPath();
+                try {
+                    if (fp.endsWith(".xml")) {
+                        Core.ACTION_NAME.set(act +":"+ fo.getName());
+                        CombatHelper.ENV.remove();
+                        CombatHelper.println( "Run " + fo.getName());
+                        runXml(fo , lgr);
+                    } else
+                    if (fp.endsWith(".sql")) {
+                        Core.ACTION_NAME.set(act +":"+ fo.getName());
+                        CombatHelper.ENV.remove();
+                        CombatHelper.println( "Run " + fo.getName());
+                        runSql(fo);
+                    }
+                } catch (Exception ex) {
+                    lgr.error (ex);
+                } catch (Error     ex) {
+                    lgr.error (ex);
+                } finally {
+                    Core.ACTION_NAME.set(act);
+                    CombatHelper.ENV.set(env);
+                }
             }
         }
     }
 
-    private static void runSql(Date dt, File fo)
+    private static void runSql(File fo)
             throws HongsException {
-        CombatHelper.println("Run "+fo.getName() );
-
         try (
-            Scanner in = new Scanner(fo);
+            Scanner in = new Scanner (fo);
         ) {
             DB db = DB.getInstance("default");
             StringBuilder sb = new StringBuilder();
@@ -207,14 +218,15 @@ public class SourceCombat {
                     }
                 }
             }
-            CombatHelper.progres( );
+            CombatHelper.progres(1, String.format("Ok(%d) Er(%d)", ok, er));
+            CombatHelper.progres();
         }
         catch (FileNotFoundException ex) {
             throw new HongsException(ex);
         }
     }
 
-    private static void runXml(Date dt, File fo, Looker lg)
+    private static void runXml(File fo, Looker lg)
             throws HongsException {
         Document doc;
         try {
@@ -228,8 +240,6 @@ public class SourceCombat {
         } catch ( IOException ex) {
             throw new HongsException(ex);
         }
-
-        CombatHelper.println("Run "+fo.getName());
 
         NodeList l = doc.getDocumentElement()
                         .getChildNodes ();
@@ -245,22 +255,31 @@ public class SourceCombat {
             if (null != t) switch ( t ) {
                 case "combat":
                     runCmd( e, lg );
-                    break;
+                    break ;
                 case "action":
                     runAct( e, lg );
-                    break;
+                    break ;
                 case "sql":
                     runSql( e, lg );
-                    break;
-                case "say":
+                    break ;
+                case "say": {
                     String txt = repVar (e.getTextContent());
                     CombatHelper.println(txt);
-                    break;
-                case "set":
-                    String key = e.getAttribute("env");
+                    break ; }
+                case "set": {
+                    Map    env = CombatHelper.ENV.get();
+                    String key = e.getAttribute ("env");
                     String val = repVar (e.getTextContent());
-                    CombatHelper.ENV.get( ).put( key , val );
-                    break;
+                           env.put (key, val);
+                    break ; }
+                case "def": {
+                    Map    env = CombatHelper.ENV.get();
+                    String key = e.getAttribute ("env");
+                    if ( ! env.containsKey(key) ) {
+                    String val = repVar (e.getTextContent());
+                           env.put (key, val);
+                    }
+                    break ; }
                 default:
                     throw new HongsException("Wrong tagName: " + t );
             }
@@ -268,7 +287,7 @@ public class SourceCombat {
     }
 
     private static void runSql(Element e, Looker lg) {
-        String d = Synt.declare(e.getAttribute("db"), "defalut");
+        String d = repVar(Synt.declare(e.getAttribute("db"), "defalut"));
         List<String> a = new ArrayList();
         List<String> b = new ArrayList();
 
@@ -286,7 +305,7 @@ public class SourceCombat {
 
             m = (Element) u;
             c = m.getTagName();
-            s = m.getTextContent();
+            s = m.getTextContent().trim();
 
             if (s != null && s.length() > 0) {
                 if ("arg".equals(c)) {
@@ -463,8 +482,9 @@ public class SourceCombat {
     }
 
     private static String repVar(String ss) {
-        StringBuffer buf = new StringBuffer(  );
         Matcher      mxt = VAR_PAT.matcher (ss);
+        StringBuffer buf = new StringBuffer(  );
+        Map<String,String> env = CombatHelper.ENV.get( );
         String       key ;
         String       val ;
 
@@ -474,49 +494,49 @@ public class SourceCombat {
                 key = key.substring(1, key.length() - 1);
             }
 
-            val = CombatHelper.ENV.get().get(key);
-            if (null == val) {
-                switch (key) {
-                    case "SERVER_ID": val = Core.SERVER_ID; break;
-                    case "BASE_PATH": val = Core.BASE_PATH; break;
-                    case "CORE_PATH": val = Core.CORE_PATH; break;
-                    case "CONF_PATH": val = Core.CONF_PATH; break;
-                    case "DATA_PATH": val = Core.DATA_PATH; break;
-                    default:
-                        // 时间处理
-                        Matcher mat = TIM_PAT.matcher(key);
-                        if (mat.matches()) {
-                            String add = mat.group(1);
-                            String fmt = mat.group(2);
-                            Long   tim = Synt.asLong(CombatHelper.ENV.get().get("TIME"));
-                            if (tim == null) {
-                                tim  = System.currentTimeMillis();
-                            }
+            switch (key) {
+                case "SERVER_ID": val = Core.SERVER_ID; break;
+                case "BASE_PATH": val = Core.BASE_PATH; break;
+                case "CORE_PATH": val = Core.CORE_PATH; break;
+                case "CONF_PATH": val = Core.CONF_PATH; break;
+                case "DATA_PATH": val = Core.DATA_PATH; break;
+                default:
+                    // 时间处理
+                    Matcher mat = TIM_PAT.matcher(key);
+                    if (mat.matches()) {
+                               key = mat.group(1);
+                        String add = mat.group(3);
+                        String fmt = mat.group(4);
+                        long   mis = mat.group(2) == null ? 1000 : 1;
+                        Long   tim ;
 
-                            // 时间偏移
-                            if (add != null) {
-                                if (add.charAt(0) == '+') {
-                                    tim += Long.valueOf(add.substring(1));
-                                } else {
-                                    tim -= Long.valueOf(add.substring(1));
-                                }
-                            }
-
-                            // 时间格式
-                            if (fmt == null) {
-                                val  = Synt.asString(tim);
-                            } else
-                            if ("SSSS".equals(fmt)) {
-                                val  = Synt.asString(tim); // 毫秒
-                            } else
-                            if ("ssss".equals(fmt)) {
-                                val  = Synt.asString(tim / 1000); // 秒
-                            } else {
-                                fmt  = fmt.substring( 1 );
-                                val  = new SimpleDateFormat(fmt).format(new Date(tim));
-                            }
+                        // 时间获取
+                        if ("EXEC_TIME".equals(key)) {
+                            tim = Core.ACTION_TIME.get(/**/);
+                        } else {
+                            tim = System.currentTimeMillis();
                         }
-                }
+
+                        // 时间偏移
+                        if (add != null ) {
+                        if (add.charAt(0) == '+') {
+                            add  = add.substring( 1 );
+                            tim += Long.valueOf (add) * mis ;
+                        } else {
+                            add  = add.substring( 1 );
+                            tim -= Long.valueOf (add) * mis ;
+                        }}
+
+                        // 时间格式
+                        if (fmt != null ) {
+                            fmt  = fmt.substring( 1 );
+                            val  = DateTimeFormatter.ofPattern(fmt, Core.getLocality()).format(Instant.ofEpochMilli(tim).atZone(Core.getTimezone().toZoneId()));
+                        } else {
+                            val  = Synt.asString(tim  /  mis);
+                        }
+                    } else {
+                            val  = Synt.defoult (env.get(key), "");
+                    }
             }
 
             mxt.appendReplacement(buf, Matcher.quoteReplacement(val));

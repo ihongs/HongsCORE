@@ -2,11 +2,11 @@
 <root>
     <combat system="no">
         <cmd>common.drop-dir</cmd>
-        <arg>{{$DATA_PATH}}</arg>
+        <arg>$DATA_PATH</arg>
     </combat>
     <combat system="no">
         <cmd>common.make-dir</cmd>
-        <arg>{{$DATA_PATH}}</arg>
+        <arg>$DATA_PATH</arg>
     </combat>
     <!--
         维护命令举例.

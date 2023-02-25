@@ -46,6 +46,7 @@ import org.xml.sax.SAXException;
 @Combat("source")
 public class SourceCombat {
 
+    private static final Pattern CMT_PAT = Pattern.compile("/\\*.*?\\*/");
     private static final Pattern VAR_PAT = Pattern.compile("\\$(\\w+|\\{.*?\\})");
     private static final Pattern TIM_PAT = Pattern.compile("^(CURR_TIME|EXEC_TIME)(_MS)?([\\-\\+]\\d+)?(\\|.*)?$");
 
@@ -150,31 +151,38 @@ public class SourceCombat {
 
             while ( in.hasNextLine() ) {
                 String  ln = in.nextLine();
-                String  tn = ln.trim();
-                rl  +=  ln.length();
-                li  ++  ;
+                rl  +=  ln.length ();
+                ln   =  ln. trim  ();
+                li  +=  1 ;
 
                 if (sb.length() == 0 ) {
-                    if (tn.length() == 0 ) {        // 空行
+                    if (ln.length() == 0 ) {        // 空行
                         continue;
                     }
-                    if (tn.startsWith("--DB=")) {   // 切换数据库
-                        db = DB.getInstance(tn.substring(5));
+                    if (ln.startsWith("--DB=")) {   // 切换数据库
+                        db = DB.getInstance(ln.substring(5));
                         continue;
                     }
-                    if (tn.startsWith("--")) {      // 注释
+                    if (ln.startsWith("--")) {      // 注释
+                        continue;
+                    }
+                    if (ln.startsWith("/*")
+                    &&  ln.  endsWith("*/")) {      // 注释
                         continue;
                     }
                 }
-                    if (! tn.endsWith(";" )) {      // 换行
-                        sb.append(ln);
-                        continue;
-                    }
 
-                ln = ln.substring(0, ln.lastIndexOf(';'));
-                sb.append( ln );
-                ln = sb.toString ();
-                sb.setLength(0);
+                ln = CMT_PAT.matcher(ln).replaceAll(" ").trim(); // 注释
+                if (ln.endsWith(";")) {
+                    ln = ln.substring (0, ln.length()-1);
+                    sb.append(ln);
+                } else {
+                    sb.append(ln);
+                    continue;
+                }
+
+                ln = sb.toString( );
+                sb . setLength( 0 );
 
                 // 进度
                float rp = (float) rl / al;
@@ -189,7 +197,7 @@ public class SourceCombat {
                     CombatHelper.progres(rp, String.format("Ok(%d) Er(%d) ET: %s", ok, er++, Syno.phraseTime(et)));
                     if (0 < Core.DEBUG) {
                         CombatHelper.progres();
-                        CombatHelper.println("Error in file("+fo.getName()+") at lin("+li+"): "+ex.getMessage() );
+                        CombatHelper.println("Error in file("+fo.getName()+") at line("+li+"): "+ex.getMessage() );
                         throw ex;
                     }
                 }
@@ -210,7 +218,7 @@ public class SourceCombat {
                     CombatHelper.progres(rp, String.format("Ok(%d) Er(%d) ET: %s", ok, er++, Syno.phraseTime(et)));
                     if (0 < Core.DEBUG) {
                         CombatHelper.progres();
-                        CombatHelper.println("Error in file("+fo.getName()+") at lin("+li+"): "+ex.getMessage() );
+                        CombatHelper.println("Error in file("+fo.getName()+") at line("+li+"): "+ex.getMessage() );
                         throw ex;
                     }
                 }

@@ -66,7 +66,7 @@ CREATE TABLE `a_master_user` (
   `mtime` INTEGER(10) DEFAULT NULL,
   `rtime` INTEGER(10) DEFAULT NULL, /* 权限最后更新时间 */
   `ptime` INTEGER(10) DEFAULT NULL, /* 密码最后更新时间 */
-  `state` TINYINT DEFAULT '1', /* 1 正常, 2 系统, 0 删除, -1 锁定
+  `state` TINYINT DEFAULT '1', /* 1 正常, 2 系统, 0 删除, -1 锁定 */
   /* 扩展字段 */
   `title` VARCHAR(200) DEFAULT NULL,
   `email` VARCHAR(200) DEFAULT NULL,

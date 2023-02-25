@@ -505,7 +505,7 @@ public final class Synt {
             val = ( (Calendar) val ).getTimeInMillis();
         } else
         if (val instanceof Instant ) {
-            val = ( (Instant ) val ).toEpochMilli(   );
+            val = ( (Instant ) val ). toEpochMilli ( );
         }
 
         return val;

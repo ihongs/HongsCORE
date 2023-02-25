@@ -1,15 +1,11 @@
 package io.github.ihongs.util.verify;
 
 import io.github.ihongs.Core;
-import io.github.ihongs.util.Synt;
 import io.github.ihongs.CoreLocale;
 import io.github.ihongs.HongsExemption;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import io.github.ihongs.util.Syno;
+import io.github.ihongs.util.Synt;
 import java.util.Date;
-import java.util.Calendar;
-import java.util.Locale;
-import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,7 +14,7 @@ import java.util.regex.Pattern;
  * <pre>
  * 规则参数:
  *  type    日期类型, date(Date对象),time(毫秒数),datestamp(Date对象,精确到秒),timestamp(时间戳,精确到秒)
- *  format  日期格式, 同 java 的 SimpleDateFormat, 默认从语言资源中提取
+ *  format  日期格式, 同 java 的 DateTimeFormatter , 默认从语言资源提取
  *  offset  偏移时间, 毫秒时间戳, 可用 +-, 与 format 配合来解决日期精度
  *  min     最小时间, 毫秒时间戳, 可用 +- 前缀表示当前时间偏移
  *  max     最大时间, 毫秒时间戳, 可用 +- 前缀表示当前时间偏移
@@ -60,13 +56,13 @@ public class IsDate extends Rule {
         if (!"".equals(min)) {
             long tim = getTime(min, now);
             if ( tim > day.getTime( ) ) {
-                throw new Wrong("@fore.form.lt.mindate", new SimpleDateFormat(fwt).format(new Date(tim)));
+                throw new Wrong("@fore.form.lt.mindate", Syno.formatTime(tim, fwt, Core.getZoneId(), Core.getLocale()));
             }
         }
         if (!"".equals(max)) {
             long tim = getTime(max, now);
             if ( tim < day.getTime( ) ) {
-                throw new Wrong("@fore.form.gt.maxdate", new SimpleDateFormat(fwt).format(new Date(tim)));
+                throw new Wrong("@fore.form.gt.maxdate", Syno.formatTime(tim, fwt, Core.getZoneId(), Core.getLocale()));
             }
         }
 
@@ -83,8 +79,7 @@ public class IsDate extends Rule {
             return day.getTime() / 1000;
         }
         if (! "".equals(fmt)) {
-            Locale loc = Core.getLocality();
-            return new SimpleDateFormat(fmt, loc).format(day);
+            return Syno.formatTime(day, fmt, Core.getZoneId(), Core.getLocale());
         }
 
         return value;
@@ -128,19 +123,7 @@ public class IsDate extends Rule {
 
             // 按指定格式解析日期字符串
             // 要精确时间的可以使用偏移
-            try {
-                Locale   loc = Core.getLocality( );
-                TimeZone tmz = Core.getTimezone( );
-                Calendar cal = Calendar.getInstance();
-                SimpleDateFormat sdf = new SimpleDateFormat(fwt, loc);
-                sdf.setTimeZone(tmz);
-                cal.setTimeZone(tmz);
-                cal.setTime(sdf.parse(str));
-                cal.add(Calendar.MILLISECOND, off);
-                return cal.getTime();
-            } catch (ParseException e) {
-                // Nothing to do.
-            }
+            return Date.from(Syno.parseTime(str, fwt, Core.getZoneId(), Core.getLocale()).plusMillis(off));
         }
 
         throw new Wrong("@fore.form.is.not."+ typa);

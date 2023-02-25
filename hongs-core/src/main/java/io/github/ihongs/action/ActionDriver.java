@@ -14,6 +14,7 @@ import io.github.ihongs.util.daemon.Gate;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.time.ZoneId;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.HashMap;
@@ -190,8 +191,8 @@ public class ActionDriver implements Filter, Servlet {
             // 设置默认语言
             Core.ACTION_LANG.set(def.getProperty("core.language.default", Cnst.LANG_DEF));
             Core.ACTION_ZONE.set(def.getProperty("core.timezone.default", Cnst.ZONE_DEF));
-            Locale  .setDefault(Core.getLocality());
-            TimeZone.setDefault(Core.getTimezone());
+            TimeZone.setDefault ( TimeZone.getTimeZone(Core.getZoneId( )) );
+            Locale  .setDefault ( Core.getLocale() );
         }
 
         // 调用一下可预加载动作类
@@ -259,7 +260,7 @@ public class ActionDriver implements Filter, Servlet {
             + "\r\n\tRuntime     : {}"
             + "\r\n\tObjects     : {}",
             Core.SERVER_ID,
-            Syno.humanTime(time),
+            Syno.phraseTime(time),
             core.toString (/**/)
         );
 
@@ -479,7 +480,7 @@ public class ActionDriver implements Filter, Servlet {
                 String      tim;
                 req = hlpr.getRequest(/***/);
                 ses = req .getSession(false);
-                tim = Syno.humanTime (System.currentTimeMillis() - Core.ACTION_TIME.get());
+                tim = Syno.phraseTime (System.currentTimeMillis() - Core.ACTION_TIME.get());
                 uid = hlpr.getSessibute(Cnst.UID_SES);
                 if (uid != null) {
                     mem  = "uid="+ uid.toString();

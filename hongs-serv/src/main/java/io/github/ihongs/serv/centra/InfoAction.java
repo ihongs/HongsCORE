@@ -106,11 +106,11 @@ public class InfoAction {
             rsp.put("run_info", inf);
 
             inf.put("load", new Object[] {avg, String.valueOf(avg), "负载"});
-            inf.put("size", new Object[] {siz, Syno.humanSize(siz), "全部"});
-            inf.put("free", new Object[] {fre, Syno.humanSize(fre), "空闲"});
-            inf.put("dist", new Object[] {max, Syno.humanSize(max), "可用"});
-            inf.put("used", new Object[] {use, Syno.humanSize(use), "已用"});
-            inf.put("uses", new Object[] {stk, Syno.humanSize(stk), "非堆"});
+            inf.put("size", new Object[] {siz, Syno.phraseSize(siz), "全部"});
+            inf.put("free", new Object[] {fre, Syno.phraseSize(fre), "空闲"});
+            inf.put("dist", new Object[] {max, Syno.phraseSize(max), "可用"});
+            inf.put("used", new Object[] {use, Syno.phraseSize(use), "已用"});
+            inf.put("uses", new Object[] {stk, Syno.phraseSize(stk), "非堆"});
         }
 
         /**
@@ -168,11 +168,11 @@ public class InfoAction {
         */
 
         tot = d.getTotalSpace();
-        hum = Syno.humanSize(tot);
+        hum = Syno.phraseSize(tot);
         map.put("@", new Object[] {tot, hum, "磁盘大小"});
 
         one = d.getFreeSpace();
-        hum = Syno.humanSize(one);
+        hum = Syno.phraseSize(one);
         map.put("#", new Object[] {one, hum, "磁盘剩余"});
 
         /*

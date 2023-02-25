@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -62,7 +63,7 @@ public class SourceCombat {
             CombatHelper.println ("Usage: source FILE_OR_DIR1 FILE_OR_DIR2 ...");
             return;
         }
-        
+
         for(String fn : args) {
             File   fu = new File(fn);
 
@@ -185,10 +186,10 @@ public class SourceCombat {
 
                 try {
                     db.execute(ln);
-                    CombatHelper.progres(rp, String.format("Ok(%d) Er(%d) ET: %s", ok++, er, Syno.humanTime(et)));
+                    CombatHelper.progres(rp, String.format("Ok(%d) Er(%d) ET: %s", ok++, er, Syno.phraseTime(et)));
                 }
                 catch(HongsException ex) {
-                    CombatHelper.progres(rp, String.format("Ok(%d) Er(%d) ET: %s", ok, er++, Syno.humanTime(et)));
+                    CombatHelper.progres(rp, String.format("Ok(%d) Er(%d) ET: %s", ok, er++, Syno.phraseTime(et)));
                     if (0 < Core.DEBUG) {
                         CombatHelper.progres();
                         CombatHelper.println("Error in file("+fo.getName()+") at lin("+li+"): "+ex.getMessage() );
@@ -206,10 +207,10 @@ public class SourceCombat {
 
                 try {
                     db.execute(ln);
-                    CombatHelper.progres(rp, String.format("Ok(%d) Er(%d) ET: %s", ok++, er, Syno.humanTime(et)));
+                    CombatHelper.progres(rp, String.format("Ok(%d) Er(%d) ET: %s", ok++, er, Syno.phraseTime(et)));
                 }
                 catch(HongsException ex) {
-                    CombatHelper.progres(rp, String.format("Ok(%d) Er(%d) ET: %s", ok, er++, Syno.humanTime(et)));
+                    CombatHelper.progres(rp, String.format("Ok(%d) Er(%d) ET: %s", ok, er++, Syno.phraseTime(et)));
                     if (0 < Core.DEBUG) {
                         CombatHelper.progres();
                         CombatHelper.println("Error in file("+fo.getName()+") at lin("+li+"): "+ex.getMessage() );
@@ -529,7 +530,7 @@ public class SourceCombat {
                         // 时间格式
                         if (fmt != null ) {
                             fmt  = fmt.substring( 1 );
-                            val  = DateTimeFormatter.ofPattern(fmt, Core.getLocality()).format(Instant.ofEpochMilli(tim).atZone(Core.getTimezone().toZoneId()));
+                            val  = Syno.formatTime(tim , fmt , Core.getZoneId(), Core.getLocale());
                         } else {
                             val  = Synt.asString(tim  /  mis);
                         }

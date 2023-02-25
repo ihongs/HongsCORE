@@ -1,5 +1,15 @@
 package io.github.ihongs.util;
 
+import java.util.Date;
+import java.util.Locale;
+import java.time.ZoneId;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.LocalDateTime;
+import java.time.DateTimeException;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -591,7 +601,7 @@ public final class Syno
    * @param size 容量数
    * @return 最大到T 注意: 不带单位, B或b等请自行补充
    */
-  public static String humanSize(long size)
+  public static String phraseSize(long size)
   {
     StringBuilder sb = new StringBuilder( );
     int item;
@@ -637,7 +647,7 @@ public final class Syno
    * @param time 毫秒数
    * @return 最大到w 注意: 已带单位, 毫秒作为小数部分
    */
-  public static String humanTime(long time)
+  public static String phraseTime(long time)
   {
     StringBuilder sb = new StringBuilder( );
     int item;
@@ -677,6 +687,76 @@ public final class Syno
     }
 
     return sb.toString();
+  }
+
+  /**
+   * 格式化时间
+   * @param time 时间戳(毫秒)
+   * @param patt
+   * @param loc
+   * @param tmz
+   * @return
+   * @throws IllegalArgumentException 格式错误
+   */
+  public static String formatTime(long time, String patt, ZoneId tmz, Locale loc) {
+    Instant inst = Instant.ofEpochMilli(time);
+    return  DateTimeFormatter.ofPattern(patt, loc).format(inst.atZone(tmz));
+  }
+
+  /**
+   * 格式化时间
+   * @param time 旧的日期对象
+   * @param patt
+   * @param loc
+   * @param tmz
+   * @return
+   * @throws IllegalArgumentException 格式错误
+   */
+  public static String formatTime(Date time, String patt, ZoneId tmz, Locale loc) {
+    Instant inst = time.toInstant();
+    return  DateTimeFormatter.ofPattern(patt, loc).format(inst.atZone(tmz));
+  }
+
+  /**
+   * 格式化时间
+   * @param time 新的时刻对象
+   * @param patt
+   * @param loc
+   * @param tmz
+   * @return
+   * @throws IllegalArgumentException 格式错误
+   */
+  public static String formatTime(Instant time, String patt, ZoneId tmz, Locale loc) {
+    return  DateTimeFormatter.ofPattern(patt, loc).format(time.atZone(tmz));
+  }
+
+  /**
+   * 解析时间
+   * @param time
+   * @param patt
+   * @param loc
+   * @param tmz
+   * @return
+   * @throws IllegalArgumentException 格式错误
+   * @throws java.time.format.DateTimeParseException 解析错误
+   */
+  public static Instant parseTime(String  time, String patt, ZoneId tmz, Locale loc) {
+    TemporalAccessor ta = DateTimeFormatter.ofPattern (patt, loc).parse (time);
+    LocalDate ld;
+    try {
+        ld = LocalDate.from(ta);
+    }
+    catch (DateTimeException e) {
+        ld = LocalDate.EPOCH;
+    }
+    LocalTime lt;
+    try {
+        lt = LocalTime.from(ta);
+    }
+    catch (DateTimeException e) {
+        lt = LocalTime.MIDNIGHT;
+    }
+    return LocalDateTime.of(ld, lt).atZone(tmz).toInstant();
   }
 
 }

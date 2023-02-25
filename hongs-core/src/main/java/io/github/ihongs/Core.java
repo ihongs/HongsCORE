@@ -3,12 +3,13 @@ package io.github.ihongs;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.InvocationTargetException;
+import java.time.ZoneId;
+import java.util.Locale;
+import java.util.TimeZone;
 import java.util.Map;
 import java.util.Set;
 import java.util.HashMap;
 import java.util.TreeSet;
-import java.util.Locale;
-import java.util.TimeZone;
 import java.util.function.Supplier;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -442,7 +443,7 @@ public class Core
    * 获取语言地区
    * @return
    */
-  public static final Locale getLocality()
+  public static final Locale getLocale()
   {
     Core     core = Core.getInstance();
     String   name = Locale.class.getName();
@@ -451,7 +452,7 @@ public class Core
         return  inst;
     }
 
-    String[] lang = Core.ACTION_LANG.get().split("_",2);
+    String[] lang = Core.ACTION_LANG.get().split("_", 2);
     if (2 <= lang.length) {
         inst = new Locale(lang[0],lang[1]);
     } else {
@@ -466,7 +467,26 @@ public class Core
    * 获取当前时区
    * @return
    */
-  public static final TimeZone getTimezone()
+  public static final ZoneId getZoneId()
+  {
+    Core     core = Core.getInstance();
+    String   name = ZoneId.class.getName();
+    ZoneId   inst = (ZoneId)core.get(name);
+    if (null != inst) {
+        return  inst;
+    }
+
+    inst = ZoneId.of(Core.ACTION_ZONE.get());
+
+    core.set(name, inst);
+    return inst;
+  }
+
+  /**
+   * 获取当前时区
+   * @return
+   */
+  public static final TimeZone getTimeZone()
   {
     Core     core = Core.getInstance();
     String   name = TimeZone.class.getName();
@@ -475,7 +495,7 @@ public class Core
         return  inst;
     }
 
-    inst = TimeZone.getTimeZone(Core.ACTION_ZONE.get());
+    inst = TimeZone.getTimeZone(getZoneId());
 
     core.set(name, inst);
     return inst;

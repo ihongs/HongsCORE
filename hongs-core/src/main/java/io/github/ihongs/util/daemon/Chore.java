@@ -4,11 +4,14 @@ import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.util.Syno;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
@@ -40,22 +43,19 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
         String dt = cc.getProperty("core.daemon.run.daily", "00:00");
         int    ps = Runtime.getRuntime().availableProcessors() - 1  ;
                ps = cc.getProperty("core.daemon.pool.size", ps > 1 ? ps : 1);
+        DateTimeFormatter df = DateTimeFormatter . ofPattern("H:m" );
 
-        SimpleDateFormat sdf = new SimpleDateFormat("H:m");
-
-        sdf.setTimeZone(TimeZone.getDefault (/* Local */));
         try {
-            DDT = (int) ( sdf.parse(dt).getTime() / 1000 );
+            DDT = (int) LocalTime.parse(dt, df).atDate(LocalDate.EPOCH).atZone(Core.getZoneId()).toInstant().toEpochMilli() / 1000;
         }
-        catch (ParseException e) {
+        catch (DateTimeParseException e) {
             throw new Error("Wrong format for core.daemon.run.daily '"+dt+"'. It needs to be 'H:mm'");
         }
 
-        sdf.setTimeZone(TimeZone.getTimeZone("GMT+00:00"));
         try {
-            DTT = (int) ( sdf.parse(tt).getTime() / 1000 );
+            DTT = (int) LocalTime.parse(tt, df).atDate(LocalDate.EPOCH).atZone(ZoneId.of("UTC")).toInstant().toEpochMilli() / 1000;
         }
-        catch (ParseException e) {
+        catch (DateTimeParseException e) {
             throw new Error("Wrong format for core.daemon.run.timed '"+tt+"'. It needs to be 'H:mm'");
         }
         if (DTT < 60 || DTT > 28800) {
@@ -81,7 +81,7 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
 
     /**
      * 获取任务容器
-     * @return 
+     * @return
      */
     public ScheduledExecutorService getExecutor() {
         return SES;
@@ -137,7 +137,7 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
     /**
      * 异步任务
      * @param task
-     * @return 
+     * @return
      */
     public Future run(Runnable task) {
         if (4 == (4 & Core.DEBUG)) {
@@ -152,13 +152,12 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
      * 延时任务
      * @param task
      * @param delay 延迟秒数
-     * @return 
+     * @return
      */
     public ScheduledFuture run(Runnable task, int delay) {
         if (4 == (4 & Core.DEBUG)) {
-            Date   date = new Date(System.currentTimeMillis() + delay * 1000);
-            String time = new SimpleDateFormat("MM-dd HH:mm:ss").format(date);
-            String name = task.getClass ( ).getName( );
+            String time = Syno.formatTime(delay * 1000 + System.currentTimeMillis(), "MM-dd HH:mm:ss", ZoneId.systemDefault(), Locale.getDefault());
+            String name = task. getClass ( ).getName( );
             CoreLogger.trace("Will run " + name + " at " + time);
         }
 
@@ -170,14 +169,13 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
      * @param task
      * @param delay 延迟秒数
      * @param perio 间隔秒数
-     * @return 
+     * @return
      */
     public ScheduledFuture run(Runnable task, int delay, int perio) {
         if (4 == (4 & Core.DEBUG)) {
-            Date   date = new Date(System.currentTimeMillis() + delay * 1000);
-            String time = new SimpleDateFormat("MM-dd HH:mm:ss").format(date);
-            String timr = Syno.humanTime(perio * 1000);
-            String name = task.getClass ( ).getName( );
+            String time = Syno.formatTime(delay * 1000 + System.currentTimeMillis(), "MM-dd HH:mm:ss", ZoneId.systemDefault(), Locale.getDefault());
+            String timr = Syno.phraseTime(perio * 1000);
+            String name = task. getClass ( ).getName( );
             CoreLogger.trace("Will run " + name + " at " + time + ", "+ timr);
         }
 
@@ -190,25 +188,18 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
      * @param hour 几点(0-23)
      * @param min  几分
      * @param sec  几秒
-     * @return 
+     * @return
      */
     public ScheduledFuture runDaily(Runnable task, int hour, int min, int sec) {
         // 计算延时
-        Calendar cal0 = Calendar.getInstance( );
-        Calendar cal1 = Calendar.getInstance( );
-        cal0.setTimeZone(TimeZone.getDefault());
-        cal1.setTimeZone(TimeZone.getDefault());
-        cal1.set(Calendar.HOUR_OF_DAY, hour);
-        cal1.set(Calendar.MINUTE     , min );
-        cal1.set(Calendar.SECOND     , sec );
-        cal1.set(Calendar.MILLISECOND,  0  );
-        cal1.set(Calendar.MONTH, cal0.get(Calendar.MONTH) );
-        cal1.set(Calendar.YEAR , cal0.get(Calendar.YEAR ) );
-        cal1.set(Calendar.DATE , cal0.get(Calendar.DATE ) );
-        if ( cal1.before(cal0) ) cal1.add(Calendar.DATE, 1);
-        int ddt = (int) (cal1.getTimeInMillis() - cal0.getTimeInMillis()) / 1000 + 1;
+        LocalDateTime cal0 = LocalDateTime.now();
+        LocalDateTime cal1 = LocalDateTime.of(cal0.getYear(), cal0.getMonth(), cal0.getDayOfMonth(), hour, min, sec);
+        if (cal1.isBefore( cal0 ) ) {
+            cal1 = cal1.plusDays(1);
+        }
+        int ddt = (int) Duration.between(cal1, cal0).getSeconds() + 1;
 
-        return run(task, ddt, DDP);
+        return run(task, ddt, DDP );
     }
 
     /**
@@ -216,20 +207,16 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
      * 默认每天零点时运行
      * 或在 default.properties 设置 core.daemon.run.daily=HH:mm
      * @param task
-     * @return 
+     * @return
      */
     public ScheduledFuture runDaily(Runnable task) {
         // 计算延时
-        Calendar cal0 = Calendar.getInstance( );
-        Calendar cal1 = Calendar.getInstance( );
-        cal0.setTimeZone(TimeZone.getDefault());
-        cal1.setTimeZone(TimeZone.getDefault());
-        cal1.setTimeInMillis( DDT * 1000L ); // 起始时间
-        cal1.set(Calendar.MONTH, cal0.get(Calendar.MONTH) );
-        cal1.set(Calendar.YEAR , cal0.get(Calendar.YEAR ) );
-        cal1.set(Calendar.DATE , cal0.get(Calendar.DATE ) );
-        if ( cal1.before(cal0) ) cal1.add(Calendar.DATE, 1);
-        int ddt = (int) (cal1.getTimeInMillis() - cal0.getTimeInMillis()) / 1000 + 1;
+        LocalDateTime cal0 = LocalDateTime.now();
+        LocalDateTime cal1 = LocalDateTime.of(cal0.getYear(), cal0.getMonth(), cal0.getDayOfMonth(), 0, 0, 0);
+        if (cal1.isBefore( cal0 ) ) {
+            cal1 = cal1.plusDays(1);
+        }
+        int ddt = (int) Duration.between(cal1, cal0).getSeconds() + 1;
 
         return run(task, ddt, DDP);
     }
@@ -239,7 +226,7 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
      * 默认每隔十分钟运行
      * 或在 default.properties 设置 core.daemon.run.timed=HH:mm
      * @param task
-     * @return 
+     * @return
      */
     public ScheduledFuture runTimed(Runnable task) {
         return run(task, DTT, DTT);

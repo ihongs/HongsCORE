@@ -527,11 +527,11 @@ public class CombatHelper
     } else
     if (n == ok) {
         t = System.currentTimeMillis() - t;
-        notes = String.format("Ok(%d) TT: %s", ok, Syno.humanTime(t));
+        notes = String.format("Ok(%d) TT: %s", ok, Syno.phraseTime(t));
     } else {
         t = System.currentTimeMillis() - t;
         t = (long) (t / scale - t);
-        notes = String.format("Ok(%d) ET: %s", ok, Syno.humanTime(t));
+        notes = String.format("Ok(%d) ET: %s", ok, Syno.phraseTime(t));
     }
     CombatHelper.progres(scale, notes);
   }
@@ -555,11 +555,11 @@ public class CombatHelper
     } else
     if (n == ok + er) {
         t = System.currentTimeMillis() - t;
-        notes = String.format("Ok(%d) Er(%d) TT: %s", ok, er, Syno.humanTime(t));
+        notes = String.format("Ok(%d) Er(%d) TT: %s", ok, er, Syno.phraseTime(t));
     } else {
         t = System.currentTimeMillis() - t;
         t = (long) (t / scale - t);
-        notes = String.format("Ok(%d) Er(%d) ET: %s", ok, er, Syno.humanTime(t));
+        notes = String.format("Ok(%d) Er(%d) ET: %s", ok, er, Syno.phraseTime(t));
     }
     CombatHelper.progres(scale, notes);
   }

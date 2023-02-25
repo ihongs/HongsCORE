@@ -12,8 +12,11 @@ import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Iterator;
 import java.util.HashMap;
 import java.util.List;
@@ -761,14 +764,13 @@ public class Table
           {
             dateFormat = getDtfmt(namc, "date", values);
           }
-          SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
-          sdf.setTimeZone(Core.getTimezone());
+          DateTimeFormatter dtf = DateTimeFormatter.ofPattern(dateFormat, Core.getLocale());
 
           try
           {
-            mainValues.put(namc, sdf.parse(valueStr));
+            mainValues.put(namc, Date.valueOf(LocalDate.parse(valueStr, dtf)));
           }
-          catch (ParseException ex)
+          catch (DateTimeParseException ex)
           {
             throw dateException(namc, valueStr, dateFormat);
           }
@@ -794,14 +796,13 @@ public class Table
           {
             timeFormat = getDtfmt(namc, "time", values);
           }
-          SimpleDateFormat sdf = new SimpleDateFormat(timeFormat);
-          sdf.setTimeZone(Core.getTimezone());
+          DateTimeFormatter dtf = DateTimeFormatter.ofPattern(dateFormat, Core.getLocale());
 
           try
           {
-            mainValues.put(namc, sdf.parse(valueStr));
+            mainValues.put(namc, Time.valueOf(LocalTime.parse(valueStr, dtf)));
           }
-          catch (ParseException ex)
+          catch (DateTimeParseException ex)
           {
             throw dateException(namc, valueStr, timeFormat);
           }
@@ -827,14 +828,13 @@ public class Table
           {
             datetimeFormat = getDtfmt(namc, "datetime", values);
           }
-          SimpleDateFormat sdf = new SimpleDateFormat(datetimeFormat);
-          sdf.setTimeZone(Core.getTimezone());
+          DateTimeFormatter dtf = DateTimeFormatter.ofPattern(dateFormat, Core.getLocale());
 
           try
           {
-            mainValues.put(namc, sdf.parse(valueStr));
+            mainValues.put(namc, Timestamp.valueOf(LocalDateTime.parse(valueStr, dtf)));
           }
-          catch (ParseException ex)
+          catch (DateTimeParseException ex)
           {
             throw dateException(namc, valueStr, datetimeFormat);
           }

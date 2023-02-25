@@ -5,9 +5,8 @@ import io.github.ihongs.CoreLocale;
 import io.github.ihongs.util.Synt;
 import org.apache.lucene.index.IndexableField;
 import java.util.Map;
-import java.util.Date;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 
 /**
  * 日期格式化值
@@ -15,7 +14,7 @@ import java.text.SimpleDateFormat;
  */
 public class DatextValue implements IValue {
     private final long MN;
-    private final DateFormat DF;
+    private final DateTimeFormatter DF;
 
     public DatextValue(Map c) {
         String  tp = Synt.declare(c.get(  "type"  ), "");
@@ -36,12 +35,11 @@ public class DatextValue implements IValue {
                 fm = "yyyy/MM/dd HH:mm:ss";
             }
         }
-        DF  =  new  SimpleDateFormat( fm );
-        DF.setTimeZone(Core.getTimezone());
+        DF = DateTimeFormatter.ofPattern(fm , Core.getLocale() );
     }
 
     @Override
     public Object get(IndexableField f) {
-        return DF.format(new Date(f.numericValue().longValue() * MN));
+        return DF.format(Instant.ofEpochMilli(f.numericValue().longValue() * MN).atZone(Core.getZoneId()));
     }
 }

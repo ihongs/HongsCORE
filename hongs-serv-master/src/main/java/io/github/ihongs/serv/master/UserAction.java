@@ -16,8 +16,11 @@ import io.github.ihongs.normal.serv.Record;
 import io.github.ihongs.serv.auth.AuthKit;
 import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Synt;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -235,14 +238,10 @@ public class UserAction {
          * 重写会话规避当前用户重登录.
          */
         if (cp) {
-            Calendar ca;
-            long     et;
-            ca = Calendar.getInstance(Core.getTimezone());
-            ca.setTimeInMillis( Core.ACTION_TIME.get( ) );
-            ca.set(Calendar.HOUR_OF_DAY, 23);
-            ca.set(Calendar.MINUTE, 59);
-            ca.set(Calendar.SECOND, 59);
-            et = ca.getTimeInMillis() / 1000 + 1 ;
+            ZoneId zi = Core.getZoneId( );
+            long   et = LocalDateTime.of(
+                    LocalDate.now(zi).plusDays(1), LocalTime.MIN
+                ).atZone(zi).toInstant( ).toEpochMilli( ) / 1000;
             Record.del( "sign.retry.times." + id);
             Record.set( "sign.retry.allow." + id , 1, et);
 

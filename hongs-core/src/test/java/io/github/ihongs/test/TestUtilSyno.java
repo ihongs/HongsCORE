@@ -1,6 +1,11 @@
 package io.github.ihongs.test;
 
 import io.github.ihongs.util.Syno;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -100,6 +105,29 @@ public class TestUtilSyno extends TestCase {
         m.put("1", "Kev");
         s = Syno.inject(a, m);
         assertEquals(s, b);
+    }
+    
+    @Test
+    public void testFormat() {
+        long   tm = 1677329056750L;
+        String dt = "2023/02/25 20:44:16.750";
+        String df = "yyyy/MM/dd HH:mm:ss.SSS";
+        assertEquals(dt, Syno.formatTime(tm, df, ZoneId.of("GMT+8"), Locale.PRC));
+        assertEquals(tm, Syno. parseTime(dt, df, ZoneId.of("GMT+8"), Locale.PRC).toEpochMilli());
+        
+        // 解析时间
+        DateTimeFormatter tf = DateTimeFormatter.ofPattern("H:m", Locale.US);
+        assertEquals(   900, LocalTime.parse("0:15", tf).atDate(LocalDate.EPOCH).atZone(ZoneId.of("UTC"  )).toInstant().toEpochMilli() / 1000);
+        assertEquals(   900, Syno. parseTime("0:15", "H:m", ZoneId.of("UTC"  ), Locale.US).toEpochMilli() / 1000);
+        assertEquals(-27900, LocalTime.parse("0:15", tf).atDate(LocalDate.EPOCH).atZone(ZoneId.of("GMT+8")).toInstant().toEpochMilli() / 1000);
+        assertEquals(-27900, Syno. parseTime("0:15", "H:m", ZoneId.of("GMT+8"), Locale.US).toEpochMilli() / 1000);
+        
+        // 解析日期
+        tf = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+        assertEquals(1677283200, LocalDate.parse("2023/02/25", tf).atTime(LocalTime.MIDNIGHT).atZone(ZoneId.of("UTC"  )).toInstant().toEpochMilli() / 1000);
+        assertEquals(1677283200, Syno. parseTime("2023/02/25", "yyyy/MM/dd", ZoneId.of("UTC"  ), Locale.US).toEpochMilli() / 1000);
+        assertEquals(1677254400, LocalDate.parse("2023/02/25", tf).atTime(LocalTime.MIDNIGHT).atZone(ZoneId.of("GMT+8")).toInstant().toEpochMilli() / 1000);
+        assertEquals(1677254400, Syno. parseTime("2023/02/25", "yyyy/MM/dd", ZoneId.of("GMT+8"), Locale.US).toEpochMilli() / 1000);
     }
 
     @Test

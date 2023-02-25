@@ -17,7 +17,10 @@ import io.github.ihongs.normal.serv.Record;
 import io.github.ihongs.serv.auth.AuthKit;
 import io.github.ihongs.serv.auth.RoleSet;
 import io.github.ihongs.util.Synt;
-import java.util.Calendar;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -96,14 +99,10 @@ public class SignAction {
             ah.getResponseData( ).put("retry_times" , rt);
 
             // 记录错误次数
-            Calendar ca;
-            long     et;
-            ca = Calendar.getInstance(Core.getTimezone());
-            ca.setTimeInMillis( Core.ACTION_TIME.get( ) );
-            ca.set(Calendar.HOUR_OF_DAY, 23);
-            ca.set(Calendar.MINUTE, 59);
-            ca.set(Calendar.SECOND, 59);
-            et = ca.getTimeInMillis()/ 1000 + 1 ;
+            ZoneId zi = Core.getZoneId( );
+            long   et = LocalDateTime.of(
+                    LocalDate.now(zi).plusDays(1), LocalTime.MIN
+                ).atZone(zi).toInstant( ).toEpochMilli( ) / 1000;
             Record.set ("sign.retry.times." + id, rt, et);
             return;
         } else {

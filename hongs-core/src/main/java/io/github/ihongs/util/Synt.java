@@ -1,7 +1,8 @@
 package io.github.ihongs.util;
 
-import java.text.NumberFormat;
 import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.time.Instant;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -502,6 +503,9 @@ public final class Synt {
         } else
         if (val instanceof Calendar) {
             val = ( (Calendar) val ).getTimeInMillis();
+        } else
+        if (val instanceof Instant ) {
+            val = ( (Instant ) val ).toEpochMilli(   );
         }
 
         return val;

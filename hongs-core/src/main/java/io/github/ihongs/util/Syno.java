@@ -523,101 +523,6 @@ public final class Syno
     return  str;
   }
 
-  //** 格式 **/
-
-  /**
-   * 友好的时间格式
-   * @param time 毫秒数
-   * @return 最大到w 注意: 已带单位, 毫秒作为小数部分
-   */
-  public static String humanTime(long time)
-  {
-    StringBuilder sb = new StringBuilder( );
-    int item;
-
-    item = (int) Math.floor(time / 604800000);
-    if (item > 0) {  time = time % 604800000;
-        sb.append(item).append("w");
-    }
-
-    item = (int) Math.floor(time / 86400000);
-    if (item > 0) {  time = time % 86400000;
-        sb.append(item).append("d");
-    } else
-    if (time > 0 && 0 < sb.length()) {
-        sb.append("0d");
-    }
-
-    item = (int) Math.floor(time / 3600000);
-    if (item > 0) {  time = time % 3600000;
-        sb.append(item).append("h");
-    } else
-    if (time > 0 && 0 < sb.length()) {
-        sb.append("0h");
-    }
-
-    item = (int) Math.floor(time / 60000);
-    if (item > 0) {  time = time % 60000;
-        sb.append(item).append("m");
-    } else
-    if (time > 0 && 0 < sb.length()) {
-        sb.append("0m");
-    }
-
-    float last = (float) time/1000 ;
-    if (last > 0 || 0== sb.length()) {
-        sb.append(last).append("s");
-    }
-
-    return sb.toString();
-  }
-
-  /**
-   * 友好的容量格式
-   * @param size 容量数
-   * @return 最大到T 注意: 不带单位, B或b等请自行补充
-   */
-  public static String humanSize(long size)
-  {
-    StringBuilder sb = new StringBuilder( );
-    int item;
-
-    item = (int) Math.floor(size / 0x10000000000L);
-    if (item > 0) {  size = size % 0x10000000000L;
-        sb.append(item).append("T");
-    }
-
-    item = (int) Math.floor(size / 0x40000000);
-    if (item > 0) {  size = size % 0x40000000;
-        sb.append(item).append("G");
-    } else
-    if (size > 0 && 0 < sb.length()) {
-        sb.append("0G");
-    }
-
-    item = (int) Math.floor(size / 0x100000);
-    if (item > 0) {  size = size % 0x100000;
-        sb.append(item).append("M");
-    } else
-    if (size > 0 && 0 < sb.length()) {
-        sb.append("0M");
-    }
-
-    item = (int) Math.floor(size / 0x400);
-    if (item > 0) {  size = size % 0x400;
-        sb.append(item).append("K");
-    } else
-    if (size > 0 && 0 < sb.length()) {
-        sb.append("0K");
-    }
-
-    if (size > 0 || 0== sb.length()) {
-        sb.append(size);
-    }
-
-    return sb.toString();
-  }
-
   //** 路径 **/
 
   /**
@@ -677,6 +582,101 @@ public final class Syno
               .append( "/" ); // 不用 File.separator, 规避 Windows 下造成困扰
       }   path.append(name );
       return path.toString();
+  }
+
+  //** 格式 **/
+
+  /**
+   * 友好的容量格式
+   * @param size 容量数
+   * @return 最大到T 注意: 不带单位, B或b等请自行补充
+   */
+  public static String humanSize(long size)
+  {
+    StringBuilder sb = new StringBuilder( );
+    int item;
+
+    item = (int) Math.floor(size / 0x10000000000L);
+    if (item > 0) {  size = size % 0x10000000000L;
+        sb.append(item).append("T");
+    }
+
+    item = (int) Math.floor(size / 0x40000000);
+    if (item > 0) {  size = size % 0x40000000;
+        sb.append(item).append("G");
+    } else
+    if (size > 0 && 0 < sb.length()) {
+        sb.append("0G");
+    }
+
+    item = (int) Math.floor(size / 0x100000);
+    if (item > 0) {  size = size % 0x100000;
+        sb.append(item).append("M");
+    } else
+    if (size > 0 && 0 < sb.length()) {
+        sb.append("0M");
+    }
+
+    item = (int) Math.floor(size / 0x400);
+    if (item > 0) {  size = size % 0x400;
+        sb.append(item).append("K");
+    } else
+    if (size > 0 && 0 < sb.length()) {
+        sb.append("0K");
+    }
+
+    if (size > 0 || 0== sb.length()) {
+        sb.append(size);
+    }
+
+    return sb.toString();
+  }
+
+  /**
+   * 友好的时间格式
+   * @param time 毫秒数
+   * @return 最大到w 注意: 已带单位, 毫秒作为小数部分
+   */
+  public static String humanTime(long time)
+  {
+    StringBuilder sb = new StringBuilder( );
+    int item;
+
+    item = (int) Math.floor(time / 604800000);
+    if (item > 0) {  time = time % 604800000;
+        sb.append(item).append("w");
+    }
+
+    item = (int) Math.floor(time / 86400000);
+    if (item > 0) {  time = time % 86400000;
+        sb.append(item).append("d");
+    } else
+    if (time > 0 && 0 < sb.length()) {
+        sb.append("0d");
+    }
+
+    item = (int) Math.floor(time / 3600000);
+    if (item > 0) {  time = time % 3600000;
+        sb.append(item).append("h");
+    } else
+    if (time > 0 && 0 < sb.length()) {
+        sb.append("0h");
+    }
+
+    item = (int) Math.floor(time / 60000);
+    if (item > 0) {  time = time % 60000;
+        sb.append(item).append("m");
+    } else
+    if (time > 0 && 0 < sb.length()) {
+        sb.append("0m");
+    }
+
+    float last = (float) time/1000 ;
+    if (last > 0 || 0== sb.length()) {
+        sb.append(last).append("s");
+    }
+
+    return sb.toString();
   }
 
 }

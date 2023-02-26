@@ -3188,10 +3188,9 @@ function() {
     var tab = lnk.parent();
     var nav = tab.parent();
     var tao = tab.siblings(".active");
-    var pns = tab.attr("data-target");
-        pas = pns ? tab.hsFind(pns) : nav.next ( ) ;
-    var pno = pns ? pns.children().eq(tao.index()) : $();
-    var pne = pns ? pns.children().eq(tab.index()) : $();
+    var pns = tab.hsFind(nav.attr("data-target") || nav.next());
+    var pno = pns.children().eq(tao.index());
+    var pne = pns.children().eq(tab.index());
     if (tab.is(".active,.inactive") ) {
         return;
     }

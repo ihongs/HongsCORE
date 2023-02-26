@@ -56,13 +56,13 @@ public class IsDate extends Rule {
         if (!"".equals(min)) {
             long tim = getTime(min, now);
             if ( tim > day.getTime( ) ) {
-                throw new Wrong("@fore.form.lt.mindate", Syno.formatTime(tim, fwt, Core.getZoneId(), Core.getLocale()));
+                throw new Wrong("@fore.form.lt.mindate", Syno.formatTime(tim, fwt));
             }
         }
         if (!"".equals(max)) {
             long tim = getTime(max, now);
             if ( tim < day.getTime( ) ) {
-                throw new Wrong("@fore.form.gt.maxdate", Syno.formatTime(tim, fwt, Core.getZoneId(), Core.getLocale()));
+                throw new Wrong("@fore.form.gt.maxdate", Syno.formatTime(tim, fwt));
             }
         }
 
@@ -79,7 +79,7 @@ public class IsDate extends Rule {
             return day.getTime() / 1000;
         }
         if (! "".equals(fmt)) {
-            return Syno.formatTime(day, fmt, Core.getZoneId(), Core.getLocale());
+            return Syno.formatTime(day , fmt);
         }
 
         return value;

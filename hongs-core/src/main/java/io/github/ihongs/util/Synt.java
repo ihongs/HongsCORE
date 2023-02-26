@@ -1,16 +1,21 @@
 package io.github.ihongs.util;
 
+import static io.github.ihongs.Core.getZoneId;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.time.Instant;
-import java.util.Calendar;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Date;
+import java.util.Calendar;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Arrays;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -506,6 +511,18 @@ public final class Synt {
         } else
         if (val instanceof Instant ) {
             val = ( (Instant ) val ). toEpochMilli ( );
+        } else
+        if (val instanceof ZonedDateTime) {
+            val = ( (ZonedDateTime ) val).toInstant( ).toEpochMilli();
+        } else
+        if (val instanceof LocalDateTime) {
+            val = ( (LocalDateTime ) val).atZone(getZoneId()).toInstant().toEpochMilli();
+        } else
+        if (val instanceof LocalDate) {
+            val = ( (LocalDate) val ).atTime(LocalTime. MIN ).atZone(getZoneId()).toInstant().toEpochMilli();
+        } else
+        if (val instanceof LocalTime) {
+            val = ( (LocalTime) val ).atDate(LocalDate.EPOCH).atZone(getZoneId()).toInstant().toEpochMilli();
         }
 
         return val;

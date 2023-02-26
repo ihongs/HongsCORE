@@ -535,7 +535,7 @@ public class SourceCombat {
                         // 时间格式
                         if (fmt != null ) {
                             fmt  = fmt.substring( 1 );
-                            val  = Syno.formatTime(tim , fmt , Core.getZoneId(), Core.getLocale());
+                            val  = Syno.formatTime(tim , fmt);
                         } else {
                             val  = Synt.asString(tim  /  mis);
                         }

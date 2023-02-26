@@ -1,6 +1,6 @@
 package io.github.ihongs.util;
 
-import io.github.ihongs.Core;
+import static io.github.ihongs.Core.DEBUG;
 import io.github.ihongs.HongsExemption;
 
 import org.json.simple.parser.JSONParser;
@@ -130,7 +130,7 @@ public final class Dawn
    */
   public static void append(Appendable out, Object obj)
   {
-    Dawn.append(out, obj, Core.DEBUG < 2 );
+    Dawn.append(out, obj, 2 > DEBUG);
   }
 
   /**

@@ -1,5 +1,7 @@
 package io.github.ihongs.util;
 
+import static io.github.ihongs.Core.getLocale;
+import static io.github.ihongs.Core.getZoneId;
 import java.util.Date;
 import java.util.Locale;
 import java.time.ZoneId;
@@ -705,6 +707,18 @@ public final class Syno
 
   /**
    * 格式化时间
+   * 用 Core 中当前时区和区域
+   * @param time 时间戳(毫秒)
+   * @param patt
+   * @return
+   * @throws IllegalArgumentException 格式错误
+   */
+  public static String formatTime(long time, String patt) {
+    return  formatTime(time, patt, getZoneId(), getLocale());
+  }
+
+  /**
+   * 格式化时间
    * @param time 旧的日期对象
    * @param patt
    * @param loc
@@ -719,6 +733,18 @@ public final class Syno
 
   /**
    * 格式化时间
+   * 用 Core 中当前时区和区域
+   * @param time 旧的日期对象
+   * @param patt
+   * @return
+   * @throws IllegalArgumentException 格式错误
+   */
+  public static String formatTime(Date time, String patt) {
+    return  formatTime(time, patt, getZoneId(), getLocale());
+  }
+
+  /**
+   * 格式化时间
    * @param time 新的时刻对象
    * @param patt
    * @param loc
@@ -728,6 +754,18 @@ public final class Syno
    */
   public static String formatTime(Instant time, String patt, ZoneId tmz, Locale loc) {
     return  DateTimeFormatter.ofPattern(patt, loc).format(time.atZone(tmz));
+  }
+
+  /**
+   * 格式化时间
+   * 用 Core 中当前时区和区域
+   * @param time 新的时刻对象
+   * @param patt
+   * @return
+   * @throws IllegalArgumentException 格式错误
+   */
+  public static String formatTime(Instant time, String patt) {
+    return  formatTime(time, patt, getZoneId(), getLocale());
   }
 
   /**
@@ -754,9 +792,22 @@ public final class Syno
         lt = LocalTime.from(ta);
     }
     catch (DateTimeException e) {
-        lt = LocalTime.MIDNIGHT;
+        lt = LocalTime. MIN ;
     }
-    return LocalDateTime.of(ld, lt).atZone(tmz).toInstant();
+    return LocalDateTime.of(ld, lt).atZone(tmz).toInstant( );
+  }
+
+  /**
+   * 解析时间
+   * 用 Core 中当前时区和区域
+   * @param time
+   * @param patt
+   * @return
+   * @throws IllegalArgumentException 格式错误
+   * @throws java.time.format.DateTimeParseException 解析错误
+   */
+  public static Instant parseTime(String  time, String patt) {
+    return parseTime(time , patt , getZoneId(), getLocale());
   }
 
 }

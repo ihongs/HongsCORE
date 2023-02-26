@@ -538,59 +538,31 @@ public final class Syno
   //** 路径 **/
 
   /**
+   * 拆分文件名为路径, 按三个三个拆分
    * 防止单个目录下文件过多而无法存放
-   * 将名称拆解成路径, 按名称长度调用 splitPn36,splitPn16
    * @param name
    * @return
    */
   public static String splitPath(String name) {
-      int len  =  name.length( );
-      if (len >= 16 && len < 32) {
-          return splitPn36(name);
-      } else {
-          return splitPn16(name);
-      }
+      return splitPath(name , 3);
   }
 
   /**
+   * 拆分文件名为路径
    * 防止单个目录下文件过多而无法存放
-   * 将36进制名称(如uid)拆解成路径
-   * @param name
+   * @param name 待拆名称
+   * @param span 分割长度
    * @return
    */
-  public static String splitPn36(String name) {
-      int i  = 0 ;
-      int j  = name.length();
-      if (j >= 8 ) {
-          j  = 8 ;
-      } else {
-          j  = j - ( j % 2 );
-      }
-      StringBuilder path = new StringBuilder();
-      for (; i < j; i += 2 ) {
-          path.append(name.substring(i, i+ 2))
-              .append( "/" ); // 不用 File.separator, 规避 Windows 下造成困扰
-      }   path.append(name );
-      return path.toString();
-  }
-
-  /**
-   * 防止单个目录下文件过多而无法存放
-   * 将16进制名称(如md5)拆解成路径
-   * @param name
-   * @return
-   */
-  public static String splitPn16(String name) {
-      int i  = 0 ;
-      int j  = name.length();
-      if (j >= 32) {
-          j  = 32;
-      } else {
-          j  = j - ( j % 4 );
-      }
-      StringBuilder path = new StringBuilder();
-      for (; i < j; i += 4 ) {
-          path.append(name.substring(i, i+ 4))
+  public static String splitPath(String name, int span) {
+      int l = name.length( );
+      int p = l / span;
+      int q = p * span;
+      int i = 0x0 ;
+      int j = span;
+      StringBuilder path = new StringBuilder(l + p);
+      for ( ; i < q ; i += span, j += span) {
+          path.append(name.substring(i, j))
               .append( "/" ); // 不用 File.separator, 规避 Windows 下造成困扰
       }   path.append(name );
       return path.toString();

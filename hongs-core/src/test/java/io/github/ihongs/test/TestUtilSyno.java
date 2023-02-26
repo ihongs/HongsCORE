@@ -57,6 +57,21 @@ public class TestUtilSyno extends TestCase {
 
         b = Syno.as36Hex(y);
         assertEquals(b, a);
+        
+        x = "012/345/678/9AB/CDE/0123456789ABCDE";
+        y = "0123456789ABCDE";
+        y = Syno.splitPath(y);
+        assertEquals(y, x);
+        
+        x = "012/345/678/9AB/CDE/0123456789ABCDEF";
+        y = "0123456789ABCDEF";
+        y = Syno.splitPath(y);
+        assertEquals(y, x);
+        
+        x = "012/345/678/9AB/CDE/0123456789ABCDEFG";
+        y = "0123456789ABCDEFG";
+        y = Syno.splitPath(y);
+        assertEquals(y, x);
     }
 
     @Test

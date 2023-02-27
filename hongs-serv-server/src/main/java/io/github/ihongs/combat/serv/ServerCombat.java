@@ -58,6 +58,25 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 @Combat("server")
 public class ServerCombat {
 
+    @Combat("__main__")
+    public static void exec (String[] args) throws HongsException {
+        if (args.length == 0) {
+            System.err.println("Usage: server start|share [PORT]");
+            return;
+        }
+        String [ ]  opts = new String [ -1 + args.length];
+        System . arraycopy(args, 1, opts, 0, opts.length);
+        if ("share".equals(args[0])) {
+             share (opts);
+        } else
+        if ("start".equals(args[0])) {
+             start (opts);
+        } else
+        {
+            System.err.println("Usage: server start|share [PORT]");
+        }
+    }
+
     @Combat("share")
     public static void share(String[] args) throws HongsException {
         int    port = args.length >0 ? Integer.parseInt(args[0]) : 8080;

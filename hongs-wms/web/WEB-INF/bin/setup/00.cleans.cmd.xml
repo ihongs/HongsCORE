@@ -20,7 +20,7 @@
     <!--
     <combat system="no">
         <cmd>abc.def.xyz</cmd>
-        <arg>{{yyyy/MM/dd|-1w}}</arg>
+        <arg>${CURR_TIME-1w|yyyy/MM/dd}</arg>
         <arg opt="opt1">123</arg>
         <arg opt="opt2">456</arg>
         <arg opt="opt3"/>
@@ -28,7 +28,7 @@
     <action server="no">
         <act>abc/def/xyz</act>
         <arg opt="request">
-            abc=def&xyz=123&time={{t|-1d}}
+            abc=def&xyz=123&time=${CURR_TIME-1d}
         </arg>
         <arg opt="session">
             {"abc": "def", "xyz": 123}
@@ -37,9 +37,9 @@
             @bin/serve/root.cookie
         </arg>
     </action>
-    <runsql db="default">
+    <sql db="default">
         <sql>DELETE abc WHERE stat=?</sql>
         <arg>0</arg>
-    </runsql>
+    </sql>
     //-->
 </root>

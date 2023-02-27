@@ -33,7 +33,7 @@
 
             String  type = Synt.asString(info.get("__type__"));
             String  text = Synt.asString(info.get("__text__"));
-            String  hist = Synt.asString(info.get("__hist__"));
+            String  hail = Synt.asString(info.get("__hail__"));
 
             // 显示 ID
             if (name.equals(Cnst.ID_KEY)) {
@@ -183,9 +183,9 @@
                     <div class="form-control-static" data-fn="<%=name%>" data-ft="<%=kind%>"></div>
                 <%} /*End If */%>
                     <%
-                        hist = Synt.declare(info.get("hist") , hist != null ? hist : "");
+                        hail = Synt.declare(info.get("hail") , hail != null ? hail : "");
                     %>
-                    <div class="help-block text-muted form-control-static"><%=hist%></div>
+                    <div class="help-block text-muted form-control-static"><%=hail%></div>
                 </div>
             </div>
         <%} /*End if */%>

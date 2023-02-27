@@ -313,8 +313,8 @@ public class FormSet
         attr = element2.getAttribute("hint");
         items.put("__hint__", gotLanguage(attr));
 
-        attr = element2.getAttribute("hist");
-        items.put("__hist__", gotLanguage(attr));
+        attr = element2.getAttribute("hail");
+        items.put("__hail__", gotLanguage(attr));
 
         if (element2.hasAttribute("required")) {
             attr = element2.getAttribute("required");
@@ -535,7 +535,7 @@ public class FormSet
       String    k = (String) e.getKey();
       String    n = (String) m.get("__text__");
       String    h = (String) m.get("__hint__");
-      String    d = (String) m.get("__hist__");
+      String    d = (String) m.get("__hail__");
       Map       u = new LinkedHashMap();
       u.putAll( m );
       if (n != null ||!"".equals(n)) {
@@ -545,7 +545,7 @@ public class FormSet
           u.put("__hint__", lang.translate(h));
       }
       if (d != null &&!"".equals(d)) {
-          u.put("__hist__", lang.translate(h));
+          u.put("__hail__", lang.translate(h));
       }
       itemz.put(k, u);
     }

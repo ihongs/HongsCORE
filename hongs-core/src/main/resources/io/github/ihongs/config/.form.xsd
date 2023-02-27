@@ -26,7 +26,7 @@
       <xs:attribute ref="name"/>
       <xs:attribute ref="text"/>
       <xs:attribute ref="hint"/>
-      <xs:attribute ref="hist"/>
+      <xs:attribute ref="hail"/>
       <xs:attribute ref="type"/>
       <xs:attribute ref="rule"/>
       <xs:attribute ref="required"/>

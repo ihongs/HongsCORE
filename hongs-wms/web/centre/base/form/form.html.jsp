@@ -34,6 +34,7 @@
             String  type = (String) info.get("__type__");
             String  text = (String) info.get("__text__");
             String  hint = (String) info.get("__hint__");
+            String  hail = (String) info.get("__hail__");
             boolean rqrd = Synt.declare(info.get("__required__"), false);
             boolean rptd = Synt.declare(info.get("__repeated__"), false);
             boolean roly = Synt.declare(info.get(  "readonly"  ), false);
@@ -314,13 +315,10 @@
                     <%hint = null;%>
                 <%} /*End If */%>
                     <%
-                        String hist = "";
-                        if (hint == null)
-                               hint = "";
-                        hist = Synt.declare(info.get("hist"), hist);
-                        hint = Synt.declare(info.get("hint"), hint);
+                        hail = Synt.defxult((String) info.get("hail"), hail, "");
+                        hint = Synt.declare((String) info.get("hint"), hint, "");
                     %>
-                    <div class="help-block text-error form-control-static"><%=hist%></div>
+                    <div class="help-block text-error form-control-static"><%=hail%></div>
                     <div class="help-block text-muted form-control-static"><%=hint%></div>
                 </div>
             </div>

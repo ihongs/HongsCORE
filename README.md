@@ -50,7 +50,7 @@
     # 设置和启动系统
     cd  hongs-serv-xxx/target/HongsXXX
     bin/app source setup
-    bin/app server.start
+    bin/app server start
 
     # hongs-serv-web/target/HongsWeb 为基础系统, 仅包含基本的应用服务和前端组件等;
     # hongs-serv-wms/target/HongsWMS 为管理系统, 拥有全功能的用户管理和自助模块等.

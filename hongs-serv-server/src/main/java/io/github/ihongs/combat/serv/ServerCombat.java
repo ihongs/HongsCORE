@@ -60,21 +60,19 @@ public class ServerCombat {
 
     @Combat("__main__")
     public static void exec (String[] args) throws HongsException {
-        if (args.length == 0) {
-            System.err.println("Usage: server start|share [PORT]");
-            return;
+        if (args.length > 0) {
+            String [ ] opts = new String [ -1+ args.length];
+            System . arraycopy(args,1, opts,0, opts.length);
+            if ("share".equals(args[0])) {
+                 share(opts);
+                return ;
+            } else
+            if ("start".equals(args[0])) {
+                 start(opts);
+                return ;
+            }
         }
-        String [ ]  opts = new String [ -1 + args.length];
-        System . arraycopy(args, 1, opts, 0, opts.length);
-        if ("share".equals(args[0])) {
-             share (opts);
-        } else
-        if ("start".equals(args[0])) {
-             start (opts);
-        } else
-        {
-            System.err.println("Usage: server start|share [PORT]");
-        }
+        System.err.println("Usage: server {start|share} [PORT]");
     }
 
     @Combat("share")

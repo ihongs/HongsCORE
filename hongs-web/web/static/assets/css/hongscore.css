@@ -1011,22 +1011,20 @@ ul.pickrol > li.btn-default.form-control {
     background-color: #eee;
     border: 1px solid #ccc;
     border-radius: 4px;
-    padding-left: 12px;
+    padding-left : 8px;
 }
-.datebox.input-group select {
+.datebox.input-group a {
+    margin: auto 1em;
+    float: left;
+    color: #999;
+}
+.datebox.input-group a:hover {
+    color: #666;
+}
+.datebox.input-group  select {
     appearance: none;
     -moz-appearance: none;
     -webkit-appearance: none;
-}
-.datebox.input-group .clear ,
-.datebox.input-group .today {
-    margin-left: 0.5em;
-    cursor: pointer;
-    color : #cccccc;
-}
-.datebox.input-group .clear:hover ,
-.datebox.input-group .today:hover {
-    color : #666666;
 }
 .datebox.input-group .form-control {
     border-radius: 0;

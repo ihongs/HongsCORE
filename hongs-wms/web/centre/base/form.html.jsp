@@ -35,7 +35,6 @@
             String  type = Synt.asString(info.get("__type__"));
             String  text = Synt.asString(info.get("__text__"));
             String  hint = Synt.asString(info.get("__hint__"));
-            String  hail = Synt.asString(info.get("__hail__"));
             boolean rqrd = Synt.declare(info.get("__required__"), false);
             boolean rptd = Synt.declare(info.get("__repeated__"), false);
             boolean roly = Synt.declare(info.get(  "readonly"  ), false);
@@ -186,9 +185,9 @@
                     <div class="form-control-static" data-fn="<%=name%>" data-ft="<%=kind%>"></div>
                 <%} /*End If */%>
                     <%
-                        hail = Synt.declare(info.get("hail") , hail != null ? hail : "");
+                        hint = Synt.defxult((String) info.get("info-hint"), hint, "");
                     %>
-                    <div class="help-block text-muted form-control-static"><%=hail%></div>
+                    <div class="help-block text-muted form-control-static"><%=hint%></div>
                 </div>
             </div>
         <%} else {%>
@@ -433,7 +432,7 @@
                     <%hint = null;%>
                 <%} /*End If */%>
                     <%
-                        hint = Synt.declare(info.get("hint") , hint != null ? hint : "");
+                        hint = Synt.defxult((String) info.get("form-hint"), hint, "");
                     %>
                     <div class="help-block text-error form-control-static"><%-- --%></div>
                     <div class="help-block text-muted form-control-static"><%=hint%></div>

@@ -289,8 +289,8 @@
              * 当前时间和取消设置等
              */
             box.find('.input-group-addon').last()
-               .html('<a href="javascript:;" class="today bi bi-hi-time"></span>'
-                    +'<a href="javascript:;" class="clear bi bi-hi-delete"></span>');
+               .html('<a href="javascript:;" title="'+hsGetLang('time.today.title')+'" class="today bi bi-hi-time"></span>'
+                    +'<a href="javascript:;" title="'+hsGetLang('time.clear.title')+'" class="clear bi bi-hi-delete"></span>');
 
             /**
              * 输入框组是不可嵌套的

@@ -2826,6 +2826,7 @@ $.fn.hsFind = function(selr) {
             return salr ? $(salr, elem) : elem ;
         case '/':
             {
+                elem = elem.parent();
                 var a = salr.split('/', 2);
                 if (a[0]) elem = elem.closest(a[0]);
                 if (a[1]) elem = elem. find  (a[1]);

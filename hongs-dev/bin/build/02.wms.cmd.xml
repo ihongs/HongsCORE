@@ -9,6 +9,10 @@
         <cmd>minify.build</cmd>
         <arg opt="output">$DST_DIR/hongsedge.min.js</arg>
         <arg>$SRC_DIR/hongsedge.js</arg>
+    </combat>
+    <combat system="no">
+        <cmd>minify.build</cmd>
+        <arg opt="output">$DST_DIR/hongsedit.min.js</arg>
         <arg>$SRC_DIR/hongsedit.js</arg>
     </combat>
     <combat system="no">
@@ -26,6 +30,7 @@
         <arg>$WEB_DST_DIR/bootstrap.min.js</arg>
         <arg>$WEB_DST_DIR/hongscore.min.js</arg>
         <arg>$DST_DIR/hongsedge.min.js</arg>
+        <arg>$DST_DIR/hongsedit.min.js</arg>
     </combat>
     <combat system="no">
         <cmd>minify.merge</cmd>

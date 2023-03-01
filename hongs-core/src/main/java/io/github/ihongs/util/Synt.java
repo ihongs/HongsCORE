@@ -1072,33 +1072,41 @@ public final class Synt {
     }
 
     /**
-     * 取默认值(null,"" 均视为无值)
-     * @param <T>
-     * @param vals
-     * @return
-     */
-    public static <T extends String> T defxult(T... vals) {
-        for (T  val :  vals) {
-            if (val != null && ! EMPT.equals(val)) {
-                return val ;
-            }
-        }
-        return  vals.length > 0 ? vals[vals.length - 1] : null;
-    }
-
-    /**
      * 取默认值(null, 0 均视为无值)
      * @param <T>
      * @param vals
      * @return
      */
     public static <T extends Number> T defxult(T... vals) {
-        for (T  val :  vals) {
+        if (vals.length == 0) {
+            return null;
+        }
+        for(int i = 0; i < vals.length - 1; i ++ ) {
+            T val = vals[i];
             if (val != null && ! ZERO.equals(val)) {
                 return val ;
             }
         }
-        return  vals.length > 0 ? vals[vals.length - 1] : null;
+        return  vals[vals.length - 1];
+    }
+
+    /**
+     * 取默认值(null,"" 均视为无值)
+     * @param <T>
+     * @param vals
+     * @return
+     */
+    public static <T extends String> T defxult(T... vals) {
+        if (vals.length == 0) {
+            return null;
+        }
+        for(int i = 0; i < vals.length - 1; i ++ ) {
+            T val = vals[i];
+            if (val != null && ! EMPT.equals(val)) {
+                return val ;
+            }
+        }
+        return  vals[vals.length - 1];
     }
 
     /**

@@ -3189,7 +3189,7 @@ function() {
     var tab = lnk.parent();
     var nav = tab.parent();
     var tao = tab.siblings(".active");
-    var pns = tab.hsFind(nav.attr("data-target") || nav.next());
+    var pns = nav.hsFind(nav.attr("data-target") || nav.next());
     var pno = pns.children().eq(tao.index());
     var pne = pns.children().eq(tab.index());
     if (tab.is(".active,.inactive") ) {

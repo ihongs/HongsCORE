@@ -54,6 +54,10 @@
         <%} else if ("legend".equals(type)) {%>
             <legend class="text-center"><%=text%></legend>
         <%} else {%>
+            <%
+                text = Synt.defxult(Synt.asString(info.get("info-text")), Synt.asString(info.get("text")), text);
+                hint = Synt.defxult(Synt.asString(info.get("info-hint")), Synt.asString(info.get("hint")), hint);
+            %>
             <div class="form-group row" data-name="<%=name%>">
                 <label class="col-sm-3 col-md-2 text-right control-label form-control-static">
                     <%=text != null ? text : ""%>
@@ -183,10 +187,7 @@
                 <%} else {%>
                     <div class="form-control-static" data-fn="<%=name%>" data-ft="<%=kind%>"></div>
                 <%} /*End If */%>
-                    <%
-                        hint = Synt.defxult((String) info.get("info-hint"), hint, "");
-                    %>
-                    <div class="help-block text-muted form-control-static"><%=hint%></div>
+                    <div class="help-block text-muted form-control-static"><%=hint != null ? hint : ""%></div>
                 </div>
             </div>
         <%} /*End If */%>

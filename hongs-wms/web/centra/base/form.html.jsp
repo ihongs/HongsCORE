@@ -55,6 +55,10 @@
         <%} else if ("legend".equals(type)) {%>
             <legend class="text-center" data-name="<%=name%>"><%=text%></legend>
         <%} else if ( roly ) { //** 此部分来自 info.jsp **/ %>
+            <%
+                text = Synt.defxult(Synt.asString(info.get("info-text")), Synt.asString(info.get("text")), text);
+                hint = Synt.defxult(Synt.asString(info.get("info-hint")), Synt.asString(info.get("hint")), hint);
+            %>
             <div class="form-group row" data-name="<%=name%>">
                 <label class="col-xs-3 col-md-2 text-right control-label form-control-static">
                     <%=text != null ? text : ""%>
@@ -183,13 +187,14 @@
                 <%} else {%>
                     <div class="form-control-static" data-fn="<%=name%>" data-ft="<%=kind%>"></div>
                 <%} /*End If */%>
-                    <%
-                        hint = Synt.defxult((String) info.get("info-hint"), hint, "");
-                    %>
-                    <div class="help-block text-muted form-control-static"><%=hint%></div>
+                    <div class="help-block text-muted form-control-static"><%=hint != null ? hint : ""%></div>
                 </div>
             </div>
         <%} else {%>
+            <%
+                text = Synt.defxult(Synt.asString(info.get("form-text")), Synt.asString(info.get("text")), text);
+                hint = Synt.defxult(Synt.asString(info.get("form-hint")), Synt.asString(info.get("hint")), hint);
+            %>
             <div class="form-group row" data-name="<%=name%>">
                 <label class="col-xs-3 col-md-2 text-right control-label form-control-static">
                     <%=text != null ? text : ""%>
@@ -200,6 +205,7 @@
                         String extr = "";
                         String typa = (String) info.get("type");
                         String mode = (String) info.get("mode");
+                        String hold = Synt.defxult(Synt.asString(info.get("form-hold")), "");
                         if (rqrd) {
                             extr += " required=\"required\"";
                         }
@@ -213,11 +219,11 @@
                             extr += " class=\"form-control\" style=\"height:5em;\"";
                         }
                     %>
-                    <textarea id="<%=_pageId%>-<%=name%>" name="<%=name%>" placeholder="<%=hint%>"<%=extr%>></textarea>
-                    <%hint = null;%>
+                    <textarea id="<%=_pageId%>-<%=name%>" name="<%=name%>" placeholder="<%=hold%>"<%=extr%>></textarea>
                 <%} else if ("string".equals(type) || "text".equals(type) || "email".equals(type) || "url".equals(type) || "tel".equals(type) || "sms".equals(type)) {%>
                     <%
                         String extr = "";
+                        String hold = Synt.defxult(Synt.asString(info.get("form-hold")), "");
                         if (rqrd) {
                             extr += " required=\"required\"";
                         }
@@ -231,11 +237,11 @@
                             if (info.containsKey("pattern"  )) extr += " pattern=\""  +info.get("pattern"  ).toString()+"\"";
                         }
                     %>
-                    <input class="form-control" type="<%=type%>" name="<%=name%>" placeholder="<%=hint%>"<%=extr%>/>
-                    <%hint = null;%>
+                    <input class="form-control" type="<%=type%>" name="<%=name%>" placeholder="<%=hold%>"<%=extr%>/>
                 <%} else if ("number".equals(type) || "range".equals(type) || "color".equals(type) || "sorted".equals(type)) {%>
                     <%
                         String extr = "";
+                        String hold = Synt.defxult(Synt.asString(info.get("form-hold")), "");
                         if (rqrd) {
                             extr += " required=\"required\"";
                         }
@@ -249,8 +255,7 @@
                             if (info.containsKey("step"     )) extr += " step=\""     +info.get("step"     ).toString()+"\"";
                         }
                     %>
-                    <input class="form-control" type="<%=type%>" name="<%=name%>" placeholder="<%=hint%>"<%=extr%>/>
-                    <%hint = null;%>
+                    <input class="form-control" type="<%=type%>" name="<%=name%>" placeholder="<%=hold%>"<%=extr%>/>
                 <%} else if ("date".equals(type) || "time".equals(type) || "datetime".equals(type)) {%>
                     <%
                         String typa = Synt.declare(info.get( "type" ), "date");
@@ -419,6 +424,7 @@
                 <%} else {%>
                     <%
                         String extr = "";
+                        String hold = Synt.defxult(Synt.asString(info.get("form-hold")), "");
                         if (rptd) {
                             name += "." ;
                             extr += " multiple=\"multiple\"";
@@ -427,14 +433,10 @@
                             extr += " required=\"required\"";
                         }
                     %>
-                    <input class="form-control" type="<%=type%>" name="<%=name%>" placeholder="<%=hint%>"<%=extr%>/>
-                    <%hint = null;%>
+                    <input class="form-control" type="<%=type%>" name="<%=name%>" placeholder="<%=hold%>"<%=extr%>/>
                 <%} /*End If */%>
-                    <%
-                        hint = Synt.defxult((String) info.get("form-hint"), hint, "");
-                    %>
-                    <div class="help-block text-error form-control-static"><%-- --%></div>
-                    <div class="help-block text-muted form-control-static"><%=hint%></div>
+                    <div class="help-block text-error form-control-static"></div>
+                    <div class="help-block text-muted form-control-static"><%=hint != null ? hint : ""%></div>
                 </div>
                 <div class="col-md-2 hidden-sm hidden-xs">
                     <div class="form-control-static">

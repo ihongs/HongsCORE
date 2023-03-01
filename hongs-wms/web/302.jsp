@@ -30,34 +30,31 @@
         <meta http-equiv="Refresh" content="3; url=<%=escapeXML( href )%>">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/static/assets/css/common.min.css"/>
         <style type="text/css">
-            html, body
-                { margin: 0; padding: 0; }
-            h1, h2, h3
-                { font-size: 8em; font-weight: 800; }
-            html, body, .jumbotron, .container
-                { color: #fff; background-color: #060; }
-            blockquote, pre
-                { color: #ddd; background-color: #050; }
-            blockquote, pre
-                { margin: 0; padding: 10px 15px; }
-            .jumbotron
-                { margin: 30px 0; padding: 30px 0; }
-            .container
-                { margin: 0 auto; padding: 0 15px; }
-            @media (min-width: 1200px) {
-                .container { width: 1170px; }
+            #footbox .copy-right a ,
+            #footbox .site-links a {
+                margin-right : 1em;
             }
-            @media (min-width: 992px) {
-                .container { width: 970px; }
+            h1, h2, h3 {
+                font-size  : 8em;
+                font-weight: 800; 
             }
-            @media (min-width: 768px) {
-                .container { width: 750px; }
+            html, body {
+                width     : 100%;
+                height    : 100%;
             }
-            .copy-right a, .site-links a
-                { margin-right: 1.0em; }
-            a:link, a:hover, a:active, a:visited
-                { color: white; }
+            .jumbotron {
+                color     : #ccc;
+                background: #222;
+            }
+            @media ( min-width: 768px ) {
+                .jumbotron {
+                    background: #202222 linear-gradient(
+                        -45deg, #202222 15%, #20282f 40%, #202222 40%
+                    );
+                }
+            }
         </style>
     </head>
     <body>
@@ -66,20 +63,21 @@
                 <h1> :) </h1>
                 <p style="white-space: pre-line;"><%=escapeXML(text)%></p>
                 <p>&nbsp;</p>
-                <p style="font-size: large;">
-                    <a href="<%=escapeXML(href)%>">
-                        <b><%=CoreLocale.getInstance().translate("core.error.redirect")%></b>
+                <p style="font-weight: initial ;">
+                    <a class="btn btn-lg btn-success" href="<%=escapeXML(href)%>">
+                    <%=CoreLocale.getInstance().translate("core.error.redirect")%>
                     </a>
                 </p>
-                <p>&nbsp;</p>
-            </div>
-            <div class="container">
-                <blockquote style="font-size: small;"><p>
-                    <span>&copy;&nbsp;</span><span class="copy-right"><%=CoreLocale.getInstance().translate("fore.copy.right")%></span>
-                    <span>&nbsp;&nbsp;</span><span class="site-links"><%=CoreLocale.getInstance().translate("fore.site.links")%></span>
-                    <span>Powered by <a href="<%=request.getContextPath()%>/power.html" target="_blank">HongsCORE</a></span>
-                </p></blockquote>
             </div>
         </div>
+        <nav id="footbox" class="navbar">
+            <div class="container">
+                <blockquote><p class="clearfix" style="font-size: smail;">
+                    <span>&copy;&nbsp;</span><span class="copy-right"><%=CoreLocale.getInstance().translate("fore.copy.right")%></span>
+                    <span>&nbsp;&nbsp;</span><span class="site-links"><%=CoreLocale.getInstance().translate("fore.site.links")%></span>
+                    <span class="pull-right text-muted">Powered by <a href="<%=request.getContextPath()%>/power.html" target="_blank">HongsCORE</a></span>
+                </p></blockquote>
+            </div>
+        </nav>
     </body>
 </html>

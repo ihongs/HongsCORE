@@ -15,12 +15,12 @@
         且可以在参数中可以使用时间变量.
         combat的system属性为yes时将作为系统命令调用,
         action的server属性为yes时将通过HTTP服务调用,
-        runsql的db属性可指定将运行的库.
+        sql的db属性可指定将运行的库.
     //-->
     <!--
     <combat system="no">
         <cmd>abc.def.xyz</cmd>
-        <arg>${CURR_TIME-1w|yyyy/MM/dd}</arg>
+        <arg>${CURR_TIME-604800|yyyy/MM/dd}</arg>
         <arg opt="opt1">123</arg>
         <arg opt="opt2">456</arg>
         <arg opt="opt3"/>
@@ -28,7 +28,7 @@
     <action server="no">
         <act>abc/def/xyz</act>
         <arg opt="request">
-            abc=def&xyz=123&time=${CURR_TIME-1d}
+            abc=def&xyz=123&time=${CURR_TIME-86400}
         </arg>
         <arg opt="session">
             {"abc": "def", "xyz": 123}
@@ -38,7 +38,7 @@
         </arg>
     </action>
     <sql db="default">
-        <sql>DELETE abc WHERE stat=?</sql>
+        DELETE abc WHERE stat=?
         <arg>0</arg>
     </sql>
     //-->

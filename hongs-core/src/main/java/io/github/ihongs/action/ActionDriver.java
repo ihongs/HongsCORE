@@ -7,6 +7,7 @@ import io.github.ihongs.CoreLocale;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsCause;
 import io.github.ihongs.util.Dawn;
+import io.github.ihongs.util.Dusk;
 import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.daemon.Chore;
@@ -259,8 +260,8 @@ public class ActionDriver implements Filter, Servlet {
             + "\r\n\tRuntime     : {}"
             + "\r\n\tObjects     : {}",
             Core.SERVER_ID,
-            Syno.phraseTime(time),
-            core.toString (/**/)
+            Dusk.phraseTime(time),
+            core. toString (/**/)
         );
 
         if (!SETUP) {
@@ -479,7 +480,7 @@ public class ActionDriver implements Filter, Servlet {
                 String      tim;
                 req = hlpr.getRequest(/***/);
                 ses = req .getSession(false);
-                tim = Syno.phraseTime (System.currentTimeMillis() - Core.ACTION_TIME.get());
+                tim = Dusk.phraseTime(System.currentTimeMillis() - Core.ACTION_TIME.get());
                 uid = hlpr.getSessibute(Cnst.UID_SES);
                 if (uid != null) {
                     mem  = "uid="+ uid.toString();

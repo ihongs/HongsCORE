@@ -1,0 +1,273 @@
+package io.github.ihongs.util;
+
+import io.github.ihongs.Core;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
+import java.time.temporal.TemporalAccessor;
+import java.time.temporal.TemporalField;
+import java.util.Date;
+import java.util.Locale;
+
+/**
+ * 时间格式工具
+ *
+ * @author Hongs
+ */
+public final class Dusk
+{
+
+  private Dusk() {}
+
+  /**
+   * 格式化时长
+   * @param time 毫秒数
+   * @return 最大到天, 已带单位, 毫秒作为小数部分
+   */
+  public static String phraseTime(long time)
+  {
+    StringBuilder sb = new StringBuilder( );
+    int item;
+
+    item = (int) Math.floor(time / 86400000);
+    if (item > 0) {  time = time % 86400000;
+        sb.append(item).append("d");
+    } else
+    if (time > 0 && 0 < sb.length()) {
+        sb.append("0d");
+    }
+
+    item = (int) Math.floor(time / 3600000);
+    if (item > 0) {  time = time % 3600000;
+        sb.append(item).append("h");
+    } else
+    if (time > 0 && 0 < sb.length()) {
+        sb.append("0h");
+    }
+
+    item = (int) Math.floor(time / 60000);
+    if (item > 0) {  time = time % 60000;
+        sb.append(item).append("m");
+    } else
+    if (time > 0 && 0 < sb.length()) {
+        sb.append("0m");
+    }
+
+    float last = (float) time/1000 ;
+    if (last > 0 || 0== sb.length()) {
+        sb.append(last).append("s");
+    }
+
+    return sb.toString();
+  }
+
+  /**
+   * 格式化时间
+   * 用 Core 中当前时区和区域
+   * 且 Core 中将暂存格式对象
+   * @param time 时间戳(毫秒)
+   * @param patt
+   * @return
+   * @throws IllegalArgumentException 格式错误
+   */
+  public static String formatTime(long time, String patt) {
+    Instant          inst = Instant.ofEpochMilli(time);
+    ZoneId            tmz = Core.getZoneId();
+    ZonedDateTime     zdt = inst.atZone(tmz);
+    DateTimeFormatter dtf = getDateTimeFormatter(patt);
+    return dtf.format(zdt);
+  }
+
+  /**
+   * 格式化时间
+   * @param time 时间戳(毫秒)
+   * @param patt
+   * @param loc
+   * @param tmz
+   * @return
+   * @throws IllegalArgumentException 格式错误
+   */
+  public static String formatTime(long time, String patt, Locale loc, ZoneId tmz) {
+    Instant          inst = Instant.ofEpochMilli(time);
+    ZonedDateTime     zdt = inst.atZone(tmz);
+    DateTimeFormatter dtf = getDateTimeFormatter(patt,loc);
+    return dtf.format(zdt);
+  }
+
+  /**
+   * 格式化时间
+   * 用 Core 中当前时区和区域
+   * 且 Core 中将暂存格式对象
+   * @param time 旧版日期对象
+   * @param patt
+   * @return
+   * @throws IllegalArgumentException 格式错误
+   */
+  public static String formatTime(Date time, String patt) {
+    Instant          inst = time.toInstant();
+    ZoneId            tmz = Core.getZoneId();
+    ZonedDateTime     zdt = inst.atZone(tmz);
+    DateTimeFormatter dtf = getDateTimeFormatter(patt);
+    return dtf.format(zdt);
+  }
+
+  /**
+   * 格式化时间
+   * @param time 旧版日期对象
+   * @param patt
+   * @param loc
+   * @param tmz
+   * @return
+   * @throws IllegalArgumentException 格式错误
+   */
+  public static String formatTime(Date time, String patt, Locale loc, ZoneId tmz) {
+    Instant          inst = time.toInstant();
+    ZonedDateTime     zdt = inst.atZone(tmz);
+    DateTimeFormatter dtf = getDateTimeFormatter(patt,loc);
+    return dtf.format(zdt);
+  }
+
+  /**
+   * 格式化时间
+   * 用 Core 中当前时区和区域
+   * 且 Core 中将暂存格式对象
+   * @param time 新版时刻对象
+   * @param patt
+   * @return
+   * @throws IllegalArgumentException 格式错误
+   */
+  public static String formatTime(Instant time, String patt) {
+    ZoneId            tmz = Core.getZoneId();
+    ZonedDateTime     zdt = time.atZone(tmz);
+    DateTimeFormatter dtf = getDateTimeFormatter(patt);
+    return dtf.format(zdt);
+  }
+
+  /**
+   * 格式化时间
+   * @param time 新版时刻对象
+   * @param patt
+   * @param loc
+   * @param tmz
+   * @return
+   * @throws IllegalArgumentException 格式错误
+   */
+  public static String formatTime(Instant time, String patt, Locale loc, ZoneId tmz) {
+    ZonedDateTime     zdt = time.atZone(tmz);
+    DateTimeFormatter dtf = getDateTimeFormatter(patt,loc);
+    return dtf.format(zdt);
+  }
+
+  /**
+   * 解析时间
+   * 用 Core 中当前时区和区域
+   * 且 Core 中将暂存格式对象
+   * @param time
+   * @param patt
+   * @return
+   * @throws IllegalArgumentException 格式错误
+   * @throws java.time.format.DateTimeParseException 解析错误
+   */
+  public static Instant parseTime(String  time, String patt) {
+    DateTimeFormatter dtf = getDateTimeFormatter(patt);
+    TemporalAccessor  tar = dtf .parse(time);
+    ZoneId            tmz = Core.getZoneId();
+    return fixZonedDateTime(tar , 1970, 1, 1, 0, 0, 0, 0, tmz).toInstant();
+  }
+
+  /**
+   * 解析时间
+   * @param time
+   * @param patt
+   * @param loc
+   * @param tmz
+   * @return
+   * @throws IllegalArgumentException 格式错误
+   * @throws java.time.format.DateTimeParseException 解析错误
+   */
+  public static Instant parseTime(String time, String patt, Locale loc, ZoneId tmz) {
+    DateTimeFormatter dtf = getDateTimeFormatter(patt,loc);
+    TemporalAccessor  tar = dtf .parse(time);
+    return fixZonedDateTime(tar , 1970, 1, 1, 0, 0, 0, 0, tmz).toInstant();
+  }
+
+  /**
+   * 获取格式
+   * 用 Core 中当前时区和区域
+   * 且 Core 中将暂存格式对象
+   * @param patt
+   * @return
+   */
+  public static DateTimeFormatter getDateTimeFormatter(String patt) {
+    return Core.getInstance().got(
+        DateTimeFormatter.class.getName() + ":" + patt,
+        () -> getDateTimeFormatter(patt, Core.getLocale(), Core.getZoneId())
+    );
+  }
+
+  /**
+   * 构建格式
+   * @param patt
+   * @param loc
+   * @return
+   */
+  public static DateTimeFormatter getDateTimeFormatter(String patt, Locale loc) {
+    return new DateTimeFormatterBuilder()
+        .parseCaseInsensitive()
+        .parseLenient  ( /**/ )
+        .appendPattern ( patt )
+        .toFormatter   ( loc  );
+  }
+
+  /**
+   * 构建格式
+   * @param patt
+   * @param loc
+   * @param zid
+   * @return
+   */
+  public static DateTimeFormatter getDateTimeFormatter(String patt, Locale loc, ZoneId zid) {
+    return new DateTimeFormatterBuilder()
+        .parseCaseInsensitive()
+        .parseLenient  ( /**/ )
+        .appendPattern ( patt )
+        .toFormatter   ( loc  )
+        .withZone      ( zid  );
+  }
+
+  private static LocalDateTime fixLocalDateTime(TemporalAccessor ta, int y, int M, int d, int H, int m, int s, int n) {
+    int[] ps = new int [] {y,M,d,H,m,s,n};
+    for (int i = 0; i < TFS.length; i ++) {
+        if (ta.isSupported(TFS[i])) {
+            ps[i] = ta.get(TFS[i]);
+        }
+    }
+    return LocalDateTime.of(ps[0], ps[1], ps[2], ps[3], ps[4], ps[5], ps[6]);
+  }
+
+  private static ZonedDateTime fixZonedDateTime(TemporalAccessor ta, int y, int M, int d, int H, int m, int s, int n, ZoneId zi) {
+    int[] ps = new int [] {y,M,d,H,m,s,n};
+    for (int i = 0; i < TFS.length; i ++) {
+        if (ta.isSupported(TFS[i])) {
+            ps[i] = ta.get(TFS[i]);
+        }
+    }
+    return ZonedDateTime.of(ps[0], ps[1], ps[2], ps[3], ps[4], ps[5], ps[6], zi);
+  }
+
+  private static final TemporalField[] TFS = new TemporalField[] {
+    ChronoField.  YEAR_OF_ERA   ,
+    ChronoField. MONTH_OF_YEAR  ,
+    ChronoField.   DAY_OF_MONTH ,
+    ChronoField.  HOUR_OF_DAY   ,
+    ChronoField.MINUTE_OF_HOUR  ,
+    ChronoField.SECOND_OF_MINUTE,
+    ChronoField.  NANO_OF_SECOND
+  };
+
+}

@@ -3,6 +3,7 @@ package io.github.ihongs.util.daemon;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLogger;
+import io.github.ihongs.util.Dusk;
 import io.github.ihongs.util.Syno;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -156,7 +157,7 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
      */
     public ScheduledFuture run(Runnable task, int delay) {
         if (4 == (4 & Core.DEBUG)) {
-            String time = Syno.formatTime(delay * 1000 + System.currentTimeMillis(), "MM-dd HH:mm:ss", ZoneId.systemDefault(), Locale.getDefault());
+            String time = Dusk.formatTime(delay * 1000 + System.currentTimeMillis(), "MM-dd HH:mm:ss", Locale.getDefault(), ZoneId.systemDefault());
             String name = task. getClass ( ).getName( );
             CoreLogger.trace("Will run " + name + " at " + time);
         }
@@ -173,8 +174,8 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
      */
     public ScheduledFuture run(Runnable task, int delay, int perio) {
         if (4 == (4 & Core.DEBUG)) {
-            String time = Syno.formatTime(delay * 1000 + System.currentTimeMillis(), "MM-dd HH:mm:ss", ZoneId.systemDefault(), Locale.getDefault());
-            String timr = Syno.phraseTime(perio * 1000);
+            String time = Dusk.formatTime(delay * 1000 + System.currentTimeMillis(), "MM-dd HH:mm:ss", Locale.getDefault(), ZoneId.systemDefault());
+            String timr = Dusk.phraseTime(perio * 1000);
             String name = task. getClass ( ).getName( );
             CoreLogger.trace("Will run " + name + " at " + time + ", "+ timr);
         }

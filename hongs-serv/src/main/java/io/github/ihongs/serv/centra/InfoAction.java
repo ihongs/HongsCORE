@@ -106,11 +106,11 @@ public class InfoAction {
             rsp.put("run_info", inf);
 
             inf.put("load", new Object[] {avg, String.valueOf(avg), "负载"});
-            inf.put("size", new Object[] {siz, Syno.phraseSize(siz), "全部"});
-            inf.put("free", new Object[] {fre, Syno.phraseSize(fre), "空闲"});
-            inf.put("dist", new Object[] {max, Syno.phraseSize(max), "可用"});
-            inf.put("used", new Object[] {use, Syno.phraseSize(use), "已用"});
-            inf.put("uses", new Object[] {stk, Syno.phraseSize(stk), "非堆"});
+            inf.put("size", new Object[] {siz, phraseSize(siz), "全部"});
+            inf.put("free", new Object[] {fre, phraseSize(fre), "空闲"});
+            inf.put("dist", new Object[] {max, phraseSize(max), "可用"});
+            inf.put("used", new Object[] {use, phraseSize(use), "已用"});
+            inf.put("uses", new Object[] {stk, phraseSize(stk), "非堆"});
         }
 
         /**
@@ -160,24 +160,24 @@ public class InfoAction {
             all += one;
         }
 
-        hum = Syno.humanSize(all);
+        hum = phraseSize (all);
         map.put(".", new Object[] {all, hum, "当前目录"});
 
-        hum = Syno.humanSize(oth);
+        hum = phraseSize (oth);
         map.put("!", new Object[] {oth, hum, "其他文件"});
         */
 
         tot = d.getTotalSpace();
-        hum = Syno.phraseSize(tot);
+        hum = phraseSize (tot);
         map.put("@", new Object[] {tot, hum, "磁盘大小"});
 
         one = d.getFreeSpace();
-        hum = Syno.phraseSize(one);
+        hum = phraseSize (one);
         map.put("#", new Object[] {one, hum, "磁盘剩余"});
 
         /*
         one = tot - one;
-        hum = Syno.humanSize(one);
+        hum = phraseSize (one);
         map.put("$", new Object[] {one, hum, "磁盘已用"});
         */
 
@@ -248,6 +248,52 @@ public class InfoAction {
         Set<String> names = new LinkedHashSet(queue.  size  ());
         for(Object  task  : queue) names.add (task .toString());
         return names;
+    }
+
+    /**
+     * 友好的容量格式
+     * @param size 容量数
+     * @return 最大到T 注意: 不带单位, B或b等请自行补充
+     */
+    public static String phraseSize(long size)
+    {
+      StringBuilder sb = new StringBuilder( );
+      int item;
+
+      item = (int) Math.floor(size / 0x10000000000L);
+      if (item > 0) {  size = size % 0x10000000000L;
+          sb.append(item).append("T");
+      }
+
+      item = (int) Math.floor(size / 0x40000000);
+      if (item > 0) {  size = size % 0x40000000;
+          sb.append(item).append("G");
+      } else
+      if (size > 0 && 0 < sb.length()) {
+          sb.append("0G");
+      }
+
+      item = (int) Math.floor(size / 0x100000);
+      if (item > 0) {  size = size % 0x100000;
+          sb.append(item).append("M");
+      } else
+      if (size > 0 && 0 < sb.length()) {
+          sb.append("0M");
+      }
+
+      item = (int) Math.floor(size / 0x400);
+      if (item > 0) {  size = size % 0x400;
+          sb.append(item).append("K");
+      } else
+      if (size > 0 && 0 < sb.length()) {
+          sb.append("0K");
+      }
+
+      if (size > 0 || 0== sb.length()) {
+          sb.append(size);
+      }
+
+      return sb.toString();
     }
 
     private static class CoreToKeys extends Core {

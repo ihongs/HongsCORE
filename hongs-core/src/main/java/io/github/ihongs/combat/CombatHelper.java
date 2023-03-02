@@ -3,7 +3,7 @@ package io.github.ihongs.combat;
 import io.github.ihongs.Core;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.util.Dawn;
-import io.github.ihongs.util.Syno;
+import io.github.ihongs.util.Dusk;
 import io.github.ihongs.util.Synt;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -527,11 +527,11 @@ public class CombatHelper
     } else
     if (n == ok) {
         t = System.currentTimeMillis() - t;
-        notes = String.format("Ok(%d) TT: %s", ok, Syno.phraseTime(t));
+        notes = String.format("Ok(%d) TT: %s", ok, Dusk.phraseTime(t));
     } else {
         t = System.currentTimeMillis() - t;
         t = (long) (t / scale - t);
-        notes = String.format("Ok(%d) ET: %s", ok, Syno.phraseTime(t));
+        notes = String.format("Ok(%d) ET: %s", ok, Dusk.phraseTime(t));
     }
     CombatHelper.progres(scale, notes);
   }
@@ -555,11 +555,11 @@ public class CombatHelper
     } else
     if (n == ok + er) {
         t = System.currentTimeMillis() - t;
-        notes = String.format("Ok(%d) Er(%d) TT: %s", ok, er, Syno.phraseTime(t));
+        notes = String.format("Ok(%d) Er(%d) TT: %s", ok, er, Dusk.phraseTime(t));
     } else {
         t = System.currentTimeMillis() - t;
         t = (long) (t / scale - t);
-        notes = String.format("Ok(%d) Er(%d) ET: %s", ok, er, Syno.phraseTime(t));
+        notes = String.format("Ok(%d) Er(%d) ET: %s", ok, er, Dusk.phraseTime(t));
     }
     CombatHelper.progres(scale, notes);
   }

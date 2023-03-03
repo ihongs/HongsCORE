@@ -12,7 +12,7 @@ import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.combat.CombatHelper;
 import io.github.ihongs.combat.CombatRunner;
 import io.github.ihongs.dh.MergeMore;
-import io.github.ihongs.util.Dawn;
+import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Synt;
 import java.io.IOException;
 import java.io.InputStream;
@@ -389,7 +389,7 @@ public class MoreAction {
         String str = Synt.declare(obj, "");
         Map map;
         if (str.startsWith("{") && str.endsWith("}")) {
-            map = (  Map  ) Dawn.toObject(str);
+            map = (  Map  ) Dist.toObject(str);
         } else {
             map = ActionHelper.parseQuery(str);
         }

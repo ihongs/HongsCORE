@@ -7,7 +7,7 @@ import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.NaviMap;
-import io.github.ihongs.util.Dawn;
+import io.github.ihongs.util.Dist;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -115,7 +115,7 @@ public class AuthAction
         datamap.put(act, authset.contains( act ) );
       }
 
-      s = Dawn.toString(datamap);
+      s = Dist.toString(datamap);
     }
     catch (IllegalArgumentException ex) {
       helper.error(500, ex.getMessage());

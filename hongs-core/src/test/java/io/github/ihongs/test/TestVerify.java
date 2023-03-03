@@ -3,7 +3,7 @@ package io.github.ihongs.test;
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.combat.CombatRunner;
-import io.github.ihongs.util.Dawn;
+import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.verify.IsNumber;
 import io.github.ihongs.util.verify.IsString;
@@ -70,13 +70,13 @@ public class TestVerify extends TestCase {
                 "name", "abcdef",
                 "size", Arrays.asList(11, 22)
             );
-            //System.out.println(Dawn.toString(cleans));
-            //System.out.println(Dawn.toString(cleanz));
-            assertEquals(Dawn.toString(cleans, true), Dawn.toString(cleanz, true));
+            //System.out.println(Dist.toString(cleans));
+            //System.out.println(Dist.toString(cleanz));
+            assertEquals(Dist.toString(cleans, true), Dist.toString(cleanz, true));
         }
         catch (Wrongs wr) {
             Core.ACTION_LANG.set(Cnst.LANG_DEF);
-            fail(Dawn.toString(wr.getErrors()));
+            fail(Dist.toString(wr.getErrors()));
         }
     }
     

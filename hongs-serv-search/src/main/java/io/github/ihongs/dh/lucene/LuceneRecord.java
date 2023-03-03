@@ -17,8 +17,8 @@ import io.github.ihongs.dh.lucene.query.*;
 import io.github.ihongs.dh.lucene.quest.*;
 import io.github.ihongs.dh.lucene.stock.*;
 import io.github.ihongs.dh.lucene.value.*;
-import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Dict;
+import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
 
@@ -1836,7 +1836,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 if (p != -1) {
                     ac = an.substring(p);
                     an = an.substring(0, p - 1).trim();
-                    oc = Synt.asMap(Dawn.toObject(ac));
+                    oc = Synt.asMap(Dist.toObject(ac));
                     cb.withTokenizer(an, oc);
                 } else {
                     cb.withTokenizer(an/**/);
@@ -1861,7 +1861,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                     if (p != -1) {
                         ac = an.substring(p);
                         an = an.substring(0, p - 1).trim();
-                        oc = Synt.asMap(Dawn.toObject(ac));
+                        oc = Synt.asMap(Dist.toObject(ac));
                         cb.addCharFilter(an, oc);
                     } else {
                         cb.addCharFilter(an/**/);
@@ -1877,7 +1877,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                     if (p != -1) {
                         ac = an.substring(p);
                         an = an.substring(0, p - 1).trim();
-                        oc = Synt.asMap(Dawn.toObject(ac));
+                        oc = Synt.asMap(Dist.toObject(ac));
                         cb.addTokenFilter(an, oc);
                     } else {
                         cb.addTokenFilter(an/**/);
@@ -1911,7 +1911,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 if (p != -1) {
                     ac = an.substring(p);
                     an = an.substring(0, p - 1).trim();
-                    oc = Synt.asMap(Dawn.toObject(ac));
+                    oc = Synt.asMap(Dist.toObject(ac));
                     cb.withTokenizer(an, oc);
                 } else {
                     cb.withTokenizer(an/**/);
@@ -1936,7 +1936,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                     if (p != -1) {
                         ac = an.substring(p);
                         an = an.substring(0, p - 1).trim();
-                        oc = Synt.asMap(Dawn.toObject(ac));
+                        oc = Synt.asMap(Dist.toObject(ac));
                         cb.addCharFilter(an, oc);
                     } else {
                         cb.addCharFilter(an/**/);
@@ -1952,7 +1952,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                     if (p != -1) {
                         ac = an.substring(p);
                         an = an.substring(0, p - 1).trim();
-                        oc = Synt.asMap(Dawn.toObject(ac));
+                        oc = Synt.asMap(Dist.toObject(ac));
                         cb.addTokenFilter(an, oc);
                     } else {
                         cb.addTokenFilter(an/**/);

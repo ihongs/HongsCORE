@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.time.Instant;
 import java.util.Map;
 import java.util.List;
 import java.util.Date;
@@ -23,7 +24,7 @@ import java.util.Enumeration;
 import java.util.LinkedHashMap;
 
 /**
- * JSON格式工具
+ * 数据格式工具
  *
  * <p>
  * 支持将 <b>数组,集合框架,基础类型</b> 的数据转换为 JSON 字符串,
@@ -35,7 +36,7 @@ import java.util.LinkedHashMap;
  * 最开始用 org.json, 还不错, 可惜在解析 JSON 时会解析成他自身的对象而不是 Java 集合框架对象;
  * 后来采用 org.json.simple , 也很好, 但是不支持 Set , 需要修改其源码将 List 改成 Collection;
  * 考虑到我有一个 Dump 类, 用于调试输出基础类型和集合对象, 其实现与 JSON 大同小异,
- * 故将其修改成该 Dawn 类; 但是 JSON 的解析太麻烦, 就还是调 org.json.simple 好了 ;
+ * 故将其修改成该 Dist 类; 但是 JSON 的解析太麻烦, 就还是调 org.json.simple 好了 ;
  * </p>
  *
  * <h3>异常代码</h3>
@@ -46,10 +47,10 @@ import java.util.LinkedHashMap;
  *
  * @author Hongs
  */
-public final class Dawn
+public final class Dist
 {
 
-  private Dawn() {}
+  private Dist() {}
 
   /**
    * 将JSON字符流解析成Java对象
@@ -94,7 +95,7 @@ public final class Dawn
   public static String toString(Object obj, boolean compact)
   {
     StringBuilder out = new StringBuilder();
-    Dawn.append(out, obj, compact);
+    append(out, obj, compact);
     return out.toString();
   }
 
@@ -106,7 +107,7 @@ public final class Dawn
   public static String toString(Object obj)
   {
     StringBuilder out = new StringBuilder();
-    Dawn.append(out, obj);
+    append(out, obj);
     return out.toString();
   }
 
@@ -118,7 +119,7 @@ public final class Dawn
   public static String doEscape(String str)
   {
     StringBuilder out = new StringBuilder();
-    Dawn.excape(out, str);
+    excape(out, str);
     return out.toString();
   }
 
@@ -130,7 +131,7 @@ public final class Dawn
    */
   public static void append(Appendable out, Object obj)
   {
-    Dawn.append(out, obj, 2 > DEBUG);
+    append(out, obj, 2 > DEBUG);
   }
 
   /**
@@ -143,7 +144,7 @@ public final class Dawn
   {
     try
     {
-      Dawn.append(out, compact ? null : "" , null, obj, false);
+      append(out, compact ? null : "" , null, obj, false);
     }
     catch (IOException ex)
     {
@@ -165,7 +166,7 @@ public final class Dawn
     if (key != null)
     {
       sb.append('"');
-            Dawn.escape(sb, String.valueOf(key));
+         escape( sb , String.valueOf(key) );
       sb.append('"');
       sb.append(':');
     }
@@ -208,9 +209,13 @@ public final class Dawn
     {
       sb.append(Synt.asString((Number) val));
     }
+    else if (val instanceof Instant)
+    {
+      sb.append(Synt.asString(((Instant) val).toEpochMilli()));
+    }
     else if (val instanceof  Date  )
     {
-      sb.append(Synt.asString(((Date ) val).getTime()));
+      sb.append(Synt.asString((( Date  ) val).  getTime   ()));
     }
     else if (val instanceof Serializable
       &&  ! (val instanceof CharSequence)

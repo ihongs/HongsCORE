@@ -11,7 +11,7 @@ import io.github.ihongs.combat.anno.Combat;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.db.link.Loop;
-import io.github.ihongs.util.Dawn;
+import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Synt;
 import java.io.IOException;
 import java.util.Collection;
@@ -536,7 +536,7 @@ public class DataCombat {
             throw  new UnsupportedOperationException("Unsupported list: "+ text);
         } else
         if (text.startsWith("{") && text.endsWith("}")) {
-            return ( Map ) Dawn.toObject  (text);
+            return ( Map ) Dist.toObject  (text);
         } else {
             return ActionHelper.parseQuery(text);
         }
@@ -644,7 +644,7 @@ public class DataCombat {
 
             // 数据快照和日志标题
             nd.put("__data__", od);
-            nd.put("data", Dawn.toString(od,  true ));
+            nd.put("data", Dist.toString(od,  true ));
             nd.put("name", that.getText (od, "name"));
 
             // 操作备注和终端代码

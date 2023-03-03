@@ -1,6 +1,6 @@
 package io.github.ihongs.dh.lucene.stock;
 
-import io.github.ihongs.util.Dawn;
+import io.github.ihongs.util.Dist;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.StringField;
@@ -16,7 +16,7 @@ public class ObjectStock implements IStock {
             v  = "{}" ;
         } else
         if (! ( v instanceof String )) {
-            v  = Dawn.toString(v, true );
+            v  = Dist.toString(v, true );
         }
         return new StoredField(k, v.toString());
     }

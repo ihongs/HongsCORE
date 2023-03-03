@@ -11,7 +11,7 @@ import io.github.ihongs.action.anno.Assign;
 import io.github.ihongs.action.anno.Filter;
 import io.github.ihongs.action.anno.FilterInvoker;
 import io.github.ihongs.dh.IActing;
-import io.github.ihongs.util.Dawn;
+import io.github.ihongs.util.Dist;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -135,7 +135,7 @@ public class ActionRunner {
         if (null != aq && !"".equals(aq)) {
             if (aq.startsWith("{" )
             &&  aq.  endsWith("}")) {
-                rd = ( Map ) Dawn. toObject ( aq );
+                rd = ( Map ) Dist. toObject ( aq );
             } else {
                 rd = ActionHelper.parseQuery( aq );
             }

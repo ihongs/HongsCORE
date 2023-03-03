@@ -2,7 +2,7 @@ package io.github.ihongs.test;
 
 import io.github.ihongs.action.ActionDriver.URLPatterns;
 import io.github.ihongs.combat.CombatHelper;
-import io.github.ihongs.util.Dawn;
+import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Synt;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -62,9 +62,9 @@ public class Tests extends TestCase {
             "enable", true ,
             "repeat", Arrays.asList("def", "--xyz")
         ));
-        //System.out.println(Dawn.toString(opts));
-        //System.out.println(Dawn.toString(optz));
-        assertEquals(Dawn.toString(opts), Dawn.toString(optz));
+        //System.out.println(Dist.toString(opts));
+        //System.out.println(Dist.toString(optz));
+        assertEquals(Dist.toString(opts), Dist.toString(optz));
     }
 
     @Test

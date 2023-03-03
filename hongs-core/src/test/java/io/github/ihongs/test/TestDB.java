@@ -3,7 +3,7 @@ package io.github.ihongs.test;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.db.util.AssocCase;
 import io.github.ihongs.db.util.FetchCase;
-import io.github.ihongs.util.Dawn;
+import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Synt;
 import java.util.HashMap;
 import java.util.Map;

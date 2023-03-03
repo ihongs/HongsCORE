@@ -10,8 +10,8 @@ import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Model;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.db.util.FetchCase;
-import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Dict;
+import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Synt;
 
 import java.io.File;
@@ -209,8 +209,8 @@ public class Form extends Model {
             int i = 1;
             Object data = row != row.get("data");
             Map<String, Map> confDict = new HashMap();
-            List<Map> confData = Synt.asList(Dawn.toObject((String) data));
-            List<Map> confList = Synt.asList(Dawn.toObject((String) conf));
+            List<Map> confData = Synt.asList(Dist.toObject((String) data));
+            List<Map> confList = Synt.asList(Dist.toObject((String) conf));
 
             for(Map fo : confData) {
                 String fn = (String)  fo.get("__name__");
@@ -253,7 +253,7 @@ public class Form extends Model {
         String name = (String) rd.get("name");
 
         if (conf != null && !"".equals(conf)) {
-               flds = Synt.asList(Dawn.toObject(conf));
+               flds = Synt.asList(Dist.toObject(conf));
             Set set = Synt.setOf("name", "cuser", "muser", "ctime", "mtime");
             Map tdf = null;
             Map idf = null;
@@ -293,7 +293,7 @@ public class Form extends Model {
                 idf.remove("__repeated__");
             }
 
-            conf = Dawn.toString(flds, true);
+            conf = Dist.toString(flds, true);
             rd.put("conf", conf);
 
             // 补全表配置项
@@ -646,7 +646,7 @@ public class Form extends Model {
                     continue;
                 }
                 if (k.equals("datalist")) {
-                    select = Synt.asList(Dawn.toObject(v) );
+                    select = Synt.asList(Dist.toObject(v) );
                     continue;
                 }
 

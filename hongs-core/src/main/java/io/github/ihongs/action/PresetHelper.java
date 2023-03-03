@@ -2,8 +2,8 @@ package io.github.ihongs.action;
 
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsException;
-import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Dict;
+import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Synt;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -176,7 +176,7 @@ public class PresetHelper {
                 // 默认值, 没取到则跳过
                 if (x != null) {
                     if (data == null) {
-                        data  = Dawn.toObject(x);
+                        data  = Dist.toObject(x);
                     }
                 } else {
                     if (data == null) {
@@ -192,13 +192,13 @@ public class PresetHelper {
             } else
             if (text.startsWith("(") && text.endsWith(")")) {
                 text = text.substring(1,text.length( ) - 1);
-                data = Dawn.toObject (text);
+                data = Dist.toObject (text);
             } else
             if (text.startsWith("{") && text.endsWith("}")) {
-                data = Dawn.toObject (text);
+                data = Dist.toObject (text);
             } else
             if (text.startsWith("[") && text.endsWith("]")) {
-                data = Dawn.toObject (text);
+                data = Dist.toObject (text);
             }
         }
 

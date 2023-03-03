@@ -13,7 +13,7 @@ import io.github.ihongs.dh.IEntity;
 import io.github.ihongs.dh.search.SearchAction;
 import io.github.ihongs.dh.search.TitlesHelper;
 import io.github.ihongs.serv.matrix.Data;
-import io.github.ihongs.util.Dawn;
+import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Synt;
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -129,7 +129,7 @@ public class DataAction extends SearchAction {
         if (rsp.containsKey("info")) {
             Map inf = (Map) rsp.get("info");
         if (inf.containsKey("data")) {
-            Map dat = (Map) Dawn.toObject(
+            Map dat = (Map) Dist.toObject(
                    (String) inf.get("data")
             );
             rsp.put("info", dat);

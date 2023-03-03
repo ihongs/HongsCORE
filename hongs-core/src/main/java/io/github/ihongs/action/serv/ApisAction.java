@@ -4,7 +4,7 @@ import io.github.ihongs.Cnst;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.ActionHelper;
-import io.github.ihongs.util.Dawn;
+import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Synt;
 import java.io.IOException;
 import java.util.Date;
@@ -136,7 +136,7 @@ public class ApisAction
         String str = Synt.declare(obj, "" );
         Map map;
         if (str.startsWith("{") && str.endsWith("}")) {
-            map = (  Map  ) Dawn.toObject(str);
+            map = (  Map  ) Dist.toObject(str);
         } else {
             map = ActionHelper.parseQuery(str);
         }

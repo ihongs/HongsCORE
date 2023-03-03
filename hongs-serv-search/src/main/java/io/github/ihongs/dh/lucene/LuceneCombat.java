@@ -5,7 +5,7 @@ import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.combat.CombatHelper;
 import io.github.ihongs.combat.anno.Combat;
-import io.github.ihongs.util.Dawn;
+import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Synt;
 
 import java.util.List;
@@ -146,7 +146,7 @@ public class LuceneCombat {
             throw  new UnsupportedOperationException("Unsupported list: "+ text);
         } else
         if (text.startsWith("{") && text.endsWith("}")) {
-            return ( Map ) Dawn.toObject  (text);
+            return ( Map ) Dist. toObject (text);
         } else {
             return ActionHelper.parseQuery(text);
         }

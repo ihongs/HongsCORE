@@ -7,8 +7,8 @@ import io.github.ihongs.CoreLocale;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsCause;
 import io.github.ihongs.HongsExemption;
-import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Dict;
+import io.github.ihongs.util.Dist;
 
 import java.io.File;
 import java.io.Writer;
@@ -304,7 +304,7 @@ public class ActionHelper implements Cloneable
         return null;
     }
     try {
-        return (Map) Dawn.toObject ( request.getReader( ) );
+        return (Map) Dist.toObject ( request.getReader( ) );
     } catch ( /**/HongsExemption ex) {
         throw new HongsExemption(ex, 400 );
     } catch ( ClassCastException ex) {
@@ -968,7 +968,7 @@ public class ActionHelper implements Cloneable
                 out.append("<script type=\"text/javascript\">");
                 out.append( fun);
                 out.append("(" );
-                Dawn.append(out, this.responseData);
+                Dist.append(out, this.responseData);
                 out.append(");");
                 out.append("</script>");
             } else {
@@ -980,7 +980,7 @@ public class ActionHelper implements Cloneable
 
                 out.append( fun);
                 out.append("(" );
-                Dawn.append(out, this.responseData);
+                Dist.append(out, this.responseData);
                 out.append(");");
             }
         } else {
@@ -990,7 +990,7 @@ public class ActionHelper implements Cloneable
                     this.response.setContentType("application/json");
                 }
 
-                Dawn.append(out, this.responseData);
+                Dist.append(out, this.responseData);
         }
 
         out.flush( );

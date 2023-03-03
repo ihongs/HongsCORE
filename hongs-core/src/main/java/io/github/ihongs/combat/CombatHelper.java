@@ -2,7 +2,7 @@ package io.github.ihongs.combat;
 
 import io.github.ihongs.Core;
 import io.github.ihongs.HongsExemption;
-import io.github.ihongs.util.Dawn;
+import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Inst;
 import io.github.ihongs.util.Synt;
 import java.io.InputStream;
@@ -427,7 +427,7 @@ public class CombatHelper
   public static void preview(Object data)
   {
     PrintStream out = OUT.get ( );
-    Dawn.append(out, data, false);
+    Dist.append(out, data, false);
     out.println();
   }
 

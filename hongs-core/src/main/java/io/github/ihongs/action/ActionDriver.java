@@ -6,7 +6,7 @@ import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLocale;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsCause;
-import io.github.ihongs.util.Dawn;
+import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Inst;
 import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
@@ -516,7 +516,7 @@ public class ActionDriver implements Filter, Servlet {
                   }
                   if (!map.isEmpty()) {
                       sb.append("\r\n\tHeaders     : ")
-                        .append(Syno.indent(Dawn.toString(map)).substring(1));
+                        .append(Syno.indent(Dist.toString(map)).substring(1));
                   }
                 }
 
@@ -529,7 +529,7 @@ public class ActionDriver implements Filter, Servlet {
                   }
                   if (!map.isEmpty()) {
                       sb.append("\r\n\tContext     : ")
-                        .append(Syno.indent(Dawn.toString(map)).substring(1));
+                        .append(Syno.indent(Dist.toString(map)).substring(1));
                   }
                 }
 
@@ -542,7 +542,7 @@ public class ActionDriver implements Filter, Servlet {
                   }
                   if (!map.isEmpty()) {
                       sb.append("\r\n\tSession     : ")
-                        .append(Syno.indent(Dawn.toString(map)).substring(1));
+                        .append(Syno.indent(Dist.toString(map)).substring(1));
                   }
                 }
 
@@ -554,7 +554,7 @@ public class ActionDriver implements Filter, Servlet {
                   }
                   if (!map.isEmpty()) {
                       sb.append("\r\n\tCookies     : ")
-                        .append(Syno.indent(Dawn.toString(map)).substring(1));
+                        .append(Syno.indent(Dist.toString(map)).substring(1));
                   }
                 }
 
@@ -567,7 +567,7 @@ public class ActionDriver implements Filter, Servlet {
                     }
                     if (rd != null && !rd.isEmpty()) {
                         sb.append("\r\n\tRequest     : ")
-                          .append(Syno.indent(Dawn.toString(rd)).substring(1));
+                          .append(Syno.indent(Dist.toString(rd)).substring(1));
                     }
                 }
 
@@ -578,7 +578,7 @@ public class ActionDriver implements Filter, Servlet {
                     }
                     if (xd != null && !xd.isEmpty()) {
                         sb.append("\r\n\tResponse    : ")
-                          .append(Syno.indent(Dawn.toString(xd)).substring(1));
+                          .append(Syno.indent(Dist.toString(xd)).substring(1));
                     }
                 }
 

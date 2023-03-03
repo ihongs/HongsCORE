@@ -5,7 +5,7 @@ import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.ActionHelper;
-import io.github.ihongs.util.Dawn;
+import io.github.ihongs.util.Dist;
 
 import java.io.IOException;
 
@@ -235,7 +235,7 @@ public class ConfAction
     private String makeConf(String nam, String key)
     {
       String val = this.getValue(key, "");
-             val = Dawn.doEscape(  val  );
+             val = Dist.doEscape(  val  );
       return "\t\""+ nam +"\":\""+ val +"\",\r\n";
     }
 

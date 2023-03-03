@@ -620,7 +620,7 @@ public final class Synt {
             return new LinkedHashMap();
         }
         if (txt.startsWith("{") && txt.endsWith("}")) {
-            return (Map ) Dawn.toObject(txt);
+            return (Map ) Dist.toObject(txt);
         } else {
             Map m = new LinkedHashMap();
             for(String   s : SEXP.split(txt)) {
@@ -665,7 +665,7 @@ public final class Synt {
         }
         if (txt.startsWith("[") && txt.endsWith("]")) {
             return  new LinkedHashSet(
-                   (List) Dawn.toObject (txt)
+                   (List) Dist.toObject (txt)
             );
         } else {
             return  new LinkedHashSet(
@@ -703,7 +703,7 @@ public final class Synt {
             return  new  ArrayList();
         }
         if (txt.startsWith("[") && txt.endsWith("]")) {
-            return (List) Dawn.toObject (txt);
+            return (List) Dist.toObject (txt);
         } else {
             return  new  ArrayList(
                 Arrays.asList(SEXP.split(txt))
@@ -740,7 +740,7 @@ public final class Synt {
             return  new  ArrayList();
         }
         if (txt.startsWith("[") && txt.endsWith("]")) {
-            return (List) Dawn.toObject (txt);
+            return (List) Dist.toObject (txt);
         } else {
             return  new  ArrayList(
                 Arrays.asList(SEXP.split(txt))

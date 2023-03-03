@@ -4,7 +4,7 @@ import io.github.ihongs.HongsException;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.db.link.Loop;
-import io.github.ihongs.util.Dawn;
+import io.github.ihongs.util.Dist;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -63,7 +63,7 @@ public class JRecord<T> implements IRecord<T>, AutoCloseable {
 
             // 反序列化
             if (! bytes) {
-                return ( T ) Dawn.toObject(rs.getString( 1 ));
+                return ( T ) Dist.toObject(rs.getString( 1 ));
             }
             else try (
                       InputStream ins =    rs.getBinaryStream( 1 );
@@ -95,7 +95,7 @@ public class JRecord<T> implements IRecord<T>, AutoCloseable {
         byte[] arr = null;
         String str = null;
         if (! bytes) {
-            str = Dawn.toString ( val );
+            str = Dist.toString ( val );
         }
         else try (
             ByteArrayOutputStream bos = new ByteArrayOutputStream(   );

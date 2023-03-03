@@ -9,7 +9,7 @@ import io.github.ihongs.CoreRoster;
 import io.github.ihongs.CoreSerial;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
-import io.github.ihongs.util.Dawn;
+import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.daemon.Gate;
 import java.io.File;
@@ -405,7 +405,7 @@ public class FormSet
         case "list":
           return Synt.toList  (text);
         case "json":
-          return Dawn.toObject(text);
+          return Dist.toObject(text);
         case "bool":
           return Synt.defoult(Synt.asBool(text), false);
         case "int" :

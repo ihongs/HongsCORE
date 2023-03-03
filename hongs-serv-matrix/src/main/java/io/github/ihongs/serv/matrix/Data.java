@@ -10,7 +10,7 @@ import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Model;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.dh.search.SearchEntity;
-import io.github.ihongs.util.Dawn;
+import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
@@ -550,7 +550,7 @@ public class Data extends SearchEntity {
 
         // 数据快照和日志标题
         nd.put("__data__", dd);
-        nd.put("data", Dawn.toString(dd,  true ));
+        nd.put("data", Dist.toString(dd,  true ));
         nd.put("name", this.getText (dd, "name"));
 
         // 操作备注和终端代码
@@ -622,7 +622,7 @@ public class Data extends SearchEntity {
 
             // 数据快照和日志标题
             nd.put("__data__", dd);
-            nd.put("data", Dawn.toString(dd,  true ));
+            nd.put("data", Dist.toString(dd,  true ));
             nd.put("name", this.getText (dd, "name"));
 
             // 操作备注和终端代码
@@ -650,7 +650,7 @@ public class Data extends SearchEntity {
 
         // 数据快照和日志标题
         nd.put("__data__", dd);
-        nd.put("data", Dawn.toString(dd,  true ));
+        nd.put("data", Dist.toString(dd,  true ));
         nd.put("name", this.getText (dd, "name"));
 
         // 操作备注和终端代码
@@ -730,7 +730,7 @@ public class Data extends SearchEntity {
 
         // 数据快照和日志标题
         nd.put("__data__", dd);
-        nd.put("data", Dawn.toString(dd,  true ));
+        nd.put("data", Dist.toString(dd,  true ));
         nd.put("name", this.getText (dd, "name"));
 
         // 操作备注和终端代码
@@ -929,7 +929,7 @@ public class Data extends SearchEntity {
                 .select("state, data")
                 .getOne( );
             if (Synt.declare(od.get("state"), 0) > 0) {
-                Map dd = (Map) Dawn.toObject((String) od.get("data"));
+                Map dd = (Map) Dist.toObject((String) od.get("data"));
                 dd.put(Cnst.ID_KEY , id);
                 padInf(dd, dd);
                 Document dc = padDoc(dd);
@@ -968,7 +968,7 @@ public class Data extends SearchEntity {
         }}
 
         // 保存到文档库
-        Map dd = (Map) Dawn.toObject((String) sd.get("data"));
+        Map dd = (Map) Dist.toObject((String) sd.get("data"));
         dd.put(Cnst.ID_KEY , id);
         padInf(dd, dd);
         Document dc = padDoc(dd);
@@ -988,7 +988,7 @@ public class Data extends SearchEntity {
 
         // 数据快照和日志标题
         nd.put("__data__", dd);
-        nd.put("data", Dawn.toString(dd,  true ));
+        nd.put("data", Dist.toString(dd,  true ));
         nd.put("name", this.getText (dd, "name"));
 
         // 操作备注和终端代码
@@ -1175,8 +1175,8 @@ public class Data extends SearchEntity {
         if (fr instanceof Map
         ||  fr instanceof Collection
         ||  fr instanceof Object [ ]) {
-            fr = Dawn.toString(fr, true);
-            fo = Dawn.toString(fo, true);
+            fr = Dist.toString(fr, true);
+            fo = Dist.toString(fo, true);
         }
         return fr.equals(fo);
     }

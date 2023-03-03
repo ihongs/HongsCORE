@@ -8,7 +8,7 @@ import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
 import io.github.ihongs.combat.CombatHelper;
 import io.github.ihongs.combat.anno.Combat;
-import io.github.ihongs.util.Dawn;
+import io.github.ihongs.util.Dist;
 import java.io.File;
 import java.io.FileReader;
 import java.io.BufferedReader;
@@ -47,7 +47,7 @@ public class Access {
         if (args.length > 1 ) {
             rep.put("args", Arrays.copyOfRange(args, 1, args.length));
         }
-        String req = Dawn.toString (rep, true);
+        String req = Dist.toString (rep, true);
 
         // 命令接口
         String url = Core.SERV_HREF+Core.SERV_PATH + "/common/more/exec" +Cnst.ACT_EXT;
@@ -118,7 +118,7 @@ public class Access {
         if (opts.containsKey("context")) {
             rep.put("context", text((String) opts.get("context")));
         }
-        String req = Dawn.toString (rep, true);
+        String req = Dist.toString (rep, true);
 
         // 动作接口
         String url = Core.SERV_HREF+Core.SERV_PATH + "/common/more/call" +Cnst.ACT_EXT;
@@ -219,7 +219,7 @@ public class Access {
             throw  new UnsupportedOperationException("Unsupported arr: "+ text);
         } else
         if (text.startsWith("{") && text.endsWith("}")) {
-            return (  Map  ) Dawn.toObject(text);
+            return (  Map  ) Dist.toObject(text);
         } else {
             return ActionHelper.parseQuery(text);
         }

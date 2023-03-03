@@ -8,7 +8,7 @@ import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.ActionHelper;
-import io.github.ihongs.util.Dawn;
+import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Synt;
 import java.net.URLEncoder;
 import java.net.URLDecoder;
@@ -175,7 +175,7 @@ abstract public class Pagelet extends ActionDriver implements HttpJspPage
    * @return
    */
   public static String escapeJSS(String str) {
-      return Dawn.doEscape (str);
+      return Dist.doEscape (str);
   }
 
   /**
@@ -184,7 +184,7 @@ abstract public class Pagelet extends ActionDriver implements HttpJspPage
    * @return
    */
   public static String encodeJSO(Object obj) {
-      return Dawn.toString (obj);
+      return Dist.toString (obj);
   }
 
   /**

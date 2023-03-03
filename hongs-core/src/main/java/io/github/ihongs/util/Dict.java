@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 字典数据工具
+ * 数据字典工具
  *
  * <p>
  * 用于获取和设置树型结构

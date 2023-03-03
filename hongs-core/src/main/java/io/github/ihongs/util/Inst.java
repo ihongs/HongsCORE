@@ -283,7 +283,7 @@ public final class Inst
    * @return 
    */
   private static ZonedDateTime fixZonedDateTime(TemporalAccessor ta, int y, int M, int d, int H, int m, int s, int n, ZoneId zi) {
-    int[] ps = new int [] {y, M, d, H, m, s, n};
+    int[] ps = new int[] {y, M, d, H, m, s, n};
     for (int i = 0 ; i < 7 ; i ++ ) {
         if (ta.isSupported(TFS[i])) {
             ps[i] = ta.get(TFS[i]);

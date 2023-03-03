@@ -1797,9 +1797,9 @@ function hsPrsDate(text, format) {
 }
 
 /**
- * 偏移值转换为GMT时区
+ * 偏移值转换为UTC时区
  * @param {Number} off
- * @return {String} 例如 -480 可转为 GMT+08:00
+ * @return {String} 例如 -480 可转为 UTC+08:00
  */
 function hsGmtZone(off) {
     var hur, min;
@@ -1808,7 +1808,7 @@ function hsGmtZone(off) {
     min = Math.floor(min % 60);
     if (hur < 10) hur = "0" + hur;
     if (min < 10) min = "0" + min;
-    return "GMT"+ (off > 0 ? "-" : "+") + hur + ":" + min;
+    return "UTC"+ (off > 0 ? "-" : "+") + hur + ":" + min;
 }
 
 (function($) {

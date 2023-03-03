@@ -19,7 +19,7 @@ if(!window.HsCONF)window.HsCONF={};$.extend(window.HsCONF,{
 //** 演示语言 **/
 if(!window.HsLANG)window.HsLANG={};$.extend(window.HsLANG,{
 	"lang":"zh_CN",
-	"zone":"GMT-8",
+	"zone":"UTC-8",
 	"error.label":"错误($0)",
 	"error.undef":"未知错误",
 	"datetime.format":"yyyy/MM/dd HH:mm:ss",

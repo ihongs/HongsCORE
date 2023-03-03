@@ -151,7 +151,7 @@ function hsRequires(url, fun ) {
         // 在 head 加 link 或 script 标签
         // 监听其加载事件, 全部完成时回调
         var n = document.createElement(/\.css$/.test (u) ? "link" : "script");
-        n.onload = n.onreadystatechange = ( function (n, u) {
+        n.onload = n.onreadystatechange = ( function (n) {
             return function( ) {
                 if ( ! n.readyState
                 ||  n.readyState == "loaded"
@@ -161,8 +161,8 @@ function hsRequires(url, fun ) {
                         fun( );
                     }
                 }
-            };
-        }) (n, u);
+            } ;
+        }) (n);
         if (n.tagName == "SCRIPT") {
             n.defer = false;
             n.async = true ;

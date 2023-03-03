@@ -1,7 +1,7 @@
 <%@page import="io.github.ihongs.CoreConfig"%>
 <%@page import="io.github.ihongs.Cnst"%>
 <%@page import="io.github.ihongs.Core"%>
-<%@page import="io.github.ihongs.util.Dawn"%>
+<%@page import="io.github.ihongs.util.Dist"%>
 <%@page import="io.github.ihongs.util.Synt"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.ArrayList"%>
@@ -87,7 +87,7 @@
                                     fl.add(new Object[]{n, t, l});
                                 }
                             %>
-                            <a href="javascript:;" class="show-form" data-data="<%=escape(Dawn.toString(fl, true))%>"><%=name%></a>
+                            <a href="javascript:;" class="show-form" data-data="<%=escape(Dist.toString(fl, true))%>"><%=name%></a>
                         <%} else if ("fork".equals(type)) {%>
                             <%
                                 String ak = Synt.declare(info.get("data-ak"), "" );

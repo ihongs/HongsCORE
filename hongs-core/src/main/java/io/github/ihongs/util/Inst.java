@@ -91,8 +91,8 @@ public final class Inst
    */
   public static String format(long time, String patt) {
     Instant          inst = Instant.ofEpochMilli(time);
-    ZoneId            tmz = Core.getZoneId();
-    ZonedDateTime     zdt = inst.atZone(tmz);
+    ZoneId            zid = Core.getZoneId();
+    ZonedDateTime     zdt = inst.atZone(zid);
     DateTimeFormatter dtf = getDateTimeFormatter(patt);
     return dtf.format(zdt);
   }
@@ -124,8 +124,8 @@ public final class Inst
    */
   public static String format(Date time, String patt) {
     Instant          inst = time.toInstant();
-    ZoneId            tmz = Core.getZoneId();
-    ZonedDateTime     zdt = inst.atZone(tmz);
+    ZoneId            zid = Core.getZoneId();
+    ZonedDateTime     zdt = inst.atZone(zid);
     DateTimeFormatter dtf = getDateTimeFormatter(patt);
     return dtf.format(zdt);
   }
@@ -156,8 +156,8 @@ public final class Inst
    * @throws IllegalArgumentException 格式错误
    */
   public static String format(Instant time, String patt) {
-    ZoneId            tmz = Core.getZoneId();
-    ZonedDateTime     zdt = time.atZone(tmz);
+    ZoneId            zid = Core.getZoneId();
+    ZonedDateTime     zdt = time.atZone(zid);
     DateTimeFormatter dtf = getDateTimeFormatter(patt);
     return dtf.format(zdt);
   }
@@ -190,8 +190,8 @@ public final class Inst
   public static Instant parse(String  time, String patt) {
     DateTimeFormatter dtf = getDateTimeFormatter(patt);
     TemporalAccessor  tar = dtf .parse(time);
-    ZoneId            tmz = Core.getZoneId();
-    return fixZonedDateTime(tar , 1970, 1, 1, 0, 0, 0, 0, tmz).toInstant();
+    ZoneId            zid = Core.getZoneId();
+    return fixZonedDateTime(tar , 1970, 1, 1, 0, 0, 0, 0, zid).toInstant();
   }
 
   /**

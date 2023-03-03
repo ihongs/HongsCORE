@@ -57,13 +57,11 @@
             <legend class="text-center" data-name="<%=name%>"><%=text%></legend>
         <%} else if ( roly ) { //** 此部分来自 info.jsp **/ %>
             <%
-                text = Synt.defxult(Synt.asString(info.get("info-text")), Synt.asString(info.get("text")), text);
-                hint = Synt.defxult(Synt.asString(info.get("info-hint")), Synt.asString(info.get("hint")), hint);
+                text = Synt.defxult(Synt.asString(info.get("info-text")), text, "");
+                hint = Synt.defxult(Synt.asString(info.get("info-hint")), hint, "");
             %>
             <div class="form-group row" data-name="<%=name%>">
-                <label class="col-sm-3 col-md-2 text-right control-label form-control-static">
-                    <%=text != null ? text : ""%>
-                </label>
+                <label class="col-sm-3 col-md-2 text-right control-label form-control-static"><%=text%></label>
                 <div class="col-sm-9 col-md-8">
                 <%
                     String kind = "_review";
@@ -188,13 +186,15 @@
                 <%} else {%>
                     <div class="form-control-static" data-fn="<%=name%>" data-ft="<%=kind%>"></div>
                 <%} /*End If */%>
-                    <div class="help-block text-muted form-control-static"><%=hint != null ? hint : ""%></div>
+                    <div class="help-block text-muted form-control-static"><%=hint%></div>
                 </div>
             </div>
         <%} else {%>
             <%
-                text = Synt.defxult(Synt.asString(info.get("form-text")), Synt.asString(info.get("text")), text);
-                hint = Synt.defxult(Synt.asString(info.get("form-hint")), Synt.asString(info.get("hint")), hint);
+                String hold;
+                text = Synt.defxult(Synt.asString(info.get("form-text")), text);
+                hint = Synt.defxult(Synt.asString(info.get("form-hint")), hint);
+                hold = Synt.defxult(Synt.asString(info.get("form-hold")), "");
             %>
             <div class="form-group row" data-name="<%=name%>">
                 <label class="col-sm-3 col-md-2 text-right control-label form-control-static">
@@ -206,7 +206,6 @@
                         String extr = "";
                         String typa = (String) info.get("type");
                         String mode = (String) info.get("mode");
-                        String hold = Synt.defxult(Synt.asString(info.get("form-hold")), "");
                         if (rqrd) {
                             extr += " required=\"required\"";
                         }
@@ -224,7 +223,6 @@
                 <%} else if ("string".equals(type) || "text".equals(type) || "email".equals(type) || "url".equals(type) || "tel".equals(type) || "sms".equals(type)) {%>
                     <%
                         String extr = "";
-                        String hold = Synt.defxult(Synt.asString(info.get("form-hold")), "");
                         if (rqrd) {
                             extr += " required=\"required\"";
                         }
@@ -242,7 +240,6 @@
                 <%} else if ("number".equals(type) || "range".equals(type) || "color".equals(type) || "sorted".equals(type)) {%>
                     <%
                         String extr = "";
-                        String hold = Synt.defxult(Synt.asString(info.get("form-hold")), "");
                         if (rqrd) {
                             extr += " required=\"required\"";
                         }
@@ -425,7 +422,6 @@
                 <%} else {%>
                     <%
                         String extr = "";
-                        String hold = Synt.defxult(Synt.asString(info.get("form-hold")), "");
                         if (rptd) {
                             name += "." ;
                             extr += " multiple=\"multiple\"";
@@ -437,7 +433,7 @@
                     <input class="form-control" type="<%=type%>" name="<%=name%>" placeholder="<%=hold%>"<%=extr%>/>
                 <%} /*End If */%>
                     <div class="help-block text-error form-control-static"></div>
-                    <div class="help-block text-muted form-control-static"><%=hint != null ? hint : ""%></div>
+                    <div class="help-block text-muted form-control-static"><%=hint%></div>
                 </div>
                 <div class="col-md-2 hidden-sm hidden-xs">
                     <div class="form-control-static">

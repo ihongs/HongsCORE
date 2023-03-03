@@ -70,8 +70,8 @@
                 if (roly) gfc += " is-readonly";
                 if (gfc.length() > 0) gfc = gfc.substring(1);
                 String pfc = Synt.declare(info.get("page-form-class"), "");
-                text = Synt.defxult(Synt.asString(info.get("form-text")), Synt.asString(info.get("text")), text, "");
-                hint = Synt.defxult(Synt.asString(info.get("form-hint")), Synt.asString(info.get("hint")), hint, "");
+                text = Synt.defxult(Synt.asString(info.get("form-text")), text, "");
+                hint = Synt.defxult(Synt.asString(info.get("form-hint")), hint, "");
             %>
             <div class="form-grade <%=pfc%>">
             <div class="form-group <%=gfc%>" data-name="<%=name%>">
@@ -317,7 +317,7 @@
                     <%hint = null;%>
                 <%} /*End If */%>
                     <div class="help-block text-error form-control-static"></div>
-                    <div class="help-block text-muted form-control-static"><%=hint != null ? hint : ""%></div>
+                    <div class="help-block text-muted form-control-static"><%=hint%></div>
                 </div>
             </div>
             </div>

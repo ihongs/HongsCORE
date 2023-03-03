@@ -321,7 +321,7 @@ function gainFlds(fields, area) {
         var label = $(this).find("label span,legend span").first();
         var input = $(this).find(   "[name],[data-fn]"   ).first();
         var text  = label.text();
-        var hint  = input.attr("placeholder");
+//      var hint  = input.attr("title");
         var name  = input.attr("name") || input.attr("data-fn");
         var type  = input.attr("type") || input.prop("tagName");
         var required = input.prop("required") || input.data("required") ? "true" : "";
@@ -338,7 +338,7 @@ function gainFlds(fields, area) {
             "__name__": name,
             "__type__": type,
             "__text__": text,
-            "__hint__": hint,
+//          "__hint__": hint,
             "__required__": required ,
             "__repeated__": repeated
         };
@@ -352,6 +352,13 @@ function gainFlds(fields, area) {
             delete params["__hint__"];
             delete params["__required__"];
             delete params["__repeated__"];
+        }
+
+        // 提示短语
+        if (input.is("ul,div")) {
+            params["form-hold"] = input.siblings(".btn").text();
+        } else {
+            params["form-hold"] = input.  attr  ("placeholder");
         }
 
         var a = input.get(0).attributes;
@@ -431,7 +438,7 @@ function drawFlds(fields, area, wdgt, pre, suf) {
         var name  = field['__name__'];
         var type  = field["__type__"];
         var text  = field["__text__"];
-        var hint  = field["__hint__"];
+//      var hint  = field["__hint__"];
         var required = field["__required__"];
         var repeated = field["__repeated__"];
 
@@ -471,13 +478,15 @@ function drawFlds(fields, area, wdgt, pre, suf) {
             input.attr("data-fn", name);
             input.attr("data-required", required);
             input.attr("data-repeated", repeated);
+            input.siblings(".btn").text(field['form-hold']); // 提示短语
         } else {
             input.attr("name"   , name);
         if (group.attr("data-type") !== "_"
         &&  group.attr("data-type") !== "-") {
-            input.attr("placeholder", hint );
+//          input.attr("title"  , hint);
             input.prop("required" , ! ! required);
             input.prop("multiple" , ! ! repeated);
+            input.attr( "placeholder" , field['form-hold']); // 提示短语
         }}
 
         for(var k in field) {
@@ -500,6 +509,9 @@ function drawFlds(fields, area, wdgt, pre, suf) {
                 continue;
             }
 
+            if (k === "form-hold") {
+                continue; // 上方处理过了
+            }
             if (k === "selected") {
                 continue; // 下方一并处理
             }

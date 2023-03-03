@@ -262,46 +262,12 @@ public final class Inst
    * 不建议用, 如格式明确推荐用:
    * <code>
    * DateTimeFormatter dtf = DateTimeFormatterBuilder()
-   *    .parseDefaulting(ChronoField.YEAR, 1970)
-   *    .parseDefaulting(ChronoField.MONTH_OF_YEAR, 1)
-   *    .parseDefaulting(ChronoField.DAY_OF_MONTH , 1)
-   *    .appendPattern("H:m:s")
-   *    .toFormatter(Locale.getDefault());
-   * LocalDateTime.parse("12:30:15", dtf)
-   * </code>
-   * 
-   * @param ta
-   * @param y
-   * @param M
-   * @param d
-   * @param H
-   * @param m
-   * @param s
-   * @param n
-   * @return 
-   */
-  public static LocalDateTime fixLocalDateTime(TemporalAccessor ta, int y, int M, int d, int H, int m, int s, int n) {
-    int[] ps = new int [] {y,M,d,H,m,s,n};
-    for (int i = 0; i < TFS.length; i ++) {
-        if (ta.isSupported(TFS[i])) {
-            ps[i] = ta.get(TFS[i]);
-        }
-    }
-    return LocalDateTime.of(ps[0], ps[1], ps[2], ps[3], ps[4], ps[5], ps[6]);
-  }
-
-  /**
-   * 补全数值
-   * 
-   * 不建议用, 如格式明确推荐用:
-   * <code>
-   * DateTimeFormatter dtf = DateTimeFormatterBuilder()
-   *    .parseDefaulting(ChronoField.YEAR, 1970)
-   *    .parseDefaulting(ChronoField.MONTH_OF_YEAR, 1)
-   *    .parseDefaulting(ChronoField.DAY_OF_MONTH , 1)
-   *    .appendPattern("H:m:s")
+   *    .parseDefaulting(ChronoField.YEAR_OF_ERA, 1970)
+   *    .parseDefaulting(ChronoField.MONTH_OF_YEAR, 1 )
+   *    .parseDefaulting(ChronoField.DAY_OF_MONTH , 1 )
+   *    .appendPattern("HH:mm:ss")
    *    .toFormatter(Locale.getDefault())
-   *    .withZone(ZoneId.of("UTC+8"));
+   *    . withZone  (ZoneId.of("UTC+8" ));
    * ZonedDateTime.parse("12:30:15", dtf)
    * </code>
    * 
@@ -316,9 +282,9 @@ public final class Inst
    * @param zi
    * @return 
    */
-  public static ZonedDateTime fixZonedDateTime(TemporalAccessor ta, int y, int M, int d, int H, int m, int s, int n, ZoneId zi) {
-    int[] ps = new int [] {y,M,d,H,m,s,n};
-    for (int i = 0; i < TFS.length; i ++) {
+  private static ZonedDateTime fixZonedDateTime(TemporalAccessor ta, int y, int M, int d, int H, int m, int s, int n, ZoneId zi) {
+    int[] ps = new int [] {y, M, d, H, m, s, n};
+    for (int i = 0 ; i < 7 ; i ++ ) {
         if (ta.isSupported(TFS[i])) {
             ps[i] = ta.get(TFS[i]);
         }

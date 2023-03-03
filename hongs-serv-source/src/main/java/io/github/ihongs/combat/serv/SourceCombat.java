@@ -8,7 +8,7 @@ import io.github.ihongs.combat.CombatHelper;
 import io.github.ihongs.combat.CombatRunner;
 import io.github.ihongs.combat.anno.Combat;
 import io.github.ihongs.db.DB;
-import io.github.ihongs.util.Dusk;
+import io.github.ihongs.util.Inst;
 import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
 
@@ -192,13 +192,13 @@ public class SourceCombat {
 
                 try {
                     db.execute(ln);
-                    CombatHelper.progres(rp, String.format("Ok(%d) Er(%d) ET: %s", ok++, er, Dusk.phraseTime(et)));
+                    CombatHelper.progres(rp, String.format("Ok(%d) Er(%d) ET: %s", ok++, er, Inst.phrase(et)));
                 }
                 catch(HongsException ex) {
-                    CombatHelper.progres(rp, String.format("Ok(%d) Er(%d) ET: %s", ok, er++, Dusk.phraseTime(et)));
+                    CombatHelper.progres(rp, String.format("Ok(%d) Er(%d) ET: %s", ok, er++, Inst.phrase(et)));
                     if (0 < Core.DEBUG) {
                         CombatHelper.progres();
-                        CombatHelper.println("Error in file("+fo.getName()+") at line("+li+"): "+ex.getMessage() );
+                        CombatHelper.println("Error in file("+fo.getName()+") at line("+li+"): "+ex.getMessage());
                         throw ex;
                     }
                 }
@@ -213,10 +213,10 @@ public class SourceCombat {
 
                 try {
                     db.execute(ln);
-                    CombatHelper.progres(rp, String.format("Ok(%d) Er(%d) ET: %s", ok++, er, Dusk.phraseTime(et)));
+                    CombatHelper.progres(rp, String.format("Ok(%d) Er(%d) ET: %s", ok++, er, Inst.phrase(et)));
                 }
                 catch(HongsException ex) {
-                    CombatHelper.progres(rp, String.format("Ok(%d) Er(%d) ET: %s", ok, er++, Dusk.phraseTime(et)));
+                    CombatHelper.progres(rp, String.format("Ok(%d) Er(%d) ET: %s", ok, er++, Inst.phrase(et)));
                     if (0 < Core.DEBUG) {
                         CombatHelper.progres();
                         CombatHelper.println("Error in file("+fo.getName()+") at line("+li+"): "+ex.getMessage() );
@@ -536,7 +536,7 @@ public class SourceCombat {
                         // 时间格式
                         if (fmt != null ) {
                             fmt  = fmt.substring( 1 );
-                            val  = Dusk.formatTime(tim , fmt);
+                            val  = Inst.format(tim , fmt);
                         } else {
                             val  = Synt.asString(tim  /  mis);
                         }

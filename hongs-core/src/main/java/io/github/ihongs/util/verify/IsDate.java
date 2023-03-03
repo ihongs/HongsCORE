@@ -2,7 +2,7 @@ package io.github.ihongs.util.verify;
 
 import io.github.ihongs.CoreLocale;
 import io.github.ihongs.HongsExemption;
-import io.github.ihongs.util.Dusk;
+import io.github.ihongs.util.Inst;
 import io.github.ihongs.util.Synt;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
@@ -56,13 +56,13 @@ public class IsDate extends Rule {
         if (!"".equals(min)) {
             long tim = getTime(min, now);
             if ( tim > day.getTime( ) ) {
-                throw new Wrong("@fore.form.lt.mindate", Dusk.formatTime(tim, fwt));
+                throw new Wrong("@fore.form.lt.mindate", Inst.format(tim, fwt));
             }
         }
         if (!"".equals(max)) {
             long tim = getTime(max, now);
             if ( tim < day.getTime( ) ) {
-                throw new Wrong("@fore.form.gt.maxdate", Dusk.formatTime(tim, fwt));
+                throw new Wrong("@fore.form.gt.maxdate", Inst.format(tim, fwt));
             }
         }
 
@@ -76,10 +76,10 @@ public class IsDate extends Rule {
             return day;
         }
         if ("timestamp".equals(type)) {
-            return day.getTime() / 1000;
+            return day.getTime() / 1000 ;
         }
         if (! "".equals(fmt)) {
-            return Dusk.formatTime(day , fmt);
+            return Inst.format(day, fmt);
         }
 
         return value;
@@ -118,7 +118,7 @@ public class IsDate extends Rule {
             // 按指定格式解析日期字符串
             // 要精确时间的可以使用偏移
             try {
-                return Date.from(Dusk.parseTime(str, fwt).plusMillis(off));
+                return Date.from(Inst.parse(str, fwt).plusMillis(off));
             } catch (DateTimeParseException e) {
                 // Nothing to do.
             }
@@ -126,13 +126,13 @@ public class IsDate extends Rule {
             // 识别 ISO 或 datetime-local 格式
             try {
                 fwt = "yyyy-MM-ddTH:m:s";
-                return Date.from(Dusk.parseTime(str, fwt).plusMillis(off));
+                return Date.from(Inst.parse(str, fwt).plusMillis(off));
             } catch (DateTimeParseException e) {
                 // Nothing to do.
             }
             try {
                 fwt = "yyyy-MM-ddTH:m";
-                return Date.from(Dusk.parseTime(str, fwt).plusMillis(off));
+                return Date.from(Inst.parse(str, fwt).plusMillis(off));
             } catch (DateTimeParseException e) {
                 // Nothing to do.
             }

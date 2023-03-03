@@ -19,48 +19,62 @@ import java.util.Locale;
  *
  * @author Hongs
  */
-public final class Dusk
+public final class Inst
 {
 
-  private Dusk() {}
+  private Inst() {}
 
   /**
    * 格式化时长
    * @param time 毫秒数
-   * @return 最大到天, 已带单位, 毫秒作为小数部分
+   * @return 天时分秒单位分别为 d,h,m,s
    */
-  public static String phraseTime(long time)
+  public static String phrase(long time)
   {
-    StringBuilder sb = new StringBuilder( );
+    return phrase(time, "d", "h", "m", "s");
+  }
+
+  /**
+   * 格式化时长
+   * @param time 毫秒数
+   * @param d 天
+   * @param h 时
+   * @param m 分
+   * @param s 秒
+   * @return
+   */
+  public static String phrase(long time, String d, String h, String m, String s)
+  {
+    StringBuilder sb = new StringBuilder();
     int item;
 
     item = (int) Math.floor(time / 86400000);
-    if (item > 0) {  time = time % 86400000;
-        sb.append(item).append("d");
+    if (item > 0) {  time = time % 86400000 ;
+        sb.append(item).append(d);
     } else
     if (time > 0 && 0 < sb.length()) {
-        sb.append("0d");
+        sb.append("0" ).append(d);
     }
 
     item = (int) Math.floor(time / 3600000);
-    if (item > 0) {  time = time % 3600000;
-        sb.append(item).append("h");
+    if (item > 0) {  time = time % 3600000 ;
+        sb.append(item).append(h);
     } else
     if (time > 0 && 0 < sb.length()) {
-        sb.append("0h");
+        sb.append("0" ).append(h);
     }
 
     item = (int) Math.floor(time / 60000);
-    if (item > 0) {  time = time % 60000;
-        sb.append(item).append("m");
+    if (item > 0) {  time = time % 60000 ;
+        sb.append(item).append(m);
     } else
     if (time > 0 && 0 < sb.length()) {
-        sb.append("0m");
+        sb.append("0" ).append(m);
     }
 
-    float last = (float) time/1000 ;
+    float last = (float) time / 1000 ;
     if (last > 0 || 0== sb.length()) {
-        sb.append(last).append("s");
+        sb.append(last).append(s);
     }
 
     return sb.toString();
@@ -75,7 +89,7 @@ public final class Dusk
    * @return
    * @throws IllegalArgumentException 格式错误
    */
-  public static String formatTime(long time, String patt) {
+  public static String format(long time, String patt) {
     Instant          inst = Instant.ofEpochMilli(time);
     ZoneId            tmz = Core.getZoneId();
     ZonedDateTime     zdt = inst.atZone(tmz);
@@ -88,14 +102,14 @@ public final class Dusk
    * @param time 时间戳(毫秒)
    * @param patt
    * @param loc
-   * @param tmz
+   * @param zid
    * @return
    * @throws IllegalArgumentException 格式错误
    */
-  public static String formatTime(long time, String patt, Locale loc, ZoneId tmz) {
+  public static String format(long time, String patt, Locale loc, ZoneId zid) {
     Instant          inst = Instant.ofEpochMilli(time);
-    ZonedDateTime     zdt = inst.atZone(tmz);
-    DateTimeFormatter dtf = getDateTimeFormatter(patt,loc);
+    ZonedDateTime     zdt = inst.atZone(zid);
+    DateTimeFormatter dtf = Inst.newDateTimeFormatter(patt,loc);
     return dtf.format(zdt);
   }
 
@@ -108,7 +122,7 @@ public final class Dusk
    * @return
    * @throws IllegalArgumentException 格式错误
    */
-  public static String formatTime(Date time, String patt) {
+  public static String format(Date time, String patt) {
     Instant          inst = time.toInstant();
     ZoneId            tmz = Core.getZoneId();
     ZonedDateTime     zdt = inst.atZone(tmz);
@@ -121,14 +135,14 @@ public final class Dusk
    * @param time 旧版日期对象
    * @param patt
    * @param loc
-   * @param tmz
+   * @param zid
    * @return
    * @throws IllegalArgumentException 格式错误
    */
-  public static String formatTime(Date time, String patt, Locale loc, ZoneId tmz) {
+  public static String format(Date time, String patt, Locale loc, ZoneId zid) {
     Instant          inst = time.toInstant();
-    ZonedDateTime     zdt = inst.atZone(tmz);
-    DateTimeFormatter dtf = getDateTimeFormatter(patt,loc);
+    ZonedDateTime     zdt = inst.atZone(zid);
+    DateTimeFormatter dtf = Inst.newDateTimeFormatter(patt,loc);
     return dtf.format(zdt);
   }
 
@@ -141,7 +155,7 @@ public final class Dusk
    * @return
    * @throws IllegalArgumentException 格式错误
    */
-  public static String formatTime(Instant time, String patt) {
+  public static String format(Instant time, String patt) {
     ZoneId            tmz = Core.getZoneId();
     ZonedDateTime     zdt = time.atZone(tmz);
     DateTimeFormatter dtf = getDateTimeFormatter(patt);
@@ -153,13 +167,13 @@ public final class Dusk
    * @param time 新版时刻对象
    * @param patt
    * @param loc
-   * @param tmz
+   * @param zid
    * @return
    * @throws IllegalArgumentException 格式错误
    */
-  public static String formatTime(Instant time, String patt, Locale loc, ZoneId tmz) {
-    ZonedDateTime     zdt = time.atZone(tmz);
-    DateTimeFormatter dtf = getDateTimeFormatter(patt,loc);
+  public static String format(Instant time, String patt, Locale loc, ZoneId zid) {
+    ZonedDateTime     zdt = time.atZone(zid);
+    DateTimeFormatter dtf = Inst.newDateTimeFormatter(patt,loc);
     return dtf.format(zdt);
   }
 
@@ -173,7 +187,7 @@ public final class Dusk
    * @throws IllegalArgumentException 格式错误
    * @throws java.time.format.DateTimeParseException 解析错误
    */
-  public static Instant parseTime(String  time, String patt) {
+  public static Instant parse(String  time, String patt) {
     DateTimeFormatter dtf = getDateTimeFormatter(patt);
     TemporalAccessor  tar = dtf .parse(time);
     ZoneId            tmz = Core.getZoneId();
@@ -185,15 +199,15 @@ public final class Dusk
    * @param time
    * @param patt
    * @param loc
-   * @param tmz
+   * @param zid
    * @return
    * @throws IllegalArgumentException 格式错误
    * @throws java.time.format.DateTimeParseException 解析错误
    */
-  public static Instant parseTime(String time, String patt, Locale loc, ZoneId tmz) {
-    DateTimeFormatter dtf = getDateTimeFormatter(patt,loc);
+  public static Instant parse(String time, String patt, Locale loc, ZoneId zid) {
+    DateTimeFormatter dtf = Inst.newDateTimeFormatter(patt,loc);
     TemporalAccessor  tar = dtf .parse(time);
-    return fixZonedDateTime(tar , 1970, 1, 1, 0, 0, 0, 0, tmz).toInstant();
+    return fixZonedDateTime(tar , 1970, 1, 1, 0, 0, 0, 0, zid).toInstant();
   }
 
   /**
@@ -206,17 +220,18 @@ public final class Dusk
   public static DateTimeFormatter getDateTimeFormatter(String patt) {
     return Core.getInstance().got(
         DateTimeFormatter.class.getName() + ":" + patt,
-        () -> getDateTimeFormatter(patt, Core.getLocale(), Core.getZoneId())
+        () -> newDateTimeFormatter(patt, Core.getLocale(), Core.getZoneId())
     );
   }
 
   /**
    * 构建格式
+   * 解析宽松模式, 不区分大小写
    * @param patt
    * @param loc
    * @return
    */
-  public static DateTimeFormatter getDateTimeFormatter(String patt, Locale loc) {
+  public static DateTimeFormatter newDateTimeFormatter(String patt, Locale loc) {
     return new DateTimeFormatterBuilder()
         .parseCaseInsensitive()
         .parseLenient  ( /**/ )
@@ -226,12 +241,13 @@ public final class Dusk
 
   /**
    * 构建格式
+   * 解析宽松模式, 不区分大小写
    * @param patt
    * @param loc
    * @param zid
    * @return
    */
-  public static DateTimeFormatter getDateTimeFormatter(String patt, Locale loc, ZoneId zid) {
+  public static DateTimeFormatter newDateTimeFormatter(String patt, Locale loc, ZoneId zid) {
     return new DateTimeFormatterBuilder()
         .parseCaseInsensitive()
         .parseLenient  ( /**/ )

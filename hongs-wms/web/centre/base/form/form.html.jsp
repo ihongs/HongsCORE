@@ -76,8 +76,8 @@
             <div class="form-grade <%=pfc%>">
             <div class="form-group <%=gfc%>" data-name="<%=name%>">
                 <label class="control-label">
-                    <span class="control-order-txt"><%=++ii%></span><span class="control-order-end"></span>
-                    <span class="control-label-txt"><%=text%></span><span class="control-label-end"></span>
+                    <span class="control-label-num"><%=++ii%></span>
+                    <span class="control-label-txt"><%=text%></span>
                 </label>
                 <div class="control-input">
                 <%if ("textarea".equals(type) || "textview".equals(type)) {%>

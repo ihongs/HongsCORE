@@ -104,7 +104,7 @@
         </div>
         <nav id="footbox" class="navbar">
             <div class="container">
-                <blockquote><p class="clearfix0" style="font-size: small;">
+                <blockquote><p class="clearfix" style="font-size: small;">
                     <span>&copy;&nbsp;</span><span class="copy-right"><%=lang.translate("fore.copy.right")%></span>
                     <span>&nbsp;&nbsp;</span><span class="site-links"><%=lang.translate("fore.site.links")%></span>
                     <span class="pull-right text-muted">Powered by <a href="<%=request.getContextPath()%>/power.html" target="_blank">HongsCORE</a></span>

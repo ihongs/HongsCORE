@@ -53,11 +53,12 @@
             text  = exception.getClass().getName();
         }
         // 调试模式输出异常栈以便检测
-        if (4 != (4 & Core.DEBUG) ) {
+        if (4 == (4 & Core.DEBUG) ) {
             ByteArrayOutputStream o = new ByteArrayOutputStream();
             exception.printStackTrace(new PrintStream(o));
             trac  = new String (o.toByteArray(), "utf-8");
         } else {
+            text  = text.replaceFirst("\\s*Stacktrace:\\s*$", "");
             trac  = null;
         }
     }
@@ -74,7 +75,7 @@
             html, body
                 { margin: 0; padding: 0; }
             h1, h2, h3
-                { font-size: 8em; font-weight: 800; }
+                { font-size: 8em; font-weight: 800; margin: 0; }
             html, body, .jumbotron, .container
                 { color: #fff; background-color: #800; }
             blockquote, pre
@@ -106,8 +107,7 @@
                 <h1> :( </h1>
                 <p style="white-space: pre-line;"><%=escapeXML(text)%></p>
                 <%if (trac != null) {%>
-                <p>&nbsp;</p>
-                <pre><%=escapePRE(trac)%></pre>
+                <pre style="overflow: auto;"><%=escapePRE(trac)%></pre>
                 <%}%>
                 <p>&nbsp;</p>
                 <p style="font-size: small;">

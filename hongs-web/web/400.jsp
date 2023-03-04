@@ -50,12 +50,12 @@
             html, body
                 { margin: 0; padding: 0; }
             h1, h2, h3
-                { font-size: 8em; font-weight: 800; }
+                { font-size: 8em; font-weight: 800; margin: 0; }
             html, body, .jumbotron, .container
                 { color: #fff; background-color: #048; }
-            blockquote, pre
+            blockquote
                 { color: #ddd; background-color: #037; }
-            blockquote, pre
+            blockquote
                 { margin: 0; padding: 10px 15px; }
             .jumbotron
                 { margin: 20px 0; padding: 20px 0; }

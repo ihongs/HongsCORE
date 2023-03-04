@@ -53,11 +53,12 @@
             text  = exception.getClass().getName();
         }
         // 调试模式输出异常栈以便检测
-        if (4 != (4 & Core.DEBUG) ) {
+        if (4 == (4 & Core.DEBUG) ) {
             ByteArrayOutputStream o = new ByteArrayOutputStream();
             exception.printStackTrace(new PrintStream(o));
             trac  = new String (o.toByteArray(), "utf-8");
         } else {
+            text  = text.replaceFirst("\\s*Stacktrace:\\s*$", "");
             trac  = null;
         }
     }
@@ -115,8 +116,7 @@
                 <h1> :( </h1>
                 <p style="white-space: pre-line;"><%=escapeXML(text)%></p>
                 <%if (trac != null) {%>
-                <p>&nbsp;</p>
-                <pre><%=escapePRE(trac)%></pre>
+                <pre style="overflow: auto;"><%=escapePRE(trac)%></pre>
                 <%}%>
                 <p>&nbsp;</p>
                 <p style="font-size: small;">
@@ -132,7 +132,7 @@
         </div>
         <nav id="footbox" class="navbar">
             <div class="container">
-                <blockquote><p class="clearfix0" style="font-size: small;">
+                <blockquote><p class="clearfix" style="font-size: small;">
                     <span>&copy;&nbsp;</span><span class="copy-right"><%=lang.translate("fore.copy.right")%></span>
                     <span>&nbsp;&nbsp;</span><span class="site-links"><%=lang.translate("fore.site.links")%></span>
                     <span class="pull-right text-muted">Powered by <a href="<%=request.getContextPath()%>/power.html" target="_blank">HongsCORE</a></span>
@@ -141,3 +141,18 @@
         </nav>
     </body>
 </html>
+<%if (trac != null) {%>
+<script type="text/javascript">
+    if (document.body.clientHeight < document.body.scrollHeight) {
+        var pre = document.getElementsByTagName("pre")[0];
+        var psh = pre.scrollHeight;
+        var sh0 = document.body.scrollHeight;
+            pre.setAttribute("style", "display: none");
+        var sh1 = document.body.scrollHeight;
+            psh = psh - sh0 + sh1;
+        if (psh > 500) {
+            pre.setAttribute("style", "max-height: "+ psh +"px");
+        }
+    }
+</script>
+<%}%>

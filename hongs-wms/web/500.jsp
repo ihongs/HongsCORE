@@ -45,7 +45,7 @@
     if (null == exception) {
         text  = (String) request.getAttribute( "javax.servlet.error.message");
         if (text == null ) {
-            text  = lang.translate( "core.error.unknwn" );
+            text  = lang.translate( "core.error.undef" );
         }   trac  = null;
     } else {
         text  = exception.getLocalizedMessage();
@@ -90,12 +90,12 @@
                 height: 100%;
             }
             h1, h2, h3 {
-                font-size  : 8em;
-                font-weight: 800;
+                display: inline-block;
+                white-space: pre-line;
             }
             .navbar .copy-right a ,
             .navbar .site-links a {
-                margin-right : 1em;
+                margin-right: 1em ;
             }
             .jumbotron {
                 color     : #ccc;
@@ -114,8 +114,10 @@
         <div style="width : 100%;">
         <div class="jumbotron">
             <div class="container">
-                <h1> :( </h1>
-                <p style="white-space: pre-line;"><%=escapeXML(text)%></p>
+                <div>
+                    <h1>&#128534;</h1>
+                    <h3><%=escapeXML(text)%></h3>
+                </div>
                 <%if (trac != null) {%>
                 <pre style="overflow: auto;"><%=escapePRE(trac)%></pre>
                 <%}%>

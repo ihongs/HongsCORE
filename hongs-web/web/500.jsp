@@ -45,7 +45,7 @@
     if (null == exception) {
         text  = (String) request.getAttribute( "javax.servlet.error.message");
         if (text == null ) {
-            text  = lang.translate( "core.error.unknwn" );
+            text  = lang.translate( "core.error.undef" );
         }   trac  = null;
     } else {
         text  = exception.getLocalizedMessage();
@@ -75,11 +75,11 @@
             html, body
                 { margin: 0; padding: 0; }
             h1, h2, h3
-                { font-size: 8em; font-weight: 800; margin: 0; }
+                { margin: 0; font-size: 8em; font-weight: 800; }
             html, body, .jumbotron, .container
-                { color: #fff; background-color: #800; }
+                { color: #eee; background-color: #000; }
             blockquote, pre
-                { color: #ddd; background-color: #700; }
+                { color: #ccc; background-color: #222; }
             blockquote, pre
                 { margin: 0; padding: 10px 15px; }
             .jumbotron
@@ -104,7 +104,7 @@
     <body>
         <div class="jumbotron">
             <div class="container">
-                <h1> :( </h1>
+                <h1> : ( </h1>
                 <p style="white-space: pre-line;"><%=escapeXML(text)%></p>
                 <%if (trac != null) {%>
                 <pre style="overflow: auto;"><%=escapePRE(trac)%></pre>
@@ -125,7 +125,8 @@
                 <blockquote style="font-size: small;"><p>
                     <span>&copy;&nbsp;</span><span class="copy-right"><%=lang.translate("fore.copy.right")%></span>
                     <span>&nbsp;&nbsp;</span><span class="site-links"><%=lang.translate("fore.site.links")%></span>
-                    <span>Powered by <a href="<%=request.getContextPath()%>/power.html" target="_blank">HongsCORE</a></span>
+                    <span style="float: right;">Powered by <a href="<%=request.getContextPath()%>/power.html" target="_blank">HongsCORE</a></span>
+                    <span style="clear: both ;"></span>
                 </p></blockquote>
             </div>
         </div>

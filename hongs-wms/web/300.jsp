@@ -39,12 +39,12 @@
                 height: 100%;
             }
             h1, h2, h3 {
-                font-size  : 8em;
-                font-weight: 800; 
+                display: inline-block;
+                white-space: pre-line;
             }
             .navbar .copy-right a ,
             .navbar .site-links a {
-                margin-right : 1em;
+                margin-right: 1em ;
             }
             .jumbotron {
                 color     : #ccc;
@@ -63,8 +63,10 @@
         <div style="width : 100%;">
         <div class="jumbotron">
             <div class="container">
-                <h1> :) </h1>
-                <p style="white-space: pre-line;"><%=escapeXML(text)%></p>
+                <div>
+                    <h1>&#128578;</h1>
+                    <h3><%=escapeXML(text)%></h3>
+                </div>
                 <p>&nbsp;</p>
                 <p style="font-weight: initial ;">
                     <a class="btn btn-lg btn-success" href="<%=escapeXML(href)%>">

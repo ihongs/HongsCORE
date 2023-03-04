@@ -42,7 +42,7 @@
             blockquote, pre
                 { margin: 0; padding: 10px 15px; }
             .jumbotron
-                { margin: 30px 0; padding: 30px 0; }
+                { margin: 20px 0; padding: 20px 0; }
             .container
                 { margin: 0 auto; padding: 0 15px; }
             @media (min-width: 1200px) {

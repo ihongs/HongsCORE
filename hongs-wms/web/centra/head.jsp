@@ -268,28 +268,6 @@
             if (t) {  b.text(t); return;  }
         });
 
-        $(window).on("hashchange" , function() {
-            var a, b, h, l;
-
-            h = location.href.replace(/^\w+:\/\/[^\/]+/, '');
-            a = menubar .find("a[href='"+h+"']");
-            b = menubar ;
-
-            // 可能因参数、锚而找不到
-            if (a.size() === 0) {
-                h = h.replace( /#.*/, '');
-                a = menubar.find("a[href='"+h+"']");
-            if (a.size() === 0) {
-                h = h.replace(/\?.*/, '');
-                a = menubar.find("a[href='"+h+"']");
-            }}
-
-            b.find("li").removeClass("active")
-                        .removeClass("acting");
-            a.closest("li").addClass("active")
-             .parents("li").addClass("acting");
-        });
-
         // 标识导航组件已开启, 悬浮组件需避免层叠
         $(document.body).addClass("toper-open");
         $(document.body).addClass("sider-open");

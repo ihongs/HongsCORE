@@ -27,5 +27,29 @@
                 </div>
             </div>
         </div>
+        <script type="text/javascript">
+            $(window).on( "hashchange", function() {
+                var menubar = $( "#main-menubar" );
+                var a, b, h ;
+
+                h = location.href.replace(/^\w+:\/\/[^\/]+/, '');
+                a = menubar .find("a[href='"+h+"']");
+                b = menubar ;
+
+                // 可能因参数、锚而找不到
+                if (a.size() === 0) {
+                    h = h.replace( /#.*/, '');
+                    a = menubar.find("a[href='"+h+"']");
+                if (a.size() === 0) {
+                    h = h.replace(/\?.*/, '');
+                    a = menubar.find("a[href='"+h+"']");
+                }}
+
+                // 找到了菜单, 刷新
+                if (a.size() !== 0) {
+                    location.reload ( );
+                }
+            });
+        </script>
     </body>
 </html>

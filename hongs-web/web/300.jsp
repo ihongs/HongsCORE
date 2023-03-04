@@ -6,35 +6,30 @@
 <%@page extends="io.github.ihongs.jsp.Pagelet"%>
 <%@page contentType="text/html" pageEncoding="UTF-8" isErrorPage="true" trimDirectiveWhitespaces="true"%>
 <%
-    // 如果有内部返回, 则不要显示此页
-    if (null != request.getAttribute(Cnst.RESPON_ATTR)) {
-        return;
-    }
+    Integer     code ;
+    String      text ;
+    String      href ;
+    CoreLocale  lang = CoreLocale.getInstance();
 
-    Integer code;
-    String  text;
     code = (Integer ) request.getAttribute("javax.servlet.error.status_code");
-    if (null != code) {
-        response.setStatus(code); // 不知何故 sendError 之后总是 500, 此为修正
+    text = (String  ) request.getAttribute("javax.servlet.error.message");
+    href = (String  ) request.getAttribute("javax.servlet.location");
+    if (href == null) {
+        href  = request.getContextPath() + "/" ;
     }
-    if (null == exception) {
-        exception = (Throwable) request.getAttribute("javax.servlet.error.exception");
-    }
-    if (null != exception) {
-        text  = exception.getLocalizedMessage();
-    } else {
-        text  = (String) request.getAttribute("javax.servlet.error.message" );
-        if (null == text || text.equalsIgnoreCase("NOT FOUND")) {
-            text  = CoreLocale.getInstance().translate("core.error.no.thing");
-        }
+    if (code != null
+    &&  code >= 400 ) {
+        response.setStatus(code);
     }
 %>
 <!--MSG: <%=escapeXML(text)%> -->
-<!--ERN: Er<%=code != null ? code : 404%> -->
+<!--ERR: Goto <%=escapeXML(href)%> -->
+<!--ERN: Er<%=code != null ? code : 302%> -->
 <!doctype html>
 <html>
     <head>
-        <title><%=response.getStatus()%> Error</title>
+        <title>Redirect...</title>
+        <meta http-equiv="Refresh" content="3; url=<%=escapeXML( href )%>">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style type="text/css">
@@ -43,9 +38,9 @@
             h1, h2, h3
                 { font-size: 8em; font-weight: 800; }
             html, body, .jumbotron, .container
-                { color: #fff; background-color: #048; }
+                { color: #fff; background-color: #060; }
             blockquote, pre
-                { color: #ddd; background-color: #037; }
+                { color: #ddd; background-color: #050; }
             blockquote, pre
                 { margin: 0; padding: 10px 15px; }
             .jumbotron
@@ -70,24 +65,20 @@
     <body>
         <div class="jumbotron">
             <div class="container">
-                <h1> :( </h1>
+                <h1> :) </h1>
                 <p style="white-space: pre-line;"><%=escapeXML(text)%></p>
                 <p>&nbsp;</p>
-                <p style="font-size: small;">
-                    <%=CoreLocale.getInstance().translate("core.error.404.txt")%>
-                    <a href="javascript:history.back();">
-                        <b><%=CoreLocale.getInstance().translate("core.error.go.back")%></b>
-                    </a>,
-                    <a href="<%=request.getContextPath()%>/">
-                        <b><%=CoreLocale.getInstance().translate("core.error.go.home")%></b>
-                    </a>.
+                <p style="font-size: large;">
+                    <a href="<%=escapeXML(href)%>">
+                        <b><%=lang.translate("core.error.redirect")%></b>
+                    </a>
                 </p>
                 <p>&nbsp;</p>
             </div>
             <div class="container">
                 <blockquote style="font-size: small;"><p>
-                    <span>&copy;&nbsp;</span><span class="copy-right"><%=CoreLocale.getInstance().translate("fore.copy.right")%></span>
-                    <span>&nbsp;&nbsp;</span><span class="site-links"><%=CoreLocale.getInstance().translate("fore.site.links")%></span>
+                    <span>&copy;&nbsp;</span><span class="copy-right"><%=lang.translate("fore.copy.right")%></span>
+                    <span>&nbsp;&nbsp;</span><span class="site-links"><%=lang.translate("fore.site.links")%></span>
                     <span>Powered by <a href="<%=request.getContextPath()%>/power.html" target="_blank">HongsCORE</a></span>
                 </p></blockquote>
             </div>

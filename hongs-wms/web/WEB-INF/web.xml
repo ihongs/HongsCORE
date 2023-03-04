@@ -134,7 +134,7 @@
         </init-param>
         <init-param>
             <param-name>index-page</param-name>
-            <param-value>/centra/index.html</param-value>
+            <param-value>/centra/</param-value>
         </init-param>
         <init-param>
             <param-name>login-page</param-name>
@@ -166,7 +166,7 @@
         </init-param>
         <init-param>
             <param-name>index-page</param-name>
-            <param-value>/centra/index.html</param-value>
+            <param-value>/centre/</param-value>
         </init-param>
         <init-param>
             <param-name>login-page</param-name>
@@ -249,27 +249,31 @@
     <!-- Another Sets -->
     <error-page>
         <error-code>400</error-code>
-        <location>/500.jsp</location>
+        <location>/400.jsp</location>
     </error-page>
     <error-page>
         <error-code>401</error-code>
-        <location>/403.jsp</location>
+        <location>/400.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>402</error-code>
+        <location>/400.jsp</location>
     </error-page>
     <error-page>
         <error-code>403</error-code>
-        <location>/403.jsp</location>
+        <location>/400.jsp</location>
     </error-page>
     <error-page>
         <error-code>404</error-code>
-        <location>/404.jsp</location>
+        <location>/400.jsp</location>
     </error-page>
     <error-page>
         <error-code>405</error-code>
-        <location>/404.jsp</location>
+        <location>/400.jsp</location>
     </error-page>
     <error-page>
         <error-code>406</error-code>
-        <location>/500.jsp</location>
+        <location>/400.jsp</location>
     </error-page>
     <error-page>
         <error-code>500</error-code>

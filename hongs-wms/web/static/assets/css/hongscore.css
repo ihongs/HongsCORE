@@ -291,6 +291,10 @@ input[type="time"].form-control {
 .tabs li .title:empty:before {
     content: "..." ;
 }
+.tabs>li+li>a {
+    margin-left : 2px;
+    margin-right: 0px;
+}
 
 .nav-tabs   .close ,
 .nav-pills  .close ,

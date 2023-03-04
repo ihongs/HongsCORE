@@ -6,9 +6,11 @@
 <%@page extends="io.github.ihongs.jsp.Pagelet"%>
 <%@page contentType="text/html" pageEncoding="UTF-8" isErrorPage="true" trimDirectiveWhitespaces="true"%>
 <%
-    Integer code;
-    String  text;
-    String  href;
+    Integer     code ;
+    String      text ;
+    String      href ;
+    CoreLocale  lang = CoreLocale.getInstance();
+
     code = (Integer ) request.getAttribute("javax.servlet.error.status_code");
     text = (String  ) request.getAttribute("javax.servlet.error.message");
     href = (String  ) request.getAttribute("javax.servlet.location");
@@ -65,7 +67,7 @@
                 <p>&nbsp;</p>
                 <p style="font-weight: initial ;">
                     <a class="btn btn-lg btn-success" href="<%=escapeXML(href)%>">
-                    <%=CoreLocale.getInstance().translate("core.error.redirect")%>
+                        <b><%=lang.translate("core.error.redirect")%></b>
                     </a>
                 </p>
             </div>
@@ -73,8 +75,8 @@
         <nav id="footbox" class="navbar">
             <div class="container">
                 <blockquote><p class="clearfix" style="font-size: smail;">
-                    <span>&copy;&nbsp;</span><span class="copy-right"><%=CoreLocale.getInstance().translate("fore.copy.right")%></span>
-                    <span>&nbsp;&nbsp;</span><span class="site-links"><%=CoreLocale.getInstance().translate("fore.site.links")%></span>
+                    <span>&copy;&nbsp;</span><span class="copy-right"><%=lang.translate("fore.copy.right")%></span>
+                    <span>&nbsp;&nbsp;</span><span class="site-links"><%=lang.translate("fore.site.links")%></span>
                     <span class="pull-right text-muted">Powered by <a href="<%=request.getContextPath()%>/power.html" target="_blank">HongsCORE</a></span>
                 </p></blockquote>
             </div>

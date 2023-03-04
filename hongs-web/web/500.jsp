@@ -30,9 +30,11 @@
         return;
     }
 
-    Integer code;
-    String  text;
-    String  trac;
+    Integer     code ;
+    String      text ;
+    String      trac ;
+    CoreLocale  lang = CoreLocale.getInstance();
+
     code = (Integer ) request.getAttribute("javax.servlet.error.status_code");
     if (null != code) {
         response.setStatus(code); // 不知何故 sendError 之后总是 500, 此为修正
@@ -40,25 +42,24 @@
     if (null == exception) {
         exception = (Throwable) request.getAttribute("javax.servlet.error.exception");
     }
-    if (null != exception) {
-        text  = exception.getLocalizedMessage(   );
+    if (null == exception) {
+        text  = (String) request.getAttribute( "javax.servlet.error.message");
         if (text == null ) {
+            text  = lang.translate( "core.error.unknwn" );
+        }   trac  = null;
+    } else {
+        text  = exception.getLocalizedMessage();
+        if (text == null || text.isEmpty()) {
             text  = exception.getClass().getName();
         }
         // 调试模式输出异常栈以便检测
-        if (0 !=      Core.DEBUG
-        &&  4 != (4 & Core.DEBUG) ) {
+        if (4 != (4 & Core.DEBUG) ) {
             ByteArrayOutputStream o = new ByteArrayOutputStream();
             exception.printStackTrace(new PrintStream(o));
-            trac  = new  String(o.toByteArray(), "utf-8");
+            trac  = new String (o.toByteArray(), "utf-8");
         } else {
-            trac  = null ;
+            trac  = null;
         }
-    } else {
-        text  = (String) request.getAttribute("javax.servlet.error.message");
-        if (text == null ) {
-            text  = CoreLocale.getInstance().translate("core.error.unknwn" );
-        }   trac  = null ;
     }
 %>
 <!--MSG: <%=escapeXML(text)%> -->
@@ -104,26 +105,26 @@
             <div class="container">
                 <h1> :( </h1>
                 <p style="white-space: pre-line;"><%=escapeXML(text)%></p>
+                <%if (trac != null) {%>
+                <p>&nbsp;</p>
+                <pre><%=escapePRE(trac)%></pre>
+                <%}%>
                 <p>&nbsp;</p>
                 <p style="font-size: small;">
-                    <%=CoreLocale.getInstance().translate("core.error.500.txt")%>
+                    <%=lang.translate("core.error.500.txt")%>
                     <a href="javascript:history.back();">
-                        <b><%=CoreLocale.getInstance().translate("core.error.go.back")%></b>
+                        <b><%=lang.translate("core.error.go.back")%></b>
                     </a>,
                     <a href="<%=request.getContextPath()%>/">
-                        <b><%=CoreLocale.getInstance().translate("core.error.go.home")%></b>
+                        <b><%=lang.translate("core.error.go.home")%></b>
                     </a>.
                 </p>
                 <p>&nbsp;</p>
-                <%if (trac != null) {%>
-                <pre><%=escapePRE(trac)%></pre>
-                <p>&nbsp;</p>
-                <%}%>
             </div>
             <div class="container">
                 <blockquote style="font-size: small;"><p>
-                    <span>&copy;&nbsp;</span><span class="copy-right"><%=CoreLocale.getInstance().translate("fore.copy.right")%></span>
-                    <span>&nbsp;&nbsp;</span><span class="site-links"><%=CoreLocale.getInstance().translate("fore.site.links")%></span>
+                    <span>&copy;&nbsp;</span><span class="copy-right"><%=lang.translate("fore.copy.right")%></span>
+                    <span>&nbsp;&nbsp;</span><span class="site-links"><%=lang.translate("fore.site.links")%></span>
                     <span>Powered by <a href="<%=request.getContextPath()%>/power.html" target="_blank">HongsCORE</a></span>
                 </p></blockquote>
             </div>

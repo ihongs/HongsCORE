@@ -1116,7 +1116,7 @@ public class ActionHelper implements Cloneable
   public void ensue(int sc, String url, String msg)
   {
     url = ActionDriver.fixUrl(url);
-    String p = CoreConfig.getInstance().getProperty("core.redirect", "/302.jsp");
+    String p = CoreConfig.getInstance().getProperty("core.redirect", "/300.jsp");
     if ( ! p.isEmpty() && new File(Core.BASE_PATH + p).exists())
     {
       this.request.setAttribute("javax.servlet.location" , url);

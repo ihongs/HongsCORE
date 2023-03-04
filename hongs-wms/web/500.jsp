@@ -5,14 +5,36 @@
 <%@page import="java.io.ByteArrayOutputStream"%>
 <%@page extends="io.github.ihongs.jsp.Pagelet"%>
 <%@page contentType="text/html" pageEncoding="UTF-8" isErrorPage="true" trimDirectiveWhitespaces="true"%>
+<%!
+    private static String escapePRE(String str) {
+        StringBuilder b = new StringBuilder();
+        int  l = str.length();
+        int  i = 0;
+        char c ;
+        while ( i < l) {
+            c = str.charAt(i);
+            switch (c) {
+              case '<': b.append("&lt;" ); break;
+              case '>': b.append("&gt;" ); break;
+              case '&': b.append("&amp;"); break;
+              default : b.append(c);
+            }
+            i ++;
+        }
+        return b.toString().replaceAll("(\r\n|\r|\n)", "\r\n");
+    }
+%>
 <%
     // 如果有内部返回, 则不要显示此页
     if (null != request.getAttribute(Cnst.RESPON_ATTR)) {
         return;
     }
 
-    Integer code;
-    String  text;
+    Integer     code ;
+    String      text ;
+    String      trac ;
+    CoreLocale  lang = CoreLocale.getInstance();
+
     code = (Integer ) request.getAttribute("javax.servlet.error.status_code");
     if (null != code) {
         response.setStatus(code); // 不知何故 sendError 之后总是 500, 此为修正
@@ -20,17 +42,40 @@
     if (null == exception) {
         exception = (Throwable) request.getAttribute("javax.servlet.error.exception");
     }
-    if (null != exception) {
-        text  = exception.getLocalizedMessage();
+    if (null == exception) {
+        text  = (String) request.getAttribute( "javax.servlet.error.message");
+        if (text == null ) {
+            text  = lang.translate( "core.error.unknwn" );
+        }   trac  = null;
     } else {
-        text  = (String) request.getAttribute("javax.servlet.error.message" );
-        if (null == text || text.equalsIgnoreCase("NOT FOUND")) {
-            text  = CoreLocale.getInstance().translate("core.error.no.thing");
+        text  = exception.getLocalizedMessage();
+        if (text == null || text.isEmpty()) {
+            text  = exception.getClass().getName();
         }
+        // 调试模式输出异常栈以便检测
+        if (4 != (4 & Core.DEBUG) ) {
+            ByteArrayOutputStream o = new ByteArrayOutputStream();
+            exception.printStackTrace(new PrintStream(o));
+            trac  = new String (o.toByteArray(), "utf-8");
+        } else {
+            trac  = null;
+        }
+    }
+
+    // 分区首页
+    String home = Core.ACTION_NAME.get();
+    if (home.startsWith("centra/")) {
+        home  = "centra/";
+    } else
+    if (home.startsWith("centre/")) {
+        home  = "centre/";
+    } else
+    {
+        home  = "";
     }
 %>
 <!--MSG: <%=escapeXML(text)%> -->
-<!--ERN: Er<%=code != null ? code : 404%> -->
+<!--ERN: Er<%=code != null ? code : 500%> -->
 <!doctype html>
 <html>
     <head>
@@ -45,7 +90,7 @@
             }
             h1, h2, h3 {
                 font-size  : 8em;
-                font-weight: 800; 
+                font-weight: 800;
             }
             html, body {
                 width     : 100%;
@@ -69,14 +114,18 @@
             <div class="container">
                 <h1> :( </h1>
                 <p style="white-space: pre-line;"><%=escapeXML(text)%></p>
+                <%if (trac != null) {%>
+                <p>&nbsp;</p>
+                <pre><%=escapePRE(trac)%></pre>
+                <%}%>
                 <p>&nbsp;</p>
                 <p style="font-size: small;">
-                    <%=CoreLocale.getInstance().translate("core.error.404.txt")%>
+                    <%=lang.translate("core.error.500.txt")%>
                     <a href="javascript:history.back();">
-                        <b><%=CoreLocale.getInstance().translate("core.error.go.back")%></b>
+                        <b><%=lang.translate("core.error.go.back")%></b>
                     </a>,
-                    <a href="<%=request.getContextPath()%>/">
-                        <b><%=CoreLocale.getInstance().translate("core.error.go.home")%></b>
+                    <a href="<%=request.getContextPath()%>/<%=home%>">
+                        <b><%=lang.translate("core.error.go.home")%></b>
                     </a>.
                 </p>
             </div>
@@ -84,8 +133,8 @@
         <nav id="footbox" class="navbar">
             <div class="container">
                 <blockquote><p class="clearfix0" style="font-size: small;">
-                    <span>&copy;&nbsp;</span><span class="copy-right"><%=CoreLocale.getInstance().translate("fore.copy.right")%></span>
-                    <span>&nbsp;&nbsp;</span><span class="site-links"><%=CoreLocale.getInstance().translate("fore.site.links")%></span>
+                    <span>&copy;&nbsp;</span><span class="copy-right"><%=lang.translate("fore.copy.right")%></span>
+                    <span>&nbsp;&nbsp;</span><span class="site-links"><%=lang.translate("fore.site.links")%></span>
                     <span class="pull-right text-muted">Powered by <a href="<%=request.getContextPath()%>/power.html" target="_blank">HongsCORE</a></span>
                 </p></blockquote>
             </div>

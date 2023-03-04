@@ -11,8 +11,10 @@
         return;
     }
 
-    Integer code;
-    String  text;
+    Integer     code ;
+    String      text ;
+    CoreLocale  lang = CoreLocale.getInstance();
+
     code = (Integer ) request.getAttribute("javax.servlet.error.status_code");
     if (null != code) {
         response.setStatus(code); // 不知何故 sendError 之后总是 500, 此为修正
@@ -20,17 +22,24 @@
     if (null == exception) {
         exception = (Throwable) request.getAttribute("javax.servlet.error.exception");
     }
-    if (null != exception) {
-        text  = exception.getLocalizedMessage();
+    if (null == exception) {
+        text  = (String) request.getAttribute( "javax.servlet.error.message");
+        if (null == text
+        ||  "NOT FOUND".equalsIgnoreCase(text)) {
+            text  = lang.translate("core.error.no.thing");
+        } else
+        if ("FORBIDDEN".equalsIgnoreCase(text)) {
+            text  = lang.translate("core.error.no.power");
+        }
     } else {
-        text  = (String) request.getAttribute("javax.servlet.error.message" );
-        if (null == text || text.equalsIgnoreCase("FORBIDDEN")) {
-            text  = CoreLocale.getInstance().translate("core.error.no.power");
+        text  = exception.getLocalizedMessage();
+        if (null == text ) {
+            text  = exception.getClass().getName();
         }
     }
 %>
 <!--MSG: <%=escapeXML(text)%> -->
-<!--ERN: Er<%=code != null ? code : 403%> -->
+<!--ERN: Er<%=code != null ? code : 400%> -->
 <!doctype html>
 <html>
     <head>
@@ -74,20 +83,20 @@
                 <p style="white-space: pre-line"><%=escapeXML(text)%></p>
                 <p>&nbsp;</p>
                 <p style="font-size: small;">
-                    <%=CoreLocale.getInstance().translate("core.error.403.txt")%>
+                    <%=lang.translate("core.error.400.txt")%>
                     <a href="javascript:history.back();">
-                        <b><%=CoreLocale.getInstance().translate("core.error.go.back")%></b>
+                        <b><%=lang.translate("core.error.go.back")%></b>
                     </a>,
                     <a href="<%=request.getContextPath()%>/">
-                        <b><%=CoreLocale.getInstance().translate("core.error.go.home")%></b>
+                        <b><%=lang.translate("core.error.go.home")%></b>
                     </a>.
                 </p>
                 <p>&nbsp;</p>
             </div>
             <div class="container">
                 <blockquote style="font-size: small;"><p>
-                    <span>&copy;&nbsp;</span><span class="copy-right"><%=CoreLocale.getInstance().translate("fore.copy.right")%></span>
-                    <span>&nbsp;&nbsp;</span><span class="site-links"><%=CoreLocale.getInstance().translate("fore.site.links")%></span>
+                    <span>&copy;&nbsp;</span><span class="copy-right"><%=lang.translate("fore.copy.right")%></span>
+                    <span>&nbsp;&nbsp;</span><span class="site-links"><%=lang.translate("fore.site.links")%></span>
                     <span>Powered by <a href="<%=request.getContextPath()%>/power.html" target="_blank">HongsCORE</a></span>
                 </p></blockquote>
             </div>

@@ -1,4 +1,3 @@
-<%@page import="io.github.ihongs.Core"%>
 <%@page import="io.github.ihongs.CoreLocale"%>
 <%@page import="io.github.ihongs.HongsException"%>
 <%@page import="io.github.ihongs.action.ActionDriver"%>

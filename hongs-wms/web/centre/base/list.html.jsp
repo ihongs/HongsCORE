@@ -1,4 +1,5 @@
 <%@page import="io.github.ihongs.Cnst"%>
+<%@page import="io.github.ihongs.action.NaviMap"%>
 <%@page import="io.github.ihongs.util.Dict"%>
 <%@page import="io.github.ihongs.util.Synt"%>
 <%@page import="java.util.Iterator"%>

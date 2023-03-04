@@ -160,7 +160,7 @@ body.plain-page .container {
     }
 }
 
-body.plain-page h1.page-heading {
+body.plain-page h1 {
     font-size : 24px;
     text-align: center ;
 }

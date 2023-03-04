@@ -1,14 +1,9 @@
-<%@page import="io.github.ihongs.Core"%>
 <%@page import="io.github.ihongs.CoreLocale"%>
 <%@page import="io.github.ihongs.HongsException"%>
 <%@page import="io.github.ihongs.action.ActionDriver"%>
 <%@page import="io.github.ihongs.action.FormSet"%>
-<%@page import="io.github.ihongs.action.NaviMap"%>
-<%@page import="io.github.ihongs.dh.JFigure"%>
-<%@page import="io.github.ihongs.util.Synt"%>
 <%@page import="java.util.LinkedHashMap"%>
 <%@page import="java.util.Map"%>
-<%@page import="java.util.Set"%>
 <%@page pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%
     String     _title = "";

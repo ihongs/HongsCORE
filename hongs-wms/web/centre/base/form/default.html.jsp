@@ -1,3 +1,5 @@
+<%@page import="io.github.ihongs.action.NaviMap"%>
+<%@page import="io.github.ihongs.util.Synt"%>
 <%@page extends="io.github.ihongs.jsp.Pagelet"%>
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@include file="_boot_.jsp"%>
@@ -33,19 +35,19 @@
     }
 
     // 定制页面内容
-    String _heading = (String) _params.get("page-heading");
-    String _header  = (String) _params.get("page-header" );
-    String _footer  = (String) _params.get("page-footer" );
-    String _link    = (String) _params.get("page-link"   );
-    String _style   = (String) _params.get("page-style"  );
-    String _script  = (String) _params.get("page-script" );
+    String _topic  = (String) _params.get("page-topic" );
+    String _header = (String) _params.get("page-header");
+    String _footer = (String) _params.get("page-footer");
+    String _link   = (String) _params.get("page-link"  );
+    String _style  = (String) _params.get("page-style" );
+    String _script = (String) _params.get("page-script");
 
     String $func = "in_"+(_module+"_"+_entity).replace('/', '_');
 %>
 <!doctype html>
 <html>
     <head>
-        <title><%=_title%></title>
+        <title><%=_topic != null && ! _topic.isEmpty() ? _topic : _title%></title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <base href="<%=request.getContextPath()%>/">
@@ -70,14 +72,14 @@
     </head>
     <body class="plain-page">
         <div id="context" class="container">
-            <%if (_heading != null && !_heading.isEmpty()) {%>
-            <h1 class="page-heading"><%=_heading%></h1>
+            <%if (_topic  != null && ! _topic.isEmpty()) {%>
+            <h1><%=_topic%></h1>
             <%}%>
-            <%if (_header  != null && !_header .isEmpty()) {%>
+            <%if (_header != null && !_header.isEmpty()) {%>
             <header><%=_header%></header>
             <%}%>
             <div id="main-context" data-load="<%=_module%>/<%=_entity%>/form/form.html"></div>
-            <%if (_footer  != null && !_footer .isEmpty()) {%>
+            <%if (_footer != null && !_footer.isEmpty()) {%>
             <footer><%=_footer%></footer>
             <%}%>
         </div>

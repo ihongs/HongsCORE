@@ -85,13 +85,13 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/static/assets/css/common.min.css"/>
         <style type="text/css">
+            html, body {
+                width : 100%;
+                height: 100%;
+            }
             h1, h2, h3 {
                 font-size  : 8em;
                 font-weight: 800;
-            }
-            html, body {
-                width     : 100%;
-                height    : 100%;
             }
             .navbar .copy-right a ,
             .navbar .site-links a {

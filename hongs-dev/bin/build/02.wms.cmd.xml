@@ -3,17 +3,28 @@
     <set env="DST_DIR">$CORE_PATH/../hongs-wms/web/static/assets</set>
     <set env="SRC_DIR">$CORE_PATH/../hongs-wms/web/static/assets/src</set>
     <set env="CSS_DIR">$CORE_PATH/../hongs-wms/web/static/assets/css</set>
-    <set env="WEB_DST_DIR">$CORE_PATH/../hongs-web/web/static/assets</set>
-    <set env="WEB_CSS_DIR">$CORE_PATH/../hongs-web/web/static/assets/css</set>
+    <!-- Minify -->
     <combat system="no">
         <cmd>minify.build</cmd>
-        <arg opt="output">$DST_DIR/hongsedge.min.js</arg>
-        <arg>$SRC_DIR/hongsedge.js</arg>
+        <arg opt="output">$DST_DIR/hongscore.min.js</arg>
+        <arg>$SRC_DIR/hongscore.js</arg>
+        <arg>$SRC_DIR/hongscore-form.js</arg>
+        <arg>$SRC_DIR/hongscore-list.js</arg>
+        <arg>$SRC_DIR/hongscore-tree.js</arg>
+        <arg>$SRC_DIR/hongscore-fork.js</arg>
+        <arg>$SRC_DIR/hongscore-file.js</arg>
+        <arg>$SRC_DIR/hongscore-date.js</arg>
     </combat>
     <combat system="no">
         <cmd>minify.build</cmd>
-        <arg opt="output">$DST_DIR/hongsedit.min.js</arg>
+        <arg opt="output">*.min</arg>
+        <arg>$SRC_DIR/hongsedge.js</arg>
         <arg>$SRC_DIR/hongsedit.js</arg>
+    </combat>
+    <combat system="no">
+        <cmd>minify.build</cmd>
+        <arg opt="output">*.min</arg>
+        <arg>$CSS_DIR/hongscore.css</arg>
     </combat>
     <combat system="no">
         <cmd>minify.build</cmd>
@@ -21,22 +32,23 @@
         <arg>$CSS_DIR/centra.css</arg>
         <arg>$CSS_DIR/centre.css</arg>
     </combat>
+    <say>${CURR_TIME|yyyy-MM-dd HH:mm:ss} WMS build done</say>
     <!-- Merge -->
     <combat system="no">
         <cmd>minify.merge</cmd>
         <arg opt="output">$DST_DIR/common.min.js</arg>
-        <arg>$WEB_DST_DIR/jquery.min.js</arg>
-        <arg>$WEB_DST_DIR/jquery-ui.min.js</arg>
-        <arg>$WEB_DST_DIR/bootstrap.min.js</arg>
-        <arg>$WEB_DST_DIR/hongscore.min.js</arg>
+        <arg>$DST_DIR/jquery.min.js</arg>
+        <arg>$DST_DIR/jquery-ui.min.js</arg>
+        <arg>$DST_DIR/bootstrap.min.js</arg>
+        <arg>$DST_DIR/hongscore.min.js</arg>
         <arg>$DST_DIR/hongsedge.min.js</arg>
         <arg>$DST_DIR/hongsedit.min.js</arg>
     </combat>
     <combat system="no">
         <cmd>minify.merge</cmd>
         <arg opt="output">$CSS_DIR/common.min.css</arg>
-        <arg>$WEB_CSS_DIR/bootstrap.min.css</arg>
-        <arg>$WEB_CSS_DIR/hongscore.min.css</arg>
+        <arg>$CSS_DIR/bootstrap.min.css</arg>
+        <arg>$CSS_DIR/hongscore.min.css</arg>
     </combat>
-    <say>${CURR_TIME|yyyy-MM-dd HH:mm:ss} WMS build done</say>
+    <say>${CURR_TIME|yyyy-MM-dd HH:mm:ss} WMS merge done</say>
 </root>

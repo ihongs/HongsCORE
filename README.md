@@ -21,7 +21,7 @@
  9. 内含自助模块, 无需编程即可构建简单的信息管理系统;
 10. 内含统计模块, 可实现简单分类、区间及分组聚合统计.
 
-另见 [**更新日志**](UPDATE.md), 及 [**HongsCORE framework for Javascript**](hongs-web/web/static/assets/src/).
+另见 [**更新日志**](UPDATE.md), 及 [**HongsCORE framework for Javascript**](hongs-wms/web/static/assets/src/).
 
 ## 许可说明
 

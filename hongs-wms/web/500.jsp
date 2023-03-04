@@ -80,15 +80,11 @@
 <!doctype html>
 <html>
     <head>
-        <title>Redirect...</title>
+        <title><%=response.getStatus()%> Error</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/static/assets/css/common.min.css"/>
         <style type="text/css">
-            #footbox .copy-right a ,
-            #footbox .site-links a {
-                margin-right : 1em;
-            }
             h1, h2, h3 {
                 font-size  : 8em;
                 font-weight: 800;
@@ -96,6 +92,10 @@
             html, body {
                 width     : 100%;
                 height    : 100%;
+            }
+            .navbar .copy-right a ,
+            .navbar .site-links a {
+                margin-right : 1em;
             }
             .jumbotron {
                 color     : #ccc;
@@ -111,6 +111,7 @@
         </style>
     </head>
     <body>
+        <div style="width : 100%;">
         <div class="jumbotron">
             <div class="container">
                 <h1> :( </h1>
@@ -130,7 +131,7 @@
                 </p>
             </div>
         </div>
-        <nav id="footbox" class="navbar">
+        <nav class="navbar">
             <div class="container">
                 <blockquote><p class="clearfix" style="font-size: small;">
                     <span>&copy;&nbsp;</span><span class="copy-right"><%=lang.translate("fore.copy.right")%></span>
@@ -139,20 +140,25 @@
                 </p></blockquote>
             </div>
         </nav>
+        </div>
+        <script type="text/javascript">
+            if (document.body.clientHeight >= document.body.scrollHeight) {
+                document.body.setAttribute("style", "display: flex; align-items: center;");
+            }
+            <%if (trac != null) {%>
+            else {
+                var pre = document.getElementsByTagName("pre")[0];
+                var psh = pre.scrollHeight;
+                var sh0 = document.body.scrollHeight;
+                    pre.setAttribute("style", "display: none");
+                var sh1 = document.body.scrollHeight;
+                    pre.setAttribute("style", "");
+                    psh = psh - sh0 + sh1;
+                if (psh > 500 ) {
+                    pre.setAttribute("style", "max-height: "+ psh + "px");
+                }
+            }
+            <%}%>
+        </script>
     </body>
 </html>
-<%if (trac != null) {%>
-<script type="text/javascript">
-    if (document.body.clientHeight < document.body.scrollHeight) {
-        var pre = document.getElementsByTagName("pre")[0];
-        var psh = pre.scrollHeight;
-        var sh0 = document.body.scrollHeight;
-            pre.setAttribute("style", "display: none");
-        var sh1 = document.body.scrollHeight;
-            psh = psh - sh0 + sh1;
-        if (psh > 500) {
-            pre.setAttribute("style", "max-height: "+ psh +"px");
-        }
-    }
-</script>
-<%}%>

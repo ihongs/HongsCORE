@@ -6,19 +6,17 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <base href="../">
         <link rel="icon" type="image/x-icon" href="favicon.ico"/>
-        <link rel="stylesheet" type="text/css" href="static/assets/css/bootstrap.min.css"/>
-        <link rel="stylesheet" type="text/css" href="static/assets/css/hongscore.min.css"/>
+        <link rel="stylesheet" type="text/css" href="static/assets/css/common.min.css"/>
+        <link rel="stylesheet" type="text/css" href="static/assets/css/centre.min.css"/>
         <!--[if glt IE8.0]>
         <script type="text/javascript" src="static/addons/respond/respond.min.js"></script>
         <![endif]-->
-        <script type="text/javascript" src="static/assets/jquery.min.js"></script>
-        <script type="text/javascript" src="static/assets/bootstrap.min.js"></script>
-        <script type="text/javascript" src="static/assets/hongscore.min.js"></script>
+        <script type="text/javascript" src="static/assets/common.min.js"></script>
         <script type="text/javascript" src="common/conf/default.js"></script>
         <script type="text/javascript" src="common/lang/default.js"></script>
         <style type="text/css">
-            #footbox .copy-right a ,
-            #footbox .site-links a {
+            .navbar .copy-right a ,
+            .navbar .site-links a {
                 margin-right : 1em;
             }
             .jumbotron {
@@ -35,6 +33,7 @@
         </style>
     </head>
     <body>
+        <div style="width : 100%;">
         <div class="jumbotron">
             <div class="container">
                 <h1>您好!</h1>
@@ -136,17 +135,23 @@
                 </div>
             </div>
         </div>
-        <nav id="footbox" class="navbar">
+        <nav class="navbar">
             <div class="container">
-                <blockquote><p class="clearfix">
+                <blockquote><p class="clearfix" style="font-size: small;">
                     <span>&copy;&nbsp;</span><span class="copy-right"><script type="text/javascript">document.write(H$(":copy.right"))</script></span>
                     <span>&nbsp;&nbsp;</span><span class="site-links"><script type="text/javascript">document.write(H$(":site.links"))</script></span>
                     <span class="pull-right text-muted">Powered by <a href="power.html" target="_blank">HongsCORE</a></span>
                 </p></blockquote>
             </div>
         </nav>
+        </div>
         <script type="text/javascript">
             (function($) {
+                // 居中
+                if (document.body.clientHeight >= document.body.scrollHeight) {
+                    document.body.setAttribute("style", "display: flex; align-items: center;" );
+                }
+
                 var context = $("#sign-in-form,#sign-on-form");
 
                 // 表单

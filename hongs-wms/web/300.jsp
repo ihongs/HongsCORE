@@ -34,10 +34,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/static/assets/css/common.min.css"/>
         <style type="text/css">
-            #footbox .copy-right a ,
-            #footbox .site-links a {
-                margin-right : 1em;
-            }
             h1, h2, h3 {
                 font-size  : 8em;
                 font-weight: 800; 
@@ -45,6 +41,10 @@
             html, body {
                 width     : 100%;
                 height    : 100%;
+            }
+            .navbar .copy-right a ,
+            .navbar .site-links a {
+                margin-right : 1em;
             }
             .jumbotron {
                 color     : #ccc;
@@ -60,6 +60,7 @@
         </style>
     </head>
     <body>
+        <div style="width : 100%;">
         <div class="jumbotron">
             <div class="container">
                 <h1> :) </h1>
@@ -72,14 +73,20 @@
                 </p>
             </div>
         </div>
-        <nav id="footbox" class="navbar">
+        <nav class="navbar">
             <div class="container">
-                <blockquote><p class="clearfix" style="font-size: smail;">
+                <blockquote><p class="clearfix" style="font-size: small;">
                     <span>&copy;&nbsp;</span><span class="copy-right"><%=lang.translate("fore.copy.right")%></span>
                     <span>&nbsp;&nbsp;</span><span class="site-links"><%=lang.translate("fore.site.links")%></span>
                     <span class="pull-right text-muted">Powered by <a href="<%=request.getContextPath()%>/power.html" target="_blank">HongsCORE</a></span>
                 </p></blockquote>
             </div>
         </nav>
+        </div>
+        <script type="text/javascript">
+            if (document.body.clientHeight >= document.body.scrollHeight) {
+                document.body.setAttribute("style", "display: flex; align-items: center;");
+            }
+        </script>
     </body>
 </html>

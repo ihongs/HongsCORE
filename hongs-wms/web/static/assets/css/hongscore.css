@@ -284,6 +284,11 @@ input[type="time"].form-control {
     border-radius: 50%;
     text-align: center;
     background: #d55;
+    opacity: 0.8;
+}
+.tabs.hold-live-close li.active .close:hover ,
+.tabs.hold-live-close li.active .close:focus {
+    opacity: 1.0;
 }
 
 .tabs li a:empty:before ,
@@ -452,7 +457,7 @@ div.bootstrap-tagsinput .tag [data-role="remove"]:after {
 }
 .alert.dialog .alert-header .close {
     color : #fff;
-    opacity: 0.5;
+    opacity: 0.8;
 }
 .alert.dialog .alert-header .close:hover ,
 .alert.dialog .alert-header .close:focus {

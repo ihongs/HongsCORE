@@ -462,12 +462,14 @@
         if (! filtbox.is("invisible")) {
             filtbox.trigger("opened");
         }
+        statbox.addClass("invisible");
     });
     context.on("click", ".toolbox .statis", function() {
         statbox.toggleClass("invisible");
         if (! statbox.is("invisible")) {
             statbox.trigger("opened");
         }
+        filtbox.addClass("invisible");
     });
     context.on("click", ".toolbox :submit", function() {
         filtbox.addClass("invisible");

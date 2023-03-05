@@ -201,7 +201,7 @@
             <div class="col-md-6 col-sm-8">
                 <input type="hidden" name="ob" value="<%=_ob%>" data-ft="_sort"/>
                 <div>
-                    <select class="form-control" style="width: auto; display: inline-block;">
+                    <select class="form-control" style="width: auto; max-width: 100%; display: inline-block;">
                         <option value="<%=_ob%>" style="color: #ccc;">默认</option>
         <%
         Iterator it4 = _fields.entrySet().iterator();
@@ -220,7 +220,7 @@
         <%} /*End for*/%>
                     </select
                     <span>&nbsp;</span>
-                    <select class="form-control" style="width: auto; display: inline-block;">
+                    <select class="form-control" style="width: auto; max-width: 100%; display: inline-block;">
                         <option value="" >正序</option>
                         <option value="!">逆序</option>
                     </select>

@@ -1,31 +1,22 @@
 <root>
-    <form name="theme">
-        <field text="主题">
+    <form name="plan">
+        <field text="计划">
             <param name="db-name">centra/data/upland/data</param>
             <param name="db-path">centra/data/upland/data</param>
-            <param name="form_id">centra-upland-theme</param>
-            <param name="part_id">theme</param>
+            <param name="form_id">upland-plan</param>
+            <param name="part_id">plan</param>
             <param name="wordable">name,note</param>
         </field>
         <field text="ID" name="id" type="hidden">
             <param name="default">=%id</param>
             <param name="deforce">create</param>
         </field>
-        <field text="标题" name="name" type="text" required="yes">
+        <field text="名称" name="name" type="text" required="yes">
             <param name="listable">yes</param>
             <param name="filtable">yes</param>
             <param name="srchable">yes</param>
         </field>
-        <field text="标签" name="tags" type="text" repeated="yes">
-            <param name="listable">yes</param>
-            <param name="filtable">yes</param>
-            <param name="statable">yes</param>
-            <param name="diverse">yes</param>
-            <param name="defiant"></param>
-            <param name="slice">,</param>
-        </field>
-        <field text="简介" name="note" type="textarea">
-            <param name="listable">yes</param>
+        <field text="说明" name="note" type="textarea">
             <param name="srchable">yes</param>
         </field>
         <field text="管理员" name="owner" type="fork" repeated="yes">
@@ -54,16 +45,19 @@
             <param name="data-at">centra/master/unit/list</param>
             <param name="data-al">centra/master/unit/pick.html?pid=CENTRA&amp;find-depth=1</param>
         </field>
-        <field text="发帖" name="grade" type="select">
-            <param name="conf">centra/data/upland</param>
-            <param name="enum">theme_grade</param>
-            <param name="type">int</param>
-            <param name="default">1</param>
+        <field text="任务类型" name="kinds" type="text" repeated="yes">
+            <param name="diverse">yes</param>
+            <param name="defiant"></param>
+            <param name="slice">,</param>
         </field>
-        <field text="置顶" name="boost" type="number">
+        <field text="任务状态" name="steps" type="text" repeated="yes">
+            <param name="diverse">yes</param>
+            <param name="defiant"></param>
+            <param name="slice">,</param>
+        </field>
+        <field text="权重" name="boost" type="number">
             <param name="type">long</param>
             <param name="default">0</param>
-            <param name="listable">yes</param>
             <param name="sortable">yes</param>
         </field>
         <field text="修改时间" name="mtime" type="datetime">
@@ -83,47 +77,31 @@
             <param name="deforce">create</param>
         </field>
     </form>
-    <form name="topic">
-        <field text="话题">
+    <form name="task">
+        <field text="任务">
             <param name="db-name">centra/data/upland/data</param>
             <param name="db-path">centra/data/upland/data</param>
-            <param name="form_id">centra-upland-topic</param>
-            <param name="part_id">topic</param>
+            <param name="form_id">upland-task</param>
+            <param name="part_id">task</param>
             <param name="wordable">name,body</param>
         </field>
         <field text="ID" name="id" type="hidden">
             <param name="default">=%id</param>
             <param name="deforce">create</param>
         </field>
-        <field text="主题" name="theme_id" type="hidden">
+        <field text="计划" name="plan_id" type="hidden">
             <param name="data-vk">id</param>
             <param name="data-tk">name</param>
-            <param name="data-at">centra/data/upland/theme/search</param>
-            <param name="data-al">centra/data/upland/theme/pick.html</param>
+            <param name="data-at">centra/data/upland/plan/search</param>
+            <param name="data-al">centra/data/upland/plan/pick.html</param>
         </field>
-        <field text="标题" name="name" type="text" required="yes">
+        <field text="名称" name="name" type="text" required="yes">
             <param name="listable">yes</param>
             <param name="filtable">yes</param>
             <param name="srchable">yes</param>
         </field>
-        <field text="标签" name="tags" type="text" repeated="yes">
-            <param name="listable">yes</param>
-            <param name="filtable">yes</param>
-            <param name="statable">yes</param>
-            <param name="diverse">yes</param>
-            <param name="defiant"></param>
-            <param name="slice">,</param>
-        </field>
-        <field text="内容" name="body" type="textview">
+        <field text="说明" name="note" type="textarea">
             <param name="srchable">yes</param>
-            <param name="type">html</param>
-        </field>
-        <field text="摘要" name="note" type="text">
-            <param name="listable">yes</param>
-            <param name="disabled">yes</param>
-            <param name="default">=@alias:body</param>
-            <param name="strip">html</param>
-            <param name="limit">100 </param>
         </field>
         <field text="图片" name="pics" type="file" repeated="yes">
             <!-- 文件处于后台保护范围内 -->
@@ -141,6 +119,16 @@
             <param name="keep-naming">yes</param>
             <param name="pass-source">yes</param>
         </field>
+        <field text="分类" name="kind" type="select" rule="IsString">
+            <param name="listable">yes</param>
+            <param name="filtable">yes</param>
+            <param name="statable">yes</param>
+        </field>
+        <field text="状态" name="stat" type="select" rule="IsString">
+            <param name="listable">yes</param>
+            <param name="filtable">yes</param>
+            <param name="statable">yes</param>
+        </field>
         <field text="负责人" name="owner" type="fork" repeated="yes">
             <param name="listable">yes</param>
             <param name="filtable">yes</param>
@@ -151,17 +139,16 @@
             <param name="data-at">centra/master/user/list</param>
             <param name="data-al">centra/master/user/pick.html?unit_id=CENTRA&amp;find-depth=1</param>
         </field>
-        <field text="评论" name="grade" type="select">
-            <param name="conf">centra/data/upland</param>
-            <param name="enum">topic_grade</param>
-            <param name="type">int</param>
-            <param name="default">1</param>
+        <field text="内容" name="body" type="textview">
+            <param name="srchable">yes</param>
+            <param name="type">html</param>
         </field>
-        <field text="置顶" name="boost" type="number">
-            <param name="type">long</param>
-            <param name="default">0</param>
+        <field text="摘要" name="note" type="text">
             <param name="listable">yes</param>
-            <param name="sortable">yes</param>
+            <param name="disabled">yes</param>
+            <param name="default">=@alias:body</param>
+            <param name="strip">html</param>
+            <param name="limit">100 </param>
         </field>
         <field text="修改时间" name="mtime" type="datetime">
             <param name="type">timestamp</param>
@@ -180,28 +167,30 @@
             <param name="deforce">create</param>
         </field>
     </form>
-    <form name="tweet">
+    <form name="tick">
         <field text="评论">
             <param name="db-name">centra/data/upland/data</param>
             <param name="db-path">centra/data/upland/data</param>
-            <param name="form_id">centra-upland-tweet</param>
-            <param name="part_id">tweet</param>
+            <param name="form_id">upland-tick</param>
+            <param name="part_id">tick</param>
         </field>
         <field text="ID" name="id" type="hidden">
             <param name="default">=%id</param>
             <param name="deforce">create</param>
         </field>
-        <field text="话题" name="topic_id" type="hidden">
+        <field text="任务" name="task_id" type="hidden">
             <param name="data-vk">id</param>
             <param name="data-tk">name</param>
-            <param name="data-at">centra/data/upland/topic/search</param>
-            <param name="data-al">centra/data/upland/topic/pick.html</param>
+            <param name="data-at">centra/data/upland/task/search</param>
+            <param name="data-al">centra/data/upland/task/pick.html</param>
         </field>
-        <field text="评论" name="tweet_id" type="hidden">
-            <param name="data-vk">id</param>
-            <param name="data-tk">name</param>
-            <param name="data-at">centra/data/upland/tweet/search</param>
-            <param name="data-al">centra/data/upland/tweet/pick.html</param>
+        <field text="时间" name="ctime" type="datetime">
+            <param name="type">timestamp</param>
+            <param name="listable">yes</param>
+            <param name="sortable">yes</param>
+            <param name="readonly">yes</param>
+            <param name="default">=%now</param>
+            <param name="deforce">create</param>
         </field>
         <field text="用户" name="cuser" type="fork">
             <param name="listable">yes</param>
@@ -219,20 +208,6 @@
             <param name="srchable">yes</param>
             <param name="nameable">yes</param>
         </field>
-        <field text="时间" name="ctime" type="datetime">
-            <param name="type">timestamp</param>
-            <param name="listable">yes</param>
-            <param name="sortable">yes</param>
-            <param name="readonly">yes</param>
-            <param name="default">=%now</param>
-            <param name="deforce">create</param>
-        </field>
-        <field text="置顶" name="boost" type="number">
-            <param name="type">long</param>
-            <param name="default">0</param>
-            <param name="listable">yes</param>
-            <param name="sortable">yes</param>
-        </field>
     </form>
     <form name="image">
         <field name="file" type="file" required="yes" repeated="yes">
@@ -244,12 +219,4 @@
             <param name="pass-source">yes</param>
         </field>
     </form>
-    <enum name="theme_grade">
-        <value code="1">所有人均可发帖</value>
-        <value code="0">仅管理员可发帖</value>
-    </enum>
-    <enum name="topic_grade">
-        <value code="1">开启评论</value>
-        <value code="0">关闭评论</value>
-    </enum>
 </root>

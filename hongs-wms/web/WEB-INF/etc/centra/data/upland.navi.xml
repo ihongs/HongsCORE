@@ -1,25 +1,27 @@
 <root>
     <rsname>#default</rsname>
-    <menu text="论坛" href="centra/data/upland/theme/">
-        <role name="centra">
-            <action>centra/data/upland/topic/create.act</action>
-            <action>centra/data/upland/topic/update.act</action>
-            <action>centra/data/upland/topic/delete.act</action>
-            <action>centra/data/upland/tweet/create.act</action>
-            <action>centra/data/upland/tweet/update.act</action>
-            <action>centra/data/upland/tweet/delete.act</action>
+    <menu text="项目管理" href="centra/data/upland/">
+        <role text="参与项目" name="centra/data/upland/base">
+            <depend>centra</depend>
+            <action>centra/data/upland/base</action>
+            <action>centra/data/upland/task/create.act</action>
+            <action>centra/data/upland/task/update.act</action>
+            <action>centra/data/upland/task/delete.act</action>
+            <action>centra/data/upland/tick/create.act</action>
+            <action>centra/data/upland/tick/update.act</action>
+            <action>centra/data/upland/tick/delete.act</action>
             <action>centra/data/upland/image/create.act</action>
         </role>
-        <role text="管理论坛" name="centra/data/upland/admin">
+        <role text="管理项目" name="centra/data/upland/lead">
             <depend>centra</depend>
-            <action>centra/data/upland/admin</action>
-            <action>centra/data/upland/theme/create.act</action>
-            <action>centra/data/upland/theme/update.act</action>
-            <action>centra/data/upland/theme/delete.act</action>
-            <action>centra/data/upland/theme/reveal.act</action>
-            <action>centra/data/upland/theme/revert.act</action>
-            <action>centra/data/upland/topic/revert.act</action>
-            <action>centra/data/upland/tweet/revert.act</action>
+            <depend>centra/data/upland/base</depend>
+            <action>centra/data/upland/lead</action>
+            <action>centra/data/upland/plan/create.act</action>
+            <action>centra/data/upland/plan/update.act</action>
+            <action>centra/data/upland/plan/delete.act</action>
+            <action>centra/data/upland/plan/revert.act</action>
+            <action>centra/data/upland/task/revert.act</action>
+            <action>centra/data/upland/tick/revert.act</action>
         </role>
     </menu>
 </root>

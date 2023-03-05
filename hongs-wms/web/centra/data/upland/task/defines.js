@@ -76,7 +76,7 @@ function in_centra_data_upland_topic_info(context, formobj) {
                 .append('<div class="btn-group">'
                     + '<button type="button" class="update2 btn btn-default">修改话题</button>'
                     + '<button type="button" class="reveal2 btn btn-default">历史记录</button>'
-                    + '<button type="button" class="delete2 btn btn-danger ">删除</button>'
+                    + '<button type="button" class="delete2 btn btn-default"><span class="text-danger">删除</span></button>'
                 + '</div>')
                 .on("click", ".update2", function() {
                     context.hsFind("@").hsOpen("centra/data/upland/topic/form.html?id=" + tid,

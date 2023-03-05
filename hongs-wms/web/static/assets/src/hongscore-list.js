@@ -772,23 +772,27 @@ HsList.prototype = {
     },
 
     _fill__sort : function(th, s, n) {
-        if (th.find(".sort-ico").size() === 0) {
-            var  that = this ;
-            th.click( function() {
-                var s = null ;
-                if (!!th.hasClass("sort-asc")) {
-                    s = that._sort_esc(th, n);
-                } else
-                if (! th.hasClass("sort-esc")) {
-                    s = that._sort_asc(th, n);
-                }
+        if ( ! th.find("a").size() ) {
+            var that = this;
+            var m = jQuery('<ul class="dropdown-menu">'
+                  + '<li><a href="javascript:;" class="sort-ico sort-asc-ico" title="'+hsGetLang('list.sort.asc')+'" data-ob="'+this._sort_asc(th, n)+'"></a></li>'
+                  + '<li><a href="javascript:;" class="sort-ico sort-esc-ico" title="'+hsGetLang('list.sort.esc')+'" data-ob="'+this._sort_esc(th, n)+'"></a></li>'
+                  + '<li><a href="javascript:;" class="sort-ico" title="'+hsGetLang('list.sort.not')+'" data-ob=""></a></li>'
+                  + '</ul>');
+            var a = jQuery('<a href="javascript:;" data-toggle="dropdown"></a>')
+                  . append('<span class="sort-ico"></span>')
+                  . append(th.contents());
+            var d = jQuery( '<div class="dropdown"></div>' )
+                  . appendTo(th)
+                  . append(a)
+                  . append(m);
+            m.on("click", "a", function() {
+                var s = jQuery(this).data("ob");
                 hsSetSeria(that._data, that.sortKey, s);
             //  hsSetSeria(that._data, that.pageKey, 1);
                 that.load ( );
             });
-            th.append('<span class="sort-ico"></span>');
         }
-
         th .removeClass("sort-asc sort-esc");
         if (s === this._sort_asc(th, n)) {
             th.addClass("sort-asc");

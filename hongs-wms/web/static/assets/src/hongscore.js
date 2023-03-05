@@ -3106,7 +3106,7 @@ function(evt) {
 $(document)
 .on("mouseover", "[data-toggle=hsMenu],[data-toggle=hsMenu]~.dropdown-menu",
 function(evt) {
-    var cd = $(this).parent(".dropdown");
+    var cd = $(this).parent(".dropdown,.dropup");
         cd.   addClass("open").children("[aria-expanded]").attr("aria-expanded", "true" );
     var od = $(".dropdown.open").not(cd);
         od.removeClass("open").children("[aria-expanded]").attr("aria-expanded", "false");
@@ -3114,7 +3114,7 @@ function(evt) {
 })
 .on("mouseout" , "[data-toggle=hsMenu],[data-toggle=hsMenu]~.dropdown-menu",
 function(evt) {
-    var cd = $(this).parent(".dropdown");
+    var cd = $(this).parent(".dropdown,.dropup");
     window._hsMenuOut = setTimeout(function() {
         cd.removeClass("open").children("[aria-expanded]").attr("aria-expanded", "false");
     }, 500);

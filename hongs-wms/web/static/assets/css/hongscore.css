@@ -669,17 +669,17 @@ div.bootstrap-tagsinput .tag [data-role="remove"]:after {
 
 /* 横向菜单 */
 .listbox ._amenu .dropdown-menu {
-    white-space : nowrap;
-    min-width: 0;
-    top    : -10px;
-    left   : 1.0em;
-    right  : auto ;
-    bottom : auto ;
+    white-space: nowrap;
+    min-width  : 0px;
     padding: 4px 4px;
+    top    : -9px;
+    left   : 0;
+    right  : auto;
+    bottom : auto;
 }
 .listbox ._amenu .dropup .dropdown-menu {
-    left   : auto ;
-    right  : 1.0em;
+    left   : auto;
+    right  : 0;
 }
 .listbox ._amenu .dropdown-menu a  {
     padding: 3px 8px;
@@ -695,11 +695,8 @@ div.bootstrap-tagsinput .tag [data-role="remove"]:after {
 }
 
 /* 排序符号 */
-.listbox thead .sortable {
-    cursor: pointer;
-}
 .listbox thead .sort-ico {
-    color  : #aaa;
+    color: #777;
     display: inline-block;
     font-style: normal;
     font-weight: normal !important;
@@ -710,26 +707,59 @@ div.bootstrap-tagsinput .tag [data-role="remove"]:after {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
-.listbox thead .sort-asc .sort-ico {
-    color  : #44a;
-}
-.listbox thead .sort-esc .sort-ico {
-    color  : #a44;
+.listbox thead .sort-asc a>.sort-ico ,
+.listbox thead .sort-esc a>.sort-ico {
+    color: #b73;
 }
 .listbox thead .sort-ico::before {
     content: "\f14c";
 }
-.listbox thead .sort-asc .sort-ico::before {
+.listbox thead .sort-asc-ico::before ,
+.listbox thead .sort-asc a>.sort-ico::before {
     content: "\f571";
 }
-.listbox thead .sort-esc .sort-ico::before {
+.listbox thead .sort-esc-ico::before ,
+.listbox thead .sort-esc a>.sort-ico::before {
     content: "\f572";
 }
-.listbox thead .sort-asc.numerial .sort-ico::before {
+.listbox thead .numerial .sort-asc-ico::before ,
+.listbox thead .numerial.sort-asc a>.sort-ico::before {
     content: "\f577";
 }
-.listbox thead .sort-esc.numerial .sort-ico::before {
+.listbox thead .numerial .sort-esc-ico::before ,
+.listbox thead .numerial.sort-esc a>.sort-ico::before {
     content: "\f578";
+}
+/* 规避列名超出 */
+.listbox thead .sortable {
+    overflow : visible;
+}
+.listbox thead .sortable .dropdown>a {
+    max-width: 100%;
+    width    : auto;
+    display  : block;
+    overflow : hidden;
+    text-overflow: ellipsis;
+}
+/* 排序横向菜单 */
+.listbox thead .sortable .dropdown-menu {
+    white-space: nowrap;
+    min-width  : 0px;
+    padding: 4px 4px;
+    top    : -11px;
+    left   : 0;
+    right  : auto;
+    bottom : auto;
+}
+.listbox thead .sortable.text-right .dropdown-menu {
+    left   : auto;
+    right  : 0;
+}
+.listbox thead .sortable .dropdown-menu a  {
+    padding: 3px 8px;
+}
+.listbox thead .sortable .dropdown-menu li {
+    display: inline-block;
 }
 
 /** 旧的三角排序符 **/

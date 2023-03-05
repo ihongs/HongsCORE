@@ -901,14 +901,6 @@ ul.pickbox > li.btn {
     text-overflow: ellipsis;
     text-align   : left;
 }
-ul.pickmol > li.btn {
-    width        : auto;
-    max-width    : 100%;
-    overflow     : hidden;
-    white-space  : nowrap;
-    text-overflow: ellipsis;
-    text-align   : left;
-}
 ul.pickrol > li.btn.btn-link ,
 ul.pickrol > li.btn.btn-text {
     box-shadow   : none;
@@ -917,21 +909,16 @@ ul.pickrol > li.btn.btn-text {
     padding-left : 0px;
     margin-bottom: 0px;
 }
+ul.pickbox > li.btn .close {
+    margin-left  : 9px;
+}
 ul.pickbox > li.btn .bi,
 ul.pickbox > li.btn .glyphicon {
     margin-right : 9px;
-    display : inline;
 }
 ul.pickrol > li.btn .bi,
 ul.pickrol > li.btn .glyphicon {
-    margin-right : 0px;
     display : none;
-}
-ul.pickmol > li.btn .close {
-    margin-left  : 9px;
-}
-ul.pickrol > li.btn .close {
-    margin-left  : 0px;
 }
 ul.pickrol > li.btn-text,
 ul.pickrol > li.btn-text:hover ,
@@ -943,48 +930,33 @@ ul.pickrol > li.btn-text:focus {
 }
 ul.pickbox > li.btn-default.form-control ,
 ul.pickrol > li.btn-default.form-control {
-    color: #555;
-}
-
-.pickmul:after {
-    clear  : both ;
-    display: table;
-    content: " "  ;
-}
-.pickmul.pickrol {
-    margin-bottom: -2px;
-}
-.pickmul > li.btn {
-    margin-bottom: 2px;
-}
-.pickmol > li.btn {
-    float: left;
-    margin-right : 2px;
-    margin-bottom: 2px;
-}
-.pickmul > .preview {
-    float: left;
-    margin-right : 2px;
-    margin-bottom: 2px;
+    color   : #555;
 }
 
 .pickbox:empty  ,
+.pickrol  input ,
 .pickrol .close ,
-.pickrol  input {
-    display: none;
-}
 .picksel .picksum {
-    display: none;
+    display: none ;
 }
-.pickmul .picksum {
-    display: inline;
+
+ul.pickmul {
+    font-size: 0 ; /* 消除 inline-block 空隙 */
+    margin-bottom:-2px;
+}
+ul.pickmul > * {
+    display: inline-block;
+    margin-bottom: 2px;
+    margin-right : 2px;
+}
+ul.pickmul + * ,
+* + ul.pickmul {
+    margin-top   : 2px;
 }
 
 .preview {
     position: relative;
     cursor  : pointer ;
-    padding : 0;
-    margin  : 0;
     border  : 1px solid #ccc;
     border-radius: 4px;
 }

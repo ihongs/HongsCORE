@@ -365,7 +365,7 @@ function _hsSoloFile(box, show) {
     &&  ! box.data("multiple")
     &&  ! /(\[\]|\.\.|\.$)/.test(fn)) {
         box.siblings("[data-toggle=hsFile],[data-toggle=hsView]")
-           .toggle( show  );
+           .toggle( show );
         box.removeClass("pickmul");
     } else {
         box.   addClass("pickmul");

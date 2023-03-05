@@ -219,7 +219,6 @@
                         <option value="*,<%=name%>"><%=text%></option>
         <%} /*End for*/%>
                     </select
-                    <span>&nbsp;</span>
                     <select class="form-control" style="width: auto; max-width: 100%; display: inline-block;">
                         <option value="" >正序</option>
                         <option value="!">逆序</option>

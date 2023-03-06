@@ -198,8 +198,13 @@
                         <button type="button" class="cancel btn btn-default"><%=_locale.translate("fore.goback")%></button>
                         <%if ("reveal".equals(_action)) {%>
                         <div class="btn-group">
-                            <button type="button" class="newer btn btn-default" disabled="disabled">更新</button>
-                            <button type="button" class="older btn btn-default" disabled="disabled">更旧</button>
+                            <button type="button" class=" newer btn btn-default" disabled="disabled">更新</button>
+                            <button type="button" class=" older btn btn-default" disabled="disabled">更旧</button>
+                        </div>
+                        <%} else {%>
+                        <div class="btn-group">
+                            <button type="button" class="update btn btn-default"><span class="text-normal">编辑</span></button>
+                            <button type="button" class="delete btn btn-default"><span class="text-danger">删除</span></button>
                         </div>
                         <%} /*End If */%>
                     </div>
@@ -225,6 +230,9 @@
         _url : "<%=_module%>/<%=_entity%>/reveal.act?<%=Cnst.AB_KEY%>=_text,_fork,.fall,older,newer",
         <%} else {%>
         _url : "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.AB_KEY%>=_text,_fork,.fall",
+        _update_url: "<%=_module%>/<%=_entity%>/form.html" ,
+        _delete_act: "<%=_module%>/<%=_entity%>/delete.act",
+        _delete_msg: "<%=_locale.translate("fore.delete.confirm", _title)%>",
         <%} /* End if */%>
         _data: loadres,
         _fill__fork: hsFormFillFork,
@@ -255,6 +263,33 @@
         var loadbox = formobj.loadBox;
         loadbox.hsLoad(loadbox.data("href"), $(this).data());
     });
+    <%} else {%>
+    // 编辑删除快捷操作
+    context.on("click", ".update", function() {
+        var url = formobj._update_url;
+        var dat = {
+                id: H$("?id", loadres)
+            };
+        var bak = function() {
+                $(this).on("saveBack", function(evt, rst, obj) {
+                    formbox.trigger(evt, rst, obj); // 继续外传事件
+                    if (evt.isDefaultPrevented( )) return;
+                    var url = loadbox.data("href");
+                    var dat = loadbox.data("data");
+                    loadbox.hsLoad (url, dat,/**/);
+                });
+            };
+        loadbox.hsFind("@").hsOpen (url, dat, bak);
+    });
+    context.on("click", ".delete", function() {
+        var btn = this;
+        var msg = formobj._delete_msg;
+        var url = formobj._delete_act;
+        var dat = {
+                id: H$("?id", loadres)
+            };
+        hsSendWithMemo.call(formobj, btn, msg, url, dat);
+    });
     <%} /*End If */%>
 
     hsRequires("<%=_module%>/<%=_entity%>/defines.js", function() {
@@ -262,6 +297,13 @@
         Promise.resolve(window["<%=_funcId%>"] && window["<%=_funcId%>"](context, formobj))
                .then(function() {
 
+        // 权限控制
+        $.each({"update":".update", "delete":".delete"}
+        , function(k, v) {
+            if (! hsChkUri("<%=_module%>/<%=_entity%>/"+k+".act")) {
+                context.find(v).remove();
+            }
+        });
         // 外部限制
         $.each(denycss ? denycss.split(",") : []
         , function(i, n) {

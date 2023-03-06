@@ -198,13 +198,13 @@
                         <button type="button" class="cancel btn btn-default"><%=_locale.translate("fore.goback")%></button>
                         <%if ("reveal".equals(_action)) {%>
                         <div class="btn-group">
-                            <button type="button" class=" newer btn btn-default" disabled="disabled">更新</button>
-                            <button type="button" class=" older btn btn-default" disabled="disabled">更旧</button>
+                            <button type="button" class=" newer btn btn-default" disabled="disabled"><%=_locale.translate("fore.reveal.newer", _title)%></button>
+                            <button type="button" class=" older btn btn-default" disabled="disabled"><%=_locale.translate("fore.reveal.older", _title)%></button>
                         </div>
                         <%} else {%>
                         <div class="btn-group">
-                            <button type="button" class="update btn btn-default"><span class="text-normal">编辑</span></button>
-                            <button type="button" class="delete btn btn-default"><span class="text-danger">删除</span></button>
+                            <button type="button" class="update btn btn-default"><span class="text-normal"><%=_locale.translate("fore.update", _title)%></span></button>
+                            <button type="button" class="delete btn btn-default"><span class="text-danger"><%=_locale.translate("fore.delete", _title)%></span></button>
                         </div>
                         <%} /*End If */%>
                     </div>
@@ -241,7 +241,7 @@
     });
 
     <%if ("reveal".equals(_action)) {%>
-    // 前后历史记录快速切换
+    // 新旧记录快速切换
     context.on("loadBack", function(evt, rst) {
         delete formobj._init;
         if (rst.info && rst.snap && rst.snap.newer ) {
@@ -264,7 +264,7 @@
         loadbox.hsLoad(loadbox.data("href"), $(this).data());
     });
     <%} else {%>
-    // 编辑删除快捷操作
+    // 修改删除快捷操作
     context.on("click", ".update", function() {
         var url = formobj._update_url;
         var dat = {

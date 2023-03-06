@@ -474,12 +474,12 @@ div.bootstrap-tagsinput .tag [data-role="remove"]:after {
     background: rgba(0,102,0,0.8);
 }
 .alert.dialog.alert-warning {
-    background: rgb (102,0,0);
-    background: rgba(102,0,0,0.8);
+    background: rgb (204,102,0);
+    background: rgba(204,102,0,0.8);
 }
 .alert.dialog.alert-danger  {
-    background: rgb (153,0,102);
-    background: rgba(153,0,102,0.8);
+    background: rgb (153,0,0);
+    background: rgba(153,0,0,0.8);
 }
 .alert.dialog .btn-link {
     color : #fff;
@@ -644,9 +644,9 @@ div.bootstrap-tagsinput .tag [data-role="remove"]:after {
     margin-left : 0.5em;
 }
 
-.listbox ._amenu,
 .listbox ._check,
-.listbox ._radio {
+.listbox ._radio,
+.listbox ._admin._amenu {
     width: 1.5em;
 }
 .listbox ._hdate,
@@ -658,36 +658,62 @@ div.bootstrap-tagsinput .tag [data-role="remove"]:after {
 .listbox .datetime {
     width: 10.5em;
 }
-.listbox th._amenu ,
-.listbox td._amenu {
-    overflow: visible;
-}
 .listbox th._rowid ,
 .listbox td._rowid {
-    display : none !important;
+    display: none !important;
 }
 
 /* 横向菜单 */
-.listbox ._amenu .dropdown-menu {
+.listbox th._amenu ,
+.listbox td._amenu ,
+.listbox th.sortable {
+    overflow : visible;
+}
+.listbox th._amenu .dropdown>a ,
+.listbox td._amenu .dropdown>a ,
+.listbox th.sortable .dropdown>a {
+    max-width: 100%;
+    width    : auto;
+    display  : block;
+    overflow : hidden;
+    text-overflow: ellipsis;
+}
+.listbox th._amenu .dropdown-menu ,
+.listbox td._amenu .dropdown-menu ,
+.listbox th.sortable .dropdown-menu {
     white-space: nowrap;
     min-width  : 0px;
     padding: 4px 4px;
-    top    : -9px;
+    top    : -10px;
     left   : 0;
     right  : auto;
     bottom : auto;
 }
-.listbox ._amenu .dropup .dropdown-menu {
+.listbox th._amenu.text-right .dropdown-menu ,
+.listbox td._amenu.text-right .dropdown-menu ,
+.listbox th.sortable.text-right .dropdown-menu {
     left   : auto;
     right  : 0;
 }
-.listbox ._amenu .dropdown-menu a  {
+.listbox th._amenu.text-center .dropdown-menu ,
+.listbox td._amenu.text-center .dropdown-menu ,
+.listbox th.sortable.text-center .dropdown-menu {
+    left   : auto;
+    right  : auto;
+}
+.listbox th._amenu .dropdown-menu a ,
+.listbox td._amenu .dropdown-menu a ,
+.listbox th.sortable .dropdown-menu a {
     padding: 3px 8px;
 }
-.listbox ._amenu .dropdown-menu li {
+.listbox th._amenu .dropdown-menu li ,
+.listbox td._amenu .dropdown-menu li ,
+.listbox th.sortable .dropdown-menu li {
     display: inline-block;
 }
-.listbox ._amenu .dropdown-menu li.divider {
+.listbox th._amenu .dropdown-menu li.divider ,
+.listbox td._amenu .dropdown-menu li.divider ,
+.listbox td.sortable .dropdown-menu li.divider {
     width :  1px;
     height: 20px;
     margin: -5px 1px;
@@ -707,9 +733,13 @@ div.bootstrap-tagsinput .tag [data-role="remove"]:after {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
+.listbox thead .sortable a>.sort-ico {
+    display: none;
+}
 .listbox thead .sort-asc a>.sort-ico ,
 .listbox thead .sort-esc a>.sort-ico {
-    color: #b73;
+    color  : #b73;
+    display: inline-block;
 }
 .listbox thead .sort-ico::before {
     content: "\f14c";
@@ -729,37 +759,6 @@ div.bootstrap-tagsinput .tag [data-role="remove"]:after {
 .listbox thead .numerial .sort-esc-ico::before ,
 .listbox thead .numerial.sort-esc a>.sort-ico::before {
     content: "\f578";
-}
-/* 规避列名超出 */
-.listbox thead .sortable {
-    overflow : visible;
-}
-.listbox thead .sortable .dropdown>a {
-    max-width: 100%;
-    width    : auto;
-    display  : block;
-    overflow : hidden;
-    text-overflow: ellipsis;
-}
-/* 排序横向菜单 */
-.listbox thead .sortable .dropdown-menu {
-    white-space: nowrap;
-    min-width  : 0px;
-    padding: 4px 4px;
-    top    : -11px;
-    left   : 0;
-    right  : auto;
-    bottom : auto;
-}
-.listbox thead .sortable.text-right .dropdown-menu {
-    left   : auto;
-    right  : 0;
-}
-.listbox thead .sortable .dropdown-menu a  {
-    padding: 3px 8px;
-}
-.listbox thead .sortable .dropdown-menu li {
-    display: inline-block;
 }
 
 /** 旧的三角排序符 **/
@@ -1020,7 +1019,7 @@ ul.pickmul + * ,
     padding-left : 8px;
 }
 .datebox.input-group a {
-    margin: auto 1em;
+    margin: auto 0.5em;
     float: left;
     color: #999;
 }

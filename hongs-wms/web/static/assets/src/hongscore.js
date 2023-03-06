@@ -1885,6 +1885,17 @@ $.hsAjax = function(url, settings) {
     return  $.ajax (url, settings);
 };
 
+$.hsPost = function(url, data, complete) {
+    return  $.hsAjax({
+        url : url ,
+        data: data,
+        type: data ? "POST" : "GET",
+        complete: function(rst) {
+            complete && complete(hsResponse(rst, 3));
+        }
+    });
+};
+
 $.hsOpen = function(url, data, complete) {
     var div = $('<div class="modal fade in"><div class="modal-dialog">'
               + '<div class="modal-content"><div class="modal-header">'
@@ -2032,7 +2043,7 @@ $.hsMask = function(opt) {
     // 设置按钮
     for(var i = 1; i < arguments.length; i ++) {
         var cnf = arguments[i];
-        var btm = $('<button type="button" class="btn btn-md"></button>');
+        var btm = $('<button type="button" class="btn"></button>');
         btn.append( btm );
         if (opt["focus"]) {
             foc = (i - 1);
@@ -2198,6 +2209,8 @@ $.hsWarn = function(msg, typ, yes, not) {
             break;
         default:
             console.warn("hsWarn: Wrong type " + typ);
+    } else {
+        typ = "primary" ;
     }
 
     // 按钮
@@ -2205,7 +2218,7 @@ $.hsWarn = function(msg, typ, yes, not) {
     if (typeof yes  ===  "function") {
         yes = {
             click: yes,
-            glass: "btn-primary",
+            glass: "btn-" + typ ,
             label: hsGetLang ("ensure")
         };
     }

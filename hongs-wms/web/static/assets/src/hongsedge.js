@@ -1536,16 +1536,20 @@ function hsSendWithMemo(btn, msg, url, data) {
     var dat1 = jQuery.extend({}, hsSerialDat(data), {memo:memo.val()});
     var dat2 = jQuery.extend({}, hsSerialDat(url ), hsSerialDat(data));
     that.ajax({
-        "url"       : url ,
-        "data"      : dat1,
-        "type"      : "POST",
-        "dataType"  : "json",
-        "funcName"  : "send",
-        "cache"     : false,
-        "context"   : that,
-        "trigger"   : btn ,
-        "success"   : function(rst) {
-            this.sendBack(btn, rst, dat2);
+        "url"      : url ,
+        "data"     : dat1,
+        "type"     : "POST",
+        "dataType" : "json",
+        "funcName" : "send",
+        "cache"    : false ,
+        "context"  : that,
+        "trigger"  : btn ,
+        "success"  : function(rst) {
+            if (this.saveBack) {
+                this.saveBack(rst);
+            } else {
+                this.sendBack(btn, rst, dat2);
+            }
         }
     });
     } ;
@@ -1571,7 +1575,6 @@ function hsLoadWithWord(url, data) {
     }
     HsList.prototype.load.call(this, url, data);
 }
-hsFindWithWord = hsLoadWithWord; // 兼容
 
 //** 前台标准功能 **/
 

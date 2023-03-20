@@ -195,6 +195,13 @@ input[type="time"].form-control {
 }
 
 /* 修正 panel 和 modal 中内容底部多余空隙 */
+.well>.panel ,
+.panel-body>.panel
+.modal-body>.panel {
+    border : 0;
+    padding: 0;
+    box-shadow: none;
+}
 .well>.board ,
 .panel-body>.board ,
 .modal-body>.board {
@@ -203,12 +210,6 @@ input[type="time"].form-control {
 .panel-body>.board-end ,
 .modal-body>.board-end {
     margin-bottom: 5px;
-}
-.panel-body>.panel
-.modal-body>.panel {
-    border : 0;
-    padding: 0;
-    box-shadow: none;
 }
 
 /** 响应式表格区 **/

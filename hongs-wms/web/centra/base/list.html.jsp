@@ -21,7 +21,7 @@
     Set<String>   _sd = getSrchable (_fields);
 %>
 <h2 class="hide"><%=_locale.translate("fore."+_action+".title", _title)%></h2>
-<div id="<%=_pageId%>" class="<%=_pageId+" "+_action%>-list">
+<div id="<%=_pageId%>" class="<%=_pageId+" "+_action%>-list board-end">
     <form class="findbox toolbox board row">
         <div class="col-xs-7">
             <div class="btn-group">

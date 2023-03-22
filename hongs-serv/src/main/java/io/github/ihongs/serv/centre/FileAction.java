@@ -16,7 +16,7 @@ import javax.servlet.http.Part;
  * 公共文件上传
  * @author Hongs
  */
-@Action("centre/file")
+@Action("common/file")
 public class FileAction {
 
     @Action("create")

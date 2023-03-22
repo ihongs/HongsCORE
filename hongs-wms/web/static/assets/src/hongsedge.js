@@ -10,7 +10,6 @@ H$.uid  = function() {
             window.HsCUID = H$('%HsCUID');
         } else {
             window.HsCUID = null ;
-            H$ ( '%HsCUID', null);
         }
     }
     return  window.HsCUID ;

@@ -53,7 +53,7 @@ public class AutoFilter extends ActionDriver {
 
     private String action;
     private String layout;
-    private URLPatterns patter = null;
+    private PathPattern patter = null;
     private Set<String> layset = null;
     private Set<String> actset = null;
     private Set<String> cstset = null;
@@ -72,7 +72,7 @@ public class AutoFilter extends ActionDriver {
         }
 
         // 获取不包含的URL
-        this.patter = new URLPatterns(
+        this.patter = new PathPattern(
             cnf.getInitParameter("url-include"),
             cnf.getInitParameter("url-exclude")
         );

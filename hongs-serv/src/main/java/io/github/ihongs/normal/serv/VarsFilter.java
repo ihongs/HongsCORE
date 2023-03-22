@@ -41,7 +41,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class VarsFilter extends ActionDriver {
 
-    private URLPatterns patter = null;
+    private PathPattern patter = null;
     private String wd_split = null;
     private Set illegals = null;
     private int sr_level = 0;
@@ -54,7 +54,7 @@ public class VarsFilter extends ActionDriver {
     {
         super.init(config);
 
-        patter = new URLPatterns(
+        patter = new PathPattern(
             config.getInitParameter("url-include"),
             config.getInitParameter("url-exclude")
         );

@@ -3,7 +3,7 @@ package io.github.ihongs.normal.serv;
 import io.github.ihongs.Core;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionDriver;
-import io.github.ihongs.action.ActionDriver.URLPatterns;
+import io.github.ihongs.action.ActionDriver.PathPattern;
 import io.github.ihongs.util.Synt;
 import java.io.IOException;
 import javax.servlet.Filter;
@@ -41,7 +41,7 @@ public class SessFilter implements Filter {
     protected int    SSRX =   86400; // 会话过期时间(秒)
 
     private String      inside = null; // 过滤器标识
-    private URLPatterns patter = null; // 待忽略用例
+    private PathPattern patter = null; // 待忽略用例
 
     @Override
     public void init(FilterConfig fc)
@@ -71,7 +71,7 @@ public class SessFilter implements Filter {
         }
 
         inside = SessFilter.class.getName()+":"+fc.getFilterName()+":INSIDE";
-        patter = new ActionDriver.URLPatterns(
+        patter = new ActionDriver.PathPattern(
             fc.getInitParameter("url-include"),
             fc.getInitParameter("url-exclude")
         );

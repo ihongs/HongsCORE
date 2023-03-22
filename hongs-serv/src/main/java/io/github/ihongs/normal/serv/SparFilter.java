@@ -2,7 +2,7 @@ package io.github.ihongs.normal.serv;
 
 import io.github.ihongs.Core;
 import io.github.ihongs.action.ActionDriver;
-import io.github.ihongs.action.ActionDriver.URLPatterns;
+import io.github.ihongs.action.ActionDriver.PathPattern;
 import io.github.ihongs.util.Synt;
 import java.io.File;
 import java.io.IOException;
@@ -34,12 +34,12 @@ import org.xml.sax.SAXException;
  */
 public class SparFilter implements Filter {
 
-    private URLPatterns patter;
+    private PathPattern patter;
     private Set<String> access;
 
     @Override
     public void init(FilterConfig cnf) throws ServletException {
-        patter = new ActionDriver.URLPatterns(
+        patter = new ActionDriver.PathPattern(
             cnf.getInitParameter("url-include"),
             cnf.getInitParameter("url-exclude")
         );

@@ -34,6 +34,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -972,7 +973,7 @@ public class ActionDriver implements Filter, Servlet {
     }
 
     /**
-     * URL 匹配助手
+     * 路径匹配助手
      *
      * 构建通配符简单正则,
      * 忽略换行及首尾空白.
@@ -992,17 +993,17 @@ public class ActionDriver implements Filter, Servlet {
      *
      * @author Hongs
      */
-    public static final class URLPatterns {
+    public static final class PathPattern {
 
         private final Pattern include;
         private final Pattern exclude;
 
-        public URLPatterns(String urlInclude, String urlExclude) {
+        public PathPattern(String urlInclude, String urlExclude) {
             include = compile(urlInclude);
             exclude = compile(urlExclude);
         }
 
-        public URLPatterns(String urlInclude) {
+        public PathPattern(String urlInclude) {
             this(urlInclude, null);
         }
 
@@ -1056,6 +1057,63 @@ public class ActionDriver implements Filter, Servlet {
             pat = pat.replace("*", ".*");
             pat = "^("+ pat +")$";
             return Pattern.compile (pat);
+        }
+
+    }
+
+    /**
+     * 路径重设助手
+     *
+     * 让外部可以重设路径,
+     * 使得内部程序可续用.
+     */
+    public static class PathWrapper extends HttpServletRequestWrapper {
+
+        private String pathInfo;
+        private String servletPath;
+        private String contextPath;
+
+        public PathWrapper (HttpServletRequest req) {
+            super(req);
+        }
+
+        public PathWrapper setPathInfo(String path) {
+            pathInfo = path;
+            return this;
+        }
+
+        public PathWrapper setServletPath(String path) {
+            servletPath = path;
+            return this;
+        }
+
+        public PathWrapper setContextPath(String path) {
+            contextPath = path;
+            return this;
+        }
+
+        @Override
+        public String getPathInfo() {
+            if (null != pathInfo) {
+                return  pathInfo;
+            }
+            return super.getPathInfo();
+        }
+
+        @Override
+        public String getServletPath() {
+            if (null != servletPath) {
+                return  servletPath;
+            }
+            return super.getServletPath();
+        }
+
+        @Override
+        public String getContextPath() {
+            if (null != contextPath) {
+                return  contextPath;
+            }
+            return super.getContextPath();
         }
 
     }

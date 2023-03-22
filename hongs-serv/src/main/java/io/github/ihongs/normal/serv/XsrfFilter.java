@@ -1,7 +1,7 @@
 package io.github.ihongs.normal.serv;
 
 import io.github.ihongs.action.ActionDriver;
-import io.github.ihongs.action.ActionDriver.URLPatterns;
+import io.github.ihongs.action.ActionDriver.PathPattern;
 import io.github.ihongs.util.Synt;
 import java.io.IOException;
 import java.util.Set;
@@ -25,14 +25,14 @@ public class XsrfFilter implements Filter {
     private static final Pattern DOMAIN = Pattern.compile("^(?:\\w+\\:)?//(.+?)(?:\\:\\d+)?/");
 
     private String      inside = null; // 过滤器标识
-    private URLPatterns patter = null; // 待忽略用例
+    private PathPattern patter = null; // 待忽略用例
     private Set<String> allows = null; // 许可的域名
 
     @Override
     public void init(FilterConfig fc) throws ServletException {
         inside = XsrfFilter.class.getName()+":"+fc.getFilterName()+":INSIDE";
         allows = Synt.toTerms (fc.getInitParameter("allow-hosts"));
-        patter = new ActionDriver.URLPatterns(
+        patter = new ActionDriver.PathPattern(
             fc.getInitParameter("url-include"),
             fc.getInitParameter("url-exclude")
         );

@@ -2,7 +2,7 @@ package io.github.ihongs.normal.serv;
 
 import io.github.ihongs.Core;
 import io.github.ihongs.action.ActionDriver;
-import io.github.ihongs.action.ActionDriver.URLPatterns;
+import io.github.ihongs.action.ActionDriver.PathPattern;
 import io.github.ihongs.util.Synt;
 import java.io.File;
 import java.io.IOException;
@@ -22,14 +22,14 @@ import javax.servlet.http.HttpServletResponse;
 public class XurlFilter implements Filter {
 
     private String      inside = null; // 过滤器标识
-    private URLPatterns patter = null; // 待忽略用例
+    private PathPattern patter = null; // 待忽略用例
     private boolean     blocks = false ; // 屏蔽全部
 
     @Override
     public void init(FilterConfig fc) throws ServletException {
         inside = XsrfFilter.class.getName()+":"+fc.getFilterName()+":INSIDE";
         blocks = Synt.declare (fc.getInitParameter ("block-force") , false );
-        patter = new ActionDriver.URLPatterns(
+        patter = new ActionDriver.PathPattern(
             fc.getInitParameter("url-include"),
             fc.getInitParameter("url-exclude")
         );

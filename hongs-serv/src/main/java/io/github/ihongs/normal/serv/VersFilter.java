@@ -37,8 +37,8 @@ public class VersFilter extends ActionDriver {
     /**
      * 不包含的URL
      */
-    private URLPatterns urlPatter = null;
-    private URLPatterns refPatter = null;
+    private PathPattern urlPatter = null;
+    private PathPattern refPatter = null;
     private byte level = 0;
 
     private static final Pattern REF_PAT = Pattern.compile("^\\w+://([^/]+)(.*)");
@@ -52,11 +52,11 @@ public class VersFilter extends ActionDriver {
         /**
          * 获取不包含的URL
          */
-        this.urlPatter = new URLPatterns(
+        this.urlPatter = new PathPattern(
             config.getInitParameter("url-include"),
             config.getInitParameter("url-exclude")
         );
-        this.refPatter = new URLPatterns(
+        this.refPatter = new PathPattern(
             config.getInitParameter("ref-include"),
             config.getInitParameter("ref-exclude")
         );

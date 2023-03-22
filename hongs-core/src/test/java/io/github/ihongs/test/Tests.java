@@ -1,6 +1,6 @@
 package io.github.ihongs.test;
 
-import io.github.ihongs.action.ActionDriver.URLPatterns;
+import io.github.ihongs.action.ActionDriver.PathPattern;
 import io.github.ihongs.combat.CombatHelper;
 import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Synt;
@@ -69,7 +69,7 @@ public class Tests extends TestCase {
 
     @Test
     public void testUrlPatterns() {
-        String ss = new URLPatterns(
+        String ss = new PathPattern(
                     "*.js,*.css,*.html, *.gif,*.jpg,*.png,*.bmp",
                     "/centre/sign/* , \r\n /centre/login.html ,"
                 ).toString();
@@ -77,20 +77,20 @@ public class Tests extends TestCase {
                   + "Exclude: ^(/centre/sign/.*|/centre/login\\.html)$";
         assertEquals(ss, zz);
 
-        assertEquals(new URLPatterns("", "").matches("/a/b.js"), true);
+        assertEquals(new PathPattern("", "").matches("/a/b.js"), true);
 
-        assertEquals(new URLPatterns("/a/*", "").matches("/a/b.js"), true );
-        assertEquals(new URLPatterns("/a/*", "").matches("/b/a.js"), false);
-        assertEquals(new URLPatterns("*.js", "").matches("/a/b.js"), true );
-        assertEquals(new URLPatterns("*.js", "").matches("/a/b.ps"), false);
+        assertEquals(new PathPattern("/a/*", "").matches("/a/b.js"), true );
+        assertEquals(new PathPattern("/a/*", "").matches("/b/a.js"), false);
+        assertEquals(new PathPattern("*.js", "").matches("/a/b.js"), true );
+        assertEquals(new PathPattern("*.js", "").matches("/a/b.ps"), false);
 
-        assertEquals(new URLPatterns("", "/a/*").matches("/a/b.js"), false);
-        assertEquals(new URLPatterns("", "/a/*").matches("/b/a.js"), true );
-        assertEquals(new URLPatterns("", "*.js").matches("/a/b.js"), false);
-        assertEquals(new URLPatterns("", "*.js").matches("/a/b.ps"), true );
+        assertEquals(new PathPattern("", "/a/*").matches("/a/b.js"), false);
+        assertEquals(new PathPattern("", "/a/*").matches("/b/a.js"), true );
+        assertEquals(new PathPattern("", "*.js").matches("/a/b.js"), false);
+        assertEquals(new PathPattern("", "*.js").matches("/a/b.ps"), true );
 
-        assertEquals(new URLPatterns("/a/*", "*.js").matches("/a/b.js"), false);
-        assertEquals(new URLPatterns("*.js", "/a/*").matches("/b/a.js"), true );
+        assertEquals(new PathPattern("/a/*", "*.js").matches("/a/b.js"), false);
+        assertEquals(new PathPattern("*.js", "/a/*").matches("/b/a.js"), true );
     }
 
     @Test

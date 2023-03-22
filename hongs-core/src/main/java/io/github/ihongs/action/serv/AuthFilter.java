@@ -74,7 +74,7 @@ public class AuthFilter
   /**
    * 包含的URL
    */
-  private URLPatterns patter = null;
+  private PathPattern patter = null;
 
   /**
    * 去主机名正则
@@ -149,7 +149,7 @@ public class AuthFilter
     /**
      * 获取不包含的URL
      */
-    this.patter = new URLPatterns(
+    this.patter = new PathPattern(
         config.getInitParameter("url-include"),
         config.getInitParameter("url-exclude")
     );

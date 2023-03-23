@@ -477,19 +477,6 @@ public class Data extends SearchEntity {
     }
 
     /**
-     * 保存记录
-     * 调用 set(String, Map, long)
-     * @param id
-     * @param rd
-     * @return 有更新为 1, 无更新为 0
-     * @throws HongsException
-     */
-    @Override
-    public int set(String id, Map rd) throws HongsException {
-        return set(id, rd, System.currentTimeMillis() / 1000);
-    }
-
-    /**
      * 更新记录
      * 调用 put(String, Map, long)
      * @param id
@@ -500,6 +487,19 @@ public class Data extends SearchEntity {
     @Override
     public int put(String id, Map rd) throws HongsException {
         return put(id, rd, System.currentTimeMillis() / 1000);
+    }
+
+    /**
+     * 保存记录
+     * 调用 set(String, Map, long)
+     * @param id
+     * @param rd
+     * @return 有更新为 1, 无更新为 0
+     * @throws HongsException
+     */
+    @Override
+    public int set(String id, Map rd) throws HongsException {
+        return set(id, rd, System.currentTimeMillis() / 1000);
     }
 
     /**

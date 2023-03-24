@@ -311,14 +311,14 @@ public class Core
     try
     {
       // 获取工厂方法
-      Method method = clas.getMethod("getInstance", new Class [] {});
+      Method method = clas.getMethod("getInstance", new Class[]{});
       int    modifs = method.getModifiers();
 
       // 非父类定义的 public static
       if (! Modifier.isPublic(modifs)
       ||  ! Modifier.isStatic(modifs)
       || clas != method.getDeclaringClass()
-      || method.isAnnotationPresent(Deprecated.class ) )
+      || method.isAnnotationPresent(Deprecated.class))
       {
         throw  new  NoSuchMethodException();
       }
@@ -326,7 +326,7 @@ public class Core
       // 获取工厂对象
       try
       {
-        return (T) method.invoke(null, new Object [] {});
+        return (T) method.invoke(null, new Object[]{});
       }
       catch (IllegalAccessException ex)
       {

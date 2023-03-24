@@ -96,7 +96,6 @@ public class Data extends SearchEntity {
      * <pre>
      * 错误代码:
      * 821  找不到对应的类
-     * 822  构建方法不可用
      * 823  构建实例不成功
      * 910  配置文件不存在
      * 912  表单信息不存在
@@ -145,7 +144,7 @@ public class Data extends SearchEntity {
             } catch (   IllegalAccessException ex) {
                 throw new HongsExemption(ex, 823, "Can not call '"+name+".getInstance'");
             } catch (        SecurityException se) {
-                throw new HongsExemption(se, 822, "Can not call '"+name+".getInstance'");
+                throw new HongsExemption(se, 823, "Can not call '"+name+".getInstance'");
             }
         }
 

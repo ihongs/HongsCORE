@@ -4,8 +4,6 @@ import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionDriver;
-import io.github.ihongs.combat.CombatHelper;
-import io.github.ihongs.combat.anno.Combat;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.util.Digest;
 import java.io.Serializable;
@@ -24,7 +22,6 @@ import javax.servlet.http.HttpSessionContext;
  * @author Hongs
  * @deprecated 改用 Jetty 的 SessionManager
  */
-@Combat("normal.sesion")
 public class Sesion implements HttpSession, AutoCloseable, Serializable {
 
     private transient boolean isNew = false;
@@ -265,33 +262,6 @@ public class Sesion implements HttpSession, AutoCloseable, Serializable {
     }
 
     /**
-     * 清除过期的数据
-     * @param args
-     * @throws io.github.ihongs.HongsException
-     */
-    @Combat("clean")
-    public static void clean(String[] args) throws HongsException {
-        long exp = 0;
-        if (args.length != 0) {
-             exp = Integer.parseInt ( args [ 0 ] );
-        }
-        getRecord().del(System.currentTimeMillis() / 1000 - exp);
-    }
-
-    /**
-     * 预览存储的数据
-     * @param args
-     * @throws io.github.ihongs.HongsException
-     */
-    @Combat("check")
-    public static void check(String[] args) throws HongsException {
-        if (args.length == 0) {
-            CombatHelper.println("Record ID required");
-        }
-        CombatHelper.preview(getRecord().get(args[0]));
-    }
-
-    /**
      * 用会话 ID 获取会话对象
      * @param id
      * @return
@@ -304,7 +274,7 @@ public class Sesion implements HttpSession, AutoCloseable, Serializable {
         }
     }
 
-    private static IRecord<Sesion> getRecord() throws HongsException {
+    public static IRecord<Sesion> getRecord() throws HongsException {
         String cls = CoreConfig.getInstance( ).getProperty("core.normal.sesion.model");
         if (null == cls || 0 == cls.length() ) {
                cls = Recs.class.getName( );

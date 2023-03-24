@@ -317,7 +317,8 @@ public class Core
       // 非父类定义的 public static
       if (! Modifier.isPublic(modifs)
       ||  ! Modifier.isStatic(modifs)
-      || clas != method.getDeclaringClass())
+      || clas != method.getDeclaringClass()
+      || method.isAnnotationPresent(Deprecated.class ) )
       {
         throw  new  NoSuchMethodException();
       }

@@ -126,7 +126,8 @@ public class Data extends SearchEntity {
                 int    modi = func.getModifiers();
                 if (! Modifier.isPublic(modi)
                 ||  ! Modifier.isStatic(modi)
-                ||  type != func.getDeclaringClass()) {
+                ||  type != func.getDeclaringClass ()
+                ||  func.isAnnotationPresent(Deprecated.class)) {
                     throw new NoSuchMethodException();
                 }
                 return (Data) func.invoke(null, new Object[] {conf, form});

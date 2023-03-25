@@ -41,7 +41,7 @@
     <!-- REST Servlet -->
     <servlet>
         <servlet-name>Rest</servlet-name>
-        <servlet-class>io.github.ihongs.normal.serv.RestDriver</servlet-class>
+        <servlet-class>io.github.ihongs.action.serv.RestDriver</servlet-class>
         <multipart-config>
             <max-file-size>20971520</max-file-size>
             <max-request-size>20971520</max-request-size>

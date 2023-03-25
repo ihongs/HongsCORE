@@ -1,4 +1,4 @@
-package io.github.ihongs.normal.serv;
+package io.github.ihongs.serv;
 
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
@@ -130,8 +130,8 @@ public class Sesion implements HttpSession, AutoCloseable, Serializable {
         ctime = System.currentTimeMillis();
 
         // 删除会话 Cookie
-        if (req != null && req instanceof SessAccess) {
-           ((SessAccess) req ).delCookie();
+        if (req != null && req instanceof SessCasing) {
+           ((SessCasing) req ).delCookie();
         }
     }
 
@@ -143,8 +143,8 @@ public class Sesion implements HttpSession, AutoCloseable, Serializable {
         ctime = System.currentTimeMillis();
 
         // 更新会话 Cookie
-        if (req != null && req instanceof SessAccess) {
-           ((SessAccess) req ).setCookie();
+        if (req != null && req instanceof SessCasing) {
+           ((SessCasing) req ).setCookie();
         }
     }
 

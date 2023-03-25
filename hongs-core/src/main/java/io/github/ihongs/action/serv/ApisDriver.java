@@ -42,7 +42,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Hongs
  */
-public class ApisAction
+public class ApisDriver
   extends  ActionDriver
 {
     private String dataKey;

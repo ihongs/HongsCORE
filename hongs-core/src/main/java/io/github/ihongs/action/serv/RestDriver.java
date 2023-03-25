@@ -1,8 +1,7 @@
-package io.github.ihongs.normal.serv;
+package io.github.ihongs.action.serv;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.action.ActionRunner;
-import io.github.ihongs.action.serv.ApisAction;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
  * 同 API 的规则 , 未来有  URL rewrite 的功能
  * @author Hongs
  */
-public class RestAction extends ApisAction {
+public class RestDriver extends ApisDriver {
 
     private static final String   METHOD_GET    = "GET";
     private static final String   METHOD_ADD    = "ADD";

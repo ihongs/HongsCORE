@@ -33,7 +33,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Hongs
  */
-public class ActsAction
+public class ActsDriver
   extends  ActionDriver
 {
 

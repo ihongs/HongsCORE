@@ -1,4 +1,4 @@
-package io.github.ihongs.normal.serv;
+package io.github.ihongs.serv;
 
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;

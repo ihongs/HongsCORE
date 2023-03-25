@@ -1,4 +1,4 @@
-package io.github.ihongs.normal.serv;
+package io.github.ihongs.serv;
 
 import io.github.ihongs.Core;
 import io.github.ihongs.HongsException;
@@ -94,7 +94,7 @@ public class SessFilter implements Filter {
         }
 
         try {
-            raq = new SessAccess(raq, rzp, this);
+            raq = new SessCasing(raq, rzp, this);
             raq.setAttribute    ( inside , true);
             flt.doFilter        (raq, rzp);
         } finally {

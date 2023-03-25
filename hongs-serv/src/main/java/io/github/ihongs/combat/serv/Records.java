@@ -3,8 +3,8 @@ package io.github.ihongs.combat.serv;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.combat.CombatHelper;
 import io.github.ihongs.combat.anno.Combat;
-import io.github.ihongs.normal.serv.Record;
-import io.github.ihongs.normal.serv.Sesion;
+import io.github.ihongs.serv.Record;
+import io.github.ihongs.serv.Sesion;
 
 /**
  * 存储维护命令

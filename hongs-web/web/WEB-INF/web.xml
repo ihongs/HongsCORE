@@ -13,7 +13,7 @@
     <!-- Acts Servlet -->
     <servlet>
         <servlet-name>Acts</servlet-name>
-        <servlet-class>io.github.ihongs.action.serv.ActsAction</servlet-class>
+        <servlet-class>io.github.ihongs.action.serv.ActsDriver</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Acts</servlet-name>
@@ -22,38 +22,31 @@
     <!-- Apis Servlet -->
     <servlet>
         <servlet-name>Apis</servlet-name>
-        <servlet-class>io.github.ihongs.action.serv.ApisAction</servlet-class>
+        <servlet-class>io.github.ihongs.action.serv.ApisDriver</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Apis</servlet-name>
         <url-pattern>*.api</url-pattern>
     </servlet-mapping>
-    <!-- Conf Servlet -->
+    <!-- REST Servlet -->
     <servlet>
-        <servlet-name>Conf</servlet-name>
-        <servlet-class>io.github.ihongs.action.serv.ConfAction</servlet-class>
+        <servlet-name>Rest</servlet-name>
+        <servlet-class>io.github.ihongs.normal.serv.RestDriver</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>Conf</servlet-name>
-        <url-pattern>/common/conf/*</url-pattern>
+        <servlet-name>Rest</servlet-name>
+        <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
-    <!-- Lang Servlet -->
+    <!-- SACL Servlet -->
     <servlet>
-        <servlet-name>Lang</servlet-name>
-        <servlet-class>io.github.ihongs.action.serv.LangAction</servlet-class>
+        <servlet-name>Sacl</servlet-name>
+        <servlet-class>io.github.ihongs.action.serv.SaclDriver</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>Lang</servlet-name>
-        <url-pattern>/common/lang/*</url-pattern>
-    </servlet-mapping>
-    <!-- Auth Servlet -->
-    <servlet>
-        <servlet-name>Auth</servlet-name>
-        <servlet-class>io.github.ihongs.action.serv.AuthAction</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>Auth</servlet-name>
+        <servlet-name>Sacl</servlet-name>
         <url-pattern>/common/auth/*</url-pattern>
+        <url-pattern>/common/conf/*</url-pattern>
+        <url-pattern>/common/lang/*</url-pattern>
     </servlet-mapping>
     <!-- Session Sets -->
     <session-config>

@@ -1,4 +1,4 @@
-package io.github.ihongs.normal.serv;
+package io.github.ihongs.serv;
 
 import io.github.ihongs.CoreLogger;
 import javax.servlet.ServletContext;
@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequestWrapper;
  * @author Hongs
  * @deprecated 改用 Jetty 的 SessionManager
  */
-public class SessAccess extends HttpServletRequestWrapper {
+public class SessCasing extends HttpServletRequestWrapper {
 
     private final HttpServletResponse rsp;
     private final SessFilter flt;
@@ -26,7 +26,7 @@ public class SessAccess extends HttpServletRequestWrapper {
     private boolean vldSid;
     private byte    frm= 0;
 
-    public SessAccess(HttpServletRequest req, HttpServletResponse rsp, SessFilter flt) {
+    public SessCasing(HttpServletRequest req, HttpServletResponse rsp, SessFilter flt) {
         super(  req  );
         this.rsp = rsp;
         this.flt = flt;

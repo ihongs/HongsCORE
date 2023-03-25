@@ -1,4 +1,4 @@
-package io.github.ihongs.serv.centra;
+package io.github.ihongs.action.serv;
 
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
@@ -31,7 +31,7 @@ import java.util.Set;
  * @author Hongs
  */
 @Action("centra/file")
-public class FileAction implements IAction {
+public class FoldAction implements IAction {
 
     private static final Map<String, Byte> TYPE_SORT = new HashMap();
     static {

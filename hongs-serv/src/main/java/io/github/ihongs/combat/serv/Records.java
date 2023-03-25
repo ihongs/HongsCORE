@@ -1,4 +1,4 @@
-package io.github.ihongs.serv.centra;
+package io.github.ihongs.combat.serv;
 
 import io.github.ihongs.HongsException;
 import io.github.ihongs.combat.CombatHelper;

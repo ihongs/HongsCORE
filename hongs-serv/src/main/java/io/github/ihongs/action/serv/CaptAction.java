@@ -1,4 +1,4 @@
-package io.github.ihongs.serv.centre;
+package io.github.ihongs.action.serv;
 
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsException;

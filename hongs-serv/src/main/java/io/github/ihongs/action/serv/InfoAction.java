@@ -1,4 +1,4 @@
-package io.github.ihongs.serv.centra;
+package io.github.ihongs.action.serv;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;

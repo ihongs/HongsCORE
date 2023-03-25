@@ -20,6 +20,7 @@ import java.io.InputStreamReader;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Collections;
@@ -139,7 +140,7 @@ public class SourceCombat {
             throws HongsException {
         try (
             FileInputStream is = new FileInputStream(fo);
-            BufferedReader in = new BufferedReader(new InputStreamReader(is));
+             BufferedReader in = new  BufferedReader(new InputStreamReader(is, "UTF-8"));
         ) {
             DB db = DB.getInstance("default");
             StringBuilder sb = new StringBuilder();

@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.Filter;
@@ -207,13 +208,17 @@ public class ActionDriver implements Filter, Servlet {
         ch.runTimed(() -> Gate.clean());
 
         // 启动后需立即执行的任务
-        String ss = cnf.getProperty( "serve.init" );
-        if (ss != null) for (String sn : ss.split(";")) {
+        String ss = cnf.getProperty ( "serve.init" );
+        if (ss != null) for (String sn : ss .split(";")) {
             sn  = sn.trim();
-            if (! sn.isEmpty( ) ) try {
-               ( (Runnable) Class.forName(sn)
-                    .getDeclaredConstructor()
-                    .newInstance( ) ).run(  );
+            if (! sn.isEmpty()) try {
+                Class cs = Class.forName(sn);
+                if (Runnable.class.isAssignableFrom(cs)) {
+                  ((Runnable)cs.getDeclaredConstructor().newInstance()).run();
+                } else
+                if (Consumer.class.isAssignableFrom(cs)) {
+                  ((Consumer)cs.getDeclaredConstructor().newInstance()).accept(cont);
+                }
             } catch (ClassNotFoundException ex) {
                 throw new  ServletException(ex);
             } catch ( NoSuchMethodException ex) {

@@ -17,6 +17,11 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 
 /**
  * 会话存到数据库
+ *
+ * 可在 defines.properties 中设置:
+ *  jetty.session.manager.db=库名
+ *  jetty.session.manager.tb=表名
+ *
  * @author Hongs
  */
 public class SessInDB  implements Initer {

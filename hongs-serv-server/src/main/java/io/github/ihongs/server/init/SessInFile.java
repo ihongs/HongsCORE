@@ -12,6 +12,10 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 
 /**
  * 会话存到文件里
+ *
+ * 可在 defines.properties 中设置:
+ *  jetty.session.manager.path=存储路径
+ *
  * @author Hongs
  */
 public class SessInFile implements Initer {

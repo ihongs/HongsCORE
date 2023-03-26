@@ -2,7 +2,6 @@ package io.github.ihongs.server.init;
 
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLogger;
-import io.github.ihongs.combat.serv.ServerCombat;
 import io.github.ihongs.util.Synt;
 import java.util.Set;
 import javax.servlet.DispatcherType;
@@ -15,9 +14,10 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 
 /**
  * 会话 ID 设置
+ * 注意: 必须放在 SessInDB 或 SessInFile 之前
  * @author Hongs
  */
-public class SessId implements ServerCombat.Initer {
+public class SessId implements Initer {
 
     @Override
     public void init(ServletContextHandler sc) {

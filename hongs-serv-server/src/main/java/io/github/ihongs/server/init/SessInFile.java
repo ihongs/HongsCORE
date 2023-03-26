@@ -2,7 +2,6 @@ package io.github.ihongs.server.init;
 
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
-import io.github.ihongs.combat.serv.ServerCombat;
 import java.io.File;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.session.DefaultSessionCache;
@@ -15,7 +14,7 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
  * 会话存到文件里
  * @author Hongs
  */
-public class SessInFile implements ServerCombat.Initer {
+public class SessInFile implements Initer {
 
     @Override
     public void init(ServletContextHandler sc) {

@@ -1,14 +1,9 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package io.github.ihongs.server.init;
 
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
-import io.github.ihongs.combat.serv.ServerCombat;
 import io.github.ihongs.db.DBConfig;
 import java.util.Map;
 import org.eclipse.jetty.server.Server;
@@ -24,7 +19,7 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
  * 会话存到数据库
  * @author Hongs
  */
-public class SessInDB  implements ServerCombat.Initer {
+public class SessInDB  implements Initer {
 
     @Override
     public void init(ServletContextHandler sc) {

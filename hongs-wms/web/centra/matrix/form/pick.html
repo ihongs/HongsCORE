@@ -42,6 +42,9 @@
 (function($) {
     var context = $("#matrix-form-pick");
 
+    // 自适应滚屏
+    hsFlexRoll(context.find(".listbox"), $("#main-context"));
+
     // 附加关联所需的额外配置参数
     context.data("_fill__fork", function(cel, v, n) {
         hsListFillFork.call(this, cel, v, n);

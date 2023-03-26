@@ -63,6 +63,9 @@
 
         hsRequires("centra/master/util.css");
 
+        // 自适应滚屏
+        hsFlexRoll(context.find(".listbox"), $("#main-context"));
+
         // 鼠标悬浮在格子上提示
         context.data("_fill_tips" , function(c, v, n) {
             if (v) {

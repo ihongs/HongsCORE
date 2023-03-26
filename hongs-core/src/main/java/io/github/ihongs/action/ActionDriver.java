@@ -213,11 +213,14 @@ public class ActionDriver implements Filter, Servlet {
             sn  = sn.trim();
             if (! sn.isEmpty()) try {
                 Class cs = Class.forName(sn);
+                if (Consumer.class.isAssignableFrom(cs)) {
+                  ((Consumer)cs.getDeclaredConstructor().newInstance()).accept(cont);
+                } else
                 if (Runnable.class.isAssignableFrom(cs)) {
                   ((Runnable)cs.getDeclaredConstructor().newInstance()).run();
                 } else
-                if (Consumer.class.isAssignableFrom(cs)) {
-                  ((Consumer)cs.getDeclaredConstructor().newInstance()).accept(cont);
+                {
+                    throw new ServletException("Can not run init class: "+sn);
                 }
             } catch (ClassNotFoundException ex) {
                 throw new  ServletException(ex);

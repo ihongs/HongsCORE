@@ -24,73 +24,69 @@ public class SessId implements Initer {
         Hand   hd = new Hand(  );
         sc.setSessionHandler(hd);
 
-        CoreConfig cc = CoreConfig.getInstance("defines");
-        // 参数名称
-        String cn = hd.getSessionCookieName(hd.getSessionCookieConfig()).toLowerCase();
-        hd.setSessionHeaderName(cc.getProperty("jetty.session.header.name", "x-"+ cn));
-        hd.setSessionParamsName(cc.getProperty("jetty.session.params.name", "." + cn));
         // 追踪模式
-        Set tm  = Synt.toSet(cc.getProperty("jetty.session.tracking.mode").toUpperCase());
+        CoreConfig cc = CoreConfig.getInstance("defines");
+        Set tm  = Synt.toSet(cc.getProperty("jetty.session.tracking.mode"));
         if (tm != null && !tm.isEmpty()) {
-            if (tm.contains("COOKIE")) {
-                hd.setUsingCookies(true);
-            }
-            if (tm.contains("HEADER")) {
-                hd.setUsingHeaders(true);
-            }
-            if (tm.contains("PARAMS")) {
-                hd.setUsingRequest(true);
-            }
-            if (tm.contains("URL")) {
-                hd.setUsingURLs(true);
-            }
+            hd.setUsingHeaders(tm.contains("HEADER"));
+            hd.setUsingRequest(tm.contains("PARAMS"));
         }
     }
 
     private static class Hand extends SessionHandler {
         protected boolean _usingHeaders = false;
-        protected String _sessionHeaderName = "x-ssid";
+        protected String _sessionHeaderName = null;
         protected boolean _usingRequest = false;
-        protected String _sessionParamsName =  ".ssid";
+        protected String _sessionParamsName = null;
 
         protected Hand () {
             super();
+        }
+
+        public void setUsingURLs(boolean used) {
+            _usingURLs = used;
         }
 
         public boolean isUsingHeaders() {
             return _usingHeaders;
         }
 
-        public void setUsingHeaders(boolean usingHeaders) {
-            _usingHeaders = usingHeaders;
-        }
-
-        public String getSessionHeaderName() {
-            return _sessionHeaderName ;
+        public void setUsingHeaders(boolean used) {
+            _usingHeaders = used;
         }
 
         public void setSessionHeaderName(String param) {
             _sessionHeaderName = param;
         }
 
+        public String getSessionHeaderName() {
+            if (_sessionHeaderName == null ) {
+                _sessionHeaderName  = CoreConfig.getInstance("defines").getProperty("jetty.session.header.name");
+            if (_sessionHeaderName == null ) {
+                _sessionHeaderName  = "x-" + getSessionCookieName(getSessionCookieConfig()).toLowerCase();
+            }}
+            return _sessionHeaderName;
+        }
+
         public boolean isUsingRequest() {
             return _usingRequest;
         }
 
-        public void setUsingRequest(boolean usingRequest) {
-            _usingRequest = usingRequest;
-        }
-
-        public String getSessionParamsName() {
-            return _sessionParamsName ;
+        public void setUsingRequest(boolean used) {
+            _usingRequest = used;
         }
 
         public void setSessionParamsName(String param) {
             _sessionParamsName = param;
         }
 
-        public void setUsingURLs(boolean usingURLs) {
-            _usingURLs = usingURLs;
+        public String getSessionParamsName() {
+            if (_sessionParamsName == null ) {
+                _sessionParamsName  = CoreConfig.getInstance("defines").getProperty("jetty.session.params.name");
+            if (_sessionParamsName == null ) {
+                _sessionParamsName  =  "." + getSessionCookieName(getSessionCookieConfig()).toLowerCase();
+            }}
+            return _sessionParamsName;
         }
 
         @Override
@@ -144,25 +140,27 @@ public class SessId implements Initer {
             if (ssid == null && isUsingHeaders()) {
                 HttpSession sess;
                 String sessName = getSessionHeaderName();
-                ssid = request.getHeader    (sessName);
+                ssid = request.getHeader    ( sessName );
+                if (ssid != null) {
                 sess = getHttpSession(ssid);
                 if (sess != null && isValid (sess)) {
                     baseRequest.enterSession(sess);
                     baseRequest.  setSession(sess);
                     CoreLogger.debug("Got session id from headers, {}={}", sessName, ssid);
-                }
+                }}
             }
 
             if (ssid == null && isUsingRequest()) {
                 HttpSession sess;
                 String sessName = getSessionParamsName();
-                ssid = request.getParameter (sessName);
+                ssid = request.getParameter ( sessName );
+                if (ssid != null) {
                 sess = getHttpSession(ssid);
                 if (sess != null && isValid (sess)) {
                     baseRequest.enterSession(sess);
                     baseRequest.  setSession(sess);
                     CoreLogger.debug("Got session id from request, {}={}", sessName, ssid);
-                }
+                }}
             }
 
             if (ssid == null && isUsingURLs()) {
@@ -179,7 +177,7 @@ public class SessId implements Initer {
                         {
                             char c = uri.charAt(i);
                             if (c == ';' || c == '#' || c == '?' || c == '/')
-                                break;
+                                break ;
                             i++;
                         }
 

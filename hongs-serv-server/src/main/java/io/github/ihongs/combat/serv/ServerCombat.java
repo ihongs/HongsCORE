@@ -6,7 +6,6 @@ import io.github.ihongs.CoreRoster;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.combat.anno.Combat;
-import io.github.ihongs.db.DBConfig;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -18,7 +17,6 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.DispatcherType;
@@ -26,30 +24,22 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.annotation.WebListener;
 import javax.servlet.annotation.WebInitParam;
-
-import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-
-// Session 初始化依赖的类
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.SameFileAliasChecker;
 import org.eclipse.jetty.server.session.SessionHandler;
-import org.eclipse.jetty.server.session.DatabaseAdaptor;
-import org.eclipse.jetty.server.session.DefaultSessionCache;
-import org.eclipse.jetty.server.session.DefaultSessionIdManager;
-import org.eclipse.jetty.server.session.FileSessionDataStore;
-import org.eclipse.jetty.server.session.JDBCSessionDataStore;
-
-// JSP 初始化依赖的类
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletHolder;
-import org.eclipse.jetty.apache.jsp.JettyJasperInitializer;
-import org.eclipse.jetty.plus.annotation.ContainerInitializer;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
+
+// JSP 初始化依赖的类
 import org.apache.tomcat.InstanceManager;
 import org.apache.tomcat.SimpleInstanceManager;
-import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.SameFileAliasChecker;
-import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.util.thread.QueuedThreadPool;
+import org.eclipse.jetty.apache.jsp.JettyJasperInitializer;
+import org.eclipse.jetty.plus.annotation.ContainerInitializer;
 
 /**
  * 服务启动命令
@@ -385,127 +375,6 @@ public class ServerCombat {
     }
 
     /**
-     * 会话初始器(存文件)
-     */
-    public static class Snaper implements Initer {
-
-        @Override
-        public void init(ServletContextHandler sc) {
-            CoreConfig  cc = CoreConfig.getInstance("defines");
-            String dn = cc.getProperty("jetty.session.manager.path", "server" + File.separator + "sess");
-            File   dh = new File(dn);
-            if ( ! dh.isAbsolute() ) {
-                   dn = Core.DATA_PATH + File.separator + dn;
-                   dh = new File(dn);
-            }
-            if ( ! dh.exists() /**/) {
-                   dh.mkdirs();
-            }
-
-            Server                  sv = sc . getServer             (  );
-            DefaultSessionIdManager im = new DefaultSessionIdManager(sv);
-            im.setWorkerName       (Core.SERVER_ID);
-            sv.setSessionIdManager (im);
-
-            SessionHandler          sh = sc . getSessionHandler  (  );
-            DefaultSessionCache     ch = new DefaultSessionCache (sh);
-            FileSessionDataStore    sd = new FileSessionDataStore(  );
-            sd.setStoreDir         (dh);
-            ch.setSessionDataStore (sd);
-            sh.setSessionCache     (ch);
-            sc.setSessionHandler   (sh);
-        }
-
-    }
-
-    /**
-     * 会话初始器(数据库)
-     */
-    public static class Swaper implements Initer {
-
-        @Override
-        public void init(ServletContextHandler sc) {
-            CoreConfig  cc = CoreConfig.getInstance("defines");
-            String dh = cc.getProperty("jetty.session.manager.db", "default");
-
-            Server                  sv = sc . getServer             (  );
-            DefaultSessionIdManager im = new DefaultSessionIdManager(sv);
-            im.setWorkerName       (Core.SERVER_ID);
-            sv.setSessionIdManager (im);
-
-            SessionHandler          sh = sc . getSessionHandler  (  );
-            DefaultSessionCache     ch = new DefaultSessionCache (sh);
-            JDBCSessionDataStore    sd = new JDBCSessionDataStore(  );
-            sd.setDatabaseAdaptor  (getAdaptor(dh));
-            ch.setSessionDataStore (sd);
-            sh.setSessionCache     (ch);
-            sc.setSessionHandler   (sh);
-        }
-
-        private DatabaseAdaptor getAdaptor(String dh) {
-            DBConfig conf;
-            try {
-                conf= new DBConfig(dh);
-            } catch (HongsException e) {
-                throw new HongsExemption (e);
-            }
-
-            if (conf.link != null && conf.link.length() != 0 ) {
-                return getAdaptor(conf.link);
-            } else
-            if (conf.origin != null && !conf.origin.isEmpty()) {
-                dh = (String) conf.origin.get("name");
-                dh = ( dh + getOptions (conf.origin));
-                DatabaseAdaptor da = new DatabaseAdaptor();
-                da.setDatasourceName(dh);
-                return da;
-            } else
-            if (conf.source != null && !conf.source.isEmpty()) {
-                String dt ;
-                dt = (String) conf.source.get("jdbc");
-                dh = (String) conf.source.get("name");
-                dh = ( DBConfig.fixSourceName( dh  ));
-                dh = ( dh + getOptions (conf.source));
-                DatabaseAdaptor da = new DatabaseAdaptor();
-                da.setDriverInfo(dt, dh);
-                return da;
-            } else {
-                throw new HongsExemption("Wrong session manager jdbc!");
-            }
-        }
-
-        private String getOptions( Map dc ) {
-            Map dp = (Map) dc.get( "info" );
-            if (dp == null || dp.isEmpty()) {
-                return "";
-            }
-
-            // 拼接用户名密码
-            StringBuilder sb = new StringBuilder();
-            if (dp.containsKey("username")) {
-                sb.append("&user="/**/).append(dp.get("username"));
-            }
-            if (dp.containsKey("password")) {
-                sb.append("&password=").append(dp.get("password"));
-            }
-            // Jetty 采用序列化存储, 无特别数据类型,
-            // 附加参数会反而被作为库名部分导致错误.
-            /*
-            if (dp.containsKey("connectionProperties")) {
-                sb.append("&").append(((String)dp.get("connectionProperties")).replace(';','&'));
-            }
-            */
-            if (sb.length(   ) != 0 ) {
-                sb.setCharAt (0, '?');
-                return sb.toString( );
-            }
-
-            return "";
-        }
-
-    }
-
-    /**
      * 应用加载器
      */
     public static class Loader implements Initer {
@@ -637,11 +506,5 @@ public class ServerCombat {
         }
 
     }
-
-    /**
-     * @see Swaper
-     * @deprecated 改用 Snaper
-     */
-    public static class Sesion extends Snaper {}
 
 }

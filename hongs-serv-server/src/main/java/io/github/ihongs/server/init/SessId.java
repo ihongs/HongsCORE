@@ -14,14 +14,14 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 
 /**
  * 会话 ID 设置
- * 
+ *
  * 注意: 必须放在 SessInDB 或 SessInFile 之前
  * 可在 defines.properties 中设置:
  *  jetty.session.tracking.mode=HEADER,PARAMS
  *  jetty.session.header.name=选项名
  *  jetty.session.params.name=参数名
  * 这是对 web.xml session-config 的补充
- * 
+ *
  * @author Hongs
  */
 public class SessId implements Initer {

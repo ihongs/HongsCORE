@@ -40,7 +40,7 @@
             </tbody>
         </table>
     </div>
-    <div class="pagebox clearfix"></div>
+    <div class="pagebox clearfix"><em class="page-text">...</em></div>
 
     <div class="modal fade in" style="z-index: 99999; display: none;">
         <div class="modal-dialog modal-sm">
@@ -62,6 +62,9 @@
         var viewImg = context.find(".modal");
 
         hsRequires("centra/master/util.css");
+
+        // 自适应滚屏
+        hsFlexRoll(context.find(".listbox"), $("#main-context"));
 
         // 鼠标悬浮在格子上提示
         context.data("_fill_tips" , function(c, v, n) {

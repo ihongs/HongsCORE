@@ -1,4 +1,4 @@
---DB=normal
+﻿--DB=normal
 
 --
 -- 简单键值存储

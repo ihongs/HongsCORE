@@ -41,8 +41,8 @@ import java.util.LinkedHashMap;
  *
  * <h3>异常代码</h3>
  * <pre>
- * 850 解析JSON数据失败
- * 851 写入JSON数据失败
+ * 855 解析JSON数据失败
+ * 856 写入JSON数据失败
  * </pre>
  *
  * @author Hongs
@@ -65,7 +65,7 @@ public final class Dist
     }
     catch (ParseException | IOException ex)
     {
-      throw new HongsExemption(ex, 850, "Can not parse data by json");
+      throw new HongsExemption(ex, 855, "Can not parse data by json");
     }
   }
 
@@ -82,7 +82,7 @@ public final class Dist
     }
     catch (ParseException ex)
     {
-      throw new HongsExemption(ex, 850, "Can not parse data by json");
+      throw new HongsExemption(ex, 855, "Can not parse data by json");
     }
   }
 
@@ -144,11 +144,11 @@ public final class Dist
   {
     try
     {
-      append(out, compact ? null : "" , null, obj, false);
+      append(out, compact ? null : "", null, obj, false);
     }
-    catch (IOException ex)
+    catch (IOException e)
     {
-      throw new HongsExemption(ex, 851, "Can not write data for json");
+      throw new HongsExemption(e, 856, "Can not write data for json");
     }
   }
 
@@ -481,7 +481,7 @@ public final class Dist
             }
         }
         catch (IOException e)  {
-            throw new HongsExemption(e, 851, "Can not write data for json");
+            throw new HongsExemption(e, 856, "Can not write data for json");
         }
     }
 

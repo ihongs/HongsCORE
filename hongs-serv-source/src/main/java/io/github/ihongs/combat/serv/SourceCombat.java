@@ -13,6 +13,7 @@ import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.PrintStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -24,7 +25,6 @@ import java.util.Comparator;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -138,7 +138,8 @@ public class SourceCombat {
     private static void runSql(File fo)
             throws HongsException {
         try (
-            Scanner in = new Scanner (fo);
+            FileInputStream is = new FileInputStream(fo);
+             BufferedReader in = new  BufferedReader(new InputStreamReader(is, "UTF-8"));
         ) {
             DB db = DB.getInstance("default");
             StringBuilder sb = new StringBuilder();
@@ -148,42 +149,41 @@ public class SourceCombat {
             long rl = 0; // 处理进度
             long ok = 0; // 成功计数
             long er = 0; // 失败计数
-            int  li = 0; // 行号
+            int  rn = 0; // 行号
+            String ln;
 
-            while ( in.hasNextLine() ) {
-                String  ln = in.nextLine();
-                rl  +=  ln.length ();
-                ln   =  ln. trim  ();
-                li  +=  1 ;
+            while(null != (ln = in.readLine())) {
+                rn += 1;
+                rl += ln.length();
+                ln  = CMT_PAT.matcher(ln).replaceAll("").trim(); // 清理行注释
 
-                if (sb.length() == 0 ) {
-                    if (ln.length() == 0 ) {        // 空行
+                if (ln.length() == 0) {
+                    continue; // 空行
+                }
+                if (sb.length() == 0) {
+                    if (ln.startsWith("--DB=")) {
+                        db = DB.getInstance ( ln.substring(5) ); // 切换数据库
                         continue;
                     }
-                    if (ln.startsWith("--DB=")) {   // 切换数据库
-                        db = DB.getInstance(ln.substring(5));
-                        continue;
-                    }
-                    if (ln.startsWith("--")) {      // 注释
-                        continue;
+                    if (ln.startsWith("--")) {
+                        continue; // 注释
                     }
                     if (ln.startsWith("/*")
-                    &&  ln.  endsWith("*/")) {      // 注释
-                        continue;
+                    &&  ln.  endsWith("*/")) {
+                        continue; // 注释
                     }
                 }
 
-                ln = CMT_PAT.matcher(ln).replaceAll(" ").trim(); // 注释
                 if (ln.endsWith(";")) {
-                    ln = ln.substring (0, ln.length()-1);
+                    ln = ln.substring(0, ln.length() - 1);
                     sb.append(ln);
                 } else {
                     sb.append(ln);
                     continue;
                 }
 
-                ln = sb.toString( );
-                sb . setLength( 0 );
+                ln = sb.toString();
+                sb . setLength (0);
 
                 // 进度
                float rp = (float) rl / al;
@@ -194,17 +194,17 @@ public class SourceCombat {
                     db.execute(ln);
                     CombatHelper.progres(rp, String.format("Ok(%d) Er(%d) ET: %s", ok++, er, Inst.phrase(et)));
                 }
-                catch(HongsException ex) {
+                catch (HongsException ex) {
                     CombatHelper.progres(rp, String.format("Ok(%d) Er(%d) ET: %s", ok, er++, Inst.phrase(et)));
-                    if (0 < Core.DEBUG) {
+                    if ( 0 < Core.DEBUG ) {
                         CombatHelper.progres();
-                        CombatHelper.println("Error in file("+fo.getName()+") at line("+li+"): "+ex.getMessage());
+                        CombatHelper.println("Error in file("+fo.getName()+") at line("+rn+"): "+ex.getMessage());
                         throw ex;
                     }
                 }
             }
             if (sb.length()!=0) {
-                String ln = sb.toString();
+                ln = sb.toString();
 
                 // 进度
                float rp = (float) rl / al;
@@ -215,11 +215,11 @@ public class SourceCombat {
                     db.execute(ln);
                     CombatHelper.progres(rp, String.format("Ok(%d) Er(%d) ET: %s", ok++, er, Inst.phrase(et)));
                 }
-                catch(HongsException ex) {
+                catch (HongsException ex) {
                     CombatHelper.progres(rp, String.format("Ok(%d) Er(%d) ET: %s", ok, er++, Inst.phrase(et)));
-                    if (0 < Core.DEBUG) {
+                    if ( 0 < Core.DEBUG ) {
                         CombatHelper.progres();
-                        CombatHelper.println("Error in file("+fo.getName()+") at line("+li+"): "+ex.getMessage() );
+                        CombatHelper.println("Error in file("+fo.getName()+") at line("+rn+"): "+ex.getMessage());
                         throw ex;
                     }
                 }
@@ -228,6 +228,9 @@ public class SourceCombat {
             CombatHelper.progres();
         }
         catch (FileNotFoundException ex) {
+            throw new HongsException(ex);
+        }
+        catch (IOException ex) {
             throw new HongsException(ex);
         }
     }

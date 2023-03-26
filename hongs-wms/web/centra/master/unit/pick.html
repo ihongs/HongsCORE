@@ -36,5 +36,13 @@
             </tbody>
         </table>
     </div>
-    <div class="pagebox clearfix"></div>
+    <div class="pagebox clearfix"><em class="page-text">...</em></div>
 </div>
+<script type="text/javascript">
+    (function($) {
+        var context = H$("#master-unit-pick");
+
+        // 自适应滚屏
+        hsFlexRoll(context.find(".listbox"), $("#main-context"));
+    })(jQuery);
+</script>

@@ -50,9 +50,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * <h3>错误代码:</h3>
  * <pre>
  * 821 无法获取对应的类
- * 822 禁止访问工厂方法
+ * 822 无法执行构造方法
  * 823 无法执行工厂方法
- * 824 执行构造方法失败
  * </pre>
  *
  * @author Hongs
@@ -311,13 +310,14 @@ public class Core
     try
     {
       // 获取工厂方法
-      Method method = clas.getMethod("getInstance", new Class [] {});
+      Method method = clas.getMethod("getInstance", new Class[]{});
       int    modifs = method.getModifiers();
 
       // 非父类定义的 public static
       if (! Modifier.isPublic(modifs)
       ||  ! Modifier.isStatic(modifs)
-      || clas != method.getDeclaringClass())
+      || clas != method.getDeclaringClass()
+      || method.isAnnotationPresent(Deprecated.class))
       {
         throw  new  NoSuchMethodException();
       }
@@ -325,15 +325,7 @@ public class Core
       // 获取工厂对象
       try
       {
-        return (T) method.invoke(null, new Object [] {});
-      }
-      catch (IllegalAccessException ex)
-      {
-        throw new HongsExemption(ex, 823, "Can not build "+clas.getName());
-      }
-      catch (IllegalArgumentException  ex)
-      {
-        throw new HongsExemption(ex, 823, "Can not build "+clas.getName());
+        return (T) method.invoke(null, new Object[]{});
       }
       catch (InvocationTargetException ex)
       {
@@ -353,6 +345,18 @@ public class Core
 
         throw new HongsExemption(ta, 823, "Can not build "+clas.getName());
       }
+      catch (IllegalArgumentException ex)
+      {
+        throw new HongsExemption(ex, 823, "Can not build "+clas.getName());
+      }
+      catch (  IllegalAccessException ex)
+      {
+        throw new HongsExemption(ex, 823, "Can not build "+clas.getName());
+      }
+      catch (  SecurityException ex)
+      {
+        throw new HongsExemption(ex, 823, "Can not build "+clas.getName());
+      }
     }
     catch (NoSuchMethodException ez)
     {
@@ -360,18 +364,6 @@ public class Core
       try
       {
         return clas.getDeclaredConstructor().newInstance();
-      }
-      catch ( NoSuchMethodException ex)
-      {
-        throw new HongsExemption(ex, 824, "Can not build "+clas.getName());
-      }
-      catch (InstantiationException ex)
-      {
-        throw new HongsExemption(ex, 824, "Can not build "+clas.getName());
-      }
-      catch (IllegalAccessException ex)
-      {
-        throw new HongsExemption(ex, 824, "Can not build "+clas.getName());
       }
       catch (InvocationTargetException ex)
       {
@@ -389,12 +381,20 @@ public class Core
           throw ((HongsCause) ta).toExemption();
         }
 
-        throw new HongsExemption(ex, 824, "Can not build "+clas.getName());
+        throw new HongsExemption(ex, 822, "Can not build "+clas.getName());
       }
-    }
-    catch (SecurityException se)
-    {
-        throw new HongsExemption(se, 822, "Can not build "+clas.getName());
+      catch (InstantiationException ex)
+      {
+        throw new HongsExemption(ex, 822, "Can not build "+clas.getName());
+      }
+      catch (IllegalAccessException ex)
+      {
+        throw new HongsExemption(ex, 822, "Can not build "+clas.getName());
+      }
+      catch ( NoSuchMethodException ex)
+      {
+        throw new HongsExemption(ex, 822, "Can not build "+clas.getName());
+      }
     }
   }
 

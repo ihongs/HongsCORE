@@ -13,7 +13,7 @@
     <!-- Acts Servlet -->
     <servlet>
         <servlet-name>Acts</servlet-name>
-        <servlet-class>io.github.ihongs.action.serv.ActsAction</servlet-class>
+        <servlet-class>io.github.ihongs.action.serv.ActsDriver</servlet-class>
         <multipart-config>
             <max-file-size>20971520</max-file-size>
             <max-request-size>20971520</max-request-size>
@@ -27,7 +27,7 @@
     <!-- Apis Servlet -->
     <servlet>
         <servlet-name>Apis</servlet-name>
-        <servlet-class>io.github.ihongs.action.serv.ApisAction</servlet-class>
+        <servlet-class>io.github.ihongs.action.serv.ApisDriver</servlet-class>
         <multipart-config>
             <max-file-size>20971520</max-file-size>
             <max-request-size>20971520</max-request-size>
@@ -41,7 +41,7 @@
     <!-- REST Servlet -->
     <servlet>
         <servlet-name>Rest</servlet-name>
-        <servlet-class>io.github.ihongs.normal.serv.RestAction</servlet-class>
+        <servlet-class>io.github.ihongs.action.serv.RestDriver</servlet-class>
         <multipart-config>
             <max-file-size>20971520</max-file-size>
             <max-request-size>20971520</max-request-size>
@@ -55,7 +55,7 @@
     <!-- SACL Servlet -->
     <servlet>
         <servlet-name>Sacl</servlet-name>
-        <servlet-class>io.github.ihongs.normal.serv.SaclAction</servlet-class>
+        <servlet-class>io.github.ihongs.action.serv.SaclDriver</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Sacl</servlet-name>
@@ -66,7 +66,7 @@
     <!-- SPAR Filter -->
     <filter>
         <filter-name>SparFilter</filter-name>
-        <filter-class>io.github.ihongs.normal.serv.SparFilter</filter-class>
+        <filter-class>io.github.ihongs.serv.filter.SparFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>SparFilter</filter-name>
@@ -75,7 +75,7 @@
     <!-- XURL Filter 点开头为隐藏文件 -->
     <filter>
         <filter-name>XurlFilter</filter-name>
-        <filter-class>io.github.ihongs.normal.serv.XurlFilter</filter-class>
+        <filter-class>io.github.ihongs.serv.filter.XurlFilter</filter-class>
         <init-param>
             <param-name>url-include</param-name>
             <param-value>*.jsp,*/.*</param-value>
@@ -88,7 +88,7 @@
     <!-- XSRF Filter 开放登录不可限定 -->
     <filter>
         <filter-name>XsrfFilter</filter-name>
-        <filter-class>io.github.ihongs.normal.serv.XsrfFilter</filter-class>
+        <filter-class>io.github.ihongs.serv.filter.XsrfFilter</filter-class>
         <init-param>
             <param-name>url-exclude</param-name>
             <param-value>/centre/sign/open/*</param-value>
@@ -103,7 +103,7 @@
     <!-- Vars Filter -->
     <filter>
         <filter-name>VarsFilter</filter-name>
-        <filter-class>io.github.ihongs.normal.serv.VarsFilter</filter-class>
+        <filter-class>io.github.ihongs.serv.filter.VarsFilter</filter-class>
         <init-param>
             <param-name>rn-limit</param-name>
             <param-value>100</param-value>

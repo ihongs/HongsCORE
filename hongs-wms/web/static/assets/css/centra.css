@@ -382,15 +382,6 @@ body {
     padding-left : 15px;
     padding-right: 15px;
 }
-#main-context>div>.tabs>li>a,
-#main-context>div>.loadbox>.tabs>li>a ,
-#main-context>div>.openbox>.tabs>li>a {
-    padding: 6px 12px;
-}#main-context>div>.tabs>li+li>a,
-#main-context>div>.loadbox>.tabs>li+li>a ,
-#main-context>div>.openbox>.tabs>li+li>a {
-    margin-left: -1px;
-}
 
 /* 标准表单分块布局 */
 .form-body {

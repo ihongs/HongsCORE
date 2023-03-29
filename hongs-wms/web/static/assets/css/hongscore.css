@@ -292,9 +292,12 @@ input[type="time"].form-control {
 .tabs li .title:empty:before {
     content: "..." ;
 }
-.tabs>li+li>a {
-    margin-left : 2px;
+.tabs>li>a {
+    padding: 6px 12px;
     margin-right: 0px;
+}
+.tabs>li+li>a {
+    margin-left: -1px;
 }
 
 .nav-tabs   .close ,

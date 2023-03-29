@@ -6,7 +6,7 @@
 
 html ,
 body {
-    background: #ffffff;
+    background: #f8f8f8;
     min-height: 558px;
     min-width : 992px;
     height: 100%;
@@ -368,14 +368,28 @@ body {
 }
 
 /* 二级导航附加样式 */
+#main-context {
+    background: #ffffff;
+}
 #main-context>div>.tabs ,
 #main-context>div>.loadbox>.tabs ,
 #main-context>div>.openbox>.tabs {
     background: #f8f8f8;
+    margin-top  : -20px;
     margin-left : -15px;
     margin-right: -15px;
+    padding-top  : 20px;
     padding-left : 15px;
     padding-right: 15px;
+}
+#main-context>div>.tabs>li>a,
+#main-context>div>.loadbox>.tabs>li>a ,
+#main-context>div>.openbox>.tabs>li>a {
+    padding: 6px 12px;
+}#main-context>div>.tabs>li+li>a,
+#main-context>div>.loadbox>.tabs>li+li>a ,
+#main-context>div>.openbox>.tabs>li+li>a {
+    margin-left: -1px;
 }
 
 /* 标准表单分块布局 */

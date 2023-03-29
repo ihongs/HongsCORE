@@ -371,6 +371,7 @@ body {
 #main-context>div>.tabs ,
 #main-context>div>.loadbox>.tabs ,
 #main-context>div>.openbox>.tabs {
+    background: #f8f8f8;
     margin-left : -15px;
     margin-right: -15px;
     padding-left : 15px;

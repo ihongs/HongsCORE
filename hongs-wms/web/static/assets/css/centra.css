@@ -6,7 +6,7 @@
 
 html ,
 body {
-    background: #f8f8f8;
+    background: #ffffff;
     min-height: 558px;
     min-width : 992px;
     height: 100%;
@@ -365,6 +365,16 @@ body {
 #headbox .breadcrumb .host-crumb .bi ,
 #headbox .breadcrumb .hold-crumb .bi {
     color: #55d;
+}
+
+/* 二级导航附加样式 */
+#main-context>div>.tabs ,
+#main-context>div>.loadbox>.tabs ,
+#main-context>div>.openbox>.tabs {
+    margin-left : -15px;
+    margin-right: -15px;
+    padding-left : 15px;
+    padding-right: 15px;
 }
 
 /* 标准表单分块布局 */

@@ -205,11 +205,12 @@ input[type="time"].form-control {
 .well>.board ,
 .panel-body>.board ,
 .modal-body>.board {
-    margin-bottom: 0px;
+    margin-bottom: 0;
 }
-.panel-body>.board-end ,
-.modal-body>.board-end {
-    margin-bottom: 5px;
+.well.openbox ,
+.panel-body.openbox ,
+.modal-body.openbox {
+   padding-bottom: 0;
 }
 
 /** 响应式表格区 **/
@@ -492,9 +493,6 @@ div.bootstrap-tagsinput .tag [data-role="remove"]:after {
 }
 .board-top {
     margin-top: 20px;
-}
-.board-pad {
-   padding-top: 20px;
 }
 .board-end:after {
     margin-bottom: -20px;

@@ -491,8 +491,8 @@ div.bootstrap-tagsinput .tag [data-role="remove"]:after {
 .board {
     margin-bottom: 20px;
 }
-.board-top {
-    margin-top: 20px;
+.group {
+    margin-bottom: 15px;
 }
 .board-end:after {
     margin-bottom: -20px;

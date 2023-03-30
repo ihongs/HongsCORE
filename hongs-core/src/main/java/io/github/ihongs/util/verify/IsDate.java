@@ -5,6 +5,7 @@ import io.github.ihongs.HongsExemption;
 import io.github.ihongs.util.Inst;
 import io.github.ihongs.util.Synt;
 import java.time.format.DateTimeParseException;
+import java.time.Instant;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -89,54 +90,71 @@ public class IsDate extends Rule {
         if (val instanceof Date) {
             return  (Date) val ;
         }
+        if (val instanceof Instant) {
+            return Date.from((Instant) val);
+        }
 
-        if (val instanceof Number) {
-            long num = Synt.declare(val,0L);
+        try {
+            long num = Synt.asLong(val);
             if ("timestamp".equals(type)
             ||  "datestamp".equals(type)) {
-                return new Date(num * 1000);
-            } else {
-                return new Date(num /* */ );
+                 num = num * 1000;
+            }
+            return new Date (num);
+        } catch (ClassCastException e ) {
+            if ("timestamp".equals(type)
+            ||  "datestamp".equals(type)) {
+                 off = off * 1000;
             }
         }
 
-        if (val instanceof String) {
-            String str = ( String) val;
-
-            try {
-                long num = Synt.declare(val,0L);
-                if ("timestamp".equals(type)
-                ||  "datestamp".equals(type)) {
-                    return new Date(num * 1000);
-                } else {
-                    return new Date(num /* */ );
-                }
-            } catch (ClassCastException e) {
-                // Nothing to do.
-            }
-
-            // 按指定格式解析日期字符串
-            // 要精确时间的可以使用偏移
-            try {
-                return Date.from(Inst.parse(str, fwt).plusMillis(off));
-            } catch (DateTimeParseException e) {
-                // Nothing to do.
-            }
-
-            // 识别 ISO 或 datetime-local 格式
-            try {
-                fwt = "yyyy-MM-ddTH:m:s";
-                return Date.from(Inst.parse(str, fwt).plusMillis(off));
-            } catch (DateTimeParseException e) {
-                // Nothing to do.
-            }
-            try {
-                fwt = "yyyy-MM-ddTH:m";
-                return Date.from(Inst.parse(str, fwt).plusMillis(off));
-            } catch (DateTimeParseException e) {
-                // Nothing to do.
-            }
+        String str = Synt.asString(val);
+        if (str == null || str.isEmpty()) {
+            throw new Wrong("@fore.form.is.not."+ typa);
         }
+
+        // 按指定格式解析日期字符串
+        // 要精确时间的可以使用偏移
+        try {
+            return Date.from(Inst.parse(str, fwt).plusMillis(off));
+        } catch (DateTimeParseException e) {
+            // Nothing to do.
+        }
+
+        /*
+        // 识别 ISO 或 datetime-local,date,time 格式
+        String fmt ;
+        fmt = "yyyy-MM-ddTH:m:s";
+        if (!fmt.equals(fwt)) try {
+            return Date.from(Inst.parse(str, fmt).plusMillis(off));
+        } catch (DateTimeParseException e) {
+            // Nothing to do.
+        }
+        fmt = "yyyy-MM-ddTH:m";
+        if (!fmt.equals(fwt)) try {
+            return Date.from(Inst.parse(str, fmt).plusMillis(off));
+        } catch (DateTimeParseException e) {
+            // Nothing to do.
+        }
+        fmt = "yyyy-MM-dd";
+        if (!fmt.equals(fwt)) try {
+            return Date.from(Inst.parse(str, fmt).plusMillis(off));
+        } catch (DateTimeParseException e) {
+            // Nothing to do.
+        }
+        fmt = "H:m:s";
+        if (!fmt.equals(fwt)) try {
+            return Date.from(Inst.parse(str, fmt).plusMillis(off));
+        } catch (DateTimeParseException e) {
+            // Nothing to do.
+        }
+        fmt = "H:m";
+        if (!fmt.equals(fwt)) try {
+            return Date.from(Inst.parse(str, fmt).plusMillis(off));
+        } catch (DateTimeParseException e) {
+            // Nothing to do.
+        }
+        */
 
         throw new Wrong("@fore.form.is.not."+ typa);
     }

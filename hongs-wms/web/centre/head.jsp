@@ -227,14 +227,16 @@
                 return;
             }
 
-            h = menubar.find("a").attr("href");
+            h = menubar.find("a").attr("href"); // 首页
             l = a.data("href");
             if (l && l != '/') {
                 content .hsLoad(l);
             } else if ( !  l ) {
                 location.assign(h);
-                location.reload( ); // 规避只有 hash 变了
-            }
+            // 规避只有 hash 不同
+            if (h.indexOf('#') != -1) {
+                location.reload( );
+            }}
         });
 
         $(function() {

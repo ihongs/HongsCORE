@@ -338,7 +338,7 @@ body {
 }
 
 /* 主导航条默认样式 */
-#headbox .breadcrumb {
+#menu-context .breadcrumb {
     margin : 0;
     padding: 15px;
     padding-bottom: 0;
@@ -348,23 +348,39 @@ body {
     white-space: nowrap;
     background-color: transparent;
 }
-#headbox .breadcrumb::-webkit-scrollbar {
+#menu-context .breadcrumb::-webkit-scrollbar {
     max-width : 14px;
     max-height: 14px;
 }
-#headbox .breadcrumb::-webkit-scrollbar-thumb {
+#menu-context .breadcrumb::-webkit-scrollbar-thumb {
     background: rgba(200,200,200,0.8);
 }
-#headbox .breadcrumb .active a {
+#menu-context .breadcrumb .active a {
     text-decoration: none;
     color: #333;
 }
-#headbox .breadcrumb .home-crumb .bi {
+#menu-context .breadcrumb .home-crumb .bi {
     color: #555;
 }
-#headbox .breadcrumb .host-crumb .bi ,
-#headbox .breadcrumb .hold-crumb .bi {
+#menu-context .breadcrumb .host-crumb .bi ,
+#menu-context .breadcrumb .hold-crumb .bi {
     color: #55d;
+}
+
+/* 二级导航附加样式 */
+#main-context {
+    background: #ffffff;
+}
+#main-context>div>.tabs ,
+#main-context>div>.loadbox>.tabs ,
+#main-context>div>.openbox>.tabs {
+    background: #f8f8f8;
+    margin-top  : -20px;
+    margin-left : -15px;
+    margin-right: -15px;
+    padding-top  : 20px;
+    padding-left : 15px;
+    padding-right: 15px;
 }
 
 /* 标准表单分块布局 */

@@ -270,7 +270,7 @@
     context.on("click", ".reveal", function() {
         var url  = formobj._reveal_url;
         var data = {
-            "id.": H$( "?id", loadres )
+            "id" : H$( "?id", loadres )
         };
         hsOpenThenLoad.call(formobj, this, "@", url, data);
     });

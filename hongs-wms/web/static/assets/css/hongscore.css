@@ -292,20 +292,13 @@ input[type="time"].form-control {
 .tabs li .title:empty:before {
     content: "..." ;
 }
-.tabs>li>a {
-    padding: 6px 12px;
-    margin-right: 0px;
-}
-.tabs>li+li>a {
-    margin-left: -1px;
-}
 
 .nav-tabs   .close ,
 .nav-pills  .close ,
 .breadcrumb .close {
     font-size: 20px;
     line-height: 1.0em;
-    margin-left: 0.3em;
+    margin-left: 0.5em;
 }
 .nav-tabs   .bi+ * ,
 .nav-pills  .bi+ * ,

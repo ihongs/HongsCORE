@@ -26,7 +26,7 @@ body {
     position: relative;
     overflow: hidden;
     float : right;
-    box-shadow: 0 0 15px #c5c5c5 inset;
+    box-shadow: 0 0 15px #e5e5e5 inset;
 }
 #menu-context ,
 #main-context {
@@ -368,19 +368,40 @@ body {
 }
 
 /* 二级导航附加样式 */
-#main-context {
+/* 二级导航附加样式 */
+#main-context.labs>div {
     background: #ffffff;
-}
-#main-context>div>.tabs ,
-#main-context>div>.loadbox>.tabs ,
-#main-context>div>.openbox>.tabs {
-    background: #f8f8f8;
     margin-top  : -20px;
     margin-left : -15px;
     margin-right: -15px;
     padding-top  : 20px;
     padding-left : 15px;
     padding-right: 15px;
+    box-shadow: 0 0 15px #e5e5e5;
+}
+#main-context.labs>div>.tabs ,
+#main-context.labs>div>.loadbox>.tabs ,
+#main-context.labs>div>.openbox>.tabs {
+    background: #f8f8f8;
+    margin-top  : -20px;
+    margin-left : -15px;
+    margin-right: -15px;
+    margin-bottom: 20px;
+    padding-top  : 20px;
+    padding-left : 15px;
+    padding-right: 15px;
+    box-shadow: 0 0 15px #e5e5e5 inset;
+}
+#main-context.labs>div>.tabs>li>a ,
+#main-context.labs>div>.loadbox>.tabs>li>a ,
+#main-context.labs>div>.openbox>.tabs>li>a {
+    padding: 6px 12px;
+    margin-right: 0px;
+}
+#main-context.labs>div>.tabs>li+li>a ,
+#main-context.labs>div>.loadbox>.tabs>li+li>a ,
+#main-context.labs>div>.openbox>.tabs>li+li>a {
+    margin-left: -1px;
 }
 
 /* 标准表单分块布局 */

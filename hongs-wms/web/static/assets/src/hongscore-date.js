@@ -23,26 +23,26 @@
         var m = dat.getMonth( ) + 1;
         var y = dat.getFullYear ( );
         var b = box.find("[data-date=d]");
-        var d = b.val( );
+        var d = parseInt(b.val()||1, 10 );
+        var l = b.attr("list") ? b.next(): b;
         if (m == 2 ) {
             if ((y % 4 == 0 && y % 100 != 0) || (y % 400 == 0)) {
-                if (d > 29) b.val(29).change();
-                b.find("option:gt(28)")
-                 .hide();
+                m = 29;
             } else {
-                if (d > 28) b.val(28).change();
-                b.find("option:gt(27)")
-                 .hide();
+                m = 28;
             }
         } else {
             if ((m < 7 && m % 2 == 0) || (m > 7 && m % 2 == 1)) {
-                if (d > 30) b.val(30).change();
-                b.find("option:gt(29)")
-                 .hide();
+                m = 30;
             } else {
-                b.find("option:gt(27)")
-                 .show();
+                m = 31;
             }
+        }
+        if (d > m) {
+            b.val( m ).change();
+        }   l.empty( );
+        for(d = 1; m >= d; d++) {
+            l.append('<option value="'+d+'">'+d+'</option>');
         }
     }
 
@@ -100,13 +100,16 @@
         var pm = box.find("[data-date=La],[data-date=Sa]").val() == '1';
         box.find("[data-date]").each(function() {
             var flg = $( this ).data( "date" );
-            var val = parseInt($(this).val( ));
+            var val = parseInt($(this).val(),10);
             // 值被清空时则自动选中第一个日历项
-            if (isNaN( val )) {
-                var opt;
-                opt = $(this).children().eq(0);
-                val = parseInt(opt.val());
-                opt.prop("selected",true);
+            if (isNaN(val)) {
+                var sel = $ ( this );
+                if (sel.is("input")) {
+                    sel = sel.next("datalist");
+                }
+                val = sel.children().eq(0).val();
+                $( this ). val (val);
+                val = parseInt (val);
             }
             switch (flg) {
                 case 'LM':
@@ -123,7 +126,7 @@
                     dat.setFullYear(val + 2000);
                     break;
                 case 'd':
-                    dat.setDate(val);
+                    dat.setDate (val);
                     break;
                 case 'H':
                     dat.setHours(val);
@@ -170,31 +173,31 @@
                     return _makeChoose("SM", hsGetLang("date.SM"));
                 }
                 else {
-                    return _makeSelect( "M", 1, 12, len);
+                    return _makeNumber( "M", 1, 12, len);
                 }
             case 'y':
                 if (len >= 4) {
-                    return _makeSelect( "y", 1949, 2099, len);
+                    return _makeNumber( "y", 1949, 2099, len);
                 }
                 else {
-                    return _makeSelect("Sy", 0, 99, len);
+                    return _makeNumber("Sy", 0, 99, len);
                 }
             case 'd':
-                return _makeSelect(flg, 1, 31, len);
+                return _makeNumber(flg, 1, 31, len);
             case 'H':
-                return _makeSelect(flg, 0, 23, len);
+                return _makeNumber(flg, 0, 23, len);
             case 'k':
-                return _makeSelect(flg, 1, 24, len);
+                return _makeNumber(flg, 1, 24, len);
             case 'K':
-                return _makeSelect(flg, 0, 11, len);
+                return _makeNumber(flg, 0, 11, len);
             case 'h':
-                return _makeSelect(flg, 1, 12, len);
+                return _makeNumber(flg, 1, 12, len);
             case 'm':
-                return _makeSelect(flg, 0, 59, len);
+                return _makeNumber(flg, 0, 59, len);
             case 's':
-                return _makeSelect(flg, 0, 59, len);
+                return _makeNumber(flg, 0, 59, len);
             case 'S':
-                return _makeSelect(flg, 0,999, len);
+                return _makeNumber(flg, 0,999, len);
         }
     }
 
@@ -215,6 +218,18 @@
             s += '<option value="'+min+'">'+ v +'</option>';
         }
         s += '</select>';
+        return $(s);
+    }
+
+    function _makeNumber(flg, min, max, len) {
+        var i = 'datelist-'+flg+'-'+min+'-'+max;
+        var s = '<input class="form-control datebox-'+flg+'" data-date="'+flg+'" type="number" list="'+i+'">'
+              + '<datalist id="'+i+'">';
+        for(  ; min <= max  ; min ++  ) {
+        //  var v  = _addzero(min, len);
+            s += '<option value="'+min+'">'+min+'</option>';
+        }
+        s += '</datalist>';
         return $(s);
     }
 
@@ -430,21 +445,25 @@
 
     // 处理大小月及闰年时日期的变化
     $(document).on("change", "[data-date=M],[data-date=SM],[data-date=LM]", function() {
-        var box = $(this).closest(".datebox");
-        var dat = new Date();
-
         // 不用 _getdate, 因 04/31 是 05/01
+        var dat = new Date();
+        var box = $(this).closest(".datebox");
         var y = box.find(".datebox-y" ).val();
-        if (y !== undefined) {
-            dat.setFullYear( y );
-        } else {
+        if (y === undefined || y ==="") {
             y = box.find(".datebox-Sy").val();
-        if (y !== undefined) {
-            dat.setFullYear( y + 2000 );
+        if (y === undefined || y ==="") {
+            y = dat.getFullYear( );
+        } else {
+            y = y + 2000;
+        }}
+        var m = $(this).val ();
+        if (m === undefined || m ==="") {
+            m = dat.getMonth() + 1;
         }
-        }   dat.setMonth($(this).val( ) - 1 );
-
-        _fixdate(box, dat);
+        dat.setDate (0 + 1 );
+        dat.setMonth(m - 1 );
+        dat.setFullYear( y );
+        _fixdate( box, dat );
     });
 
     // 控件组的值更新后联动日期输入
@@ -552,7 +571,7 @@
             val =  num * 1000  ;
         }
         if (! val ) {
-            box.find( "select" )
+            box.find( "select,input")
                .val ( "" );
             inp.val ( "" );
             return;
@@ -574,7 +593,7 @@
 
     // 清除所有选项
     $(document).on("click", ".datebox .clear", function() {
-        var sel = $(this).closest(".datebox").find("select");
+        var sel = $(this).closest(".datebox").find("select,input");
         var inp = $(this).closest(".datebox").data("linked");
         sel.val ("");
         inp.val ("");

@@ -1007,45 +1007,59 @@ ul.pickmul + * ,
 
 /** 时间 **/
 
-.datebox.input-group {
-    background-color: #eee;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    padding-left : 8px;
-}
 .datebox.input-group a {
     margin: auto 0.5em;
     float: left;
     color: #999;
 }
-.datebox.input-group a:hover {
+.datebox.input-group a:hover ,
+.datebox.input-group a:focus {
     color: #666;
 }
-.datebox.input-group  select {
-    appearance: none;
-    -moz-appearance: none;
-    -webkit-appearance: none;
-}
 .datebox.input-group .form-control {
-    border-radius: 0;
+    text-align: center;
+    width: 3em ;
+}
+.datebox.input-group .form-control.datebox-y  ,
+.datebox.input-group .form-control.datebox-S  {
+    width: 4em ;
+}
+.datebox.input-group .form-control.datebox-La ,
+.datebox.input-group .form-control.datebox-Sa ,
+.datebox.input-group .form-control.datebox-LM ,
+.datebox.input-group .form-control.datebox-SM {
+    width: auto;
 }
 .datebox.input-group .input-group-addon {
-    box-shadow: none;
+    width: auto;
 }
-.datebox.input-group .form-control ,
-.datebox.input-group .input-group-addon {
-    width : auto;
-    height: 32px;
-    border: 0;
+.datebox.input-group .input-group-addon ,
+.datebox.input-group .form-control {
     padding-right: 8px;
     padding-left : 8px;
 }
-/** 修复 firefox 中 select 内总有 4px 的问题 **/
+/* 修复 firefox 中 select 内总有 4px 的问题 */
 @-moz-document url-prefix() {
 .datebox.input-group .form-control {
     padding-right: 0px;
     padding-left : 0px;
 }
+}
+/* 去除右侧指示图标 */
+.datebox.input-group select ,
+.datebox.input-group input  {
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+}
+.datebox.input-group select::-webkit-calendar-picker-indicator ,
+.datebox.input-group input::-webkit-calendar-picker-indicator ,
+.datebox.input-group input::-webkit-outer-spin-button ,
+.datebox.input-group input::-webkit-inner-spin-button {
+    padding: 0;
+    width: 0px;
+    color: transparent;
+    -webkit-appearance: none;
 }
 
 /* 优化文件上传样式 */
@@ -1074,7 +1088,7 @@ ul.pickmul + * ,
 input[type=file].form-control {
     padding: 10px 13px;
 }
-/** 修复 firefox 中 input 上传按钮不可调问题 **/
+/* 修复 firefox 中 input 上传按钮不可调问题 */
 @-moz-document url-prefix() {
 input[type=file].form-control {
     padding:  0px  0px;

@@ -130,6 +130,16 @@
                         String ak = info.containsKey("data-ak") ? (String) info.get("data-ak") :  kn ;
                         String rl = info.containsKey("data-rl") ? (String) info.get("data-rl") :  "" ;
                         rl = rl.replace("centre", "centra");
+                        /**
+                         * 默认禁止扩展功能
+                         */
+                        if (!rl.isEmpty() && !rl.contains(".deny=")) {
+                            if (!rl.contains("?") && !rl.contains("#")) {
+                                rl = rl + "?.deny=.expand";
+                            } else {
+                                rl = rl + "&.deny=.expand";
+                            }
+                        }
                         kind += "\" data-ak=\""+ak+"\" data-tk=\""+tk+"\" data-vk=\""+vk
                              +  "\" data-href=\""+rl+"\" data-target=\"@";
                     %>

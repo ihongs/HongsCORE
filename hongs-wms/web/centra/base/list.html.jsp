@@ -149,13 +149,13 @@
             </div>
         </div>
         <%} /*End For*/%>
-        <hr  style="clear: both;"/>
+        <hr/>
         </div>
         <div class="form-foot">
         <div class="btns-group form-group form-group-sm row">
             <div class="col-xs-12 text-center">
                 <button type="submit" class="btn btn-primary">过滤</button>
-                <span style="padding: 0.1em;"></span>
+                <span style="padding: 0.5em;"></span>
                 <button type="reset"  class="btn btn-default">重置</button>
             </div>
         </div>

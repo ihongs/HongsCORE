@@ -405,22 +405,21 @@ body {
 }
 
 /* 标准表单分块布局 */
-.form-body {
-    padding: 15px 15px 0px 15px;
+.panel>.form-body {
+    padding: 15px 15px 0 15px;
 }
-.form-foot {
-    padding: 20px 15px 5px 15px;
+.panel+.form-foot {
+    padding:  0 15px 5px 15px;
 }
-.form-body + .form-foot {
-    border-top : solid 1px #ddd;
+.form-body+.form-foot {
+    padding: 15px 0 0 0;
+    border-top: solid 1px #ddd;
 }
-.board + .form-foot ,
-.panel + .form-foot {
-    margin-top : -20px;
-}
-.form-body>:last-child:is(hr) ,
-.form-foot>:last-child:is(br) {
-    display: none; /* 兼容占位 */
+.form-body:after ,
+.form-foot:after {
+    display: table;
+    content: " "  ;
+    clear  : both ;
 }
 
 /* 筛选表单紧凑布局 */

@@ -8,8 +8,8 @@
 <%@include file="_boot_.jsp"%>
 <%
     String _action = Synt.declare(request.getAttribute("form.action"), "update");
-    String _pageId = (_module + "-" + _entity + "-" + _action).replace('/', '-');
     String _funcId = "in_"+(_module + "_" + _entity + "_form").replace('/', '_');
+    String _pageId = /* */ (_module + "-" + _entity + "-form").replace('/', '-');
 %>
 <h2 class="hide"><%=_locale.translate("fore."+_action+".title", _title)%></h2>
 <div id="<%=_pageId%>" class="<%=_pageId+" "+_action%>-form">

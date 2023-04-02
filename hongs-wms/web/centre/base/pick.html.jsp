@@ -6,8 +6,8 @@
 <%@include file="_boot_.jsp"%>
 <%
     String _action = Synt.declare(request.getAttribute("list.action"), "select");
-    String _pageId = (_module + "-" + _entity + "-" + _action).replace('/', '-');
     String _funcId = "in_"+(_module + "_" + _entity + "_pick").replace('/', '_');
+    String _pageId = /* */ (_module + "-" + _entity + "-pick").replace('/', '-');
 
     String NAME = Synt.declare(_params.get("field-name"), "name");
     String NOTE = Synt.declare(_params.get("field-note"), "note");

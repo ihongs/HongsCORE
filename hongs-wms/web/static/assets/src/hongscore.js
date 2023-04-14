@@ -179,8 +179,8 @@ function hsRequires(url, fun ) {
 
 /**
  * 响应数据
- * @param {Object|String|XHR} rst JSON对象/JSON文本或错误消息
- * @param {Boolean} qut 1不显示消息, 2不执行跳转, 3彻底的静默
+ * @param {Object|String|XHR} rst JSON对象/JSON文本/错误消息
+ * @param {Number} qut 1不显示消息, 2不执行跳转, 3彻底的静默
  * @return {Object}
  */
 function hsResponse(rst, qut) {
@@ -305,12 +305,11 @@ function hsResponse(rst, qut) {
 }
 
 /**
- * 尝试序列化对象, 保留 HsSerialDic,HsSerialDat 类型
+ * 待序列化对象, 保留 Array,Object,HsSerialDic,HsSerialDat 类型
  * @param {Array|String|Object|Element|FormData} obj
- * @param {boolean} kep 为 true 时不处理 PlainObject 和 FormData
  * @return {Array|HsSerialDic|HsSerialDat}
  */
-function hsSerialObj(obj, kep) {
+function hsSerialObj(obj, tod) {
     var typ = jQuery.type(obj);
     if (typ == "array" || typ == "object") {
         if (obj instanceof jQuery
@@ -321,30 +320,25 @@ function hsSerialObj(obj, kep) {
         &&  obj instanceof FormData) {
             typ = "fordat";
         } else
-        if (obj instanceof HsSerialDic) {
-            typ = "serdic";
-        } else
         if (obj instanceof HsSerialDat) {
             typ = "serdat";
+        } else
+        if (obj instanceof HsSerialDic) {
+            typ = "serdic";
         }
     }
     switch (typ) {
         case "undefined":
         case "null"  :
         case "array" :
+        case "object":
         case "serdic":
         case "serdat":
             return obj;
+        case "fordat":
         case "string":
         case "jquery":
             return hsSerialArr(obj);
-        case "object":
-        case "fordat":
-        if (kep) {
-            return obj;
-        } else {
-            return hsSerialArr(obj);
-        }
         default:
             throw new Error("hsSerialObj: Unsupported type "+typ);
     }
@@ -367,11 +361,11 @@ function hsSerialArr(obj) {
         &&  obj instanceof FormData) {
             typ = "fordat";
         } else
-        if (obj instanceof HsSerialDic) {
-            typ = "serdic";
-        } else
         if (obj instanceof HsSerialDat) {
             typ = "serdat";
+        } else
+        if (obj instanceof HsSerialDic) {
+            typ = "serdic";
         }
     }
     switch (typ) {
@@ -380,12 +374,6 @@ function hsSerialArr(obj) {
             break;
         case "array" :
             arr = obj;
-            break;
-        case "object":
-            for(var key in obj) {
-                var vxl  = obj[ key ];
-                arr.push({name: key, value: vxl});
-            }
             break;
         case "fordat":
             obj = obj.entries();
@@ -396,21 +384,68 @@ function hsSerialArr(obj) {
                 arr.push({name:vxl[0], value:vxl[1]});
             }
             break;
-        case "serdic":
-            hsForEach(obj, function(vxl, key) {
-                if (key.length) {
-                    key  = key/***/[ 0 ]; // 一键多值但无层级
-                    arr.push({name: key, value: vxl});
-                }
-            });
-            break;
         case "serdat":
-            hsForEach(obj, function(vxl, key) {
-                if (key.length) {
-                    key  = key.join('.'); // 需将多层键串起来
+        case "serdic":
+            var add = function (arr, vxl, key, k, r ) {
+                if (jQuery.isPlainObject(vxl)) {
+                    if (r !== undefined ) {
+                        key = key + "." + k;
+                    }
+                    for(k in vxl) {
+                        add (arr, vxl[k], key, k, 1 );
+                    }
+                }
+                else if (jQuery.isArray (vxl)) {
+                    if (r !== undefined ) {
+                        key = key + "." + k;
+                    }
+                    for(k = 0; k < vxl.length; k ++ ) {
+                        add (arr, vxl[k], key, k, 0 );
+                    }
+                }
+                else {
+                    if (r !== undefined ) {
+                        k   = r ? k : '';
+                        key = key + '.' + k;
+                    }
                     arr.push({name: key, value: vxl});
                 }
-            });
+            };
+            for(var key in obj) {
+                var vxl  = obj[key];
+                add(arr  , vxl,key);
+            }
+            break;
+        case "object":
+            var add = function (arr, vxl, key, k, r ) {
+                if (jQuery.isPlainObject(vxl)) {
+                    if (r !== undefined ) {
+                        key = key + "[" + k + ']';
+                    }
+                    for(k in vxl) {
+                        add (arr, vxl[k], key, k, 1 );
+                    }
+                }
+                else if (jQuery.isArray (vxl)) {
+                    if (r !== undefined ) {
+                        key = key + "[" + k + ']';
+                    }
+                    for(k = 0; k < vxl.length; k ++ ) {
+                        add (arr, vxl[k], key, k, 0 );
+                    }
+                }
+                else {
+                    if (r !== undefined) {
+                        k   = r ? k : '';
+                        key = key + '[' + k + ']';
+                    }
+                    arr.push({name: key, value: vxl});
+                }
+            };
+            for(var key in obj) {
+                var vxl  = obj[key];
+                add(arr  , vxl,key);
+            }
             break;
         case "string":
             var ar1, ar2, key, vxl, i = 0;
@@ -613,7 +648,7 @@ function hsAsFormData (data) {
         hsSetSeria ( data, name, value );
     };
     data["delete"] = function(name) {
-        hsSetSerias( data, name, [ ] );
+        hsSetSeria ( data, name, [ ] );
     };
     data["get"   ] = function(name) {
         return hsGetSeria (data, name);
@@ -1138,6 +1173,7 @@ function _hsGetPkeys(path) {
 
 function _hsGetDkeys(path) {
     if (/(\[\]|\.\.|\.$)/.test(path)) {
+    path = path.replace(/(\[\]|\.)$/, '');
         return [path , null];
     } else {
         return [path];
@@ -1150,31 +1186,8 @@ function _hsGetPkeyz(path) {
 }
 
 function _hsGetDkeyz(path) {
+    path = path.replace(/(\[\]|\.)$/, '');
     return [path];
-}
-
-/**
- * 遍历对象或数组的全部叶子节点
- * @param {Object,Array} data
- * @param {Function} func
- */
-function hsForEach(data, func) {
-    function _each(data, func, path) {
-        if (jQuery.isPlainObject(data)) {
-            for (var k in data) {
-                _each(data[k], func, path.concat([k]));
-            }
-        }
-        else if (jQuery.isArray (data)) {
-            for (var i = 0 ; i < data.length ; i ++ ) {
-                _each(data[i], func, path.concat([i]));
-            }
-        }
-        else if (path.length > 0) {
-            func(data, path);
-        }
-    }
-    _each( data, func, [ ] );
 }
 
 /**

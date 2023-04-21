@@ -1189,7 +1189,7 @@ function _hsGetDkeys(path) {
     // 统一路径符号, 移除数组末尾标识
     path = path.replace(/\[/g , "." )
                .replace(/\]/g , ""  )
-               .replace(/\.$/ , ""  )
+               .replace(/\.$/ , ""  );
         return [path , null];
     } else {
         return [path];

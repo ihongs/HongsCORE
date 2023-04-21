@@ -2280,9 +2280,10 @@ $.hsWait = function(msg, xhr, xhu) {
              + 'role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">'
              + '</div></div>'
     });
+    box.find(".alert-footer").append('<span class="progress-per"></span>');
     var mod = box.closest(".modal");
-    var foo = box.find(".alert-footer");
     var bar = box.find(".progress-bar");
+    var foo = box.find(".progress-per");
     var stt = new Date().getTime( );
     var pct = 0;
     var itl ;

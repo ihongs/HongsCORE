@@ -2355,8 +2355,8 @@ $.hsWait = function(msg, xhr, xhu) {
             itl  =  undefined ;
         }
     };
-    box.load = function() {}; // 加载完成
-    box.sent = function() {}; // 发送完成
+    box.done = function() {}; // 全部完成
+    box.over = function() {}; // 发送完成
 
     foo.addClass("code").text("..."); // 清空
 
@@ -2366,12 +2366,12 @@ $.hsWait = function(msg, xhr, xhu) {
         if (pct < 100) {
             box.setProgress(evt.loaded, evt.total);
         } else {
-            box.sent();
+            box.over();
         }}
     } , false );
     if (xhr)
     xhr.addEventListener(  "load"  , function(   ) {
-        box.load();
+        box.done();
         box.hide();
     } , false );
 

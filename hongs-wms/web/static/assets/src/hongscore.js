@@ -309,7 +309,7 @@ function hsResponse(rst, qut) {
  * @param {Array|String|Object|Element|FormData} obj
  * @return {Array|HsSerialDic|HsSerialDat}
  */
-function hsSerialObj(obj, tod) {
+function hsSerialObj(obj) {
     var typ = jQuery.type(obj);
     if (typ == "array" || typ == "object") {
         if (obj instanceof jQuery
@@ -384,8 +384,21 @@ function hsSerialArr(obj) {
                 arr.push({name:vxl[0], value:vxl[1]});
             }
             break;
-        case "serdat":
         case "serdic":
+            for(var key in obj) {
+                var vxl  = obj[ key ];
+                if (jQuery.isArray(vxl) ) {
+                    if (!/(\[\]|\.\.|\.$)/.test(key)) {
+                        key = key+'.';
+                    }
+                for(var i = 0 ; i < vxl.length; i ++) {
+                    var vol = vxl [i];
+                    arr.push({name: key, value: vol});
+                }} else {
+                    arr.push({name: key, value: vxl});
+                }
+            }
+        case "serdat":
             var add = function (arr, vxl, key, k, r ) {
                 if (jQuery.isPlainObject(vxl)) {
                     if (r !== undefined ) {
@@ -1154,9 +1167,9 @@ function _hsGetDapth(lst, keys, def, pos) {
 }
 
 function _hsGetPkeys(path) {
-    path = path.replace(/\]\[/g, ".")
-               .replace(/\[/   , ".")
-               .replace(/\]/   , "" )
+    // 清理路径符号, 按分隔符进行拆分
+    path = path.replace(/\[/g , "." )
+               .replace(/\]/g , ""  )
                .split  (/\./ );
     var i , keys = [];
     for(i = 0; i < path.length; i ++) {
@@ -1173,7 +1186,10 @@ function _hsGetPkeys(path) {
 
 function _hsGetDkeys(path) {
     if (/(\[\]|\.\.|\.$)/.test(path)) {
-    path = path.replace(/(\[\]|\.)$/, '');
+    // 统一路径符号, 移除数组末尾标识
+    path = path.replace(/\[/g , "." )
+               .replace(/\]/g , ""  )
+               .replace(/\.$/ , ""  )
         return [path , null];
     } else {
         return [path];
@@ -2267,12 +2283,13 @@ $.hsWait = function(msg, xhr, xhu) {
     var mod = box.closest(".modal");
     var foo = box.find(".alert-footer");
     var bar = box.find(".progress-bar");
-    var stt = new Date().getTime()/1000;
+    var stt = new Date().getTime( );
     var pct = 0;
-    var itl;
+    var itl ;
 
     // 剩余时间文本表示, h:mm:ss
     function getProgtime (rtt) {
+        rtt = rtt / 1000; // 精确到秒
         var ctt, snt;
         snt  =  ""  ;
         ctt  = Math.floor(rtt /3600);
@@ -2310,21 +2327,26 @@ $.hsWait = function(msg, xhr, xhu) {
             bar.attr("aria-valuenow",  0 );
             bar.css ( "width" , snt + "%");
             itl  =  setInterval(function() {
-                var ctt = new Date().getTime() / 1000 - stt;
-                foo.text("+" + getProgtime(Math.ceil(ctt)));
+                var ctt = new Date().getTime()-stt;
+                var ttt = getProgtime(ctt);
+                foo.text( "+" + ttt);
             },1000);
             return ;
         }}
 
         var ctt, rtt;
-        ctt  = new Date ().getTime() / 1000 - stt;
+        ctt  = new Date ().getTime() -  stt ;
         pct  = Math.ceil((100 * snt) / (0.0 + tal));
         rtt  = Math.ceil((100 - pct) * (ctt / pct));
         snt  = getProgtime (rtt);
 
         bar.attr("aria-valuenow", pct);
         bar.css ( "width" , pct + "%");
-        foo.text(  pct  + "% -" + snt);
+        if (pct < 100) {
+            foo.text( pct +"% -"+ snt);
+        } else {
+            foo.text( pct +"%" );
+        }
     };
     box.hide = function() {
         mod.modal("hide");
@@ -2333,18 +2355,24 @@ $.hsWait = function(msg, xhr, xhu) {
             itl  =  undefined ;
         }
     };
+    box.load = function() {}; // 加载完成
+    box.sent = function() {}; // 发送完成
 
     foo.addClass("code").text("..."); // 清空
 
-    if (xhr)
-    xhr.addEventListener(  "load"  , function(   ) {
-        box.hide( );
-    } , false );
     if (xhu)
     xhu.addEventListener("progress", function(evt) {
-        if (pct  <  100  && evt.lengthComputable ) {
-            box.setProgress(evt.loaded,evt.total );
-        }
+        if (evt.lengthComputable) {
+        if (pct < 100) {
+            box.setProgress(evt.loaded, evt.total);
+        } else {
+            box.sent();
+        }}
+    } , false );
+    if (xhr)
+    xhr.addEventListener(  "load"  , function(   ) {
+        box.load();
+        box.hide();
     } , false );
 
     return  box;

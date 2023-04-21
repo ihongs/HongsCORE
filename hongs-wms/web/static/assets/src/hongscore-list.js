@@ -541,7 +541,8 @@ HsList.prototype = {
             btn.trigger(ext , [rst, data, that]);
             if (ext.isDefaultPrevented()) return;
 
-            that.load( );
+            box.hsClose(); // 关闭内页
+            that . load(); // 重载列表
         });
     },
 

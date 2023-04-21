@@ -435,6 +435,8 @@ HsTree.prototype = {
             btn.trigger(ext , [rst, data, that]);
             if (ext.isDefaultPrevented()) return;
 
+            box.hsClose(); // 关闭内页
+
             if (data[that.pidKey] !== undefined) {
                 that.load(/* Saved */ data[that.pidKey]); // 更新
             } else

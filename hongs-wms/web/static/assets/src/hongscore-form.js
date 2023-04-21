@@ -405,9 +405,6 @@ HsForm.prototype = {
             this.formBox.trigger(evt, [rst, this]);
             if (evt.isDefaultPrevented( )) return ;
 
-            // 关闭窗口
-            this.loadBox.hsClose(  );
-
             // 完成提示
             if ( rst.msg ) {
                 this.note(rst.msg, "success" );

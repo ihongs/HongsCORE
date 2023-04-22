@@ -56,7 +56,7 @@ function H$() {
             arguments[1] = c.data("href")
                         || c.data("data")
                          ? hsSerialObj(c)
-                         : location.href;
+                         : { };
           }
           return hsGetSeria(arguments[1], arguments[0]);
         } else {
@@ -767,6 +767,87 @@ function hsBeFormData (elem) {
 }
 
 /**
+ * 获取多个参数值
+ * @param {String} url
+ * @param {String} name
+ * @return {String|Array}
+ */
+function hsGetParam (url, name) {
+    name = encodeURIComponent( name );
+    var nam = name.replace('.','\\.');
+    var reg = new RegExp("[\\?&#]"+ nam +"=([^&#]*)", "g");
+    var arr = null;
+    var val = [  ];
+    while ( ( arr = reg.exec(url) ) ) {
+        val.push(decodeURIComponent(arr[1]));
+    }
+    if (val.length === 0) {
+        return undefined;
+    }
+    if (/(\[\]|\.\.|\.$)/.test(name)) {
+        return val;
+    }
+    return val [0];
+}
+
+/**
+ * 设置多个参数值
+ * @param {String} url
+ * @param {String} name
+ * @param {String|Array} value
+ * @return {String} 同 url
+ */
+function hsSetParam(url, name, value) {
+    name = encodeURIComponent( name );
+    var nam = name.replace('.','\\.');
+    var reg = new RegExp("[\\?&#]"+ nam +"=([^&#]*)", "g");
+    var sig = /^#/.test ( url ) ? '#' : '?'; // hash or search
+    url = url.replace(reg, "" );
+    if (! jQuery.isArray(value)) {
+        value =  value !== undefined
+              && value !== null
+              ? [value] :  []  ;
+    }
+    for(var i = 0; i < value.length; i ++) {
+        url+= "&"+ name +"="+ encodeURIComponent(value[i]);
+    }
+    if (url.indexOf(sig) === -1) {
+        url = url.replace("&", sig);
+    }
+    return url;
+}
+
+/**
+ * 获取多个参数值
+ * @param {String} url
+ * @param {String} name
+ * @return {Array}
+ * @deprecated 只用 hsGetParam 即可
+ */
+function hsGetParams(url, name) {
+    var value = hsGetParam(url, name);
+    if (value ===  undefined  ) {
+        value = [/***/];
+    } else
+    if (!jQuery.isArray(value)) {
+        value = [value];
+    }
+    return value;
+}
+
+/**
+ * 设置多个参数值
+ * @param {String} url
+ * @param {String} name
+ * @param {Array} value
+ * @return {String} 同 url
+ * @deprecated 只用 hsSetParam 即可
+ */
+function hsSetParams(url, name, value) {
+  return hsSetParam (url, name, value);
+}
+
+/**
  * 获取序列值
  * @param {Array|Object} arr hsSerialArr 或 HsSerialDic,HsSerialDat
  * @param {String} name
@@ -861,87 +942,6 @@ function hsGetSerias(arr, name) {
  */
 function hsSetSerias(arr, name, value) {
   return hsSetSeria (arr, name, value);
-}
-
-/**
- * 获取多个参数值
- * @param {String} url
- * @param {String} name
- * @return {String|Array}
- */
-function hsGetParam (url, name) {
-    name = encodeURIComponent( name );
-    var nam = name.replace('.','\\.');
-    var reg = new RegExp("[\\?&#]"+ nam +"=([^&#]*)", "g");
-    var arr = null;
-    var val = [  ];
-    while ( ( arr = reg.exec(url) ) ) {
-        val.push(decodeURIComponent(arr[1]));
-    }
-    if (val.length === 0) {
-        return undefined;
-    }
-    if (/(\[\]|\.\.|\.$)/.test(name)) {
-        return val;
-    }
-    return val [0];
-}
-
-/**
- * 设置多个参数值
- * @param {String} url
- * @param {String} name
- * @param {String|Array} value
- * @return {String} 同 url
- */
-function hsSetParam(url, name, value) {
-    name = encodeURIComponent( name );
-    var nam = name.replace('.','\\.');
-    var reg = new RegExp("[\\?&#]"+ nam +"=([^&#]*)", "g");
-    var sig = /^#/.test ( url ) ? '#' : '?'; // hash or search
-    url = url.replace(reg, "" );
-    if (! jQuery.isArray(value)) {
-        value =  value !== undefined
-              && value !== null
-              ? [value] :  []  ;
-    }
-    for(var i = 0; i < value.length; i ++) {
-        url+= "&"+ name +"="+ encodeURIComponent(value[i]);
-    }
-    if (url.indexOf(sig) === -1) {
-        url = url.replace("&", sig);
-    }
-    return url;
-}
-
-/**
- * 获取多个参数值
- * @param {String} url
- * @param {String} name
- * @return {Array}
- * @deprecated 只用 hsGetParam 即可
- */
-function hsGetParams(url, name) {
-    var value = hsGetParam(url, name);
-    if (value ===  undefined  ) {
-        value = [/***/];
-    } else
-    if (!jQuery.isArray(value)) {
-        value = [value];
-    }
-    return value;
-}
-
-/**
- * 设置多个参数值
- * @param {String} url
- * @param {String} name
- * @param {Array} value
- * @return {String} 同 url
- * @deprecated 只用 hsSetParam 即可
- */
-function hsSetParams(url, name, value) {
-  return hsSetParam (url, name, value);
 }
 
 /**

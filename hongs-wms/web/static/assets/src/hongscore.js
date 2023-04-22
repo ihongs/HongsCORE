@@ -780,7 +780,7 @@ function hsGetSeria (arr, name) {
         return _hsGetPoint (arr, _hsGetPkeys(name));
     }
     if ( jQuery.isPlainObject(arr)) {
-        return arr[ name ];
+        return _hsGetPoint (arr, _hsGetPkeys(name));
     }
     var val = [  ];
     for(var i = 0 ; i < arr.length; i ++) {
@@ -814,7 +814,7 @@ function hsSetSeria (arr, name, value) {
         return arr;
     }
     if ( jQuery.isPlainObject(arr)) {
-        arr[name] = value;
+        _hsSetPoint (arr, _hsGetPkeyz(name), value);
         return arr;
     }
     if (!jQuery.isArray(value)) {

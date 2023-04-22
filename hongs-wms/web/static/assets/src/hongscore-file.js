@@ -27,6 +27,10 @@
             box = $(box );
         var txt = /^data:/.test (src) ? ''
                 : decodeURIComponent(src.replace(/^.*[\/\\]/, ''));
+        if (txt === '') { // 通过文件对象获取文件名称
+            if (this[0].filez && this[0].filez.length) txt = this[0].filez[0].name;
+            if (this[0].files && this[0].files.length) txt = this[0].files[0].name;
+        }
         var clz = box.is(".pickrol" ) ? '' : "bi bi-hi-file";
         var cls = box.is(".pickrol" ) ? "btn btn-link" : "btn btn-info";
         var inp = $(this).after(
@@ -90,6 +94,10 @@
         var inp = $(this);
         var txt = /^data:/.test( src ) ? ''
                   : decodeURIComponent(src.replace(/^.*[\/\\]/, ''));
+        if (txt === '') { // 通过文件对象获取文件名称
+            if (this[0].filez && this[0].filez.length) txt = this[0].filez[0].name;
+            if (this[0].files && this[0].files.length) txt = this[0].files[0].name;
+        }
         var div = $('<li class="preview"></li>').attr("title" , txt)
            .css({width: w+'px', height: h+'px', overflow: 'hidden'});
 
@@ -262,10 +270,26 @@
         if (! inp.data("picked")) {
             inp.data("picked", 1);
             var box = inp.siblings(".pickbox");
-            inp.on("change", function( ) {
+            var mul = inp.prop("multiple");
+            inp.on ( "change", function( ) {
+                inp.hsReadFile(function(val, src) {
                    _hsSoloFile(box, false);
-                inp.hsPickFile(box, inp.val());
-            });
+                    /**
+                     * 多选模式下尝试自定义传递,
+                     * 将文件对象绑定到扩展属性,
+                     * 通过 hsToFormData 来上传.
+                     */
+                    if (mul) {
+                        var iup = inp.clone( );
+                        iup[0].filez = [ val ];
+                        iup.val( "" );
+                        inp.val( "" );
+                        iup.hsPickFile (box, src);
+                    } else {
+                        inp.hsPickFile (box, src);
+                    }
+                } );
+            } );
         }
         inp.click();
     });
@@ -284,37 +308,25 @@
             var  w  = box.data("size");
             var  h  = w.split ("*", 2);
                  w  = h [0]; h = h [1];
-            var tmp = $('<input type="hidden"/>')
-                  .attr("name", inp.attr("name"));
-            inp.on("change", function( ) {
-            inp.hsReadFile ( function( val, src ) {
+            inp.on ( "change", function( ) {
+                inp.hsReadFile(function(val, src) {
                    _hsSoloFile(box, false);
-                /**
-                 * 多选模式下尝试自定义传递,
-                 * 将文件对象绑定到扩展属性,
-                 * 通过 hsToFormData 来上传.
-                 */
-            if (mul) {
-                var iup = inp.clone( );
-                iup[0].filez = [ val ];
-                iup.val( "" );
-                inp.val( "" );
-                iup.hsPickView(box, src, w, h, k);
-            } else {
-                inp.hsPickView(box, src, w, h, k);
-            }
-                /**
-                 * 因为 hsReadFile 是异步的,
-                 * 插一个输入项规避校验失败;
-                 * 但是如果不加延时直接移除,
-                 * 还是会导致校验时检测不到.
-                 */
-                setTimeout ( function( ) {
-                   tmp.remove();
-                }, 100);
-            });
-                box.append(tmp);
-            });
+                    /**
+                     * 多选模式下尝试自定义传递,
+                     * 将文件对象绑定到扩展属性,
+                     * 通过 hsToFormData 来上传.
+                     */
+                    if (mul) {
+                        var iup = inp.clone( );
+                        iup[0].filez = [ val ];
+                        iup.val( "" );
+                        inp.val( "" );
+                        iup.hsPickView (box, src, w, h, k);
+                    } else {
+                        inp.hsPickView (box, src, w, h, k);
+                    }
+                } );
+            } );
         }
         inp.click();
     });

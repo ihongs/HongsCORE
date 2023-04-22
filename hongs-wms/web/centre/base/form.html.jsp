@@ -402,6 +402,7 @@
                         }
                         if (rptd) {
                             name  = name + "."; // 多选末尾加点
+                            typa += "\" multiple=\"multiple";
                             extr += " data-repeated=\"repeated\"";
                         }
                         if (rqrd) {

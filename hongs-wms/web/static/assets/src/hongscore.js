@@ -52,11 +52,7 @@ function H$() {
         if (typeof(arguments[1]) !== "string") {
           if (arguments[1] instanceof jQuery
           ||  arguments[1] instanceof Element) {
-            var c = jQuery (arguments[1]).hsFind( "%" );
-            arguments[1] = c.data("href")
-                        || c.data("data")
-                         ? hsSerialObj(c)
-                         : { };
+            arguments[1] = hsSerialObj(jQuery (arguments[1]).hsFind("%"))
           }
           return hsGetSeria(arguments[1], arguments[0]);
         } else {
@@ -334,14 +330,16 @@ function hsSerialObj(obj) {
         case "object":
         case "serdic":
         case "serdat":
-            return obj;
+            break;
         case "fordat":
         case "string":
         case "jquery":
-            return hsSerialArr(obj);
+            obj = hsSerialArr(obj);
+            break;
         default:
             throw new Error("hsSerialObj: Unsupported type "+typ);
     }
+    return  obj;
 }
 
 /**
@@ -461,43 +459,44 @@ function hsSerialArr(obj) {
             }
             break;
         case "string":
-            var ar1, ar2, key, vxl, i = 0;
-            ar1 = obj.split('#' , 2);
-            if (ar1.length > 1) obj = ar1[0];
-            ar1 = obj.split('?' , 2);
-            if (ar1.length > 1) obj = ar1[1];
-            ar1 = obj.split('&');
-            for ( ; i < ar1.length ; i ++ ) {
-                ar2 = ar1[i].split('=' , 2);
-                if (ar2.length > 1) {
+            var p, i, j, ar0, ar1, ar2, key, vxl;
+            ar0 = [];
+            p = obj.indexOf('#');
+            if (p > -1) {
+                ar1 = obj.substring(p + 1);
+                obj = obj.substring(0 , p);
+                ar0.unshift(ar1);
+            }
+            p = obj.indexOf('?');
+            if (p > -1) {
+                ar1 = obj.substring(p + 1);
+                obj = obj.substring(0 , p);
+                ar0.unshift(ar1);
+            }
+            for(i = 0; i < ar0.length; i ++) {
+                ar1 = ar0[i].split('&'   );
+            for(j = 0; j < ar1.length; j ++) {
+                ar2 = ar1[j].split('=', 2);
+                if (ar2.length) {
                     key = decodeURIComponent (ar2[0]);
                     vxl = decodeURIComponent (ar2[1]);
                     arr.push({name: key, value: vxl});
                 }
-            }
+            }}
             break;
         case "jquery":
             obj = jQuery( obj  );
             if (obj.data("href")) {
-                var url = obj.data("href");
+                var ref = obj.data("href");
                 var dat = obj.data("data");
-                var p, a, i;
-                p = url.indexOf("?");
-                if (p != -1) {
-                    a  = hsSerialArr(url.substring(p + 1));
-                    for(i = 0; i < a.length; i ++) {
-                        arr.push(a[i]);
-                    }
-                }
-                p = url.indexOf("#");
-                if (p != -1) {
-                    a  = hsSerialArr(url.substring(p + 1));
+                if (ref) {
+                    var a = hsSerialArr(ref);
                     for(i = 0; i < a.length; i ++) {
                         arr.push(a[i]);
                     }
                 }
                 if (dat) {
-                    a  = hsSerialArr(dat);
+                    var a = hsSerialArr(dat);
                     for(i = 0; i < a.length; i ++) {
                         arr.push(a[i]);
                     }
@@ -513,7 +512,7 @@ function hsSerialArr(obj) {
 }
 
 /**
- * 合并多组序列, 类似 jQuery.merge, 但归并层级, 返回为单层 HsSerialDic
+ * 合并多组序列, 类似 jQuery.extend, 但归并层级, 返回为单层 HsSerialDic
  * 支持参数类型: {Array|String|Object|Element|FormData}
  * @returns {Object}
  */

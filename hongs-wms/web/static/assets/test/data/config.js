@@ -132,7 +132,7 @@ if(!window.HsLANG)window.HsLANG={};$.extend(window.HsLANG,{
     });
     $(document).on("loadBack", ".HsForm", function(evt, rst) {
         var box = $( this ).closest (".loadbox" );
-        if (! hsGetSeria(hsSerialObj(box), "id")) {
+        if (!H$("?id", box)) {
             delete rst.list;
             rst.info = {  };
         }

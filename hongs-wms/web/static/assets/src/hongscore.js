@@ -46,17 +46,13 @@ function H$() {
     case '?':
         // 因 & 为实体标识, 用 ? 规避 &amp;
         if (arguments.length === 1) {
-            arguments.length  =  2;
-            arguments[1] = location.href;
-        }
-        if (typeof(arguments[1]) !== "string") {
-          if (arguments[1] instanceof jQuery
-          ||  arguments[1] instanceof Element) {
-            arguments[1] = hsSerialObj(jQuery (arguments[1]).hsFind("%"))
-          }
-          return hsGetSeria(arguments[1], arguments[0]);
+          return hsGetParam(location.href, arguments[0]);
+        } else
+        if (typeof(arguments[1]) === "string") {
+          return hsGetParam(arguments[1] , arguments[0]);
         } else {
-          return hsGetParam(arguments[1], arguments[0]);
+          arguments[1] = hsSerialObj (arguments[1]);
+          return hsGetSeria(arguments[1] , arguments[0]);
         }
     case '$':
     case '%':
@@ -485,8 +481,9 @@ function hsSerialArr(obj) {
             }}
             break;
         case "jquery":
-            obj = jQuery( obj  );
-            if (obj.data("href")) {
+            obj = jQuery (obj);
+            arr = obj.serializeArray();
+            if (! arr.length ) {
                 var ref = obj.data("href");
                 var dat = obj.data("data");
                 if (ref) {
@@ -501,8 +498,6 @@ function hsSerialArr(obj) {
                         arr.push(a[i]);
                     }
                 }
-            } else {
-                arr = jQuery(obj).serializeArray();
             }
             break;
         default:

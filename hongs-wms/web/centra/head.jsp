@@ -261,13 +261,13 @@
             var b, t;
             b = navibar.find(".home-crumb .title");
             t = b.text( );
-            if (t) {  return;  }
-            t = navibar.closest(".loadbox").data("title");
-            if (t) {  b.text(t); return;  }
+            if (t) { return; }
+            t = navibar.closest(".loadbox").data("title") ;
+            if (t) { b.text(t); document.title = t; return; }
             t = menubar.find(".active > a").text();
-            if (t) {  b.text(t); return;  }
+            if (t) { b.text(t); document.title = t; return; }
             t = menubar.find(".acting > a").text();
-            if (t) {  b.text(t); return;  }
+            if (t) { b.text(t); document.title = t; return; }
         });
 
         // 标识导航组件已开启, 悬浮组件需避免层叠

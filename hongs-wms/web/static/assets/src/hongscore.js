@@ -2322,23 +2322,23 @@ $.hsWait = function(msg, xhr, xhu) {
             bar.attr("aria-valuenow",  0 );
             bar.css ( "width" , snt + "%");
             itl  =  setInterval(function() {
-                var ctt = new Date().getTime()-stt;
-                var ttt = getProgtime(ctt);
-                foo.text( "+" + ttt);
+                var ctt = new Date().getTime() - stt;
+                var rtt = getProgtime(ctt);
+                foo.text( "+" + rtt);
             },1000);
             return ;
         }}
 
         var ctt, rtt;
-        ctt  = new Date ().getTime() -  stt ;
-        pct  = Math.ceil((100 * snt) / (0.0 + tal));
-        rtt  = Math.ceil((100 - pct) * (ctt / pct));
-        snt  = getProgtime (rtt);
+        ctt  = new Date().getTime() - stt ;
+        pct  = Math.floor((100 * snt) / (0.0 + tal));
+        rtt  = Math.ceil ((100 - pct) * (ctt / pct));
+        rtt  = getProgtime (rtt);
 
         bar.attr("aria-valuenow", pct);
         bar.css ( "width" , pct + "%");
         if (pct < 100) {
-            foo.text( pct +"% -"+ snt);
+            foo.text( pct +"% -"+ rtt);
         } else {
             foo.text( pct +"%" );
         }
@@ -2358,11 +2358,9 @@ $.hsWait = function(msg, xhr, xhu) {
     if (xhu)
     xhu.addEventListener("progress", function(evt) {
         if (evt.lengthComputable) {
-        if (pct < 100) {
             box.setProgress(evt.loaded, evt.total);
-        } else {
-            box.over();
-        }}
+            if (pct >= 100) box.over();
+        }
     } , false );
     if (xhr)
     xhr.addEventListener(  "load"  , function(   ) {
@@ -2374,26 +2372,38 @@ $.hsWait = function(msg, xhr, xhu) {
 };
 /**
  * 带上传进度条的异步通讯方法
- * @param {String} msg 提示语
- * @return {Function} xhr回调
+ * @param  {String} msg 提示语
+ * @param  {Function} evt 事件
+ * @return {Function} xhr 回调
  */
-$.hsXhup = function(msg) {
-    return function(   ) {
+$.hsXhup = function(msg, evt) {
+    return function() {
         var xhr = $.ajaxSettings.xhr();
         var xhu = xhr.upload ||  xhr  ;
-        $.hsWait( /**/ msg, xhr, xhu );
+        var box = $.hsWait( msg, xhr, xhu );
+        if (evt) {
+            evt.call(box, "init");
+            box.over = function() { evt.call(box, "over"); };
+            box.done = function() { evt.call(box, "done"); };
+        }
         return xhr;
     };
 };
 /**
  * 带加载进度条的异步通讯方法
- * @param {String} msg 提示语
- * @return {Function} xhr回调
+ * @param  {String} msg 提示语
+ * @param  {Function} evt 事件
+ * @return {Function} xhr 回调
  */
-$.hsXhrp = function(msg) {
-    return function(   ) {
+$.hsXhrp = function(msg, evt) {
+    return function() {
         var xhr = $.ajaxSettings.xhr();
-        $.hsWait( /**/ msg, xhr, xhr );
+        var box = $.hsWait( msg, xhr, xhr );
+        if (evt) {
+            evt.call(box, "init");
+            box.over = function() { evt.call(box, "over"); };
+            box.done = function() { evt.call(box, "done"); };
+        }
         return xhr;
     };
 };

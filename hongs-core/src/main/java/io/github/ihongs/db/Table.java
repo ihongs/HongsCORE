@@ -395,11 +395,12 @@ public class Table
   {
     String param = (String) params.get("field."+ field);
     if (null == param) {
-        param = Core.getInstance (  CoreConfig.class  )
-    .getProperty("core.table."+ field +".field", field);
+        param = "core.table."+ field +".field";
+        field = Core.getInstance(CoreConfig.class)
+                    .getProperty(param, field);
     }
-    if (null != param && getFields().containsKey(param)) {
-        return  param;
+    if (null != field && getFields().containsKey(field)) {
+        return  field;
     } else {
         return  null ;
     }
@@ -414,11 +415,12 @@ public class Table
   {
     String param = (String) params.get("state."+ state);
     if (null == param) {
-        param = Core.getInstance (  CoreConfig.class  )
-    .getProperty("core.table."+ state +".state", state);
+        param = "core.table."+ state +".state";
+        state = Core.getInstance(CoreConfig.class)
+                    .getProperty(param, null );
     }
-    if (null != param) {
-        return  param;
+    if (null != state) {
+        return  state;
     } else {
         return  null ;
     }

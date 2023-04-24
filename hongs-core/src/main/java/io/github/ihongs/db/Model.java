@@ -334,10 +334,10 @@ implements IEntity
       throw new HongsException(1085, "Param n or v can not be empty" );
     }
 
-    String n = (String) rd.get("n");
-    String v = (String) rd.get("v");
+    String n = Synt.asString(rd.get("n"));
+    String v = Synt.asString(rd.get("v"));
 
-    Map columns = this.table.getFields();
+    Map columns = this.table.getFields( );
 
     // 是否缺少n对应的字段
     if (!columns.containsKey(n))
@@ -350,9 +350,9 @@ implements IEntity
     Iterator it = rd.entrySet().iterator();
     while (it.hasNext())
     {
-      Map.Entry entry = (Map.Entry)it.next();
-      String field = (String) entry.getKey();
-      String value = (String) entry.getValue();
+      Map.Entry entry = (Map.Entry) it.next();
+      String field = Synt.asString(entry.getKey( ) );
+      String value = Synt.asString(entry.getValue());
 
       if (field.equals( this.table.primaryKey)
       ||  field.equals( Cnst.ID_KEY))

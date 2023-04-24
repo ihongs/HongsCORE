@@ -731,6 +731,12 @@ public class Grade extends Model
     return Integer.parseInt(cn.toString());
   }
 
+  public int getRealChildsNum(String id)
+    throws HongsException
+  {
+    return this.getRealChildsNum(id, null);
+  }
+
   public int getRealChildsNum(String id, Collection excludeIds)
     throws HongsException
   {
@@ -758,12 +764,6 @@ public class Grade extends Model
 
     Object cn = info.get("__count__");
     return Integer.parseInt(cn.toString());
-  }
-
-  public int getRealChildsNum(String id)
-    throws HongsException
-  {
-    return this.getRealChildsNum(id, null);
   }
 
   public void setChildsNum(String id, int num)
@@ -840,6 +840,12 @@ public class Grade extends Model
     return Integer.parseInt(on.toString());
   }
 
+  public int getLastSerialNum(String pid)
+    throws HongsException
+  {
+    return this.getLastSerialNum(pid, null);
+  }
+
   public int getLastSerialNum(String pid, Collection excludeIds)
     throws HongsException
   {
@@ -874,12 +880,6 @@ public class Grade extends Model
 
     Object on = info.get(this.snumKey);
     return Integer.parseInt(on.toString());
-  }
-
-  public int getLastSerialNum(String pid)
-    throws HongsException
-  {
-    return this.getLastSerialNum(pid, null);
   }
 
   public void setSerialNum(String id, int num)
@@ -987,7 +987,7 @@ public class Grade extends Model
    * @param pid
    * @throws HongsException
    */
-  public void chkChildsNum(String pid)
+  public void fixChildsAndSerialNum(String pid)
     throws HongsException
   {
     String sql;
@@ -1031,8 +1031,8 @@ public class Grade extends Model
         this.db.execute(sql);
 
         // 向下递归
-        num  =  num  +  1;
-        chkChildsNum(cid);
+        num = num + 0x1;
+        fixChildsAndSerialNum(cid);
       }
     }
     else
@@ -1042,8 +1042,8 @@ public class Grade extends Model
       while (it.hasNext())
       {
         // 向下递归
-        cid  =  it.next();
-        chkChildsNum(cid);
+        cid = it.next();
+        fixChildsAndSerialNum(cid);
       }
     }
   }

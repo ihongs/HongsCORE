@@ -2,7 +2,7 @@
 <div id="master-unit-pick"
      class="pick-list"
      data-topple="hsList"
-     data-load-url="centra/master/unit/list.act?rb=id,name,mtime,ctime&amp;ob=pid,boost!,ctime"
+     data-load-url="centra/master/unit/list.act?rb=id,name,mtime,ctime&amp;ob=pid,boost!,ctime&with-units=2"
      data--0="loadData:($(this).hsFind('%'))"
      data--1="_fill__fork: (hsListFillFork)">
     <form class="findbox toolbox board row" action="" method="POST">
@@ -28,6 +28,7 @@
                         <input type="checkbox" class="checkall" name="id[]"/>
                     </th>
                     <th data-fn="name" class="sortable">名称</th>
+                    <th data-fn="units..name" data-ft="tips">上级</th>
                     <th data-fn="mtime" data-ft="_htime" data-fl="v*1000" class="_htime sortable">修改时间</th>
                     <th data-fn="ctime" data-ft="_htime" data-fl="v*1000" class="_htime sortable">创建时间</th>
                 </tr>
@@ -44,5 +45,14 @@
 
         // 自适应滚屏
         hsFlexRoll(context.find(".listbox"), $("#main-context"));
+
+        // 鼠标悬浮在格子上提示
+        context.data("_fill_tips" , function(c, v, n) {
+            if (v) {
+                v = v.sort().join(" / ");
+                    c.attr("title" , v );
+            }
+            return  v;
+        });
     })(jQuery);
 </script>

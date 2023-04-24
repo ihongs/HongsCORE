@@ -392,6 +392,7 @@ function hsSerialArr(obj) {
                     arr.push({name: key, value: vxl});
                 }
             }
+            break;
         case "serdat":
             var add = function (arr, vxl, key, k, r ) {
                 if (jQuery.isPlainObject(vxl)) {

@@ -2275,12 +2275,12 @@ $.hsWait = function(msg, xhr, xhu) {
              + 'role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">'
              + '</div></div>'
     });
-    box.find(".alert-footer").append('<span class="progress-per"></span>');
+    box.find(".alert-footer").append('<span class="progress-per code">...</span>');
     var mod = box.closest(".modal");
     var bar = box.find(".progress-bar");
-    var foo = box.find(".progress-per");
-    var stt = new Date().getTime( );
-    var pct = 0;
+    var per = box.find(".progress-per");
+    var stt = 0; // 开始时间, 正数: 执行时间, 负数: 剩余时间
+    var pct = 0; // 执行进度, [0.00,1.00]
     var itl ;
 
     // 剩余时间文本表示, h:mm:ss
@@ -2310,38 +2310,27 @@ $.hsWait = function(msg, xhr, xhu) {
     box.getProgress = function() {
         return pct ;
     };
-    box.setProgress = function(snt, tal) {
-        if (itl) {
-            clearInterval(itl);
-            itl  =  undefined ;
-        }
-        if (tal === undefined) {
-            tal  =  100;
-        if (snt === undefined) {
-            snt  =  100;
-            // 设置为 100% 并计时
-            bar.attr("aria-valuenow",  0 );
-            bar.css ( "width" , snt + "%");
-            itl  =  setInterval(function() {
-                var ctt = new Date().getTime() - stt;
-                var rtt = getProgtime(ctt);
-                foo.text( "+" + rtt);
-            },1000);
-            return ;
-        }}
+    box.setProgress = function(pzt) {
+        pct  = pzt ;
 
-        var ctt, rtt;
-        ctt  = new Date().getTime() - stt ;
-        pct  = Math.floor((100 * snt) / (0.0 + tal));
-        rtt  = Math.ceil ((100 - pct) * (ctt / pct));
-        rtt  = getProgtime (rtt);
+        var pxt ;
+        pxt  = pzt * 100 ;
+        bar.attr("aria-valuenow", pxt);
+        bar.css ( "width" , pxt + "%");
 
-        bar.attr("aria-valuenow", pct);
-        bar.css ( "width" , pct + "%");
-        if (pct < 100) {
-            foo.text( pct +"% -"+ rtt);
+        var ctt ;
+        if (stt < 0) {
+            ctt = new Date().getTime() + stt ;
+            ctt = ctt / pct -  ctt ; // 剩余时间
+            ctt = getProgtime (ctt);
+            per.text(pct+"% -"+ctt);
+        } else
+        if (stt > 0) {
+            ctt = new Date().getTime() - stt ;
+            ctt = getProgtime (ctt);
+            per.text(pct+"% +"+ctt);
         } else {
-            foo.text( pct +"%" );
+            per.text(pct+"%");
         }
     };
     box.hide = function() {
@@ -2354,13 +2343,14 @@ $.hsWait = function(msg, xhr, xhu) {
     box.done = function() {}; // 全部完成
     box.over = function() {}; // 发送完成
 
-    foo.addClass("code").text("..."); // 清空
-
     if (xhu)
     xhu.addEventListener("progress", function(evt) {
         if (evt.lengthComputable) {
-            box.setProgress(evt.loaded, evt.total);
-            if (pct >= 100) box.over();
+            var pct  = evt.loaded / evt.total;
+            box.setProgress (pct) ;
+            if (pct >= 1.0) {
+                box.over( );
+            }
         }
     } , false );
     if (xhr)

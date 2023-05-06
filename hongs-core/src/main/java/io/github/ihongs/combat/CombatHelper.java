@@ -483,85 +483,45 @@ public class CombatHelper
   }
 
   /**
-   * 输出执行进度(按完成量计算)
-   * @param n 总条目数
+   * 输出执行进度
+   * @param rt 完成比例, 0~1的浮点数
    * @param ok 完成条目数
    */
-  public static void progres(int n, int ok)
+  public static void progres(float rt, int ok)
   {
-    if (0 == n) return;
-    String notes = String.format("Ok(%d)", ok);
-    float  scale = (float) ok / n;
-    CombatHelper.progres(scale, notes);
+    CombatHelper.progres(rt, String.format("Ok(%d)", ok));
   }
 
   /**
-   * 输出执行进度(按完成失败量计算)
-   * @param n 总条目数
+   * 输出执行进度
+   * @param rt 完成比例, 0~1的浮点数
    * @param ok 完成条目数
    * @param er 错误条目数
    */
-  public static void progres(int n, int ok, int er)
+  public static void progres(float rt, int ok, int er)
   {
-    if (0 == n) return;
-    String notes = String.format("Ok(%d) Er(%d)", ok, er);
-    float  scale = (float) (er + ok) / n;
-    CombatHelper.progres(scale, notes);
+    CombatHelper.progres(rt, String.format("Ok(%d) Er(%d)", ok, er));
   }
 
   /**
-   * 输出剩余时间(按完成量计算, 此时间为估算)
-   * @param t 开始时间(毫秒)
-   * @param n 总条目数
+   * 输出执行进度
+   * @param rl 总条目数
    * @param ok 完成条目数
    */
-  public static void progres(long t, int n, int ok)
+  public static void progres(int rl, int ok)
   {
-    if (0 == n ) {
-        return ;
-    }
-    String notes ;
-    float  scale = (float) ok / n;
-    if (0 == ok) {
-        notes = String.format("Ok(%d) ET: -" , ok);
-    } else
-    if (n == ok) {
-        t = System.currentTimeMillis() - t;
-        notes = String.format("Ok(%d) TT: %s", ok, Inst.phrase(t));
-    } else {
-        t = System.currentTimeMillis() - t;
-        t = (long) (t / scale - t);
-        notes = String.format("Ok(%d) ET: %s", ok, Inst.phrase(t));
-    }
-    CombatHelper.progres(scale, notes);
+    if (rl > 0) CombatHelper.progres((float) ok / rl, ok);
   }
 
   /**
-   * 输出剩余时间(按完成失败量计算, 此时间为估算)
-   * @param t 开始时间(毫秒)
-   * @param n 总条目数
+   * 输出执行进度
+   * @param rl 总条目数
    * @param ok 完成条目数
    * @param er 错误条目数
    */
-  public static void progres(long t, int n, int ok, int er)
+  public static void progres(int rl, int ok, int er)
   {
-    if (0 == n ) {
-        return ;
-    }
-    String notes ;
-    float  scale = (float) (er + ok) / n;
-    if (0 == ok + er) {
-        notes = String.format("Ok(%d) Er(%d) ET: -" , ok, er);
-    } else
-    if (n == ok + er) {
-        t = System.currentTimeMillis() - t;
-        notes = String.format("Ok(%d) Er(%d) TT: %s", ok, er, Inst.phrase(t));
-    } else {
-        t = System.currentTimeMillis() - t;
-        t = (long) (t / scale - t);
-        notes = String.format("Ok(%d) Er(%d) ET: %s", ok, er, Inst.phrase(t));
-    }
-    CombatHelper.progres(scale, notes);
+    if (rl > 0) CombatHelper.progres((float) (er + ok) / rl, ok, rl);
   }
 
   /**

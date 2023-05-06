@@ -394,7 +394,9 @@ public class Table
     throws HongsException
   {
     String param = (String) params.get("field."+ field);
-    if (null == param) {
+    if (null != param) {
+        field = param;
+    } else {
         param = "core.table."+ field +".field";
         field = Core.getInstance(CoreConfig.class)
                     .getProperty(param, field);
@@ -414,12 +416,14 @@ public class Table
   public String getState(String state)
   {
     String param = (String) params.get("state."+ state);
-    if (null == param) {
+    if (null != param) {
+        state = param;
+    } else {
         param = "core.table."+ state +".state";
         state = Core.getInstance(CoreConfig.class)
                     .getProperty(param, null );
     }
-    if (null != state) {
+    if (null != state && state.length() != 0 ) {
         return  state;
     } else {
         return  null ;

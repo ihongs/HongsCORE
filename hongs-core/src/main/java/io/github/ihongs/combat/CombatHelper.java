@@ -485,6 +485,15 @@ public class CombatHelper
   /**
    * 输出执行进度
    * @param rt 完成比例, 0~1的浮点数
+   */
+  public static void progres(float rt)
+  {
+    CombatHelper.progres(rt, "");
+  }
+
+  /**
+   * 输出执行进度
+   * @param rt 完成比例, 0~1的浮点数
    * @param ok 完成条目数
    */
   public static void progres(float rt, int ok)

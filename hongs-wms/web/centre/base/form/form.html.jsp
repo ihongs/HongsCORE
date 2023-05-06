@@ -98,7 +98,7 @@
                             extr += " class=\"form-control\" style=\"height:5em;\"";
                         }
                     %>
-                    <textarea id="<%=_pageId%>-<%=name%>" name="<%=name%>" placeholder="<%=hold%>"<%=hold%>></textarea>
+                    <textarea id="<%=_pageId%>-<%=name%>" name="<%=name%>" placeholder="<%=hold%>"<%=extr%>></textarea>
                 <%} else if ("string".equals(type) || "text".equals(type) || "email".equals(type) || "url".equals(type) || "tel".equals(type) || "sms".equals(type)) {%>
                     <%
                         String extr = "";

@@ -2285,9 +2285,9 @@ $.hsWait = function(msg, xhr, xhu) {
 
     // 剩余时间文本表示, h:mm:ss
     function getProgtime (rtt) {
-        rtt = rtt / 1000; // 精确到秒
         var ctt, snt;
         snt  =  ""  ;
+        rtt  = Math.round(rtt /1000); // 精确到秒
         ctt  = Math.floor(rtt /3600);
         if ( 0<ctt) rtt  =rtt %3600 ;
     //  if (10>ctt) snt += "0";
@@ -2312,25 +2312,24 @@ $.hsWait = function(msg, xhr, xhu) {
     };
     box.setProgress = function(pzt) {
         pct  = pzt ;
+        pzt  = Math.round(10000 * pzt) / 100 ; // 保留两位小数的百分比
 
-        var pxt ;
-        pxt  = pzt * 100 ;
-        bar.attr("aria-valuenow", pxt);
-        bar.css ( "width" , pxt + "%");
+        bar.attr("aria-valuenow", pzt);
+        bar.css ( "width" , pzt + "%");
 
         var ctt ;
         if (stt < 0) {
             ctt = new Date().getTime() + stt ;
             ctt = ctt / pct -  ctt ; // 剩余时间
             ctt = getProgtime (ctt);
-            per.text(pct+"% -"+ctt);
+            per.text(pzt+"% -"+ctt);
         } else
         if (stt > 0) {
             ctt = new Date().getTime() - stt ;
             ctt = getProgtime (ctt);
-            per.text(pct+"% +"+ctt);
+            per.text(pzt+"% +"+ctt);
         } else {
-            per.text(pct+"%");
+            per.text(pzt+"%");
         }
     };
     box.hide = function() {

@@ -8,11 +8,11 @@
 <%@include file="_boot_.jsp"%>
 <%
     String _action = Synt.declare(request.getAttribute("form.action"), "update");
-    String _pageId = (_module + "-" + _entity + "-" + _action).replace('/', '-');
     String _funcId = "in_"+(_module + "_" + _entity + "_form").replace('/', '_');
+    String _pageId = /* */ (_module + "-" + _entity + "-form").replace('/', '-');
 %>
 <h2 class="hide"><%=_locale.translate("fore."+_action+".title", _title)%></h2>
-<div id="<%=_pageId%>" class="<%=_pageId+" "+_action%>-form board-end">
+<div id="<%=_pageId%>" class="<%=_pageId+" "+_action%>-form">
     <form action="<%=_module%>/<%=_entity%>/<%=_action%>.act"
           method="POST" enctype="multipart/form-data" class="form-horizontal">
         <div class="rollbox panel panel-default">
@@ -131,6 +131,16 @@
                         String ak = info.containsKey("data-ak") ? (String) info.get("data-ak") :  kn ;
                         String rl = info.containsKey("data-rl") ? (String) info.get("data-rl") :  "" ;
                         rl = rl.replace("centre", "centra");
+                        /**
+                         * 默认禁止扩展功能
+                         */
+                        if (!rl.isEmpty() && !rl.contains(".deny=")) {
+                            if (!rl.contains("?") && !rl.contains("#")) {
+                                rl = rl + "?.deny=.expand";
+                            } else {
+                                rl = rl + "&.deny=.expand";
+                            }
+                        }
                         kind += "\" data-ak=\""+ak+"\" data-tk=\""+tk+"\" data-vk=\""+vk
                              +  "\" data-href=\""+rl+"\" data-target=\"@";
                     %>
@@ -338,6 +348,23 @@
                         al = al.replace("centre", "centra");
                         at = at.replace("centre", "centra");
                         /**
+                         * 默认禁止扩展功能
+                         */
+                        if (!rl.isEmpty() && !rl.contains(".deny=")) {
+                            if (!rl.contains("?") && !rl.contains("#")) {
+                                rl = rl + "?.deny=.expand";
+                            } else {
+                                rl = rl + "&.deny=.expand";
+                            }
+                        }
+                        if (!al.isEmpty() && !al.contains(".deny=")) {
+                            if (!al.contains("?") && !al.contains("#")) {
+                                al = al + "?.deny=.expand";
+                            } else {
+                                al = al + "&.deny=.expand";
+                            }
+                        }
+                        /**
                          * 关联路径: base/search|data/xxxx/search?rb=a,b,c
                          * 需转换为: data/xxxx/search.act?rb=a,b,c
                          */
@@ -372,6 +399,7 @@
                         }
                         if (rptd) {
                             name  = name + "."; // 多选末尾加点
+                            typa += "\" multiple=\"multiple";
                             extr += " data-repeated=\"repeated\"";
                         }
                         if (rqrd) {

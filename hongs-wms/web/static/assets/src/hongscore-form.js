@@ -9,7 +9,7 @@ function HsForm(context, opts) {
 
     var loadBox  = context.closest(".loadbox");
     var pageBox  = context.find   (".pagebox");
-    var formBox  = context.find   ( "form"   );
+    var formBox  = context.find   ( "form:first" );
     var loadUrl  = hsGetValue(opts, "loadUrl");
     var saveUrl  = hsGetValue(opts, "saveUrl");
     var loadDat  = hsGetValue(opts, "loadData");
@@ -404,9 +404,6 @@ HsForm.prototype = {
             var evt = jQuery.Event("saveBack");
             this.formBox.trigger(evt, [rst, this]);
             if (evt.isDefaultPrevented( )) return ;
-
-            // 关闭窗口
-            this.loadBox.hsClose(  );
 
             // 完成提示
             if ( rst.msg ) {

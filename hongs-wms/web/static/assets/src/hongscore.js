@@ -46,21 +46,13 @@ function H$() {
     case '?':
         // 因 & 为实体标识, 用 ? 规避 &amp;
         if (arguments.length === 1) {
-            arguments.length  =  2;
-            arguments[1] = location.href;
-        }
-        if (typeof(arguments[1]) !== "string") {
-          if (arguments[1] instanceof jQuery
-          ||  arguments[1] instanceof Element) {
-            var c = jQuery (arguments[1]).hsFind( "%" );
-            arguments[1] = c.data("href")
-                        || c.data("data")
-                         ? hsSerialObj(c)
-                         : location.href;
-          }
-          return hsGetSeria(arguments[1], arguments[0]);
+          return hsGetParam(location.href, arguments[0]);
+        } else
+        if (typeof(arguments[1]) === "string") {
+          return hsGetParam(arguments[1] , arguments[0]);
         } else {
-          return hsGetParam(arguments[1], arguments[0]);
+          arguments[1] = hsSerialObj (arguments[1]);
+          return hsGetSeria(arguments[1] , arguments[0]);
         }
     case '$':
     case '%':
@@ -179,8 +171,8 @@ function hsRequires(url, fun ) {
 
 /**
  * 响应数据
- * @param {Object|String|XHR} rst JSON对象/JSON文本或错误消息
- * @param {Boolean} qut 1不显示消息, 2不执行跳转, 3彻底的静默
+ * @param {Object|String|XHR} rst JSON对象/JSON文本/错误消息
+ * @param {Number} qut 1不显示消息, 2不执行跳转, 3彻底的静默
  * @return {Object}
  */
 function hsResponse(rst, qut) {
@@ -305,12 +297,11 @@ function hsResponse(rst, qut) {
 }
 
 /**
- * 尝试序列化对象, 保留 HsSerialDic,HsSerialDat 类型
+ * 待序列化对象, 保留 Array,Object,HsSerialDic,HsSerialDat 类型
  * @param {Array|String|Object|Element|FormData} obj
- * @param {boolean} kep 为 true 时不处理 PlainObject 和 FormData
  * @return {Array|HsSerialDic|HsSerialDat}
  */
-function hsSerialObj(obj, kep) {
+function hsSerialObj(obj) {
     var typ = jQuery.type(obj);
     if (typ == "array" || typ == "object") {
         if (obj instanceof jQuery
@@ -321,33 +312,30 @@ function hsSerialObj(obj, kep) {
         &&  obj instanceof FormData) {
             typ = "fordat";
         } else
-        if (obj instanceof HsSerialDic) {
-            typ = "serdic";
-        } else
         if (obj instanceof HsSerialDat) {
             typ = "serdat";
+        } else
+        if (obj instanceof HsSerialDic) {
+            typ = "serdic";
         }
     }
     switch (typ) {
         case "undefined":
         case "null"  :
         case "array" :
+        case "object":
         case "serdic":
         case "serdat":
-            return obj;
+            break;
+        case "fordat":
         case "string":
         case "jquery":
-            return hsSerialArr(obj);
-        case "object":
-        case "fordat":
-        if (kep) {
-            return obj;
-        } else {
-            return hsSerialArr(obj);
-        }
+            obj = hsSerialArr(obj);
+            break;
         default:
             throw new Error("hsSerialObj: Unsupported type "+typ);
     }
+    return  obj;
 }
 
 /**
@@ -367,11 +355,11 @@ function hsSerialArr(obj) {
         &&  obj instanceof FormData) {
             typ = "fordat";
         } else
-        if (obj instanceof HsSerialDic) {
-            typ = "serdic";
-        } else
         if (obj instanceof HsSerialDat) {
             typ = "serdat";
+        } else
+        if (obj instanceof HsSerialDic) {
+            typ = "serdic";
         }
     }
     switch (typ) {
@@ -380,12 +368,6 @@ function hsSerialArr(obj) {
             break;
         case "array" :
             arr = obj;
-            break;
-        case "object":
-            for(var key in obj) {
-                var vxl  = obj[ key ];
-                arr.push({name: key, value: vxl});
-            }
             break;
         case "fordat":
             obj = obj.entries();
@@ -397,65 +379,126 @@ function hsSerialArr(obj) {
             }
             break;
         case "serdic":
-            hsForEach(obj, function(vxl, key) {
-                if (key.length) {
-                    key  = key/***/[ 0 ]; // 一键多值但无层级
-                    arr.push({name: key, value: vxl});
-                }
-            });
-            break;
-        case "serdat":
-            hsForEach(obj, function(vxl, key) {
-                if (key.length) {
-                    key  = key.join('.'); // 需将多层键串起来
-                    arr.push({name: key, value: vxl});
-                }
-            });
-            break;
-        case "string":
-            var ar1, ar2, key, vxl, i = 0;
-            ar1 = obj.split('#' , 2);
-            if (ar1.length > 1) obj = ar1[0];
-            ar1 = obj.split('?' , 2);
-            if (ar1.length > 1) obj = ar1[1];
-            ar1 = obj.split('&');
-            for ( ; i < ar1.length ; i ++ ) {
-                ar2 = ar1[i].split('=' , 2);
-                if (ar2.length > 1) {
-                    key = decodeURIComponent (ar2[0]);
-                    vxl = decodeURIComponent (ar2[1]);
+            for(var key in obj) {
+                var vxl  = obj[ key ];
+                if (jQuery.isArray(vxl) ) {
+                    if (!/(\[\]|\.\.|\.$)/.test(key)) {
+                        key = key+'.';
+                    }
+                for(var i = 0 ; i < vxl.length; i ++) {
+                    var vol = vxl [i];
+                    arr.push({name: key, value: vol});
+                }} else {
                     arr.push({name: key, value: vxl});
                 }
             }
             break;
-        case "jquery":
-            obj = jQuery( obj  );
-            if (obj.data("href")) {
-                var url = obj.data("href");
-                var dat = obj.data("data");
-                var p, a, i;
-                p = url.indexOf("?");
-                if (p != -1) {
-                    a  = hsSerialArr(url.substring(p + 1));
-                    for(i = 0; i < a.length; i ++) {
-                        arr.push(a[i]);
+        case "serdat":
+            var add = function (arr, vxl, key, k, r ) {
+                if (jQuery.isPlainObject(vxl)) {
+                    if (r !== undefined ) {
+                        key = key + "." + k;
+                    }
+                    for(k in vxl) {
+                        add (arr, vxl[k], key, k, 1 );
                     }
                 }
-                p = url.indexOf("#");
-                if (p != -1) {
-                    a  = hsSerialArr(url.substring(p + 1));
+                else if (jQuery.isArray (vxl)) {
+                    if (r !== undefined ) {
+                        key = key + "." + k;
+                    }
+                    for(k = 0; k < vxl.length; k ++ ) {
+                        add (arr, vxl[k], key, k, 0 );
+                    }
+                }
+                else {
+                    if (r !== undefined ) {
+                        k   = r ? k : '';
+                        key = key + '.' + k;
+                    }
+                    arr.push({name: key, value: vxl});
+                }
+            };
+            for(var key in obj) {
+                var vxl  = obj[key];
+                add(arr  , vxl,key);
+            }
+            break;
+        case "object":
+            var add = function (arr, vxl, key, k, r ) {
+                if (jQuery.isPlainObject(vxl)) {
+                    if (r !== undefined ) {
+                        key = key + "[" + k + ']';
+                    }
+                    for(k in vxl) {
+                        add (arr, vxl[k], key, k, 1 );
+                    }
+                }
+                else if (jQuery.isArray (vxl)) {
+                    if (r !== undefined ) {
+                        key = key + "[" + k + ']';
+                    }
+                    for(k = 0; k < vxl.length; k ++ ) {
+                        add (arr, vxl[k], key, k, 0 );
+                    }
+                }
+                else {
+                    if (r !== undefined) {
+                        k   = r ? k : '';
+                        key = key + '[' + k + ']';
+                    }
+                    arr.push({name: key, value: vxl});
+                }
+            };
+            for(var key in obj) {
+                var vxl  = obj[key];
+                add(arr  , vxl,key);
+            }
+            break;
+        case "string":
+            var p, i, j, ar0, ar1, ar2, key, vxl;
+            ar0 = [];
+            p = obj.indexOf('#');
+            if (p > -1) {
+                ar1 = obj.substring(p + 1);
+                obj = obj.substring(0 , p);
+                ar0.unshift(ar1);
+            }
+            p = obj.indexOf('?');
+            if (p > -1) {
+                ar1 = obj.substring(p + 1);
+                obj = obj.substring(0 , p);
+                ar0.unshift(ar1);
+            }
+            for(i = 0; i < ar0.length; i ++) {
+                ar1 = ar0[i].split('&'   );
+            for(j = 0; j < ar1.length; j ++) {
+                ar2 = ar1[j].split('=', 2);
+                if (ar2.length) {
+                    key = decodeURIComponent (ar2[0]);
+                    vxl = decodeURIComponent (ar2[1]);
+                    arr.push({name: key, value: vxl});
+                }
+            }}
+            break;
+        case "jquery":
+            obj = jQuery (obj);
+            arr = obj.serializeArray();
+            if (! arr.length ) {
+                var ref = obj.data("href");
+                var dat = obj.data("data");
+                if (ref) {
+                    var a = hsSerialArr(ref);
                     for(i = 0; i < a.length; i ++) {
                         arr.push(a[i]);
                     }
                 }
                 if (dat) {
-                    a  = hsSerialArr(dat);
+                    var a = hsSerialArr(dat);
                     for(i = 0; i < a.length; i ++) {
                         arr.push(a[i]);
                     }
                 }
-            } else {
-                arr = jQuery(obj).serializeArray();
             }
             break;
         default:
@@ -465,7 +508,7 @@ function hsSerialArr(obj) {
 }
 
 /**
- * 合并多组序列, 类似 jQuery.merge, 但归并层级, 返回为单层 HsSerialDic
+ * 合并多组序列, 类似 jQuery.extend, 但归并层级, 返回为单层 HsSerialDic
  * 支持参数类型: {Array|String|Object|Element|FormData}
  * @returns {Object}
  */
@@ -613,7 +656,7 @@ function hsAsFormData (data) {
         hsSetSeria ( data, name, value );
     };
     data["delete"] = function(name) {
-        hsSetSerias( data, name, [ ] );
+        hsSetSeria ( data, name, [ ] );
     };
     data["get"   ] = function(name) {
         return hsGetSeria (data, name);
@@ -719,103 +762,6 @@ function hsBeFormData (elem) {
 }
 
 /**
- * 获取序列值
- * @param {Array|Object} arr hsSerialArr 或 HsSerialDic,HsSerialDat
- * @param {String} name
- * @return {String|Array}
- */
-function hsGetSeria (arr, name) {
-    if (arr instanceof HsSerialDic) {
-        return _hsGetPoint (arr, _hsGetDkeys(name));
-    }
-    if (arr instanceof HsSerialDat) {
-        return _hsGetPoint (arr, _hsGetPkeys(name));
-    }
-    if ( jQuery.isPlainObject(arr)) {
-        return arr[ name ];
-    }
-    var val = [  ];
-    for(var i = 0 ; i < arr.length; i ++) {
-        if (arr[i]["name"] === name ) {
-            val.push(arr[i]["value"]);
-        }
-    }
-    if (val.length === 0) {
-        return undefined;
-    }
-    if (/(\[\]|\.\.|\.$)/.test(name)) {
-        return val;
-    }
-    return val [0];
-}
-
-/**
- * 设置序列值
- * @param {Array|Object} arr hsSerialArr 或 HsSerialDic,HsSerialDat
- * @param {String} name
- * @param {String|Array} value
- * @return {Array|Object} 同 arr
- */
-function hsSetSeria (arr, name, value) {
-    if (arr instanceof HsSerialDic) {
-        _hsSetPoint (arr, _hsGetDkeyz(name), value);
-        return arr;
-    }
-    if (arr instanceof HsSerialDat) {
-        _hsSetPoint (arr, _hsGetPkeyz(name), value);
-        return arr;
-    }
-    if ( jQuery.isPlainObject(arr)) {
-        arr[name] = value;
-        return arr;
-    }
-    if (!jQuery.isArray(value)) {
-        value =  value !== undefined
-              && value !== null
-              ? [value] : [];
-    }
-    for(var j = arr.length-1; j > -1; j --) {
-        if (arr[j]["name"] === name) {
-            arr.splice(j, 1);
-        }
-    }
-    for(var i = 0 ; i < value.length; i ++) {
-        arr.push({name: name, value: value[i]});
-    }
-    return arr;
-}
-
-/**
- * 获取多个序列值
- * @param {Array|Object} arr hsSerialArr 或 HsSerialDic,HsSerialDat
- * @param {String} name
- * @return {Array}
- * @deprecated 只用 hsGetSeria 即可
- */
-function hsGetSerias(arr, name) {
-    var value = hsGetSeria(arr, name);
-    if (value ===  undefined  ) {
-        value = [/***/];
-    } else
-    if (!jQuery.isArray(value)) {
-        value = [value];
-    }
-    return value;
-}
-
-/**
- * 设置多个序列值
- * @param {Array|Object} arr hsSerialArr 或 HsSerialDic,HsSerialDat
- * @param {String} name
- * @param {Array} value
- * @return {Array|Object} 同 arr
- * @deprecated 只用 hsSetSeria 即可
- */
-function hsSetSerias(arr, name, value) {
-  return hsSetSeria (arr, name, value);
-}
-
-/**
  * 获取多个参数值
  * @param {String} url
  * @param {String} name
@@ -894,6 +840,103 @@ function hsGetParams(url, name) {
  */
 function hsSetParams(url, name, value) {
   return hsSetParam (url, name, value);
+}
+
+/**
+ * 获取序列值
+ * @param {Array|Object} arr hsSerialArr 或 HsSerialDic,HsSerialDat
+ * @param {String} name
+ * @return {String|Array}
+ */
+function hsGetSeria (arr, name) {
+    if (arr instanceof HsSerialDic) {
+        return _hsGetPoint (arr, _hsGetDkeys(name));
+    }
+    if (arr instanceof HsSerialDat) {
+        return _hsGetPoint (arr, _hsGetPkeys(name));
+    }
+    if ( jQuery.isPlainObject(arr)) {
+        return _hsGetPoint (arr, _hsGetPkeys(name));
+    }
+    var val = [  ];
+    for(var i = 0 ; i < arr.length; i ++) {
+        if (arr[i]["name"] === name ) {
+            val.push(arr[i]["value"]);
+        }
+    }
+    if (val.length === 0) {
+        return undefined;
+    }
+    if (/(\[\]|\.\.|\.$)/.test(name)) {
+        return val;
+    }
+    return val [0];
+}
+
+/**
+ * 设置序列值
+ * @param {Array|Object} arr hsSerialArr 或 HsSerialDic,HsSerialDat
+ * @param {String} name
+ * @param {String|Array} value
+ * @return {Array|Object} 同 arr
+ */
+function hsSetSeria (arr, name, value) {
+    if (arr instanceof HsSerialDic) {
+        _hsSetPoint (arr, _hsGetDkeyz(name), value);
+        return arr;
+    }
+    if (arr instanceof HsSerialDat) {
+        _hsSetPoint (arr, _hsGetPkeyz(name), value);
+        return arr;
+    }
+    if ( jQuery.isPlainObject(arr)) {
+        _hsSetPoint (arr, _hsGetPkeyz(name), value);
+        return arr;
+    }
+    if (!jQuery.isArray(value)) {
+        value =  value !== undefined
+              && value !== null
+              ? [value] : [];
+    }
+    for(var j = arr.length-1; j > -1; j --) {
+        if (arr[j]["name"] === name) {
+            arr.splice(j, 1);
+        }
+    }
+    for(var i = 0 ; i < value.length; i ++) {
+        arr.push({name: name, value: value[i]});
+    }
+    return arr;
+}
+
+/**
+ * 获取多个序列值
+ * @param {Array|Object} arr hsSerialArr 或 HsSerialDic,HsSerialDat
+ * @param {String} name
+ * @return {Array}
+ * @deprecated 只用 hsGetSeria 即可
+ */
+function hsGetSerias(arr, name) {
+    var value = hsGetSeria(arr, name);
+    if (value ===  undefined  ) {
+        value = [/***/];
+    } else
+    if (!jQuery.isArray(value)) {
+        value = [value];
+    }
+    return value;
+}
+
+/**
+ * 设置多个序列值
+ * @param {Array|Object} arr hsSerialArr 或 HsSerialDic,HsSerialDat
+ * @param {String} name
+ * @param {Array} value
+ * @return {Array|Object} 同 arr
+ * @deprecated 只用 hsSetSeria 即可
+ */
+function hsSetSerias(arr, name, value) {
+  return hsSetSeria (arr, name, value);
 }
 
 /**
@@ -1119,9 +1162,9 @@ function _hsGetDapth(lst, keys, def, pos) {
 }
 
 function _hsGetPkeys(path) {
-    path = path.replace(/\]\[/g, ".")
-               .replace(/\[/   , ".")
-               .replace(/\]/   , "" )
+    // 清理路径符号, 按分隔符进行拆分
+    path = path.replace(/\[/g , "." )
+               .replace(/\]/g , ""  )
                .split  (/\./ );
     var i , keys = [];
     for(i = 0; i < path.length; i ++) {
@@ -1138,6 +1181,10 @@ function _hsGetPkeys(path) {
 
 function _hsGetDkeys(path) {
     if (/(\[\]|\.\.|\.$)/.test(path)) {
+    // 统一路径符号, 移除数组末尾标识
+    path = path.replace(/\[/g , "." )
+               .replace(/\]/g , ""  )
+               .replace(/\.$/ , ""  );
         return [path , null];
     } else {
         return [path];
@@ -1150,31 +1197,8 @@ function _hsGetPkeyz(path) {
 }
 
 function _hsGetDkeyz(path) {
+    path = path.replace(/(\[\]|\.)$/, '');
     return [path];
-}
-
-/**
- * 遍历对象或数组的全部叶子节点
- * @param {Object,Array} data
- * @param {Function} func
- */
-function hsForEach(data, func) {
-    function _each(data, func, path) {
-        if (jQuery.isPlainObject(data)) {
-            for (var k in data) {
-                _each(data[k], func, path.concat([k]));
-            }
-        }
-        else if (jQuery.isArray (data)) {
-            for (var i = 0 ; i < data.length ; i ++ ) {
-                _each(data[i], func, path.concat([i]));
-            }
-        }
-        else if (path.length > 0) {
-            func(data, path);
-        }
-    }
-    _each( data, func, [ ] );
 }
 
 /**
@@ -2251,17 +2275,19 @@ $.hsWait = function(msg, xhr, xhu) {
              + 'role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">'
              + '</div></div>'
     });
+    box.find(".alert-footer").append('<span class="progress-per code">...</span>');
     var mod = box.closest(".modal");
-    var foo = box.find(".alert-footer");
     var bar = box.find(".progress-bar");
-    var stt = new Date().getTime()/1000;
-    var pct = 0;
-    var itl;
+    var per = box.find(".progress-per");
+    var stt = 0; // 开始时间, 正数: 执行时间, 负数: 剩余时间
+    var pct = 0; // 执行进度, [0.00,1.00]
+    var itl ;
 
     // 剩余时间文本表示, h:mm:ss
     function getProgtime (rtt) {
         var ctt, snt;
         snt  =  ""  ;
+        rtt  = Math.round(rtt /1000); // 精确到秒
         ctt  = Math.floor(rtt /3600);
         if ( 0<ctt) rtt  =rtt %3600 ;
     //  if (10>ctt) snt += "0";
@@ -2284,34 +2310,27 @@ $.hsWait = function(msg, xhr, xhu) {
     box.getProgress = function() {
         return pct ;
     };
-    box.setProgress = function(snt, tal) {
-        if (itl) {
-            clearInterval(itl);
-            itl  =  undefined ;
+    box.setProgress = function(pzt) {
+        pct  = pzt ;
+        pzt  = Math.round(10000 * pzt) / 100 ; // 保留两位小数的百分比
+
+        bar.attr("aria-valuenow", pzt);
+        bar.css ( "width" , pzt + "%");
+
+        var ctt ;
+        if (stt < 0) {
+            ctt = new Date().getTime() + stt ;
+            ctt = ctt / pct -  ctt ; // 剩余时间
+            ctt = getProgtime (ctt);
+            per.text(pzt+"% -"+ctt);
+        } else
+        if (stt > 0) {
+            ctt = new Date().getTime() - stt ;
+            ctt = getProgtime (ctt);
+            per.text(pzt+"% +"+ctt);
+        } else {
+            per.text(pzt+"%");
         }
-        if (tal === undefined) {
-            tal  =  100;
-        if (snt === undefined) {
-            snt  =  100;
-            // 设置为 100% 并计时
-            bar.attr("aria-valuenow",  0 );
-            bar.css ( "width" , snt + "%");
-            itl  =  setInterval(function() {
-                var ctt = new Date().getTime() / 1000 - stt;
-                foo.text("+" + getProgtime(Math.ceil(ctt)));
-            },1000);
-            return ;
-        }}
-
-        var ctt, rtt;
-        ctt  = new Date ().getTime() / 1000 - stt;
-        pct  = Math.ceil((100 * snt) / (0.0 + tal));
-        rtt  = Math.ceil((100 - pct) * (ctt / pct));
-        snt  = getProgtime (rtt);
-
-        bar.attr("aria-valuenow", pct);
-        bar.css ( "width" , pct + "%");
-        foo.text(  pct  + "% -" + snt);
     };
     box.hide = function() {
         mod.modal("hide");
@@ -2320,44 +2339,61 @@ $.hsWait = function(msg, xhr, xhu) {
             itl  =  undefined ;
         }
     };
+    box.done = function() {}; // 全部完成
+    box.over = function() {}; // 发送完成
 
-    foo.addClass("code").text("..."); // 清空
-
-    if (xhr)
-    xhr.addEventListener(  "load"  , function(   ) {
-        box.hide( );
-    } , false );
     if (xhu)
     xhu.addEventListener("progress", function(evt) {
-        if (pct  <  100  && evt.lengthComputable ) {
-            box.setProgress(evt.loaded,evt.total );
+        if (evt.lengthComputable) {
+            var pct  = evt.loaded / evt.total;
+            box.setProgress (pct) ;
+            if (pct >= 1.0) {
+                box.over( );
+            }
         }
+    } , false );
+    if (xhr)
+    xhr.addEventListener(  "load"  , function(   ) {
+        box.done();
+        box.hide();
     } , false );
 
     return  box;
 };
 /**
  * 带上传进度条的异步通讯方法
- * @param {String} msg 提示语
- * @return {Function} xhr回调
+ * @param  {String} msg 提示语
+ * @param  {Function} evt 事件
+ * @return {Function} xhr 回调
  */
-$.hsXhup = function(msg) {
-    return function(   ) {
+$.hsXhup = function(msg, evt) {
+    return function() {
         var xhr = $.ajaxSettings.xhr();
         var xhu = xhr.upload ||  xhr  ;
-        $.hsWait( /**/ msg, xhr, xhu );
+        var box = $.hsWait( msg, xhr, xhu );
+        if (evt) {
+            evt.call(box, "init");
+            box.over = function() { evt.call(box, "over"); };
+            box.done = function() { evt.call(box, "done"); };
+        }
         return xhr;
     };
 };
 /**
  * 带加载进度条的异步通讯方法
- * @param {String} msg 提示语
- * @return {Function} xhr回调
+ * @param  {String} msg 提示语
+ * @param  {Function} evt 事件
+ * @return {Function} xhr 回调
  */
-$.hsXhrp = function(msg) {
-    return function(   ) {
+$.hsXhrp = function(msg, evt) {
+    return function() {
         var xhr = $.ajaxSettings.xhr();
-        $.hsWait( /**/ msg, xhr, xhr );
+        var box = $.hsWait( msg, xhr, xhr );
+        if (evt) {
+            evt.call(box, "init");
+            box.over = function() { evt.call(box, "over"); };
+            box.done = function() { evt.call(box, "done"); };
+        }
         return xhr;
     };
 };

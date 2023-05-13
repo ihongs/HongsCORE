@@ -8,11 +8,11 @@
 <%@include file="_boot_.jsp"%>
 <%
     String _action = Synt.declare(request.getAttribute("info.action"), "review");
-    String _pageId = (_module + "-" + _entity + "-" + _action).replace('/', '-');
     String _funcId = "in_"+(_module + "_" + _entity + "_info").replace('/', '_');
+    String _pageId = /* */ (_module + "-" + _entity + "-info").replace('/', '-');
 %>
 <h2 class="hide"><%=_locale.translate("fore."+_action+".title", _title)%></h2>
-<div id="<%=_pageId%>" class="<%=_pageId+" "+_action%>-info board-end">
+<div id="<%=_pageId%>" class="<%=_pageId+" "+_action%>-info">
     <form action="" onsubmit="return false"
           method="POST" enctype="multipart/form-data" class="form-horizontal">
         <div class="panel panel-default">
@@ -131,6 +131,16 @@
                         String ak = info.containsKey("data-ak") ? (String) info.get("data-ak") :  kn ;
                         String rl = info.containsKey("data-rl") ? (String) info.get("data-rl") :  "" ;
                         rl = rl.replace("centra", "centre");
+                        /**
+                         * 默认禁止扩展功能
+                         */
+                        if (!rl.isEmpty() && !rl.contains(".deny=")) {
+                            if (!rl.contains("?") && !rl.contains("#")) {
+                                rl = rl + "?.deny=.expand";
+                            } else {
+                                rl = rl + "&.deny=.expand";
+                            }
+                        }
                         kind += "\" data-ak=\""+ak+"\" data-tk=\""+tk+"\" data-vk=\""+vk
                              +  "\" data-href=\""+rl+"\" data-target=\"@";
                     %>

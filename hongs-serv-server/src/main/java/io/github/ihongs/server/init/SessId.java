@@ -132,7 +132,7 @@ public class SessId implements Initer {
                                     CoreLogger.debug("Got session id from cookies, {}={}", sessName, ssid);
                                     break; // 取到就不再继续
                                 } else {
-                                    CoreLogger.warn ("Wrong session id in cookies, {}={}", sessName, ssid);
+                                    CoreLogger.debug("Wrong session id in cookies, {}={}", sessName, ssid);
                                 }
                             /*} else {
                                 CoreLogger.warn ("Duplicate session id in cookies, {}:{},{}", sessName, sess.getId(), ssid);

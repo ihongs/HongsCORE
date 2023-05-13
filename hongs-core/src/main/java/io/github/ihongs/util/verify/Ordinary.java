@@ -35,17 +35,16 @@ public class Ordinary extends Rule {
          */
         if (value instanceof Map) {
             try {
-                Object type = getParam("__type__");
-                if ("json".equals(type)
-                ||"object".equals(type)) {
+                Object type = getParam ("__type__");
+                if ("object".equals(type) || "form".equals(type)) {
                     return value;
                 }
                 Object kind = FormSet.getInstance().getEnum("__types__").get(type);
-                if ("form".equals(kind)) {
+                if ("object".equals(kind) || "form".equals(kind)) {
                     return value;
                 }
-            } catch ( HongsException ex) {
-                throw ex.toExemption(  );
+            } catch (HongsException e) {
+                throw e.toExemption( );
             }
 
             throw new Wrong("@fore.form.ordinary");

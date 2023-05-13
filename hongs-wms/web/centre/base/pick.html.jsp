@@ -6,8 +6,8 @@
 <%@include file="_boot_.jsp"%>
 <%
     String _action = Synt.declare(request.getAttribute("list.action"), "select");
-    String _pageId = (_module + "-" + _entity + "-" + _action).replace('/', '-');
     String _funcId = "in_"+(_module + "_" + _entity + "_pick").replace('/', '_');
+    String _pageId = /* */ (_module + "-" + _entity + "-pick").replace('/', '-');
 
     String NAME = Synt.declare(_params.get("field-name"), "name");
     String NOTE = Synt.declare(_params.get("field-note"), "note");
@@ -19,7 +19,7 @@
     Set<String>   _wd = getWordable (_fields);
 %>
 <h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
-<div id="<%=_pageId%>" class="<%=_action%>-list board-end">
+<div id="<%=_pageId%>" class="<%=_pageId+" "+_action%>-list">
     <div style="display: table; width: 100%;">
         <div style="display: table-cell; width: 15px; vertical-align: middle;">
             <div class="pagebox btn-group" style="white-space: nowrap; padding-right: 15px;">

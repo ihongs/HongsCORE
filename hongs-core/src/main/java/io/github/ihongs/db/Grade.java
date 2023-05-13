@@ -166,13 +166,13 @@ public class Grade extends Model
 
     if (pth == 1)
     {
-      String id = (String) info.get(this.table.primaryKey);
+      String id = Synt.asString(info.get(this.table.primaryKey));
       info.put(this.pathKey, this.getParentIds(id, pid));
     }
     else
     if (pth == 2)
     {
-      String id = (String) info.get(this.table.primaryKey);
+      String id = Synt.asString(info.get(this.table.primaryKey));
       info.put(this.pathKey, this.getParents  (id, pid));
     }
 
@@ -270,8 +270,8 @@ public class Grade extends Model
         return data;
     }
 
-    byte   pth = Synt.declare(rd.get(this.pathKey), (byte) 0);
-    String pid = Synt.declare(rd.get(this.pidKey ), "" );
+    byte   pth = Synt.declare(rd.get(this.pathKey), (byte)0);
+    String pid = Synt.declare(rd.get(this.pidKey ),   ""   );
     if (pid.length() == 0)
     {
         pid = this.rootId;
@@ -285,7 +285,7 @@ public class Grade extends Model
       while (it.hasNext())
       {
         Map  info = (Map) it.next();
-        String id = (String)info.get(this.table.primaryKey);
+        String id = Synt.asString(info.get(this.table.primaryKey));
         List subPath = new ArrayList( );
         info.put(this.pathKey, subPath);
 
@@ -301,7 +301,7 @@ public class Grade extends Model
       while (it.hasNext())
       {
         Map  info = (Map) it.next();
-        String id = (String)info.get(this.table.primaryKey);
+        String id = Synt.asString(info.get(this.table.primaryKey));
         List subPath = new ArrayList( );
         info.put(this.pathKey, subPath);
 
@@ -345,7 +345,7 @@ public class Grade extends Model
       rd = new HashMap( );
     }
 
-    String pid = (String) rd.get(this.pidKey);
+    String pid = Synt.asString(rd.get(this.pidKey));
 
     // 默认加到根节点下
     if (pid == null || pid.length() == 0)
@@ -396,13 +396,13 @@ public class Grade extends Model
      * 如有指定bid(BeforeID)
      * 则将新的pid(ParentID)重设为其pid
      */
-    String bid = (String) rd.get(this.bidKey);
+    String bid = Synt.asString(rd.get(this.bidKey));
     if (bid != null && bid.length() != 0)
     {
       rd.put(this.pidKey, this.getParentId(bid));
     }
 
-    String newPid = (String) rd.get(this.pidKey);
+    String newPid = Synt.asString(rd.get(this.pidKey));
     String oldPid = this.getParentId (id);
     int    ordNum = this.getSerialNum(id);
     int    chgNum = super.put(id, rd);
@@ -529,53 +529,10 @@ public class Grade extends Model
             "` WHERE `"
             + this.table.primaryKey +
             "` = ?";
-    Map info = this.db.fetchOne(sql, id);
-    return (String)info.get(this.pidKey);
-  }
-
-  public Map getParent(String id)
-    throws HongsException
-  {
-    String sql = "SELECT * FROM `"
-            + this.table.tableName +
-            "` WHERE `"
-            + this.table.primaryKey +
-            "` = ?";
-    Map info = this.db.fetchOne(sql, id);
-    return !info.isEmpty() ? info : null;
-  }
-
-  public List<String> getParentIds(String id, String rootId)
-    throws HongsException
-  {
-    List<String> ids = new ArrayList();
-    String pid = this.getParentId(id );
-    if (pid != null)
-    {
-      ids.add( pid );
-      if (!pid.equals(rootId))
-      {
-        ids.addAll(this.getParentIds(pid, rootId));
-      }
+    for(Map row : this.db.query(sql, 0, 1, id )) {
+        return Synt.asString (row.get(this.pidKey));
     }
-    return ids;
-  }
-
-  public List<Map> getParents(String id, String rootId)
-    throws HongsException
-  {
-    List<Map> nds = new ArrayList();
-    Map pnd  = this.getParent( id );
-    if (pnd != null)
-    {
-      nds.add( pnd );
-      String pid = (String) pnd.get(this.pidKey);
-      if (!pid.equals(rootId))
-      {
-        nds.addAll(this.getParents(pid, rootId));
-      }
-    }
-    return nds;
+    return null;
   }
 
   public List<String> getParentIds(String id)
@@ -584,10 +541,58 @@ public class Grade extends Model
     return this.getParentIds(id, this.rootId);
   }
 
+  public List<String> getParentIds(String id, String rootId)
+    throws HongsException
+  {
+    List<String> ids = new ArrayList();
+    String  pid = this.getParentId(id);
+    if (pid != null)
+    {
+      ids.add( pid );
+      if (! pid.equals(rootId))
+      {
+        ids.addAll(this.getParentIds(pid, rootId));
+      }
+    }
+    return  ids;
+  }
+
   public List<Map> getParents(String id)
     throws HongsException
   {
     return this.getParents(id, this.rootId);
+  }
+
+  public List<Map> getParents(String id, String rootId)
+    throws HongsException
+  {
+    List<String> ids = getParentIds (id, rootId);
+    List<Map>    nds = new ArrayList(ids.size());
+    Map          map = new  HashMap (ids.size());
+    if (ids.isEmpty()) return nds;
+    String sql = "SELECT * FROM `"
+            + this.table.tableName +
+            "` WHERE `"
+            + this.table.primaryKey +
+            "` IN (?)";
+    for(Map row : this.db.query(sql, 0, 0, ids)) {
+        id = Synt.asString (row.get(this.table.primaryKey));
+        map.put(id, row);
+    }
+    // 按顺序重排
+    for(String pid: ids) {
+        Map row  = (Map) map.get(pid);
+        if (row != null) {
+            nds.add(row);
+        }
+    }
+    return  nds;
+  }
+
+  public List<String> getChildIds(String id)
+    throws HongsException
+  {
+    return this.getChildIds(id, false);
   }
 
   public List<String> getChildIds(String id, boolean all)
@@ -627,16 +632,17 @@ public class Grade extends Model
       while (it.hasNext())
       {
         Map info = (Map)it.next();
-        String cid = (String)info.get(this.table.primaryKey);
+        String cid = Synt.asString(info.get(this.table.primaryKey));
 
         int num;
-        if (this.cnumKey == null)
+        if (this.cnumKey != null)
         {
-          num = 1; // 总是尝试获取就行了 //this.getChildsNum(cid);
+          num = Synt.declare(info.get(this.cnumKey), 0);
         }
         else
         {
-          num = Integer.parseInt((String)info.get(this.cnumKey));
+        //num = this.getChildsNum(cid);
+          num = 1; // 总是尝试获取就行了
         }
 
         if (num > 0)
@@ -647,6 +653,12 @@ public class Grade extends Model
     }
 
     return cids;
+  }
+
+  public List<Map> getChilds(String id)
+    throws HongsException
+  {
+    return this.getChilds(id, false);
   }
 
   public List<Map> getChilds(String id, boolean all)
@@ -666,16 +678,17 @@ public class Grade extends Model
       while (it.hasNext())
       {
         Map info = (Map)it.next();
-        String cid = (String)info.get(this.table.primaryKey);
+        String cid = Synt.asString(info.get(this.table.primaryKey));
 
         int num;
-        if (this.cnumKey == null)
+        if (this.cnumKey != null)
         {
-          num = 1; // 总是尝试获取就行了 //this.getChildsNum(cid);
+          num = Synt.declare(info.get(this.cnumKey), 0);
         }
         else
         {
-          num = Integer.parseInt((String)info.get(this.cnumKey));
+        //num = this.getChildsNum(cid);
+          num = 1; // 总是尝试获取就行了
         }
 
         if (num > 0)
@@ -686,18 +699,6 @@ public class Grade extends Model
     }
 
     return list;
-  }
-
-  public List<String> getChildIds(String id)
-    throws HongsException
-  {
-    return this.getChildIds(id, false);
-  }
-
-  public List<Map> getChilds(String id)
-    throws HongsException
-  {
-    return this.getChilds(id, false);
   }
 
   //** 子数目相关 **/
@@ -730,6 +731,12 @@ public class Grade extends Model
     return Integer.parseInt(cn.toString());
   }
 
+  public int getRealChildsNum(String id)
+    throws HongsException
+  {
+    return this.getRealChildsNum(id, null);
+  }
+
   public int getRealChildsNum(String id, Collection excludeIds)
     throws HongsException
   {
@@ -757,12 +764,6 @@ public class Grade extends Model
 
     Object cn = info.get("__count__");
     return Integer.parseInt(cn.toString());
-  }
-
-  public int getRealChildsNum(String id)
-    throws HongsException
-  {
-    return this.getRealChildsNum(id, null);
   }
 
   public void setChildsNum(String id, int num)
@@ -839,6 +840,12 @@ public class Grade extends Model
     return Integer.parseInt(on.toString());
   }
 
+  public int getLastSerialNum(String pid)
+    throws HongsException
+  {
+    return this.getLastSerialNum(pid, null);
+  }
+
   public int getLastSerialNum(String pid, Collection excludeIds)
     throws HongsException
   {
@@ -873,12 +880,6 @@ public class Grade extends Model
 
     Object on = info.get(this.snumKey);
     return Integer.parseInt(on.toString());
-  }
-
-  public int getLastSerialNum(String pid)
-    throws HongsException
-  {
-    return this.getLastSerialNum(pid, null);
   }
 
   public void setSerialNum(String id, int num)
@@ -986,7 +987,7 @@ public class Grade extends Model
    * @param pid
    * @throws HongsException
    */
-  public void chkChildsNum(String pid)
+  public void fixChildsAndSerialNum(String pid)
     throws HongsException
   {
     String sql;
@@ -1030,8 +1031,8 @@ public class Grade extends Model
         this.db.execute(sql);
 
         // 向下递归
-        num  =  num  +  1;
-        chkChildsNum(cid);
+        num = num + 0x1;
+        fixChildsAndSerialNum(cid);
       }
     }
     else
@@ -1041,8 +1042,8 @@ public class Grade extends Model
       while (it.hasNext())
       {
         // 向下递归
-        cid  =  it.next();
-        chkChildsNum(cid);
+        cid = it.next();
+        fixChildsAndSerialNum(cid);
       }
     }
   }

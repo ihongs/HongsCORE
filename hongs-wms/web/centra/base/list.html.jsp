@@ -8,8 +8,8 @@
 <%@include file="_boot_.jsp"%>
 <%
     String _action = Synt.declare(request.getAttribute("list.action"), "browse");
-    String _pageId = (_module + "-" + _entity + "-" + _action).replace('/', '-');
     String _funcId = "in_"+(_module + "_" + _entity + "_list").replace('/', '_');
+    String _pageId = /* */ (_module + "-" + _entity + "-list").replace('/', '-');
 
     String _conf   = FormSet.hasConfFile(_module + "/" + _entity)
                   || NaviMap.hasConfFile(_module + "/" + _entity)
@@ -21,7 +21,7 @@
     Set<String>   _sd = getSrchable (_fields);
 %>
 <h2 class="hide"><%=_locale.translate("fore."+_action+".title", _title)%></h2>
-<div id="<%=_pageId%>" class="<%=_pageId+" "+_action%>-list board-end">
+<div id="<%=_pageId%>" class="<%=_pageId+" "+_action%>-list">
     <form class="findbox toolbox board row">
         <div class="col-xs-7">
             <div class="btn-group">
@@ -66,8 +66,8 @@
         </div>
     </form>
     <!-- 筛选 -->
-    <form class="findbox filtbox invisible well form-horizontal">
-        <div class="group-end">
+    <form class="findbox filtbox openbox invisible well form-horizontal">
+        <div class="form-body">
         <%
         Iterator it2 = _fields.entrySet().iterator();
         while (it2.hasNext()) {
@@ -149,19 +149,21 @@
             </div>
         </div>
         <%} /*End For*/%>
-        <hr  style="clear: both;"/>
+        <hr/>
+        </div>
+        <div class="form-foot">
         <div class="btns-group form-group form-group-sm row">
             <div class="col-xs-12 text-center">
                 <button type="submit" class="btn btn-primary">过滤</button>
-                <span style="padding: 0.1em;"></span>
+                <span style="padding: 0.5em;"></span>
                 <button type="reset"  class="btn btn-default">重置</button>
             </div>
         </div>
         </div>
     </form>
     <!-- 统计 -->
-    <form class="findbox statbox invisible well">
-        <div class="board-end row">
+    <form class="findbox statbox openbox invisible well">
+        <div class="row">
         <%
         Iterator it3 = _fields.entrySet().iterator();
         while (it3.hasNext()) {

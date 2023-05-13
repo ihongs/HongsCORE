@@ -8,8 +8,8 @@
 <%@include file="_boot_.jsp"%>
 <%
     String _action = Synt.declare(request.getAttribute("list.action"), "browse");
-    String _pageId = (_module + "-" + _entity + "-" + _action).replace('/', '-');
     String _funcId = "in_"+(_module + "_" + _entity + "_list").replace('/', '_');
+    String _pageId = /* */ (_module + "-" + _entity + "-list").replace('/', '-');
 
     String _conf   = FormSet.hasConfFile(_module + "/" + _entity)
                   || NaviMap.hasConfFile(_module + "/" + _entity)
@@ -26,7 +26,7 @@
     Set<String>   _sd = getSrchable (_fields);
 %>
 <h2 class="hide"><%=_locale.translate("fore."+_action+".title", _title)%></h2>
-<div id="<%=_pageId%>" class="<%=_pageId+" "+_action%>-list board-end">
+<div id="<%=_pageId%>" class="<%=_pageId+" "+_action%>-list">
     <form class="findbox toolbox board row">
         <div class="col-md-6 col-sm-8 center-block">
             <div style="display: table; width: 100%;">
@@ -59,7 +59,8 @@
         </div>
     </form>
     <!-- 筛选 -->
-    <form class="findbox filtbox statbox invisible well form-horizontal">
+    <form class="findbox filtbox statbox openbox invisible well form-horizontal">
+        <div class="form-body">
         <%
         Iterator it2 = _fields.entrySet().iterator();
         while (it2.hasNext()) {
@@ -226,7 +227,8 @@
                 </div>
             </div>
         </div>
-        <div class="group-end">
+        </div>
+        <div class="form-foot">
             <input type="submit" class="invisible"/>
         </div>
     </form>

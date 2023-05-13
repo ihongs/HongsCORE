@@ -23,24 +23,38 @@ import java.util.Map;
 @Action("common/menu")
 public class MenuAction {
 
-    private static final String MENU_ACT_URI = "common/menu" + Cnst.ACT_EXT;
+    private final String act;
+    private final String pre;
+
+    public MenuAction(String act) {
+        this.act = act ;
+        this.pre = act + "?";
+    }
+
+    public MenuAction() {
+        this("common/menu"+ Cnst.ACT_EXT);
+    }
 
     @Action("__main__")
     public void menu(ActionHelper helper)
     throws HongsException {
         String m = helper.getParameter("m"); // 配置名称
         String n = helper.getParameter("n"); // 节点标识
-        String x = helper.getParameter("x"); // 附加标识(已废弃)
-        String u = MENU_ACT_URI;
+        String u = act;
 
-        if (m == null || "".equals(m)) {
-            m  = "default";
-        }   u += "?m=" + m;
+        // 拼接名称
+        if (m != null) {
+            u += "?m=" + m;
         if (n != null) {
             u += "&n=" + n;
-        }
-        if (x != null) {
-            u += "&x=" + x;
+        }} else {
+        if (n != null) {
+            u += "?n=" + n;
+        }}
+
+        // 默认配置
+        if (m == null || m.isEmpty()) {
+            m  = "default";
         }
 
         NaviMap site = NaviMap.getInstance(m);
@@ -74,9 +88,9 @@ public class MenuAction {
     @Action("list")
     public void list(ActionHelper helper)
     throws HongsException {
-        String m = helper.getParameter("m");
-        String n = helper.getParameter("n");
-        String d = helper.getParameter("d");
+        String m = helper.getParameter("m"); // 配置名称
+        String n = helper.getParameter("n"); // 节点名称
+        String d = helper.getParameter("d"); // 提取深度
         List   l;
         int    b;
 
@@ -112,7 +126,7 @@ public class MenuAction {
             if (href.startsWith("!")) {
                 continue;
             }
-            if (href.startsWith(MENU_ACT_URI + "?")) {
+            if (href.startsWith(pre)) {
                 Map<String, Map> subs = (Map) item.get("menus");
                 if (subs != null && !subs.isEmpty()) {
                     href  = getRedirect(site, subs);

@@ -98,7 +98,7 @@
                             extr += " class=\"form-control\" style=\"height:5em;\"";
                         }
                     %>
-                    <textarea id="<%=_pageId%>-<%=name%>" name="<%=name%>" placeholder="<%=hold%>"<%=hold%>></textarea>
+                    <textarea id="<%=_pageId%>-<%=name%>" name="<%=name%>" placeholder="<%=hold%>"<%=extr%>></textarea>
                 <%} else if ("string".equals(type) || "text".equals(type) || "email".equals(type) || "url".equals(type) || "tel".equals(type) || "sms".equals(type)) {%>
                     <%
                         String extr = "";
@@ -222,6 +222,23 @@
                         rl = rl.replace("centra", "centre");
                         al = al.replace("centra", "centre");
                         at = at.replace("centra", "centre");
+                        /**
+                         * 默认禁止扩展功能
+                         */
+                        if (!rl.isEmpty() && !rl.contains(".deny=")) {
+                            if (!rl.contains("?") && !rl.contains("#")) {
+                                rl = rl + "?.deny=.expand";
+                            } else {
+                                rl = rl + "&.deny=.expand";
+                            }
+                        }
+                        if (!al.isEmpty() && !al.contains(".deny=")) {
+                            if (!al.contains("?") && !al.contains("#")) {
+                                al = al + "?.deny=.expand";
+                            } else {
+                                al = al + "&.deny=.expand";
+                            }
+                        }
                         /**
                          * 关联路径: base/search|data/xxxx/search?rb=a,b,c
                          * 需转换为: data/xxxx/search.act?rb=a,b,c

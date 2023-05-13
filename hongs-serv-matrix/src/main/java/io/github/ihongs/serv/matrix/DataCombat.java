@@ -147,7 +147,7 @@ public class DataCombat {
         boolean pr = ( Core . DEBUG  ==  0 );
         long tm = System.currentTimeMillis();
         long tc = tm / 1000 ;
-        if (pr) CombatHelper.progres(tm,c,i);
+        if (pr) CombatHelper.progres( c, i );
 
         dr.begin ( );
 
@@ -178,7 +178,7 @@ public class DataCombat {
                 da.commit(  );
                 dr.begin (  );
                 if ( pr) {
-                    CombatHelper.progres(tm, c,i);
+                    CombatHelper.progres(c, i);
                 }
             }
         }
@@ -186,7 +186,7 @@ public class DataCombat {
         da.commit( );
         dr.begin ( );
         if ( pr) {
-            CombatHelper.progres(tm, c,i);
+            CombatHelper.progres(c, i);
         }
 
         /**

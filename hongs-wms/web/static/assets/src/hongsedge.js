@@ -230,6 +230,7 @@ HsStat.prototype = {
                     }
 
                     k = n.find(".checkone2").attr( "name" );
+                    k = _hsGetDkeys(k) [ 0 ]; // 规避数组结尾
                     if (dat && dat [k] ) {
                         n.find(".checkone2").val ( dat[k] );
                     } else {
@@ -793,6 +794,7 @@ HsCate.prototype = {
                     }
 
                     k = n.find(".checkone2").attr( "name" );
+                    k = _hsGetDkeys(k) [ 0 ]; // 规避数组结尾
                     if (dat && dat[k] ) {
                         n.find(".checkone2").val ( dat[k] );
                     } else {

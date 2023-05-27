@@ -28,7 +28,7 @@
         var loadpms = hsSerialArr(loadbox       );
         var path    = hsGetSeria (loadpms,"path");
 
-        context.find("[name=path]").val( path );
+        context.find("[name='path']").val( path );
 
         context.find("form").on("submit", function(evt) {
             var form = $(this);
@@ -39,7 +39,8 @@
                 path : path + "/" + name,
                 type : "dir"
             };
-            evt.preventDefault();
+            evt.stopPropagation();
+            evt.preventDefault( );
             if (!inst.validate()) {
                 return false;
             }
@@ -56,6 +57,7 @@
                 "complete"  : inst.saveBack,
                 "error"     : function() { return false; }
             });
+            return false;
         });
     })(jQuery);
 </script>

@@ -29,8 +29,8 @@
         var path    = hsGetSeria (loadpms,"path");
         var name    = path.replace (/^.*\// , '');
 
-        context.find("[name=path]").val( path );
-        context.find("[name=name]").val( name );
+        context.find("[name='path']").val( path );
+        context.find("[name='name']").val( name );
 
         context.find("form").on("submit", function(evt) {
             var form = $(this);
@@ -43,7 +43,8 @@
                 path : path,
                 type : "dir"
             };
-            evt.preventDefault();
+            evt.stopPropagation();
+            evt.preventDefault( );
             if (!inst.validate()) {
                 return false;
             }
@@ -60,6 +61,7 @@
                 "complete"  : inst.saveBack,
                 "error"     : function() { return false; }
             });
+            return false;
         });
     })(jQuery);
 </script>

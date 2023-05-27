@@ -1,9 +1,9 @@
 <h2>新建文件</h2>
 <div id="manage-file-file-create"
      data-topple="hsForm"
-     data-save-url="centra/file/create.act?path=${path}">
+     data-save-url="centra/file/create.act">
     <form action="" method="POST">
-        <!--input type="hidden" name="path"/-->
+        <input type="hidden" name="path">
         <input type="hidden" name="type" value="file"/>
         <div class="form-group row" style="padding: 0 15px;">
             <div class="col-md-10 col-lg-8 center-block" style="padding: 0;">
@@ -28,6 +28,11 @@
 <script type="text/javascript">
     (function($) {
         var context = H$("#manage-file-file-create");
+        var loadbox = context.closest(".loadbox");
+        var loadpms = hsSerialArr(loadbox       );
+        var path    = hsGetSeria (loadpms,"path");
+
+        context.find("[name='path']").val( path );
 
         context.data("_fill_text", function(inp, val, n, t) {
             var name = this._info.name;
@@ -74,7 +79,8 @@
                 text : text,
                 type :"file"
             };
-            evt.preventDefault();
+            evt.stopPropagation();
+            evt.preventDefault( );
             if (!inst.validate()) {
                 return false;
             }
@@ -91,6 +97,7 @@
                 "complete"  : inst.saveBack,
                 "error"     : function() { return false; }
             });
+            return false;
         });
     })(jQuery);
 </script>

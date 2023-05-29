@@ -45,13 +45,14 @@ def hsFetch(fv, ks, i=0):
 
 def hsTable(sh, url, cok, fil, prt=False):
     pn  = 0
+    tn  = 1
     if  prt :
         dat = parse.urlencode({'pn': pn}).encode('utf-8')
         req = request.Request(url, data=dat, headers={'Cookie': cok, 'X-Requested-With': 'XMLHttpRequest'})
         rsp = request.urlopen(req)
         rst = rsp.read().decode('utf-8')
         rst = json.loads(rst)
-        tn  = int (rst["page"]["total"])
+        tn  = int(rst.get("page",{}).get("total",tn))
 
         print('%d%% Page %d/%d' % (0, 0, tn), end='')
 
@@ -83,7 +84,7 @@ def hsTable(sh, url, cok, fil, prt=False):
 
 if __name__ == '__main__':
     def cmd_help():
-        print("Usage: table.py FILE.xlsx http://xx --cookie COOKIE --fields Fn1,Fn2 --labels Fn1,Fn2")
+        print("Usage: trawl.py FILE.xlsx http://xx --cookie COOKIE --fields Fn1,Fn2 --labels Fn1,Fn2")
         print("Options:")
         print("  -c --cookie key=val   HTTP Cookie")
         print("  -f --fields fn1,fn2   List fields")

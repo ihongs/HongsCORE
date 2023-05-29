@@ -16,7 +16,7 @@ from getopt import getopt
 
 if  __name__ == "__main__":
     def cmd_help():
-        print("Usage: store.py SRC_PATH DST_PATH")
+        print("Usage: strap.py SRC_PATH DST_PATH")
         print("Another options:")
         print("  -n --name             Dest name with time format")
         print("  -c --pack             Pack backup files")

@@ -190,7 +190,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
              * 与 list 保持一致, 用 rn 控制 page
              * rn= 1 正常
              * rn= 0 不给 page
-             * rn=-1 返回 page.state=-1 (缺失), page.state=-2 (受限)
+             * rn=-1 返回 page.count=0 缺失 page.count=1 受限
              */
             int rn = Synt.declare(rd.get(Cnst.RN_KEY), 1);
             if (rn == 0) {
@@ -236,7 +236,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         if (rn < 0) {
             throw new HongsException(400 , "Wrong param " + Cnst.RN_KEY);
         }
-        int pn = Synt.declare(rd.get(Cnst.PN_KEY), 1 /*first*/);
+        int pn = Synt.declare(rd.get(Cnst.PN_KEY), Cnst.PN_DEF);
         if (pn < 0) {
             throw new HongsException(400 , "Wrong param " + Cnst.PN_KEY);
         }

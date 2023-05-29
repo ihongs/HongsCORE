@@ -18,6 +18,10 @@ public final class Cnst {
 
     public static final int    RN_DEF =  20 ; // 默认每页行数
 
+    public static final int    PN_DEF =   1 ;
+
+    public static final int    QN_DEF =   0 ;
+
     //** 查询参数 **/
 
     public static final String ID_KEY = "id"; // 编号
@@ -145,9 +149,9 @@ public final class Cnst {
     //** 系统路径 **/
 
     public static final String CONF_PACK = "io/github/ihongs/config";
-    
+
     public static final String  LOG_NAME = "hongs.log";
-    
+
     public static final String  OUT_NAME = "hongs.out";
 
 }

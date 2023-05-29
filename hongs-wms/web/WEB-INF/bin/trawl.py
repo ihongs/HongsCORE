@@ -4,6 +4,7 @@
 # 数据导出到文件
 # Excel 时间戳转时间串公式: =TEXT((A1+8*3600)/86400+70*365+19,"yyyy-mm-dd hh:mm:ss")
 
+import re
 import os
 import sys
 import json
@@ -43,18 +44,9 @@ def hsFetch(fv, ks, i=0):
         return fa
     return  fv
 
-def hsTable(sh, url, cok, fil, prt=False):
+def hsTrawl(sh, url, cok, fil, prt=False):
     pn  = 0
     tn  = 1
-    if  prt :
-        dat = parse.urlencode({'pn': pn}).encode('utf-8')
-        req = request.Request(url, data=dat, headers={'Cookie': cok, 'X-Requested-With': 'XMLHttpRequest'})
-        rsp = request.urlopen(req)
-        rst = rsp.read().decode('utf-8')
-        rst = json.loads(rst)
-        tn  = int(rst.get("page",{}).get("total",tn))
-
-        print('%d%% Page %d/%d' % (0, 0, tn), end='')
 
     while True:
         pn  = pn + 1
@@ -63,7 +55,8 @@ def hsTable(sh, url, cok, fil, prt=False):
         rsp = request.urlopen(req)
         rst = rsp.read().decode('utf-8')
         rst = json.loads(rst)
-        lst = rst["list"]
+        lst = rst.get("list")
+        pag = rst.get("page")
 
         if  lst is None or not len (lst):
             break
@@ -71,8 +64,10 @@ def hsTable(sh, url, cok, fil, prt=False):
         for row in lst:
             fil(sh,row)
         
-        if  not prt:
+        if  pag is None or not prt :
             continue
+
+        tn  = int(pag.get( "total" , tn))
         print('\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r', end='')
         print('%d%% Page %d/%d' % (int(pn / tn * 100), pn, tn), end='')
 
@@ -130,6 +125,6 @@ if __name__ == '__main__':
 
     sh.append(lns)
 
-    hsTable(sh, url, cok, fil, True)
+    hsTrawl(sh, url, cok, fil, True)
 
     wb.save(xls)

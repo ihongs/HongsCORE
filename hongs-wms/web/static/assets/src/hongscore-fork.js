@@ -509,7 +509,7 @@ function hsListFillPick(cel, v, n) {
  * @param {Number} rn 单页数量, 默认 100
  * @param {Number} pn 最多页数, 默认 0, 不限
  */
-function hsListPickMore(listObj, rn, pn) {
+function hsPickListMore(listObj, rn, pn) {
     if (rn === undefined) rn = 100;
     if (pn === undefined) pn =  0 ;
 

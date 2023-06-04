@@ -27,6 +27,7 @@
             <div class="btn-group">
                 <%if ("select".equals(_action)) {%>
                 <button type="button" class="commit btn btn-primary"><%=_locale.translate("fore.select", _title)%></button>
+                <button type="button" class="checks btn btn-warning"><%=_locale.translate("fore.selall", _title)%></button>
                 <%} // End If %>
                 <button type="button" class="create btn btn-default"><%=_locale.translate("fore.create", _title)%></button>
                 <%if ("browse".equals(_action)) {%>
@@ -479,11 +480,15 @@
     context.on("click", ".filtbox :submit", function() {
         filtbox.addClass("invisible");
     });
+    context.on("click", ".toolbox .column", function() {
+        hsHideListCols(listbox);
+    });
     context.on("click", ".toolbox .copies", function() {
         hsCopyListData(listbox);
     });
-    context.on("click", ".toolbox .column", function() {
-        hsHideListCols(listbox);
+    context.on("click", ".toolbar .checks", function() {
+        hsPickListMore(listobj);
+        context.find(".commit").click();
     });
     hsSaveListCols(listbox, "<%=_pageId%>");
 
@@ -539,6 +544,13 @@
         if (statbox.find(".stat-group").size() == 0) {
             findbox.find(".statis").remove();
         }
+
+        <%if ("select".equals(_action)) {%>
+        // 单选移除跨页全选
+        if (! loadbox.is(".pickmul")) {
+            context.find(".toolbar .checks").remove();
+        }
+        <%} /*End If */%>
 
         // 自适滚动
         var h = hsFlexRoll(listbox.filter(".rollbox"), $("#main-context"));

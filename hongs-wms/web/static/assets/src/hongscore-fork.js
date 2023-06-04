@@ -503,6 +503,73 @@ function hsListFillPick(cel, v, n) {
     cel.find(".checkone").data(this._info);
 }
 
+/**
+ * 列表跨页全选
+ * @param {HsList} listObj
+ * @param {Number} rn 单页数量, 默认 100
+ * @param {Number} pn 最多页数, 默认 0, 不限
+ */
+function hsListPickMore(listObj, rn, pn) {
+    if (rn === undefined) rn = 100;
+    if (pn === undefined) pn =  0 ;
+
+    var vk  = listObj._id_key ||  "id" ;
+    var tk  = listObj._tt_key || "name";
+    var url = listObj._url ;
+    var dat = listObj._data;
+    var div = jQuery('<div class="invivisible"></div>');
+    var chk = jQuery('<input type="checkbox" class="checkone" checked="checked"/>');
+
+    listObj.context.append(div);
+    dat = hsSerialMix( {}, dat);
+
+    try {
+        var    qn = 1;
+        while (qn > 0) {
+           if (qn > pn && pn > 0) break;
+            dat [listObj.rowsKey] = rn ;
+            dat [listObj.pageKey] = qn ;
+            qn ++ ;
+
+            listObj.ajax({
+                "url"      : url,
+                "data"     : dat,
+                "type"     : "POST",
+                "dataType" : "json",
+                "funcName" : "pick",
+                "async"    : false,
+                "cache"    : false,
+                "global"   : false,
+                "context"  : listObj,
+                "complete" : function(rst) {
+                    rst = hsResponse (rst);
+
+                    if (! rst.ok
+                    ||  ! rst.list
+                    ||  ! rst.list.length) {
+                        j = 0 ;
+                        return;
+                    }
+
+                    for(var i = 0; i < rst.list.length; i ++) {
+                        var a = rst.list [i];
+                        var c = chk.clone( );
+                        c.data(a);
+                        c.attr("value", a[vk]);
+                        c.attr("title", a[tk]);
+                        c.appendTo(div);
+                        c.trigger ( "change" );
+                        c.remove  (   );
+                    }
+                }
+            });
+        }
+    }
+    finally {
+        div.remove();
+    }
+}
+
 (function($) {
     $(document)
     .on("click", "[data-toggle=hsPick],[data-toggle=hsFork]",

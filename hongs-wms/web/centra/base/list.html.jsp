@@ -488,7 +488,7 @@
     });
     context.on("click", ".toolbar .checks", function() {
         hsPickListMore(listobj);
-        context.find(".commit").click();
+        context.find(":checkbox.checkone,:checkbox.checkall").prop("checked", true);
     });
     hsSaveListCols(listbox, "<%=_pageId%>");
 

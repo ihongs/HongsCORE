@@ -422,7 +422,7 @@ HsList.prototype = {
                 var rn = parseInt(fo.find("[name='rn']").val());
                 var pn = parseInt(fo.find("[name='pn']").val());
                 if (isNaN(pn) || isNaN(rn) || pn < 1 || rn < 10 || rn > 100) {
-                    alert(hsGetLang('list.give.wrong'));
+                    alert(hsGetLang('list.goto.wrong'));
                     return false;
                 }
                 jQuery(this).closest(".modal").find(":submit").click();

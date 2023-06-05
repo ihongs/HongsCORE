@@ -150,6 +150,32 @@
     </div>
     <div class="col-xs-6 apis-info">
         <fieldset>
+            <legend data-toggle="hsDrop">列表筛选表达式 <span class="caret"></span></legend>
+            <div class="dropdown-body">
+                <p>列表搜索框内可以使用表达式进行复杂筛选, 格式为 <code>?字段=取值&字段=取值</code> 的形式, 前后没有空格, 空格用 + 号代替.</p >
+                <p>字段和选项取值可从此文档中获取. 字段还可以附加后缀, 如 字段.in=取值1,取值2 表示匹配取值1或取值2的任意一个, 更多后缀如下:</p >
+                <pre class="form-control-static">
+<b>.eq</b>  等于
+<b>.ne</b>  不等于
+<b>.cq</b>  匹配
+<b>.nc</b>  不匹配
+<b>.gt</b>  大于
+<b>.ge</b>  大于或等于
+<b>.lt</b>  小于
+<b>.le</b>  小于或等于
+<b>.rg</b>  区间
+<b>.on</b>  等于或包含
+<b>.in</b>  包含
+<b>.ni</b>  不包含
+<b>.mi</b>  全包含
+<b>.is</b>  空或非空
+<b>.or</b>  值关系为或
+                </pre>
+                <p><code>.cq/.nc</code> 需要字段支持模糊查询; <code>.in/.ni/.mi</code> 可用半角逗号(,)分隔多个取值; <code>.gt/.ge/.lt/.le/.rg</code> 需要字段为数字或时间戳类型, <code>.rg</code> 为数学区间表达式: <code>[0,9]</code> 开区间, <code>(0,9)</code> 闭区间, 无括号默认开区间; <code>.is</code> 可为 <code>null</code>(无值),<code>not-null</code>(有值),<code>empty</code>(无值或空串),<code>not-emtpy</code>(有值且非空).</p >
+                <p>需要分组时可以在字段上加 <code>or.N./ar.N./nr.N</code> 前缀, 如 <code>?or.1.fn1=1&or.1.fn2=2&or.2.fn1=3&or.2.fn2=4</code> 表示 (字段fn1等于1 且 字段fn2等于2) 或 (字段fn1等于3 且 字段fn2等于4); <code>ar/nr</code> 类似, 表示多组与/非条件.</p >
+            </div>
+        </fieldset>
+        <fieldset>
             <legend data-toggle="hsDrop">获取列表或详情 <span class="caret"></span></legend>
             <div class="dropdown-body">
                 <div class="form-group">

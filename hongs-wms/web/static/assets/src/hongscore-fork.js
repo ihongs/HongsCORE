@@ -506,11 +506,11 @@ function hsListFillPick(cel, v, n) {
 /**
  * 列表跨页全选
  * @param {HsList} listObj
- * @param {Number} rn 单页数量, 默认 100
+ * @param {Number} rn 单页数量, 默认 200
  * @param {Number} pn 最多页数, 默认 0, 不限
  */
 function hsPickListMore(listObj, rn, pn) {
-    if (rn === undefined) rn = 100;
+    if (rn === undefined) rn = 200;
     if (pn === undefined) pn =  0 ;
 
     var vk  = listObj._id_key ||  "id" ;
@@ -547,7 +547,7 @@ function hsPickListMore(listObj, rn, pn) {
                     if (! rst.ok
                     ||  ! rst.list
                     ||  ! rst.list.length) {
-                        j = 0 ;
+                        qn = 0;
                         return;
                     }
 
@@ -560,6 +560,12 @@ function hsPickListMore(listObj, rn, pn) {
                         c.appendTo(div);
                         c.trigger ( "change" );
                         c.remove  (   );
+                    }
+                    
+                    if (rst.page
+                    &&  rst.page.total
+                    &&  rst.page.total == qn ) {
+                        qn = 0;
                     }
                 }
             });

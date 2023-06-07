@@ -545,8 +545,8 @@ function hsListPickMore(listObj, rn, pn, pf) {
                     rst = hsResponse(rst);
                 } catch (e) {
                     div.remove();
-                    pf ( qn,qn );
-                    return;
+                    pf ( 0 , 0 );
+                    return ;
                 }
 
                 if (! rst.ok
@@ -554,7 +554,7 @@ function hsListPickMore(listObj, rn, pn, pf) {
                 ||  ! rst.list.length) {
                     div.remove();
                     pf ( qn,qn );
-                    return;
+                    return ;
                 }
 
                 for(var i = 0; i < rst.list.length; i ++) {
@@ -572,20 +572,22 @@ function hsListPickMore(listObj, rn, pn, pf) {
                 if (gn > 0 && gn <= qn) {
                     div.remove();
                     pf ( qn,qn );
-                    return;
+                    return ;
                 }
                 if (pn > 0 && pn <= qn) {
                     div.remove();
                     pf ( qn,qn );
-                    return;
+                    return ;
                 }
 
-                gn = gn > 0 && pn > 0
-                   ? Math.min (gn , pn)
-                   : Math.max (gn , pn);
+                if (gn > 0 && pn > 0) {
+                    gn = Math.min(gn, pn);
+                } else {
+                    gn = Math.max(gn, pn);
+                }
 
-                pf (qn,gn);
-                sel(qn +1);
+                pf (qn, gn);
+                sel(qn + 1);
             }
         });
     };

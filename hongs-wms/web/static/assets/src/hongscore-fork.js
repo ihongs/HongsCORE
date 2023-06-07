@@ -573,7 +573,9 @@ function hsListPickMore(listObj, rn, pn, pf) {
                         return;
                     }
 
-                    pf(qn, tn);
+                    setTimeout(function() {
+                        pf(qn, tn);
+                    }, 0);
                 }
             });
         }

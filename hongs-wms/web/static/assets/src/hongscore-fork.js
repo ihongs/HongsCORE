@@ -580,9 +580,12 @@ function hsListPickMore(listObj, rn, pn, pf) {
                     return;
                 }
 
-                gn = gn > 0 && pn > 0 ? Math.min(gn, pn) : Math.max(gn, pn);
+                gn = (gn > 0 && pn > 0)
+                   ? Math.min (gn , pn)
+                   : Math.max (gn , pn);
+
                 pf (qn,gn);
-                sel(qn ++);
+                sel(qn +1);
             }
         });
     };

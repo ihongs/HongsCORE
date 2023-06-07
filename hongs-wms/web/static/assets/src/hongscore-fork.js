@@ -580,7 +580,7 @@ function hsListPickMore(listObj, rn, pn, pf) {
                     return;
                 }
 
-                gn = (gn > 0 && pn > 0)
+                gn = gn > 0 && pn > 0
                    ? Math.min (gn , pn)
                    : Math.max (gn , pn);
 

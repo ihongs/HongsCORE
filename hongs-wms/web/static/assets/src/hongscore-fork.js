@@ -523,66 +523,70 @@ function hsListPickMore(listObj, rn, pn, pf) {
     var chk = jQuery('<input type="checkbox" class="checkone" checked="checked"/>');
 
     listObj.context.append(div);
-    dat = hsSerialMix( {}, dat);
+    dat = hsSerialMix ({}, dat);
 
-    try {
-        for(var qn =  1; qn > 0;) {
-            if (pn >  0) {
-                if (pn < qn) break;
-            }
-            if (rn > -1) {
-                dat[listObj.rowsKey] = rn;
-            }
-                dat[listObj.pageKey] = qn;
-                qn += 1;
+    var sel = function(qn) {
+        if (rn > -1) {
+            dat[listObj.rowsKey] = rn;
+        }   dat[listObj.pageKey] = qn;
 
-            listObj.ajax({
-                "url"      : url,
-                "data"     : dat,
-                "type"     : "POST",
-                "dataType" : "json",
-                "funcName" : "pick",
-                "async"    : false,
-                "cache"    : false,
-                "global"   : false,
-                "context"  : listObj,
-                "complete" : function(rst) {
-                    rst = hsResponse (rst);
-
-                    if (! rst.ok
-                    ||  ! rst.list
-                    ||  ! rst.list.length) {
-                        qn = 0;
-                        return;
-                    }
-
-                    for(var i = 0; i < rst.list.length; i ++) {
-                        var a = rst.list [i];
-                        var c = chk.clone( );
-                        c.data(a);
-                        c.attr("value", a[vk]);
-                        c.attr("title", a[tk]);
-                        c.appendTo(div);
-                        c.trigger ( "change" );
-                        c.remove  (   );
-                    }
-
-                    var tn = rst.page && rst.page.total || 0;
-                    if (tn && tn < qn ) {
-                        qn = 0;
-                        return;
-                    }
-
-                    setTimeout(function() {
-                        pf(qn, tn);
-                    }, 0);
+        listObj.ajax({
+            "url"      : url,
+            "data"     : dat,
+            "type"     : "POST",
+            "dataType" : "json",
+            "funcName" : "pick",
+            "async"    : true ,
+            "cache"    : false,
+            "global"   : false,
+            "context"  : listObj,
+            "complete" : function(rst) {
+                try {
+                    rst = hsResponse(rst);
+                } catch (e) {
+                    div.remove();
+                    pf ( qn,qn );
+                    return;
                 }
-            });
-        }
-    }
-    finally {
-        div.remove();
-    }
+
+                if (! rst.ok
+                ||  ! rst.list
+                ||  ! rst.list.length) {
+                    div.remove();
+                    pf ( qn,qn );
+                    return;
+                }
+
+                for(var i = 0; i < rst.list.length; i ++) {
+                    var a = rst.list [i];
+                    var c = chk.clone( );
+                    c.data(a);
+                    c.attr("value", a[vk]);
+                    c.attr("title", a[tk]);
+                    c.appendTo(div);
+                    c.trigger ( "change" );
+                    c.remove  (   );
+                }
+
+                var gn = rst.page && rst.page.total || 0;
+                if (gn > 0 && gn <= qn) {
+                    div.remove();
+                    pf ( qn,qn );
+                    return;
+                }
+                if (pn > 0 && pn <= qn) {
+                    div.remove();
+                    pf ( qn,qn );
+                    return;
+                }
+
+                gn = gn > 0 && pn > 0 ? Math.min(gn, pn) : Math.max(gn, pn);
+                pf (qn,gn);
+                sel(qn ++);
+            }
+        });
+    };
+    sel(1);
 }
 
 (function($) {

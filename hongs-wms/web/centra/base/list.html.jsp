@@ -486,9 +486,8 @@
     context.on("click", ".toolbox .copies", function() {
         hsCopyListData(listbox);
     });
-    context.on("click", ".toolbar .checks", function() {
-        hsPickListMore(listobj);
-        context.find(":checkbox.checkone,:checkbox.checkall").prop("checked", true);
+    context.on("click", ".toolbox .checks", function() {
+        hsPickListMore(listbox);
     });
     hsSaveListCols(listbox, "<%=_pageId%>");
 
@@ -548,7 +547,7 @@
         <%if ("select".equals(_action)) {%>
         // 单选移除跨页全选
         if (! loadbox.is(".pickmul")) {
-            context.find(".toolbar .checks").remove();
+            context.find(".toolbox .checks").remove();
         }
         <%} /*End If */%>
 

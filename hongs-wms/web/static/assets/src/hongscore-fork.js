@@ -506,12 +506,13 @@ function hsListFillPick(cel, v, n) {
 /**
  * 列表跨页全选
  * @param {HsList} listObj
- * @param {Number} rn 单页数量, 默认 200
- * @param {Number} pn 最多页数, 默认 0, 不限
+ * @param {Number} rn 单页数量, -1 不设
+ * @param {Number} pn 最多页数, -1 不限
+ * @param {Function} pf 进度回调函数(页码, 总数)
  */
-function hsPickListMore(listObj, rn, pn) {
-    if (rn === undefined) rn = 200;
-    if (pn === undefined) pn =  0 ;
+function hsListPickMore(listObj, rn, pn, pf) {
+    if (rn === undefined) rn = -1;
+    if (pn === undefined) pn = -1;
 
     var vk  = listObj._id_key ||  "id" ;
     var tk  = listObj._tt_key || "name";
@@ -524,12 +525,14 @@ function hsPickListMore(listObj, rn, pn) {
     dat = hsSerialMix( {}, dat);
 
     try {
-        var    qn = 1;
-        while (qn > 0) {
-           if (qn > pn && pn > 0) break;
-            dat [listObj.rowsKey] = rn ;
-            dat [listObj.pageKey] = qn ;
-            qn ++ ;
+        for(var qn =  1; qn > 0;) {
+            if (pn > -1) {
+                if (pn < qn) break;
+            }
+            if (rn > -1) {
+                dat[listObj.rowsKey] = rn;
+            }   dat[listObj.pageKey] = qn;
+                qn += 1;
 
             listObj.ajax({
                 "url"      : url,
@@ -561,11 +564,15 @@ function hsPickListMore(listObj, rn, pn) {
                         c.trigger ( "change" );
                         c.remove  (   );
                     }
-                    
-                    if (rst.page
-                    &&  rst.page.total
-                    &&  rst.page.total == qn ) {
+
+                    var tn = rst.page && rst.page.total || 0;
+                    if (tn && tn < qn ) {
                         qn = 0;
+                        return;
+                    }
+
+                    if (pf) {
+                        pf(qn , tn);
                     }
                 }
             });
@@ -573,6 +580,10 @@ function hsPickListMore(listObj, rn, pn) {
     }
     finally {
         div.remove();
+    }
+
+    if (pf) {
+        pf(0, 0);
     }
 }
 

@@ -2311,6 +2311,11 @@ $.hsWait = function(msg, xhr, xhu) {
         return pct ;
     };
     box.setProgress = function(pzt) {
+        if (pzt === Infinity) {
+            per.text( "..." );
+            return ;
+        }
+
         pct  = pzt ;
         pzt  = Math.round(10000 * pzt) / 100 ; // 保留两位小数的百分比
 

@@ -960,8 +960,9 @@ ul.pickrol > li.btn-default.form-control {
 .pickbox:empty  ,
 .pickrol  input ,
 .pickrol .close ,
-.picksel .picksum {
-    display: none ;
+.picksel:not(.pickmul) .picksum ,
+.picksel:not(.pickmul) .picknum {
+    display : none;
 }
 
 ul.pickmul {

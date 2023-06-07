@@ -2322,6 +2322,15 @@ $.hsWait = function(msg, xhr, xhu) {
         bar.attr("aria-valuenow", pzt);
         bar.css ( "width" , pzt + "%");
 
+        // 小数位补 0
+        pzt  = pzt + "";
+        if (/\.\d$/.test(pzt)) {
+            pzt = pzt +  "0" ;
+        } else
+        if (/^\d+$/.test(pzt)) {
+            pzt = pzt + ".00";
+        }
+
         var ctt ;
         if (stt < 0) {
             ctt = new Date().getTime() + stt ;

@@ -1243,13 +1243,15 @@ function hsPickListMore(box, obj) {
     $.hsWarn(
         "确定跨页全选吗?\r\n当数据量较大时, 可能需要些时间, 期间无法执行其他操作.",
         function() {
-            var bar = $.hsWait("选择中, 请稍等...");
-            hsListPickMore(obj, -1, -1, function(pn , tn) {
-                if ( tn > 0 ) bar . setProgress (pn / tn);
-            });
-            bar.hide();
-            box.find(":checkbox.checkone").prop("checked", true);
-            box.find(":checkbox.checkall").prop("checked", true);
+            setTimeout(function() {
+                var bar = $.hsWait("选择中, 请稍等...");
+                hsListPickMore(obj, -1, -1, function(pn , tn) {
+                    if ( tn > 0 ) bar . setProgress (pn / tn);
+                });
+                bar.hide();
+                box.find(":checkbox.checkone").prop("checked", true);
+                box.find(":checkbox.checkall").prop("checked", true);
+            } , 0);
         },
         function() {
         }

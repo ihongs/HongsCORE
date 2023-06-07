@@ -2281,7 +2281,6 @@ $.hsWait = function(msg, xhr, xhu) {
     var per = box.find(".progress-per");
     var stt = 0; // 开始时间, 正数: 执行时间, 负数: 剩余时间
     var pct = 0; // 执行进度, [0.00,1.00]
-    var itl ;
 
     // 剩余时间文本表示, h:mm:ss
     function getProgtime (rtt) {
@@ -2310,20 +2309,26 @@ $.hsWait = function(msg, xhr, xhu) {
     box.getProgress = function() {
         return pct ;
     };
-    box.setProgress = function(pzt) {
+    box.setProgress = function(pzt, txt) {
         if (pzt === Infinity) {
             per.text( "..." );
             return ;
         }
 
         pct  = pzt ;
-        pzt  = Math.round(10000 * pzt) / 100 ; // 保留两位小数的百分比
+        pzt *= 100 ;
 
         bar.attr("aria-valuenow", pzt);
         bar.css ( "width" , pzt + "%");
 
-        // 小数位补 0
-        pzt  = pzt + "";
+        // 指定进度文本
+        if (txt) {
+            per.text (txt);
+            return ;
+        }
+
+        // 保留两位小数, 小数位补 0
+        pzt  =  (Math.round(pzt * 100) / 100) + "";
         if (/\.\d$/.test(pzt)) {
             pzt = pzt +  "0" ;
         } else
@@ -2348,10 +2353,6 @@ $.hsWait = function(msg, xhr, xhu) {
     };
     box.hide = function() {
         mod.modal("hide");
-        if (itl) {
-            clearInterval(itl);
-            itl  =  undefined ;
-        }
     };
     box.done = function() {}; // 全部完成
     box.over = function() {}; // 发送完成

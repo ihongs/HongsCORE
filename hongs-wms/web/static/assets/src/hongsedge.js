@@ -1239,7 +1239,7 @@ function hsFillListMore(x, v) {
  */
 function hsPickListMore(box, obj) {
     if (! obj) obj = box.closest(".HsList").data("HsList");
-    
+
     $.hsWarn(
         "确定跨页全选吗?\r\n当数据量较大时, 可能需要些时间, 期间无法执行其他操作.",
         function() {

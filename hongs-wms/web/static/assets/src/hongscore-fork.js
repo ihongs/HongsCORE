@@ -513,6 +513,7 @@ function hsListFillPick(cel, v, n) {
 function hsListPickMore(listObj, rn, pn, pf) {
     if (rn === undefined) rn = -1;
     if (pn === undefined) pn = -1;
+    if (pf === undefined) pf = function() {};
 
     var vk  = listObj._id_key ||  "id" ;
     var tk  = listObj._tt_key || "name";
@@ -526,12 +527,13 @@ function hsListPickMore(listObj, rn, pn, pf) {
 
     try {
         for(var qn =  1; qn > 0;) {
-            if (pn > -1) {
+            if (pn >  0) {
                 if (pn < qn) break;
             }
             if (rn > -1) {
                 dat[listObj.rowsKey] = rn;
-            }   dat[listObj.pageKey] = qn;
+            }
+                dat[listObj.pageKey] = qn;
                 qn += 1;
 
             listObj.ajax({
@@ -571,19 +573,13 @@ function hsListPickMore(listObj, rn, pn, pf) {
                         return;
                     }
 
-                    if (pf) {
-                        pf(qn , tn);
-                    }
+                    pf(qn, tn);
                 }
             });
         }
     }
     finally {
         div.remove();
-    }
-
-    if (pf) {
-        pf(0, 0);
     }
 }
 

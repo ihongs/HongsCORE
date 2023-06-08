@@ -544,16 +544,17 @@ function hsListPickMore(listObj, rn, pn, pf) {
                 try {
                     rst = hsResponse(rst);
                 } catch (e) {
-                    div.remove();
                     pf ( 0 , 0 );
+                    div.remove();
                     return ;
                 }
 
                 if (! rst.ok
                 ||  ! rst.list
                 ||  ! rst.list.length) {
-                    div.remove();
+                    qn = qn - 1 ;
                     pf ( qn,qn );
+                    div.remove();
                     return ;
                 }
 
@@ -570,13 +571,13 @@ function hsListPickMore(listObj, rn, pn, pf) {
 
                 var gn = rst.page && rst.page.total || 0;
                 if (gn > 0 && gn <= qn) {
-                    div.remove();
                     pf ( qn,qn );
+                    div.remove();
                     return ;
                 }
                 if (pn > 0 && pn <= qn) {
-                    div.remove();
                     pf ( qn,qn );
+                    div.remove();
                     return ;
                 }
 

@@ -1246,9 +1246,8 @@ function hsPickListMore(box, obj) {
             setTimeout (function() {
                 var bar = $.hsWait("选择中, 请稍等...");
                 hsListPickMore(obj, -1, -1, function(pn, tn) {
-                    if (pn !== 0
-                    &&  pn !== tn) {
-                        bar.setProgress(pn / tn , pn+"/"+tn);
+                    if (pn !== tn) {
+                        bar.prog(pn / tn, tn <= 0 ? "已选 "+pn+"页" : "已选 "+pn+"页, 共 "+tn+"页");
                     } else {
                         bar.hide();
                         box.find(":checkbox.checkone").prop("checked", true);

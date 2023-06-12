@@ -437,8 +437,8 @@ HsList.prototype = {
             var rn = $(this).find( "[name=rn]" ).val(  );
             var pn = $(this).find( "[name=pn]" ).val(  );
             that._data = hsSerialArr(that._data);
-            that._url  = hsSetParam (that._url , that.rowsKey, rn);
-            /* SetDat */ hsSetSeria (that._data, that.pageKey, pn);
+            hsSetSeria(that._data, that.rowsKey, rn);
+            hsSetSeria(that._data, that.pageKey, pn);
             that.load();
         });
     },

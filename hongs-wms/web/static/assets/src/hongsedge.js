@@ -169,9 +169,6 @@ HsStat.prototype = {
              .children().text($(this).data("text")+" 统计中...");
         });
 
-        // 统计字段
-        url = hsSetParam(url, "rb.", rb) + eb.join("&");
-
         // 筛选数据
         var dat;
         var mod;
@@ -193,15 +190,21 @@ HsStat.prototype = {
         while (false);
 
         // 重建数据, 删除可能冲突的参数
-        dat = hsSerialMix({}, dat);
+        url = hsSetParam (    url, "rb", rb.join("&"));
+        dat = hsSerialMix({}, dat, "?" + eb.join("&"));
         delete dat["rb" ];
         delete dat["rb."];
         delete dat["ob" ];
         delete dat["ob."];
+        delete dat["ab" ];
+        delete dat["ab."];
+        delete dat["rn" ];
+        delete dat["pn" ];
 
         $.hsAjax({
             url : url,
             data: dat,
+            type: "post",
             dataType : "json",
             cache  : true,
             success: function(rst) {
@@ -247,6 +250,8 @@ HsStat.prototype = {
     },
 
     copy: function(itemBox) {
+        var context = this.context;
+        var findBox = this.findBox;
         var listBox = itemBox.find(".checkbox");
 
         // 检查接口
@@ -255,19 +260,11 @@ HsStat.prototype = {
             return;
         }
 
-        var fn  = itemBox.attr("data-name");
-        var fx  = itemBox.attr("data-text");
-        var ft  = itemBox.attr("data-type");
-        var url = ft==="amount"? this.murl
-              : ( ft==="acount"? this.curl
-              :                  this.eurl);
-        var rn  = hsGetParam(url, "rn", 20);
-
         // 复制提示
         var set = [{
             mode : "warn",
             glass: "alert-default",
-            text : "为了降低网络延迟, 图表按从多到少排, 仅取前 "+rn+" 条; 这将会调取完整统计数据, 以便导入 Office/WPS 等应用中.",
+            text : "为了降低网络延迟, 图表按从多到少排, 仅取部分; 这将会调取完整统计数据, 以便导入 Office/WPS 等应用中.",
             title: "正在获取完整统计数据, 请稍等...",
             topic: "已经取得完整统计数据, 请拷贝吧!",
             note : "拷贝成功, 去粘贴吧!"
@@ -305,14 +302,53 @@ HsStat.prototype = {
             return;
         }
 
-        var dat = this.findBox.serialize( );
-        url = hsSetParam(url, "rb", fn ); // 单字段
-        url = hsSetParam(url, "rn", "0"); // 不分页
+        var fn  = itemBox.attr("data-name");
+        var fp  = itemBox.attr("data-prms");
+        var fx  = itemBox.attr("data-text");
+        var ft  = itemBox.attr("data-type");
+        var url = ft==="amount"? this.murl
+              : ( ft==="acount"? this.curl
+              :                  this.eurl);
+
+        // 筛选数据
+        var dat;
+        var mod;
+        do {
+            mod = context.data("HsList");
+            if (mod) {
+                dat = mod._data;
+                break;
+            }
+
+            mod = context.data("HsTree");
+            if (mod) {
+                dat = mod._data;
+                break;
+            }
+
+            dat = findBox;
+        }
+        while (false);
+
+        // 重建数据, 删除可能冲突的参数
+        url = hsSetParam (    url, "rn", 0 );
+        url = hsSetParam (    url, "rb", fn);
+        dat = hsSerialMix({}, dat, "?" + fp);
+        delete dat[ fn + ".rn" ];
+        delete dat["rb" ];
+        delete dat["rb."];
+        delete dat["ob" ];
+        delete dat["ob."];
+        delete dat["ab" ];
+        delete dat["ab."];
+        delete dat["rn" ];
+        delete dat["pn" ];
 
         // 读取全部
         $.hsAjax({
             url : url,
             data: dat,
+            type: "post",
             dataType : "json",
             cache  : true,
             success: function(rst) {
@@ -739,9 +775,6 @@ HsCate.prototype = {
             $(this).empty(); // 清空待写入选项
         });
 
-        // 统计字段
-        url = hsSetParam(url, "rb.", rb) + eb.join("&");
-
         // 筛选数据
         var dat;
         var mod;
@@ -763,15 +796,21 @@ HsCate.prototype = {
         while (false);
 
         // 重建数据, 删除可能冲突的参数
-        dat = hsSerialMix({}, dat);
+        url = hsSetParam (    url, "rb", rb.join("&"));
+        dat = hsSerialMix({}, dat, "?" + eb.join("&"));
         delete dat["rb" ];
         delete dat["rb."];
         delete dat["ob" ];
         delete dat["ob."];
+        delete dat["ab" ];
+        delete dat["ab."];
+        delete dat["rn" ];
+        delete dat["pn" ];
 
         $.hsAjax({
             url : url,
             data: dat,
+            type: "post",
             dataType : "json",
             cache  : true,
             success: function(rst) {

@@ -474,10 +474,14 @@ function hsSerialArr(obj) {
                 ar1 = ar0[i].split('&'   );
             for(j = 0; j < ar1.length; j ++) {
                 ar2 = ar1[j].split('=', 2);
-                if (ar2.length) {
+                if (ar2.length > 1) {
                     key = decodeURIComponent (ar2[0]);
                     vxl = decodeURIComponent (ar2[1]);
                     arr.push({name: key, value: vxl});
+                } else if (ar2 [0]) {
+                    vxl = decodeURIComponent (ar2[0]);
+                    arr.push({name: ".", value: vxl});
+                    // 匿名参数, 规则同 CombatHelper.getOpts
                 }
             }}
             break;

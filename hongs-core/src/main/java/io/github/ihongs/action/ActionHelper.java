@@ -1192,6 +1192,12 @@ public class ActionHelper implements Cloneable
               j++;
           }
 
+          // 匿名参数, 规则同 CombatHelper.getOpts
+          if (s.charAt(i - 1) != '=') {
+              v =  k ;
+              k = ".";
+          }
+
           Dict.setParam(a, v, k);
       }
 

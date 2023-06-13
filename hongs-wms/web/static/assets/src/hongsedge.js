@@ -190,7 +190,7 @@ HsStat.prototype = {
         while (false);
 
         // 重建数据, 删除可能冲突的参数
-        url = hsSetParam (    url, "rb", rb.join("&"));
+        url = hsSetParam (    url, "rb", rb.join(","));
         dat = hsSerialMix({}, dat, "?" + eb.join("&"));
         delete dat["rb" ];
         delete dat["rb."];
@@ -796,7 +796,7 @@ HsCate.prototype = {
         while (false);
 
         // 重建数据, 删除可能冲突的参数
-        url = hsSetParam (    url, "rb", rb.join("&"));
+        url = hsSetParam (    url, "rb", rb.join(","));
         dat = hsSerialMix({}, dat, "?" + eb.join("&"));
         delete dat["rb" ];
         delete dat["rb."];

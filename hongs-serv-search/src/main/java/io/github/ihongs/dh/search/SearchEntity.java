@@ -73,7 +73,7 @@ public class SearchEntity extends LuceneRecord {
          */
         try {
             super.permit(rd, ids, ern);
-        } catch (Lost e) {
+        } catch (Lost ex) {
             super.permit(rd, ids, ern);
         }
     }
@@ -83,8 +83,18 @@ public class SearchEntity extends LuceneRecord {
     throws HongsException {
         try {
             return super.search(rd);
-        } catch (Lost e) {
+        } catch (Lost ex) {
             return super.search(rd);
+        }
+    }
+
+    @Override
+    public Map  get(String id)
+    throws HongsException {
+        try {
+            return super.get(id);
+        } catch (Lost ex) {
+            return super.get(id);
         }
     }
 
@@ -93,7 +103,7 @@ public class SearchEntity extends LuceneRecord {
     throws HongsException {
         try {
             return super.getOne(rd);
-        } catch (Lost e) {
+        } catch (Lost ex) {
             return super.getOne(rd);
         }
     }
@@ -103,7 +113,7 @@ public class SearchEntity extends LuceneRecord {
     throws HongsException {
         try {
             return super.getAll(rd);
-        } catch (Lost e) {
+        } catch (Lost ex) {
             return super.getAll(rd);
         }
     }

@@ -288,7 +288,9 @@
                     } else {
                         inp.hsPickFile (box, src);
                     }
+                    box.trigger("change"); // 转文件容器触发
                 } );
+                return  false;
             } );
         }
         inp.click();
@@ -325,7 +327,9 @@
                     } else {
                         inp.hsPickView (box, src, w, h, k);
                     }
+                    box.trigger("change"); // 转文件容器触发
                 } );
+                return  false;
             } );
         }
         inp.click();

@@ -212,7 +212,6 @@ public class FlashyConn implements Conn, Core.Singleton {
             long tt = System.currentTimeMillis();
 
             writer.commit();
-            vary  =  true  ;
 
             tt = System.currentTimeMillis() - tt;
             CoreLogger.trace("Flush lucene indexes: {}, TC: {} ms", dbname, tt);
@@ -244,10 +243,11 @@ public class FlashyConn implements Conn, Core.Singleton {
     public void close() {
         try {
             flushs.cancel(false);
-            merges.cancel(true );
+            merges.cancel(false);
 
             if (writer != null
             &&  writer.isOpen()) {
+                writer.commit();
                 writer.close ();
                 writer  = null ;
             }

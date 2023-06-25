@@ -94,6 +94,32 @@ public final class CommitRunner {
         }
     }
 
+    static public void commit() {
+        commit(Core.getInstance());
+    }
+
+    static public void commit(Core core) {
+        Hub  crux  = new Hub(core);
+        for(Object o : crux.values().toArray()) {
+            if (o instanceof IReflux) {
+                ((IReflux) o).commit();
+            }
+        }
+    }
+
+    static public void cancel() {
+        cancel(Core.getInstance());
+    }
+
+    static public void cancel(Core core) {
+        Hub  crux  = new Hub(core);
+        for(Object o : crux.values().toArray()) {
+            if (o instanceof IReflux) {
+                ((IReflux) o).cancel();
+            }
+        }
+    }
+
     private static final class Hub extends Core {
 
         private Hub (Core core) {

@@ -13,6 +13,10 @@ import org.apache.lucene.search.IndexSearcher;
  */
 public interface Conn extends AutoCloseable {
     
+    public String getDbName();
+    
+    public String getDbPath();
+    
     public IndexWriter getWriter() throws IOException;
     
     public IndexReader getReader() throws IOException;

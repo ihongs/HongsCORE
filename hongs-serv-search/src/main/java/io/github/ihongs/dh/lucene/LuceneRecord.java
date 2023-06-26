@@ -1652,6 +1652,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      */
     @Override
     public void close() {
+        // 提交变更
         if (REFLUX_MODE) {
             try {
             try {
@@ -1661,6 +1662,15 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 throw e ;
             }
             } catch (Throwable e) {
+                CoreLogger.error(e);
+            }
+        }
+
+        // 释放连接
+        if (dbconn != null) {
+            try {
+                dbconn.close();
+            } catch (Exception e) {
                 CoreLogger.error(e);
             }
         }
@@ -1755,17 +1765,19 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 break  DO;
             }
 
-            String     cn;
+            String cn, dn, dp;
             CoreConfig cc;
             ConnGetter cg;
+            dn = getDbName();
+            dp = getDbPath();
             cc = CoreConfig.getInstance();
             cn = DirectConn.Getter.class.getName();
             cn = cc.getProperty("core.lucene.conn.getter.class", cn);
             cg = (ConnGetter) Core.newInstance(cn);
 
-            CoreLogger.trace("Lucene conn by {}" , cn);
+            dbconn = cg.get(dp, dn);
 
-            dbconn = cg.get (getDbPath(), getDbName());
+            CoreLogger . trace ("Lucene conn to {} by {}" , dn , cn);
         }}
         return dbconn;
     }

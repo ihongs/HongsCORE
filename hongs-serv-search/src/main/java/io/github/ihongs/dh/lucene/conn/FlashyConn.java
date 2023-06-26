@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.function.Supplier;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
@@ -21,6 +20,7 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.store.AlreadyClosedException;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
@@ -34,33 +34,27 @@ public class FlashyConn implements Conn, Core.Singleton {
     public static class Getter implements ConnGetter, Core.Soliloquy {
 
         @Override
-        public Conn get(String dbpath, String dbname) {
-            return Core.GLOBAL_CORE.got(
-                Conn.class.getName () + ":" + dbname,
-                new Supplier <Conn>() {
-                    @Override
-                    public Conn get() {
-                        String mypath = dbpath;
-                        String myname = dbname;
-
-                        // 处理路径中的变量
-                        Map mm = new HashMap();
-                        mm.put("SERVER_ID", Core.SERVER_ID);
-                        mm.put("CORE_PATH", Core.CORE_PATH);
-                        mm.put("DATA_PATH", Core.DATA_PATH);
-                        mypath = Syno.inject( mypath , mm );
-                        if (!new File(dbpath).isAbsolute())
-                        mypath = Core.DATA_PATH + "/lucene/" + mypath;
-
-                        return new FlashyConn(mypath, myname);
-                    }
-                }
+        public Conn get (String dbpath, String dbname) {
+            return  Core.getInstance().got(
+                    Conn.class.getName() +":"+ dbname,
+                () -> new CourseConn(Core.GLOBAL_CORE.got(
+                    Conn.class.getName() +"|"+ dbname,
+                () -> new FlashyConn( dbpath , dbname) ) )
             );
         }
 
     }
 
     private FlashyConn (String dbpath, String dbname) {
+        // 处理路径中的变量
+        Map mm = new HashMap(3);
+        mm.put("SERVER_ID", Core.SERVER_ID);
+        mm.put("CORE_PATH", Core.CORE_PATH);
+        mm.put("DATA_PATH", Core.DATA_PATH);
+        dbpath = Syno.inject( dbpath , mm );
+        if (!new File(dbpath).isAbsolute())
+        dbpath = Core.DATA_PATH + "/lucene/" + dbpath;
+
         this.dbname = dbname;
         this.dbpath = dbpath;
 
@@ -79,6 +73,16 @@ public class FlashyConn implements Conn, Core.Singleton {
     private  IndexReader   reader = null;
     private  IndexSearcher finder = null;
     private volatile boolean vary = true;
+
+    @Override
+    public String getDbName() {
+        return dbname;
+    }
+
+    @Override
+    public String getDbPath() {
+        return dbpath;
+    }
 
     @Override
     public IndexWriter getWriter() throws IOException {
@@ -142,7 +146,17 @@ public class FlashyConn implements Conn, Core.Singleton {
             IndexReader readar = reader;
             reader = DirectoryReader.open(writer);
             finder = new  IndexSearcher  (reader);
-            if (null != readar ) readar.close ( );
+
+            // 释放旧的连接
+            if (null != readar) try {
+                    readar.decRef();
+                if (readar.getRefCount() <= 0) {
+                    readar.close ();
+                    CoreLogger.trace("Close the lucene reader for {}", dbname);
+                }
+            } catch (AlreadyClosedException e) {
+                // Pass
+            }
 
             /*
             // 已明确知道有写入, 无需再做判断
@@ -251,16 +265,22 @@ public class FlashyConn implements Conn, Core.Singleton {
                 writer.close ();
                 writer  = null ;
             }
+
             if (reader != null ) {
                 reader.close ();
                 reader  = null ;
                 finder  = null ;
             }
 
-            CoreLogger.trace("Close the lucene writer for {}", dbname);
+            CoreLogger.trace("Close the lucene conn for {}", dbname);
         } catch (IOException x) {
             CoreLogger.error(x);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Lucene conn " + dbname;
     }
 
 }

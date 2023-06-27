@@ -209,8 +209,8 @@ public class DirectConn implements Conn {
             }
             vary = true;
             iw.commit();
-            iw.maybeMerge( );
-            iw.deleteUnusedFiles( );
+            iw. maybeMerge ();
+            iw.deleteUnusedFiles ();
         } finally {
             RL.writeLock().unlock();
         }

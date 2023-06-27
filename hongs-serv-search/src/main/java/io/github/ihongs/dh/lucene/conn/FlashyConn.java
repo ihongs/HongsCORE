@@ -209,7 +209,6 @@ public class FlashyConn implements Conn, Core.Singleton {
                     iw.deleteDocuments(new Term("@"+Cnst.ID_KEY, id)    );
                 }
             }
-        //  iw.commit(); // 无需立即提交
             vary = true;
         } finally {
             RL.writeLock().unlock();

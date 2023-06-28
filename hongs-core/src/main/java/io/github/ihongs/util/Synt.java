@@ -620,7 +620,16 @@ public final class Synt {
             return new LinkedHashMap();
         }
         if (txt.startsWith("{") && txt.endsWith("}")) {
-            return (Map ) Dist.toObject(txt);
+            return  (Map ) Dist.toObject(txt);
+        } else
+        if (txt.startsWith("[") && txt.endsWith("]")) {
+           List a = (List) Dist.toObject(txt);
+            Map m = new LinkedHashMap();
+            int i = 0;
+            for (Object v : a ) {
+                m.put(i ++, v );
+            }
+            return  m;
         } else {
             Map m = new LinkedHashMap();
             for(String   s : SEXP.split(txt)) {
@@ -667,6 +676,11 @@ public final class Synt {
             return  new LinkedHashSet(
                    (List) Dist.toObject (txt)
             );
+        } else
+        if (txt.startsWith("{") && txt.endsWith("}")) {
+            return  new LinkedHashSet(
+                   ((Map) Dist.toObject (txt)).values()
+            );
         } else {
             return  new LinkedHashSet(
                 Arrays.asList(SEXP.split(txt))
@@ -704,6 +718,11 @@ public final class Synt {
         }
         if (txt.startsWith("[") && txt.endsWith("]")) {
             return (List) Dist.toObject (txt);
+        } else
+        if (txt.startsWith("{") && txt.endsWith("}")) {
+            return  new  ArrayList(
+                   ((Map) Dist.toObject (txt)).values()
+            );
         } else {
             return  new  ArrayList(
                 Arrays.asList(SEXP.split(txt))
@@ -732,20 +751,7 @@ public final class Synt {
      * @return
      */
     public static Collection toColl(String txt) {
-        if (txt == null) {
-            return null;
-        }
-        txt = txt.trim();
-        if (txt.length() == 0) {
-            return  new  ArrayList();
-        }
-        if (txt.startsWith("[") && txt.endsWith("]")) {
-            return (List) Dist.toObject (txt);
-        } else {
-            return  new  ArrayList(
-                Arrays.asList(SEXP.split(txt))
-            );
-        }
+        return toList(txt);
     }
 
     /**

@@ -130,12 +130,10 @@ public class CombatRunner implements Runnable
     }
     finally
     {
-      Core.THREAD_CORE
-            .get ( )
-            .close();
-      Core.GLOBAL_CORE
-            .close();
-
+      Core.getInstance( )
+          .close ( );
+      Core.getInterior( )
+          .close ( );
       System.exit(c);
     }
   }

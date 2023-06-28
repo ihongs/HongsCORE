@@ -33,12 +33,11 @@ public class DirectConn implements Conn {
 
         @Override
         public Conn get (String dbpath, String dbname) {
-            return  Core.getInstance().got(
-                    Conn.class.getName() +":"+ dbname,
-                () -> new CourseConn(Core.GLOBAL_CORE.got(
-                    Conn.class.getName() +"|"+ dbname,
-                () -> new DirectConn( dbpath , dbname) ) )
-            );
+            return  Core.getInstance().got(Conn.class.getName() +":"+ dbname, () -> new CourseConn(
+                    Core.getInterior().got(Conn.class.getName() +"|"+ dbname, () -> new DirectConn(
+                        dbpath, dbname
+                    ))
+                ));
         }
 
     }

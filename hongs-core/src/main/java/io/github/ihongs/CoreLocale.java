@@ -263,7 +263,7 @@ public class CoreLocale
     {
       return inst;
     }
-    Core gore = Core.GLOBAL_CORE;
+    Core gore = Core.getInterior();
     inst = (CoreLocale) gore.get(ck);
     if (inst != null && inst.isModified() != true)
     {

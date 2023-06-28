@@ -28,6 +28,18 @@ import java.util.Map;
 
 /**
  * 维护命令
+ *
+ * <pre>
+ *  调远程命令
+ *  access.exec 命令 参数1 参数2 ...
+ *  调远程动作
+ *  access.eval 动作 --request 请求参数 ...
+ *  调本地动作
+ *  access.eval 动作 --request 请求参数 ...
+ * </p>
+ *
+ * <p>注意: 远程调用默认关闭, 开启后需设白名单, 可以跳过权限检查, 详见 io.github.ihongs.action.serv.MoreAction</p>
+ *
  * @author hongs
  */
 @Combat("access")
@@ -122,7 +134,7 @@ public class Access {
         String req = Dist.toString (rep, true);
 
         // 动作接口
-        String url = Core.SERV_HREF+Core.SERV_PATH + "/common/more/call" +Cnst.ACT_EXT;
+        String url = Core.SERV_HREF+Core.SERV_PATH + "/common/more/eval" +Cnst.ACT_EXT;
 
         try {
             HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();

@@ -28,9 +28,13 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * 通用聚合动作
+ *
+ * <p>
  * 可一次调用多个动作
  * 批量执行后返回数据
  * 请求格式举例:
+ * </p>
+ * <pre>
  * {
  *   at: "path/to/action",
  *   in: {type: 1},
@@ -45,8 +49,20 @@ import javax.servlet.http.HttpServletResponse;
  *     }
  *   }
  * }
+ * </pre>
+ * <p>
  * 下层用 on 关联上层, 缺省为层级名加 _id;
  * 当顶层 at 未给出时, 顶层资源平行无关联.
+ * </p>
+ *
+ * <p>许可配置, 在 default.properties 中:</p>
+ * <pre>
+ * core.eval.more.enable eval 远程维护动作开启
+ * core.eval.more.allows eval 执行动作 IP 白名单, 默认仅本机
+ * core.eval.more.enable eval 远程维命令开启
+ * core.eval.more.allows eval 执行命令 IP 白名单, 默认仅本机
+ * </pre>
+ *
  * @author Hongs
  */
 @Action("common/more")

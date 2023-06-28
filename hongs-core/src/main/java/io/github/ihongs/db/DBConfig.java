@@ -386,7 +386,7 @@ public class DBConfig
     // 2016/9/4 增加 source,origin 的 param 节点, 附加设置可使用 param
     getProperties(element, info);
 
-    Map origin = new HashMap();
+    Map origin = new HashMap (3);
     origin.put("jndi", mode);
     origin.put("name", namc);
     origin.put("info", info);
@@ -424,7 +424,7 @@ public class DBConfig
     // 2016/9/4 增加 source,origin 的 param 节点, 附加设置可使用 param
     getProperties(element, info);
 
-    Map source = new HashMap();
+    Map source = new HashMap (3);
     source.put("jdbc", mode);
     source.put("name", namc);
     source.put("info", info);
@@ -583,13 +583,12 @@ public class DBConfig
   public static String fixSourceName(String name) {
     // Sqlite 相对路径补全
     if (name.startsWith("jdbc:sqlite:")) {
-        name = name.substring( 12 );
+        name = name.substring(12);
 
         // 使用变量
-        Map  opts  =  new HashMap();
+        Map opts = new HashMap(3);
         opts.put("SERVER_ID", Core.SERVER_ID);
         opts.put("CORE_PATH", Core.CORE_PATH);
-        opts.put("CONF_PATH", Core.CONF_PATH);
         opts.put("DATA_PATH", Core.DATA_PATH);
         name = Syno.inject( name, opts );
 

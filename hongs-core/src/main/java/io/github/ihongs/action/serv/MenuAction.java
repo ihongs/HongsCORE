@@ -108,8 +108,8 @@ public class MenuAction {
             l  = NaviMap.getInstance(m).getMenuTranslated(   b);
         }
 
-        Map data = new HashMap();
-        data.put( "list", l );
+        Map data = new HashMap(1);
+        data.put("list",l);
         helper.reply(data);
     }
 

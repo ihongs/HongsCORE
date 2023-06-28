@@ -300,7 +300,7 @@ public abstract class CoreSerial
   protected Object save()
     throws HongsException
   {
-    Map     map =new HashMap();
+    Map     map   = new HashMap();
     Class   clazz = getClass();
     Field[] fields;
 

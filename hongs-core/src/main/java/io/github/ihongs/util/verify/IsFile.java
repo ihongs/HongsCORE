@@ -388,7 +388,7 @@ public class IsFile extends Rule {
         String CURR_SERV_HREF = Core.SERVER_HREF.get();
         String CORE_SERV_PATH = Core.SERVER_PATH.get();
 
-        Map m = new HashMap();
+        Map m = new HashMap(3);
         m.put("SERV_HREF", CURR_SERV_HREF);
         m.put("SERV_PATH", CORE_SERV_PATH);
         m.put("BASE_HREF", CURR_SERV_HREF
@@ -399,7 +399,7 @@ public class IsFile extends Rule {
     }
 
     private String getDir(String path) {
-        Map m = new HashMap();
+        Map m = new HashMap(4);
         m.put("BASE_PATH", Core.BASE_PATH);
         m.put("CORE_PATH", Core.CORE_PATH);
         m.put("CONF_PATH", Core.CONF_PATH);

@@ -381,9 +381,9 @@ public class AuthFilter
     }
 
     if (inAjax(req)) {
-        Map rep = new HashMap();
-        rep.put( "ok"  , false);
-        rep.put( "msg" ,  msg );
+        Map rep = new HashMap(4);
+        rep.put( "ok"  , false );
+        rep.put( "msg" ,  msg  );
         rep.put( "ern" , "Er40" + type);
         if (uri != null && uri.length() != 0) {
         rep.put( "err" , "Goto "+ uri );

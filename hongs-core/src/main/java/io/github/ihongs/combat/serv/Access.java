@@ -9,6 +9,7 @@ import io.github.ihongs.action.ActionRunner;
 import io.github.ihongs.combat.CombatHelper;
 import io.github.ihongs.combat.anno.Combat;
 import io.github.ihongs.util.Dist;
+import io.github.ihongs.util.Synt;
 import java.io.File;
 import java.io.FileReader;
 import java.io.BufferedReader;
@@ -42,8 +43,8 @@ public class Access {
         }
 
         // 请求参数
-        Map rep = new HashMap();
-        rep.put("cmd", args[0]);
+        Map rep = new HashMap(2);
+        rep.put("cmd" , args[0]);
         if (args.length > 1 ) {
             rep.put("args", Arrays.copyOfRange(args, 1, args.length));
         }
@@ -104,8 +105,8 @@ public class Access {
         }
 
         // 请求参数
-        Map rep = new HashMap();
-        rep.put("act", args[0]);
+        Map rep = new HashMap(5);
+        rep.put("act" , args[0]);
         if (opts.containsKey("request")) {
             rep.put("request", text((String) opts.get("request")));
         }
@@ -207,22 +208,7 @@ public class Access {
     }
 
     private static Map data(String text) throws HongsException {
-        text = text(text);
-        if (text.length() == 0 ) {
-            return new HashMap();
-        }
-
-        if (text.startsWith("<") && text.endsWith(">")) {
-            throw  new UnsupportedOperationException("Unsupported xml: "+ text);
-        } else
-        if (text.startsWith("[") && text.endsWith("]")) {
-            throw  new UnsupportedOperationException("Unsupported arr: "+ text);
-        } else
-        if (text.startsWith("{") && text.endsWith("}")) {
-            return (  Map  ) Dist.toObject(text);
-        } else {
-            return ActionHelper.parseQuery(text);
-        }
+        return Synt.toMap(text(text));
     }
 
     private static String text(String text) throws HongsException {

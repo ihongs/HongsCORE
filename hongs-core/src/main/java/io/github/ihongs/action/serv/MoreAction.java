@@ -12,7 +12,6 @@ import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.combat.CombatHelper;
 import io.github.ihongs.combat.CombatRunner;
 import io.github.ihongs.dh.MergeMore;
-import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Synt;
 import java.io.IOException;
 import java.io.InputStream;
@@ -107,10 +106,10 @@ public class MoreAction {
         String uri = (String)map.get("act" );
 
         // 从参数提取参数
-        helper.setRequestData(data(map.get("request")));
-        helper.setContextData(data(map.get("context")));
-        helper.setSessionData(data(map.get("session")));
-        helper.setCookiesData(data(map.get("cookies")));
+        helper.setRequestData(data(map, "request"));
+        helper.setContextData(data(map, "context"));
+        helper.setSessionData(data(map, "session"));
+        helper.setCookiesData(data(map, "cookies"));
 
         try {
             eval(helper, uri,req,rsp);
@@ -319,16 +318,16 @@ public class MoreAction {
             if (ex.getCause() instanceof HongsCause) {
                 HongsCause  ez = ( HongsCause ) ex.getCause( );
                 String en = Integer.toHexString(ez.getErrno());
-                Map map = new HashMap();
-                map.put("ok" ,  false );
-                map.put("ern", "Ex"+en);
+                Map map = new HashMap(4);
+                map.put("ok" ,  false  );
+                map.put("ern", "Ex"+en );
                 map.put("err", ez.getMessage());
                 map.put("msg", ez.getLocalizedMessage());
                 helper.reply(map);
             } else {
-                Map map = new HashMap();
-                map.put("ok" ,  false );
-                map.put("ern", "Er500");
+                Map map = new HashMap(4);
+                map.put("ok" ,  false  );
+                map.put("ern", "Er500" );
                 map.put("err", ex.getMessage());
                 map.put("msg", ex.getLocalizedMessage());
                 helper.reply(map);
@@ -379,21 +378,17 @@ public class MoreAction {
         }
     }
 
-    private Map data(Object obj) {
-        if (obj == null || "".equals(obj)) {
-            return new HashMap();
+    private Map data(Map map, String key) throws HongsException {
+        Object obj = map.get (key);
+        if (obj == null) {
+            return new HashMap (0);
         }
-        if (obj instanceof Map ) {
-            return ( Map ) obj ;
+        try {
+            return Synt.toMap(obj);
         }
-        String str = Synt.declare(obj, "");
-        Map map;
-        if (str.startsWith("{") && str.endsWith("}")) {
-            map = (  Map  ) Dist.toObject(str);
-        } else {
-            map = ActionHelper.parseQuery(str);
+        catch (ClassCastException e) {
+            throw new HongsException(400, "Can not parse "+key);
         }
-        return map;
     }
 
     private static class Wrap extends ActionHelper {

@@ -4,7 +4,6 @@ import io.github.ihongs.Cnst;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.ActionHelper;
-import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Synt;
 import java.io.IOException;
 import java.util.Date;
@@ -78,7 +77,7 @@ public class ApisDriver
         Set mode  = null;
         if (_mod != null) {
             try {
-                mode = trnsConv(_mod);
+                mode = trnsMode(_mod);
             } catch (ClassCastException e) {
                 hlpr.error(400, "Can not parse value for "+ modeKey );
                 return;
@@ -122,25 +121,18 @@ public class ApisDriver
         }
     }
 
-    private static Set trnsConv(Object obj) {
-        return Synt.toTerms(obj);
+    private static Set trnsMode(Object obj) {
+        if (obj == null || "".equals(obj) ) {
+            return null ;
+        }
+        return Synt.toSet(obj);
     }
 
     private static Map trnsData(Object obj) {
         if (obj == null || "".equals(obj) ) {
-            return new HashMap();
+            return null ;
         }
-        if (obj instanceof Map ) {
-            return ( Map ) obj ;
-        }
-        String str = Synt.declare(obj, "" );
-        Map map;
-        if (str.startsWith("{") && str.endsWith("}")) {
-            map = (  Map  ) Dist.toObject(str);
-        } else {
-            map = ActionHelper.parseQuery(str);
-        }
-        return map;
+        return Synt.toMap(obj);
     }
 
     /**

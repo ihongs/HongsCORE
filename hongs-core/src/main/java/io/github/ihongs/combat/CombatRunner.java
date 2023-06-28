@@ -215,7 +215,8 @@ public class CombatRunner implements Runnable
     /** 核心属性配置 **/
 
     Core.ENVIR = 0;
-    Core.DEBUG = Synt.declare(opts.get("DEBUG") , (byte) 0);
+    Core.DEBUG = Synt.declare(opts.get("DEBUG") , (byte) 0 );
+    Core.SERVER_ID = Synt.declare(opts.get("SERVERID"), "0");
     Core.CORE_PATH = Synt.declare(opts.get("COREPATH"), System.getProperty("user.dir"));
     Core.CORE_PATH = new File(Core.CORE_PATH).getAbsolutePath();
     Core.CONF_PATH = Synt.declare(opts.get("CONFPATH"), Core.CORE_PATH + File.separator + "etc");
@@ -230,15 +231,14 @@ public class CombatRunner implements Runnable
 
     /** 系统属性配置 **/
 
-    CoreConfig cnf = CoreConfig.getInstance("defines");
-    Core.SERVER_ID = cnf.getProperty("server.id", "0");
-
-    Map m = new HashMap();
+    Map m = new HashMap(5);
     m.put("SERVER_ID", Core.SERVER_ID);
     m.put("BASE_PATH", Core.BASE_PATH);
     m.put("CORE_PATH", Core.CORE_PATH);
     m.put("CONF_PATH", Core.CONF_PATH);
     m.put("DATA_PATH", Core.DATA_PATH);
+
+    CoreConfig cnf = CoreConfig.getInstance("defines");
 
     // 启动系统属性
     for(Map.Entry et : cnf.entrySet()) {

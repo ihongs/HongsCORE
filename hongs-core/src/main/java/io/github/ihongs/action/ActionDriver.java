@@ -125,28 +125,21 @@ public class ActionDriver implements Filter, Servlet {
 
             /** 核心属性配置 **/
 
-            Core.DEBUG = Synt.declare(cont.getInitParameter("debug"), (byte) 0);
+            Core.DEBUG     = Synt.declare(cont.getInitParameter("debug"), (byte) 0);
+            Core.SERVER_ID = Synt.declare(cont.getInitParameter("server-id"), "0" );
 
             Core.SERV_PATH = cont.getContextPath();
-            Core.BASE_PATH = cont.getRealPath("" );
+            Core.BASE_PATH = cont.getRealPath ("");
 
             Core.BASE_PATH = Core.BASE_PATH.replaceFirst("[/\\\\]$", "");
             Core.CORE_PATH = Core.BASE_PATH + File.separator + "WEB-INF";
-
-            File cp = new File(Core.CORE_PATH );
-            if (!cp.exists()) {
-                Core.CORE_PATH = cp.getParent();
-            }
-
             Core.CONF_PATH = Core.CORE_PATH + File.separator + "etc";
             Core.DATA_PATH = Core.CORE_PATH + File.separator + "var";
 
             //** 系统属性配置 **/
 
-            Core.SERVER_ID = cnf.getProperty("server.id", "0");
-
             // 用于替换下面系统属性中的变量
-            Map m = new HashMap();
+            Map m = new HashMap(5);
             m.put("SERVER_ID", Core.SERVER_ID);
             m.put("BASE_PATH", Core.BASE_PATH);
             m.put("CORE_PATH", Core.CORE_PATH);

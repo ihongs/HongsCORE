@@ -144,17 +144,19 @@ public class SourceCombat {
             DB db = DB.getInstance("default");
             StringBuilder sb = new StringBuilder();
 
+            /*
             long st = System. currentTimeMillis ();
             long al = fo.length();
             long rl = 0; // 处理进度
+            */
             long ok = 0; // 成功计数
             long er = 0; // 失败计数
             int  rn = 0; // 行号
-            String ln;
+            String  ln ;
 
             while(null != (ln = in.readLine())) {
                 rn += 1;
-                rl += ln.length();
+            //  rl += ln.length();
                 ln  = CMT_PAT.matcher(ln).replaceAll("").trim(); // 清理行注释
 
                 if (ln.length() == 0) {
@@ -186,10 +188,12 @@ public class SourceCombat {
                 ln = sb.toString();
                 sb . setLength (0);
 
+                /*
                 // 进度
                float rp = (float) rl / al;
                 long et = System.currentTimeMillis() - st;
                      et = (long ) (  et / rp - et  );
+                */
 
                 try {
                     db.execute(ln);
@@ -202,11 +206,14 @@ public class SourceCombat {
             }
             if (sb.length()!=0) {
                 ln = sb.toString();
+                sb . setLength (0);
 
+                /*
                 // 进度
                float rp = (float) rl / al;
                 long et = System.currentTimeMillis() - st;
                      et = (long ) (  et / rp - et  );
+                */
 
                 try {
                     db.execute(ln);

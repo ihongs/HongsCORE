@@ -273,20 +273,20 @@ public class SourceCombat {
                     runSql( e, lg );
                     break ;
                 case "say": {
-                    String txt = repVar (e.getTextContent());
-                    CombatHelper.println(txt);
+                    String txt = repVar(e.getTextContent());
+                    lg.print( txt );
                     break ; }
                 case "set": {
                     Map    env = CombatHelper.ENV.get();
                     String key = e.getAttribute ("env");
-                    String val = repVar (e.getTextContent());
+                    String val = repVar(e.getTextContent());
                            env.put (key, val);
                     break ; }
                 case "def": {
                     Map    env = CombatHelper.ENV.get();
                     String key = e.getAttribute ("env");
                     if ( ! env.containsKey(key) ) {
-                    String val = repVar (e.getTextContent());
+                    String val = repVar(e.getTextContent());
                            env.put (key, val);
                     }
                     break ; }

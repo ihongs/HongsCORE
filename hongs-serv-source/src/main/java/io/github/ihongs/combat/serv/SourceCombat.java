@@ -47,9 +47,9 @@ import org.xml.sax.SAXException;
 @Combat("source")
 public class SourceCombat {
 
-    private static final Pattern CMT_PAT = Pattern.compile("/\\*.*?\\*/");
-    private static final Pattern VAR_PAT = Pattern.compile("\\$(\\w+|\\{.*?\\})");
-    private static final Pattern TIM_PAT = Pattern.compile("^(CURR_TIME|EXEC_TIME)(_MS)?([\\-\\+]\\d+)?(\\|.*)?$");
+    private static final Pattern CMT_PAT = Pattern.compile("^\ufeff|/\\*.*?\\*/"); // 注释和 BOM
+    private static final Pattern VAR_PAT = Pattern.compile("\\$(\\w+|\\{.*?\\})"); // 内嵌的变量
+    private static final Pattern TIM_PAT = Pattern.compile("^(CURR_TIME|EXEC_TIME)(_MS)?([\\-\\+]\\d+)?(\\|.*)?$"); // 时间偏移
 
     /**
      * 执行命令
@@ -121,7 +121,7 @@ public class SourceCombat {
                         Core.ACTION_NAME.set(act +":"+ fo.getName());
                         CombatHelper.ENV.remove();
                         CombatHelper.println( "Run " + fo.getName());
-                        runSql(fo);
+                        runSql(fo , lgr);
                     }
                 } catch (Exception ex) {
                     lgr.error (ex);
@@ -135,7 +135,7 @@ public class SourceCombat {
         }
     }
 
-    private static void runSql(File fo)
+    private static void runSql(File fo, Looker lg)
             throws HongsException {
         try (
             FileInputStream is = new FileInputStream(fo);
@@ -176,9 +176,10 @@ public class SourceCombat {
 
                 if (ln.endsWith(";")) {
                     ln = ln.substring(0, ln.length() - 1);
-                    sb.append(ln);
+                    sb.append(ln );
                 } else {
-                    sb.append(ln);
+                    sb.append(ln )
+                      .append(' ');
                     continue;
                 }
 
@@ -192,15 +193,11 @@ public class SourceCombat {
 
                 try {
                     db.execute(ln);
-                    CombatHelper.progres(rp, String.format("Ok(%d) Er(%d) ET: %s", ok++, er, Inst.phrase(et)));
+                    //CombatHelper.progres(rp, String.format("Ok(%d) Er(%d) ET: %s", ok ++, er, Inst.phrase( et )));
                 }
                 catch (HongsException ex) {
-                    CombatHelper.progres(rp, String.format("Ok(%d) Er(%d) ET: %s", ok, er++, Inst.phrase(et)));
-                    if ( 0 < Core.DEBUG ) {
-                        CombatHelper.progres();
-                        CombatHelper.println("Error in file("+fo.getName()+") at line("+rn+"): "+ex.getMessage());
-                        throw ex;
-                    }
+                    lg.error(String.format("Error at line(%d) in file(%s): %s", rn, fo.getName(), ex.getMessage()));
+                    //CombatHelper.progres(rp, String.format("Ok(%d) Er(%d) ET: %s", ok, er ++, Inst.phrase( et )));
                 }
             }
             if (sb.length()!=0) {
@@ -213,19 +210,16 @@ public class SourceCombat {
 
                 try {
                     db.execute(ln);
-                    CombatHelper.progres(rp, String.format("Ok(%d) Er(%d) ET: %s", ok++, er, Inst.phrase(et)));
+                    //CombatHelper.progres(rp, String.format("Ok(%d) Er(%d) ET: %s", ok ++, er, Inst.phrase( et )));
                 }
                 catch (HongsException ex) {
-                    CombatHelper.progres(rp, String.format("Ok(%d) Er(%d) ET: %s", ok, er++, Inst.phrase(et)));
-                    if ( 0 < Core.DEBUG ) {
-                        CombatHelper.progres();
-                        CombatHelper.println("Error in file("+fo.getName()+") at line("+rn+"): "+ex.getMessage());
-                        throw ex;
-                    }
+                    lg.error(String.format("Error at line(%d) in file(%s): %s", rn, fo.getName(), ex.getMessage()));
+                    //CombatHelper.progres(rp, String.format("Ok(%d) Er(%d) ET: %s", ok, er ++, Inst.phrase( et )));
                 }
             }
-            CombatHelper.progres(1, String.format("Ok(%d) Er(%d)", ok, er));
-            CombatHelper.progres();
+            lg.print(String.format("Run %s Ok(%d) Er(%d)", fo.getName(), ok, er));
+            //CombatHelper.progres( 1 , String.format( "Ok(%d) Er(%d)" , ok, er));
+            //CombatHelper.progres();
         }
         catch (FileNotFoundException ex) {
             throw new HongsException(ex);
@@ -427,7 +421,7 @@ public class SourceCombat {
                 c = m.getAttribute("opt");
             }
             if (c != null && c.length() > 0) {
-                a.add("--" + c /**/);
+                a.add("--" + c );
             }
             if (s != null && s.length() > 0) {
                 a.add(repVar(s));

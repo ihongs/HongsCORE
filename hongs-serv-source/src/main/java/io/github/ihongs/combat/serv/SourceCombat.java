@@ -280,14 +280,14 @@ public class SourceCombat {
                     Map    env = CombatHelper.ENV.get();
                     String key = e.getAttribute ("env");
                     String val = repVar(e.getTextContent());
-                           env.put (key, val);
+                           env.put ( key , val);
                     break ; }
                 case "def": {
                     Map    env = CombatHelper.ENV.get();
                     String key = e.getAttribute ("env");
                     if ( ! env.containsKey(key) ) {
                     String val = repVar(e.getTextContent());
-                           env.put (key, val);
+                           env.put ( key , val);
                     }
                     break ; }
                 default:

@@ -780,7 +780,7 @@ public class Form extends Model {
             defi = docm.createElement("value");
             defs.appendChild ( defi );
             defi.setAttribute("code", Cnst.AR_KEY+".x.cuser");
-            defi.appendChild ( docm.createTextNode("($session.uid)"));
+            defi.appendChild ( docm.createTextNode("($session.uid||\"*\")"));
 
             // 保护写接口
             defs = docm.createElement("enum");
@@ -789,7 +789,7 @@ public class Form extends Model {
             defi = docm.createElement("value");
             defs.appendChild ( defi );
             defi.setAttribute("code", Cnst.AR_KEY+".x.cuser");
-            defi.appendChild ( docm.createTextNode("($session.uid)"));
+            defi.appendChild ( docm.createTextNode("($session.uid||\"*\")"));
         }
 
         saveDocument(file , docm);
@@ -797,6 +797,7 @@ public class Form extends Model {
         //** 关联权限 **/
 
         NodeList list;
+        Set      acts;
 
         R0: {
             file = new File(Core.CONF_PATH +"/"+ centra +"/"+ id + Cnst.NAVI_EXT +".xml");
@@ -811,13 +812,23 @@ public class Form extends Model {
             for(int i = list.getLength() - 1; i > -1; i --) {
                 root.removeChild(list.item(i));
             }
+            acts = NaviMap.getInstance("centra").actions;
             for(String at : ats) {
+                if (at.startsWith(centre+"/")) {
+                    at = centra+"/"+at.substring(centre.length()); // 更换分区前缀
+                    at = at + Cnst.ACT_EXT;
+                } else
+                if (at.startsWith(centra+"/")) {
+                    at = at + Cnst.ACT_EXT;
+                } else
+                {
+                    continue;
+                }
                 item = docm.createElement("action");
                 root.appendChild(item);
-                if (at.startsWith(centre+"/")) { // 更换分区前缀
-                    at = centra + "/" + at.substring(centre.length( ));
+                if (acts.contains(at)) {
+                    item.appendChild(docm.createTextNode(at));
                 }
-                item.appendChild(docm.createTextNode(at+Cnst.ACT_EXT));
             }
             saveDocument(file, docm);
         }
@@ -835,13 +846,23 @@ public class Form extends Model {
             for(int i = list.getLength() - 1; i > -1; i --) {
                 root.removeChild(list.item(i));
             }
+            acts = NaviMap.getInstance("centre").actions;
             for(String at : ats) {
+                if (at.startsWith(centra+"/")) {
+                    at = centre+"/"+at.substring(centra.length()); // 更换分区前缀
+                    at = at + Cnst.ACT_EXT;
+                } else
+                if (at.startsWith(centre+"/")) {
+                    at = at + Cnst.ACT_EXT;
+                } else
+                {
+                    continue;
+                }
                 item = docm.createElement("action");
                 root.appendChild(item);
-                if (at.startsWith(centra+"/")) { // 更换分区前缀
-                    at = centre + "/" + at.substring(centra.length( ));
+                if (acts.contains(at)) {
+                    item.appendChild(docm.createTextNode(at));
                 }
-                item.appendChild(docm.createTextNode(at+Cnst.ACT_EXT));
             }
             saveDocument(file, docm);
         }
@@ -1183,7 +1204,7 @@ public class Form extends Model {
             }
         }
     }
-    
+
     private Element getNodeByTagNameAndAttr(Element elem, String tag, String att, String val) {
         NodeList a = elem.getChildNodes();
         for (int i = 0; i < a.getLength(); i ++ ) {

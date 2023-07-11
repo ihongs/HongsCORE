@@ -820,14 +820,13 @@ public class Form extends Model {
                 } else
                 if (at.startsWith(centra+"/")) {
                     at = at + Cnst.ACT_EXT;
-                } else
-                {
+                } else {
                     continue;
                 }
-                item = docm.createElement("action");
-                root.appendChild(item);
                 if (acts.contains(at)) {
+                    item = docm.createElement("action");
                     item.appendChild(docm.createTextNode(at));
+                    root.appendChild(item);
                 }
             }
             saveDocument(file, docm);
@@ -854,14 +853,13 @@ public class Form extends Model {
                 } else
                 if (at.startsWith(centre+"/")) {
                     at = at + Cnst.ACT_EXT;
-                } else
-                {
+                } else {
                     continue;
                 }
-                item = docm.createElement("action");
-                root.appendChild(item);
                 if (acts.contains(at)) {
+                    item = docm.createElement("action");
                     item.appendChild(docm.createTextNode(at));
+                    root.appendChild(item);
                 }
             }
             saveDocument(file, docm);

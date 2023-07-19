@@ -54,12 +54,12 @@ public class XurlFilter implements Filter {
          * 文件缺失无需理会，将会自动转入 404
          */
         if (! blocks
-        &&  ! new File(Core.BASE_PATH+ActionDriver.getRecentPath(req)).exists()) {
+        &&  ! new File (Core.BASE_PATH+ActionDriver.getRecentPath(req)).exists()) {
             fc.doFilter(req, rsp);
             return;
         }
 
-        rsp.sendError(HttpServletResponse.SC_FORBIDDEN, "What's your problem?");
+        rsp.sendError(418, "What's your problem?");
     }
 
     @Override

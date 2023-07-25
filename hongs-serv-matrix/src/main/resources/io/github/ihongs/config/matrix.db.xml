@@ -43,5 +43,9 @@ xsi:schemaLocation="http://ihongs.github.io/hongs-core db.xsd">
                 <param name="fields">id,name</param>
             </assoc>
         </table>
+        <table name="feed"
+               tableName="a_matrix_feed"
+               primaryKey="fn">
+        </table>
     </tables>
 </db>

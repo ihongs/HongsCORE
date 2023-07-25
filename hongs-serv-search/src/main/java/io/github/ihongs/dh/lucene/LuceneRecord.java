@@ -2029,6 +2029,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             return t ;
         }
 
+        // 常规类型
         switch (t) {
             case "string":
             case "search":
@@ -2051,6 +2052,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             throw e.toExemption( );
         }
 
+        // 扩展类型
         switch (t) {
             case "number":
                 return Synt.declare(fc.get("type"), "double");

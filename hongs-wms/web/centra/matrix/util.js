@@ -671,6 +671,13 @@ $.fn.hsCols = function() {
             pane = getTypePane (context, "-" );
         }
 
+        // 加字段名
+        var nam2 = field.find("[data-fn]").attr("data-fn")
+                || field.find("[name]"   ).attr("name"   );
+        if (nam2 && nam2.substr(0, 1) != '-' ) {
+            name = name + " " + nam2;
+        }
+
         modal.find("h4").text(name);
         modal.find( ".simple-set" ) // 基础设置区
              .empty( ).append(pane);
@@ -763,12 +770,12 @@ $.fn.hsCols = function() {
 };
 
 // 快捷拷贝表单配置
-H$.getFormCols = function() {
+H$.getFormConf = function() {
     var conf = [];
     gainFlds(conf, $(".target-area"), $(".widget-form"));
     return   conf;
 };
-H$.setFormCols = function(conf) {
+H$.setFormConf = function(conf) {
     drawFlds(conf, $(".target-area"), $(".widget-form"));
 };
 

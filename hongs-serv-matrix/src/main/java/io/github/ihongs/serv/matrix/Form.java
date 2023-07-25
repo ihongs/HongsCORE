@@ -247,34 +247,44 @@ public class Form extends Model {
         return 1;
     }
 
-    protected List<Map> parseConf(String id, Map rd) {
+    protected List<Map> parseConf(String id, Map rd) throws HongsException {
         List<Map> flds = null;
         String conf = (String) rd.get("conf");
         String name = (String) rd.get("name");
 
         if (conf != null && !"".equals(conf)) {
                flds = Synt.asList(Dist.toObject(conf));
-            Set set = Synt.setOf("name", "cuser", "muser", "ctime", "mtime");
+            Set fns = new HashSet(flds.size( ));
             Map tdf = null;
             Map idf = null;
             Map fld ;
 
+            Iterator<Map> ite = flds.iterator();
+            while (ite.hasNext()) {
+                fld = ite.next();
+                Object fn = fld.get("__name__");
+                if (!"-".equals(fn )
+                &&  !"@".equals(fn)) {
+                    fns.add (fn);
+                }
+            }
+
             Iterator<Map> itr = flds.iterator();
             while (itr.hasNext()) {
                 fld = itr.next();
-                if (  "-".equals(fld.get("__name__"))) {
-                    fld.put("__name__", Core.newIdentity());
+                Object fn = fld.get("__name__");
+                if ( "-".equals(fn)) {
+                    fn = getFieldName(fld, fns);
+                    fld.put ( "__name__" , fn );
+                    fns.add (fn);
                 } else
-                if (  "@".equals(fld.get("__name__"))) {
+                if ( "@".equals(fn)) {
                     tdf = fld;
-                    itr. remove (  );
+                    itr.remove();
                 } else
-                if ( "id".equals(fld.get("__name__"))) {
+                if ("id".equals(fn)) {
                     idf = fld;
-                    itr. remove (  );
-                } else
-                if (set.contains(fld.get("__name__"))) {
-                    set. remove (fld.get("__name__"));
+                    itr.remove();
                 }
             }
 
@@ -336,7 +346,7 @@ public class Form extends Model {
             }
 
             // 增加描述字段
-            if (set.contains("name")) {
+            if (!fns.contains("name")) {
                 flds.add(Synt.mapOf(
                     "__name__", "name",
                     "__type__", "hidden",
@@ -344,7 +354,7 @@ public class Form extends Model {
                     "wordable", "true"
                 ));
             }
-            if (set.contains("word")) {
+            if (!fns.contains("word")) {
                 flds.add(Synt.mapOf(
                     "__name__", "word",
                     "__type__", "search",
@@ -354,7 +364,7 @@ public class Form extends Model {
             }
 
             // 增加用户字段
-            if (set.contains("muser")) {
+            if (!fns.contains("muser")) {
                 flds.add(Synt.mapOf(
                     "__name__", "muser",
                     "__type__", "hidden",
@@ -363,7 +373,7 @@ public class Form extends Model {
                     "deforce" , "always"
                 ));
             }
-            if (set.contains("cuser")) {
+            if (!fns.contains("cuser")) {
                 flds.add(Synt.mapOf(
                     "__name__", "cuser",
                     "__type__", "hidden",
@@ -374,7 +384,7 @@ public class Form extends Model {
             }
 
             // 增加时间字段
-            if (set.contains("mtime")) {
+            if (!fns.contains("mtime")) {
                 flds.add(Synt.mapOf(
                     "__name__", "mtime",
                     "__type__", "datetime",
@@ -384,7 +394,7 @@ public class Form extends Model {
                     "deforce" , "always"
                 ));
             }
-            if (set.contains("ctime")) {
+            if (!fns.contains("ctime")) {
                 flds.add(Synt.mapOf(
                     "__name__", "ctime",
                     "__type__", "datetime",
@@ -1111,6 +1121,86 @@ public class Form extends Model {
 
     protected void updateUnitMenu(String id) throws HongsException {
         new Furl().updateMenus( );
+    }
+
+    /**
+     * 构建字段名称
+     * 避免库里有太多的零散字段
+     * @param fc
+     * @param fs
+     * @return
+     * @throws HongsException
+     */
+    protected String getFieldName(Map fc, Set fs) throws HongsException {
+        Table  tab = db.getTable ("feed");
+        String sql = "SELECT `fn` FROM `"+tab.tableName+"` WHERE `ft` = ? AND `fn` NOT IN (?) ORDER BY `fn`";
+
+        String ft1 = Synt.declare(fc.get ( "__type__" ),"string");
+        String fn1 = (String) db.fetchOne(sql, ft1, fs).get("fn");
+        if ( null != fn1 ) return fn1;
+
+        String ft2 = getFieldType(fc);
+        String fn2 = (String) db.fetchOne(sql, ft2, fs).get("fn");
+        if ( null != fn2 ) return fn2;
+
+        fn2 = Core.newIdentity ( "FN" );
+        tab.insert( Synt.mapOf (
+            "fn", fn2,
+            "ft", ft2
+        ) );
+        return fn2;
+    }
+
+    /**
+     * 获取字段类型
+     * 同 LuceneRecord.datatype
+     * @param fc
+     * @return
+     */
+    protected String getFieldType(Map fc) {
+        String t = (String) fc.get("__type__");
+        if (t == null) {
+            return t ;
+        }
+
+        // 常规类型
+        switch (t) {
+            case "string":
+            case "search":
+            case "sorted":
+            case "stored":
+            case "object":
+                return t ;
+        }
+
+        // 基准类型
+        try {
+            String k  = (String) FormSet
+                  .getInstance ( /***/ )
+                  .getEnum ("__types__")
+                  .get (t);
+            if (null != k) {
+                   t  = k;
+            }
+        } catch (HongsException e) {
+            throw e.toExemption( );
+        }
+
+        // 扩展类型
+        switch (t) {
+            case "number":
+                return Synt.declare(fc.get("type"), "double");
+            case "hidden":
+            case  "enum" :
+            case  "fork" :
+                return Synt.declare(fc.get("type"), "string");
+            case  "file" :
+                return "string";
+            case  "form" :
+                return "object";
+            default:
+                return t ;
+        }
     }
 
     private Document makeDocument() throws HongsException {

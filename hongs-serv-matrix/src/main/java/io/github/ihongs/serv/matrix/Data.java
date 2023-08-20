@@ -2,6 +2,7 @@ package io.github.ihongs.serv.matrix;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
+import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.ActionHelper;
@@ -14,6 +15,7 @@ import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
+import java.io.UnsupportedEncodingException;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -27,6 +29,16 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import java.util.Base64;
+import java.util.Base64.Decoder;
+import java.util.Base64.Encoder;
+import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -459,7 +471,57 @@ public class Data extends SearchEntity {
         for(String id : ids) {
             c += rev(id, rd, t);
         }
-        return  c;
+        return c;
+    }
+
+    /**
+     * 查询历史记录
+     * @param rd
+     * @return
+     * @throws HongsException
+     */
+    public Map reveal(Map rd) throws HongsException {
+        Map rsp = getModel( ).search ( rd );
+
+        if (rsp.containsKey("info")) {
+            Map inf = (Map) rsp.get("info");
+        if (inf.containsKey("data")) {
+            // 解密详情数据
+            Map dat = (Map) getData(
+                   (String) inf.get("data")
+            );
+            rsp.put("info", dat);
+            rsp.put("snap", inf);
+            inf.remove( "data" );
+
+            // 补充新旧标识
+            Set ab  = Synt.toTerms(rd.get(Cnst.AB_KEY));
+            if (ab != null
+            && (ab.contains("older")
+            ||  ab.contains("newer"))) {
+                Object  id = inf.get(/**/ "id");
+                Object fid = inf.get("form_id");
+                long ctime = Synt.declare(inf.get("ctime"), 0L);
+                if (ab.contains("older")) {
+                    Map row = getModel().table.fetchCase()
+                       .filter("`id` = ? AND `form_id` = ? AND `ctime` < ?", id, fid, ctime)
+                       .assort("`ctime` DESC")
+                       .select("`ctime`")
+                       .getOne();
+                    inf.put("older" , ! row.isEmpty() ? row.get("ctime") : null);
+                }
+                if (ab.contains("newer")) {
+                    Map row = getModel().table.fetchCase()
+                       .filter("`id` = ? AND `form_id` = ? AND `ctime` > ?", id, fid, ctime)
+                       .assort("`ctime`  ASC")
+                       .select("`ctime`")
+                       .getOne();
+                    inf.put("newer" , ! row.isEmpty() ? row.get("ctime") : null);
+                }
+            }
+        }}
+
+        return rsp;
     }
 
     /**
@@ -550,8 +612,8 @@ public class Data extends SearchEntity {
 
         // 数据快照和日志标题
         nd.put("__data__", dd);
-        nd.put("data", Dist.toString(dd,  true ));
-        nd.put("name", this.getText (dd, "name"));
+        nd.put("data", getData(dd));
+        nd.put("name", getText(dd, "name"));
 
         // 操作备注和终端代码
         if (rd.containsKey("memo")) {
@@ -628,8 +690,8 @@ public class Data extends SearchEntity {
 
         // 数据快照和日志标题
         nd.put("__data__", dd);
-        nd.put("data", Dist.toString(dd,  true ));
-        nd.put("name", this.getText (dd, "name"));
+        nd.put("data", getData(dd));
+        nd.put("name", getText(dd, "name"));
 
         // 操作备注和终端代码
         if (rd.containsKey("memo")) {
@@ -702,8 +764,8 @@ public class Data extends SearchEntity {
 
             // 数据快照和日志标题
             nd.put("__data__", dd);
-            nd.put("data", Dist.toString(dd,  true ));
-            nd.put("name", this.getText (dd, "name"));
+            nd.put("data", getData(dd));
+            nd.put("name", getText(dd, "name"));
 
             // 操作备注和终端代码
             if (rd.containsKey("memo")) {
@@ -730,8 +792,8 @@ public class Data extends SearchEntity {
 
         // 数据快照和日志标题
         nd.put("__data__", dd);
-        nd.put("data", Dist.toString(dd,  true ));
-        nd.put("name", this.getText (dd, "name"));
+        nd.put("data", getData(dd));
+        nd.put("name", getText(dd, "name"));
 
         // 操作备注和终端代码
         if (rd.containsKey("memo")) {
@@ -929,7 +991,7 @@ public class Data extends SearchEntity {
                 .select("state, data")
                 .getOne( );
             if (Synt.declare(od.get("state"), 0) > 0) {
-                Map dd = (Map) Dist.toObject((String) od.get("data"));
+                Map dd = getData((String) od.get("data"));
                 dd.put(Cnst.ID_KEY , id);
                 padInf(dd, dd);
                 Document dc = padDoc(dd);
@@ -968,7 +1030,7 @@ public class Data extends SearchEntity {
         }}
 
         // 保存到文档库
-        Map dd = (Map) Dist.toObject((String) sd.get("data"));
+        Map dd = getData((String) sd.get("data"));
         dd.put(Cnst.ID_KEY , id);
         padInf(dd, dd);
         Document dc = padDoc(dd);
@@ -988,8 +1050,8 @@ public class Data extends SearchEntity {
 
         // 数据快照和日志标题
         nd.put("__data__", dd);
-        nd.put("data", Dist.toString(dd,  true ));
-        nd.put("name", this.getText (dd, "name"));
+        nd.put("data", getData(dd));
+        nd.put("name", getText(dd, "name"));
 
         // 操作备注和终端代码
         if (rd.containsKey("memo")) {
@@ -1293,6 +1355,69 @@ public class Data extends SearchEntity {
         } else {
             return nm;
         }
+    }
+
+    /**
+     * 获取加密数据
+     * @param dd 原始数据
+     * @return
+     * @throws HongsException
+     */
+    protected String getData(Map dd) throws HongsException {
+        String ds = Dist.toString(dd, true);
+
+        // 加密
+        String sk = CoreConfig.getInstance().getProperty("core.matrix.data.secret.key");
+        if (sk != null && !sk.isEmpty()
+        &&  ds != null && !ds.isEmpty()) {
+            try {
+                byte[] keyBytes = sk.getBytes(StandardCharsets.UTF_8);
+                byte[] datBytes = ds.getBytes(StandardCharsets.UTF_8);
+                SecretKeySpec secKey = new SecretKeySpec(keyBytes, "AES");
+                Cipher  cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+                Encoder encode = Base64.getEncoder (   );
+                cipher.init(Cipher.ENCRYPT_MODE, secKey);
+                datBytes = cipher.doFinal(datBytes);
+                datBytes = encode.encode (datBytes);
+
+                ds = new String (datBytes, StandardCharsets.UTF_8);
+            } catch (GeneralSecurityException ex) {
+                throw new HongsException (ex);
+            }
+        }
+
+        return  ds;
+    }
+
+    /**
+     * 获取解密数据
+     * @param ds 库存数据
+     * @return
+     * @throws HongsException
+     */
+    protected Map getData(String ds) throws HongsException {
+        // 解密
+        String sk = CoreConfig.getInstance().getProperty("core.matrix.data.secret.key");
+        if (sk != null && !sk.isEmpty()
+        &&  ds != null && !ds.isEmpty()
+        && !ds.startsWith("{") && !ds.endsWith("}")) {
+            try {
+                byte[] keyBytes = sk.getBytes(StandardCharsets.UTF_8);
+                byte[] datBytes = ds.getBytes(StandardCharsets.UTF_8);
+                SecretKeySpec secKey = new SecretKeySpec(keyBytes, "AES");
+                Cipher  cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+                Decoder decode = Base64.getDecoder (   );
+                cipher.init(Cipher.DECRYPT_MODE, secKey);
+                datBytes = decode.decode (datBytes);
+                datBytes = cipher.doFinal(datBytes);
+
+                ds = new String (datBytes, StandardCharsets.UTF_8);
+            } catch (GeneralSecurityException ex) {
+                throw new HongsException (ex);
+            }
+        }
+
+        return (Map) Dist.toObject(ds);
     }
 
     /**

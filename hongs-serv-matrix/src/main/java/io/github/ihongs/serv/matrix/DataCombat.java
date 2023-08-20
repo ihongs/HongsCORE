@@ -21,8 +21,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
+
+import java.util.Base64;
+import java.util.Base64.Decoder;
+import java.util.Base64.Encoder;
+import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
 
 /**
  * 数据操作命令
@@ -527,6 +536,87 @@ public class DataCombat {
         }
     }
 
+    /**
+     * 更换密钥
+     * @param args
+     * @throws HongsException
+     */
+    @Combat("crypts")
+    public static void crypts(String[] args) throws HongsException {
+        Map opts = CombatHelper.getOpts(
+            args,
+            "db:s",
+            "old-key:s",
+            "new-key:s",
+            "old-table=s",
+            "new-table=s",
+            "?Usage: crypts --old-table OLD_TABLE --old-key OLD_SECRET_KEY --new-table NEW_TABLE --new-key NEW_SECRET_KEY"
+        );
+        String dbName = (String) opts.get("db");
+        String oldKey = (String) opts.get("old-key");
+        String newKey = (String) opts.get("new-key");
+        String oldTab = (String) opts.get("old-table");
+        String newTab = (String) opts.get("new-table");
+
+        DB  db  = DB.getInstance(Synt.defxult(dbName, "default"));
+        Map row = db.fetchOne ("SELECT COUNT(*) AS `cnt` FROM `"+oldTab+"`");
+        int cnt = Synt.declare(row.get("cnt"), 0);
+        int fin = 0;
+
+        try {
+            Cipher  deciph = null;
+            Cipher  enciph = null;
+            Decoder decode = Base64.getDecoder();
+            Encoder encode = Base64.getEncoder();
+            if (oldKey != null && ! oldKey.isEmpty()) {
+                byte[] keyBytes = oldKey.getBytes(StandardCharsets.UTF_8);
+                SecretKeySpec secKey = new SecretKeySpec(keyBytes, "AES");
+                deciph = Cipher.getInstance("AES/ECB/PKCS5Padding");
+                deciph.init(Cipher.DECRYPT_MODE, secKey);
+            }
+            if (newKey != null && ! newKey.isEmpty()) {
+                byte[] keyBytes = newKey.getBytes(StandardCharsets.UTF_8);
+                SecretKeySpec secKey = new SecretKeySpec(keyBytes, "AES");
+                enciph = Cipher.getInstance("AES/ECB/PKCS5Padding");
+                enciph.init(Cipher.ENCRYPT_MODE, secKey);
+            }
+
+            CombatHelper.progres(cnt, fin);
+
+            Loop lp = db.query("SELECT * FROM `"+oldTab+"`", 0, 0);
+            while (lp.hasNext()) {
+                row = lp.next();
+                String fi = (String) row.get("form_id");
+                String ds = (String) row.get("data");
+                // 注意: form_id 为 - 表示表单变更记录
+                if (fi != null && fi.length() > 1
+                &&  ds != null && ds.length() > 1) {
+                    byte[] bytes = ds.getBytes(StandardCharsets.UTF_8);
+
+                    if (deciph != null
+                    && !ds.startsWith("{")
+                    && !ds.  endsWith("}")) {
+                        bytes = decode.decode (bytes); // 解码
+                        bytes = deciph.doFinal(bytes); // 解密
+                    }
+
+                    if (enciph != null) {
+                        bytes = enciph.doFinal(bytes); // 加密
+                        bytes = encode.encode (bytes); // 编码
+                    }
+
+                    ds = new String(bytes, StandardCharsets.UTF_8);
+                }
+                row. put ("data", ds );
+                db.insert(newTab, row);
+
+                CombatHelper.progres(cnt, ++ fin);
+            }   CombatHelper.progres();
+        } catch (GeneralSecurityException ex) {
+            throw new HongsException(ex);
+        }
+    }
+
     private static Map data(String text) {
         text = text.trim();
         if (text.startsWith("<") && text.endsWith(">")) {
@@ -644,8 +734,8 @@ public class DataCombat {
 
             // 数据快照和日志标题
             nd.put("__data__", od);
-            nd.put("data", Dist.toString(od,  true ));
-            nd.put("name", that.getText (od, "name"));
+            nd.put("data", that.getData(od));
+            nd.put("name", that.getText(od, "name"));
 
             // 操作备注和终端代码
             if (od.containsKey("memo")) {

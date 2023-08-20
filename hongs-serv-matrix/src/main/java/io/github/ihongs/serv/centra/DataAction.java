@@ -4,7 +4,6 @@ import io.github.ihongs.Cnst;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
-import io.github.ihongs.action.SelectHelper;
 import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.action.anno.Select;
 import io.github.ihongs.action.anno.Verify;
@@ -13,11 +12,9 @@ import io.github.ihongs.dh.IEntity;
 import io.github.ihongs.dh.search.SearchAction;
 import io.github.ihongs.dh.search.TitlesHelper;
 import io.github.ihongs.serv.matrix.Data;
-import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Synt;
 import java.lang.reflect.Method;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * 数据存储动作
@@ -113,70 +110,11 @@ public class DataAction extends SearchAction {
     }
 
     @Action("reveal")
+    @Select(conf="", form="")
     public void reveal(ActionHelper helper) throws HongsException {
-        ActionRunner runner = (ActionRunner)
-           helper.getAttribute(ActionRunner.class.getName());
-        String ent = runner.getEntity();
-        String mod = runner.getModule();
-
         Data   ett = (Data) getEntity(helper);
         Map    req = helper.getRequestData( );
-               req.put("form_id", ett.getFormId());
-               req.put("user_id", req.get("user"));
-        Map    rsp = ett.getModel( ).search( req );
-
-        // 详情数据转换
-        if (rsp.containsKey("info")) {
-            Map inf = (Map) rsp.get("info");
-        if (inf.containsKey("data")) {
-            Map dat = (Map) Dist.toObject(
-                   (String) inf.get("data")
-            );
-            rsp.put("info", dat);
-            rsp.put("snap", inf);
-            inf.remove( "data" );
-
-            // 补充枚举和关联
-            Set ab = Synt.toTerms(req.get(Cnst.AB_KEY));
-            if (null != ab) {
-                byte md = 0;
-                if (ab.contains(".enfo")) md += SelectHelper.ENFO;
-                if (ab.contains(".info")) md += SelectHelper.INFO;
-                if (ab.contains(".fall")) md += SelectHelper.FALL;
-                if (ab.contains("_text")) md += SelectHelper.TEXT;
-                if (ab.contains("_time")) md += SelectHelper.TIME;
-                if (ab.contains("_link")) md += SelectHelper.LINK;
-                if (ab.contains("_fork")) md += SelectHelper.FORK;
-                if (md != 0) {
-                    new SelectHelper().addItemsByForm(mod, ent).select(rsp, md);
-                }
-
-                // 新的和旧的
-                if (ab.contains("older")
-                ||  ab.contains("newer")) {
-                    Object  id = inf.get(/**/ "id");
-                    Object fid = inf.get("form_id");
-                    long ctime = Synt.declare(inf.get("ctime"), 0L);
-                    if (ab.contains("older")) {
-                        Map row = ett.getModel().table.fetchCase()
-                           .filter("`id` = ? AND `form_id` = ? AND `ctime` < ?", id, fid, ctime)
-                           .assort("`ctime` DESC")
-                           .select("`ctime`")
-                           .getOne();
-                        inf.put("older" , ! row.isEmpty() ? row.get("ctime") : null);
-                    }
-                    if (ab.contains("newer")) {
-                        Map row = ett.getModel().table.fetchCase()
-                           .filter("`id` = ? AND `form_id` = ? AND `ctime` > ?", id, fid, ctime)
-                           .assort("`ctime`  ASC")
-                           .select("`ctime`")
-                           .getOne();
-                        inf.put("newer" , ! row.isEmpty() ? row.get("ctime") : null);
-                    }
-                }
-            }
-        }}
-
+        Map    rsp = ett.reveal(req);
         helper.reply(rsp);
     }
 

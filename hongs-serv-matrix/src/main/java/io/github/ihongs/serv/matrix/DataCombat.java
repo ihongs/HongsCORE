@@ -571,8 +571,8 @@ public class DataCombat {
         if (newMod == null || newMod.isEmpty()) {
             newMod = "AES/ECB/PKCS5Padding";
         }
-        String oldAlg = oldMod.substring(0, oldMod.indexOf("/"));
-        String newAlg = newMod.substring(0, newMod.indexOf("/"));
+        String oldAlg = oldMod.substring(0 , oldMod.indexOf("/"));
+        String newAlg = newMod.substring(0 , newMod.indexOf("/"));
 
         DB  db  = DB.getInstance(Synt.defxult(dbName, "default"));
         Map row = db.fetchOne ("SELECT COUNT(*) AS `cnt` FROM `"+oldTab+"`");

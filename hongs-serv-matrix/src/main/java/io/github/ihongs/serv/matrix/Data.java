@@ -15,7 +15,6 @@ import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
-import java.io.UnsupportedEncodingException;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -35,8 +34,6 @@ import java.util.Base64.Decoder;
 import java.util.Base64.Encoder;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -1361,60 +1358,28 @@ public class Data extends SearchEntity {
      * 获取加密数据
      * @param dd 原始数据
      * @return
-     * @throws HongsException
      */
-    protected String getData(Map dd) throws HongsException {
+    protected String getData(Map dd) {
         String ds = Dist.toString(dd, true);
 
         // 加密
-        String sk = CoreConfig.getInstance().getProperty("core.matrix.data.secret.key");
-        if (sk != null && !sk.isEmpty()
-        &&  ds != null && !ds.isEmpty()) {
-            try {
-                byte[] keyBytes = sk.getBytes(StandardCharsets.UTF_8);
-                byte[] datBytes = ds.getBytes(StandardCharsets.UTF_8);
-                SecretKeySpec secKey = new SecretKeySpec(keyBytes, "AES");
-                Cipher  cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-                Encoder encode = Base64.getEncoder (   );
-                cipher.init(Cipher.ENCRYPT_MODE, secKey);
-                datBytes = cipher.doFinal(datBytes);
-                datBytes = encode.encode (datBytes);
+        ds = Cryp.getInstance().encrypt(ds);
 
-                ds = new String (datBytes, StandardCharsets.UTF_8);
-            } catch (GeneralSecurityException ex) {
-                throw new HongsException (ex);
-            }
-        }
-
-        return  ds;
+        return ds;
     }
 
     /**
      * 获取解密数据
      * @param ds 库存数据
      * @return
-     * @throws HongsException
      */
-    protected Map getData(String ds) throws HongsException {
+    protected Map getData(String ds) {
         // 解密
-        String sk = CoreConfig.getInstance().getProperty("core.matrix.data.secret.key");
-        if (sk != null && !sk.isEmpty()
-        &&  ds != null && !ds.isEmpty()
-        && !ds.startsWith("{") && !ds.endsWith("}")) {
-            try {
-                byte[] keyBytes = sk.getBytes(StandardCharsets.UTF_8);
-                byte[] datBytes = ds.getBytes(StandardCharsets.UTF_8);
-                SecretKeySpec secKey = new SecretKeySpec(keyBytes, "AES");
-                Cipher  cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-                Decoder decode = Base64.getDecoder (   );
-                cipher.init(Cipher.DECRYPT_MODE, secKey);
-                datBytes = decode.decode (datBytes);
-                datBytes = cipher.doFinal(datBytes);
-
-                ds = new String (datBytes, StandardCharsets.UTF_8);
-            } catch (GeneralSecurityException ex) {
-                throw new HongsException (ex);
-            }
+        if (ds != null
+        && !ds.startsWith("{")
+        && !ds.  endsWith("}")) {
+            ds  = Cryp.getInstance(  )
+                      .  decrypt  (ds);
         }
 
         return (Map) Dist.toObject(ds);

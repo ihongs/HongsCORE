@@ -541,22 +541,38 @@ public class DataCombat {
      * @param args
      * @throws HongsException
      */
-    @Combat("crypts")
+    @Combat("crypto")
     public static void crypts(String[] args) throws HongsException {
         Map opts = CombatHelper.getOpts(
             args,
             "db:s",
-            "old-key:s",
-            "new-key:s",
             "old-table=s",
+            "old-key:s",
+            "old-mod:s",
             "new-table=s",
-            "?Usage: crypts --old-table OLD_TABLE --old-key OLD_SECRET_KEY --new-table NEW_TABLE --new-key NEW_SECRET_KEY"
+            "new-key:s",
+            "new-mod:s",
+            "?Usage: crypts --old-table OLD_TABLE --old-key OLD_SECRET_KEY --old-mod OLD_CRYPTO_MOD --new-table NEW_TABLE --new-key NEW_SECRET_KEY --new-mod NEW_CRYPTO_MOD"
         );
         String dbName = (String) opts.get("db");
-        String oldKey = (String) opts.get("old-key");
-        String newKey = (String) opts.get("new-key");
         String oldTab = (String) opts.get("old-table");
+        String oldKey = (String) opts.get("old-key");
+        String oldMod = (String) opts.get("old-mod");
         String newTab = (String) opts.get("new-table");
+        String newKey = (String) opts.get("new-key");
+        String newMod = (String) opts.get("new-mod");
+
+        if (dbName == null || dbName.isEmpty()) {
+            dbName = "default";
+        }
+        if (oldMod == null || oldMod.isEmpty()) {
+            oldMod = "AES/ECB/PKCS5Padding";
+        }
+        if (newMod == null || newMod.isEmpty()) {
+            newMod = "AES/ECB/PKCS5Padding";
+        }
+        String oldAlg = oldMod.substring(0, oldMod.indexOf("/"));
+        String newAlg = newMod.substring(0, newMod.indexOf("/"));
 
         DB  db  = DB.getInstance(Synt.defxult(dbName, "default"));
         Map row = db.fetchOne ("SELECT COUNT(*) AS `cnt` FROM `"+oldTab+"`");
@@ -569,15 +585,15 @@ public class DataCombat {
             Decoder decode = Base64.getDecoder();
             Encoder encode = Base64.getEncoder();
             if (oldKey != null && ! oldKey.isEmpty()) {
-                byte[] keyBytes = oldKey.getBytes(StandardCharsets.UTF_8);
-                SecretKeySpec secKey = new SecretKeySpec(keyBytes, "AES");
-                deciph = Cipher.getInstance("AES/ECB/PKCS5Padding");
+                byte[] keyBytes = oldKey.getBytes (StandardCharsets.UTF_8);
+                SecretKeySpec secKey = new SecretKeySpec(keyBytes, oldAlg);
+                deciph = Cipher.getInstance (oldMod);
                 deciph.init(Cipher.DECRYPT_MODE, secKey);
             }
             if (newKey != null && ! newKey.isEmpty()) {
-                byte[] keyBytes = newKey.getBytes(StandardCharsets.UTF_8);
-                SecretKeySpec secKey = new SecretKeySpec(keyBytes, "AES");
-                enciph = Cipher.getInstance("AES/ECB/PKCS5Padding");
+                byte[] keyBytes = newKey.getBytes (StandardCharsets.UTF_8);
+                SecretKeySpec secKey = new SecretKeySpec(keyBytes, newAlg);
+                enciph = Cipher.getInstance (newMod);
                 enciph.init(Cipher.ENCRYPT_MODE, secKey);
             }
 

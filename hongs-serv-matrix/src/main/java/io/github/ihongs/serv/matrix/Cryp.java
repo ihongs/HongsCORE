@@ -11,57 +11,62 @@ import javax.crypto.spec.SecretKeySpec;
 
 /**
  * 数据加密解密
- * 
+ *
+ * 配置项(default.properties)：
+ *  core.matrix.data.secret.key=密钥, 需为 16/24/32 位
+ *  core.matrix.data.crypto=加密方式, 默认 AES/ECB/PKCS5Padding
+ * 密钥默认不设, 即不加密
+ *
  * @author Hongs
  */
 public class Cryp {
-    
-   private final String sk;
-   private final Cipher ec;
-   private final Cipher dc;
-    
-    public Cryp (String sk) {
-        this.sk =  sk ;
-        if (sk == null) {
-            ec  = null;
-            dc  = null;
-            return;
-        }
-        
-        try {
-            byte[] kb;
-            SecretKeySpec ks;
-            kb = sk.getBytes();
-            ks = new SecretKeySpec(kb, "AES");
 
-            ec = Cipher.getInstance("AES/ECB/PKCS5Padding");
-            ec.init(Cipher.ENCRYPT_MODE , ks);
+   private final SecretKeySpec ks;
+   private final String tr ;
+   private       Cipher ec = null;
+   private       Cipher dc = null;
 
-            dc = Cipher.getInstance("AES/ECB/PKCS5Padding");
-            dc.init(Cipher.DECRYPT_MODE , ks);
-        } catch (GeneralSecurityException ex) {
-            throw new HongsExemption(ex);
-        }
-    }
-    
     public static Cryp getInstance() {
         return Core.getInstance().got(
             Cryp.class.getName( ),
             ( ) -> new Cryp (
-                CoreConfig.getInstance()
-                          .getProperty("core.matrix.data.secret.key")
+                CoreConfig.getInstance().getProperty("core.matrix.data.secret.key"),
+                CoreConfig.getInstance().getProperty("core.matrix.data.crypto", "AES/ECB/PKCS5Padding")
             )
         );
     }
-    
+
+    /**
+     * 加密组件
+     * @param sk 密钥
+     * @param tr 转换形式
+     */
+    public Cryp (String sk, String tr) {
+        if (sk != null && !sk.isEmpty()) {
+            this.ks = new SecretKeySpec(sk.getBytes(), tr.substring(0, tr.indexOf("/")));
+            this.tr =  tr ;
+        } else {
+            this.ks = null;
+            this.tr = null;
+        }
+    }
+
+    /**
+     * 加密
+     * @param ds 明文
+     * @return
+     */
     public String encrypt(String ds) {
-        if (sk != null && !sk.isEmpty()
-        &&  ds != null && !ds.isEmpty()) {
+        if (ks != null && ds != null && !ds.isEmpty()) {
             try {
-                byte[] db;
-                Base64.Encoder  ba ;
-                ba = Base64.getEncoder();
-                db = ds. getBytes ( StandardCharsets.UTF_8);
+                if (ec == null) {
+                    ec = Cipher.getInstance(tr);
+                    ec.init ( Cipher.ENCRYPT_MODE , ks );
+                }
+                Base64.Encoder  ba = Base64.getEncoder();
+
+                byte [] db;
+                db = ds.getBytes   (StandardCharsets.UTF_8);
                 db = ec.doFinal(db);
                 db = ba.encode (db);
                 ds = new String(db, StandardCharsets.UTF_8);
@@ -71,15 +76,23 @@ public class Cryp {
         }
         return  ds;
     }
-    
+
+    /**
+     * 解密
+     * @param ds 密文
+     * @return
+     */
     public String decrypt(String ds) {
-        if (sk != null && !sk.isEmpty()
-        &&  ds != null && !ds.isEmpty()) {
+        if (ks != null && ds != null && !ds.isEmpty()) {
             try {
-                byte[] db;
-                Base64.Decoder  ba ;
-                ba = Base64.getDecoder();
-                db = ds. getBytes ( StandardCharsets.UTF_8);
+                if (dc == null) {
+                    dc = Cipher.getInstance(tr);
+                    dc.init ( Cipher.DECRYPT_MODE , ks );
+                }
+                Base64.Decoder  ba = Base64.getDecoder();
+
+                byte [] db;
+                db = ds.getBytes   (StandardCharsets.UTF_8);
                 db = ba.decode (db);
                 db = dc.doFinal(db);
                 ds = new String(db, StandardCharsets.UTF_8);
@@ -89,5 +102,5 @@ public class Cryp {
         }
         return  ds;
     }
-    
+
 }

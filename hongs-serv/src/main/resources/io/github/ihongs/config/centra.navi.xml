@@ -1,8 +1,0 @@
-g<root>
-    <rsname>#default</rsname>
-    <menu text="后台" href="!centra">
-        <role text="登录后台" name="centra">
-            <action>centra</action><!-- 未登录则完全禁止访问 -->
-        </role>
-    </menu>
-</root>

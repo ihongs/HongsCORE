@@ -23,13 +23,6 @@ public final class Digest {
     private    MessageDigest    DIGEST ;
 
     /**
-     * MD5 算法
-     */
-    public Digest() {
-        this("MD5");
-    }
-
-    /**
      * 指定算法
      * @param type MD5,SHA-1,SHA-256
      */
@@ -78,17 +71,40 @@ public final class Digest {
         return s.toString();
     }
 
+    /**
+     * 摘要实例
+     * @param type MD5,SHA-1,SHA-256
+     * @return
+     */
+    public static Digest getInstance(String type) {
+        return  Core.getInstance( ).got(
+            Digest.class.getName( ) + ":" + type,
+            () -> new Digest (type)
+        );
+    }
+
+    /**
+     * MD5 实例
+     * @return 
+     */
+    public static Digest md5() {
+        return  Core.getInstance( ).got(
+            Digest.class.getName( ) + ":MD5",
+            () -> new Digest("MD5")
+        );
+    }
+
     public static final String md5(byte[] data) {
-        return Core.getInstance(Digest.class).digest(data);
+        return md5().digest(data);
     }
 
     public static final String md5(String text) {
-        return Core.getInstance(Digest.class).digest(text);
+        return md5().digest(text);
     }
 
     public static final String md5( File  file)
     throws IOException {
-        return Core.getInstance(Digest.class).digest(file);
+        return md5().digest(file);
     }
 
 }

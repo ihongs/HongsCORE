@@ -44,6 +44,17 @@ import org.apache.http.util.EntityUtils;
 
 /**
  * 远程请求工具
+ *
+ * <pre>
+ * 默认配置(default.properties):
+ *  core.remote.request.wait.timeout=等待超时
+ *  core.remote.request.conn.timeout=连接超时
+ *  core.remote.request.sock.timeout=套接超时
+ *  core.remote.request.max.redirect=最大重定向数
+ * 单位毫秒, 为 0 不限, 默认均为 0.
+ * 在请求 head 中设置 :WAIT-TIMEOUT/:CONN-TIMEOUT/:SOCK-TIMEOUT/:MAX-REDIRECT 亦可
+ * </pre>
+ *
  * @author Hongs
  */
 public final class Remote {
@@ -313,7 +324,7 @@ public final class Remote {
             }
 
             // 设置超时
-            CoreConfig cc = CoreConfig.getInstance ("manage");
+            CoreConfig cc = CoreConfig.getInstance();
             RequestConfig.Builder cb = RequestConfig.custom();
             int tt;
             tt = Synt.declare(head != null ? head.get(":WAIT-TIMEOUT") : null, cc.getProperty("core.remote.request.wait.timeout", 0));
@@ -523,8 +534,8 @@ public final class Remote {
 
         public StatusException(String url, String rsp, int sta) {
             super(sta >= 300 && sta <= 399
-                ? "@manage:core.remote.request.status.refer"
-                : "@manage:core.remote.request.status.error"
+                ? "@normal:core.remote.request.status.refer"
+                : "@normal:core.remote.request.status.error"
                 , url, rsp, sta
             );
 
@@ -559,7 +570,7 @@ public final class Remote {
         private final String url;
 
         public SimpleException(String url, Throwable cause) {
-            super(cause, "@manage:core.remote.request.simple.error", url);
+            super(cause, "@normal:core.remote.request.simple.error", url);
 
             this.url = url;
         }

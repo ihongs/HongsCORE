@@ -3,7 +3,7 @@
 <db xmlns="http://hongs-core"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://ihongs.github.io/hongs-core db.xsd">
-    <config link="centra"/>
+    <config link="default"/>
     <tables>
         <table name="user"
                tableName="a_master_user"

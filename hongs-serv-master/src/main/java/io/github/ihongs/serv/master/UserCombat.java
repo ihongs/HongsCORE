@@ -7,11 +7,13 @@ import io.github.ihongs.combat.anno.Combat;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.db.link.Loop;
+import io.github.ihongs.util.Crypto;
 import io.github.ihongs.util.Synt;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 /**
  * 用户维护命令
@@ -232,6 +234,104 @@ public class UserCombat {
             tb = db.getTable(t);
             tb.db.execute("UPDATE `"+tb.tableName+"` SET `"+f+"` = ? WHERE `"+f+"` IN (?)", uid , uids);
         }
+    }
+
+    /**
+     * 更换密钥
+     * @param args
+     * @throws HongsException
+     */
+    @Combat("crypto-change")
+    public static void crypto(String[] args) throws HongsException {
+        Map opts = CombatHelper.getOpts(
+            args,
+            "db:s",
+            "old-table=s",
+            "old-type:s",
+            "old-sk:s",
+            "old-iv:s",
+            "new-table=s",
+            "new-type:s",
+            "new-sk:s",
+            "new-iv:s",
+            "?Usage: crypto"
+                + " --old-table OLD_TABLE"
+                + " --old-type OLD_CRYPTO_TYPE"
+                + " --old-sk OLD_CRYPTO_SK"
+                + " --old-iv OLD_CRYPTO_IV"
+                + " --new-table NEW_TABLE"
+                + " --new-type NEW_CRYPTO_TYPE"
+                + " --new-sk NEW_CRYPTO_SK"
+                + " --new-iv NEW_CRYPTO_IV"
+        );
+        String dbName = (String) opts.get("db");
+        String oldTab = (String) opts.get("old-table");
+        String oldMod = (String) opts.get("old-type");
+        String oldSk  = (String) opts.get("old-sk");
+        String oldIv  = (String) opts.get("old-iv");
+        String newTab = (String) opts.get("new-table");
+        String newMod = (String) opts.get("new-type");
+        String newSk  = (String) opts.get("new-sk");
+        String newIv  = (String) opts.get("new-iv");
+
+        DB  db  = DB.getInstance(Synt.defxult(dbName, "master"));
+        Map row = db.fetchOne ("SELECT COUNT(*) AS `cnt` FROM `"+oldTab+"`");
+        int cnt = Synt.declare(row.get("cnt"), 0);
+        int fin = 0;
+
+        String[] fs = new UserTable(db, Synt.mapOf(
+            "name", "user"
+        )).getCryptoFields();
+        Function<String, String> decrypt = null;
+        if (oldMod != null && ! oldMod.isEmpty()) {
+            decrypt = new UserTable(db, Synt.mapOf(
+                "name", "user",
+                "tableName", oldTab
+            )) {
+                @Override
+                public Crypto getCrypto() {
+                    return new Crypto(oldMod, oldSk, oldIv);
+                }
+            }.decrypt();
+        }
+        Function<String, String> encrypt = null;
+        if (newMod != null && ! newMod.isEmpty()) {
+            encrypt = new UserTable(db, Synt.mapOf(
+                "name", "user",
+                "tableName", newTab
+            )) {
+                @Override
+                public Crypto getCrypto() {
+                    return new Crypto(newMod, newSk, newIv);
+                }
+            }.encrypt();
+        }
+
+        CombatHelper.progres(cnt, fin);
+
+        try (Loop lp = db.query("SELECT * FROM `"+oldTab+"`", 0, 0)) {
+        while (lp.hasNext()) {
+            row = lp.next();
+
+            for(String fn : fs) {
+                String fv = Synt.asString(row.get(fn));
+                if (fv != null && ! fv.isEmpty()) {
+                    if (decrypt != null) {
+                        fv = decrypt.apply(fv); // 解密
+                    }
+                    if (encrypt != null) {
+                        fv = encrypt.apply(fv); // 加密
+                    }
+
+                    row.put(fn, fv );
+                }
+            }
+            db. insert (newTab, row);
+
+            CombatHelper.progres(cnt, ++ fin);
+        } }
+
+        CombatHelper.progres();
     }
 
 }

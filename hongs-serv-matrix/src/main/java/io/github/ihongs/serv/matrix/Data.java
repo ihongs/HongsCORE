@@ -10,6 +10,7 @@ import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Model;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.dh.search.SearchEntity;
+import io.github.ihongs.util.Crypto;
 import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Syno;
@@ -1354,7 +1355,7 @@ public class Data extends SearchEntity {
         String ds = Dist.toString(dd, true);
 
         // 加密
-        ds = Cryp.getInstance().encrypt(ds);
+        ds = Crypto.getInstance().encrypt().apply(ds);
 
         return ds;
     }
@@ -1369,8 +1370,7 @@ public class Data extends SearchEntity {
         if (ds != null
         && !ds.startsWith("{")
         && !ds.  endsWith("}")) {
-            ds  = Cryp.getInstance(  )
-                      .  decrypt  (ds);
+            ds  = Crypto.getInstance().decrypt().apply(ds);
         }
 
         return (Map) Dist.toObject(ds);

@@ -6,8 +6,8 @@ import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.NaviMap;
 import io.github.ihongs.db.DB;
-import io.github.ihongs.db.Grade;
 import io.github.ihongs.db.Table;
+import io.github.ihongs.db.TreeModel;
 import io.github.ihongs.db.util.FetchCase;
 import io.github.ihongs.util.Synt;
 
@@ -40,7 +40,7 @@ import org.w3c.dom.Element;
  * 单元模型
  * @author Hongs
  */
-public class Furl extends Grade {
+public class Furl extends TreeModel {
 
     protected String centra = "centra/data";
     protected String centre = "centre/data";

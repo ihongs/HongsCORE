@@ -5,8 +5,8 @@ import io.github.ihongs.Core;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.db.DB;
-import io.github.ihongs.db.Grade;
 import io.github.ihongs.db.Table;
+import io.github.ihongs.db.TreeModel;
 import io.github.ihongs.db.util.FetchCase;
 import io.github.ihongs.serv.auth.AuthKit;
 import io.github.ihongs.util.Synt;
@@ -19,7 +19,7 @@ import java.util.Set;
  * @author Hongs
  */
 public class Unit
-extends Grade {
+extends TreeModel {
 
     public Unit()
     throws HongsException {

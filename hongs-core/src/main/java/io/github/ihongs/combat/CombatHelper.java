@@ -483,53 +483,12 @@ public class CombatHelper
 
   /**
    * 输出执行进度
-   * @param rt 完成比例, 0~1的浮点数
+   * @param ok 完成数量
+   * @param tt 总条目数
    */
-  public static void progres(float rt)
+  public static void progres(int ok, int tt)
   {
-    CombatHelper.progres(rt, "");
-  }
-
-  /**
-   * 输出执行进度
-   * @param rt 完成比例, 0~1的浮点数
-   * @param ok 完成条目数
-   */
-  public static void progres(float rt, int ok)
-  {
-    CombatHelper.progres(rt, String.format("Ok(%d)", ok));
-  }
-
-  /**
-   * 输出执行进度
-   * @param rt 完成比例, 0~1的浮点数
-   * @param ok 完成条目数
-   * @param er 错误条目数
-   */
-  public static void progres(float rt, int ok, int er)
-  {
-    CombatHelper.progres(rt, String.format("Ok(%d) Er(%d)", ok, er));
-  }
-
-  /**
-   * 输出执行进度
-   * @param rl 总条目数
-   * @param ok 完成条目数
-   */
-  public static void progres(int rl, int ok)
-  {
-    if (rl > 0) CombatHelper.progres((float) ok / rl, ok);
-  }
-
-  /**
-   * 输出执行进度
-   * @param rl 总条目数
-   * @param ok 完成条目数
-   * @param er 错误条目数
-   */
-  public static void progres(int rl, int ok, int er)
-  {
-    if (rl > 0) CombatHelper.progres((float) (er + ok) / rl, ok, rl);
+    if (tt > 0) CombatHelper.progres((float) ok / tt, String.format("%d/%d", ok, tt));
   }
 
   /**

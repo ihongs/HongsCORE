@@ -98,7 +98,7 @@ public class Cryptos {
         Map row = db.fetchOne ("SELECT COUNT(*) AS `cnt` FROM `"+oldTab.tableName+"`");
         int cnt = Synt.declare(row.get("cnt"), 0);
         int fin = 0;
-        CombatHelper.progres((float) fin / cnt, String.format("%d/%d", fin, cnt));
+        CombatHelper.progres(fin, cnt);
 
         try (Loop lp = db.query("SELECT * FROM `"+oldTab.tableName+"`", 0, 0)) {
         while (lp.hasNext()) {
@@ -109,8 +109,7 @@ public class Cryptos {
 
             db.insert(newTab.tableName , row);
 
-            fin ++;
-            CombatHelper.progres((float) fin / cnt, String.format("%d/%d", fin, cnt));
+            CombatHelper.progres(++ fin, cnt);
         } }
 
         CombatHelper.progres();

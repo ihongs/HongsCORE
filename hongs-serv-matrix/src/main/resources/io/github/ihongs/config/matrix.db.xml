@@ -26,7 +26,8 @@ xsi:schemaLocation="http://ihongs.github.io/hongs-core db.xsd">
         </table>
         <table name="data"
                tableName="a_matrix_data"
-               primaryKey="id">
+               primaryKey="id"
+               class="io.github.ihongs.serv.matrix.DataTable">
             <param name="srchable">name,memo</param>
             <param name="check.value">0</param><!-- 不检查字段值 -->
             <param name="field.state">-</param><!-- 正常查阅删除 -->

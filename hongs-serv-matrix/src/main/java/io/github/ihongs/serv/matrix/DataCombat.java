@@ -11,7 +11,6 @@ import io.github.ihongs.combat.anno.Combat;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.db.link.Loop;
-import io.github.ihongs.util.Crypto;
 import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Synt;
 import java.io.IOException;
@@ -25,9 +24,6 @@ import java.util.Set;
 
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
-
-import java.util.Base64;
-import java.nio.charset.StandardCharsets;
 
 /**
  * 数据操作命令
@@ -530,96 +526,6 @@ public class DataCombat {
             row.put("memo", "uproot");
             ent.put( id, row );
         }
-    }
-
-    /**
-     * 更换密钥
-     * @param args
-     * @throws HongsException
-     */
-    @Combat("crypto-change")
-    public static void crypto(String[] args) throws HongsException {
-        Map opts = CombatHelper.getOpts(
-            args,
-            "db:s",
-            "old-table=s",
-            "old-type:s",
-            "old-sk:s",
-            "old-iv:s",
-            "new-table=s",
-            "new-type:s",
-            "new-sk:s",
-            "new-iv:s",
-            "?Usage: crypto"
-                + " --old-table OLD_TABLE"
-                + " --old-type OLD_CRYPTO_TYPE"
-                + " --old-sk OLD_CRYPTO_SK"
-                + " --old-iv OLD_CRYPTO_IV"
-                + " --new-table NEW_TABLE"
-                + " --new-type NEW_CRYPTO_TYPE"
-                + " --new-sk NEW_CRYPTO_SK"
-                + " --new-iv NEW_CRYPTO_IV"
-        );
-        String dbName = (String) opts.get("db");
-        String oldTab = (String) opts.get("old-table");
-        String oldMod = (String) opts.get("old-type");
-        String oldSk  = (String) opts.get("old-sk");
-        String oldIv  = (String) opts.get("old-iv");
-        String newTab = (String) opts.get("new-table");
-        String newMod = (String) opts.get("new-type");
-        String newSk  = (String) opts.get("new-sk");
-        String newIv  = (String) opts.get("new-iv");
-
-        Crypto.Crypt   decrypt = null;
-        Base64.Decoder decoder = null;
-        Crypto.Crypt   encrypt = null;
-        Base64.Encoder encoder = null;
-        if (oldMod != null && !oldMod.isEmpty()) {
-            decrypt = new Crypto(oldMod, oldSk, oldIv).decrypt();
-            decoder = Base64.getDecoder();
-        }
-        if (newMod != null && !newMod.isEmpty()) {
-            encrypt = new Crypto(newMod, newSk, newIv).encrypt();
-            encoder = Base64.getEncoder();
-        }
-
-        DB  db  = DB.getInstance(Synt.defxult(dbName, "matrix"));
-        Map row = db.fetchOne ("SELECT COUNT(*) AS `cnt` FROM `"+oldTab+"`");
-        int cnt = Synt.declare(row.get("cnt"), 0);
-        int fin = 0;
-
-        CombatHelper.progres(cnt, fin);
-
-        try (Loop lp = db.query("SELECT * FROM `"+oldTab+"`", 0, 0)) {
-        while (lp.hasNext()) {
-            row = lp.next();
-
-            // 注意: form_id 为 - 表示表单变更记录
-            String fi = (String) row.get("form_id");
-            String ds = (String) row.get("data");
-            if (fi != null && fi.length() > 1
-            &&  ds != null && ds.length() > 1) {
-                byte[] bs = ds.getBytes(StandardCharsets.UTF_8);
-                if (decrypt != null
-                && !ds.startsWith("{")
-                && !ds.  endsWith("}")) {
-                    bs = decoder.decode(bs); // 解码
-                    bs = decrypt.apply (bs); // 解密
-                }
-                if (encrypt != null) {
-                    bs = encrypt.apply (bs); // 加密
-                    bs = encoder.encode(bs); // 编码
-                }
-                ds = new String(bs, StandardCharsets.UTF_8);
-                
-                row.put("data", ds );
-            }
-            db. insert (newTab, row);
-
-            CombatHelper.progres(cnt, ++ fin);
-        } }
-
-        CombatHelper.progres();
     }
 
     private static Map data(String text) {

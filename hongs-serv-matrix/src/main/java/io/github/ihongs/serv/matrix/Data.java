@@ -1347,32 +1347,20 @@ public class Data extends SearchEntity {
     }
 
     /**
-     * 获取加密数据
+     * 获取数据序列
      * @param dd 原始数据
      * @return
      */
     protected String getData(Map dd) {
-        String ds = Dist.toString(dd, true);
-
-        // 加密
-        ds = Crypto.getInstance().encrypt().apply(ds);
-
-        return ds;
+        return Dist.toString(dd, true);
     }
 
     /**
-     * 获取解密数据
+     * 解析序列数据
      * @param ds 库存数据
      * @return
      */
     protected Map getData(String ds) {
-        // 解密
-        if (ds != null
-        && !ds.startsWith("{")
-        && !ds.  endsWith("}")) {
-            ds  = Crypto.getInstance().decrypt().apply(ds);
-        }
-
         return (Map) Dist.toObject(ds);
     }
 

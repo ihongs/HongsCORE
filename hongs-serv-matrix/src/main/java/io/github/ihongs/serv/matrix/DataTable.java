@@ -1,4 +1,4 @@
-package io.github.ihongs.serv.master;
+package io.github.ihongs.serv.matrix;
 
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
@@ -11,24 +11,22 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- * 加密用户表
+ * 加密数据表
  *
- * 针对电话和邮箱进行加密,
+ * 针对数据字段值进行加密,
  * 无需加密则不必设置此类.
  *
- * @author HuangHong
+ * @author Hongs
  */
-public class UserTable extends PrivTable {
+public class DataTable extends PrivTable {
 
-    private static final String[] CRYPTO_FIELDS = new String[] {"email", "phone"};
-    private static final String   CRYPTO_PREFIX = "=";
-    private static final int      CRYPTO_STARTS =  1 ;
+    private static final String DATA_FIELD = "data";
 
     private Crypto   crypto   = null;
     private Consumer<Map> enc = null;
     private Consumer<Map> dec = null;
 
-    public UserTable (DB db, Map conf) throws HongsException {
+    public DataTable (DB db, Map conf) throws HongsException {
         super(db, conf);
     }
 
@@ -36,36 +34,18 @@ public class UserTable extends PrivTable {
     public void setCrypto(Crypto crypto) {
         this.crypto = crypto;
     }
-    
+
     @Override
     public Crypto getCrypto() {
         return crypto != null ? crypto : Core.getInstance().got(
             Crypto.class.getName() + ":matrix.data" , () -> {
-                CoreConfig cc = CoreConfig.getInstance("master");
+                CoreConfig cc = CoreConfig.getInstance("matrix");
                 return new Crypto(
-                    cc.getProperty("core.master.user.crypto.type"),
-                    cc.getProperty("core.master.user.crypto.sk"),
-                    cc.getProperty("core.master.user.crypto.iv")
+                    cc.getProperty("core.matrix.data.crypto.type"),
+                    cc.getProperty("core.matrix.data.crypto.sk"),
+                    cc.getProperty("core.matrix.data.crypto.iv")
                 );
             });
-    }
-
-    /**
-     * 加密, 以便作为查询参数
-     * @param val
-     * @return
-     */
-    public String encrypt(String val) {
-        // 加密
-        Crypto.Crypt enx = getCrypto().encrypt();
-        if (enx.valid()
-        &&  val != null
-        && !val.isEmpty()
-        && !val.startsWith(CRYPTO_PREFIX)) {
-            val  = CRYPTO_PREFIX + enx.apply(val);
-        }
-
-        return val;
     }
 
     @Override
@@ -76,14 +56,12 @@ public class UserTable extends PrivTable {
                 enc = new Consumer<Map>() {
                     @Override
                     public void accept(Map values) {
-                        for(String fn : CRYPTO_FIELDS) {
-                            String fv = Synt.asString(values.get(fn));
-                            if (fv != null
-                            && !fv.isEmpty()
-                            && !fv.startsWith(CRYPTO_PREFIX)) {
-                                fv  = CRYPTO_PREFIX + enx.apply( fv );
-                                values.put(fn , fv);
-                            }
+                        String fv = Synt.asString(values.get(DATA_FIELD));
+                        if (fv != null
+                        && !fv.isEmpty()
+                        &&  fv.startsWith("{")) {
+                            fv  = enx.apply(fv);
+                            values.put(DATA_FIELD, fv);
                         }
                     }
                 };
@@ -107,14 +85,13 @@ public class UserTable extends PrivTable {
                 dec = new Consumer<Map>() {
                     @Override
                     public void accept(Map values) {
-                        for(String fn : CRYPTO_FIELDS) {
-                            String fv = Synt.asString(values.get(fn));
-                            if (fv != null
-                            && !fv.isEmpty()
-                            &&  fv.startsWith(CRYPTO_PREFIX)) {
-                                fv  = dex.apply(fv.substring(CRYPTO_STARTS));
-                                values.put(fn , fv);
-                            }
+                        String fv = Synt.asString(values.get(DATA_FIELD));
+                        if (fv != null
+                        && !fv.isEmpty()
+                        && !fv.startsWith("{")
+                        && !fv.startsWith("[")) {
+                            fv  = dex.apply(fv);
+                            values.put(DATA_FIELD, fv);
                         }
                     }
                 };

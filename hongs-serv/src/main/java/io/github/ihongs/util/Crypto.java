@@ -1,7 +1,5 @@
 package io.github.ihongs.util;
 
-import io.github.ihongs.Core;
-import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsExemption;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
@@ -222,24 +220,6 @@ public class Crypto {
             dc = new Decrypt(ct, ks, ps);
         }
         return dc;
-    }
-
-    /**
-     * 获取默认加解密实例
-     * @return
-     */
-    public static Crypto getInstance() {
-        return Core.getInstance().got(
-            Crypto.class.getName( ),
-            ( ) -> {
-                CoreConfig cc = CoreConfig.getInstance();
-                return new Crypto (
-                    cc.getProperty("core.crypto.default.type"),
-                    cc.getProperty("core.crypto.default.sk"),
-                    cc.getProperty("core.crypto.default.iv")
-                );
-            }
-        );
     }
 
 }

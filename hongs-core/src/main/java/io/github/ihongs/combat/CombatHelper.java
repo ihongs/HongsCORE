@@ -483,12 +483,19 @@ public class CombatHelper
 
   /**
    * 输出执行进度
-   * @param ok 完成数量
-   * @param tt 总条目数
+   * @param done 完成数量
+   * @param tote 总条目数
    */
-  public static void progres(int ok, int tt)
+  public static void progres(int done, int tote)
   {
-    if (tt > 0) CombatHelper.progres((float) ok / tt, String.format("%d/%d", ok, tt));
+    if (tote > 0)
+    {
+      CombatHelper.progres((float) done / tote, String.format("%d/%d", done, tote));
+    }
+    else
+    {
+      CombatHelper.progres(0 , "...");
+    }
   }
 
   /**

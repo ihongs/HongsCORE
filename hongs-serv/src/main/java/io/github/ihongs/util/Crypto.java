@@ -12,15 +12,6 @@ import javax.crypto.spec.IvParameterSpec;
 
 /**
  * 加解密工具集
- *
- * <pre>
- * 默认配置(default.properties):
- *  core.crypto.default.type=默认加密形式, 如 AES/ECB/PKCS5Padding
- *  core.crypto.default.sk=默认密钥, 需为 16/24/32 位
- *  core.crypto.default.iv=加密向量, 需为 16 位
- * 默认未设, 即不加密
- * </pre>
- *
  * @author Hongs
  */
 public class Crypto {

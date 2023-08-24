@@ -22,12 +22,68 @@ import java.util.function.Consumer;
 public class Cryptos {
 
     /**
+     * 加密
+     * @param args
+     */
+    @Combat("encrypt")
+    public static void encrypt(String[] args) {
+        Map opts = CombatHelper.getOpts(
+            args,
+            "type=s",
+            "sk=s",
+            "iv:s",
+            "!Anonymous",
+            "?Usage: encrypt"
+                + " --type CRYPTO_TYPE"
+                + " --sk CRYPTO_SK"
+                + " --iv CRYPTO_IV"
+                + " TEXT..."
+        );
+        String   type = Synt.asString(opts.get("type"));
+        String    sk  = Synt.asString(opts.get( "sk" ));
+        String    iv  = Synt.asString(opts.get( "iv" ));
+        String[] argz = (String[]) opts.get( "" );
+        Crypto crypto = new Crypto(type, sk, iv );
+        for (String arg : argz) {
+            CombatHelper.paintln(crypto.encrypt().apply(arg));
+        }
+    }
+
+    /**
+     * 加密
+     * @param args
+     */
+    @Combat("decrypt")
+    public static void decrypt(String[] args) {
+        Map opts = CombatHelper.getOpts(
+            args,
+            "type=s",
+            "sk=s",
+            "iv:s",
+            "!Anonymous",
+            "?Usage: decrypt"
+                + " --type CRYPTO_TYPE"
+                + " --sk CRYPTO_SK"
+                + " --iv CRYPTO_IV"
+                + " TEXT..."
+        );
+        String   type = Synt.asString(opts.get("type"));
+        String    sk  = Synt.asString(opts.get( "sk" ));
+        String    iv  = Synt.asString(opts.get( "iv" ));
+        String[] argz = (String[]) opts.get( "" );
+        Crypto crypto = new Crypto(type, sk, iv );
+        for (String arg : argz) {
+            CombatHelper.paintln(crypto.decrypt().apply(arg));
+        }
+    }
+
+    /**
      * 更换数据库表密钥
      * @param args
      * @throws HongsException
      */
-    @Combat("alter")
-    public static void recrypt(String[] args) throws HongsException {
+    @Combat("convert")
+    public static void convert(String[] args) throws HongsException {
         Map opts = CombatHelper.getOpts(
             args,
             "table=s",
@@ -37,7 +93,7 @@ public class Cryptos {
             "new-type:s",
             "new-sk:s",
             "new-iv:s",
-            "?Usage: crypto"
+            "?Usage: convert"
                 + " --table TABLE"
                 + " --old-type OLD_CRYPTO_TYPE"
                 + " --old-sk OLD_CRYPTO_SK"

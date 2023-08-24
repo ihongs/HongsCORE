@@ -494,7 +494,7 @@ public class CombatHelper
     }
     else
     {
-      CombatHelper.progres (0, "...");
+      CombatHelper.progres ( 0.0f, "..." );
     }
   }
 

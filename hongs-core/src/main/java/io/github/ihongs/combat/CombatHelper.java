@@ -3,7 +3,6 @@ package io.github.ihongs.combat;
 import io.github.ihongs.Core;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.util.Dist;
-import io.github.ihongs.util.Inst;
 import io.github.ihongs.util.Synt;
 import java.io.InputStream;
 import java.io.PrintStream;

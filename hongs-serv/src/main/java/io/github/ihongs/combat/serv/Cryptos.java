@@ -90,8 +90,8 @@ public class Cryptos {
             "sk:s",
             "iv:s",
             "sql:s",
-            "start:n",
-            "limit:n",
+            "start:i",
+            "limit:i",
             "?Usage: check"
                 + " --table DB.TABLE*"
                 + " --table-name REAL_TABLE_NAME"
@@ -186,8 +186,8 @@ public class Cryptos {
             "new-sk:s",
             "new-iv:s",
             "sql:s",
-            "start:n",
-            "limit:n",
+            "start:i",
+            "limit:i",
             "?Usage: convert"
                 + " --table DB.TABLE*"
                 + " --old-table-name OLD_TABLE_NAME"

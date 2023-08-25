@@ -131,6 +131,7 @@ public class Cryptos {
         int er  = 0;
         List<String> ers = new LinkedList();
 
+        CombatHelper.progres((float) fin / cnt, fin+"/"+cnt);
         while(true) {
             try (Loop lp = query(db, tb, sql, fin + start, limit)) {
                 if (! lp.hasNext()) {
@@ -151,9 +152,11 @@ public class Cryptos {
 
                     CombatHelper.progres((float) fin / cnt, fin+"/"+cnt+" ok:"+ok+" er:"+er);
                 }
+                if (limit == 0) {
+                    break;
+                }
             }
         }
-
         CombatHelper.progres();
 
         if (!ers.isEmpty()) {
@@ -278,6 +281,9 @@ public class Cryptos {
 
                     CombatHelper.progres(++ fin, cnt);
                 }
+                if (limit == 0) {
+                    break;
+                }
             }
         }
 
@@ -286,7 +292,11 @@ public class Cryptos {
 
     private static Loop query(DB db, Table tb, String sql, int start, int limit) throws HongsException {
         if (sql != null && !sql.isEmpty()) {
-            return db.query(Syno.inject(sql, start, limit), 0, 0);
+            if (limit == 0) {
+                return db.query(Syno.inject(sql, start), 0, 0);
+            } else {
+                return db.query(Syno.inject(sql, start, limit), 0, 0);
+            }
         } else {
             return db.query("SELECT * FROM `"+tb.tableName+"`", start, limit);
         }

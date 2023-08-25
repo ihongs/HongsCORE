@@ -8,6 +8,7 @@ import io.github.ihongs.db.Table;
 import io.github.ihongs.db.PrivTable;
 import io.github.ihongs.db.link.Loop;
 import io.github.ihongs.util.Crypto;
+import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -88,6 +89,9 @@ public class Cryptos {
             "type:s",
             "sk:s",
             "iv:s",
+            "sql:s",
+            "start:n",
+            "limit:n",
             "?Usage: check"
                 + " --table DB.TABLE*"
                 + " --table-name REAL_TABLE_NAME"
@@ -100,6 +104,9 @@ public class Cryptos {
         String mod = (String) opts.get("type");
         String sk  = (String) opts.get("sk");
         String iv  = (String) opts.get("iv");
+        String sql = (String) opts.get("sql");
+        int  start = Synt.declare(opts.get("start"),  0  );
+        int  limit = Synt.declare(opts.get("limit"), 1000);
 
         Table  tb  = DB.getInstance( ).getTable(tab);
         DB     db  = tb.db;
@@ -118,28 +125,34 @@ public class Cryptos {
 
         // 获取总数以计算进度
         Map row = db.fetchOne ("SELECT COUNT(*) AS `cnt` FROM `"+tb.tableName+"`");
-        int cnt = Synt.declare(row.get("cnt"), 0);
+        int cnt = Synt.declare(row.get("cnt"), 0) - start;
         int fin = 0;
         int ok  = 0;
         int er  = 0;
         List<String> ers = new LinkedList();
 
-        try (Loop lp = db.query("SELECT * FROM `"+tb.tableName+"`", 0, 0)) {
-        while (lp.hasNext()) {
-            row = lp.next();
-            fin ++;
+        while(true) {
+            try (Loop lp = query(db, tb, sql, fin + start, limit)) {
+                if (! lp.hasNext()) {
+                    break;
+                }
+                while(lp.hasNext()) {
+                    row = lp.next();
+                    fin ++;
 
-            // 检测
-            try {
-                becrypt.accept(row);
-                ok ++;
-            } catch (Exception ex ) {
-                er ++;
-                ers.add(fin+"\t"+ex.getMessage());
+                    // 检测
+                    try {
+                        becrypt.accept(row);
+                        ok ++;
+                    } catch (Exception ex ) {
+                        er ++;
+                        ers.add(fin+"\t"+ex.getMessage());
+                    }
+
+                    CombatHelper.progres((float) fin / cnt, fin+"/"+cnt+" ok:"+ok+" er:"+er);
+                }
             }
-
-            CombatHelper.progres((float) fin / cnt, fin+"/"+cnt+" ok:"+ok+" er:"+er);
-        } }
+        }
 
         CombatHelper.progres();
 
@@ -169,6 +182,9 @@ public class Cryptos {
             "new-type:s",
             "new-sk:s",
             "new-iv:s",
+            "sql:s",
+            "start:n",
+            "limit:n",
             "?Usage: convert"
                 + " --table DB.TABLE*"
                 + " --old-table-name OLD_TABLE_NAME"
@@ -189,6 +205,9 @@ public class Cryptos {
         String newMod = (String) opts.get("new-type");
         String newSk  = (String) opts.get("new-sk");
         String newIv  = (String) opts.get("new-iv");
+        String sql    = (String) opts.get("sql");
+        int    start  = Synt.declare(opts.get("start"),  0  );
+        int    limit  = Synt.declare(opts.get("limit"), 1000);
 
         Table  tb = DB.getInstance( ).getTable(tab);
         DB     db = tb.db;
@@ -232,31 +251,45 @@ public class Cryptos {
         }
 
         // 检查目标表是否为空
-        Map one = db.fetchOne ("SELECT COUNT(*) AS `cnt` FROM `"+newTab.tableName+"`");
-        int cxt = Synt.declare(one.get("cnt"), 0);
+        Map one = db.fetchOne ("SELECT COUNT(1) AS `cnt` FROM `"+newTab.tableName+"`");
+        int cxt = Synt.declare(one.get("cnt"), 0) - start;
         if (cxt > 0) {
             throw new HongsException("Verify new table failed, please truncate table first.");
         }
 
         // 获取总数以计算进度
-        Map row = db.fetchOne ("SELECT COUNT(*) AS `cnt` FROM `"+oldTab.tableName+"`");
-        int cnt = Synt.declare(row.get("cnt"), 0);
+        Map row = db.fetchOne ("SELECT COUNT(1) AS `cnt` FROM `"+oldTab.tableName+"`");
+        int cnt = Synt.declare(row.get("cnt"), 0) - start;
         int fin = 0;
         CombatHelper.progres(fin, cnt);
 
-        try (Loop lp = db.query("SELECT * FROM `"+oldTab.tableName+"`", 0, 0)) {
-        while (lp.hasNext()) {
-            row = lp.next();
+        while(true) {
+            try (Loop lp = query(db, oldTab, sql, fin + start, limit)) {
+                if (! lp.hasNext()) {
+                    break;
+                }
+                while(lp.hasNext()) {
+                    row = lp.next();
 
-            decrypt.accept(row); // 解密
-            encrypt.accept(row); // 加密
+                    decrypt.accept(row); // 解密
+                    encrypt.accept(row); // 加密
 
-            db.insert(newTab.tableName , row);
+                    db.insert(newTab.tableName , row);
 
-            CombatHelper.progres(++ fin, cnt);
-        } }
+                    CombatHelper.progres(++ fin, cnt);
+                }
+            }
+        }
 
         CombatHelper.progres();
+    }
+
+    private static Loop query(DB db, Table tb, String sql, int start, int limit) throws HongsException {
+        if (sql != null && !sql.isEmpty()) {
+            return db.query(Syno.inject(sql, start, limit), 0, 0);
+        } else {
+            return db.query("SELECT * FROM `"+tb.tableName+"`", start, limit);
+        }
     }
 
 }

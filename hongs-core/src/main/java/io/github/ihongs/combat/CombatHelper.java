@@ -490,11 +490,11 @@ public class CombatHelper
   {
     if (tote > 0)
     {
-      CombatHelper.progres ((float) done / tote, String.format("%d/%d", done, tote));
+      CombatHelper.progres( (float) done / tote, done+"/"+tote );
     }
     else
     {
-      CombatHelper.progres ((float) 0 , "..." );
+      CombatHelper.progres( (float) 0 , "..." );
     }
   }
 

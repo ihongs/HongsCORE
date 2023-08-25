@@ -41,7 +41,7 @@ public class UserTable extends PrivTable {
     @Override
     public Crypto getCrypto() {
         return crypto != null ? crypto : Core.getInstance().got(
-            Crypto.class.getName() + ":matrix.data" , () -> {
+            Crypto.class.getName() + ":master.user" , () -> {
                 CoreConfig cc = CoreConfig.getInstance();
                 return new Crypto(
                     cc.getProperty("core.master.user.crypto.type"),

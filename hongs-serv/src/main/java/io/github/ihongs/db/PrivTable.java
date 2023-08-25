@@ -13,7 +13,7 @@ import java.util.function.Consumer;
  * 加密表
  * @author Hongs
  */
-public abstract class PrivTable extends Table {
+public abstract class PrivTable extends Table implements Cloneable {
 
     public PrivTable(DB db, Map conf) throws HongsException {
         super(db, conf);
@@ -51,6 +51,20 @@ public abstract class PrivTable extends Table {
      * @return
      */
     public abstract Consumer<Map> decrypt();
+
+    /**
+     * 测试解密
+     *
+     * 默认同 decrypt,
+     * 抛出异常即无法解密,
+     * 特殊格式可重写校验.
+     *
+     * @deprecated 检测命令专用
+     * @return
+     */
+    public Consumer<Map> becrypt() {
+        return decrypt();
+    }
 
     @Override
     public int insert(Map<String, Object> values)

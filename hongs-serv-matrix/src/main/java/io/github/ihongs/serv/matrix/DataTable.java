@@ -3,6 +3,7 @@ package io.github.ihongs.serv.matrix;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsException;
+import io.github.ihongs.HongsExemption;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.db.PrivTable;
 import io.github.ihongs.util.Crypto;
@@ -39,7 +40,7 @@ public class DataTable extends PrivTable {
     public Crypto getCrypto() {
         return crypto != null ? crypto : Core.getInstance().got(
             Crypto.class.getName() + ":matrix.data" , () -> {
-                CoreConfig cc = CoreConfig.getInstance("matrix");
+                CoreConfig cc = CoreConfig.getInstance();
                 return new Crypto(
                     cc.getProperty("core.matrix.data.crypto.type"),
                     cc.getProperty("core.matrix.data.crypto.sk"),
@@ -105,6 +106,28 @@ public class DataTable extends PrivTable {
             }
         }
         return dec;
+    }
+
+    /**
+     * 测试解密
+     * @return
+     */
+    @Override
+    public Consumer<Map> becrypt() {
+        Consumer<Map> dex = decrypt();
+        return new Consumer<Map>() {
+            @Override
+            public void accept(Map values) {
+                dex.accept(values);
+                String fv = Synt.asString(values.get(DATA_FIELD));
+                if (fv != null
+                && !fv.isEmpty()
+                && !fv.startsWith("{")
+                && !fv.startsWith("[")) {
+                    throw new HongsExemption(DATA_FIELD+" not decrypt");
+                }
+            }
+        };
     }
 
 }

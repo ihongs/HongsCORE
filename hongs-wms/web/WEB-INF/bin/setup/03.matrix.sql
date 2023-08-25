@@ -81,6 +81,7 @@ CREATE INDEX `IK_a_matrix_data_state` ON `a_matrix_data` (`state`);
 CREATE INDEX `IK_a_matrix_data_ctime` ON `a_matrix_data` (`ctime`);
 CREATE INDEX `IK_a_matrix_data_etime` ON `a_matrix_data` (`etime`);
 CREATE INDEX `IK_a_matrix_data_rtime` ON `a_matrix_data` (`rtime`);
+CREATE UNIQUE INDEX `UK_a_matrix_data_uk` ON `a_matrix_data` (`id`,`form_id`,`etime`);
 
 --
 -- 字段

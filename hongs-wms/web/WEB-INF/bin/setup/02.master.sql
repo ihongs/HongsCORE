@@ -70,7 +70,7 @@ CREATE TABLE `a_master_user` (
   /* 扩展字段 */
   `title` VARCHAR(200) DEFAULT NULL,
   `email` VARCHAR(200) DEFAULT NULL,
-  `phone` VARCHAR(20 ) DEFAULT NULL,
+  `phone` VARCHAR(200) DEFAULT NULL,
   `title_checked` TINYINT DEFAULT '0',
   `email_checked` TINYINT DEFAULT '0',
   `phone_checked` TINYINT DEFAULT '0',

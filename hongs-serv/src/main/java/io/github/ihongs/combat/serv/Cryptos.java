@@ -11,6 +11,8 @@ import io.github.ihongs.util.Crypto;
 import io.github.ihongs.util.Synt;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -77,35 +79,113 @@ public class Cryptos {
         }
     }
 
+    @Combat("becrypt")
+    public static void becrypt(String[] args) throws HongsException {
+        Map opts = CombatHelper.getOpts(
+            args,
+            "table=s",
+            "table-name:s",
+            "type:s",
+            "sk:s",
+            "iv:s",
+            "?Usage: check"
+                + " --table DB.TABLE*"
+                + " --table-name REAL_TABLE_NAME"
+                + " --type CRYPTO_TYPE"
+                + " --sk CRYPTO_SK"
+                + " --iv CRYPTO_IV"
+        );
+        String tab = (String) opts.get("table");
+        String tbn = (String) opts.get("table-name");
+        String mod = (String) opts.get("type");
+        String sk  = (String) opts.get("sk");
+        String iv  = (String) opts.get("iv");
+
+        Table  tb  = DB.getInstance( ).getTable(tab);
+        DB     db  = tb.db;
+        if (! (tb instanceof PrivTable)) {
+            throw new HongsException("Table not crypto");
+        }
+
+        // 按参数改表名和密钥, 获取验证方法
+        if (tbn != null && ! tbn.isEmpty()) {
+            tb.tableName = tbn;
+        }
+        if (mod != null && ! mod.isEmpty()) {
+            ((PrivTable) tb).setCrypto(new Crypto(mod, sk, iv));
+        }
+        Consumer <Map> becrypt = ((PrivTable) tb).becrypt();
+
+        // 获取总数以计算进度
+        Map row = db.fetchOne ("SELECT COUNT(*) AS `cnt` FROM `"+tb.tableName+"`");
+        int cnt = Synt.declare(row.get("cnt"), 0);
+        int fin = 0;
+        int ok  = 0;
+        int er  = 0;
+        List<String> ers = new LinkedList();
+
+        try (Loop lp = db.query("SELECT * FROM `"+tb.tableName+"`", 0, 0)) {
+        while (lp.hasNext()) {
+            row = lp.next();
+            fin ++;
+
+            // 检测
+            try {
+                becrypt.accept(row);
+                ok ++;
+            } catch (Exception ex ) {
+                er ++;
+                ers.add(fin+"\t"+ex.getMessage());
+            }
+
+            CombatHelper.progres((float) fin / cnt, fin+"/"+cnt+" ok:"+ok+" er:"+er);
+        } }
+
+        CombatHelper.progres();
+
+        if (!ers.isEmpty()) {
+            for (String es : ers) {
+                CombatHelper.println(es);
+            }
+            CombatHelper.paintln("total:"+cnt+" ok:"+ok+" er:"+er);
+        }
+    }
+
     /**
      * 更换数据库表密钥
      * @param args
      * @throws HongsException
      */
-    @Combat("convert")
-    public static void convert(String[] args) throws HongsException {
+    @Combat("recrypt")
+    public static void recrypt(String[] args) throws HongsException {
         Map opts = CombatHelper.getOpts(
             args,
             "table=s",
+            "old-table-name:s",
             "old-type:s",
             "old-sk:s",
             "old-iv:s",
+            "new-table-name:s",
             "new-type:s",
             "new-sk:s",
             "new-iv:s",
             "?Usage: convert"
-                + " --table TABLE"
+                + " --table DB.TABLE*"
+                + " --old-table-name OLD_TABLE_NAME"
                 + " --old-type OLD_CRYPTO_TYPE"
                 + " --old-sk OLD_CRYPTO_SK"
                 + " --old-iv OLD_CRYPTO_IV"
+                + " --old-table-name NEW_TABLE_NAME"
                 + " --new-type NEW_CRYPTO_TYPE"
                 + " --new-sk NEW_CRYPTO_SK"
                 + " --new-iv NEW_CRYPTO_IV"
         );
         String tab    = (String) opts.get("table");
+        String oldTbn = (String) opts.get("old-table-name");
         String oldMod = (String) opts.get("old-type");
         String oldSk  = (String) opts.get("old-sk");
         String oldIv  = (String) opts.get("old-iv");
+        String newTbn = (String) opts.get("new-table-name");
         String newMod = (String) opts.get("new-type");
         String newSk  = (String) opts.get("new-sk");
         String newIv  = (String) opts.get("new-iv");
@@ -118,7 +198,15 @@ public class Cryptos {
 
         PrivTable oldTab = ((PrivTable) tb).clone();
         PrivTable newTab = ((PrivTable) tb).clone();
-        newTab.tableName += "_new";
+
+        if (oldTbn != null && !oldTbn.isEmpty()) {
+            oldTab.tableName = oldTbn;
+        }
+        if (newTbn != null && !newTbn.isEmpty()) {
+            newTab.tableName = newTbn;
+        } else {
+            newTab.tableName+= "_new";
+        }
 
         // 加解密参数, 不指定则使用默认配置
         if (oldMod != null && ! oldMod.isEmpty()) {

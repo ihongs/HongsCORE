@@ -85,6 +85,7 @@ public class Crypto {
 
     public static interface Crypt {
 
+        public Cipher getCipher();
         public boolean valid();
         public byte[] apply(byte[] bs);
         public String apply(String ds);
@@ -110,6 +111,11 @@ public class Crypto {
             } catch (GeneralSecurityException ex) {
                 throw new HongsExemption (ex);
             }
+        }
+
+        @Override
+        public Cipher getCipher() {
+            return ci;
         }
 
         @Override

@@ -265,7 +265,7 @@ public class AuthKit {
             uhead = (String) ud.get("head");
 
             // 第三方登录项
-            ud  =  new HashMap( );
+            ud = new HashMap(3);
             ud.put("user_id", uuid );
             ud.put("unit"   , unit );
             ud.put("code"   , code );
@@ -277,20 +277,24 @@ public class AuthKit {
             // 加入公共部门
             rr  = cc.getProperty("core.public.regs.unit","");
             if (! rr.isEmpty()) {
-                ud  =  new HashMap();
-                ud.put("user_id", uuid );
-                ud.put("unit_id",  rr  );
-                ud.put("type"   ,  00  );
-                db.getTable("unit_user").insert(ud);
+                for (Object role : Synt.toSet(rr)) {
+                    ud = new HashMap(3);
+                    ud.put("user_id", uuid );
+                    ud.put("unit_id", role );
+                    ud.put("type"   ,  00  );
+                    db.getTable("unit_user").insert(ud);
+                }
             }
 
             // 赋予公共权限
             rr  = cc.getProperty("core.public.regs.role","");
             if (! rr.isEmpty()) {
-                ud  =  new HashMap();
-                ud.put("user_id", uuid );
-                ud.put("role"   ,  rr  );
-                db.getTable("user_role").insert(ud);
+                for (Object role : Synt.toSet(rr)) {
+                    ud = new HashMap(2);
+                    ud.put("user_id", uuid );
+                    ud.put("role"   , role );
+                    db.getTable("user_role").insert(ud);
+                }
             }
         }
 

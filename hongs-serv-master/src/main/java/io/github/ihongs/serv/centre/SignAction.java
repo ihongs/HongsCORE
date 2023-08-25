@@ -12,6 +12,7 @@ import io.github.ihongs.serv.master.User;
 import io.github.ihongs.util.Synt;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 登录动作
@@ -57,25 +58,29 @@ public class SignAction extends io.github.ihongs.serv.centra.SignAction {
         String uuid  =  uo.create(rd);
         String uname = Synt.declare(rd.get("name"), "");
         String uhead = Synt.declare(rd.get("head"), "");
-        String role  ;
+        String roles ;
 
         // 加入公共部门
-        role = cc.getProperty("core.public.regs.unit", "");
-        if (!role.isEmpty()) {
-            Map  sd = new HashMap();
-            sd.put("user_id", uuid);
-            sd.put("unit_id", role);
-            sd.put("type"   ,  0  );
-            uo.db.getTable("unit_user").insert(sd);
+        roles = cc.getProperty("core.public.regs.unit", "");
+        if (!roles.isEmpty()) {
+            for (Object role : Synt.toSet(roles)) {
+                Map sd = new HashMap(3);
+                sd.put("user_id", uuid);
+                sd.put("unit_id", role);
+                sd.put("type"   ,  0  );
+                uo.db.getTable("unit_user").insert(sd);
+            }
         }
 
         // 赋予公共权限
-        role = cc.getProperty("core.public.regs.role", "");
-        if (!role.isEmpty()) {
-            Map  sd = new HashMap();
-            sd.put("user_id", uuid);
-            sd.put("role"   , role);
-            uo.db.getTable("user_role").insert(sd);
+        roles = cc.getProperty("core.public.regs.role", "");
+        if (!roles.isEmpty()) {
+            for (Object role : Synt.toSet(roles)) {
+                Map sd = new HashMap(2);
+                sd.put("user_id", uuid);
+                sd.put("role"   , role);
+                uo.db.getTable("user_role").insert(sd);
+            }
         }
 
         Map  ad = AuthKit.userSign( ah, "*", uuid, uname, uhead ); // * 表示密码登录

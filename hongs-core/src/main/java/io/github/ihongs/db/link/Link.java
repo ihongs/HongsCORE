@@ -331,7 +331,8 @@ abstract public class Link
         .getDatabaseProductName()
         .toUpperCase();
 
-        if ("SQLITE".equals(dpn)) {
+        if ("MYSQL".equals(dpn)
+        || "SQLITE".equals(dpn)) {
             sql += " LIMIT ?,?";
             Object[] paramz = new Object[params.length + 2];
             System.arraycopy(params, 0, paramz, 0, params.length);

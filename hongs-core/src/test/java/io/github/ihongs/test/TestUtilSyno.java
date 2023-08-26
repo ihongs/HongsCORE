@@ -115,6 +115,9 @@ public class TestUtilSyno extends TestCase {
         m.put("1", "Kev");
         s = Syno.inject(a, m);
         assertEquals(s, b);
+
+        // 模板参数个数与实际替换参数个数可以不同
+        assertEquals("abc 123 ", Syno.inject("abc $0 $2", 123, 456));
     }
 
 }

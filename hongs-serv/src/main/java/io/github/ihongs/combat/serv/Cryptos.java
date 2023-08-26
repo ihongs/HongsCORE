@@ -291,10 +291,10 @@ public class Cryptos {
     }
 
     private static Loop query(DB db, Table tb, String sql, int start, int limit) throws HongsException {
-        if (sql != null && !sql.isEmpty()) {
-            return db.query(Syno.inject(sql, start, limit), 0, 0);
+        if (sql == null || sql.isEmpty()) {
+            return db.query("SELECT * FROM `"+ tb.tableName +"`" , start, limit);
         } else {
-            return db.query("SELECT * FROM `"+tb.tableName+"`", start, limit);
+            return db.query(Syno.inject(sql, start, limit), 0, 0);
         }
     }
 

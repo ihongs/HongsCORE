@@ -55,16 +55,10 @@ public class Tests extends TestCase {
             "!U",
             "!A"
         );
-        Map optz = new HashMap(Synt.mapOf(
-            "", new String[] {"--others", "456", "789"},
-            "number",  123 ,
-            "regexp", "abc",
-            "enable", true ,
-            "repeat", Arrays.asList("def", "--xyz")
-        ));
-        //System.out.println(Dist.toString(opts));
-        //System.out.println(Dist.toString(optz));
-        assertEquals(Dist.toString(opts), Dist.toString(optz));
+        assertTrue(Synt.asBool(opts.get("enable")));
+        assertTrue(Synt.asInt (opts.get("number")) == 123);
+        assertEquals(Dist.toString(opts.get("repeat")), Dist.toString(Arrays.asList("def", "--xyz")));
+        assertEquals(Dist.toString(opts.get(   ""   )), Dist.toString(new String[] {"--others", "456", "789"}));
     }
 
     @Test

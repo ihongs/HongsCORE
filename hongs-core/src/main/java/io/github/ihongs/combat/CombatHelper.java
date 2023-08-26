@@ -123,8 +123,33 @@ public class CombatHelper
 
   /**
    * 解析参数
-   * 本函数遵循 Perl 的 Getopt::Long 解析规则
-   * 同时也遵循 Configure 类似的参数的解析规则
+   *
+   * <p>本函数遵循 Perl 的 Getopt::Long 解析规则, 同时也遵循 Configure 类似的参数的解析规则.</p>
+   * <pre>
+   * 规则描述:
+   *    OPT[=:+*][sifb]
+   * 符号意义:
+   *    = 必要参数
+   *    : 可选参数
+   *    + 一个或多个
+   *    * 零个或多个
+   *    s 字符串
+   *    i 整数
+   *    f 小数
+   *    b 是或否
+   * 举例说明:
+   *    str=s   匹配 --str abc 或 --str=abc, 必要
+   *    num:i   匹配 --num 123 或 --num=123, 可选
+   *    yes:b   匹配 --yes 或 --yes=true
+   *    abc+s   匹配 --abc xxx yyy 或 --abc xxx --abc yyy
+   * 特殊标识:
+   *    !Anonymous  允许多余匿名参数, 如 cmd --opt xyz 12 34 567, 后面的 12,34,567 将作为数组放入空选项中
+   *    !Undefined  允许未定义的参数, 如 cmd --opt xyz --abc 123, 后面的 abc 参数没有定义也将放入空选项中
+   *    ?HELP TEXT  未给出任何参数时, 将抛出带有此帮助消息的异常, 需要注意, 全可选参数的务必要截获此异常
+   * 多余你们参数获取方法:
+   *    String args2 = (String[]) opts.get(""); // 总是字符串数组的形式
+   * </pre>
+   *
    * @param args
    * @param chks
    * @return
@@ -132,7 +157,7 @@ public class CombatHelper
   public static Map<String, Object> getOpts(String[] args, String... chks)
   {
     Map<String, Object[]>  chkz = new HashMap();
-    Map<String, Object> newOpts = new HashMap();
+    Map<String, Object  >  opts = new HashMap();
     List<String>        newArgs = new ArrayList();
     Set<String>         reqOpts = new LinkedHashSet();
     Set<String>         errMsgs = new LinkedHashSet();
@@ -190,87 +215,82 @@ public class CombatHelper
     }
 
     F:for (int i = 0; i < args.length; i++) {
-        String name = args[i];
+        String arg = args[i];
+        String key ;
+        String val ;
 
-        if (name.startsWith( "--" )) {
-            name = name.substring(2);
-            if (name.length( ) == 0) {
+        if (arg.startsWith( "--" )) {
+            key = arg.substring (2);
+            if (key.length( ) == 0) {
                 continue;
             }
 
-            int q = name.indexOf('=');
+            int q = key.indexOf('=');
             if (q > 0) {
-                String arg ;
-                Object val ;
-                arg  = name.substring(1+q);
-                name = name.substring(0,q);
+                val = key.substring (1+q);
+                key = key.substring (0,q);
 
-                if (chkz.containsKey(name)) {
-                    Object[] chk = chkz.get (name);
+                if (chkz.containsKey(key)) {
+                    Object[] chk = chkz.get(key);
                     char sign = (Character) chk[0];
                     char type = (Character) chk[1];
 
                     switch (type) {
                         case 'b':
-                            if (!BP.matcher(arg).matches()) {
-                                errMsgs.add(GETERRS[6].replace("%opt", name));
+                            if (!BP.matcher(val).matches()) {
+                                errMsgs.add(GETERRS[6].replace("%opt", key));
                                 continue;
                             }
-                            val = Synt.asBool(arg);
                             break;
                         case 'i':
-                            if (!IP.matcher(arg).matches()) {
-                                errMsgs.add(GETERRS[4].replace("%opt", name));
+                            if (!IP.matcher(val).matches()) {
+                                errMsgs.add(GETERRS[4].replace("%opt", key));
                                 continue;
                             }
-                            val = Long.parseLong(arg);
                             break;
                         case 'f':
-                            if (!FP.matcher(arg).matches()) {
-                                errMsgs.add(GETERRS[5].replace("%opt", name));
+                            if (!FP.matcher(val).matches()) {
+                                errMsgs.add(GETERRS[5].replace("%opt", key));
                                 continue;
                             }
-                            val = Double.parseDouble(arg);
                             break;
                         case 'r':
                             Pattern rp  = (Pattern) chk[2];
                             String  reg = (String ) chk[3];
                             String  err = (String ) chk[4];
-                            if (!rp.matcher(arg).matches()) {
-                                errMsgs.add(err.replace("%mat", reg).replace("%opt", name));
+                            if (!rp.matcher(val).matches()) {
+                                errMsgs.add(err.replace("%mat", reg).replace("%opt", key));
                                 continue;
                             }
-                        default:
-                            val = arg;
                     }
 
                     if ('+' == sign || '*' == sign) {
                         List vals;
-                        vals = (List) newOpts.get(name);
+                        vals = (List) opts.get(key);
                         if (vals == null) {
                             vals  = new ArrayList();
-                            newOpts.put(name, vals);
+                            opts.put(key, vals);
                         }
                         vals.add(val);
                     } else {
-                        if ('=' == sign && arg.isEmpty()) {
-                            errMsgs.add(GETERRS[2].replace("%opt", name));
+                        if ('=' == sign && val.isEmpty()) {
+                            errMsgs.add(GETERRS[2].replace("%opt", key));
                         } else
-                        if (newOpts.containsKey( name ) ) {
-                            errMsgs.add(GETERRS[3].replace("%opt", name));
+                        if (opts.containsKey(key ) ) {
+                            errMsgs.add(GETERRS[3].replace("%opt", key));
                         } else {
-                            newOpts.put(name, val);
+                            opts.put(key, val);
                         }
                     }
                 } else if (ub) {
                     // 未知参数
-                    errMsgs.add(GETERRS[8].replace("%opt", name));
+                    errMsgs.add(GETERRS[8].replace("%opt", key));
                 } else {
                     newArgs.add(args[i]);
                 }
             } else {
-                if (chkz.containsKey(name)) {
-                    Object[] chk = chkz.get (name);
+                if (chkz.containsKey(key)) {
+                    Object[] chk = chkz.get (key);
                     char sign = (Character) chk[0];
                     char type = (Character) chk[1];
 
@@ -280,7 +300,7 @@ public class CombatHelper
                     List  vals = null;
 
                     if ('b' == type) {
-                        newOpts.put(name,true);
+                        opts.put(key,true);
                         continue;
                     }
 
@@ -291,19 +311,18 @@ public class CombatHelper
                     }
 
                     if ('+' == sign || '*' == sign) {
-                        vals = (List) newOpts.get(name);
+                        vals = (List) opts.get(key);
                         if (vals == null) {
                             vals  = new ArrayList();
-                            newOpts.put(name, vals);
+                            opts.put(key, vals);
                         }
                     }
 
                     W:while (i < args.length - 1) {
-                        Object val ;
-                        String arg = args [i + 1];
-                        if (arg.startsWith("--")) {
+                        val = args [i + 1];
+                        if (val.startsWith("--")) {
                             if (vals == null || vals.isEmpty()) { // 缺少取值
-                                errMsgs.add(GETERRS[2].replace("%opt", name));
+                                errMsgs.add(GETERRS[2].replace("%opt", key));
                             }
                             break;
                         } else {
@@ -312,45 +331,41 @@ public class CombatHelper
 
                         switch (type) {
                             case 'i':
-                                if (!IP.matcher(arg).matches()) {
-                                    errMsgs.add(GETERRS[4].replace("%opt", name));
+                                if (!IP.matcher(val).matches()) {
+                                    errMsgs.add(GETERRS[4].replace("%opt", key));
                                     continue;
                                 }
-                                val = Long.parseLong(arg);
                                 break;
                             case 'f':
-                                if (!FP.matcher(arg).matches()) {
-                                    errMsgs.add(GETERRS[5].replace("%opt", name));
+                                if (!FP.matcher(val).matches()) {
+                                    errMsgs.add(GETERRS[5].replace("%opt", key));
                                     continue;
                                 }
-                                val = Double.parseDouble(arg);
                                 break;
                             case 'r':
-                                if (!rp.matcher(arg).matches()) {
-                                    errMsgs.add(err.replace("%mat", reg).replace("%opt", name));
+                                if (!rp.matcher(val).matches()) {
+                                    errMsgs.add(err.replace("%mat", reg).replace("%opt", key));
                                     continue;
                                 }
-                            default:
-                                val = arg;
                         }
 
                         if ('+' == sign || '*' == sign) {
                             vals.add(val);
                         } else {
-                            if ('=' == sign && arg.isEmpty()) {
-                                errMsgs.add(GETERRS[2].replace("%opt", name));
+                            if ('=' == sign && val.isEmpty()) {
+                                errMsgs.add(GETERRS[2].replace("%opt", key));
                             } else
-                            if (newOpts.containsKey( name ) ) {
-                                errMsgs.add(GETERRS[3].replace("%opt", name));
+                            if (opts.containsKey(key ) ) {
+                                errMsgs.add(GETERRS[3].replace("%opt", key));
                             } else {
-                                newOpts.put(name, val);
+                                opts.put(key, val);
                             }
                             break;
                         }
                     }
                 } else if (ub) {
                     // 未知参数
-                    errMsgs.add(GETERRS[8].replace("%opt", name));
+                    errMsgs.add(GETERRS[8].replace("%opt", key));
                 } else {
                     newArgs.add(args[i]);
                 }
@@ -364,7 +379,7 @@ public class CombatHelper
     }
 
     for (String name : reqOpts) {
-      if (!newOpts.containsKey(name)) {
+      if (! opts.containsKey(name)) {
         Set<String> err = new LinkedHashSet();
         err.add(GETERRS[1].replace("%opt", name));
         err.addAll( errMsgs );
@@ -388,9 +403,9 @@ public class CombatHelper
     }
 
     // 把剩余的参数放进去
-    newOpts.put("", newArgs.toArray(new String[0]));
+    opts.put("", ! newArgs.isEmpty() ? newArgs.toArray(new String[0]) : new String[0]);
 
-    return newOpts;
+    return opts;
   }
 
   //** 输出相关 **/

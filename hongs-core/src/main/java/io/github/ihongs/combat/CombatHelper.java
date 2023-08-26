@@ -114,7 +114,7 @@ public class CombatHelper
       "Value for option '%opt' must be int",
       "Value for option '%opt' must be float",
       "Value for option '%opt' must be boolean",
-      "Value for option '%opt' not matches: %mat",
+      "Value for option '%opt' not matches: %exp",
       "Unrecognized option '%opt'",
       "Unupport anonymous options"
     };
@@ -259,7 +259,7 @@ public class CombatHelper
                             String  reg = (String ) chk[3];
                             String  err = (String ) chk[4];
                             if (!rp.matcher(val).matches()) {
-                                errMsgs.add(err.replace("%mat", reg).replace("%opt", key));
+                                errMsgs.add(err.replace("%exp", reg).replace("%opt", key));
                                 continue;
                             }
                     }
@@ -344,7 +344,7 @@ public class CombatHelper
                                 break;
                             case 'r':
                                 if (!rp.matcher(val).matches()) {
-                                    errMsgs.add(err.replace("%mat", reg).replace("%opt", key));
+                                    errMsgs.add(err.replace("%exp", reg).replace("%opt", key));
                                     continue;
                                 }
                         }

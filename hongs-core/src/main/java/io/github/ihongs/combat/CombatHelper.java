@@ -143,10 +143,10 @@ public class CombatHelper
    *    yes:b   匹配 --yes 或 --yes=true
    *    abc+s   匹配 --abc xxx yyy 或 --abc xxx --abc yyy
    * 特殊标识:
-   *    !Anonymous  允许多余匿名参数, 如 cmd --opt xyz 12 34 567, 后面的 12,34,567 将作为数组放入空选项中
+   *    !Anonymous  允许匿名多余参数, 如 cmd --opt xyz 12 34 567, 后面的 12,34,567 将作为数组放入空选项中
    *    !Undefined  允许未定义的参数, 如 cmd --opt xyz --abc 123, 后面的 abc 参数没有定义也将放入空选项中
    *    ?HELP TEXT  未给出任何参数时, 将抛出带有此帮助消息的异常, 需要注意, 全可选参数的务必要截获此异常
-   * 多余你们参数获取方法:
+   * 匿名及多余参数获取方法:
    *    String args2 = (String[]) opts.get(""); // 总是字符串数组的形式
    * </pre>
    *

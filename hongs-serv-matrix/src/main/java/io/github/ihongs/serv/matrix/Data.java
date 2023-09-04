@@ -9,8 +9,8 @@ import io.github.ihongs.action.FormSet;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Model;
 import io.github.ihongs.db.Table;
+import io.github.ihongs.db.util.FetchCase;
 import io.github.ihongs.dh.search.SearchEntity;
-import io.github.ihongs.util.Crypto;
 import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Syno;
@@ -470,12 +470,14 @@ public class Data extends SearchEntity {
      * @throws HongsException
      */
     public Map reveal(Map rd) throws HongsException {
-        Map rsp = getModel( ).search ( rd );
+        FetchCase fc = getModel().fetchCase();
+        fc.filter("`form_id`=?", getFormId());
+        Map rsp = getModel ().search (rd, fc);
 
         if (rsp.containsKey("info")) {
             Map inf = (Map) rsp.get("info");
         if (inf.containsKey("data")) {
-            // 解密详情数据
+            // 解析详情数据
             Map dat = (Map) getData(
                    (String) inf.get("data")
             );

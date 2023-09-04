@@ -95,7 +95,7 @@
     context.find("[name='ctime.<%=Cnst.LE_REL%>']").val(hsGetSeria(loadpms, "ctime_le"));
 
     var listobj = context.hsList({
-        loadUrl : "<%=_module%>/<%=_entity%>/reveal.act?<%=Cnst.ID_KEY%>.=$<%=Cnst.ID_KEY%>&<%=Cnst.OB_KEY%>=ctime!&<%=Cnst.RB_KEY%>=data!,user.*&user=$user&meno=$meno",
+        loadUrl : "<%=_module%>/<%=_entity%>/reveal.act?<%=Cnst.RB_KEY%>=data!,user.*&<%=Cnst.OB_KEY%>=ctime!&<%=Cnst.ID_KEY%>.=$<%=Cnst.ID_KEY%>&user_id=$user_id&meno=$meno",
         send    : hsSendWithMemo,
         _fill_stat: function(td , stat) {
             var st = statmap['' + stat];
@@ -154,7 +154,7 @@
         var id =    tr.data(     "id");
         var ge = context.find("[name='ctime.<%=Cnst.GE_REL%>']").val();
         var le = context.find("[name='ctime.<%=Cnst.LE_REL%>']").val();
-        lo.hsOpen ("<%=_module%>/<%=_entity%>/snap.html", { id : id, ctime_ge: ge, ctime_le: le}, function() { $(this).hsL10n(tt); });
+        lo.hsOpen ("<%=_module%>/<%=_entity%>/snap.html", {     id: id, ctime_ge: ge, ctime_le: le}, function() { $(this).hsL10n(tt); });
     });
 
     context.on("click", ".same-u", function() {
@@ -164,7 +164,7 @@
         var id =    tr.data("user_id");
         var ge = context.find("[name='ctime.<%=Cnst.GE_REL%>']").val();
         var le = context.find("[name='ctime.<%=Cnst.LE_REL%>']").val();
-        lo.hsOpen ("<%=_module%>/<%=_entity%>/snap.html", {user: id, ctime_ge: ge, ctime_le: le}, function() { $(this).hsL10n(tt); });
+        lo.hsOpen ("<%=_module%>/<%=_entity%>/snap.html", {user_id: id, ctime_ge: ge, ctime_le: le}, function() { $(this).hsL10n(tt); });
     });
 
     context.on("click", ".same-m", function() {
@@ -174,7 +174,7 @@
         var id =    tr.data(   "meno");
         var ge = context.find("[name='ctime.<%=Cnst.GE_REL%>']").val();
         var le = context.find("[name='ctime.<%=Cnst.LE_REL%>']").val();
-        lo.hsOpen ("<%=_module%>/<%=_entity%>/snap.html", {meno: id, ctime_ge: ge, ctime_le: le}, function() { $(this).hsL10n(tt); });
+        lo.hsOpen ("<%=_module%>/<%=_entity%>/snap.html", {meno   : id, ctime_ge: ge, ctime_le: le}, function() { $(this).hsL10n(tt); });
     });
 
     context.on("click", ".nav li", function() {

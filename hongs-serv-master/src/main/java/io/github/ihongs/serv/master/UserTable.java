@@ -63,7 +63,25 @@ public class UserTable extends PrivTable {
         &&  val != null
         && !val.isEmpty()
         && !val.startsWith(CRYPTO_PREFIX)) {
-            val  = CRYPTO_PREFIX + enx.apply(val);
+            val = CRYPTO_PREFIX + enx.apply(val);
+        }
+
+        return val;
+    }
+
+    /**
+     * 解密, 以便特殊情况使用
+     * @param val
+     * @return
+     */
+    public String decrypt(String val) {
+        // 加密
+        Crypto.Crypt enx = getCrypto().decrypt();
+        if (enx.valid()
+        &&  val != null
+        && !val.isEmpty()
+        &&  val.startsWith(CRYPTO_PREFIX)) {
+            val = enx.apply ( val.substring(1) );
         }
 
         return val;

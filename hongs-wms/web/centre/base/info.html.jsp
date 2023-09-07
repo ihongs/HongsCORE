@@ -51,7 +51,15 @@
         <%/****/ if ("hidden".equals(type)) {%>
             <input type="hidden" name="<%=name%>" />
         <%} else if ("legend".equals(type)) {%>
-            <legend class="text-center"><%=text%></legend>
+            <%
+                text = Synt.defxult(Synt.asString(info.get("info-text")), text, "");
+            %>
+            <legend data-name="<%=name%>"><%=text%></legend>
+        <%} else if ("figure".equals(type)) {%>
+            <%
+                text = Synt.defxult(Synt.asString(info.get("info-text")), text, "");
+            %>
+            <figure data-name="<%=name%>"><%=text%></figure>
         <%} else {%>
             <%
                 text = Synt.defxult(Synt.asString(info.get("info-text")), text, "");

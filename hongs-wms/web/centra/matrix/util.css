@@ -30,8 +30,9 @@
     {color: #2780E3;}
 
 /* 规避 Windows 中滚动条把按钮挡住了 */
-.cols-form .target-form .form-group>label,
-.cols-form .target-form .form-group>legend
+.cols-form .target-form .form-group>label ,
+.cols-form .target-form .form-group>legend,
+.cols-form .target-form .form-group>figure
     {padding-right: 20px;}
 
 /* 拖拽 */

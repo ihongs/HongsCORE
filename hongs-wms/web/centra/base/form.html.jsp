@@ -52,7 +52,15 @@
         <%/****/ if ("hidden".equals(type)) {%>
             <input type="hidden" name="<%=name%>" />
         <%} else if ("legend".equals(type)) {%>
-            <legend class="text-center" data-name="<%=name%>"><%=text%></legend>
+            <%
+                text = Synt.defxult(Synt.asString(info.get("form-text")), text, "");
+            %>
+            <legend data-name="<%=name%>"><%=text%></legend>
+        <%} else if ("figure".equals(type)) {%>
+            <%
+                text = Synt.defxult(Synt.asString(info.get("form-text")), text, "");
+            %>
+            <figure data-name="<%=name%>"><%=text%></figure>
         <%} else if ( roly ) { //** 此部分来自 info.jsp **/ %>
             <%
                 text = Synt.defxult(Synt.asString(info.get("info-text")), text, "");

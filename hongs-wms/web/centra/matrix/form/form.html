@@ -220,6 +220,15 @@
                         <input type="text" name="-" class="form-ignored invisible"/>
                         <button class="btn btn-default form-control" type="button" data-toggle="hsPick" data-target="@" data-href="centra/matrix/form/pick.html" data-vk="id" data-tk="name">选择...</button>
                     </div>
+                    <div class="form-group" data-type="figure">
+                        <figure class="clearfix" data-valtype="text">
+                            <span>附注</span>
+                            <span class="bi bi-hi-close pull-right"></span>
+                            <span class="bi bi-hi-update pull-right"></span>
+                            <span class="bi bi-hi-create pull-right"></span>
+                        </figure>
+                        <input style="display:none" name="-" type="figure" data-__rule__="@Ignore" data-unstated="true"/>
+                    </div>
                 </form>
             </div>
             <div class="col-xs-6" style="margin-top: 15px;">
@@ -385,7 +394,7 @@
 
     <!-- 基础设置 -->
     <div style="display:none;">
-        <div class="widget-pane widget-pane-legend">
+        <div class="widget-pane widget-pane-legend widget-pane-figure">
             <div class="form-group">
                 <input class="form-control" type="text" name="span:first" value=""/>
             </div>

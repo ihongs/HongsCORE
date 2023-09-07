@@ -318,8 +318,8 @@ function saveConf(modal, field) {
  */
 function gainFlds(fields, area) {
     area.find(".form-group").each(function() {
-        var label = $(this).find("label span,legend span").first();
-        var input = $(this).find(   "[name],[data-fn]"   ).first();
+        var label = $(this).find("label span,legend>span,figure>span").first();
+        var input = $(this).find("[name],[data-fn]").first();
         var text  = label.text();
 //      var hint  = input.attr("title");
         var name  = input.attr("name") || input.attr("data-fn");
@@ -467,8 +467,8 @@ function drawFlds(fields, area, wdgt, pre, suf) {
         if (group.size() == 0) {
             group = getTypeItem(wdgt , "-" ).show();
         }
-        var label = group.find("label span,legend span").first( );
-        var input = group.find(   "[data-fn],[name]"   ).first( );
+        var label = group.find("label span,legend>span,figure>span").first( );
+        var input = group.find("[data-fn],[name]").first();
             label.text( text );
         if (type == "date" || type == "time" || type == "datetime"
         ||  input.is("input[type='']")) {
@@ -692,7 +692,7 @@ $.fn.hsCols = function() {
             tabs.find("li:eq(1) a").click();
             tabs.find("li:eq(0)"  ).hide( );
         } else
-        if (type == 'legend') {
+        if (type == 'legend' ||  type == 'figure') {
             tabs.find("li:eq(0) a").click();
             tabs.find("li:eq(1)"  ).hide( );
         } else

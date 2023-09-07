@@ -147,7 +147,7 @@
         <field name="uniq" text="唯一" type="unique">
             <param name="data-ut">search/action</param>
             <param name="data-uk">filed1,field2</param>
-            <param name="unstated">yes</param>
+            <param name="unstored">yes</param>
         </field>
     </form>
     <enum name="demo-enum">

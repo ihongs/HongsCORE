@@ -14,7 +14,9 @@
      */
     Set<String> getWordable(Map _fields) throws HongsException {
         Map fc = (Map) _fields.get("word");
-        if (fc != null && ! Synt.declare(fc.get("readonly"), false)) {
+        if (fc != null
+        &&!Synt.declare(fc.get("readonly"), false)
+        &&!Synt.declare(fc.get("disabled"), false)) {
             return /**/ Synt.setOf("word");
         }
 

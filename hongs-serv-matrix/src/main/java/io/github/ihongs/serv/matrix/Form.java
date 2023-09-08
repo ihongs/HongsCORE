@@ -345,7 +345,9 @@ public class Form extends Model {
                 flds.add(1, fld);
             }
 
+            /*
             // 增加描述字段
+            // 2023/09/08 不再默认设置, 避免冲掉其他 nameable,wordable 字段
             if (!fns.contains("name")) {
                 flds.add(Synt.mapOf(
                     "__name__", "name",
@@ -362,6 +364,7 @@ public class Form extends Model {
                     "srchable", "true"
                 ));
             }
+            */
 
             // 增加用户字段
             if (!fns.contains("muser")) {

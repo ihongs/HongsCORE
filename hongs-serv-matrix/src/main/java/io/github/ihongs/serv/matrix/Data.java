@@ -394,10 +394,10 @@ public class Data extends SearchEntity {
                 userId = (String) ActionHelper.getInstance()
                                 . getSessibute(Cnst.UID_SES);
             } catch (UnsupportedOperationException e ) {
-                throw new NullPointerException("Call setUserId first");
+                return Cnst.GUS_UID;
             }
             if ( null == userId ) {
-                throw new NullPointerException("Call setUserId first");
+                return Cnst.GUS_UID;
             }
         }
         return userId;

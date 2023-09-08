@@ -391,9 +391,8 @@ public class Data extends SearchEntity {
     public String getUserId() {
         if ( null == userId ) {
             try {
-                userId = (String) ActionHelper.getInstance()
-                                . getSessibute(Cnst.UID_SES);
-            } catch (UnsupportedOperationException e ) {
+                userId = (String) ActionHelper.getInstance().getSessibute(Cnst.UID_SES);
+            } catch (UnsupportedOperationException e) {
                 return Cnst.GUS_UID;
             }
             if ( null == userId ) {

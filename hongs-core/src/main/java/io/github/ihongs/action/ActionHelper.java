@@ -90,6 +90,14 @@ public class ActionHelper implements Cloneable
   private       Writer        outputWriter;
 
   /**
+   * 初始化组数(用于异步线程)
+   */
+  public ActionHelper()
+  {
+    this(new HashMap( ), new HashMap(0), new HashMap(0), new HashMap(0));
+  }
+
+  /**
    * 初始化助手(用于combat)
    *
    * @param req 请求数据
@@ -105,10 +113,10 @@ public class ActionHelper implements Cloneable
     this.outputStream = null;
     this.outputWriter = null;
 
-    this.requestData  = req != null ? req : new HashMap();
-    this.contextData  = att != null ? att : new HashMap();
-    this.sessionData  = ses != null ? ses : new HashMap();
-    this.cookiesData  = cok != null ? cok : new HashMap();
+    this.requestData  = req ;
+    this.contextData  = att ;
+    this.sessionData  = ses ;
+    this.cookiesData  = cok ;
   }
 
   /**
@@ -119,24 +127,24 @@ public class ActionHelper implements Cloneable
    */
   public ActionHelper(HttpServletRequest req, HttpServletResponse rsp)
   {
-    this.request  = req;
-    this.response = rsp;
-
     try
     {
-      if (null != this.request )
+      if (null != req)
       {
-        this.request .setCharacterEncoding("UTF-8");
+        req.setCharacterEncoding("UTF-8");
       }
-      if (null != this.response)
+      if (null != rsp)
       {
-        this.response.setCharacterEncoding("UTF-8");
+        rsp.setCharacterEncoding("UTF-8");
       }
     }
     catch (UnsupportedEncodingException ex)
     {
       throw new HongsExemption(ex, 1111, "Can not set encoding.");
     }
+
+    this.request      = req ;
+    this.response     = rsp ;
 
     this.outputStream = null;
     this.outputWriter = null;
@@ -149,24 +157,24 @@ public class ActionHelper implements Cloneable
    */
   public final void updateHelper(HttpServletRequest req, HttpServletResponse rsp)
   {
-    this.request  = req;
-    this.response = rsp;
-
     try
     {
-      if (null != this.request )
+      if (null != req)
       {
-        this.request .setCharacterEncoding("UTF-8");
+        req.setCharacterEncoding("UTF-8");
       }
-      if (null != this.response)
+      if (null != rsp)
       {
-        this.response.setCharacterEncoding("UTF-8");
+        rsp.setCharacterEncoding("UTF-8");
       }
     }
     catch (UnsupportedEncodingException ex)
     {
       throw new HongsExemption(ex, 1111, "Can not set encoding.");
     }
+
+    this.request      = req ;
+    this.response     = rsp ;
 
     this.outputStream = null;
     this.outputWriter = null;
@@ -189,7 +197,7 @@ public class ActionHelper implements Cloneable
    */
   public final void updateOutput(OutputStream out)
   {
-    this.updateOutput ( out , new OutputStreamWriter(out));
+    this.updateOutput( out , new OutputStreamWriter( out ) );
   }
 
   public final void setRequestData(Map<String, Object> data) {
@@ -507,7 +515,12 @@ public class ActionHelper implements Cloneable
    */
   public String getParameter(String name)
   {
-    Object o = Dict.getParam(getRequestData(), name);
+    Map d = getRequestData();
+    if (d == null)
+    {
+      return null;
+    }
+    Object o = Dict.getParam ( d ,  name  );
     if (o == null)
     {
       return null;
@@ -568,6 +581,8 @@ public class ActionHelper implements Cloneable
       } else {
         this.request.setAttribute(name , value);
       }
+    } else {
+      throw new NullPointerException("Context is not ready");
     }
   }
 
@@ -614,14 +629,15 @@ public class ActionHelper implements Cloneable
         HttpSession ss = this.request.getSession(true );
         if (null != ss ) ss.setAttribute(name , value );
       }
+    } else {
+      throw new NullPointerException("Session is not ready");
     }
   }
 
   /**
    * 获取跟踪参数
-   * @return 当前取值, 没有则为 null
    * @param name
-   * @return
+   * @return 当前取值, 没有则为 null
    */
   public String getCookibute(String  name) {
     if (null != this.cookiesData) {
@@ -661,12 +677,14 @@ public class ActionHelper implements Cloneable
       }
         this.cookiesData.put(Cnst.UPDATE_ATTR, Long.toString(System.currentTimeMillis()));
     } else
-    if (this.response    != null) {
+    if (this.response != null) {
       if (value == null) {
         setCookibute(name, value,  0, Core.SERV_PATH + "/", null, false, false);
       } else {
         setCookibute(name, value, -1, Core.SERV_PATH + "/", null, false, false);
       }
+    } else {
+      throw new NullPointerException("Cookies is not ready");
     }
   }
 
@@ -683,7 +701,8 @@ public class ActionHelper implements Cloneable
    */
   public void setCookibute(String name, String value,
     int life, String path, String host, boolean httpOnly, boolean secuOnly) {
-      if (value != null) {
+    if (response != null) {
+      if ( value != null) {
         try {
           value = URLEncoder.encode(value,"UTF-8");
         } catch ( UnsupportedEncodingException e ) {
@@ -707,6 +726,9 @@ public class ActionHelper implements Cloneable
           ce.setHttpOnly(true);
       }
       response.addCookie( ce );
+    } else {
+      throw new NullPointerException("Response is not ready for set cookie");
+    }
   }
 
   /**
@@ -737,9 +759,9 @@ public class ActionHelper implements Cloneable
     String name = ActionHelper.class.getName();
     ActionHelper  inst = (ActionHelper) core.get(name);
     if (null != inst) {
-        return  inst.clone();
+        return  inst.clone ( );
     }
-    return new  ActionHelper  (null, null, null, null);
+    return new ActionHelper(new HashMap(), new HashMap(), new HashMap(), new HashMap());
   }
 
   /**

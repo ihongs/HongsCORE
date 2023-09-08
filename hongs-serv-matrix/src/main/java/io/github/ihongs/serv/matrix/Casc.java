@@ -71,13 +71,13 @@ public class Casc {
             long time = System.currentTimeMillis() / 1000;
             try {
                 // 设置会话用户 ID, 规避更新错误
-                ActionHelper hlpr = ActionHelper.newInstance();
-                hlpr.setSessibute(Cnst.UID_SES, Cnst.ADM_UID );
-                core.set(ActionHelper.class.getName( ), hlpr );
+                ActionHelper hlpr = new ActionHelper();
+                core.set (ActionHelper.class.getName(), hlpr);
+                hlpr.setSessibute(Cnst.UID_SES, Cnst.ADM_UID);
 
                 switch (ac) {
-                    case UPDATE: update (aq, id, time); break ;
-                    case DELETE: delete (aq, id, time); break ;
+                    case UPDATE: update (aq, id, time); break;
+                    case DELETE: delete (aq, id, time); break;
                 }
             }
             catch (Exception|Error e) {

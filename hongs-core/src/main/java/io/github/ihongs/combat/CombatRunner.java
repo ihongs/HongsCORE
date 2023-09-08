@@ -351,9 +351,9 @@ public class CombatRunner implements Runnable
 
     /** 初始化动作助手, 可复用动作组件 **/
 
-    ActionHelper hlpr = new ActionHelper(null, null, null, null);
-    Core.getInstance( ).set(ActionHelper.class.getName( ), hlpr);
-    hlpr.updateOutput (System.out , new PrintWriter(System.out));
+    ActionHelper hlpr = new ActionHelper(new HashMap(), new HashMap(), new HashMap(), new HashMap());
+    Core.getInstance().set(ActionHelper.class.getName(), hlpr);
+    hlpr.updateOutput(System.out, new PrintWriter(System.out));
 
     return args;
   }

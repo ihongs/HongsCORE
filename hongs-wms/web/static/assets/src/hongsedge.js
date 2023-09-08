@@ -1065,10 +1065,10 @@ jQuery.fn.hsShowInput = function() {
 jQuery.fn.hsHideInput = function() {
     return  this. hsToggleInput (null);
 };
-jQuery.fn.hsHideValue = function(data) {
+jQuery.fn.hsHideValue = function(data, a) {
     data = hsSerialArr(data);
     var hide = $('<input type="hidden" class="form-ignored"/>');
-    this.empty( );
+    if (! a) this.empty ( );
     for(var i = 0; i < data.length; i ++) {
         var item = data [i];
         var node = hide.clone();

@@ -247,7 +247,7 @@ public class DataCombat {
 
         dr.commit( );
 
-        CombatHelper.println("Import "+i+" item(s) to "+dr.getDbName());
+        CombatHelper.println("Import "+i+" item(s) to "+dr.getFormId());
     }
 
     @Combat("update")
@@ -297,7 +297,7 @@ public class DataCombat {
 
         dr.commit( );
 
-        CombatHelper.println("Update "+i+" item(s) in "+dr.getDbName());
+        CombatHelper.println("Update "+i+" item(s) in "+dr.getFormId());
     }
 
     @Combat("delete")
@@ -348,7 +348,7 @@ public class DataCombat {
 
         dr.commit( );
 
-        CombatHelper.println("Delete "+i+" item(s) in "+dr.getDbName());
+        CombatHelper.println("Delete "+i+" item(s) in "+dr.getFormId());
     }
 
     @Combat("search")

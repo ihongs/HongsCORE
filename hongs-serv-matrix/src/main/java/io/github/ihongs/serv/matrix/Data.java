@@ -751,7 +751,7 @@ public class Data extends SearchEntity {
             }
             if (Synt.declare(od.get("ctime"), 0L ) >= ctime) {
             //  throw new HongsException(400, "@matrix:matrix.wait.one.second", getFormId(), id);
-                ctime = 0;
+                ctime = 0; // 仅更新最终记录
             }
         }
 

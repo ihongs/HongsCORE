@@ -2,6 +2,7 @@ package io.github.ihongs.serv.matrix;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
+import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.ActionHelper;
@@ -764,15 +765,22 @@ public class Data extends SearchEntity {
             nd.put("name", getText(dd, "name"));
 
             // 操作备注和终端代码
+            // 改记日志, 以免冲掉
+            /*
             if (rd.containsKey("memo")) {
                 nd.put("memo", getText(rd, "memo"));
             }
             if (rd.containsKey("meno")) {
                 nd.put("meno", getText(rd, "meno"));
             }
+            */
 
-            table.update(nd, where, param);
-            return 1;
+            if (table.update(nd, where, param) > 0) {
+                CoreLogger.info("Update data for {}, id: {}, ctime: {}. {} {}", getFormId(), id, od.get("ctime"), rd.get("meno"), rd.get("memo"));
+                return 1;
+            } else {
+                return 0;
+            }
         }
 
         Map ud = new HashMap();

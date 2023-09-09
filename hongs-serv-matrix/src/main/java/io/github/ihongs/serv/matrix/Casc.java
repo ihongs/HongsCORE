@@ -70,10 +70,9 @@ public class Casc {
             Core core = Core.getInstance();
             long time = System.currentTimeMillis() / 1000;
             try {
-                // 设置会话用户 ID, 规避更新错误
-                ActionHelper hlpr = new ActionHelper();
-                core.set (ActionHelper.class.getName(), hlpr);
-                hlpr.setSessibute(Cnst.UID_SES, Cnst.ADM_UID);
+                // 将当前用户设为管理员
+                ActionHelper hlpr = ActionHelper.getInstance();
+                hlpr.setSessibute (Cnst.UID_SES, Cnst.ADM_UID);
 
                 switch (ac) {
                     case UPDATE: update (aq, id, time); break;

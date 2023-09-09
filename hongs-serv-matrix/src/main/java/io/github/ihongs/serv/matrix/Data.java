@@ -388,22 +388,28 @@ public class Data extends SearchEntity {
         return code;
     }
 
+    /**
+     * 获取当前操作用户ID
+     *
+     * 有设置将返回设置的
+     * 无设置将从会话读取
+     * 都没有则返回访客ID
+     *
+     * @return
+     */
     public String getUserId() {
-        if ( null == userId ) {
-            try {
-                userId = (String) ActionHelper.getInstance().getSessibute(Cnst.UID_SES);
-            } catch (UnsupportedOperationException e) {
-                return Cnst.GUS_UID;
-            }
-            if ( null == userId ) {
-                return Cnst.GUS_UID;
-            }
+        if ( null != userId ) {
+            return   userId ;
         }
-        return userId;
+        return Synt.defoult((String) ActionHelper.getInstance().getSessibute(Cnst.UID_SES), Cnst.GUS_UID);
     }
 
-    public void setUserId(String cuId) {
-        userId = cuId;
+    /**
+     * 设置当前操作用户ID
+     * @param uid
+     */
+    public void setUserId(String uid) {
+        userId = uid;
     }
 
     /**

@@ -159,10 +159,10 @@ public class Core
       @Override
       protected String initialValue() {
         try {
-          return io.github.ihongs.action.ActionDriver.getServerHref(
+          return io.github.ihongs.action.ActionDriver.getServerHref (
                  io.github.ihongs.action.ActionHelper.getInstance( )
                                                      .getRequest ( ) );
-        } catch (NullPointerException|UnsupportedOperationException e) {
+        } catch (NullPointerException e) {
           return SERV_HREF;
         }
       }
@@ -176,10 +176,10 @@ public class Core
       @Override
       protected String initialValue() {
         try {
-          return io.github.ihongs.action.ActionDriver.getClientAddr(
+          return io.github.ihongs.action.ActionDriver.getClientAddr (
                  io.github.ihongs.action.ActionHelper.getInstance( )
                                                      .getRequest ( ) );
-        } catch (NullPointerException|UnsupportedOperationException e) {
+        } catch (NullPointerException e) {
           return "";
         }
       }

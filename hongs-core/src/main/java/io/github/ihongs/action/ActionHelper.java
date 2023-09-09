@@ -56,22 +56,22 @@ public class ActionHelper implements Cloneable
   /**
    * 请求数据
    */
-  private Map<String, Object> requestData = null;
+  private Map<String, Object> requestData;
 
   /**
    * 容器数据
    */
-  private Map<String, Object> contextData = null;
+  private Map<String, Object> contextData;
 
   /**
    * 会话数据
    */
-  private Map<String, Object> sessionData = null;
+  private Map<String, Object> sessionData;
 
   /**
    * 跟踪数据
    */
-  private Map<String, String> cookiesData = null;
+  private Map<String, String> cookiesData;
 
   /**
    * HttpServletResponse
@@ -81,21 +81,13 @@ public class ActionHelper implements Cloneable
   /**
    * 响应数据
    */
-  private Map<String, Object> responseData = null;
+  private Map<String, Object> responseData;
 
   /**
    * 响应输出
    */
   private OutputStream        outputStream;
   private       Writer        outputWriter;
-
-  /**
-   * 初始化组数(用于异步线程)
-   */
-  public ActionHelper()
-  {
-    this(new HashMap( ), new HashMap(0), new HashMap(0), new HashMap(0));
-  }
 
   /**
    * 初始化助手(用于combat)
@@ -108,15 +100,15 @@ public class ActionHelper implements Cloneable
   public ActionHelper(Map req, Map att, Map ses, Map cok)
   {
     this.request      = null;
-    this.response     = null;
-
-    this.outputStream = null;
-    this.outputWriter = null;
-
     this.requestData  = req ;
     this.contextData  = att ;
     this.sessionData  = ses ;
     this.cookiesData  = cok ;
+
+    this.response     = null;
+    this.responseData = null;
+    this.outputStream = null;
+    this.outputWriter = null;
   }
 
   /**
@@ -144,8 +136,13 @@ public class ActionHelper implements Cloneable
     }
 
     this.request      = req ;
-    this.response     = rsp ;
+    this.requestData  = null;
+    this.contextData  = null;
+    this.sessionData  = null;
+    this.cookiesData  = null;
 
+    this.response     = rsp ;
+    this.responseData = null;
     this.outputStream = null;
     this.outputWriter = null;
   }
@@ -174,8 +171,13 @@ public class ActionHelper implements Cloneable
     }
 
     this.request      = req ;
-    this.response     = rsp ;
+    this.requestData  = null;
+    this.contextData  = null;
+    this.sessionData  = null;
+    this.cookiesData  = null;
 
+    this.response     = rsp ;
+    this.responseData = null;
     this.outputStream = null;
     this.outputWriter = null;
   }
@@ -733,8 +735,8 @@ public class ActionHelper implements Cloneable
 
   /**
    * 获取实例
-   * 必须要在 ActionDriver 等容器初始化后使用,
-   * 否则抛出 UnsupportedOperationException
+   * 通常要在 ActionDriver 等容器初始化后使用,
+   * 独立异步线程内将填充空的请求和容器空间等.
    * @return
    */
   public static ActionHelper getInstance()
@@ -742,34 +744,31 @@ public class ActionHelper implements Cloneable
     Core   core = Core.getInstance();
     String name = ActionHelper.class.getName();
     ActionHelper  inst = (ActionHelper) core.get(name);
-    if (null != inst) {
-        return  inst;
+    if (inst == null) {
+        inst = new ActionHelper (new HashMap(), new HashMap(0), new HashMap(0), new HashMap(0));
+        core.put(name, inst);
     }
-    throw new UnsupportedOperationException("Please use the ActionHelper in the coverage of the ActionDriver or CombatRunner inside");
+    return inst;
   }
 
   /**
    * 新建实例
    * 用于使用 ActionRunner 时快速构建请求对象,
-   * 可用以上 setXxxxxData 在构建之后设置参数.
+   * 可用以上 setXxxData() 在构建之后设置参数.
    * @return
    */
   public static ActionHelper newInstance() {
     Core   core = Core.getInstance();
     String name = ActionHelper.class.getName();
     ActionHelper  inst = (ActionHelper) core.get(name);
-    if (null != inst) {
-        return  inst.clone ( );
+    if (inst == null) {
+        inst = new ActionHelper (new HashMap(), new HashMap(0), new HashMap(0), new HashMap(0));
+    } else {
+        inst = inst.clone( );
     }
-    return new ActionHelper(new HashMap(), new HashMap(), new HashMap(), new HashMap());
+    return inst;
   }
 
-  /**
-   * 克隆方法
-   * 用于使用 ActionRunner 时快速构建请求对象,
-   * 可用以上 setXxxxxData 在克隆之后设置参数.
-   * @return
-   */
   @Override
   public ActionHelper clone() {
     ActionHelper helper;

@@ -83,7 +83,7 @@ public class RoleSet extends CoreSerial implements CoreSerial.Mtimes, Set<String
             ActionHelper ah;
             try {
                 ah = ActionHelper.getInstance();
-            } catch (UnsupportedOperationException e) {
+            } catch (NullPointerException | UnsupportedOperationException e) {
                 break USK; // 不理会非动作环境
             }
             if ( ! "*".equals(ah.getSessibute(Cnst.USK_SES))) {

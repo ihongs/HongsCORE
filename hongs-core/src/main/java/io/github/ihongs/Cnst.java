@@ -118,7 +118,7 @@ public final class Cnst {
 
     public static final String  ADM_UID =  "1";    // 超级用户
 
-    public static final String  GUS_UID =  "0";    // 访客用户
+    public static final String  GST_UID =  "0";    // 访客用户
 
     public static final String  TOP_GID =  "0";    // 顶层用户组
 

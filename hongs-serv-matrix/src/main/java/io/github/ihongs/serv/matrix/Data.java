@@ -751,7 +751,7 @@ public class Data extends SearchEntity {
             }
             if (Synt.declare(od.get("ctime"), 0L ) >= ctime) {
             //  throw new HongsException(400, "@matrix:matrix.wait.one.second", getFormId(), id);
-                ctime = 0; // 仅更新最终记录
+                ctime = 0;
             }
         }
 
@@ -776,7 +776,7 @@ public class Data extends SearchEntity {
             */
 
             if (table.update(nd, where, param) > 0) {
-                CoreLogger.info("Update data for {}, id: {}, ctime: {}. {} {}", getFormId(), id, od.get("ctime"), rd.get("meno"), rd.get("memo"));
+                CoreLogger.info("Set data for {}, id: {}, ctime: {}. {} {}", getFormId(), id, od.get("ctime"), rd.get("meno"), rd.get("memo"));
                 return 1;
             } else {
                 return 0;
@@ -924,6 +924,8 @@ public class Data extends SearchEntity {
             Map nd = new HashMap();
             nd.put("state",   0  );
 
+            /*
+            // 改记日志, 以免冲掉
             // 操作备注和终端代码
             if (rd.containsKey("memo")) {
                 nd.put("memo", getText(rd, "memo"));
@@ -931,9 +933,14 @@ public class Data extends SearchEntity {
             if (rd.containsKey("meno")) {
                 nd.put("meno", getText(rd, "meno"));
             }
+            */
 
-            table.update(nd, where, param);
-            return 1;
+            if (table.update(nd, where, param) > 0) {
+                CoreLogger.info("End data for {}, id: {}, ctime: {}. {} {}", getFormId(), id, od.get("ctime"), rd.get("meno"), rd.get("memo"));
+                return 1;
+            } else {
+                return 0;
+            }
         }
 
         Map ud = new HashMap();

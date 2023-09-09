@@ -402,7 +402,7 @@ public class Data extends SearchEntity {
         if ( null != userId ) {
             return   userId ;
         }
-        return Synt.defoult((String) ActionHelper.getInstance().getSessibute(Cnst.UID_SES), Cnst.GST_UID);
+        return Synt.declare(ActionHelper.getInstance().getSessibute(Cnst.UID_SES), Cnst.GST_UID);
     }
 
     /**

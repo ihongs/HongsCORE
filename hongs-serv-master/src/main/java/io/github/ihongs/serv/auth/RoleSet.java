@@ -80,8 +80,13 @@ public class RoleSet extends CoreSerial implements CoreSerial.Mtimes, Set<String
          * 需要重新登录
          */
         USK: {
-            ActionHelper ah = ActionHelper.getInstance();
-            if (! "*".equals (ah.getSessibute(Cnst.USK_SES) ) ) {
+            ActionHelper ah;
+            try {
+                ah = ActionHelper.getInstance();
+            } catch (NullPointerException e) {
+                break USK; // 不理会非动作环境
+            }
+            if ( ! "*".equals(ah.getSessibute(Cnst.USK_SES) ) ) {
                 break USK; // 不理会非密码登录
             }
             ot = Synt.declare(ah.getSessibute(Cnst.UST_SES) , 0L);

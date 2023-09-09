@@ -54,40 +54,44 @@ public class ActionHelper implements Cloneable
   private HttpServletRequest  request;
 
   /**
-   * 请求数据
-   */
-  private Map<String, Object> requestData;
-
-  /**
-   * 容器数据
-   */
-  private Map<String, Object> contextData;
-
-  /**
-   * 会话数据
-   */
-  private Map<String, Object> sessionData;
-
-  /**
-   * 跟踪数据
-   */
-  private Map<String, String> cookiesData;
-
-  /**
    * HttpServletResponse
    */
   private HttpServletResponse response;
 
   /**
-   * 响应数据
-   */
-  private Map<String, Object> responseData;
-
-  /**
-   * 响应输出
+   * 字节输出
    */
   private OutputStream        outputStream;
+
+  /**
+   * 字符输出
+   */
   private       Writer        outputWriter;
+
+  /**
+   * 请求数据
+   */
+  private Map<String, Object> requestData = null;
+
+  /**
+   * 容器数据
+   */
+  private Map<String, Object> contextData = null;
+
+  /**
+   * 会话数据
+   */
+  private Map<String, Object> sessionData = null;
+
+  /**
+   * 跟踪数据
+   */
+  private Map<String, String> cookiesData = null;
+
+  /**
+   * 响应数据
+   */
+  private Map<String, Object> responseData = null;
 
   /**
    * 初始化助手(用于combat)
@@ -100,15 +104,14 @@ public class ActionHelper implements Cloneable
   public ActionHelper(Map req, Map att, Map ses, Map cok)
   {
     this.request      = null;
+    this.response     = null;
+    this.outputStream = null;
+    this.outputWriter = null;
+
     this.requestData  = req ;
     this.contextData  = att ;
     this.sessionData  = ses ;
     this.cookiesData  = cok ;
-
-    this.response     = null;
-    this.responseData = null;
-    this.outputStream = null;
-    this.outputWriter = null;
   }
 
   /**
@@ -136,13 +139,7 @@ public class ActionHelper implements Cloneable
     }
 
     this.request      = req ;
-    this.requestData  = null;
-    this.contextData  = null;
-    this.sessionData  = null;
-    this.cookiesData  = null;
-
     this.response     = rsp ;
-    this.responseData = null;
     this.outputStream = null;
     this.outputWriter = null;
   }
@@ -171,13 +168,7 @@ public class ActionHelper implements Cloneable
     }
 
     this.request      = req ;
-    this.requestData  = null;
-    this.contextData  = null;
-    this.sessionData  = null;
-    this.cookiesData  = null;
-
     this.response     = rsp ;
-    this.responseData = null;
     this.outputStream = null;
     this.outputWriter = null;
   }

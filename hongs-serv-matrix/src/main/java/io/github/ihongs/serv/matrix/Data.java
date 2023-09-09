@@ -764,9 +764,9 @@ public class Data extends SearchEntity {
             nd.put("data", getData(dd));
             nd.put("name", getText(dd, "name"));
 
-            // 操作备注和终端代码
-            // 改记日志, 以免冲掉
             /*
+            // 改记日志, 以免冲掉
+            // 操作备注和终端代码
             if (rd.containsKey("memo")) {
                 nd.put("memo", getText(rd, "memo"));
             }

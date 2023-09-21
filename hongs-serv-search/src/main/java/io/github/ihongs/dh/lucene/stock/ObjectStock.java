@@ -12,13 +12,10 @@ import org.apache.lucene.document.StringField;
 public class ObjectStock implements IStock {
     @Override
     public Field get(String k, Object v) {
-        if (v == null || "".equals(v)) {
-            v  = "{}" ;
-        } else
-        if (! ( v instanceof String )) {
-            v  = Dist.toString(v, true );
+        if (  !  (v instanceof String) ) {
+           v  =  Dist.toString(v , true);
         }
-        return new StoredField(k, v.toString());
+        return new StoredField(/**/k, v == null || v.equals("") ? "null" : (String) v /**/);
     }
     @Override
     public Field whr(String k, Object v) {

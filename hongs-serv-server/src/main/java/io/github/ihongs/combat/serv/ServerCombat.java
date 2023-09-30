@@ -125,12 +125,13 @@ public class ServerCombat {
     @Combat("start")
     public static void start(String[] args) throws HongsException {
         int    port = args.length >0 ? Integer.parseInt(args[0]) : 8080;
+        String proc = ManagementFactory.getRuntimeMXBean().getName().split("@", 2)[0]; // 进程ID
         String conf = Core.CORE_PATH + File.separator + "web.xml";
         if ( ! (new File(conf)).exists( ) ) {
                conf = Core.CONF_PATH + File.separator + "web.xml";
         }
         String serd = Core.DATA_PATH + File.separator + "server" ;
-        File   ppid = new  File(serd + File.separator +  port + ".pid");
+        File   ppid = new  File(serd + File.separator + "ppid" ) ;
         File   ppcd = new  File(serd);
 
         // 检查进程
@@ -143,11 +144,10 @@ public class ServerCombat {
             ppcd.mkdirs();
         }
         try (
-            FileWriter fw  = new FileWriter( ppid, true );
+            FileWriter fw  = new FileWriter(ppid, true);
         ) {
-            fw.write(ManagementFactory.getRuntimeMXBean()
-                        .getName( ).split( "@", 2 )[ 0 ]);
-            fw.close(  );
+            fw.write(proc + " " + port);
+            fw.close();
         } catch (IOException e) {
             throw new HongsException(e);
         }

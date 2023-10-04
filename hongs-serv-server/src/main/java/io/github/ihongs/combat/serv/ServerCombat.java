@@ -92,8 +92,12 @@ public class ServerCombat {
         webapp.setInitParameter(x+"useFileMappedBuffer", "false");
         webapp.setInitParameter(x+"dirAllowed"         , "true" );
 
+        // 启用软链、JSP
+        new io.github.ihongs.server.init.Linker( ).init( webapp );
+        new io.github.ihongs.server.init.Jasper( ).init( webapp );
+
         // 中止机制
-        Runtime.getRuntime( ).addShutdownHook( new Stoper(server, null) );
+        Runtime.getRuntime().addShutdownHook(new Stoper( server , null ));
 
         // 启动服务
         try {

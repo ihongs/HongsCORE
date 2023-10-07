@@ -1832,21 +1832,6 @@ if (!$(document.documentElement).hasClass( "deny-dark" )) {
 }
 
 /**
- * 筛选重置事件处理
- */
-$(document).on("reset", ".HsList .findbox", function() {
-    var findbox = $(this);
-    findbox.find("[data-ft=_fork]"). each ( function() {
-        hsFormFillFork($(this), {});
-    });
-    findbox.find("[data-fn].repeated.labelbox .label"  ).remove();
-    findbox.find("[data-fn].bootstrap-tagsinput .label").remove();
-    setTimeout(function() {
-        findbox.find(":submit").first().click();
-    } , 500);
-});
-
-/**
  * 关闭按钮事件处理
  */
 $(document).on("click", ".cancel,.recant" , function() {
@@ -1859,28 +1844,18 @@ $(document).on("click", ".cancel,.recant" , function() {
 });
 
 /**
- * 新开页导航滚到底
+ * 筛选重置事件处理
  */
-$(document).on("hsReady", "#main-context>.laps.labs>*>.openbox", function(ev) {
-    if ( ev.target != this ) return ;
-    var nav = $("#main-context>.laps.tabs");
-    var end = nav.prop  (  "scrollWidth"  );
-    nav.scrollLeft(end || 0);
+$(document).on("reset", ".HsList .findbox", function() {
+    var findbox = $(this);
+    findbox.find("[data-ft=_fork]"). each ( function() {
+        hsFormFillFork($(this), {});
+    });
+    findbox.find("[data-fn].repeated.labelbox   .label").remove();
+    findbox.find("[data-fn].bootstrap-tagsinput .label").remove();
+    setTimeout(function() {
+        findbox.find(":submit").first().click();
+    } , 500);
 });
-
-/**
- * 返回键联动导航条
- */
-$(window).on("popstate", function(ev) {
-    var ov  = ev.originalEvent;
-    if (! ov || ! ov.state || ! ov.state.crumb) return;
-    var li  = $("#main-context>.laps.tabs>li.active" );
-    if (! li.is(".home-crumb")) {
-        li.hsClose( );
-    }
-    history.pushState({crumb: true}, null, null);
-});
-history.pushState({crumb: true}, null, null);
-history.pushState({crumb: true}, null, null);
 
 })(jQuery);

@@ -205,7 +205,11 @@
         var menubar = $("#main-menubar");
         var menubox = $("#menu-context");
         var context = $("#main-context");
-        var content = context.children( ).last( );
+        var content = context.children().last();
+
+        // 标识导航组件已开启, 悬浮组件需避免层叠
+        $(document.body).addClass("toper-open");
+        $(document.body).addClass("sider-open");
 
         $(function() {
             if (menubar.find("li.active").size()) {
@@ -270,9 +274,29 @@
             if (t) { b.text(t); document.title = t; return; }
         });
 
-        // 标识导航组件已开启, 悬浮组件需避免层叠
-        $(document.body).addClass("toper-open");
-        $(document.body).addClass("sider-open");
+        // 返回联动导航条
+        $(window).on("popstate", function(ev) {
+            var ov = ev.originalEvent;
+            var li = navibar.find ( "li.active" );
+            if (ov && ov.state && ov.state.crumb) {
+                if (! li.is(".home-crumb")
+                &&  ! li.is(".host-crumb")
+                &&  ! li.is(".hold-crumb")) {
+                    li.hsClose();
+                }
+                history.pushState({crumb: true}, null, null);
+            }
+        });
+        history.pushState({crumb: true}, null, null);
+        history.pushState({crumb: true}, null, null);
+
+        // 新开导航滚到底
+        context.on("hsReady", ">*>.openbox", function(ev) {
+            if (ev.target == this) {
+                navibar.scrollLeft(navibar.prop("scrollWidth" ) || 0);
+            //  navibar.scrollTop (navibar.prop("scrollHeight") || 0);
+            }
+        });
 
         // 菜单折叠和展开
         menubar.find("li> ul").hide();

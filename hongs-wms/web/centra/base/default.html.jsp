@@ -83,11 +83,9 @@
     </head>
     <body class="sider-open toper-open">
         <div id="context">
-            <%if (!"!HIDE".equals($hrel) && !"HIDE".equals($hrel)) {%>
             <div id="headbox">
                 <div id="menu-context" data-load="centra/head.jsp" data-active="<%=$module+"/"+$entity+"/"%>" data-title="<%=$title%>"></div>
             </div>
-            <%} /* End if */%>
             <div id="bodybox">
                 <div id="main-context" class="container-fluid labs laps">
                     <div>

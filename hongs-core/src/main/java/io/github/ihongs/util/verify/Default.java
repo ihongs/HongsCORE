@@ -92,7 +92,7 @@ public class Default extends Rule {
         }}
 
         // 兼容旧版规则
-        if (def.length() > 2 ) {
+        if (def.length() > 2) {
         switch (def.substring(0, 2)) {
         case "==":
             return def.substring(1);

@@ -336,7 +336,7 @@ public class Form extends Model {
                 "__name__", "id",
                 "__type__", "hidden",
                 "deforce" , "create",
-                "default" , "=%id"
+                "default" , "@id"
             );
             if (idf != null) {
                 fld .putAll(idf);
@@ -372,7 +372,7 @@ public class Form extends Model {
                     "__name__", "muser",
                     "__type__", "hidden",
                     "disabled", "true",
-                    "default" , "=$uid",
+                    "default" , "@uid",
                     "deforce" , "always"
                 ));
             }
@@ -381,7 +381,7 @@ public class Form extends Model {
                     "__name__", "cuser",
                     "__type__", "hidden",
                     "disabled", "true",
-                    "default" , "=$uid",
+                    "default" , "@uid",
                     "deforce" , "create"
                 ));
             }
@@ -393,7 +393,7 @@ public class Form extends Model {
                     "__type__", "datetime",
                       "type"  , "timestamp",
                     "disabled", "true",
-                    "default" , "=%now",
+                    "default" , "@now",
                     "deforce" , "always"
                 ));
             }
@@ -403,7 +403,7 @@ public class Form extends Model {
                     "__type__", "datetime",
                       "type"  , "timestamp",
                     "disabled", "true",
-                    "default" , "=%now",
+                    "default" , "@now",
                     "deforce" , "create"
                 ));
             }

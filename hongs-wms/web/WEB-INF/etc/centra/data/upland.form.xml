@@ -8,7 +8,7 @@
             <param name="wordable">name,note</param>
         </field>
         <field text="ID" name="id" type="hidden">
-            <param name="default">=%id</param>
+            <param name="default">@id</param>
             <param name="deforce">create</param>
         </field>
         <field text="名称" name="name" type="text" required="yes">
@@ -65,7 +65,7 @@
             <param name="listable">yes</param>
             <param name="sortable">yes</param>
             <param name="readonly">yes</param>
-            <param name="default">=%now</param>
+            <param name="default">@now</param>
             <param name="deforce">always</param>
         </field>
         <field text="创建时间" name="ctime" type="datetime">
@@ -73,7 +73,7 @@
             <param name="listable">yes</param>
             <param name="sortable">yes</param>
             <param name="readonly">yes</param>
-            <param name="default">=%now</param>
+            <param name="default">@now</param>
             <param name="deforce">create</param>
         </field>
     </form>
@@ -86,7 +86,7 @@
             <param name="wordable">name,body</param>
         </field>
         <field text="ID" name="id" type="hidden">
-            <param name="default">=%id</param>
+            <param name="default">@id</param>
             <param name="deforce">create</param>
         </field>
         <field text="计划" name="plan_id" type="hidden">
@@ -146,7 +146,7 @@
         <field text="摘要" name="note" type="text">
             <param name="listable">yes</param>
             <param name="disabled">yes</param>
-            <param name="default">=@alias:body</param>
+            <param name="default">@alias:body</param>
             <param name="strip">html</param>
             <param name="limit">100 </param>
         </field>
@@ -155,7 +155,7 @@
             <param name="listable">yes</param>
             <param name="sortable">yes</param>
             <param name="readonly">yes</param>
-            <param name="default">=%now</param>
+            <param name="default">@now</param>
             <param name="deforce">always</param>
         </field>
         <field text="创建时间" name="ctime" type="datetime">
@@ -163,7 +163,7 @@
             <param name="listable">yes</param>
             <param name="sortable">yes</param>
             <param name="readonly">yes</param>
-            <param name="default">=%now</param>
+            <param name="default">@now</param>
             <param name="deforce">create</param>
         </field>
     </form>
@@ -175,7 +175,7 @@
             <param name="part_id">tick</param>
         </field>
         <field text="ID" name="id" type="hidden">
-            <param name="default">=%id</param>
+            <param name="default">@id</param>
             <param name="deforce">create</param>
         </field>
         <field text="任务" name="task_id" type="hidden">
@@ -189,7 +189,7 @@
             <param name="listable">yes</param>
             <param name="sortable">yes</param>
             <param name="readonly">yes</param>
-            <param name="default">=%now</param>
+            <param name="default">@now</param>
             <param name="deforce">create</param>
         </field>
         <field text="用户" name="cuser" type="fork">
@@ -200,7 +200,7 @@
             <param name="data-ak">cuser</param>
             <param name="data-at">centra/master/user/list?rb=id,name,head</param>
             <param name="data-al">centra/master/user/pick.html</param>
-            <param name="default">=$uid</param>
+            <param name="default">@uid</param>
             <param name="deforce">create</param>
         </field>
         <field text="消息" name="note"  type="textarea">

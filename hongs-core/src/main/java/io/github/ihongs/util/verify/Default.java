@@ -1,5 +1,6 @@
 package io.github.ihongs.util.verify;
 
+import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.ActionHelper;
@@ -17,9 +18,19 @@ import java.util.regex.Pattern;
  * 默认取值
  * <pre>
  * 规则参数:
- *  default 默认值, 可使用 =$会话属性, =#应用属性, =%now+-偏移毫秒, =%id 新唯一ID
- *  default 还可为 =@alias:别名字段, =@count:计数字段, =@merge:${其他字段}, =@abc.Def:param 自定方法
  *  deforce 强制写, 控制不同阶段, create 创建时, update 更新时, always 任何时, blanks 存 null 读补全
+ *  default 默认值, 可使用 @id 新唯一ID, @addr 客户端IP, @lang 访客语言, @zone 访客时区, 更多的如下:
+ *      @session.会话属性
+ *      @conetxt.应用属性
+ *      @now+或-偏移毫秒
+ *      @merge:合并字段, 如: ${字段}xxx${字段2}
+ *      @alias:别名字段
+ *      @count:字段计数
+ *      @min:字段最小值
+ *      @max:字段最大值
+ *      @avg:字段平均值
+ *      @sum:字段求和
+ *  default 还可为 @abc.Def:param 自定义方法, 需继承下方 Def
  * </pre>
  * @author Hongs
  */
@@ -73,120 +84,145 @@ public class Default extends Rule {
         }
         String def = ((String) val).trim();
 
-        // 需等号开头时, 用两个表一个
+        // 新版集中规则
+        if (def.startsWith("@@")) {
+            return def.substring(1); // 转义起始符号
+        }
+        if (def.startsWith( "@")) {
+            return get(watch, def.substring(1));
+        }
+
+        // 兼容旧版规则
         if (def.startsWith("==")) {
-            return def.substring(1);
+            return def.substring(1); // 转义起始符号
         }
-
-        // 应用属性
-        if (def.startsWith("=#")) {
-            return Core.getInstance(ActionHelper.class).getAttribute(def.substring(2));
-        }
-
-        // 会话属性
-        if (def.startsWith("=$")) {
-            return Core.getInstance(ActionHelper.class).getSessibute(def.substring(2));
-        }
-
-        if (def.startsWith("=%")) {
-            // 新唯一ID
-            if (def.equals("=%id")) {
-                return Core.newIdentity();
-            }
-
-            // 空或丢弃
-            if (def.equals("=%null")) {
-                return null ;
-            }
-            if (def.equals("=%void")) {
-                return QUIT;
-            }
-
-            // 动作选项
-            if (def.equals("=%zone")) {
-                return Core.ACTION_ZONE.get();
-            }
-            if (def.equals("=%lang")) {
-                return Core.ACTION_LANG.get();
-            }
-            if (def.equals("=%addr")) {
-                return Core.CLIENT_ADDR.get();
-            }
-
-            // 默认时间
-            Matcher mat = NOW.matcher(def);
-            if (mat.matches()) {
-               Date now = new Date();
-                String flag = mat.group(1);
-                String plus = mat.group(2);
-                if (flag.length() == 4) {// time 字串长度
-                    now.setTime(Core.ACTION_TIME.get( ));
-                }
-                if (plus != null) {
-                   Long msc = Long.valueOf(plus.substring(1));
-                    if (plus.charAt(0) == '+') {
-                        now.setTime(now.getTime() + msc);
-                    } else {
-                        now.setTime(now.getTime() - msc);
-                    }
-                }
-                return  now;
-            }
-        }
-
         if (def.startsWith("=@")) {
-            // 别名字段, 通常用于截取字串, 清理 HTML
-            if (def.startsWith("=@alias:")) {
-                return alias(watch, def.substring(8));
-            }
-
-            // 组合字段
-            if (def.startsWith("=@merge:")) {
-                return merge(watch, def.substring(8));
-            }
-
-            // 计数字段
-            if (def.startsWith("=@count:")) {
-                return count(watch, def.substring(8));
-            }
-
-            // 其他计算
-            if (def.startsWith("=@max:"  )) {
-                return max  (watch, def.substring(6));
-            }
-            if (def.startsWith("=@min:"  )) {
-                return min  (watch, def.substring(6));
-            }
-            if (def.startsWith("=@sum:"  )) {
-                return sum  (watch, def.substring(6));
-            }
-            if (def.startsWith("=@avg:"  )) {
-                return avg  (watch, def.substring(6));
-            }
-
-            // 自定方法
-            try {
-                String c, p ;
-                int i  = def.indexOf  (':');
-                if (i != -1) {
-                    c  = def.substring(2,i);
-                    p  = def.substring(1+i);
-                } else {
-                    c  = def.substring( 2 );
-                    p  = "" ;
-                }
-                return ((Def) Core.getInstance(c)).def(watch, p);
-            }
-            catch (HongsExemption | ClassCastException e) {
-                throw new HongsExemption(e);
-            }
+            return get(watch, def.substring(2));
+        }
+        if (def.startsWith("=%")) {
+            return get(watch, def.substring(2));
+        }
+        if (def.startsWith("=$")) {
+            return var("session", def.substring(2));
+        }
+        if (def.startsWith("=#")) {
+            return var("context", def.substring(2));
         }
 
         return  val;
     }
 
-    private static final Pattern NOW = Pattern.compile ("^=%(time|now)([+\\-]\\d+)?$");
-    private static final Pattern INJ = Pattern.compile ("\\$(\\$|\\w+|\\{.+?\\})");
+    private static final Pattern VAR = Pattern.compile("^(request|context|session|cookies)\\.(.+)$");
+    private static final Pattern NOW = Pattern.compile("^(time|now)([+\\-]\\d+)?$");
+    private static final Pattern INJ = Pattern.compile( "\\$(\\$|\\w+|\\{.+?\\})" );
+
+    private Object get(Value watch, String def) throws Wrong, Wrongs {
+        Matcher mat;
+        mat = VAR.matcher(def);
+        if (mat.matches()) {
+            return var(mat.group(1), mat.group(2));
+        }
+        mat = NOW.matcher(def);
+        if (mat.matches()) {
+            return now(mat.group(1), mat.group(2));
+        }
+
+        switch (def) {
+            case "null":
+                return null;
+            case "void":
+                return QUIT;
+            case "zone":
+                return Core.ACTION_ZONE.get();
+            case "lang":
+                return Core.ACTION_LANG.get();
+            case "addr":
+                return Core.CLIENT_ADDR.get();
+            case  "id" :
+                return Core.newIdentity();
+            case "uid" :
+                return ActionHelper.getInstance().getSessibute(Cnst.UID_SES);
+        }
+
+        String c, p ;
+        int i  = def. indexOf (':');
+        if (i != -1) {
+            c  = def.substring(1,i);
+            p  = def.substring(1+i);
+        } else {
+            c  = def.substring( 1 );
+            p  = "" ;
+        }
+
+        switch (c) {
+            case "alias":
+                return alias(watch, p);
+            case "merge":
+                return merge(watch, p);
+            case "count":
+                return count(watch, p);
+            case "max":
+                return max(watch, p);
+            case "min":
+                return min(watch, p);
+            case "sum":
+                return sum(watch, p);
+            case "avg":
+                return avg(watch, p);
+        }
+
+        // 自定方法
+        try {
+            return ((Def) Core.getInstance(c)).def(watch, p);
+        }
+        catch (HongsExemption | ClassCastException e) {
+            throw new HongsExemption(e);
+        }
+    }
+
+    private Object var(String feed, String part) {
+        Object  data = null;
+        String  path = null;
+        int p = part.indexOf(".");
+        if (p > 0) {
+            path = part.substring(1+p);
+            part = part.substring(0,p);
+        }
+        switch (feed) {
+            case "request":
+                data = ActionHelper.getInstance().getRequestData().get(part);
+                break;
+            case "context":
+                data = ActionHelper.getInstance().getAttribute(part);
+                break;
+            case "session":
+                data = ActionHelper.getInstance().getSessibute(part);
+                break;
+            case "cookies":
+                data = ActionHelper.getInstance().getCookibute(part);
+                break;
+        }
+        if (data != null && path != null) {
+            data  = Dict.getParam(Synt.asMap(data), path);
+        }
+        return data;
+    }
+
+    private Object now(String flag, String plus) {
+        Date now = new Date ( );
+        if (flag.length() == 4) {
+            now.setTime(Core.ACTION_TIME.get( )); // time 表示使用动作开始时间
+        }
+        if (plus != null) {
+            Long msc = Long.valueOf(plus.substring(1));
+            if (plus.charAt(0) == '+') {
+                now.setTime(now.getTime() + msc);
+            } else {
+                now.setTime(now.getTime() - msc);
+            }
+        }
+        return  now;
+    }
 
     public static Object alias(Value watch, String param) {
         Object v = Dict.getParam(watch.getCleans(), QUIT, param);
@@ -376,7 +412,7 @@ public class Default extends Rule {
 
     /**
      * 默认值调节器
-     * 用默认值配置 =@abc.Def:param
+     * 用默认值配置 @abc.Def:param
      */
     public static interface Def {
         public Object def(Value value, String param) throws Wrong, Wrongs;

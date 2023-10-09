@@ -141,7 +141,7 @@
             <param name="maxrepeat">6</param>
         </field>
         <field name="more" text="默认" type="text">
-            <param name="default">=%now,=%uid</param>
+            <param name="default">@now,@uid,@id</param>
             <param name="deforce">create,update,always,blanks</param>
         </field>
         <field name="uniq" text="唯一" type="unique">

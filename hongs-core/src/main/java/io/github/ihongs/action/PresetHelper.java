@@ -150,20 +150,23 @@ public class PresetHelper {
                 String k = mat.group(3);
                 String x = mat.group(4);
 
-                if ("request".equals(s)) {
+                if (null != s) switch (s) {
+                case "request":
                     data = help.getRequestData().get(n);
-                } else
-                if ("context".equals(s)) {
+                    break;
+                case "context":
                     data = help.getAttribute(n);
-                } else
-                if ("session".equals(s)) {
+                    break;
+                case "session":
                     data = help.getSessibute(n);
-                } else
-                if ("cookies".equals(s)) {
+                    break;
+                case "cookies":
                     data = help.getCookibute(n);
-                } else
-                {
-                    data = reqd.get (n);
+                    break;
+                default:
+                    data = reqd.get(n);
+                } else {
+                    data = reqd.get(n);
                 }
 
                 // 下级键, 可向深层提取

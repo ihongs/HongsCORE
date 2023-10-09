@@ -113,68 +113,20 @@ public class Default extends Rule {
     private static final Pattern NOW = Pattern.compile("^(time|now)([+\\-]\\d+)?$");
     private static final Pattern INJ = Pattern.compile( "\\$(\\$|\\w+|\\{.+?\\})" );
 
-    private Object get(Value watch, String def) throws Wrong, Wrongs {
-        Matcher mat;
-        mat = VAR.matcher(def);
-        if (mat.matches()) {
-            return var(mat.group(1), mat.group(2));
+    private Object now(String flag, String plus) {
+        Date now = new Date ( );
+        if (flag.length() == 4) {
+            now.setTime(Core.ACTION_TIME.get( )); // time 表示使用动作开始时间
         }
-        mat = NOW.matcher(def);
-        if (mat.matches()) {
-            return now(mat.group(1), mat.group(2));
+        if (plus != null) {
+            Long msc = Long.valueOf(plus.substring(1));
+            if (plus.charAt(0) == '+') {
+                now.setTime(now.getTime() + msc);
+            } else {
+                now.setTime(now.getTime() - msc);
+            }
         }
-
-        switch (def) {
-            case "null":
-                return null;
-            case "void":
-                return QUIT;
-            case "zone":
-                return Core.ACTION_ZONE.get();
-            case "lang":
-                return Core.ACTION_LANG.get();
-            case "addr":
-                return Core.CLIENT_ADDR.get();
-            case  "id" :
-                return Core.newIdentity();
-            case "uid" :
-                return ActionHelper.getInstance().getSessibute(Cnst.UID_SES);
-        }
-
-        String c, p ;
-        int i  = def. indexOf (':');
-        if (i != -1) {
-            c  = def.substring(1,i);
-            p  = def.substring(1+i);
-        } else {
-            c  = def.substring( 1 );
-            p  = "" ;
-        }
-
-        switch (c) {
-            case "alias":
-                return alias(watch, p);
-            case "merge":
-                return merge(watch, p);
-            case "count":
-                return count(watch, p);
-            case "max":
-                return max(watch, p);
-            case "min":
-                return min(watch, p);
-            case "sum":
-                return sum(watch, p);
-            case "avg":
-                return avg(watch, p);
-        }
-
-        // 自定方法
-        try {
-            return ((Def) Core.getInstance(c)).def(watch, p);
-        }
-        catch (HongsExemption | ClassCastException e) {
-            throw new HongsExemption(e);
-        }
+        return  now;
     }
 
     private Object var(String feed, String part) {
@@ -205,20 +157,62 @@ public class Default extends Rule {
         return data;
     }
 
-    private Object now(String flag, String plus) {
-        Date now = new Date ( );
-        if (flag.length() == 4) {
-            now.setTime(Core.ACTION_TIME.get( )); // time 表示使用动作开始时间
+    private Object get(Value watch, String def) throws Wrong, Wrongs {
+        Matcher mat;
+        mat = VAR.matcher(def);
+        if (mat.matches()) {
+            return var(mat.group(1), mat.group(2));
         }
-        if (plus != null) {
-            Long msc = Long.valueOf(plus.substring(1));
-            if (plus.charAt(0) == '+') {
-                now.setTime(now.getTime() + msc);
-            } else {
-                now.setTime(now.getTime() - msc);
-            }
+        mat = NOW.matcher(def);
+        if (mat.matches()) {
+            return now(mat.group(1), mat.group(2));
         }
-        return  now;
+
+        switch (def) {
+            case "null" :
+                return null;
+            case "void" :
+                return QUIT;
+            case "zone" :
+                return Core.ACTION_ZONE.get();
+            case "lang" :
+                return Core.ACTION_LANG.get();
+            case "addr" :
+                return Core.CLIENT_ADDR.get();
+            case  "id"  :
+                return Core.newIdentity(/**/);
+            case "uid"  :
+                return ActionHelper.getInstance().getSessibute(Cnst.UID_SES);
+        }
+
+        String  prm;
+        int pos  = def.indexOf(':');
+        if (pos != -1) {
+            prm  = def.substring(1+ pos);
+            def  = def.substring(0, pos);
+        } else {
+            prm  = null;
+        }
+
+        switch (def) {
+            case "alias":
+                return alias(watch, prm);
+            case "merge":
+                return merge(watch, prm);
+            case "count":
+                return count(watch, prm);
+            case  "max" :
+                return  max (watch, prm);
+            case  "min" :
+                return  min (watch, prm);
+            case  "sum" :
+                return  sum (watch, prm);
+            case  "avg" :
+                return  avg (watch, prm);
+        }
+
+        // 自定方法
+        return ((Def) Core.getInstance(def)).def(watch, prm);
     }
 
     public static Object alias(Value watch, String param) {

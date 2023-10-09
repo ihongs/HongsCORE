@@ -84,29 +84,23 @@ public class Default extends Rule {
         }
         String def = ((String) val).trim();
 
-        // 新版集中规则
-        if (def.startsWith("@@")) {
-            return def.substring(1); // 转义起始符号
-        }
-        if (def.startsWith( "@")) {
-            return get(watch, def.substring(1));
+        // 兼容旧版规则
+        if (def.length( ) > 2) switch (def.substring(0, 2)) {
+        case "@@": // 新版起始符号
+        case "==": // 旧版起始符号
+            return def.substring(1);
+        case "=#":
+            return var("context", def.substring(2));
+        case "=$":
+            return var("session", def.substring(2));
+        case "=%":
+            return get(watch, def.substring(2));
+        case "=@":
+            return get(watch, def.substring(2));
         }
 
-        // 兼容旧版规则
-        if (def.startsWith("==")) {
-            return def.substring(1); // 转义起始符号
-        }
-        if (def.startsWith("=@")) {
-            return get(watch, def.substring(2));
-        }
-        if (def.startsWith("=%")) {
-            return get(watch, def.substring(2));
-        }
-        if (def.startsWith("=$")) {
-            return var("session", def.substring(2));
-        }
-        if (def.startsWith("=#")) {
-            return var("context", def.substring(2));
+        if (def.startsWith("@")) {
+            return get(watch, def.substring(1));
         }
 
         return  val;

@@ -84,7 +84,7 @@ public class Default extends Rule {
         }
         String def = ((String) val).trim();
 
-        if (def.startsWith( "@")) {
+        if (def.startsWith("@" )) {
         if (def.startsWith("@@")) {
             return def.substring(1);
         } else {

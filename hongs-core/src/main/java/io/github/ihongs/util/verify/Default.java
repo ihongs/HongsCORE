@@ -106,7 +106,7 @@ public class Default extends Rule {
             return var("context", def.substring(2));
         }}
 
-        return  val;
+        return val;
     }
 
     private static final Pattern VAR = Pattern.compile("^(request|context|session|cookies)\\.(.+)$");

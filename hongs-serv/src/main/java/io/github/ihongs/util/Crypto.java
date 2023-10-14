@@ -123,16 +123,6 @@ public class Crypto {
             return ci != null;
         }
 
-        @Override
-        public byte[] apply(byte[] bs) {
-            if (ci != null) try {
-                bs = ci.doFinal (bs);
-            } catch (GeneralSecurityException ex) {
-                throw new HongsExemption (ex);
-            }
-            return bs;
-        }
-
     }
 
     /**
@@ -145,8 +135,18 @@ public class Crypto {
         }
 
         @Override
+        public byte[] apply(byte[] bs) {
+            if (bs != null && ci != null) try {
+                bs = ci.doFinal (bs);
+            } catch (GeneralSecurityException ex) {
+                throw new HongsExemption(ex, "@normal:core.encrypt.failed");
+            }
+            return bs;
+        }
+
+        @Override
         public String apply(String ds) {
-            if (ci != null) try {
+            if (ds != null && ci != null) try {
                 byte [] db;
                 Encoder ba;
                 ba = Base64.getEncoder();
@@ -155,7 +155,7 @@ public class Crypto {
                 db = ba. encode (db);
                 ds = new String (db, StandardCharsets.UTF_8);
             } catch (GeneralSecurityException ex) {
-                throw new HongsExemption (ex);
+                throw new HongsExemption(ex, "@normal:core.encrypt.failed");
             }
             return ds;
         }
@@ -172,6 +172,16 @@ public class Crypto {
         }
 
         @Override
+        public byte[] apply(byte[] bs) {
+            if (bs != null && ci != null) try {
+                bs = ci.doFinal (bs);
+            } catch (GeneralSecurityException ex) {
+                throw new HongsExemption(ex, "@normal:core.decrypt.failed");
+            }
+            return bs;
+        }
+
+        @Override
         public String apply(String ds) {
             if (ci != null) try {
                 byte [] db;
@@ -182,7 +192,9 @@ public class Crypto {
                 db = ci.doFinal (db);
                 ds = new String (db, StandardCharsets.UTF_8);
             } catch (GeneralSecurityException ex) {
-                throw new HongsExemption (ex);
+                throw new HongsExemption (ex, "@normal:core.decrypt.failed");
+            } catch (IllegalArgumentException ex) {
+                throw new HongsExemption (ex, "@normal:core.decrypt.invalid", ds);
             }
             return ds;
         }

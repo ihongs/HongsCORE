@@ -3,8 +3,8 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@include file="_base_.jsp"%>
 <%
-    // 仅开放接口则抛出资源缺失异常, 兼容旧版 NONE
-    if ($hrel != null && ($hrel.startsWith("!") || $hrel.equals("NONE"))) {
+    // 仅开放接口则抛出资源缺失异常
+    if ($hrel != null && $hrel.startsWith("!")) {
         throw new HongsException(404, $locale.translate("core.error.no.thing"));
     }
     String $func = "in_"+($module+"_"+$entity).replace ('/', '_');

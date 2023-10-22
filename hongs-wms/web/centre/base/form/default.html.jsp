@@ -72,7 +72,7 @@
     </head>
     <body class="plain-page">
         <div id="context" class="container">
-            <%if (_topic  != null && ! _topic.isEmpty()) {%>
+            <%if (_topic  != null && !_topic .isEmpty()) {%>
             <h1><%=_topic%></h1>
             <%}%>
             <%if (_header != null && !_header.isEmpty()) {%>

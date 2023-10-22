@@ -30,12 +30,9 @@
                 continue;
             }
             if (hrel != null
-            &&  hrel.startsWith("!")) {
-                continue;
-            }
-            // 兼容旧版
-            if ("NONE".equals(hrel)
-            ||  "HIDE".equals(hrel) ) {
+            &&  hrel.startsWith("!")
+            && !hrel.equals("!MENU")
+            && !hrel.equals("!EDGE")) {
                 continue;
             }
 
@@ -79,7 +76,17 @@
                         .append("</li>\r\n");
                     break;
                 case 0 :
-                    if (href.startsWith("common/menu.")) {
+                    if (href.startsWith("common/menu.")
+                    ||  href.startsWith("centra/menu.")
+                    ||  "!MENU".equals(hrel)) {
+                        continue;
+                    }
+                    if ("!EDGE".equals(hrel)) {
+                        menu.append("<li class=\"divider\"><span title=\"")
+                            .append( hint )
+                            .append("\">" )
+                            .append( text )
+                            .append("</span></li>\r\n");
                         continue;
                     }
                     actc = "actual " + actc ;

@@ -250,6 +250,14 @@ body {
     margin-right: -10px; /* 修正上层内补误差 */
 }
 
+#main-menubar .divider {
+    border-bottom: 1px solid #fff;
+    border-top   : 1px solid #ddd;
+    margin-right : 5px;
+    margin-left  : 5px;
+    text-align: center;
+}
+
 /* 头像 */
 
 #headbox .uhead {

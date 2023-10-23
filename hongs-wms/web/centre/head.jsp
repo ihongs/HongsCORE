@@ -16,7 +16,8 @@
         return menu;
     }
     int makeMenu(StringBuilder menu, List<Map> list, String acti) {
-        int code  = 0;
+        int code  =  0;
+        int edge  = -1;
 
         if (list != null) for (Map item: list) {
             String text = (String) item.get("text");
@@ -24,6 +25,7 @@
             String href = (String) item.get("href");
             String hrel = (String) item.get("hrel");
 //          String icon = (String) item.get("icon");
+            String actc ;
 
             if (href == null
             ||  href.startsWith("!")) {
@@ -39,24 +41,23 @@
             if (text == null) text = "";
             if (hint == null) hint = "";
 
-            String actc ;
             if (href.equals(acti)) {
-                actc  = "active";
-                code  = 2 ;
+                actc = "active";
+                code =  2;
             } else
             if (code == 0) {
-                actc  = "";
-                code  = 1 ;
+                actc = "";
+                code =  1;
             } else
             {
-                actc  = "";
-            }
+                actc = "";
+            }   edge = -1;
 
             List<Map> subs = (List) item.get("menus");
             StringBuilder subm = new StringBuilder( );
             switch ( makeMenu(subm, subs, acti) ) {
                 case 2 :
-                    code = 2 ;
+                    code =  2;
                     actc = "acting" ;
                 case 1 :
                     href = Core.SERV_PATH +"/"+ href;
@@ -78,20 +79,11 @@
                         .append("</li>\r\n");
                     break;
                 case 0 :
-                    if (href.startsWith("common/menu.")
-                    ||  href.startsWith("centre/menu.")
-                    ||  "!MENU".equals(hrel)) {
-                        continue;
-                    }
-                    if ("!EDGE".equals(hrel)) {
-                        menu.append("<li class=\"divider\"><span title=\"")
-                            .append( hint )
-                            .append("\">" )
-                            .append( text )
-                            .append("</span></li>\r\n");
-                        continue;
-                    }
-                    actc = "actual " + actc ;
+                if (! href.startsWith("common/menu.")
+                &&  ! href.startsWith("centre/menu.")
+                &&  ! "!MENU".equals(hrel)) {
+                if (! "!EDGE".equals(hrel)) {
+                    actc = "actual "+actc ;
                     href = Core.SERV_PATH +"/"+ href;
                     hrel = Core.SERV_PATH +"/"+ hrel;
                     menu.append("<li class=\"").append(actc).append("\">")
@@ -101,8 +93,20 @@
                         .append( text )
                         .append("</a>")
                         .append("</li>\r\n");
-                    break;
+                } else {
+                    if (edge != -1) {
+                        menu.setLength(edge);
+                    }   edge = menu.length();
+                    menu.append("<li class=\"divider\"><span title=\"")
+                        .append( hint )
+                        .append("\">" )
+                        .append( text )
+                        .append("</span></li>\r\n");
+                }}  break;
             }
+        }
+        if (edge != -1) {
+            menu.setLength(edge);
         }
 
         return  code;

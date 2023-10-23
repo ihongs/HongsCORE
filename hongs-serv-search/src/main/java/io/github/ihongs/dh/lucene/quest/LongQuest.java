@@ -15,36 +15,43 @@ public class LongQuest implements IQuest {
     }
     @Override
     public Query whr(String k, Object v) {
-        if (v == null || "".equals(v)) {
-            throw new NullPointerException("Query for "+k+" must be number, but null");
+        Long   n2;
+        try {
+            n2 = Synt.asLong(v);
         }
-        long    n2 = Synt.asLong(v);
-        Query   q2 = LongPoint.newExactQuery("@"+k, n2);
-        return  q2;
+        catch (ClassCastException ex) {
+            throw new   ClassCastException("Query for "+k+" must be number");
+        }
+        if (n2 == null) {
+            throw new NullPointerException("Query for "+k+" must be number");
+        }
+        Query  q2 = LongPoint.newExactQuery("@"+k, n2);
+        return q2;
     }
     @Override
     public Query whr(String k, Object n, Object x, boolean l, boolean g) {
-        if (n == null && x == null) {
-            throw new NullPointerException("Range for "+k+" must be number, but null");
-        }
-        long n2, x2;
-        if (n == null || "".equals(n)) {
-            n2 = Long.MIN_VALUE;
-        } else {
+        Long   n2, x2;
+        try {
             n2 = Synt.asLong(n);
-            if (!l) {
-                n2 = n2 + 1;
-            }
-        }
-        if (x == null || "".equals(x)) {
-            x2 = Long.MAX_VALUE;
-        } else {
             x2 = Synt.asLong(x);
-            if (!g) {
-                x2 = x2 - 1;
-            }
         }
-        Query   q2 = LongPoint.newRangeQuery("@"+k, n2, x2);
-        return  q2;
+        catch (ClassCastException ex) {
+            throw new   ClassCastException("Range for "+k+" must be number");
+        }
+        if (n2 == null && x2 == null) {
+            throw new NullPointerException("Range for "+k+" must be number");
+        }
+        if (n2 == null) {
+            n2 = Long.MIN_VALUE;
+        } else if (! l) {
+            n2 = n2 + 1;
+        }
+        if (x2 == null) {
+            x2 = Long.MAX_VALUE;
+        } else if (! g) {
+            x2 = x2 - 1;
+        }
+        Query  q2 = LongPoint.newRangeQuery("@"+k, n2, x2);
+        return q2;
     }
 }

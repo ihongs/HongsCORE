@@ -17,17 +17,37 @@ public class StringQuest implements IQuest {
     }
     @Override
     public Query whr(String k, Object v) {
-        if (null == v) {
+        String v2;
+        try {
+            v2 = Synt.asString(v);
+        }
+        catch (ClassCastException ex) {
+            throw new   ClassCastException("Query for "+k+" must be string");
+        }
+        if (v2 == null) {
             throw new NullPointerException("Query for "+k+" must be string, but null");
         }
+        v2 = v2.trim( );
 
-        Query  q2 = new  TermQuery (new Term("@"+k, v.toString()));
+        Query  q2 = new  TermQuery (new Term("@"+k, v2));
         return q2 ;
     }
     @Override
     public Query whr(String k, Object n, Object x, boolean l, boolean g) {
-        String n2 = Synt.declare(n, "");
-        String x2 = Synt.declare(x, "");
+        String n2, x2;
+        try {
+            n2 = Synt.asString(n);
+            x2 = Synt.asString(x);
+        }
+        catch (ClassCastException ex) {
+            throw new   ClassCastException("Range for "+k+" must be string");
+        }
+        if (n2 == null && x2 == null) {
+            throw new NullPointerException("Range for "+k+" must be string");
+        }
+        n2 = Synt.defoult(n2, "").trim();
+        x2 = Synt.defoult(x2, "").trim();
+
         Query  q2 = TermRangeQuery.newStringRange("@" + k, n2, x2, l, g);
         return q2 ;
     }

@@ -71,20 +71,26 @@ public class SearchQuest extends StringQuest {
 
     @Override
     public Query wdr(String k, Object v) {
-        if (null == v) {
-            throw new NullPointerException("Query for "+k+" must be string, but null");
+        String v2;
+        try {
+            v2 = Synt.asString(v);
         }
-
-        String  s = v.toString().trim();
+        catch (ClassCastException ex) {
+            throw new   ClassCastException("Query for "+k+" must be string");
+        }
+        if (v2 == null) {
+            throw new NullPointerException("Query for "+k+" must be string");
+        }
+        v2 = v2.trim( );
 
         // 是否转义
         if (des == null || !des) {
-            if (s . isEmpty( ) ) {
+            if (v2 . isEmpty( ) ) {
                 // 空串查全部
-                s = "[* TO *]" ;
+                v2 = "[* TO *]" ;
             } else {
                 // 拆分关键词
-                s = "\""+Syno.concat("\" \"", Synt.toWords(s))+"\"" ;
+                v2 = "\""+Syno.concat("\" \"", Synt.toWords(v2))+"\"" ;
             }
         }
 
@@ -109,7 +115,7 @@ public class SearchQuest extends StringQuest {
         if (agp != null) qp.setAutoGeneratePhraseQueries(agp);
 
         try {
-            Query  q2 = qp.parse(s);
+            Query  q2 = qp.parse(v2);
             return q2 ;
         } catch ( ParseException e) {
             throw new HongsExemption(e);

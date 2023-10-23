@@ -562,7 +562,8 @@ public final class Synt {
     }
 
     /**
-     * 针对 servlet 的 requestMap 规则, 多个取首个值
+     * 取单一值
+     * 有多个值将会抛出 ClassCastException
      * @param val
      * @return
      */
@@ -571,21 +572,37 @@ public final class Synt {
             return null;
         }
 
-        try {
-            if (val instanceof Object[]) {
-                return ((Object[]) val )[0];
-            } else
-            if (val instanceof List) {
-                return ((List) val ).get(0);
-            } else
-            if (val instanceof Set ) {
-                return ((Set ) val ).toArray()[0];
-            } else
-            if (val instanceof Map ) {
-                return ((Map ) val ).values( ).toArray()[0];
+        if (val instanceof Object[]) {
+            Object[] v2 = (Object[]) val;
+            switch ( v2.length ) {
+                case 0 : return null ;
+                case 1 : return v2[0];
+                default: throw new ClassCastException("'" + val + "' is not single");
             }
-        } catch (IndexOutOfBoundsException ex) {
-            return null;
+        } else
+        if (val instanceof List) {
+            List v2 = (List) val;
+            switch ( v2.size() ) {
+                case 0 : return null;
+                case 1 : for (Object v3 : v2) return v3;
+                default: throw new ClassCastException("'" + val + "' is not single");
+            }
+        } else
+        if (val instanceof Set ) {
+            Set  v2 = (Set ) val;
+            switch ( v2.size() ) {
+                case 0 : return null;
+                case 1 : for (Object v3 : v2) return v3;
+                default: throw new ClassCastException("'" + val + "' is not single");
+            }
+        } else
+        if (val instanceof Map ) {
+            Map  v2 = (Map ) val;
+            switch ( v2.size() ) {
+                case 0 : return null;
+                case 1 : for (Object v3 : v2.values()) return v3;
+                default: throw new ClassCastException("'" + val + "' is not single");
+            }
         }
 
         return val;

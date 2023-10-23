@@ -237,6 +237,7 @@ body {
 
 #main-menubar .caret {
     margin:  9px 0px;
+    margin-right: -10px; /* 修正上层内补误差 */
 }
 #main-menubar .caret {
     float: right;
@@ -246,16 +247,13 @@ body {
     float: right;
     color: rgba(51,51,51,0.8);
 }
-#main-menubar .caret {
-    margin-right: -10px; /* 修正上层内补误差 */
-}
 
 #main-menubar .divider {
-    border-bottom: 1px solid #ccc;
+    color: rgba(96,96,96,0.0);
+    border-bottom: 1px solid rgba(210,210,210,0.0);
     margin-right : 5px;
     margin-left  : 5px;
     text-align: center;
-    color : #888 ;
 }
 
 /* 头像 */

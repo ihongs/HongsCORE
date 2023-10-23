@@ -274,8 +274,8 @@
 
         $(function() {
             // 清理无效多余的菜单分隔
-            menubar.find(".divider"). prev (".divider").remove();
-            menubar.find( "li:last").filter(".divider").remove();
+            //menubar.find(".divider"). prev (".divider").remove();
+            //menubar.find( "li:last").filter(".divider").remove();
             // 获取并设置当前模块标题
             var b, t;
             b = navibar.find(".home-crumb .title");

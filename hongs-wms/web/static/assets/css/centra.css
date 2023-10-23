@@ -249,18 +249,27 @@ body {
 }
 
 #main-menubar .divider {
-    color: rgba(51,51,51,0.8);
-    border-bottom: 1px solid rgba(51,51,51,0.5);
+    color: rgba(51,51,51,0.6);
+    border-bottom: 1px solid rgba(51,51,51,0.3);
     margin-right : 5px;
     margin-left  : 5px;
 }
 #main-menubar .divider span {
-    text-align: center;
+    text-align : center;
+    font-weight: bold;
     display: block;
-    padding: 20px 16px 10px 16px;
+}
+#main-menubar .divider span {
+    padding: 11px 16px 0 16px;
 }
 #main-menubar .divider span:empty {
-    padding: 0;
+    display: none;
+}
+#main-menubar ul ul .divider span {
+    padding:  7px 16px 0 16px;
+}
+#main-menubar ul ul .divider span:empty {
+    display: none;
 }
 
 /* 头像 */

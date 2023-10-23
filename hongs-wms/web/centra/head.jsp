@@ -52,7 +52,6 @@
             {
                 actc = "";
             }
-                edge = -1;
 
             List<Map> subs = (List) item.get("menus");
             StringBuilder subm = new StringBuilder( );
@@ -63,6 +62,7 @@
                 case 1 :
                     href = Core.SERV_PATH +"/"+ href;
                     hrel = Core.SERV_PATH +"/"+ hrel;
+                    edge = -1;
                     menu.append("<li class=\"").append(actc).append("\">")
                         .append( "<a title=\"").append(hint).append("\" ")
                         .append(     "href=\"").append(href).append("\" ")
@@ -85,6 +85,7 @@
                     actc = "actual "+actc ;
                     href = Core.SERV_PATH +"/"+ href;
                     hrel = Core.SERV_PATH +"/"+ hrel;
+                    edge = -1;
                     menu.append("<li class=\"").append(actc).append("\">")
                         .append( "<a title=\"").append(hint).append("\" ")
                         .append(     "href=\"").append(href).append("\" ")

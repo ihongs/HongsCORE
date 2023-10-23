@@ -251,11 +251,11 @@ body {
 }
 
 #main-menubar .divider {
-    border-bottom: 1px solid #fff;
-    border-top   : 1px solid #ddd;
+    border-bottom: 1px solid #ccc;
     margin-right : 5px;
     margin-left  : 5px;
     text-align: center;
+    color : #888 ;
 }
 
 /* 头像 */

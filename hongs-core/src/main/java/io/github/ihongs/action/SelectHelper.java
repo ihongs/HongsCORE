@@ -196,20 +196,20 @@ public class SelectHelper {
 
             if (null != defo) {
                 if (defo instanceof String) {
-                DEF: {
+                DEFS: {
                     String defs = (String) defo;
                     String typa = (String) mt.get("type"); // 细分类型
                     if (defs.startsWith("@" )) {
                     if (defs.startsWith("@@")) {
                         defs = defs.substring(1);
                     }  else {
-                        break DEF;
+                        break  DEFS;
                     }} else
                     if (defs.startsWith("=" )) {
                     if (defs.startsWith("==")) {
                         defs = defs.substring(1);
                     }  else {
-                        break DEF;
+                        break  DEFS;
                     }}  defo = infoAsType ( defs , typa ); // 校准类型
                     infos.put(name , defo);
                 }} else {

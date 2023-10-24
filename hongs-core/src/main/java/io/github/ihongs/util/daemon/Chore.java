@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 守护线程池
  *
  * 系统配置项(default.properties):
- *  core.daemon.pool.size=线程池的容量, 默认为处理器核数 - 1
+ *  core.daemon.pool.size=线程池的容量, 默认为处理器核数 * 2
  *  core.daemon.run.timed=常规定时间隔, 默认为十分钟 (00:10)
  *  core.daemon.run.daily=日常维护时间, 默认每日零点 (00:00)
  *
@@ -41,8 +41,8 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
         CoreConfig  cc = CoreConfig.getInstance("default");
         String tt = cc.getProperty("core.daemon.run.timed", "00:10");
         String dt = cc.getProperty("core.daemon.run.daily", "00:00");
-        int    ps = Runtime.getRuntime().availableProcessors() - 1  ;
-               ps = cc.getProperty("core.daemon.pool.size", ps > 1 ? ps : 1);
+        int    ps = Runtime.getRuntime().availableProcessors() * 2  ;
+               ps = cc.getProperty("core.daemon.pool.size", ps > 2 ? ps : 2);
         DateTimeFormatter df = DateTimeFormatter . ofPattern("H:m" );
 
         try {

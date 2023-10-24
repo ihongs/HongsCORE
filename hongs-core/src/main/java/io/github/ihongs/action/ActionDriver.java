@@ -15,6 +15,7 @@ import io.github.ihongs.util.daemon.Gate;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.time.ZoneId;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.HashMap;
@@ -183,11 +184,11 @@ public class ActionDriver implements Filter, Servlet {
                 }
             }
 
-            // 设置默认语言
+            // 默认语言时区
             Core.ACTION_LANG.set(def.getProperty("core.language.default", Cnst.LANG_DEF));
             Core.ACTION_ZONE.set(def.getProperty("core.timezone.default", Cnst.ZONE_DEF));
-            TimeZone.setDefault ( TimeZone.getTimeZone(Core.getZoneId( )) );
-            Locale  .setDefault ( Core.getLocale() );
+            Locale  .setDefault (Core.getLocale  ());
+            TimeZone.setDefault (Core.getTimeZone());
         }
 
         // 调用一下可预加载动作类

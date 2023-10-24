@@ -157,7 +157,7 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
     public ScheduledFuture run(Runnable task, int delay) {
         if (4 == (4 & Core.DEBUG)) {
             String time = Inst.format(delay * 1000 + System.currentTimeMillis(), "MM-dd HH:mm:ss", Locale.getDefault(), ZoneId.systemDefault());
-            String name = task. getClass ( ).getName( );
+            String name = task.getClass().getName();
             CoreLogger.trace("Will run " + name + " at " + time);
         }
 
@@ -166,20 +166,48 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
 
     /**
      * 定时任务
+     * 同 run(task, delay, perio, false)
      * @param task
      * @param delay 延迟秒数
      * @param perio 间隔秒数
      * @return
      */
     public ScheduledFuture run(Runnable task, int delay, int perio) {
+        return run(task, delay, perio, false);
+    }
+
+    /**
+     * 定时任务
+     * @param task
+     * @param delay 延迟秒数
+     * @param perio 间隔秒数
+     * @param rate  true 从开始执行算间隔, false 从执行完成算间隔
+     * @return
+     */
+    public ScheduledFuture run(Runnable task, int delay, int perio, boolean rate) {
         if (4 == (4 & Core.DEBUG)) {
             String time = Inst.format(delay * 1000 + System.currentTimeMillis(), "MM-dd HH:mm:ss", Locale.getDefault(), ZoneId.systemDefault());
             String timr = Inst.phrase(perio * 1000);
-            String name = task. getClass ( ).getName( );
-            CoreLogger.trace("Will run " + name + " at " + time + ", "+ timr);
+            String name = task.getClass().getName();
+            CoreLogger.trace("Will run " + name + " at " + time + (rate ? ", rate: " : ", delay: ") + timr);
         }
 
-        return SES.scheduleAtFixedRate(task , delay, perio, TimeUnit.SECONDS);
+        return rate
+             ? SES.scheduleAtFixedRate   (task , delay, perio, TimeUnit.SECONDS)
+             : SES.scheduleWithFixedDelay(task , delay, perio, TimeUnit.SECONDS);
+    }
+
+    /**
+     * 每日任务
+     * 当前时区
+     * @param task
+     * @param hour 几点(0-23)
+     * @param min  几分
+     * @param sec  几秒
+     * @return
+     */
+    public ScheduledFuture runDaily(Runnable task, int hour, int min, int sec) {
+        return runDaily(task, hour, min, sec, Core.getZoneId());
     }
 
     /**
@@ -188,18 +216,19 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
      * @param hour 几点(0-23)
      * @param min  几分
      * @param sec  几秒
+     * @param zone 时区
      * @return
      */
-    public ScheduledFuture runDaily(Runnable task, int hour, int min, int sec) {
-        // 计算延时
-        LocalDateTime cal0 = LocalDateTime.now();
-        LocalDateTime cal1 = LocalDateTime.of(cal0.getYear(), cal0.getMonth(), cal0.getDayOfMonth(), hour, min, sec);
+    public ScheduledFuture runDaily(Runnable task, int hour, int min, int sec, ZoneId zone) {
+        // 计算延时, 指定时区
+        LocalDateTime cal0 = LocalDateTime.now(zone);
+        LocalDateTime cal1 = LocalDateTime.of (cal0.getYear(), cal0.getMonth(), cal0.getDayOfMonth(), hour, min, sec);
         if (cal1.isBefore( cal0 ) ) {
             cal1 = cal1.plusDays(1);
         }
         int ddt = (int) Duration.between(cal1, cal0).getSeconds() + 1;
 
-        return run(task, ddt, DDP );
+        return run(task, ddt, DDP, true );
     }
 
     /**
@@ -210,15 +239,15 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
      * @return
      */
     public ScheduledFuture runDaily(Runnable task) {
-        // 计算延时
+        // 计算延时, 默认时区
         LocalDateTime cal0 = LocalDateTime.now();
-        LocalDateTime cal1 = LocalDateTime.of(cal0.getYear(), cal0.getMonth(), cal0.getDayOfMonth(), 0, 0, 0);
+        LocalDateTime cal1 = LocalDateTime.of (cal0.getYear(), cal0.getMonth(), cal0.getDayOfMonth(), 0, 0, 0);
         if (cal1.isBefore( cal0 ) ) {
             cal1 = cal1.plusDays(1);
         }
         int ddt = (int) Duration.between(cal1, cal0).getSeconds() + 1;
 
-        return run(task, ddt, DDP);
+        return run(task, ddt, DDP, true );
     }
 
     /**
@@ -229,7 +258,7 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
      * @return
      */
     public ScheduledFuture runTimed(Runnable task) {
-        return run(task, DTT, DTT);
+        return run(task, DTT, DTT, false);
     }
 
 }

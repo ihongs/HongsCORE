@@ -39,7 +39,6 @@ public class SelectHelper {
 
     private final static  Pattern  HOSTP = Pattern.compile("^(\\w+:)?//");
     private final static  Pattern  SERVP = Pattern.compile("^\\$\\{?SER");
-    private final static  Pattern  DEFTP = Pattern.compile( "^=[~@#$%]" );
 
     private final Map<String, Object> infos;
     private final Map<String, Map> enums;

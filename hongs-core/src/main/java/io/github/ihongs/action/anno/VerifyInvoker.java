@@ -60,11 +60,23 @@ public class VerifyInvoker implements FilterInvoker {
             if (up == null) {
                 Object hd = chains.getHandle(  );
                 Object id = dat.get(Cnst.ID_KEY);
-                type = /***/ "update".equals(hd)
-                  || (null!=id && !"".equals(id))
-                          ? (byte) 1 : (byte) 0 ;
+                if ("update".equals(hd)) {
+                    type = (byte) 1;
+                } else
+                if ("create".equals(hd)) {
+                    type = (byte) 0;
+                } else
+                if (null != id && !"".equals(id)) {
+                    type = (byte) 1;
+                } else {
+                    type = (byte) 0;
+                }
             } else {
-                type = up ? (byte) 1 : (byte) 0 ;
+                if (up) {
+                    type = (byte) 1;
+                } else {
+                    type = (byte) 0;
+                }
             }
         }
         boolean prp = mode <= 0 ;

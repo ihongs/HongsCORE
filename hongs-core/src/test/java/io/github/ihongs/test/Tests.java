@@ -5,38 +5,16 @@ import io.github.ihongs.combat.CombatHelper;
 import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Synt;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
-import junit.framework.TestCase;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
 import org.junit.Test;
 
 /**
- *
+ * 杂项测试
  * @author Hongs
  */
-public class Tests extends TestCase {
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    @Override
-    public void setUp() {
-    }
-
-    @After
-    @Override
-    public void tearDown() {
-    }
+public class Tests {
 
     @Test
     public void testGetOpts() {
@@ -105,7 +83,7 @@ public class Tests extends TestCase {
     }
 
     /**
-     * @see io.github.ihongs.action.ActionDriver getClientAddr
+     * @see io.github.ihongs.action.ActionDriver.getClientAddr
      * @param h_0
      * @return
      */

@@ -6,41 +6,14 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
-import junit.framework.TestCase;
 import static junit.framework.TestCase.assertEquals;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * 测试 io.github.ihongs.util.Dusk
+ * 测试 io.github.ihongs.util.Inst
  * @author Hongs
  */
-public class TestUtilDusk extends TestCase {
-
-    public TestUtilDusk() {
-
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    @Override
-    public void setUp() {
-    }
-
-    @After
-    @Override
-    public void tearDown() {
-    }
+public class TestUtilInst {
 
     @Test
     public void testFormat() {

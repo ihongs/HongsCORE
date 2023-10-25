@@ -13,7 +13,7 @@ import org.junit.Test;
  * @author Hongs
  */
 public class TestCore {
-    
+
     @Test
     public void test() throws InterruptedException {
         final ExecutorService es = Executors.newFixedThreadPool(10);
@@ -30,15 +30,15 @@ public class TestCore {
                 );
             }
         };
-        
+
         for (int i = 0; i < 10; i ++ ) {
             es.execute(() -> rn.run());
         }
-        
+
         es.shutdown ();
         es.awaitTermination(10, TimeUnit.SECONDS);
-        
+
         assertEquals(1, ai.get());
     }
-    
+
 }

@@ -5,40 +5,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import junit.framework.TestCase;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import static junit.framework.TestCase.assertEquals;
 import org.junit.Test;
 
 /**
  * 测试 io.github.ihongs.util.Syno
  * @author Hongs
  */
-public class TestUtilSyno extends TestCase {
-
-    public TestUtilSyno() {
-
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    @Override
-    public void setUp() {
-    }
-
-    @After
-    @Override
-    public void tearDown() {
-    }
+public class TestUtilSyno {
 
     @Test
     public void testHex() {

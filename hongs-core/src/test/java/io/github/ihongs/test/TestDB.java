@@ -3,16 +3,11 @@ package io.github.ihongs.test;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.db.util.AssocCase;
 import io.github.ihongs.db.util.FetchCase;
-import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Synt;
 import java.util.HashMap;
 import java.util.Map;
-import static junit.framework.Assert.fail;
 import static junit.framework.TestCase.assertEquals;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import static junit.framework.TestCase.fail;
 import org.junit.Test;
 
 /**
@@ -20,25 +15,6 @@ import org.junit.Test;
  * @author Hongs
  */
 public class TestDB {
-
-    public TestDB() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
 
     @Test
     public void testFetchCase() throws HongsException {
@@ -82,7 +58,7 @@ public class TestDB {
         if (! vali.equals(copy.toString())) {
             fail("提取下级查询异常\r\n\t目标: "+vali+"\r\n\t实际: "+caze.toString());
         }
-        
+
         caze = new FetchCase(FetchCase.CLEVER);
         caze.from   ("xxx", "x")
             .join   ("yyy", "y", "xxx_id = :id")
@@ -91,7 +67,7 @@ public class TestDB {
         if (! vali.equals(caze.toString())) {
             fail("智能模式构建异常\r\n\t目标: "+vali+"\r\n\t实际: "+caze.toString());
         }
-        
+
         caze = new FetchCase(FetchCase.CLEVER);
         caze.from   ("a_master_user", "user")
             .filter ("state != 1 AND unit_id IN (?)", 1)
@@ -104,7 +80,7 @@ public class TestDB {
             fail("实例复合查询异常\r\n\t目标: "+vali+"\r\n\t实际: "+caze.toString());
         }
     }
-    
+
     @Test
     public void testAssocCase() throws HongsException {
         FetchCase fc = new FetchCase(  );

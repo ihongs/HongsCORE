@@ -1,41 +1,15 @@
 package io.github.ihongs.test;
 
 import io.github.ihongs.util.Synt;
-import junit.framework.TestCase;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import static junit.framework.TestCase.assertEquals;
 import org.junit.Test;
 
 /**
- *
- * @author Kevin
+ * 测试 io.github.ihongs.util.Synt
+ * @author Hongs
  */
-public class TestUtilSynt extends TestCase {
+public class TestUtilSynt {
 
-    public TestUtilSynt() {
-
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    @Override
-    public void setUp() {
-    }
-
-    @After
-    @Override
-    public void tearDown() {
-    }
-    
     @Test
     public void testCompare() {
         assertEquals(Synt.compare("a" , "a" , false),  0);

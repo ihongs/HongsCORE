@@ -14,43 +14,21 @@ import io.github.ihongs.util.verify.Wrongs;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
-import junit.framework.TestCase;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.fail;
 import org.junit.Test;
 
 /**
- *
+ * 测试 io.github.ihongs.util.verify.Verify
  * @author Hongs
  */
-public class TestVerify extends TestCase {
-    
-    
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    @Override
-    public void setUp() {
-    }
-
-    @After
-    @Override
-    public void tearDown() {
-    }
+public class TestVerify {
 
     @Test
     public void testVerify() throws IOException {
         // 避免路径缺失致写入项目主目录
         CombatRunner.init(new String[] {"--COREPATH", "target"});
-        
+
         try {
             Verify verify = new Verify()
                 .addRule("name",
@@ -79,5 +57,5 @@ public class TestVerify extends TestCase {
             fail(Dist.toString(wr.getErrors()));
         }
     }
-    
+
 }

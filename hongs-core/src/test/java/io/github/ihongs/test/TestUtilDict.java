@@ -1,6 +1,5 @@
 package io.github.ihongs.test;
 
-import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Dict;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,9 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import junit.framework.TestCase;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -25,14 +22,7 @@ public class TestUtilDict extends TestCase {
     private Map dict;
 
     public TestUtilDict() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
+        super();
     }
 
     @Before

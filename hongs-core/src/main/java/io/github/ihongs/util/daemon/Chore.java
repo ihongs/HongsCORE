@@ -251,4 +251,36 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
         return ran (task, DTT, DTT);
     }
 
+    /**
+     * 最小任务间隔
+     * 规避定时任务执行太久致后续连续触发
+     * 注意: 此封装的实例不得多点并行执行
+     */
+    public static class Least implements Runnable {
+
+        private final Runnable R;
+        private final long L;
+        private       long T;
+
+        /**
+         * @param task
+         * @param least 最小间隔, 低于此秒数则略过
+         */
+        public Least(Runnable task, int least) {
+            L= least * 1000L; // 转为毫秒
+            R= task;
+            T= 0L;
+        }
+
+        @Override
+        public void run() {
+            long t = System.currentTimeMillis();
+            long l = t - T;
+            this.T = t ;
+            if ( L < l )
+                 R.run();
+        }
+
+    }
+
 }

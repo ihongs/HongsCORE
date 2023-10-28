@@ -260,7 +260,7 @@ public class ActionDriver implements Filter, Servlet {
         CoreLogger.info(
             "Action server is stopped"
             + "\r\n\tSERVER_ID   : {}"
-            + "\r\n\tExec time   : {}"
+            + "\r\n\tServ time   : {}"
             + "\r\n\tInstances   : {}",
             Core.SERVER_ID,
             Inst.phrase(time),

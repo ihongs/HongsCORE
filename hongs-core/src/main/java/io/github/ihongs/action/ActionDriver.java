@@ -260,8 +260,8 @@ public class ActionDriver implements Filter, Servlet {
         CoreLogger.info(
             "Action server is stopped"
             + "\r\n\tSERVER_ID   : {}"
-            + "\r\n\tRuntime     : {}"
-            + "\r\n\tObjects     : {}",
+            + "\r\n\tExec time   : {}"
+            + "\r\n\tInstances   : {}",
             Core.SERVER_ID,
             Inst.phrase(time),
             core.toString ( )
@@ -502,8 +502,8 @@ public class ActionDriver implements Filter, Servlet {
                   .append("\r\n\tThread      : ").append(Thread.currentThread().getName())
                   .append("\r\n\tMethod      : ").append(req.getMethod())
                   .append("\r\n\tMember      : ").append(mem)
-                  .append("\r\n\tRuntime     : ").append(tim)
-                  .append("\r\n\tObjects     : ").append(core.toString());
+                  .append("\r\n\tExec time   : ").append(tim)
+                  .append("\r\n\tInstances   : ").append(core.toString());
 
                 /**
                  * 显示请求报头及输入输出

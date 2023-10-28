@@ -284,70 +284,27 @@ public class CombatRunner implements Runnable
 
     cnf = CoreConfig.getInstance("default");
 
-    String zone = null;
-    if (opts.containsKey("TIMEZONE"))
-    {
-      zone = (String) opts.get ("TIMEZONE");
-    }
-    if (zone == null || zone.length() == 0)
-    {
-      if (cnf.getProperty("core.timezone.probing", false))
-      {
-        zone = TimeZone.getDefault( ).getID( );
-      }
-      else
-      {
-        zone = cnf.getProperty("core.timezone.default", Cnst.ZONE_DEF);
-      }
-    }
-    Core.ACTION_ZONE.set(zone);
+    // 默认语言时区
+    Core.ACTION_LANG.set(cnf.getProperty("core.language.default", Cnst.LANG_DEF));
+    Core.ACTION_ZONE.set(cnf.getProperty("core.timezone.default", Cnst.ZONE_DEF));
+    Locale  .setDefault(Core.getLocale  ());
+    TimeZone.setDefault(Core.getTimeZone());
 
-    String lang = null;
-    if (opts.containsKey("LANGUAGE"))
-    {
-      lang = (String) opts.get ("LANGUAGE");
-    }
-    if (lang == null || lang.length() == 0)
-    {
-      if (cnf.getProperty("core.language.probing", false))
-      {
-        /**
-         * 获取系统默认的区域
-         * 仅保留 语言[_地区]
-         */
-        lang = Locale.getDefault().toString();
-        int pos  = lang.indexOf('_');
-        if (pos  > 0) {
-            pos  = lang.indexOf('_', pos + 1);
-        if (pos  > 0) {
-            lang = lang.substring(0, pos/**/);
-        }}
-        lang = CoreLocale.getAcceptLanguage(lang);
-        if (lang == null)
-        {
-          lang = cnf.getProperty("core.language.default", Cnst.LANG_DEF);
+    // 当前语言时区
+    String lang = (String) opts.get("LANGUAGE");
+    if (lang != null && !lang.isEmpty()) {
+        lang  = CoreLocale.getAcceptLanguage(lang);
+        if (lang != null) {
+            Core.ACTION_LANG.set(lang);
         }
-      }
-      else
-      {
-          lang = cnf.getProperty("core.language.default", Cnst.LANG_DEF);
-      }
     }
-    else
-    {
-      /**
-       * 检查语言参数设置
-       */
-      String leng;
-      leng = lang;
-      lang = CoreLocale.getAcceptLanguage(lang);
-      if (lang ==null)
-      {
-        CoreLogger.error("ERROR: Unsupported language: " + leng + ".");
-        System.exit(1);
-      }
+    String zone = (String) opts.get("TIMEZONE");
+    if (zone != null && !zone.isEmpty()) {
+        zone  = CoreLocale.getNormalTimeZone(zone);
+        if (zone != null) {
+            Core.ACTION_ZONE.set(zone);
+        }
     }
-    Core.ACTION_LANG.set(lang);
 
     /** 初始化动作助手, 可复用动作组件 **/
 

@@ -187,8 +187,8 @@ public class ActionDriver implements Filter, Servlet {
             // 默认语言时区
             Core.ACTION_LANG.set(def.getProperty("core.language.default", Cnst.LANG_DEF));
             Core.ACTION_ZONE.set(def.getProperty("core.timezone.default", Cnst.ZONE_DEF));
-            Locale  .setDefault (Core.getLocale  ());
-            TimeZone.setDefault (Core.getTimeZone());
+            Locale  .setDefault(Core.getLocale  ());
+            TimeZone.setDefault(Core.getTimeZone());
         }
 
         // 调用一下可预加载动作类
@@ -462,10 +462,10 @@ public class ActionDriver implements Filter, Servlet {
              * 过滤一下避免错误时区
              */
             if (zone != null) {
-                zone  = TimeZone.getTimeZone(zone).getID();
-//          if (zone != null) {
+                zone  = CoreLocale.getNormalTimeZone(zone);
+            if (zone != null) {
                 Core.ACTION_ZONE.set(zone);
-//          }
+            }
             }
         }
     }

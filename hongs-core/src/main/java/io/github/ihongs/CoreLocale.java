@@ -3,9 +3,12 @@ package io.github.ihongs;
 import io.github.ihongs.util.Syno;
 import java.io.File;
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Arrays;
 import java.util.Map;
+import java.time.ZoneId;
+import java.time.DateTimeException;
+import java.time.zone.ZoneRulesException;
 
 /**
  * 语言资源读取工具
@@ -468,6 +471,23 @@ public class CoreLocale
         +"_"+lang.substring(1 + p).toUpperCase();
     } else {
       return lang.toLowerCase( );
+    }
+  }
+
+  /**
+   * 检查时区是否有效
+   * @param zone
+   * @return 时区标识, 如UT+08:00, 错误则为null
+   */
+  public static String getNormalTimeZone(String zone)
+  {
+    try
+    {
+      return ZoneId.of(zone).getId();
+    }
+    catch (DateTimeException e)
+    {
+      return null;
     }
   }
 

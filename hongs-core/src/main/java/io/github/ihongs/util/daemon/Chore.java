@@ -46,20 +46,20 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
         DateTimeFormatter df = DateTimeFormatter . ofPattern("H:m" );
 
         try {
-            DDT = (int) LocalTime.parse(dt, df).atDate(LocalDate.EPOCH).atZone(Core.getZoneId()).toInstant().toEpochMilli() / 1000;
+            DDT = (int) LocalTime.parse(dt, df).atDate(LocalDate.EPOCH).atZone(ZoneId.systemDefault()).toInstant().getEpochSecond();
         }
         catch (DateTimeParseException e) {
             throw new Error("Wrong format for core.daemon.run.daily '"+dt+"'. It needs to be 'H:mm'");
         }
 
         try {
-            DTT = (int) LocalTime.parse(tt, df).atDate(LocalDate.EPOCH).atZone(ZoneId.of("UTC")).toInstant().toEpochMilli() / 1000;
+            DTT = (int) LocalTime.parse(tt, df).atDate(LocalDate.EPOCH).atZone(ZoneId.of("UTC")).toInstant().getEpochSecond();
         }
         catch (DateTimeParseException e) {
             throw new Error("Wrong format for core.daemon.run.timed '"+tt+"'. It needs to be 'H:mm'");
         }
-        if (DTT < 60 || DTT > 28800) {
-            throw new Error("Wrong config for core.daemon.run.timed '"+tt+"', must be 0:01 to 8:00" );
+        if (DTT < 60 || DTT > 3600) {
+            throw new Error("Wrong config for core.daemon.run.timed '"+tt+"', must be 0:01 to 1:00" );
         }
 
         SES = Executors.newScheduledThreadPool(ps, new ThreadFactory() {
@@ -223,21 +223,26 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
 
     /**
      * 日常维护任务
+     * 使用系统默认的时区
+     * @param task
+     * @param hour 几点(0-23)
+     * @param min  几分
+     * @param sec  几秒
+     * @return
+     */
+    public ScheduledFuture runDaily(Runnable task, int hour, int min, int sec) {
+        return runDaily(task, hour, min, sec, ZoneId.systemDefault( ));
+    }
+
+    /**
+     * 日常维护任务
      * 默认每天零点时运行
      * 或在 default.properties 设置 core.daemon.run.daily=HH:mm
      * @param task
      * @return
      */
     public ScheduledFuture runDaily(Runnable task) {
-        // 计算延时, 默认时区
-        LocalDateTime cal0 = LocalDateTime.now();
-        LocalDateTime cal1 = LocalDateTime.of (cal0.getYear(), cal0.getMonth(), cal0.getDayOfMonth(), 0, 0, 0);
-        if (cal1.isBefore( cal0 ) ) {
-            cal1 = cal1.plusDays(1);
-        }
-        int ddt  = (int) Duration.between(cal1, cal0).getSeconds() + 1;
-
-        return run (task, ddt, DDP);
+        return runDaily(task, DDT / 3600 , DDT % 3600 / 60 , DDT % 60);
     }
 
     /**

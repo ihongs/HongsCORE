@@ -452,12 +452,15 @@ public class Core
         return  inst;
     }
 
-    String[] lang = Core.ACTION_LANG.get().split("_", 2);
-    if (2 <= lang.length) {
-        inst = new Locale(lang[0],lang[1]);
-    } else {
-        inst = new Locale(lang[0]);
+    // 分拆 语言_地区
+    String l = Core.ACTION_LANG.get();
+    String c = "";
+    int p = l. indexOf ('_');
+    if (p > -1) {
+        c = l.substring(1+p);
+        l = l.substring(0,p);
     }
+    inst  = new Locale (l,c);
 
     core.set(name, inst);
     return inst;

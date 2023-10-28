@@ -109,7 +109,7 @@ public final class Inst
   public static String format(long time, String patt, Locale loc, ZoneId zid) {
     Instant          inst = Instant.ofEpochMilli(time);
     ZonedDateTime     zdt = inst.atZone(zid);
-    DateTimeFormatter dtf = Inst.newDateTimeFormatter(patt,loc);
+    DateTimeFormatter dtf = newDateTimeFormatter(patt, loc);
     return dtf.format(zdt);
   }
 
@@ -142,7 +142,7 @@ public final class Inst
   public static String format(Date time, String patt, Locale loc, ZoneId zid) {
     Instant          inst = time.toInstant();
     ZonedDateTime     zdt = inst.atZone(zid);
-    DateTimeFormatter dtf = Inst.newDateTimeFormatter(patt,loc);
+    DateTimeFormatter dtf = newDateTimeFormatter(patt, loc);
     return dtf.format(zdt);
   }
 
@@ -173,7 +173,7 @@ public final class Inst
    */
   public static String format(Instant time, String patt, Locale loc, ZoneId zid) {
     ZonedDateTime     zdt = time.atZone(zid);
-    DateTimeFormatter dtf = Inst.newDateTimeFormatter(patt,loc);
+    DateTimeFormatter dtf = newDateTimeFormatter(patt, loc);
     return dtf.format(zdt);
   }
 
@@ -187,7 +187,7 @@ public final class Inst
    * @throws IllegalArgumentException 格式错误
    * @throws java.time.format.DateTimeParseException 解析错误
    */
-  public static Instant parse(String  time, String patt) {
+  public static Instant parse(String time, String patt) {
     DateTimeFormatter dtf = getDateTimeFormatter(patt);
     TemporalAccessor  tar = dtf .parse(time);
     ZoneId            zid = Core.getZoneId();
@@ -205,7 +205,7 @@ public final class Inst
    * @throws java.time.format.DateTimeParseException 解析错误
    */
   public static Instant parse(String time, String patt, Locale loc, ZoneId zid) {
-    DateTimeFormatter dtf = Inst.newDateTimeFormatter(patt,loc);
+    DateTimeFormatter dtf = newDateTimeFormatter(patt, loc);
     TemporalAccessor  tar = dtf .parse(time);
     return fixZonedDateTime(tar , 1970, 1, 1, 0, 0, 0, 0, zid).toInstant();
   }

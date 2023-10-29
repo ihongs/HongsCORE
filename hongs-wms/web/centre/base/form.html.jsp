@@ -44,7 +44,7 @@
              */
             if (roly && _action.equals("create")) {
                 Object defo = info.get("deforce");
-                if (defo != null && ! defo.equals("blanks")) {
+                if (defo != null && ! defo.equals("")) {
                     continue;
                 }
                 roly = false;

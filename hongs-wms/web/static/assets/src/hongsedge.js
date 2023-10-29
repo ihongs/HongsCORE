@@ -1635,18 +1635,21 @@ function hsSendWithMemo(btn, msg, url, data) {
 function hsOpenThenLoad(btn, box, url, data) {
     var formbox = this.formBox;
     var loadbox = this.loadBox;
+    if (!formbox.reload) formbox.reload = function() {
+        var url = loadbox.data("href");
+        var dat = loadbox.data("data");
+        loadbox.hsLoad(url,dat);
+    };
     loadbox.hsFind(box).hsOpen(url, data, function() {
         var box = jQuery(this);
         box.on("saveBack", function( evt, rst, obj ) {
             // 继续外传事件
-            formbox.trigger(evt, [rst,obj]);
-            if (evt.isDefaultPrevented( ) ) {
+            formbox.trigger(evt,[rst,obj]);
+            if (evt.isDefaultPrevented( )) {
                 return;
             }
             // 重载当前板块
-            var url  = loadbox.data("href");
-            var data = loadbox.data("data");
-            loadbox.hsLoad(url,data);
+            formbox.reload.apply(obj, [ ]);
         });
     });
 }

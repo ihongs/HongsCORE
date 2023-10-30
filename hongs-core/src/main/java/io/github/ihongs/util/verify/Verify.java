@@ -211,7 +211,7 @@ public class Verify {
         }
         if (data instanceof Collection) {
             int i3 = -1;
-            for(Object data3 :  ( Collection )  data  ) {
+            for(Object data3 : ( Collection ) data ) {
                 i3 += 1;
 
                 if (data3 == null || skips.contains(data3)) {
@@ -234,7 +234,7 @@ public class Verify {
                 data2.add(data3);
             }
         } else if (data instanceof Map) {
-            for(Object i3 : ( ( Map ) data).entrySet()) {
+            for(Object i3 : ((Map) data).entrySet()) {
                 Map.Entry e3 = (Map.Entry) i3;
                 Object    k3 = e3.getKey  ( );
                 Object data3 = e3.getValue( );

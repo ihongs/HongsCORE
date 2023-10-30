@@ -39,17 +39,20 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
 
     private Chore () {
         CoreConfig  cc = CoreConfig.getInstance("default");
-        String tt = cc.getProperty("core.daemon.run.timed", "00:10");
         String dt = cc.getProperty("core.daemon.run.daily", "00:00");
+        String tt = cc.getProperty("core.daemon.run.timed", "00:10");
         int    ps = Runtime.getRuntime().availableProcessors() * 2  ;
                ps = cc.getProperty("core.daemon.pool.size", ps > 2 ? ps : 2);
         DateTimeFormatter df = DateTimeFormatter . ofPattern("H:m" );
 
         try {
-            DDT = (int) LocalTime.parse(dt, df).atDate(LocalDate.EPOCH).atZone(ZoneId.systemDefault()).toInstant().getEpochSecond();
+            DDT = (int) LocalTime.parse(dt, df).atDate(LocalDate.EPOCH).atZone(ZoneId.of("UTC")).toInstant().getEpochSecond();
         }
         catch (DateTimeParseException e) {
             throw new Error("Wrong format for core.daemon.run.daily '"+dt+"'. It needs to be 'H:mm'");
+        }
+        if (DDT < 0 || DDT > 86400) {
+            throw new Error("Wrong config for core.daemon.run.timed '"+dt+"', must be 0:00 to 23:59");
         }
 
         try {
@@ -216,7 +219,7 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
         if (cal1.isBefore( cal0 ) ) {
             cal1 = cal1.plusDays(1);
         }
-        int ddt  = (int) Duration.between(cal1, cal0).getSeconds() + 1;
+        int ddt  = (int) Duration.between(cal0,cal1).getSeconds() + 1;
 
         return run (task, ddt, DDP);
     }
@@ -231,7 +234,7 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
      * @return
      */
     public ScheduledFuture runDaily(Runnable task, int hour, int min, int sec) {
-        return runDaily(task, hour, min, sec, ZoneId.systemDefault( ));
+        return runDaily(task, hour, min, sec, ZoneId.systemDefault());
     }
 
     /**
@@ -242,7 +245,7 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
      * @return
      */
     public ScheduledFuture runDaily(Runnable task) {
-        return runDaily(task, DDT / 3600 , DDT % 3600 / 60 , DDT % 60);
+        return runDaily(task, DDT / 3600, DDT % 3600 / 60, DDT % 60 );
     }
 
     /**

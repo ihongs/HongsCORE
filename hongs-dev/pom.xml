@@ -82,6 +82,8 @@
             </plugin>
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <version>1.8</version>
                 <executions>
                     <execution>
                         <id>build-hongs-core-system</id>

@@ -178,9 +178,10 @@ public class UploadHelper {
 
     private void setResultName(String name, String kind) {
         /**
-         * 当文件名含点和斜杠时将作为完整文件名
          * 当文件名以点结尾表示同上但需加扩展名
-         * 默认情况下会把文件等分拆解成多级目录
+         * 当文件名含点和斜杠时将作为完整文件名
+         * 默认情况下会把文件等分拆分成多级目录
+         * 拆分后加上服务器 ID 规避同步同名问题
          */
         if (name.endsWith(".") == true ) {
             int l = name.length ( ) - 1 ;
@@ -189,6 +190,7 @@ public class UploadHelper {
         if (name.contains(".") == false
         &&  name.contains("/") == false) {
             name  = Syno.splitPath(name);
+            name  = Core.SERVER_ID +"/"+ name;
         } else
         {
             kind  = null;

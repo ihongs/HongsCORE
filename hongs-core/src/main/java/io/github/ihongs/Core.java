@@ -418,11 +418,11 @@ public class Core
          trid = trid % 1296L;                                 // 36^2
 
     return  String.format(
-            "%2s%8s%4s%2s",
-            svid,
+            "%8s%4s%2s%2s",
             Long.toString(time, 36),
             Long.toString(rand, 36),
-            Long.toString(trid, 36)
+            Long.toString(trid, 36),
+            svid
         ).replace(' ','0')
          .toUpperCase(   );
   }

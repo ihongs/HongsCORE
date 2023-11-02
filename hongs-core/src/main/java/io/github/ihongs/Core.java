@@ -417,6 +417,10 @@ public class Core
          time = time % 2821109907456L;                        // 36^8
          trid = trid % 1296L;                                 // 36^2
 
+    /**
+     * 服务器 ID 改回到末尾,
+     * 避免按 ID 排序被干扰.
+     */
     return  String.format(
             "%8s%4s%2s%2s",
             Long.toString(time, 36),

@@ -1025,11 +1025,11 @@ public final class Synt {
         if (String.class.isAssignableFrom(cls)) {
             val = asString(val);
         } else
-        if (Integer.class.isAssignableFrom(cls)) {
-            val = asInt(val);
-        } else
         if (Boolean.class.isAssignableFrom(cls)) {
             val = asBool(val);
+        } else
+        if (Integer.class.isAssignableFrom(cls)) {
+            val = asInt(val);
         } else
         if (Long.class.isAssignableFrom(cls)) {
             val = asLong(val);

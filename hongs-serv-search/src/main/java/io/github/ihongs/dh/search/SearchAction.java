@@ -66,6 +66,13 @@ public class SearchAction extends JAction {
         super.search(helper);
     }
 
+    @Action("amount")
+    @Preset(conf="", form="")
+    @Titles(conf="", form="")
+    public void amount(ActionHelper helper) throws HongsException {
+        acount(helper);
+    }
+
     @Action("acount")
     @Preset(conf="", form="")
     @Titles(conf="", form="")
@@ -87,27 +94,6 @@ public class SearchAction extends JAction {
         helper.reply( sd );
     }
 
-    @Action("amount")
-    @Preset(conf="", form="")
-    @Titles(conf="", form="")
-    public void amount(ActionHelper helper) throws HongsException {
-        SearchEntity sr = (SearchEntity) getEntity(helper);
-        StatisHelper sh = new StatisHelper(sr);
-
-        Map rd = helper.getRequestData();
-        rd = getReqMap(helper, sr, "amount", rd);
-
-        // 检查参数
-        acheck(sr, rd, 2 );
-
-        Map xd = sh.amount ( rd );
-
-        Map sd = Synt.mapOf("enfo", xd );
-        sd = getRspMap(helper, sr, "amount", sd);
-
-        helper.reply( sd );
-    }
-
     @Action("assort")
     @Preset(conf="", form="")
     @Select(conf="", form="")
@@ -119,7 +105,7 @@ public class SearchAction extends JAction {
         rd = getReqMap(helper, sr, "assort", rd);
 
         // 检查参数
-        acheck(sr, rd, 3 );
+        acheck(sr, rd, 2 );
 
         int rn = Synt.declare(rd.get(Cnst.RN_KEY), 0);
         int pn = Synt.declare(rd.get(Cnst.PN_KEY), 1);
@@ -134,7 +120,7 @@ public class SearchAction extends JAction {
      * 检查参数是否可统计
      * @param sr 字段配置
      * @param rd 请求数据
-     * @param nb 1 acount, 2 amount, 3 assort
+     * @param nb 1 acount, 2 assort
      * @throws HongsException
      */
     protected void acheck(LuceneRecord sr, Map rd, int nb) throws HongsException {
@@ -149,7 +135,7 @@ public class SearchAction extends JAction {
         Set ns ;
         Set ks = NUM_KINDS;
         Set hs = CAL_HANDS;
-        if (nb < ACT_NAMES.length) {
+        if (nb > 0 && nb < ACT_NAMES.length) {
             ns = sr.getCaseNames(ACT_NAMES[nb] + "able");
         if (ns == null || ns.isEmpty()) {
             ns = sr.getCaseNames("statable");
@@ -166,7 +152,7 @@ public class SearchAction extends JAction {
              * 维度字段后跟函数名,
              * 判断前需要将其去除.
              */
-            if (nb == 3) {
+            if (nb == 2) {
                 int p  = fn.indexOf  ('!');
                 if (p != -1) {
                     fx = fn.substring(1+p);
@@ -193,8 +179,9 @@ public class SearchAction extends JAction {
              * 仅数字类型可以计算,
              * 分组计算方法也一样.
              */
-            if (nb == 2
-            || (nb == 3 && hs.contains(fx)) ) {
+            Object ab = Dict.get(rd, null, fn, Cnst.AB_KEY);
+            if ((nb == 1 && hs.contains(ab))
+            ||  (nb == 2 && hs.contains(fx))) {
                 Object t = fc.get("__type__");
                 Object k = fc.get(  "type"  );
                 t = ts.containsKey(t) ? ts.get(t) : t;
@@ -204,23 +191,25 @@ public class SearchAction extends JAction {
                 &&  !( "enum" .equals(t) && ks.contains(k))) {
                     throw new HongsException(400, "Field '"+fn+"' is not numeric");
                 }
+            }
 
-                /**
-                 * 枚举补全:
-                 * 如果外部未指定区间,
-                 * 则从枚举配置中提取.
-                 */
-                Set on  = Dict.getValue ( rd, Set.class, fn, Cnst.AR_KEY);
-                if (on == null) {
-                    String xc = Synt.defxult((String) fc.get("conf"), (String) cn);
-                    String xn = Synt.defxult((String) fc.get("enum"), (String) fn);
-                    try {
-                        on = FormSet.getInstance(xc).getEnum(xn).keySet();
-                        Dict.put( rd, on, fn, Cnst.AR_KEY );
-                    } catch ( HongsException ex) {
-                    if (ex.getErrno() != 913) {
-                        throw ex;
-                    }}
+            /**
+             * 枚举补全:
+             * 如果外部未指定区间,
+             * 则从枚举配置中提取.
+             */
+            Set ar  = Dict.getValue ( rd, Set.class, fn, Cnst.AR_KEY);
+            if (ar == null) {
+                String xc = Synt.defxult((String) fc.get("conf"), (String) cn);
+                String xn = Synt.defxult((String) fc.get("enum"), (String) fn);
+                try {
+                    ar = FormSet.getInstance(xc).getEnum(xn).keySet();
+                } catch (HongsException e) {
+                if ( 913 != e.getErrno() ) {
+                    throw e; // 非枚举缺失异常
+                }}
+                if (ar != null) {
+                    Dict.put( rd, ar, fn, Cnst.AR_KEY );
                 }
             }
         }
@@ -233,7 +222,7 @@ public class SearchAction extends JAction {
              * ! 表默认逆序
              * * 表默认正序
              */
-            if (nb != 3
+            if (nb != 2
             && (fn.equals("-")
             ||  fn.equals("!")
             ||  fn.equals("*") ) ) {
@@ -258,8 +247,8 @@ public class SearchAction extends JAction {
         }
     }
 
-    private static final String [  ] ACT_NAMES = new String [] {"", "acount", "amount", "assort"};                       // 统计名称
-    private static final Set<String> CAL_HANDS = new HashSet(Arrays.asList("sum", "min" , "max"  , "ratio" , "range" )); // 计算方法
-    private static final Set<String> NUM_KINDS = new HashSet(Arrays.asList("int", "long", "float", "double", "number")); // 数字类型
+    private static final String [  ] ACT_NAMES = new String [] {"", "acount", "assort"}; // 统计名称
+    private static final Set<String> CAL_HANDS = new HashSet(Arrays.asList("range","tally","total","sum","min","max")); // 计算方法
+    private static final Set<String> NUM_KINDS = new HashSet(Arrays.asList("number","double", "float", "long", "int")); // 数字类型
 
 }

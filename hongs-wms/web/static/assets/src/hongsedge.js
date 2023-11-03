@@ -80,9 +80,7 @@ function HsStat(context, opts) {
     this.context = context;
     this.statBox = statBox;
     this.findBox = findBox;
-    this.murl  = opts.murl;
-    this.curl  = opts.curl;
-    this.eurl  = opts.eurl;
+    this._url  = opts._url || opts.loadUrl ;
 
     var  that  = this;
 
@@ -138,9 +136,7 @@ HsStat.prototype = {
                 }
             });
 
-            that.fill(statBox.find("[data-type=ecount]"));
-            that.fill(statBox.find("[data-type=acount]"));
-            that.fill(statBox.find("[data-type=amount]"));
+            that.fill(statBox.find(".stat-group[data-name]"));
         });
     },
 
@@ -151,16 +147,14 @@ HsStat.prototype = {
         var context = this.context;
         var statBox = this.statBox;
         var findBox = this.findBox;
+        var url     = this._url;
 
         var rb  = [];
         var eb  = [];
-        var ft  = itemBox.attr ("data-type");
-        var url = ft==="amount"? this.murl
-              : ( ft==="acount"? this.curl
-              :                  this.eurl );
 
         itemBox.each(function() {
             if ($(this).data("name")) rb.push($(this).data("name"));
+            if ($(this).data("type")) eb.push($(this).data("name")+".ab="+$(this).data("type"));
             if ($(this).data("prms")) eb.push($(this).data("prms"));
 
             $(this).find(".checkbox").hide();
@@ -212,6 +206,7 @@ HsStat.prototype = {
                 for(var k  in rst) {
                     var d  =  rst [k];
                     var n  =  statBox.find("[data-name='"+k+"']");
+                    var t  =  n.attr("data-type");
 
                     if (n.size() === 0) {
                         continue;
@@ -224,10 +219,16 @@ HsStat.prototype = {
                     n.find(".checkbox").show();
                     n.find(".chartbox").show();
 
-                    if (ft === "amount") {
+                    if (t === "range"
+                    ||  t === "tally") {
+                        that.setAmountCheck(n , d);
+                        that.setAcountChart(n , d);
+                    } else
+                    if (t === "total") {
                         that.setAmountCheck(n , d);
                         that.setAmountChart(n , d);
-                    } else {
+                    } else
+                    {
                         that.setAcountCheck(n , d);
                         that.setAcountChart(n , d);
                     }
@@ -306,9 +307,7 @@ HsStat.prototype = {
         var fp  = itemBox.attr("data-prms");
         var fx  = itemBox.attr("data-text");
         var ft  = itemBox.attr("data-type");
-        var url = ft==="amount"? this.murl
-              : ( ft==="acount"? this.curl
-              :                  this.eurl);
+        var url = this._url;
 
         // 筛选数据
         var dat;
@@ -702,9 +701,7 @@ function HsCate(context, opts) {
     this.context = context;
     this.statBox = statBox;
     this.findBox = findBox;
-    this.murl  = opts.murl;
-    this.curl  = opts.curl;
-    this.eurl  = opts.eurl;
+    this._url  = opts._url || opts.loadUrl ;
 
     var  that  = this;
 
@@ -748,9 +745,7 @@ HsCate.prototype = {
     load: function() {
         var that    = this;
         var statBox = this.statBox;
-        that.fill(statBox.find("[data-type=ecount]"));
-        that.fill(statBox.find("[data-type=acount]"));
-        that.fill(statBox.find("[data-type=amount]"));
+        that.fill(statBox.find(".stat-group[data-name]"));
     },
 
     fill: function(itemBox) {
@@ -760,16 +755,14 @@ HsCate.prototype = {
         var context = this.context;
         var statBox = this.statBox;
         var findBox = this.findBox;
+        var url     = this._url;
 
         var rb  = [];
         var eb  = [];
-        var ft  = itemBox.attr ("data-type");
-        var url = ft==="amount"? this.murl
-              : ( ft==="acount"? this.curl
-              :                  this.eurl );
 
         itemBox.each(function() {
             if ($(this).data("name")) rb.push($(this).data("name"));
+            if ($(this).data("type")) eb.push($(this).data("name")+".ab="+$(this).data("type"));
             if ($(this).data("prms")) eb.push($(this).data("prms"));
 
             $(this).empty(); // 清空待写入选项
@@ -818,6 +811,7 @@ HsCate.prototype = {
                 for(var k  in rst) {
                     var d  =  rst [k];
                     var n  =  statBox.find("[data-name='"+k+"']");
+                    var t  =  n.attr("data-type");
 
                     if (n.size() === 0 ) {
                         continue;
@@ -826,10 +820,18 @@ HsCate.prototype = {
                         continue;
                     }
 
-                    if (ft === "amount") {
+                    if (t === "range"
+                    ||  t === "tally") {
                         that.setAmountCheck(n , d);
-                    } else {
+                        that.setAcountChart(n , d);
+                    } else
+                    if (t === "total") {
+                        that.setAmountCheck(n , d);
+                        that.setAmountChart(n , d);
+                    } else
+                    {
                         that.setAcountCheck(n , d);
+                        that.setAcountChart(n , d);
                     }
 
                     k = n.find(".checkone2").attr( "name" );

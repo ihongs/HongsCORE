@@ -147,25 +147,44 @@ public class TitlesHelper {
             throws HongsException {
         Iterator<Map.Entry> it = info.entrySet().iterator();
         while (it.hasNext()) {
-            Map.Entry et = it.next( );
-            Object lo = et.getValue();
-            if (!(lo instanceof List)) {
+            Map.Entry et = it.next ( );
+            Object lo = et.getValue( );
+            if (! (lo instanceof List)) {
+                continue;
+            }
+            List lz = (List) lo;
+            if ( lz.isEmpty( ) ) {
                 continue;
             }
 
-            List<Object[]> ls = (List) lo;
-            String fn = Synt.declare ( et.getKey(), "");
+            String fn = Synt.asString(et.getKey());
 
-            if (enums != null && enums.containsKey(fn)) {
-                addEnums(ls, enums.get(fn), fn);
-            } else
-            if (forks != null && forks.containsKey(fn)) {
-                addForks(ls, forks.get(fn), fn);
+            if (lz.get(0) instanceof List) {
+                List<List> ls = lz;
+                if (enums != null && enums.containsKey(fn)) {
+                    addEnums(ls, enums.get(fn), fn);
+                } else
+                if (forks != null && forks.containsKey(fn)) {
+                    addForks(ls, forks.get(fn), fn);
+                } else {
+                    // 没有对应的枚举表则用值来补全
+                    for(List lx : ls) {
+                        List li = (List) lx ;
+                        li.set(1, li.get(0));
+                    }
+                }
             } else {
-                // 没有对应的枚举表则用值来补全
-                for(Object[ ] lx : ls) {
-                    if (lx[1] == null) {
-                        lx[1]  = lx[0];
+                List<Object[]> ls = lz;
+                if (enums != null && enums.containsKey(fn)) {
+                    addEnumz(ls, enums.get(fn), fn);
+                } else
+                if (forks != null && forks.containsKey(fn)) {
+                    addForkz(ls, forks.get(fn), fn);
+                } else {
+                    // 没有对应的枚举表则用值来补全
+                    for(Object[] lx : ls) {
+                        Object[] li = (Object[]) lx;
+                        li[1] = li[0];
                     }
                 }
             }
@@ -178,7 +197,29 @@ public class TitlesHelper {
      * @param es
      * @param fn
      */
-    protected void addEnums(List<Object[]> ls, Map es, String fn) {
+    protected void addEnums(List<List> ls, Map es, String fn) {
+        for (List lx : ls) {
+            Object v = Synt.asString(lx.get(0)); // 规避取值为非字串
+            if (v != null) {
+                v  = es.get( v ); // 得到标签
+            }
+            if (v == null) {
+                v  = es.get("-"); // 未知选项
+            }
+            if (v == null) {
+                continue;
+            }
+            lx.set(1, v);
+        }
+    }
+
+    /**
+     * 通过查找枚举信息来补全名称
+     * @param ls
+     * @param es
+     * @param fn
+     */
+    protected void addEnumz(List<Object[]> ls, Map es, String fn) {
         for (Object[] lx : ls) {
             Object v = Synt.asString(lx[0]); // 规避取值为非字串
             if (v != null) {
@@ -201,7 +242,87 @@ public class TitlesHelper {
      * @param fn
      * @throws HongsException
      */
-    protected void addForks(List<Object[]> ls, Map fc, String fn) throws HongsException {
+    protected void addForks(List<List> ls, Map fc, String fn) throws HongsException {
+        String at = (String) fc.get("data-at");
+        String vk = (String) fc.get("data-vk");
+        String tk = (String) fc.get("data-tk");
+
+        if (at == null || at.isEmpty()) {
+            String c = (String) fc.get("conf");
+            String f = (String) fc.get("form");
+            at  =  c +"/"+ f +"/search";
+        }
+        if (vk == null || vk.isEmpty()) {
+            vk  =  Cnst.ID_KEY;
+        }
+        if (tk == null || tk.isEmpty()) {
+            tk  =  "name";
+        }
+        Object[] vk2 = Dict.splitKeys(vk);
+        Object[] tk2 = Dict.splitKeys(tk);
+
+        // 映射关系
+        Map<Object, List> lm = new HashMap();
+        for(List lx : ls) {
+            lm.put( lx.get(0), lx);
+        }
+        Set li = lm.keySet( );
+
+        // 查询结构
+        Map cd = new HashMap();
+        Map rd = new HashMap();
+        Set rb = new HashSet();
+        rd.put(Cnst.RB_KEY, rb );
+        rd.put(Cnst.RN_KEY,1024);
+        rb.add(vk);
+        rb.add(tk);
+
+        // 获取结果
+        ActionHelper ah = ActionHelper.newInstance( /**/ );
+        ah.setContextData (cd);
+        ah.setRequestData (rd);
+        ActionRunner ar = ActionRunner.newInstance(ah, at);
+
+        /**
+         * Lucene 单个条件的数量无法超过 1024
+         * 故需拆成片段
+         * 分批进行查询
+         */
+       List l = new ArrayList(li);
+        int k = l.size ();
+        int j = 0 , i = 0;
+        while  (j < k) {
+            j = i + 1024 ;
+            if (j > k) {
+                j = k;
+            }
+            rd.put(Cnst.ID_KEY, l.subList(i, j) );
+            /**/i = j;
+
+            ar.doInvoke();
+
+            // 整合数据
+            Map sd  =  ah.getResponseData( /**/ );
+            List <Map> lz = (List) sd.get("list");
+            if (lz != null) for (Map ro : lz) {
+                String lv = Dict.getValue(ro, "", vk2);
+                String lt = Dict.getValue(ro, "", tk2);
+                List   lx = lm.get(lv);
+                if (null != lx) {
+                    lx.set( 1, lt);
+                }
+            }
+        }
+    }
+
+    /**
+     * 通过调用关联动作来补全名称
+     * @param ls
+     * @param fc
+     * @param fn
+     * @throws HongsException
+     */
+    protected void addForkz(List<Object[]> ls, Map fc, String fn) throws HongsException {
         String at = (String) fc.get("data-at");
         String vk = (String) fc.get("data-vk");
         String tk = (String) fc.get("data-tk");
@@ -266,7 +387,6 @@ public class TitlesHelper {
             if (lz != null) for (Map ro : lz) {
                 String lv = Dict.getValue(ro, "", vk2);
                 String lt = Dict.getValue(ro, "", tk2);
-
                 Object[ ]   lx  =  lm.get(lv);
                 if (null != lx) {
                     lx[1] = lt;

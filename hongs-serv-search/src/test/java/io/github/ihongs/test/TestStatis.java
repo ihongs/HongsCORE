@@ -32,7 +32,7 @@ public class TestStatis {
 
     @Test
     public void testRatio() {
-        StatisGrader.Ratio r = new StatisGrader.Ratio();
+        StatisGrader.Total r = new StatisGrader.Total(new StatisGrader.Range(""));
         r.add(123);
         r.add(456);
 

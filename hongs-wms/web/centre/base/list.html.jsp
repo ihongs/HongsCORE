@@ -91,6 +91,11 @@
                         throw ex;
                     }}
 
+                    // 统计方法
+                    String kind = (String) info.get("stat-type");
+                    if (kind != null && ! kind.isEmpty()) {
+                        type  = kind;
+                    } else
                     if ("number".equals(type)) {
                         if (enumData != null ) {
                             type = "amount";
@@ -98,7 +103,7 @@
                             type = "acount";
                         }
                     } else {
-                        type = "acount";
+                        type  = "acount";
                     }
 
                     // 附加参数
@@ -307,14 +312,12 @@
     });
 
     var statobj = context.hsCate({
-        murl: "<%=_module%>/<%=_entity%>/amount.act?<%=Cnst.RN_KEY%>=<%=Cnst.RN_DEF%>&<%=Cnst.OB_KEY%>=-&<%=Cnst.AB_KEY%>=linked,_text",
-        curl: "<%=_module%>/<%=_entity%>/acount.act?<%=Cnst.RN_KEY%>=<%=Cnst.RN_DEF%>&<%=Cnst.OB_KEY%>=-&<%=Cnst.AB_KEY%>=linked,_text,_fork"
+        _url: "<%=_module%>/<%=_entity%>/acount.act?<%=Cnst.RN_KEY%>=<%=Cnst.RN_DEF%>&<%=Cnst.OB_KEY%>=-&<%=Cnst.AB_KEY%>=linked,_text,_fork"
     });
 
     // 绑定参数
     listobj._url = hsSetPms(listobj._url, loadres);
-    statobj.murl = hsSetPms(statobj.murl, loadres);
-    statobj.curl = hsSetPms(statobj.curl, loadres);
+    statobj._url = hsSetPms(statobj._url, loadres);
 
     // 延迟加载
     context.on("opened",".filtbox", function() {

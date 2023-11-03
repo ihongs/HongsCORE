@@ -432,9 +432,192 @@ public class StatisGather {
     /**
      * 量化
      */
-    public static class Ratio extends Index<Number[]> {
+    public static class Tally extends Index<Number[]> {
 
-        public Ratio(TYPE type, String field, String alias) {
+        public Tally(TYPE type, String field, String alias) {
+            super (type, field, alias);
+
+            if (type == TYPE.STRING
+            ||  type == TYPE.STRINGS ) {
+                throw new UnsupportedOperationException("Unsupported type String(s) for " + alias);
+            }
+        }
+
+        @Override
+        public Object collect(int i, Number[] n) throws IOException {
+            switch (type) {
+                case INT: {
+                    NumericDocValues numValues = ((NumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
+                    int  x =(int ) numValues.longValue();
+                    if (n != null) {
+                        n  = new Number[]{1L + n[0].longValue() ,
+                                 0,
+                                 Int .min( x , n[2]. intValue()),
+                                 Int .max( x , n[3]. intValue())};
+                    } else {
+                        n  = new Number[]{1L , 0, x, x };
+                    }
+                    break;
+                }
+                case LONG: {
+                    NumericDocValues numValues = ((NumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
+                    long x =(long) numValues.longValue();
+                    if (n != null) {
+                        n  = new Number[]{1L + n[0].longValue() ,
+                                 0,
+                                 Long.min( x , n[2].longValue()),
+                                 Long.max( x , n[3].longValue())};
+                    } else {
+                        n  = new Number[]{1L , 0, x, x };
+                    }
+                    break;
+                }
+                case FLOAT: {
+                    NumericDocValues numValues = ((NumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
+                    float  x = NumericUtils. sortableIntToFloat ((int ) numValues.longValue());
+                    if (n != null) {
+                        n  = new Number[]{1L + n[0].longValue() ,
+                               0,
+                               Float .min( x , n[2]. floatValue()),
+                               Float .max( x , n[3]. floatValue())};
+                    } else {
+                        n  = new Number[]{1L , 0, x, x };
+                    }
+                    break;
+                }
+                case DOUBLE: {
+                    NumericDocValues numValues = ((NumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
+                    double x = NumericUtils.sortableLongToDouble((long) numValues.longValue());
+                    if (n != null) {
+                        n  = new Number[]{1L + n[0].longValue() ,
+                               0,
+                               Double.min( x , n[2].doubleValue()),
+                               Double.max( x , n[3].doubleValue())};
+                    } else {
+                        n  = new Number[]{1L , 0, x, x };
+                    }
+                    break;
+                }
+                case INTS: {
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
+                    int  x = (int ) numValues.nextValue();
+                    int  min = x ;
+                    int  max = x ;
+                    int  j = 1 ;
+                    for( ; j < numValues.docValueCount(); j ++) {
+                         x = (int ) numValues.nextValue();
+                         min = Int .min(min, x);
+                         max = Int .max(max, x);
+                    }
+                    if (n != null) {
+                        n  = new Number[]{1L + n[0].longValue() ,
+                                 0,
+                                 Int .min(min, n[2]. intValue()),
+                                 Int .max(max, n[3]. intValue())};
+                    } else {
+                        n  = new Number[]{1L , 0, min, max};
+                    }
+                    break;
+                }
+                case LONGS: {
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
+                    long x = (long) numValues.nextValue();
+                    long min = x ;
+                    long max = x ;
+                    int  j = 1 ;
+                    for( ; j < numValues.docValueCount(); j ++) {
+                         x = (long) numValues.nextValue();
+                         min = Long.min(min, x);
+                         max = Long.max(max, x);
+                    }
+                    if (n != null) {
+                        n  = new Number[]{1L + n[0].longValue() ,
+                                 0,
+                                 Long.min(min, n[2].longValue()),
+                                 Long.max(max, n[3].longValue())};
+                    } else {
+                        n  = new Number[]{1L , 0, min, max};
+                    }
+                    break;
+                }
+                case FLOATS: {
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
+                    float  x = NumericUtils. sortableIntToFloat ((int ) numValues.nextValue());
+                    float  min = x ;
+                    float  max = x ;
+                    int    j = 1 ;
+                    for( ; j < numValues.docValueCount(); j ++) {
+                         x = NumericUtils. sortableIntToFloat ((int ) numValues.nextValue());
+                         min = Float .min(min, x);
+                         max = Float .max(max, x);
+                    }
+                    if (n != null) {
+                        n  = new Number[]{1L + n[0].longValue() ,
+                               0,
+                               Float .min(min, n[2]. floatValue()),
+                               Float .max(max, n[3]. floatValue())};
+                    } else {
+                        n  = new Number[]{1L , 0, min, max};
+                    }
+                    break;
+                }
+                case DOUBLES: {
+                    SortedNumericDocValues numValues = ((SortedNumericDocValues) getDocValues());
+                //  if (! numValues.advanceExact(i)) {
+                //      break;
+                //  }
+                    double x = NumericUtils.sortableLongToDouble((long) numValues.nextValue());
+                    double min =  x ;
+                    double max =  x ;
+                    int    j = 1 ;
+                    for( ; j < numValues.docValueCount(); j ++) {
+                         x = NumericUtils.sortableLongToDouble((long) numValues.nextValue());
+                         min = Double.min(min, x);
+                         max = Double.max(max, x);
+                    }
+                    if (n != null) {
+                        n  = new Number[]{1L + n[0].longValue() ,
+                               0,
+                               Double.min(min, n[2].doubleValue()),
+                               Double.max(max, n[3].doubleValue())};
+                    } else {
+                        n  = new Number[]{1L , 0, min, max};
+                    }
+                    break;
+                }
+            }
+            return  n ;
+        }
+
+    }
+
+    /**
+     * 量化(求和)
+     */
+    public static class Total extends Index<Number[]> {
+
+        public Total(TYPE type, String field, String alias) {
             super (type, field, alias);
 
             if (type == TYPE.STRING
@@ -594,9 +777,9 @@ public class StatisGather {
                 //      break;
                 //  }
                     double x = NumericUtils.sortableLongToDouble((long) numValues.nextValue());
-                    double min =  x ;
-                    double max =  x ;
-                    double sum = x;
+                    double min = x ;
+                    double max = x ;
+                    double sum = x ;
                     int    j = 1 ;
                     for( ; j < numValues.docValueCount(); j ++) {
                          x = NumericUtils.sortableLongToDouble((long) numValues.nextValue());

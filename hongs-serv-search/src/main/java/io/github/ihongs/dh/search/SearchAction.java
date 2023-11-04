@@ -66,6 +66,9 @@ public class SearchAction extends JAction {
         super.search(helper);
     }
 
+    /**
+     * @deprecated 已并入 acount
+     */
     @Action("amount")
     @Preset(conf="", form="")
     @Titles(conf="", form="")

@@ -909,7 +909,7 @@ public class Form extends Model {
             root.appendChild ( role );
             role.appendChild ( docm.createTextNode("#centra") );
 
-            // 查看
+            // 查看 2023/11/04, 数值统计并入选项统计
             role = docm.createElement("role");
             menu.appendChild ( role );
             role.setAttribute("name", href +"search");
@@ -923,9 +923,9 @@ public class Form extends Model {
             actn = docm.createElement("action");
             role.appendChild ( actn );
             actn.appendChild ( docm.createTextNode(href +"acount"+ Cnst.ACT_EXT) );
-            actn = docm.createElement("action");
-            role.appendChild ( actn );
-            actn.appendChild ( docm.createTextNode(href +"amount"+ Cnst.ACT_EXT) );
+//          actn = docm.createElement("action");
+//          role.appendChild ( actn );
+//          actn.appendChild ( docm.createTextNode(href +"amount"+ Cnst.ACT_EXT) );
             depn = docm.createElement("depend");
             role.appendChild ( depn );
             depn.appendChild ( docm.createTextNode("centra") );

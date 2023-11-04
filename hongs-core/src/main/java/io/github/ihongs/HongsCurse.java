@@ -124,7 +124,7 @@ public final class HongsCurse {
         R: {
             CoreConfig conf = getConfig( );
 
-            if ( mark != null && ! mark .isEmpty()) {
+            if ( mark != null && ! mark.isEmpty()) {
                 errox  = conf.getProperty(mark);
                 if (errox != null) break R;
             }
@@ -138,7 +138,7 @@ public final class HongsCurse {
                 if (errox != null) break R;
             }
 
-            if (error != null && ! error.isEmpty()) {
+            if (error != null && !error.isEmpty()) {
                 errox  = error;
                 break R;
             }
@@ -175,7 +175,7 @@ public final class HongsCurse {
         R: {
             CoreConfig conf = getLocale( );
 
-            if ( mark != null && ! mark .isEmpty()) {
+            if ( mark != null && ! mark.isEmpty()) {
                 errox  = conf.getProperty(mark);
                 if (errox != null) break R;
             }
@@ -189,7 +189,7 @@ public final class HongsCurse {
                 if (errox != null) break R;
             }
 
-            if (error != null && ! error.isEmpty()) {
+            if (error != null && !error.isEmpty()) {
                 errox  = error;
                 break R;
             }

@@ -2,14 +2,14 @@ package io.github.ihongs.combat.serv;
 
 import io.github.ihongs.combat.CombatHelper;
 import io.github.ihongs.combat.anno.Combat;
-import io.github.ihongs.dh.Stores;
+import io.github.ihongs.dh.Roster;
 
 /**
  * 存储维护命令
  * @author Hongs
  */
 @Combat("records")
-public class Records {
+public class Rosters {
 
     /**
      * 清除过期的数据
@@ -19,9 +19,9 @@ public class Records {
     public static void clean(String[] args) {
         long exp = 0;
         if (args.length != 0) {
-             exp = Integer.parseInt ( args[0] );
+             exp = Integer.parseInt (args[0]);
         }
-        Stores.del(System.currentTimeMillis() / 1000 - exp);
+        Roster.del(System.currentTimeMillis() / 1000 - exp);
     }
 
     /**
@@ -31,9 +31,9 @@ public class Records {
     @Combat("check")
     public static void check(String[] args) {
         if (args.length == 0) {
-          CombatHelper.println("Record ID required!");
+          CombatHelper.println("Roster ID required!");
         }
-          CombatHelper.preview( Stores.get(args[0]) );
+          CombatHelper.preview( Roster.get(args[0]) );
     }
 
 }

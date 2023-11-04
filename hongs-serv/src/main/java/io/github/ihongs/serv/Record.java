@@ -1,6 +1,6 @@
 package io.github.ihongs.serv;
 
-import io.github.ihongs.dh.Stores;
+import io.github.ihongs.dh.Roster;
 
 /**
  * 简单数据存储
@@ -16,7 +16,7 @@ public class Record {
      * @deprecated 改用 Stores.get
      */
     public static Object get(String key) {
-        return Stores.get(key);
+        return Roster.get(key);
     }
 
     /**
@@ -27,7 +27,7 @@ public class Record {
      * @deprecated 改用 Stores.set
      */
     public static void set(String key, Object val, long exp) {
-        Stores.set(key, val, exp);
+        Roster.set(key, val, exp);
     }
 
     /**
@@ -38,7 +38,7 @@ public class Record {
      * @deprecated 改用 Stores.put
      */
     public static void put(String key, Object val, long exp) {
-        Stores.put(key, val, exp);
+        Roster.put(key, val, exp);
     }
 
     /**
@@ -48,7 +48,7 @@ public class Record {
      * @deprecated 改用 Stores.set
      */
     public static void set(String key, long exp) {
-        Stores.set(key, exp);
+        Roster.set(key, exp);
     }
 
     /**
@@ -58,7 +58,7 @@ public class Record {
      * @deprecated 改用 Stores.put
      */
     public static void put(String key, long exp) {
-        Stores.put(key, exp);
+        Roster.put(key, exp);
     }
 
     /**
@@ -67,7 +67,7 @@ public class Record {
      * @deprecated 改用 Stores.del
      */
     public static void del(String key) {
-        Stores.del(key);
+        Roster.del(key);
     }
 
     /**
@@ -75,8 +75,8 @@ public class Record {
      * @param exp
      * @deprecated 改用 Stores.del
      */
-    public static void del( long  exp) {
-        Stores.del(exp);
+    public static void del(long exp) {
+        Roster.del(exp);
     }
 
 }

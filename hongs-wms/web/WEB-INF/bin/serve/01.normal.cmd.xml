@@ -11,7 +11,7 @@
         <arg>$TIME</arg>
     </sql>
     <combat system="no">
-        <cmd>normal.record.clean</cmd>
+        <cmd>normal.roster.clean</cmd>
     </combat>
     <combat system="no">
         <cmd>normal.sesion.clean</cmd>

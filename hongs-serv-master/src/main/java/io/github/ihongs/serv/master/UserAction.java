@@ -12,7 +12,7 @@ import io.github.ihongs.action.anno.Select;
 import io.github.ihongs.action.anno.Verify;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.db.util.FetchCase;
-import io.github.ihongs.dh.Stores;
+import io.github.ihongs.dh.Roster;
 import io.github.ihongs.serv.auth.AuthKit;
 import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Synt;
@@ -242,8 +242,8 @@ public class UserAction {
             long   et = LocalDateTime.of(
                     LocalDate.now(zi).plusDays(1), LocalTime.MIN
                 ).atZone(zi).toInstant( ).toEpochMilli( ) / 1000;
-            Stores.del( "sign.retry.times." + id);
-            Stores.set( "sign.retry.allow." + id , 1, et);
+            Roster.del( "sign.retry.times." + id);
+            Roster.set( "sign.retry.allow." + id , 1, et);
 
             if (id.equals(helper.getSessibute(Cnst.UID_SES))
             && "*".equals(helper.getSessibute(Cnst.USK_SES))) {

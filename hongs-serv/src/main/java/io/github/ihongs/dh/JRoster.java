@@ -21,12 +21,12 @@ import java.sql.SQLException;
  * @author Hongs
  * @param <T>
  */
-public class JStored<T> implements IStored<T>, AutoCloseable {
+public class JRoster<T> implements IRoster<T>, AutoCloseable {
 
     protected final boolean bytes;
     protected final   Table table;
 
-    protected JStored(Table table) throws HongsException {
+    protected JRoster(Table table) throws HongsException {
         this. table = table;
 
         // 判断是采用序列化还是 JSON
@@ -36,8 +36,8 @@ public class JStored<T> implements IStored<T>, AutoCloseable {
         bytes  =  dt == Types.BLOB || dt == Types.BINARY ;
     }
 
-    public JStored() throws HongsException {
-        this(DB.getInstance("normal").getTable("record"));
+    public JRoster() throws HongsException {
+        this(DB.getInstance("normal").getTable("roster"));
     }
 
     /**

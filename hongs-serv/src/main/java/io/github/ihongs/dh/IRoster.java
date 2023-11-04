@@ -7,7 +7,7 @@ import io.github.ihongs.HongsException;
  * @author Hongs
  * @param <T>
  */
-public interface IStored<T> {
+public interface IRoster<T> {
 
     /**
      * 获取数据

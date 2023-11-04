@@ -8,14 +8,14 @@ import io.github.ihongs.HongsException;
  * 简单数据存储
  * @author Hongs
  */
-public class Stores {
+public class Roster {
 
-    private static IStored getStored() throws HongsException {
-        String cls = CoreConfig.getInstance().getProperty("core.normal.record.model");
+    private static IRoster getModel() throws HongsException {
+        String cls = CoreConfig.getInstance().getProperty("core.normal.roster.model");
         if (null == cls || 0 == cls.length()) {
-               cls = JStored.class.getName( );
+               cls = JRoster.class.getName( );
         }
-        return (IStored)Core.getInstance(cls);
+        return (IRoster)Core.getInstance(cls);
     }
 
     /**
@@ -25,7 +25,7 @@ public class Stores {
      */
     public static Object get(String key) {
         try {
-            return getStored( ).get(key);
+            return getModel().get(key);
         }
         catch (HongsException ex ) {
             throw ex.toExemption();
@@ -40,7 +40,7 @@ public class Stores {
      */
     public static void set(String key, Object val, long exp) {
         try {
-            getStored( ).set(key, val, exp);
+            getModel().set(key, val, exp);
         }
         catch (HongsException ex ) {
             throw ex.toExemption();
@@ -56,7 +56,7 @@ public class Stores {
     public static void put(String key, Object val, long exp) {
         exp += System.currentTimeMillis() / 1000;
         try {
-            getStored( ).set(key, val, exp);
+            getModel().set(key, val, exp);
         }
         catch (HongsException ex ) {
             throw ex.toExemption();
@@ -70,7 +70,7 @@ public class Stores {
      */
     public static void set(String key, long exp) {
         try {
-            getStored( ).set(key, exp);
+            getModel().set(key, exp);
         }
         catch (HongsException ex ) {
             throw ex.toExemption();
@@ -85,7 +85,7 @@ public class Stores {
     public static void put(String key, long exp) {
         exp += System.currentTimeMillis() / 1000;
         try {
-            getStored( ).set(key, exp);
+            getModel().set(key, exp);
         }
         catch (HongsException ex ) {
             throw ex.toExemption();
@@ -98,7 +98,7 @@ public class Stores {
      */
     public static void del(String key) {
         try {
-            getStored().del( key );
+            getModel().del(key);
         }
         catch (HongsException ex ) {
             throw ex.toExemption();
@@ -109,9 +109,9 @@ public class Stores {
      * 清除数据
      * @param exp
      */
-    public static void del( long  exp) {
+    public static void del(long exp) {
         try {
-            getStored().del( exp );
+            getModel().del(exp);
         }
         catch (HongsException ex ) {
             throw ex.toExemption();

@@ -4,7 +4,8 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://ihongs.github.io/hongs-core db.xsd">
   <config link="default"/>
   <tables>
-      <table name="record" tableName="a_normal_data" primaryKey="id"/>
-      <table name="sesion" tableName="a_normal_sess" primaryKey="id"/>
+      <table name="roster" tableName="a_normal_data" primaryKey="id"/>
+      <table name="record" tableName="a_normal_data" primaryKey="id"/><!-- 已改名 -->
+      <table name="sesion" tableName="a_normal_sess" primaryKey="id"/><!-- 已弃用 -->
   </tables>
 </db>

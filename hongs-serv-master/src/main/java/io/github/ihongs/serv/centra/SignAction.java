@@ -13,7 +13,7 @@ import io.github.ihongs.action.serv.AuthFilter;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.db.util.FetchCase;
-import io.github.ihongs.dh.Stores;
+import io.github.ihongs.dh.Roster;
 import io.github.ihongs.serv.auth.AuthKit;
 import io.github.ihongs.serv.auth.RoleSet;
 import io.github.ihongs.util.Synt;
@@ -72,7 +72,7 @@ public class SignAction {
         id = (String) ud.get("id");
         tt = Synt.declare(cc.getProperty("core.sign.retry.token"), "");
         at = Synt.declare(cc.getProperty("core.sign.retry.times"), 5 );
-        if ( Synt.declare(Stores.get("sign.retry.allow."+id), false) ) {
+        if ( Synt.declare(Roster.get("sign.retry.allow."+id), false) ) {
             tt = "id";
         }
         switch (tt) {
@@ -80,7 +80,7 @@ public class SignAction {
             case "ip": id = Core.CLIENT_ADDR.get(); break;
             default  : id = id+"-"+Core.CLIENT_ADDR.get();
         }
-        rt = Synt.declare(Stores.get("sign.retry.times."+id), 0 );
+        rt = Synt.declare(Roster.get("sign.retry.times."+id), 0 );
         if (rt >= at) {
             ah.reply(AuthKit.getWrong("password", "core.password.timeout"));
             ah.getResponseData( ).put("allow_times" , at);
@@ -103,10 +103,10 @@ public class SignAction {
             long   et = LocalDateTime.of(
                     LocalDate.now(zi).plusDays(1), LocalTime.MIN
                 ).atZone(zi).toInstant( ).toEpochMilli( ) / 1000;
-            Stores.set ("sign.retry.times." + id, rt, et);
+            Roster.set ("sign.retry.times." + id, rt, et);
             return;
         } else {
-            Stores.del ("sign.retry.times." + id/*Drop*/);
+            Roster.del ("sign.retry.times." + id/*Drop*/);
         }
 
         String uuid  = (String) ud.get( "id" );

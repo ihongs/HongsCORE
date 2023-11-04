@@ -4,12 +4,14 @@ import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLocale;
+import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsCause;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.VerifyHelper;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Table;
+import io.github.ihongs.db.util.FetchCase;
 import io.github.ihongs.serv.master.Unit;
 import io.github.ihongs.serv.master.UserAction;
 import io.github.ihongs.util.Synt;
@@ -231,7 +233,7 @@ public class AuthKit {
         Table ub = db.getTable("user");
         Map   ud = tb.fetchCase()
                      .from(tb.tableName, "s")
-                     .join(ub.tableName, "u", "`u`.`id` = `s`.`user_id`")
+                     .join(ub.tableName, "u", "`u`.`id` = `s`.`user_id`", FetchCase.LEFT)
                      .filter("`s`.`unit` = ? AND `s`.`code` = ?", unit, code)
                      .select("`u`.`id`, `u`.`name`, `u`.`head`, `u`.`state`")
                      .getOne(   );
@@ -349,6 +351,33 @@ public class AuthKit {
     }
 
     //** 分组权限辅助方法 **/
+
+    /**
+     * 设置第三方登录标识
+     * @param unit
+     * @param code
+     * @param uid
+     * @throws HongsException 
+     */
+    public static void setUserSign(String unit, String code, String uid)
+    throws HongsException {
+        Table  tab = DB.getInstance("master").getTable("user_sign");
+        Map    row = tab.fetchCase ()
+            .filter("unit = ?", unit)
+            .filter("code = ?", code)
+            .select("user_id" )
+            .getOne();
+        if (row == null || row.isEmpty()) {
+            tab.insert(Synt.mapOf(
+                "user_id", uid ,
+                "unit"   , unit,
+                "code"   , code
+            ));
+        } else
+        if (! uid.equals(row.get("user_id"))) {
+            throw new HongsException("core.sign.oauth.diverse", unit, code, uid, row.get("user_id"));
+        }
+    }
 
     /**
      * 获取分组拥有的权限

@@ -2,12 +2,11 @@ package io.github.ihongs.serv.oauth2;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.CoreConfig;
+import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.action.anno.CommitSuccess;
-import io.github.ihongs.db.DB;
-import io.github.ihongs.db.Table;
 import io.github.ihongs.serv.auth.AuthKit;
 import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Remote;
@@ -52,12 +51,13 @@ public class QQAction {
             // 登记 openId
             if (opnId != null && opuId != null) {
                 String usrId = (String) back.get(Cnst.UID_SES);
-                setUserSign ( "qq.web", opnId, usrId );
+                AuthKit.setUserSign ( "qq.web", opnId, usrId );
             }
 
             AuthKit.redirect(helper, back);
-        } catch (HongsException  ex) {
-            AuthKit.redirect(helper,  ex );
+        } catch (HongsException exc) {
+            AuthKit.redirect(helper, exc );
+            CoreLogger.error(/*****/ exc );
         }
     }
 
@@ -91,31 +91,13 @@ public class QQAction {
             // 登记 openId
             if (opnId != null && opuId != null) {
                 String usrId = (String) back.get(Cnst.UID_SES);
-                setUserSign ( "qq.wap", opnId, usrId );
+                AuthKit.setUserSign ( "qq.wap", opnId, usrId );
             }
 
             AuthKit.redirect(helper, back);
-        } catch (HongsException  ex) {
-            AuthKit.redirect(helper,  ex );
-        }
-    }
-
-    public static void setUserSign(String unit, String code, String uid)
-    throws HongsException {
-        Table  tab = DB.getInstance("master")
-                       .getTable("user_sign");
-        Map    row = tab.fetchCase()
-            .filter("user_id = ?", uid )
-            .filter("unit = ?"   , unit)
-            .filter("code = ?"   , code)
-            .select("1")
-            .getOne();
-        if (row == null || row.isEmpty()) {
-            tab.insert(Synt.mapOf(
-                "user_id", uid ,
-                "unit"   , unit,
-                "code"   , code
-            ));
+        } catch (HongsException exc) {
+            AuthKit.redirect(helper, exc );
+            CoreLogger.error(/*****/ exc );
         }
     }
 

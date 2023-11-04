@@ -407,7 +407,7 @@ HsStat.prototype = {
             if (v[0] === "" )  continue;
             if (v[1] == null)  v[1] = "#"+ v[0] ;
             label = $('<label></label>')
-                .attr("title", v[1] +" ("+ v[2] + ", "+ v[3] +")" );
+                .attr("title", v[1] +" ("+ v[2] + ")");
             check = $('<input type="checkbox" class="checkone2"/>')
                 .attr("name" , name + ".rg.")
                 .attr("value", v[0]);

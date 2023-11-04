@@ -3,9 +3,12 @@ package io.github.ihongs.dh.search;
 import io.github.ihongs.dh.search.StatisHandle.Field;
 import io.github.ihongs.util.Synt;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.Objects;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.apache.lucene.index.LeafReader;
@@ -235,7 +238,7 @@ public class StatisGrader {
                             Coach w = rr.getValue();
                             Range m = rr.getKey  ();
                             if (m.covers(v)) {
-                                w.add   (v);
+                                w.tap   (v);
                             }
                         }
                     }
@@ -251,7 +254,7 @@ public class StatisGrader {
                             continue;
                         }
                         if (cntc.containsKey(v)) {
-                          ((Count) cntc.get (v)).add();
+                          ((Count) cntc.get (v)).tap();
                         }
                     }
                 } break;
@@ -262,10 +265,10 @@ public class StatisGrader {
                             continue;
                         }
                         if (cntc.containsKey(v)) {
-                          ((Count) cntc.get (v)).add();
+                          ((Count) cntc.get (v)).tap();
                         } else {
                             Count c = new Count(v);
-                                  c.add( );
+                                  c.tap( );
                             cntc.put(v, c);
                         }
                     }
@@ -351,20 +354,6 @@ public class StatisGrader {
             if ( o instanceof Range) {
                 Range that = (Range) o;
 
-                if (this.min < that.min) {
-                    return -1;
-                }
-                if (this.min > that.min) {
-                    return  1;
-                }
-
-                if (this.ge && !that.ge) {
-                    return -1;
-                }
-                if (that.ge && !this.ge) {
-                    return  1;
-                }
-
                 if (this.max < that.max) {
                     return -1;
                 }
@@ -376,6 +365,20 @@ public class StatisGrader {
                     return -1;
                 }
                 if (this.le && !that.le) {
+                    return  1;
+                }
+
+                if (this.min < that.min) {
+                    return -1;
+                }
+                if (this.min > that.min) {
+                    return  1;
+                }
+
+                if (this.ge && !that.ge) {
+                    return -1;
+                }
+                if (that.ge && !this.ge) {
                     return  1;
                 }
             }
@@ -407,71 +410,113 @@ public class StatisGrader {
     /**
      * 计算结果
      */
-    public static class Total extends ArrayList implements Comparable, Coach {
-        public long   cnt = 0;
-        public double sum = 0;
-        public double min = Double.NEGATIVE_INFINITY;
-        public double max = Double.POSITIVE_INFINITY;
+    public static class Total extends Coach {
+  final private Range  rng;
+        private Object txt = null;
+        private int    cnt = 0;
+        private double sum = 0;
+        private double min = Double.NEGATIVE_INFINITY;
+        private double max = Double.POSITIVE_INFINITY;
 
         public Total(Range rng) {
-            super(6);
-            super.add(rng );
-            super.add(null);
-            super.add(cnt );
-            super.add(sum );
-            super.add(min );
-            super.add(max );
+            this.rng = rng;
         }
 
         @Override
-        public void add() {
+        public void tap() {
             cnt = 1 + cnt;
         }
 
         @Override
-        public void add(Number v) {
-            add(v.doubleValue( ));
+        public void tap(Number v) {
+            tap(v.doubleValue( ));
         }
 
         @Override
-        public void add(double v) {
+        public void tap(double v) {
             cnt = 1 + cnt;
-            super.set(2, cnt);
             sum = v + sum;
-            super.set(3, sum);
             if (min > v || min == Double.NEGATIVE_INFINITY) {
                 min = v;
-                super.set(4, min);
             }
             if (max < v || max == Double.POSITIVE_INFINITY) {
                 max = v;
-                super.set(5, max);
             }
+        }
+
+        @Override
+        public Object get(int i) {
+            switch (i) {
+                case 0 : return rng;
+                case 1 : return txt;
+                case 2 : return cnt;
+                case 3 : return sum;
+                case 4 : return min;
+                case 5 : return max;
+            }
+            throw new IndexOutOfBoundsException("Index out of range("+5+"): "+i);
         }
 
         @Override
         public Object set(int i, Object v) {
-            switch ( i ) {
-                case 2 :
-                    cnt = Synt.asLong  (v);
-                    return super.set(2, cnt);
-                case 3 :
-                    sum = Synt.asDouble(v);
-                    return super.set(3, sum);
-                case 4 :
-                    min = Synt.asDouble(v);
-                    return super.set(4, min);
-                case 5 :
-                    max = Synt.asDouble(v);
-                    return super.set(5, max);
-                default:
-                    return super.set(i, v);
+            if (i == 1) {
+                Object o;
+                o =  txt;
+                txt  = v;
+                return o;
             }
+            throw new IndexOutOfBoundsException("Only text(index 1) can be set");
         }
 
         @Override
-        public String toString() {
-            return cnt +","+ sum +","+ min +","+ max ;
+        public int size() {
+            return 6;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o instanceof Tally) {
+                Tally  tt = (Tally) o;
+                return tt.cnt == cnt && tt.sum == sum
+                    && tt.min == min && tt.max == max;
+            }
+            return false;
+        }
+
+        @Override
+        public int compareTo(Object o) {
+            if (o instanceof Total) {
+                Total  tt = (Total) o;
+
+                if (tt.cnt > cnt) {
+                    return -1;
+                }
+                if (tt.cnt < cnt) {
+                    return  1;
+                }
+
+                if (tt.sum > sum) {
+                    return -1;
+                }
+                if (tt.sum < sum) {
+                    return  1;
+                }
+
+                if (tt.max > max) {
+                    return -1;
+                }
+                if (tt.max < max) {
+                    return  1;
+                }
+
+                if (tt.min > min) {
+                    return -1;
+                }
+                if (tt.min < min) {
+                    return  1;
+                }
+            }
+            return 0;
         }
 
         @Override
@@ -480,118 +525,124 @@ public class StatisGrader {
         }
 
         @Override
-        public boolean equals(Object o) {
-            if (! (o instanceof Total)) {
-                return false;
-            }
-            Total  m = (Total ) o;
-            return m.cnt == cnt && m.sum == sum
-                && m.min == min && m.max == max;
+        public String toString() {
+            return cnt +","+ sum +","+ min +","+ max ;
         }
 
         @Override
-        public int compareTo(Object o) {
-            if (o instanceof Total) {
-                Total that =(Total) o;
-
-                if (this.cnt < that.cnt) {
-                    return -1;
-                }
-                if (this.cnt > that.cnt) {
-                    return  1;
-                }
-
-                if (this.sum < that.sum) {
-                    return -1;
-                }
-                if (this.sum > that.sum) {
-                    return  1;
-                }
-
-                if (this.min < that.min) {
-                    return -1;
-                }
-                if (this.min > that.min) {
-                    return  1;
-                }
-
-                if (this.max < that.max) {
-                    return -1;
-                }
-                if (this.max > that.max) {
-                    return  1;
-                }
-            }
-            return 0;
+        public Object[] toArray() {
+            return new Object [] {rng, txt, cnt, sum, min, max};
         }
+
+        @Override
+        public Object[] toArray(Object[] a) {
+            return new Object [] {rng, txt, cnt, sum, min, max};
+        }
+
     }
 
     /**
      * 计算结果
      */
-    public static class Tally extends ArrayList implements Comparable, Coach {
-        public long   cnt = 0;
-        public double sum = 0;
-        public double min = Double.NEGATIVE_INFINITY;
-        public double max = Double.POSITIVE_INFINITY;
+    public static class Tally extends Coach {
+  final private Range  rng;
+        private Object txt = null;
+        private int    cnt = 0;
+  final private double sum = 0;
+        private double min = Double.NEGATIVE_INFINITY;
+        private double max = Double.POSITIVE_INFINITY;
 
         public Tally(Range rng) {
-            super(6);
-            super.add(rng );
-            super.add(null);
-            super.add(cnt );
-            super.add(sum );
-            super.add(min );
-            super.add(max );
+            this.rng = rng;
         }
 
         @Override
-        public void add() {
-            cnt = 1 + cnt;
+        public void tap() {
+            cnt  = 1 + cnt;
         }
 
         @Override
-        public void add(Number v) {
-            add(v.doubleValue( ));
+        public void tap(Number v) {
+            tap(v.doubleValue( ));
         }
 
         @Override
-        public void add(double v) {
-            cnt = 1 + cnt;
-            super.set(2, cnt);
+        public void tap(double v) {
+            cnt  = 1 + cnt;
             if (min > v || min == Double.NEGATIVE_INFINITY) {
                 min = v;
-                super.set(4, min);
             }
             if (max < v || max == Double.POSITIVE_INFINITY) {
                 max = v;
-                super.set(5, max);
             }
+        }
+
+        @Override
+        public Object get(int i) {
+            switch (i) {
+                case 0 : return rng;
+                case 1 : return txt;
+                case 2 : return cnt;
+                case 3 : return sum;
+                case 4 : return min;
+                case 5 : return max;
+            }
+            throw new IndexOutOfBoundsException("Index out of range("+5+"): "+i);
         }
 
         @Override
         public Object set(int i, Object v) {
-            switch ( i ) {
-                case 2 :
-                    cnt = Synt.asLong  (v);
-                    return super.set(2, cnt);
-                case 3 :
-                    sum = Synt.asDouble(v);
-                    return super.set(3, sum);
-                case 4 :
-                    min = Synt.asDouble(v);
-                    return super.set(4, min);
-                case 5 :
-                    max = Synt.asDouble(v);
-                    return super.set(5, max);
-                default:
-                    return super.set(i, v);
+            if (i == 1) {
+                Object o;
+                o =  txt;
+                txt  = v;
+                return o;
             }
+            throw new IndexOutOfBoundsException("Only text(index 1) can be set");
         }
 
         @Override
-        public String toString() {
-            return cnt +","+ sum +","+ min +","+ max ;
+        public int size() {
+            return 6;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o instanceof Tally) {
+                Tally  tt = (Tally) o;
+                return tt.cnt == cnt && tt.sum == sum
+                    && tt.min == min && tt.max == max;
+            }
+            return false;
+        }
+
+        @Override
+        public int compareTo(Object o) {
+            if (o instanceof Total) {
+                Total  tt = (Total) o;
+
+                if (tt.cnt > cnt) {
+                    return -1;
+                }
+                if (tt.cnt < cnt) {
+                    return  1;
+                }
+
+                if (tt.max > max) {
+                    return -1;
+                }
+                if (tt.max < max) {
+                    return  1;
+                }
+
+                if (tt.min > min) {
+                    return -1;
+                }
+                if (tt.min < min) {
+                    return  1;
+                }
+            }
+            return 0;
         }
 
         @Override
@@ -600,87 +651,98 @@ public class StatisGrader {
         }
 
         @Override
-        public boolean equals(Object o) {
-            if (! (o instanceof Total)) {
-                return false;
+        public String toString() {
+            return cnt +","+ sum +","+ min +","+ max ;
+        }
+
+        @Override
+        public Object[] toArray() {
+            return new Object [] {rng, txt, cnt, sum, min, max};
+        }
+
+        @Override
+        public Object[] toArray(Object[] a) {
+            return new Object [] {rng, txt, cnt, sum, min, max};
+        }
+
+    }
+
+    public static class Count extends Coach {
+  final private Object val;
+        private Object txt = null;
+        private int    cnt = 0;
+
+        public Count(Object val) {
+            this.val = val;
+        }
+
+        @Override
+        public void tap() {
+            cnt  = 1 + cnt;
+        }
+
+        @Override
+        public void tap(Number v) {
+            tap();
+        }
+
+        @Override
+        public void tap(double v) {
+            tap();
+        }
+
+        @Override
+        public Object get(int i) {
+            switch (i) {
+                case 0 : return val;
+                case 1 : return txt;
+                case 2 : return cnt;
             }
-            Total  m = (Total ) o;
-            return m.cnt == cnt && m.sum == sum
-                && m.min == min && m.max == max;
+            throw new IndexOutOfBoundsException("Index out of range("+2+"): "+i);
+        }
+
+        @Override
+        public Object set(int i, Object v) {
+            if (i == 1) {
+                Object o;
+                o =  txt;
+                txt  = v;
+                return o;
+            }
+            throw new IndexOutOfBoundsException("Only text(index 1) can be set");
+        }
+
+        @Override
+        public int size() {
+            return 3;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o instanceof Count) {
+                Count  tt = (Count) o;
+                return tt.cnt == cnt ;
+            }
+            return false;
         }
 
         @Override
         public int compareTo(Object o) {
-            if (o instanceof Total) {
-                Total that =(Total) o;
-
-                if (this.cnt < that.cnt) {
+            if (o instanceof Count) {
+                Count  tt = (Count) o;
+                if (tt.cnt > cnt) {
                     return -1;
                 }
-                if (this.cnt > that.cnt) {
-                    return  1;
-                }
-
-                if (this.sum < that.sum) {
-                    return -1;
-                }
-                if (this.sum > that.sum) {
-                    return  1;
-                }
-
-                if (this.min < that.min) {
-                    return -1;
-                }
-                if (this.min > that.min) {
-                    return  1;
-                }
-
-                if (this.max < that.max) {
-                    return -1;
-                }
-                if (this.max > that.max) {
+                if (tt.cnt < cnt) {
                     return  1;
                 }
             }
             return 0;
         }
-    }
-
-    public static class Count extends ArrayList implements Comparable, Coach {
-        public long cnt = 0L;
-
-        public Count(Object val) {
-            super(3);
-            super.add(val );
-            super.add(null);
-            super.add(cnt );
-        }
 
         @Override
-        public void add() {
-            cnt = 1 + cnt;
-            super.set(2, cnt);
-        }
-
-        @Override
-        public void add(Number v) {
-            add ( );
-        }
-
-        @Override
-        public void add(double v) {
-            add ( );
-        }
-
-        @Override
-        public Object set(int i, Object v) {
-            switch ( i ) {
-                case 2 :
-                    cnt = Synt.asLong  (v);
-                    return super.set(2, cnt);
-                default:
-                    return super.set(i, v);
-            }
+        public int hashCode() {
+            return Objects . hash(cnt);
         }
 
         @Override
@@ -689,41 +751,154 @@ public class StatisGrader {
         }
 
         @Override
-        public int hashCode() {
-            return Objects . hash (cnt);
+        public Object[] toArray() {
+            return new Object [] {val, txt, cnt};
         }
 
         @Override
-        public boolean equals(Object o) {
-            if (! (o instanceof Total)) {
-                return false;
-            }
-            Count  m = (Count ) o;
-            return m.cnt == cnt;
+        public Object[] toArray(Object[] a) {
+            return new Object [] {val, txt, cnt};
         }
 
-        @Override
-        public int compareTo(Object o) {
-            if (o instanceof Count) {
-                Count that =(Count) o;
-                if (this.cnt < that.cnt) {
-                    return -1;
-                }
-                if (this.cnt > that.cnt) {
-                    return  1;
-                }
-            }
-            return 0;
-        }
     }
 
-    public static abstract interface Coach {
+    /**
+     * 基础计数容器
+     * 需要实现 tap,get,set.size 用于计数和读取,
+     * 还需实现 equals,compareTo,hashCode,toString,toArray
+     */
+    abstract public static class Coach implements Comparable, List {
 
-        public void add();
-        public void add(Number v);
-        public void add(double v);
-        public Object get (int i);
+        abstract public void tap();
+        abstract public void tap(Number v);
+        abstract public void tap(double v);
 
+        private int top ;
+        public  int top() {
+            return  top ;
+        }
+        public void top(int i) {
+            this.top = i;
+        }
+
+        @Override
+        public Iterator iterator() {
+            final Coach o = this ;
+            return new  Iterator() {
+                private int c = 0;
+                @Override
+                public Object  next() {
+                    return o.get (c ++);
+                }
+                @Override
+                public boolean hasNext() {
+                    return o.size() > c;
+                }
+            };
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return false;
+        }
+
+        //** 有限只读, 下列方法均不支持 */
+
+        @Override
+        @Deprecated
+        public boolean add(Object o) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        @Deprecated
+        public boolean remove(Object o) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        @Deprecated
+        public boolean contains(Object o) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        @Deprecated
+        public boolean addAll(Collection c) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        @Deprecated
+        public boolean addAll(int i, Collection c) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        @Deprecated
+        public boolean removeAll(Collection c) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        @Deprecated
+        public boolean retainAll(Collection c) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        @Deprecated
+        public boolean containsAll(Collection c) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        @Deprecated
+        public int indexOf(Object o) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        @Deprecated
+        public int lastIndexOf(Object o) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        @Deprecated
+        public void clear() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        @Deprecated
+        public void add(int i, Object o) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        @Deprecated
+        public Object remove(int i) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        @Deprecated
+        public List subList(int f, int t) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        @Deprecated
+        public ListIterator listIterator() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        @Deprecated
+        public ListIterator listIterator(int index) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
     }
 
 }

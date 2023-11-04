@@ -33,17 +33,17 @@ public class TestStatis {
     @Test
     public void testRatio() {
         StatisGrader.Total r = new StatisGrader.Total(new StatisGrader.Range(""));
-        r.add(123);
-        r.add(456);
+        r.tap(123);
+        r.tap(456);
 
         System.out.println(
                 r.toString()
         );
 
-        assertTrue(r.cnt == 2);
-        assertTrue(r.sum == 123 + 456);
-        assertTrue(r.min == 123);
-        assertTrue(r.max == 456);
+        assertTrue((int) r.get(2) == 2);
+        assertTrue((double) r.get(3) == 123 + 456);
+        assertTrue((double) r.get(4) == 123);
+        assertTrue((double) r.get(5) == 456);
     }
 
 }

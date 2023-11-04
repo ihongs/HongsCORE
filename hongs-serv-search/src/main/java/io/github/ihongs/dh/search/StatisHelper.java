@@ -24,8 +24,10 @@ import java.util.Comparator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -116,7 +118,8 @@ public class StatisHelper {
 
                 // 模式
                 int cm =  -1 ;
-                Function  vf , cf ;
+                Function<Object, Object> vf;
+                Function<Object, Coach > cf;
                 switch(Synt.declare(vm.get(Cnst.AB_KEY), "")) {
                     case "total":
                         vf = (v) -> new Range(v);
@@ -161,7 +164,7 @@ public class StatisHelper {
                     Map vz = new HashMap(vs.size());
                     for(Object v : vs) {
                         Object s = vf.apply(v);
-                        Object c = cf.apply(s);
+                        Coach  c = cf.apply(s);
                         vz.put(s , c );
                     }
                     counts.put(k , vz);
@@ -194,18 +197,21 @@ public class StatisHelper {
                     Set vx = new HashSet(vs.size());
                     for(Object v : vs) {
                         Object s = vf.apply(v);
-                        Object c = cf.apply(s);
+                        Coach  c = cf.apply(s);
                         vz.put(s , c );
                         vx.add(s /**/);
+                        c .top(1 /**/); // 设为置顶, 排序优先
                     }
-                    if (counts . containsKey(k)) {
-                        vz.putAll(counts.get(k));
+                    if (counts.containsKey(k)) {
+                        counts.get(k).putAll(vz);
+                    } else {
+                        counts.put(k , vz);
                     }
-                    if (countz . containsKey(k)) {
-                        vx.addAll(countz.get(k));
+                    if (countz.containsKey( k )) {
+                        countz.get(k).addAll(vx);
+                    } else {
+                        countz.put(k , vx);
                     }
-                    counts.put(k , vz);
-                    countz.put(k , vx);
                 }
 
                 // 分块条件
@@ -216,18 +222,21 @@ public class StatisHelper {
                     Set vx = new HashSet(vs.size());
                     for(Object v : vs) {
                         Object s = vf.apply(v);
-                        Object c = cf.apply(s);
+                        Coach  c = cf.apply(s);
                         vz.put(s , c );
                         vx.add(s /**/);
+                        c .top(2 /**/); // 设为置顶, 排序优先
                     }
-                    if (counts . containsKey(k)) {
-                        vz.putAll(counts.get(k));
+                    if (counts.containsKey(k)) {
+                        counts.get(k).putAll(vz);
+                    } else {
+                        counts.put(k , vz);
                     }
-                    if (countz . containsKey(k)) {
-                        vx.addAll(countz.get(k));
+                    if (countz.containsKey( k )) {
+                        countz.get(k).addAll(vx);
+                    } else {
+                        countz.put(k , vx);
                     }
-                    counts.put(k , vz);
-                    countz.put(k , vx);
 
                     // 提取出来准备独立处理
                     vd  = new HashMap (rd);
@@ -282,37 +291,89 @@ public class StatisHelper {
             Set <Object      > w = countz.get(k);
             List<       Coach> a = new ArrayList(m.values());
 
-            // 排序
+            /**
+             * 排序, 保障特选的排在前面.
+             */
+            int xd  = 0;
             if (ob != null && ! ob.isEmpty()) {
                 if (ob.contains(k+"!")
                 ||  ob.contains("-"+k)) {
-                    Collections.sort(a, OrderD);
+                    Collections.sort(a, OrderD); xd = 2;
                 } else
                 if (ob.contains(  k  )) {
-                    Collections.sort(a, OrderA);
+                    Collections.sort(a, OrderA); xd = 1;
                 } else
                 if (od == 2) {
-                    Collections.sort(a, OrderD);
+                    Collections.sort(a, OrderD); xd = 2;
                 } else
                 if (od == 1) {
-                    Collections.sort(a, OrderA);
+                    Collections.sort(a, OrderA); xd = 1;
+                } else
+                if (w != null && ! w.isEmpty()) {
+                    Collections.sort(a, OrderT);
+                }
+            } else {
+                if (w != null && ! w.isEmpty()) {
+                    Collections.sort(a, OrderT);
                 }
             }
 
-            // 截选 Top N
+            /**
+             * 截取, 保障特选的在结果里.
+             */
             n = Dict.getValue(rd, rn, k, Cnst.RN_KEY);
             if (n > 0 && n < a.size()) {
-                a = a.subList( 0, n );
+                if (w != null && ! w.isEmpty()) {
+                    n  = Math.max (n, w.size());
+                }
+                a = a.subList (0 , n);
+            }
 
-                // 补充特选值
-                if (w != null) {
-                    for(Coach  o : a) {
-                        w.remove(o.get(0));
-                    }
-                    for(Object v : w) {
-                        a.add   (m.get(v));
+            /**
+             * 清理计数为零的
+             * 正序遇到非零则后面全非零
+             * 逆序遇到为零则后面全为零
+             * 未排序则只能遍历过滤重建
+             */
+            if (xd == 1) {
+                int i , j ;
+                i = j = w != null ? w.size() : 0;
+                for(; j < a.size(); j ++) {
+                    Coach c = a.get(j);
+                    if ((int) c.get(2) != 0) {
+                        break;
                     }
                 }
+                if (j > i) {
+                   List b = new ArrayList (a.size()-j+i);
+                    if (i > 0) {
+                        b.addAll(a.subList(0, i /***/ ));
+                    }   b.addAll(a.subList(j, a.size()));
+                    a = b;
+                }
+            } else
+            if (xd == 2) {
+                int j = w != null ? w.size() : 0;
+                for(; j < a.size(); j ++) {
+                    Coach c = a.get(j);
+                    if ((int) c.get(2) == 0) {
+                        break;
+                    }
+                }
+                if (j < a.size()) {
+                    a = a.subList(0,j);
+                }
+            } else
+            {
+               List b = new ArrayList(a.size( ));
+                int j = w != null ? w.size() : 0;
+                for(; j < a.size(); j ++) {
+                    Coach c = a.get(j);
+                    if ((int) c.get(2) != 0) {
+                        b.add(c);
+                    }
+                }
+                a = b;
             }
 
             cnts.put(k, a);
@@ -944,8 +1005,15 @@ public class StatisHelper {
         @Override
         public int compare(Coach o1, Coach o2) {
             try {
-                long   cnt1 = (long)   o1.get(2);
-                long   cnt2 = (long)   o2.get(2);
+                // 置顶总是逆序
+                int top1 = o1.top();
+                int top2 = o2.top();
+                if (top1 != top2) {
+                    return top1 > top2 ? -1 : 1 ;
+                }
+
+                int cnt1 = (int) o1.get(2);
+                int cnt2 = (int) o2.get(2);
                 if (cnt1 != cnt2) {
                     return cnt1 < cnt2 ? -1 : 1 ;
                 }
@@ -973,8 +1041,15 @@ public class StatisHelper {
         @Override
         public int compare(Coach o1, Coach o2) {
             try {
-                long   cnt1 = (long)   o1.get(2);
-                long   cnt2 = (long)   o2.get(2);
+                // 置顶总是逆序
+                int top1 = o1.top();
+                int top2 = o2.top();
+                if (top1 != top2) {
+                    return top1 > top2 ? -1 : 1 ;
+                }
+
+                int cnt1 = (int) o1.get(2);
+                int cnt2 = (int) o2.get(2);
                 if (cnt1 != cnt2) {
                     return cnt1 > cnt2 ? -1 : 1 ;
                 }
@@ -983,6 +1058,28 @@ public class StatisHelper {
                 double sum2 = (double) o2.get(3);
                 if (sum1 != sum2) {
                     return sum1 > sum2 ? -1 : 1 ;
+                }
+            }
+            catch (IndexOutOfBoundsException | ClassCastException e) {
+                // Nothing to do.
+            }
+
+            return 0;
+        }
+    };
+
+    /**
+     * 置顶排序
+     */
+    private static final Comparator<Coach> OrderT = new Comparator<Coach>() {
+        @Override
+        public int compare(Coach o1, Coach o2) {
+            try {
+                // 置顶总是逆序
+                int top1 = o1.top();
+                int top2 = o2.top();
+                if (top1 != top2) {
+                    return top1 > top2 ? -1 : 1 ;
                 }
             }
             catch (IndexOutOfBoundsException | ClassCastException e) {

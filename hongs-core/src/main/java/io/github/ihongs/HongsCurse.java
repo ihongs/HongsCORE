@@ -90,7 +90,7 @@ public final class HongsCurse {
             return  mark  ;
         } else
         {
-            return "Error";
+            return this.getClass().getName();
         }
     }
 
@@ -107,7 +107,10 @@ public final class HongsCurse {
         &&  errno <= 1) {
             return cauze.toString();
         }
-        return getStage()+": "+getMessage();
+
+        String s  = this.getStage();
+        String m  = this.getMessage();
+        return m != null ? (s +": "+ m) : s;
     }
 
     /**
@@ -121,20 +124,17 @@ public final class HongsCurse {
         R: {
             CoreConfig conf = getConfig( );
 
-                errox  = mark;
-            if (errox != null && ! errox.isEmpty()) {
-                errox  = conf.getProperty(errox);
+            if ( mark != null && ! mark .isEmpty()) {
+                errox  = conf.getProperty(mark);
                 if (errox != null) break R;
             }
 
-            if ( 600 <= errno ) {
-                errox  = "Ex" + Integer.toString(errno, 10);
-                errox  = conf.getProperty(errox);
+            if (errno >= 600 ) {
+                errox  = conf.getProperty("Ex" + Integer.toString(errno, 10));
                 if (errox != null) break R;
             } else
-            if ( 400 <= errno ) {
-                errox  = "Er" + Integer.toString(errno, 10);
-                errox  = conf.getProperty(errox);
+            if (errno >= 400 ) {
+                errox  = conf.getProperty("Er" + Integer.toString(errno, 10));
                 if (errox != null) break R;
             }
 
@@ -148,7 +148,12 @@ public final class HongsCurse {
                 return erroo.getMessage();
             }
 
-            errox  = "";
+            // 参数作为消息
+            if (cases != null && cases.length > 0) {
+                return Syno . concat (", ", cases);
+            }
+
+            return null;
         }
 
         // 注入消息参数
@@ -170,20 +175,17 @@ public final class HongsCurse {
         R: {
             CoreConfig conf = getLocale( );
 
-                errox  = mark;
-            if (errox != null && ! errox.isEmpty()) {
-                errox  = conf.getProperty(errox);
+            if ( mark != null && ! mark .isEmpty()) {
+                errox  = conf.getProperty(mark);
                 if (errox != null) break R;
             }
 
-            if ( 600 <= errno ) {
-                errox  = "Ex" + Integer.toString(errno, 10);
-                errox  = conf.getProperty(errox);
+            if (errno >= 600 ) {
+                errox  = conf.getProperty("Ex" + Integer.toString(errno, 10));
                 if (errox != null) break R;
             } else
-            if ( 400 <= errno ) {
-                errox  = "Er" + Integer.toString(errno, 10);
-                errox  = conf.getProperty(errox);
+            if (errno >= 400 ) {
+                errox  = conf.getProperty("Er" + Integer.toString(errno, 10));
                 if (errox != null) break R;
             }
 
@@ -197,7 +199,12 @@ public final class HongsCurse {
                 return erroo.getLocalizedMessage();
             }
 
-            errox  = "";
+            /**
+             * 本地消息可能对外展示,
+             * 故不会将参数作为消息.
+             */
+
+            return null;
         }
 
         // 注入消息参数

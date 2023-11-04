@@ -2,7 +2,7 @@ package io.github.ihongs.combat.serv;
 
 import io.github.ihongs.combat.CombatHelper;
 import io.github.ihongs.combat.anno.Combat;
-import io.github.ihongs.serv.Record;
+import io.github.ihongs.dh.Stores;
 
 /**
  * 存储维护命令
@@ -21,7 +21,7 @@ public class Records {
         if (args.length != 0) {
              exp = Integer.parseInt ( args[0] );
         }
-        Record.del(System.currentTimeMillis() / 1000 - exp);
+        Stores.del(System.currentTimeMillis() / 1000 - exp);
     }
 
     /**
@@ -33,7 +33,7 @@ public class Records {
         if (args.length == 0) {
           CombatHelper.println("Record ID required!");
         }
-          CombatHelper.preview( Record.get(args[0]) );
+          CombatHelper.preview( Stores.get(args[0]) );
     }
 
 }

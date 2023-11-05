@@ -24,10 +24,8 @@ import java.util.Comparator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -190,7 +188,7 @@ public class StatisHelper {
                     countx.put(k , vx);
                 }
 
-                // 特选
+                // 备选
                 vs = Synt.asSet(vm.get(Cnst.OR_KEY));
                 if (vs != null && !vs.isEmpty()) {
                     Map vz = new HashMap(vs.size());
@@ -214,8 +212,7 @@ public class StatisHelper {
                     }
                 }
 
-                // 分块条件
-                if (ln != true) vs = null ; else {
+                // 已选
                 vs = Synt.asSet(vm.get(Cnst.IN_REL));
                 if (vs != null && !vs.isEmpty()) {
                     Map vz = new HashMap(vs.size());
@@ -237,20 +234,27 @@ public class StatisHelper {
                     } else {
                         countz.put(k , vx);
                     }
+                }
 
-                    // 提取出来准备独立处理
+                // 已选条件, 拆出备用
+                if (ln && vs != null && !vs.isEmpty()) {
                     vd  = new HashMap (rd);
                     vm  = new HashMap (vm);
                     vm.remove(Cnst.IN_REL);
                     vd.put(k , vm);
-                }}
+                }
 
                 } catch ( ClassCastException ex) {
                     throw new HongsException(ex, 400); // 数据转换失败
                 }
             }
 
-            if ( vs == null || vs.isEmpty() ) {
+            /**
+             * 仿 LinkedIn 筛选统计
+             * 将已选的部分单独统计
+             * 其他未选部分一起统计
+             */
+            if (vd == null) {
                 Map vz  = counts.get(k);
                 if (vz != null) counts2.put (k , vz);
                 Set<Object> vx= countx .get (k);
@@ -335,7 +339,7 @@ public class StatisHelper {
              * 逆序遇到为零则后面全为零
              * 未排序则只能遍历过滤重建
              */
-            if (xd == 1) {
+            if (xd == 1) { // 0-9
                 int i , j ;
                 i = j = w != null ? w.size() : 0;
                 for(; j < a.size(); j ++) {
@@ -352,7 +356,7 @@ public class StatisHelper {
                     a = b;
                 }
             } else
-            if (xd == 2) {
+            if (xd == 2) { // 9-0
                 int j = w != null ? w.size() : 0;
                 for(; j < a.size(); j ++) {
                     Coach c = a.get(j);

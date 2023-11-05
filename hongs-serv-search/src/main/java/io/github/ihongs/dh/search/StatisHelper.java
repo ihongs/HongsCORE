@@ -58,6 +58,7 @@ public class StatisHelper {
      * rd.ob 为要排序的字段
      * rd.ab 含 linked 时 rd.fn.in 对应字段 fn 分块统计
      * rd.fn.rn 可单独指定字段统计长度
+     * rd.fn.or 可指定要置顶的取值集合
      * rd.fn.ar 可指定要统计的取值集合
      * rd.fn.nr 可指定要忽略的取值集合(只是不作统计, 并非查询约束)
      * </pre>
@@ -118,20 +119,24 @@ public class StatisHelper {
                 int cm =  -1 ;
                 Function<Object, Object> vf;
                 Function<Object, Coach > cf;
+                String  CURR_IN_REL = Cnst.IN_REL;
                 switch(Synt.declare(vm.get(Cnst.AB_KEY), "")) {
                     case "total":
+                        CURR_IN_REL = Cnst.RG_REL;
                         vf = (v) -> new Range(v);
                         cf = (v) -> new Total((Range)v);
                         cm = StatisGrader.TOTAL ;
                         styles.put(k, cm);
                         break;
                     case "tally":
+                        CURR_IN_REL = Cnst.RG_REL;
                         vf = (v) -> new Range(v);
                         cf = (v) -> new Tally((Range)v);
                         cm = StatisGrader.TALLY ;
                         styles.put(k, cm);
                         break;
                     case "range":
+                        CURR_IN_REL = Cnst.RG_REL;
                         vf = (v) -> new Range(v);
                         cf = (v) -> new Count(v);
                         cm = StatisGrader.RANGE ;
@@ -213,7 +218,7 @@ public class StatisHelper {
                 }
 
                 // 已选
-                vs = Synt.asSet(vm.get(Cnst.IN_REL));
+                vs = Synt.asSet(vm.get(CURR_IN_REL));
                 if (vs != null && !vs.isEmpty()) {
                     Map vz = new HashMap(vs.size());
                     Set vx = new HashSet(vs.size());
@@ -240,7 +245,7 @@ public class StatisHelper {
                 if (ln && vs != null && !vs.isEmpty()) {
                     vd  = new HashMap (rd);
                     vm  = new HashMap (vm);
-                    vm.remove(Cnst.IN_REL);
+                    vm.remove(CURR_IN_REL);
                     vd.put(k , vm);
                 }
 

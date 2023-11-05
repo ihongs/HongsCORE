@@ -423,6 +423,11 @@ public class StatisGrader {
         }
 
         @Override
+        public int cnt() {
+            return cnt;
+        }
+
+        @Override
         public void tap() {
             cnt = 1 + cnt;
         }
@@ -557,6 +562,11 @@ public class StatisGrader {
         }
 
         @Override
+        public int cnt() {
+            return cnt;
+        }
+
+        @Override
         public void tap() {
             cnt  = 1 + cnt;
         }
@@ -677,6 +687,11 @@ public class StatisGrader {
         }
 
         @Override
+        public int cnt() {
+            return cnt;
+        }
+
+        @Override
         public void tap() {
             cnt  = 1 + cnt;
         }
@@ -769,6 +784,7 @@ public class StatisGrader {
      */
     abstract public static class Coach implements Comparable, List {
 
+        abstract public  int cnt();
         abstract public void tap();
         abstract public void tap(Number v);
         abstract public void tap(double v);
@@ -783,17 +799,20 @@ public class StatisGrader {
 
         @Override
         public Iterator iterator() {
-            final Coach o = this ;
+            final Coach o = this;
             return new  Iterator() {
-                private int c = 0;
+                int i = 0;
+
                 @Override
                 public Object  next() {
-                    return o.get (c ++);
+                    return o.get (i ++);
                 }
+
                 @Override
                 public boolean hasNext() {
-                    return o.size() > c;
+                    return o.size() > i;
                 }
+
             };
         }
 
@@ -899,6 +918,7 @@ public class StatisGrader {
         public ListIterator listIterator(int index) {
             throw new UnsupportedOperationException("Not supported yet.");
         }
+
     }
 
 }

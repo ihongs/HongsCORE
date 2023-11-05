@@ -22,10 +22,14 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -73,7 +77,9 @@ public class StatisHelper {
         Set<String> ab = Synt.toTerms(rd.get(Cnst.AB_KEY));
         Set<String> rb = Synt.toTerms(rd.get(Cnst.RB_KEY));
         Set<String> ob = Synt.toTerms(rd.get(Cnst.OB_KEY));
-        boolean ln  =  ab != null && ab.contains("linked");
+        boolean ld  =  ab != null && ab.contains("linked");
+        boolean rt  =  ab != null && ab.contains("resort");
+        boolean ro  =  ab != null && ab.contains("rezero");
         int     rl  =  rb != null  ? rb.size() : 0 ;
 
         Map<String, Map    > counts  = new HashMap(rl);
@@ -120,7 +126,7 @@ public class StatisHelper {
                 Function<Object, Object> vf;
                 Function<Object, Coach > cf;
                 String  CURR_IN_REL = Cnst.IN_REL;
-                switch(Synt.declare(vm.get(Cnst.AB_KEY), "")) {
+                switch(Synt.declare(vm.get(Cnst.RB_KEY), "")) {
                     case "total":
                         CURR_IN_REL = Cnst.RG_REL;
                         vf = (v) -> new Range(v);
@@ -242,7 +248,7 @@ public class StatisHelper {
                 }
 
                 // 已选条件, 拆出备用
-                if (ln && vs != null && !vs.isEmpty()) {
+                if (ld && vs != null && !vs.isEmpty()) {
                     vd  = new HashMap (rd);
                     vm  = new HashMap (vm);
                     vm.remove(CURR_IN_REL);
@@ -295,97 +301,109 @@ public class StatisHelper {
         }}
 
         for(Map.Entry<String, Map> et : counts.entrySet()) {
-                 String        k = et.getKey  ();
-            Map <Object,Coach> m = et.getValue();
-            Set <Object      > w = countz.get(k);
-            List<       Coach> a = new ArrayList(m.values());
+                String        k  = et.getKey  ();
+            Map<Object,Coach> m  = et.getValue();
+            Set<Object      > w  = countz.get(k);
+            Collection<Coach> x  = m .values ( );
+            Coach[]           a  = new Coach [x.size()];
+                              a  = x .toArray(a);
+
+            int al = a.length;
+            int wl = w != null ? w.size() : 0;
+            int nl = Dict.getValue(rd, rn, k, Cnst.RN_KEY);
 
             /**
-             * 排序, 保障特选的排在前面.
+             * 排序, 保障特选的排在前面
+             * rezero则将特选为零往后排
              */
-            int xd  = 0;
-            if (ob != null && ! ob.isEmpty()) {
-                if (ob.contains(k+"!")
-                ||  ob.contains("-"+k)) {
-                    Collections.sort(a, OrderD); xd = 2;
-                } else
-                if (ob.contains(  k  )) {
-                    Collections.sort(a, OrderA); xd = 1;
-                } else
-                if (od == 2) {
-                    Collections.sort(a, OrderD); xd = 2;
-                } else
-                if (od == 1) {
-                    Collections.sort(a, OrderA); xd = 1;
-                } else
-                if (w != null && ! w.isEmpty()) {
-                    Collections.sort(a, OrderT);
+            Comparator<Coach> cp;
+            if (ro) {
+                cp = OrderH2;
+                if (ob != null && ! ob.isEmpty()) {
+                    if (ob.contains(k+"!")
+                    ||  ob.contains("-"+k)) {
+                        cp = OrderD2;
+                    } else
+                    if (ob.contains(  k  )) {
+                        cp = OrderA2;
+                    } else
+                    if (od == 2) {
+                        cp = OrderD2;
+                    } else
+                    if (od == 1) {
+                        cp = OrderA2;
+                    }
                 }
             } else {
-                if (w != null && ! w.isEmpty()) {
-                    Collections.sort(a, OrderT);
+                cp = OrderH2;
+                if (ob != null && ! ob.isEmpty()) {
+                    if (ob.contains(k+"!")
+                    ||  ob.contains("-"+k)) {
+                        cp = OrderD1;
+                    } else
+                    if (ob.contains(  k  )) {
+                        cp = OrderA1;
+                    } else
+                    if (od == 2) {
+                        cp = OrderD1;
+                    } else
+                    if (od == 1) {
+                        cp = OrderA1;
+                    }
                 }
             }
+            Arrays.sort(a , cp);
 
             /**
-             * 截取, 保障特选的在结果里.
+             * 清理, 去掉末尾计数为零的
+             * rezero则将特选为零也去掉
              */
-            n = Dict.getValue(rd, rn, k, Cnst.RN_KEY);
-            if (n > 0 && n < a.size()) {
-                if (w != null && ! w.isEmpty()) {
-                    n  = Math.max (n, w.size());
+            if (ro) {
+                int i = al -1;
+                for(; i >  -1; i -- ) {
+                    Coach  c = a[ i ];
+                    if (c.cnt() != 0) {
+                        break;
+                    }
+                    if (c.top() != 0) {
+                        wl --;
+                    }
                 }
-                a = a.subList (0 , n);
-            }
-
-            /**
-             * 清理计数为零的
-             * 正序遇到非零则后面全非零
-             * 逆序遇到为零则后面全为零
-             * 未排序则只能遍历过滤重建
-             */
-            if (xd == 1) { // 0-9
-                int i , j ;
-                i = j = w != null ? w.size() : 0;
-                for(; j < a.size(); j ++) {
-                    Coach c = a.get(j);
-                    if ((int) c.get(2) != 0) {
+                al = i + 1;
+            } else {
+                int i = al -1;
+                for(; i >  -1; i -- ) {
+                    Coach  c = a[ i ];
+                    if (c.cnt() != 0) {
+                        break;
+                    }
+                    if (c.top() != 0) {
                         break;
                     }
                 }
-                if (j > i) {
-                   List b = new ArrayList (a.size()-j+i);
-                    if (i > 0) {
-                        b.addAll(a.subList(0, i /***/ ));
-                    }   b.addAll(a.subList(j, a.size()));
-                    a = b;
-                }
-            } else
-            if (xd == 2) { // 9-0
-                int j = w != null ? w.size() : 0;
-                for(; j < a.size(); j ++) {
-                    Coach c = a.get(j);
-                    if ((int) c.get(2) == 0) {
-                        break;
-                    }
-                }
-                if (j < a.size()) {
-                    a = a.subList(0,j);
-                }
-            } else
-            {
-               List b = new ArrayList(a.size( ));
-                int j = w != null ? w.size() : 0;
-                for(; j < a.size(); j ++) {
-                    Coach c = a.get(j);
-                    if ((int) c.get(2) != 0) {
-                        b.add(c);
-                    }
-                }
-                a = b;
+                al = i + 1;
             }
 
-            cnts.put(k, a);
+            /**
+             * 截取, 保障特选非零的不丢
+             */
+            if (nl > 0) {
+                al = Math.min(al, Math.max(wl, nl));
+            }
+
+            /**
+             * 重排, 不理置顶按计数重排
+             */
+            if (rt && al > wl && wl > 0) {
+                if (cp == OrderD2 || cp == OrderD1) {
+                    Arrays.sort (a, 0, al, OrderD0);
+                } else
+                if (cp == OrderA2 || cp == OrderA1) {
+                    Arrays.sort (a, 0, al, OrderA0);
+                }
+            }
+
+            cnts.put(k, new MyList(a, 0, al));
         }
 
         return cnts;
@@ -1006,35 +1024,165 @@ public class StatisHelper {
     }
 
     /**
-     * 计算排序
-     * 先按数量从少到多排
-     * 再按求和从小到大排
+     * 数组片段
+     * @param <T>
      */
-    private static final Comparator<Coach> OrderA = new Comparator<Coach>() {
+    private static class MyList<T> implements List<T> {
+
+        private final T[] a;
+        private final int b;
+        private final int l;
+
+        public MyList(T[] a, int b, int l) {
+            this.a = a;
+            this.b = b;
+            this.l = l;
+        }
+
+        @Override
+        public T get(int i) {
+            return a[i];
+        }
+
+        @Override
+        public T set(int i, T e) {
+            T v  = a[i];
+            a[i] = e;
+            return v;
+        }
+
+        @Override
+        public int size() {
+            return l -  b;
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return l == b;
+        }
+
+        @Override
+        public List<T> subList(int f, int t) {
+            return new MyList ( a, f, t );
+        }
+
+        @Override
+        public Iterator<T> iterator() {
+            return new Iterator<T> () {
+                int i = b;
+
+                @Override
+                public boolean hasNext() {
+                    return i < l;
+                }
+
+                @Override
+                public T next() {
+                    return a [i ++];
+                }
+
+            };
+        }
+
+        @Override
+        public Object[] toArray() {
+            return a;
+        }
+
+        @Override
+        public <T> T[] toArray(T[] a) {
+            return a;
+        }
+
+        //** 有限只读, 下列方法均不支持 */
+
+        @Override
+        public boolean add(T e) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public boolean remove(Object o) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public boolean contains(Object o) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public boolean addAll(Collection<? extends T> c) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public boolean addAll(int index, Collection<? extends T> c) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public boolean removeAll(Collection<?> c) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public boolean retainAll(Collection<?> c) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public boolean containsAll(Collection<?> c) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public void clear() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public void add(int i, T e) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public T remove(int i) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public int indexOf(Object o) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public int lastIndexOf(Object o) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public ListIterator<T> listIterator() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public ListIterator<T> listIterator(int j) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+    }
+
+    /**
+     * 仅按计数正序重排
+     */
+    private static final Comparator<Coach> OrderA0 = new Comparator<Coach>() {
         @Override
         public int compare(Coach o1, Coach o2) {
-            try {
-                // 置顶总是逆序
-                int top1 = o1.top();
-                int top2 = o2.top();
-                if (top1 != top2) {
-                    return top1 > top2 ? -1 : 1 ;
-                }
-
-                int cnt1 = (int) o1.get(2);
-                int cnt2 = (int) o2.get(2);
-                if (cnt1 != cnt2) {
-                    return cnt1 < cnt2 ? -1 : 1 ;
-                }
-
-                double sum1 = (double) o1.get(3);
-                double sum2 = (double) o2.get(3);
-                if (sum1 != sum2) {
-                    return sum1 < sum2 ? -1 : 1 ;
-                }
-            }
-            catch (IndexOutOfBoundsException | ClassCastException e) {
-                // Nothing to do.
+            int cnt1  = o1.cnt();
+            int cnt2  = o2.cnt();
+            if (cnt1 != cnt2) {
+                return cnt1 < cnt2 ? -1 : 1 ;
             }
 
             return 0;
@@ -1042,35 +1190,23 @@ public class StatisHelper {
     };
 
     /**
-     * 计算排序
-     * 先按数量从多到少排
-     * 再按求和从大到小排
+     * 置顶条目总排前面
+     * 按计数从小到大排
      */
-    private static final Comparator<Coach> OrderD = new Comparator<Coach>() {
+    private static final Comparator<Coach> OrderA1 = new Comparator<Coach>() {
         @Override
         public int compare(Coach o1, Coach o2) {
-            try {
-                // 置顶总是逆序
-                int top1 = o1.top();
-                int top2 = o2.top();
-                if (top1 != top2) {
-                    return top1 > top2 ? -1 : 1 ;
-                }
-
-                int cnt1 = (int) o1.get(2);
-                int cnt2 = (int) o2.get(2);
-                if (cnt1 != cnt2) {
-                    return cnt1 > cnt2 ? -1 : 1 ;
-                }
-
-                double sum1 = (double) o1.get(3);
-                double sum2 = (double) o2.get(3);
-                if (sum1 != sum2) {
-                    return sum1 > sum2 ? -1 : 1 ;
-                }
+            // 置顶总是逆序
+            int top1  = o1.top();
+            int top2  = o2.top();
+            if (top1 != top2) {
+                return top1 > top2 ? -1 : 1 ;
             }
-            catch (IndexOutOfBoundsException | ClassCastException e) {
-                // Nothing to do.
+
+            int cnt1  = o1.cnt();
+            int cnt2  = o2.cnt();
+            if (cnt1 != cnt2) {
+                return cnt1 < cnt2 ? -1 : 1 ;
             }
 
             return 0;
@@ -1078,21 +1214,144 @@ public class StatisHelper {
     };
 
     /**
-     * 置顶排序
+     * 计数为零总排后面
+     * 置顶条目总排前面
+     * 按计数从小到大排
      */
-    private static final Comparator<Coach> OrderT = new Comparator<Coach>() {
+    private static final Comparator<Coach> OrderA2 = new Comparator<Coach>() {
         @Override
         public int compare(Coach o1, Coach o2) {
-            try {
-                // 置顶总是逆序
-                int top1 = o1.top();
-                int top2 = o2.top();
-                if (top1 != top2) {
-                    return top1 > top2 ? -1 : 1 ;
-                }
+            // 零总是排最后
+            int cnt1  = o1.cnt();
+            int cnt2  = o2.cnt();
+            if (cnt1 != cnt2) {
+                if (0== cnt2) return -1 ;
+                if (0== cnt1) return  1 ;
             }
-            catch (IndexOutOfBoundsException | ClassCastException e) {
-                // Nothing to do.
+
+            // 置顶总是逆序
+            int top1  = o1.top();
+            int top2  = o2.top();
+            if (top1 != top2) {
+                return top1 > top2 ? -1 : 1 ;
+            }
+
+            if (cnt1 != cnt2) {
+                return cnt1 < cnt2 ? -1 : 1 ;
+            }
+
+            return 0;
+        }
+    };
+
+    /**
+     * 仅按计数逆序重排
+     */
+    private static final Comparator<Coach> OrderD0 = new Comparator<Coach>() {
+        @Override
+        public int compare(Coach o1, Coach o2) {
+            int cnt1  = o1.cnt();
+            int cnt2  = o2.cnt();
+            if (cnt1 != cnt2) {
+                return cnt1 > cnt2 ? -1 : 1 ;
+            }
+
+            return 0;
+        }
+    };
+
+    /**
+     * 置顶条目总排前面
+     * 按计数从大到小排
+     */
+    private static final Comparator<Coach> OrderD1 = new Comparator<Coach>() {
+        @Override
+        public int compare(Coach o1, Coach o2) {
+            // 置顶总是逆序
+            int top1  = o1.top();
+            int top2  = o2.top();
+            if (top1 != top2) {
+                return top1 > top2 ? -1 : 1 ;
+            }
+
+            int cnt1  = o1.cnt();
+            int cnt2  = o2.cnt();
+            if (cnt1 != cnt2) {
+                return cnt1 > cnt2 ? -1 : 1 ;
+            }
+
+            return 0;
+        }
+    };
+
+    /**
+     * 计数为零总排后面
+     * 置顶条目总排前面
+     * 按计数从大到小排
+     */
+    private static final Comparator<Coach> OrderD2 = new Comparator<Coach>() {
+        @Override
+        public int compare(Coach o1, Coach o2) {
+            // 零总是排最后
+            int cnt1  = o1.cnt();
+            int cnt2  = o2.cnt();
+            if (cnt1 != cnt2) {
+                if (0== cnt2) return -1 ;
+                if (0== cnt1) return  1 ;
+            }
+
+            // 置顶总是逆序
+            int top1  = o1.top();
+            int top2  = o2.top();
+            if (top1 != top2) {
+                return top1 > top2 ? -1 : 1 ;
+            }
+
+            if (cnt1 != cnt2) {
+                return cnt1 > cnt2 ? -1 : 1 ;
+            }
+
+            return 0;
+        }
+    };
+
+    /**
+     * 置顶条目总排前面
+     */
+    private static final Comparator<Coach> OrderH1 = new Comparator<Coach>() {
+        @Override
+        public int compare(Coach o1, Coach o2) {
+            // 置顶总是逆序
+            int top1  = o1.top();
+            int top2  = o2.top();
+            if (top1 != top2) {
+                return top1 > top2 ? -1 : 1 ;
+            }
+
+            return 0;
+        }
+    };
+
+    /**
+     * 计数为零总排后面
+     * 置顶条目总排前面
+     */
+    private static final Comparator<Coach> OrderH2 = new Comparator<Coach>() {
+        @Override
+        public int compare(Coach o1, Coach o2) {
+            // 零总是排最后
+            int cnt1  = o1.cnt();
+            int cnt2  = o2.cnt();
+            if (cnt1 != cnt2) {
+                if (0== cnt2) return -1 ;
+                if (0== cnt1) return  1 ;
+            }
+
+            // 置顶总是逆序
+            int top1  = o1.top();
+            int top2  = o2.top();
+            if (top1 != top2) {
+                return top1 > top2 ? -1 : 1 ;
             }
 
             return 0;

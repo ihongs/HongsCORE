@@ -154,7 +154,7 @@ HsStat.prototype = {
 
         itemBox.each(function() {
             if ($(this).data("name")) rb.push($(this).data("name"));
-            if ($(this).data("type")) eb.push($(this).data("name")+".ab="+$(this).data("type"));
+            if ($(this).data("type")) eb.push($(this).data("name")+".rb="+$(this).data("type"));
             if ($(this).data("prms")) eb.push($(this).data("prms"));
 
             $(this).find(".checkbox").hide();
@@ -406,8 +406,8 @@ HsStat.prototype = {
             var v = data[i];
             if (v[0] === "" )  continue;
             if (v[1] == null)  v[1] = "#"+ v[0] ;
-            label = $('<label></label>')
-                .attr("title", v[1] +" ("+ v[2] + ")");
+            label = $('<label'+(!v[2] ? ' class="text-muted"' : '')+'></label>')
+                .attr("title", v[1] +" ("+ v[2] + (v[3] ? ","+ v[3] : "") + ")");
             check = $('<input type="checkbox" class="checkone2"/>')
                 .attr("name" , name + ".rg.")
                 .attr("value", v[0]);
@@ -432,7 +432,7 @@ HsStat.prototype = {
             var v = data[i];
             if (v[0] === "" )  continue;
             if (v[1] == null)  v[1] = "#"+ v[0] ;
-            label = $('<label></label>')
+            label = $('<label'+(!v[2] ? ' class="text-muted"' : '')+'></label>')
                 .attr("title", v[1] +" ("+ v[2] + ")");
             check = $('<input type="checkbox" class="checkone2"/>')
                 .attr("name" , name + ".in.")
@@ -762,7 +762,7 @@ HsCate.prototype = {
 
         itemBox.each(function() {
             if ($(this).data("name")) rb.push($(this).data("name"));
-            if ($(this).data("type")) eb.push($(this).data("name")+".ab="+$(this).data("type"));
+            if ($(this).data("type")) eb.push($(this).data("name")+".rb="+$(this).data("type"));
             if ($(this).data("prms")) eb.push($(this).data("prms"));
 
             $(this).empty(); // 清空待写入选项
@@ -870,8 +870,8 @@ HsCate.prototype = {
         for(var i = 0; i < data.length; i ++) {
             var v = data[i];
             if (v[0] === "") continue ;
-            label = $('<label></label>')
-                .attr("title", v[1] +" ("+ v[2] + ")");
+            label = $('<label'+(!v[2] ? ' class="text-muted"' : '')+'></label>')
+                .attr("title", v[1] +" ("+ v[2] + (v[3] ? ","+ v[3] : "") + ")");
             check = $('<input type="checkbox" class="checkone2"/>')
                 .attr("name" , name + ".rg.")
                 .attr("value", v[0]);
@@ -902,7 +902,7 @@ HsCate.prototype = {
         for(var i = 0; i < data.length; i ++) {
             var v = data[i];
             if (v[0] === "") continue ;
-            label = $('<label></label>')
+            label = $('<label'+(!v[2] ? ' class="text-muted"' : '')+'></label>')
                 .attr("title", v[1] +" ("+ v[2] + ")");
             check = $('<input type="checkbox" class="checkone2"/>')
                 .attr("name" , name + ".in.")

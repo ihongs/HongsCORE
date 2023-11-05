@@ -27,6 +27,8 @@ import javax.servlet.http.HttpServletResponse;
  * 0.9.0 将 :xx 操作符换成 xx
  * 1.0.0 将 enum/menu 换成 enfo, create 增加 info, update 返回 size
  * 1.0.5 在 acount/amount 统计接口默认添加逆序 rb=!
+ * 1.0.7 将 amount 转向 acount, 这俩接口已合并
+ * 1.0.8 将单 id 的 search 转向 detail, 已分离
  * 支持 url-include 和 url-exclude
  *
  * @deprecated 仅为兼容
@@ -42,6 +44,12 @@ public class VersFilter extends ActionDriver {
     private byte level = 0;
 
     private static final Pattern REF_PAT = Pattern.compile("^\\w+://([^/]+)(.*)");
+
+    private static final int V090 = 1;
+    private static final int V100 = 2;
+    private static final int V105 = 4;
+    private static final int V107 = 8;
+    private static final int V108 = 16;
 
     @Override
     public void init(FilterConfig config)
@@ -67,13 +75,19 @@ public class VersFilter extends ActionDriver {
         Set vs  = Synt.toTerms(config.getInitParameter("versions"));
         if (vs != null) {
             if (vs.contains("0.9.0")) {
-                level += 1;
+                level += V090;
             }
             if (vs.contains("1.0.0")) {
-                level += 2;
+                level += V100;
             }
             if (vs.contains("1.0.5")) {
-                level += 4;
+                level += V105;
+            }
+            if (vs.contains("1.0.7")) {
+                level += V107;
+            }
+            if (vs.contains("1.1.8")) {
+                level += V108;
             }
         }
     }
@@ -133,10 +147,7 @@ public class VersFilter extends ActionDriver {
             return;
         }
 
-        int rf = 0;
-        int nf = 0;
-
-        if (1 == (1 & level)) {
+        if (V090 == (V090 & level)) {
             /**
              * 非 JSON 已在 Dict 中兼容
              */
@@ -149,7 +160,41 @@ public class VersFilter extends ActionDriver {
             }
         }
 
-        if (4 == (4 & level)) {
+        if (V108 == (V108 & level)) {
+            if (act != null ) {
+                int p = act.lastIndexOf(".");
+                if (p > 0) {
+                    String c = act.substring(0 , p);
+                    if (c.endsWith("/search")) {
+                           c = act.substring(0 + p);
+                        act  = act.substring(0 , p - 7) + "/detail" + c;
+                        Object id = rd.get(Cnst.ID_KEY);
+                        if (id != null && ! "".equals(id)
+                        && (id instanceof String || id instanceof Number) ) {
+                            req.getRequestDispatcher(act).include(req, rsp);
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (V107 == (V107 & level)) {
+            if (act != null ) {
+                int p = act.lastIndexOf(".");
+                if (p > 0) {
+                    String c = act.substring(0 , p);
+                    if (c.endsWith("/amount")) {
+                           c = act.substring(0 + p);
+                        act  = act.substring(0 , p - 7) + "/acount" + c;
+                        req.getRequestDispatcher(act).include(req, rsp);
+                        return;
+                    }
+                }
+            }
+        }
+
+        if (V105 == (V105 & level)) {
             if (act != null ) {
                 int p = act.lastIndexOf(".");
                 if (p > 0) {
@@ -164,7 +209,10 @@ public class VersFilter extends ActionDriver {
             }
         }
 
-        if (2 == (2 & level)) {
+        int rf = 0;
+        int nf = 0;
+
+        if (V100 == (V100 & level)) {
             Set ab  = Synt.toTerms(rd.get(Cnst.AB_KEY));
             if (ab != null) {
                 rd.put(Cnst.AB_KEY , ab);
@@ -207,7 +255,7 @@ public class VersFilter extends ActionDriver {
 
         chain.doFilter(req, rsp);
 
-        if (2 == (2 & level)) {
+        if (V100 == (V100 & level)) {
             Map sd  = hlpr.getResponseData();
             if (sd != null) {
                 if (sd.containsKey("enfo")) {

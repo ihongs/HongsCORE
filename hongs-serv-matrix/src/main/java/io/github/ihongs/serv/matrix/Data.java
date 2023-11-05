@@ -479,6 +479,20 @@ public class Data extends SearchEntity {
         FetchCase fc = getModel().fetchCase();
         fc.filter("`form_id`=?", getFormId());
         Map rsp = getModel ().search (rd, fc);
+        
+        return rsp;
+    }
+    
+    /**
+     * 查询历史数据
+     * @param rd
+     * @return
+     * @throws HongsException
+     */
+    public Map retail(Map rd) throws HongsException {
+        FetchCase fc = getModel().fetchCase();
+        fc.filter("`form_id`=?", getFormId());
+        Map rsp = getModel ().detail (rd, fc);
 
         if (rsp.containsKey("info")) {
             Map inf = (Map) rsp.get("info");

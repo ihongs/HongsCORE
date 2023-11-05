@@ -76,7 +76,6 @@ abstract public class JAction implements IActing, IAction {
     }
 
     @Action("select")
-    @Preset(conf="", form="")
     @Select(conf="", form="")
     public void select(ActionHelper helper) throws HongsException {
         helper.reply("");
@@ -84,7 +83,7 @@ abstract public class JAction implements IActing, IAction {
 
     @Override
     @Action("search")
-    @Preset(conf="", form="")
+    @Preset(conf="", form="", defs={"defense"})
     @Select(conf="", form="")
     public void search(ActionHelper helper) throws HongsException {
         IEntity sr = getEntity(helper);
@@ -96,8 +95,21 @@ abstract public class JAction implements IActing, IAction {
     }
 
     @Override
+    @Action("detail")
+    @Preset(conf="", form="", defs={"defense"})
+    @Select(conf="", form="")
+    public void detail(ActionHelper helper) throws HongsException {
+        IEntity sr = getEntity(helper);
+        Map     rd = helper.getRequestData();
+                rd = getReqMap(helper, sr, "detail", rd);
+        Map     sd = sr.detail( rd );
+                sd = getRspMap(helper, sr, "detail", sd);
+        helper.reply(sd);
+    }
+
+    @Override
     @Action("create")
-    @Preset(conf="", form="", defs={".initial"})
+    @Preset(conf="", form="", deft={".default"})
     @Verify(conf="", form="")
     @CommitSuccess
     public void create(ActionHelper helper) throws HongsException {

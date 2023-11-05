@@ -89,37 +89,213 @@ implements IEntity
   //** 标准动作方法 **/
 
   /**
-   * 综合提取方法
+   * 查询列表
+   *
+   * 为空则page.errno为1, 页码超出则page.errno为2
+   * 页码等于 0 则不要列表数据
+   * 行数小于 0 则不要分页信息
+   * 行数等于 0 则不要使用分页
+   * 页码小于 0 则逆向倒数获取
+   *
    * @param rd
-   * @return
+   * @return 单页列表
    * @throws io.github.ihongs.HongsException
    */
   @Override
   public Map search(Map rd)
     throws HongsException
   {
-    return this.search(rd, null);
+    return search(rd, null);
   }
 
   /**
-   * 综合提取方法
+   * 查询列表
+   *
+   * 为空则page.errno为1, 页码超出则page.errno为2
+   * 页码等于 0 则不要列表数据
+   * 行数小于 0 则不要分页信息
+   * 行数等于 0 则不要使用分页
+   * 页码小于 0 则逆向倒数获取
+   *
    * @param rd
    * @param caze
-   * @return
+   * @return 单页列表
    * @throws io.github.ihongs.HongsException
    */
   public Map search(Map rd, FetchCase caze)
     throws HongsException
   {
-    Object id = rd.get ( Cnst.ID_KEY );
-    if (id == null) {
-        id =  rd.get(table.primaryKey);
+    if (rd == null)
+    {
+      rd = new HashMap();
     }
-    if (id instanceof String || id instanceof Number) {
-        return getInfo(rd , caze);
+    if (caze == null)
+    {
+      caze = fetchCase();
+    }
+
+    if (rd.containsKey(Cnst.ID_KEY))
+    {
+      rd.put(table.primaryKey, rd.get(Cnst.ID_KEY));
+    }
+
+    caze.setOption("MODEL_START", "search");
+    this.filter(caze, rd);
+
+    // 获取行数, 默认依从配置
+    int rows = Cnst.RN_DEF ;
+    if (rd.containsKey(Cnst.RN_KEY))
+    {
+      rows = Synt.declare(rd.get(Cnst.RN_KEY), rows);
+    }
+
+    // 获取页码, 默认为第一页
+    int page = 1;
+    if (rd.containsKey(Cnst.PN_KEY))
+    {
+      page = Synt.declare(rd.get(Cnst.PN_KEY), page);
+    }
+
+    // 续查页数, 默认查总页数
+    int ques = 0;
+    if (rd.containsKey(Cnst.QN_KEY))
+    {
+      ques = Synt.declare(rd.get(Cnst.QN_KEY), ques);
+    }
+
+    Map data = new HashMap();
+
+    if (rows != 0)
+    {
+      caze.from (table.tableName , table.name );
+      FetchPage fp = new FetchPage(caze, table);
+      fp.setPage(page);
+      fp.setQues(Math.abs(ques));
+      fp.setRows(Math.abs(rows));
+
+      // 页码等于 0 则不要列表数据
+      if (page != 0)
+      {
+        List list = fp.getList();
+        data.put( "list", list );
+      }
+
+      // 行数小于 0 则不要分页信息
+      if (rows  > 0)
+      {
+        Map  info = fp.getPage();
+        data.put( "page", info );
+      }
+    }
+    else
+    {
+      // 行数等于 0 则不要使用分页
+        List list = table.fetchMore(caze);
+        data.put( "list", list );
+    }
+
+    return data;
+  }
+
+  /**
+   * 获取详情
+   *
+   * @param rd
+   * @return 记录信息
+   * @throws io.github.ihongs.HongsException
+   */
+  @Override
+  public Map detail(Map rd)
+    throws HongsException
+  {
+    return detail(rd, null);
+  }
+
+  /**
+   * 获取详情
+   *
+   * @param rd
+   * @param caze
+   * @return 记录信息
+   * @throws io.github.ihongs.HongsException
+   */
+  public Map detail(Map rd, FetchCase caze)
+    throws HongsException
+  {
+    if (rd == null)
+    {
+      rd = new HashMap();
+    }
+    if (caze == null)
+    {
+      caze = fetchCase();
+    }
+
+    if (rd.containsKey(Cnst.ID_KEY))
+    {
+      rd.put(table.primaryKey, rd.get(Cnst.ID_KEY));
+    }
+
+    /**
+     * 只允许查单个 id
+     */
+    Object id = rd.get(table.primaryKey);
+    if (id == null || "".equals(id)) {
+      throw new HongsException (400, "id required");
+    }
+    if (! (id instanceof String || id instanceof Number)) {
+      throw new HongsException (400, "must be single id");
+    }
+
+    caze.setOption("MODEL_START", "detail");
+    this.filter(caze, rd);
+
+    Map info = table.fetchLess(caze);
+
+    Map data = new HashMap();
+    data.put( "info", info );
+
+    /**
+     * 与 list 保持一致, 用 rn 控制 page
+     * rn= 1 正常
+     * rn= 0 不给 page
+     * rn=-1 返回 page.count=0 缺失 page.count=1 受限
+     */
+    int rn = Synt.declare(rd.get(Cnst.RN_KEY), 1);
+    if (rn == 0) {
+        return data ;
+    }
+
+    Map page = new HashMap();
+    data.put( "page", page );
+
+    /**
+     * 查不到可能是不存在、已删除或受限
+     * 需通过 id 再查一遍，区分不同错误
+     */
+    page.put(Cnst.RN_KEY,rn);
+    if (info != null && ! info.isEmpty()) {
+        page.put("state", 1);
+        page.put("count", 1);
+    } else
+    if (rn >= 0 || id == null) {
+        page.put("state", 0);
+        page.put("count", 0);
     } else {
-        return getList(rd , caze);
+        FetchCase fc = new FetchCase(FetchCase.STRICT)
+            .filter(table.primaryKey , id )
+            .select(table.primaryKey);
+        Map row = table.fetchLess(fc);
+        if (row != null && ! row.isEmpty()) {
+            page.put("state", 0);
+            page.put("count", 1);
+        }  else {
+            page.put("state", 0);
+            page.put("count", 0);
+        }
     }
+
+    return data;
   }
 
   /**
@@ -603,199 +779,39 @@ implements IEntity
   }
 
   /**
-   * 获取信息(无查询结构)
-   *
-   * @param rd
-   * @return 记录信息
-   * @throws io.github.ihongs.HongsException
+   * @deprecated 已废弃, 请改用 detail
    */
   public Map getInfo(Map rd)
     throws HongsException
   {
-    return this.getInfo(rd, null);
+    return detail (rd, null);
   }
 
   /**
-   * 获取信息
-   *
-   * @param rd
-   * @param caze
-   * @return 记录信息
-   * @throws io.github.ihongs.HongsException
+   * @deprecated 已废弃, 请改用 detail
    */
   public Map getInfo(Map rd, FetchCase caze)
     throws HongsException
   {
-    if (rd == null)
-    {
-      rd = new HashMap();
-    }
-    if (caze == null)
-    {
-      caze = fetchCase();
-    }
-
-    if (rd.containsKey(Cnst.ID_KEY))
-    {
-      rd.put(table.primaryKey, rd.get(Cnst.ID_KEY));
-    }
-
-    caze.setOption("MODEL_START", "getInfo");
-    this.filter(caze, rd);
-
-    Map info = table.fetchLess(caze);
-
-    Map data = new HashMap();
-    data.put( "info", info );
-
-    /**
-     * 与 list 保持一致, 用 rn 控制 page
-     * rn= 1 正常
-     * rn= 0 不给 page
-     * rn=-1 返回 page.count=0 缺失 page.count=1 受限
-     */
-    int rn = Synt.declare(rd.get(Cnst.RN_KEY), 1);
-    if (rn == 0) {
-        return data ;
-    }
-
-    Map page = new HashMap();
-    data.put( "page", page );
-
-    /**
-     * 查不到可能是不存在、已删除或受限
-     * 需通过 id 再查一遍，区分不同错误
-     */
-    page.put(Cnst.RN_KEY,rn);
-    Object id = rd.get(table.primaryKey);
-    if (info != null && ! info.isEmpty()) {
-        page.put("state", 1);
-        page.put("count", 1);
-    } else
-    if (rn >= 0 || id == null) {
-        page.put("state", 0);
-        page.put("count", 0);
-    } else {
-        FetchCase fc = new FetchCase(FetchCase.STRICT)
-            .filter(table.primaryKey , id )
-            .select(table.primaryKey);
-        Map row = table.fetchLess(fc);
-        if (row != null && ! row.isEmpty()) {
-            page.put("state", 0);
-            page.put("count", 1);
-        }  else {
-            page.put("state", 0);
-            page.put("count", 0);
-        }
-    }
-
-    return data;
+    return detail (rd, caze);
   }
 
   /**
-   * 获取分页(无查询结构)
-   *
-   * 为空则page.errno为1, 页码超出则page.errno为2
-   *
-   * 含分页信息
-   *
-   * @param rd
-   * @return 单页列表
-   * @throws io.github.ihongs.HongsException
+   * @deprecated 已废弃, 请改用 search
    */
   public Map getList(Map rd)
     throws HongsException
   {
-    return this.getList(rd, null);
+    return search (rd, null);
   }
 
   /**
-   * 获取分页
-   *
-   * 为空则page.errno为1, 页码超出则page.errno为2
-   * 页码等于 0 则不要列表数据
-   * 行数小于 0 则不要分页信息
-   * 行数等于 0 则不要使用分页
-   * 页码小于 0 则逆向倒数获取
-   *
-   * @param rd
-   * @param caze
-   * @return 单页列表
-   * @throws io.github.ihongs.HongsException
+   * @deprecated 已废弃, 请改用 search
    */
   public Map getList(Map rd, FetchCase caze)
     throws HongsException
   {
-    if (rd == null)
-    {
-      rd = new HashMap();
-    }
-    if (caze == null)
-    {
-      caze = fetchCase();
-    }
-
-    if (rd.containsKey(Cnst.ID_KEY))
-    {
-      rd.put(table.primaryKey, rd.get(Cnst.ID_KEY));
-    }
-
-    caze.setOption("MODEL_START", "getList");
-    this.filter(caze, rd);
-
-    // 获取行数, 默认依从配置
-    int rows = Cnst.RN_DEF ;
-    if (rd.containsKey(Cnst.RN_KEY))
-    {
-      rows = Synt.declare(rd.get(Cnst.RN_KEY), rows);
-    }
-
-    // 获取页码, 默认为第一页
-    int page = 1;
-    if (rd.containsKey(Cnst.PN_KEY))
-    {
-      page = Synt.declare(rd.get(Cnst.PN_KEY), page);
-    }
-
-    // 续查页数, 默认查总页数
-    int ques = 0;
-    if (rd.containsKey(Cnst.QN_KEY))
-    {
-      ques = Synt.declare(rd.get(Cnst.QN_KEY), ques);
-    }
-
-    Map data = new HashMap();
-
-    if (rows != 0)
-    {
-      caze.from (table.tableName , table.name );
-      FetchPage fp = new FetchPage(caze, table);
-      fp.setPage(page);
-      fp.setQues(Math.abs(ques));
-      fp.setRows(Math.abs(rows));
-
-      // 页码等于 0 则不要列表数据
-      if (page != 0)
-      {
-        List list = fp.getList();
-        data.put( "list", list );
-      }
-
-      // 行数小于 0 则不要分页信息
-      if (rows  > 0)
-      {
-        Map  info = fp.getPage();
-        data.put( "page", info );
-      }
-    }
-    else
-    {
-      // 行数等于 0 则不要使用分页
-        List list = table.fetchMore(caze);
-        data.put( "list", list );
-    }
-
-    return data;
+    return search (rd, caze);
   }
 
   /**
@@ -915,8 +931,8 @@ implements IEntity
      * 默认只连接 LEFT,INNER,RIGHT 的表(常规关联均可)
      */
     Object ms = caze.getOption("MODEL_START");
-    if ("getAll" .equals(ms)
-    ||  "getList".equals(ms)
+    if ("search".equals(ms)
+    ||  "getAll".equals(ms)
     ) {
       if (null == caze.getOption("ASSOC"))
       {

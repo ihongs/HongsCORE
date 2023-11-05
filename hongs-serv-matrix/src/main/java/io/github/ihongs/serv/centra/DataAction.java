@@ -118,4 +118,13 @@ public class DataAction extends SearchAction {
         helper.reply(rsp);
     }
 
+    @Action("retail")
+    @Select(conf="", form="")
+    public void retail(ActionHelper helper) throws HongsException {
+        Data   ett = (Data) getEntity(helper);
+        Map    req = helper.getRequestData( );
+        Map    rsp = ett.retail(req);
+        helper.reply(rsp);
+    }
+
 }

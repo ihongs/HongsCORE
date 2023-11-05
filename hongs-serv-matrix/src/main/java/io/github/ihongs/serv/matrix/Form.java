@@ -425,17 +425,15 @@ public class Form extends Model {
             return;
         }
 
+        // 非常规动作不作限制
         String  mm = caze.getOption("MODEL_START" , "");
-        if ("getList".equals(mm)
-        ||  "getInfo".equals(mm)) {
-            mm = "/search";
-        } else
-        if ("update" .equals(mm)
-        ||  "delete" .equals(mm)) {
-            mm = "/" + mm ;
-        } else {
-            return; // 非常规动作不限制
+        if (!"search".equals(mm)
+        &&  !"detail".equals(mm)
+        &&  !"update".equals(mm)
+        &&  !"delete".equals(mm)) {
+            return;
         }
+        mm = "/" + mm;
 
         // 从权限串中取表单ID
         NaviMap nm = NaviMap.getInstance(centra);
@@ -909,7 +907,9 @@ public class Form extends Model {
             root.appendChild ( role );
             role.appendChild ( docm.createTextNode("#centra") );
 
-            // 查看 2023/11/04, 数值统计并入选项统计
+            // 查看
+            // 2023/11/04 数值统计并入选项统计
+            // 2023/11/05 列表和详情的接口分离
             role = docm.createElement("role");
             menu.appendChild ( role );
             role.setAttribute("name", href +"search");
@@ -919,18 +919,22 @@ public class Form extends Model {
             actn.appendChild ( docm.createTextNode(href +"search"+ Cnst.ACT_EXT) );
             actn = docm.createElement("action");
             role.appendChild ( actn );
+            actn.appendChild ( docm.createTextNode(href +"detail"+ Cnst.ACT_EXT) );
+            actn = docm.createElement("action");
+            role.appendChild ( actn );
             actn.appendChild ( docm.createTextNode(href +"select"+ Cnst.ACT_EXT) );
             actn = docm.createElement("action");
             role.appendChild ( actn );
             actn.appendChild ( docm.createTextNode(href +"acount"+ Cnst.ACT_EXT) );
-//          actn = docm.createElement("action");
-//          role.appendChild ( actn );
-//          actn.appendChild ( docm.createTextNode(href +"amount"+ Cnst.ACT_EXT) );
+            actn = docm.createElement("action");
+            role.appendChild ( actn );
+            actn.appendChild ( docm.createTextNode(href +"assort"+ Cnst.ACT_EXT) );
             depn = docm.createElement("depend");
             role.appendChild ( depn );
             depn.appendChild ( docm.createTextNode("centra") );
 
-            // 添加 2019/08/10, 添加不再依赖查看权限
+            // 添加
+            // 2019/08/10 添加不再依赖查看权限
             role = docm.createElement("role");
             menu.appendChild ( role );
             role.setAttribute("name", href +"create");
@@ -944,9 +948,6 @@ public class Form extends Model {
             depn = docm.createElement("depend");
             role.appendChild ( depn );
             depn.appendChild ( docm.createTextNode("centra") );
-//          depn = docm.createElement("depend");
-//          role.appendChild ( depn );
-//          depn.appendChild ( docm.createTextNode(href +"search") );
             depn = docm.createElement("depend");
             role.appendChild ( depn );
             depn.appendChild ( docm.createTextNode(href +"relate") );
@@ -979,6 +980,7 @@ public class Form extends Model {
             depn.appendChild ( docm.createTextNode(href +"search") );
 
             // 回看
+            // 2023/11/05 列表和详情的接口分离
             role = docm.createElement("role");
             menu.appendChild ( role );
             role.setAttribute("name", href +"reveal");
@@ -986,6 +988,9 @@ public class Form extends Model {
             actn = docm.createElement("action");
             role.appendChild ( actn );
             actn.appendChild ( docm.createTextNode(href +"reveal"+ Cnst.ACT_EXT) );
+            actn = docm.createElement("action");
+            role.appendChild ( actn );
+            actn.appendChild ( docm.createTextNode(href +"retail"+ Cnst.ACT_EXT) );
             depn = docm.createElement("depend");
             role.appendChild ( depn );
             depn.appendChild ( docm.createTextNode(href +"search") );

@@ -79,7 +79,7 @@ public class DBAction implements IAction, IActing {
 
     @Override
     @Action("search")
-    @Preset(conf="", form="")
+    @Preset(conf="", form="", defs={"defense"})
     @Select(conf="", form="")
     public void search(ActionHelper helper)
     throws HongsException {
@@ -92,8 +92,22 @@ public class DBAction implements IAction, IActing {
     }
 
     @Override
+    @Action("detail")
+    @Preset(conf="", form="", defs={"defense"})
+    @Select(conf="", form="")
+    public void detail(ActionHelper helper)
+    throws HongsException {
+        Model   ett = getEntity(helper);
+        Map     req = helper.getRequestData();
+                req = getReqMap(helper, ett, "detail", req);
+        Map     rsp = ett.detail(req);
+                rsp = getRspMap(helper, ett, "detail", rsp);
+        helper.reply(rsp);
+    }
+
+    @Override
     @Action("create")
-    @Preset(conf="", form="", defs={".initial"})
+    @Preset(conf="", form="", deft={".default"})
     @Verify(conf="", form="")
     @CommitSuccess
     public void create(ActionHelper helper)
@@ -108,7 +122,7 @@ public class DBAction implements IAction, IActing {
 
     @Override
     @Action("update")
-    @Preset(conf="", form="", defs={".defence"})
+    @Preset(conf="", form="", defs={"defence"})
     @Verify(conf="", form="")
     @CommitSuccess
     public void update(ActionHelper helper)
@@ -123,7 +137,7 @@ public class DBAction implements IAction, IActing {
 
     @Override
     @Action("delete")
-    @Preset(conf="", form="", defs={".defence"})
+    @Preset(conf="", form="", defs={"defence"})
     @CommitSuccess
     public void delete(ActionHelper helper)
     throws HongsException {

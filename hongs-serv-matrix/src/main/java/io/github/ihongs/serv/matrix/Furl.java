@@ -94,16 +94,13 @@ public class Furl extends TreeModel {
             return;
         }
 
+        // 非常规动作不作限制
         String  mm = caze.getOption("MODEL_START" , "");
-        if ("getList".equals(mm)
-        ||  "getInfo".equals(mm)) {
-//          mm = "/search";
-        } else
-        if ("update" .equals(mm)
-        ||  "delete" .equals(mm)) {
-//          mm = "/" + mm ;
-        } else {
-            return; // 非常规动作不限制
+        if (!"search".equals(mm)
+        &&  !"detail".equals(mm)
+        &&  !"update".equals(mm)
+        &&  !"delete".equals(mm)) {
+            return;
         }
 
         // 从导航表中取单元ID

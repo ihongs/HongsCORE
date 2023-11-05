@@ -93,10 +93,14 @@ public class PresetHelper {
      */
     public PresetHelper addItemsByForm(String conf, String name, String[] deft, String[] defs)
     throws HongsException {
-        FormSet form = FormSet.getInstance(conf);
+        FormSet form = FormSet.getInstance (conf);
 
-        addDefenseData(form , name + ".defense");
-        addDefaultData(form , name + ".default");
+        // 缺省指定
+        if (defs.length == 0 && deft.length == 0) {
+            addDefenseData(form, name+".defense");
+            addDefaultData(form, name+".default");
+            return this;
+        }
 
         for (String usen : defs) {
             if (name != null

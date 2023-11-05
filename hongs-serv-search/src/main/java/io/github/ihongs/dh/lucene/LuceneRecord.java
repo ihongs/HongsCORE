@@ -156,8 +156,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
     /**
      * 获取数据
      *
-     * 以下参数为特殊参数, 可在 default.properties 中配置:
-     * id   ID, 仅指定单个 id 时则返回详情(info)
+     * <pre>
+     * 特殊参数:
+     * id   ID
      * rn   行数, 明确指定为 0 则不分页
      * gn   分页
      * pn   页码
@@ -168,63 +169,14 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      * nr   多组"否"关系条件
      * ar   串联多组关系条件
      * 请注意尽量避免将其作为字段名(id,wd除外)
+     * </pre>
      *
      * @param rd
-     * @return
+     * @return 结构: {list: [], page: {}}
      * @throws HongsException
      */
     @Override
     public Map search(Map rd) throws HongsException {
-        // 指定单个 id 则走 getOne
-        Object id = rd.get (Cnst.ID_KEY);
-        if (id instanceof String || id instanceof Number) {
-            if ("".equals(id)) {
-                return new HashMap(); // id 为空则不获取
-            }
-            Map info = getOne ( rd );
-
-            Map data = new HashMap();
-            data.put( "info", info );
-
-            /**
-             * 与 list 保持一致, 用 rn 控制 page
-             * rn= 1 正常
-             * rn= 0 不给 page
-             * rn=-1 返回 page.count=0 缺失 page.count=1 受限
-             */
-            int rn = Synt.declare(rd.get(Cnst.RN_KEY), 1);
-            if (rn == 0) {
-                return data ;
-            }
-
-            Map page = new HashMap();
-            data.put( "page", page );
-
-            /**
-             * 查不到可能是不存在、已删除或受限
-             * 需通过 id 再查一遍，区分不同错误
-             */
-            page.put(Cnst.RN_KEY,rn);
-            if (null != info && ! info.isEmpty()) {
-                page.put("state", 1);
-                page.put("count", 1);
-            } else
-            if (rn >= 1 ) {
-                page.put("state", 0);
-                page.put("count", 0);
-            } else
-            if (null != getDoc( id.toString( ) )) {
-                page.put("state", 0);
-                page.put("count", 1);
-            }  else
-            {
-                page.put("state", 0);
-                page.put("count", 0);
-            }
-
-            return data;
-        }
-
         // 默认仅返回可以列举的字段
         Set rb = Synt.declare(rd.get(Cnst.RB_KEY), Set.class);
         if (rb == null || rb.isEmpty( )) {
@@ -275,6 +227,74 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         }   resp.put ( "page", page );
 
         return resp;
+    }
+
+    /**
+     * 获取数据
+     *
+     * <pre>
+     * 特殊参数:
+     * id   ID
+     * rn   行数, 明确指定为 0 则不返回 page, 为 -1 则 page.count=0 缺失 page.count=1 受限
+     * 其他 rb,ar,nr 等同 search
+     * </pre>
+     *
+     * @param rd
+     * @return 结构: {info: {}, page: {}}
+     * @throws HongsException
+     */
+    @Override
+    public Map detail(Map rd) throws HongsException {
+        Object id = rd.get (Cnst.ID_KEY);
+        if (id == null || "".equals(id)) {
+            throw new HongsException(400, "id required");
+        }
+        if (! (id instanceof String || id instanceof Number) ) {
+            throw new HongsException(400, "must be single id");
+        }
+
+        Map info = getOne ( rd );
+
+        Map data = new HashMap();
+        data.put( "info", info );
+
+        /**
+         * 与 list 保持一致, 用 rn 控制 page
+         * rn= 1 正常
+         * rn= 0 不给 page
+         * rn=-1 返回 page.count=0 缺失 page.count=1 受限
+         */
+        int rn = Synt.declare(rd.get(Cnst.RN_KEY), 1);
+        if (rn == 0) {
+            return data ;
+        }
+
+        Map page = new HashMap();
+        data.put( "page", page );
+
+        /**
+         * 查不到可能是不存在、已删除或受限
+         * 需通过 id 再查一遍，区分不同错误
+         */
+        page.put(Cnst.RN_KEY,rn);
+        if (null != info && ! info.isEmpty()) {
+            page.put("state", 1);
+            page.put("count", 1);
+        } else
+        if (rn >= 1 ) {
+            page.put("state", 0);
+            page.put("count", 0);
+        } else
+        if (null != getDoc( id.toString( ) )) {
+            page.put("state", 0);
+            page.put("count", 1);
+        }  else
+        {
+            page.put("state", 0);
+            page.put("count", 0);
+        }
+
+        return data;
     }
 
     /**

@@ -221,6 +221,7 @@ public class SearchAction extends JAction {
             String fn = fu != null ? fu.toString() : "";
 
             /**
+             * 排序方向:
              * 非聚合统计中
              * ! 表默认逆序
              * * 表默认正序

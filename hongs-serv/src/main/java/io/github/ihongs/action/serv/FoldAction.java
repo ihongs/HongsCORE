@@ -246,6 +246,12 @@ public class FoldAction implements IAction {
     }
 
     @Override
+    @Deprecated
+    public void detail(ActionHelper helper) throws HongsException {
+        // just search
+    }
+
+    @Override
     @Action("create")
     public void create(ActionHelper helper) throws HongsException {
         CoreLocale lang = CoreLocale.getInstance("manage");

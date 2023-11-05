@@ -293,7 +293,7 @@ HsStat.prototype = {
             div.show(  );
             tab.hsCopy();
             div.hide(  );
-            $.hsNote( set[1].note , "success" );
+            $.hsNote( set[0].note , "success" );
         });
 
         // 重复拷贝

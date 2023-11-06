@@ -8,7 +8,7 @@ import io.github.ihongs.dh.Roster;
  * 存储维护命令
  * @author Hongs
  */
-@Combat("records")
+@Combat("rosters")
 public class Rosters {
 
     /**

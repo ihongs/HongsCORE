@@ -2,7 +2,7 @@ package io.github.ihongs.dh.search;
 
 import io.github.ihongs.dh.search.StatisHandle.TYPE;
 import io.github.ihongs.dh.search.StatisHandle.Field;
-import io.github.ihongs.dh.search.StatisGrader.Range;
+import io.github.ihongs.dh.search.StatisHandle.Range;
 import io.github.ihongs.dh.search.StatisHandle.Valuer;
 import io.github.ihongs.util.Synt;
 import java.io.IOException;
@@ -36,7 +36,7 @@ import org.apache.lucene.util.NumericUtils;
 public class StatisGather {
 
     private final IndexSearcher finder;
-    private       Diman[]       dimans;
+    private       Dimen[]       dimans;
     private       Index[]       indics;
     private       Query         query ;
 
@@ -44,22 +44,42 @@ public class StatisGather {
         this.finder = finder;
     }
 
-    public StatisGather group(Diman... fields) {
-        this.dimans = fields;
-        return this;
-    }
-
-    public StatisGather count(Index... fields) {
-        this.indics = fields;
-        return this;
-    }
-
+    /**
+     * 限定条件
+     * @param query
+     * @return
+     */
     public StatisGather where(Query    query ) {
         this.query  = query ;
         return this;
     }
 
-    public List<Map> search() throws IOException {
+    /**
+     * 分组维度
+     * @param fields
+     * @return
+     */
+    public StatisGather group(Dimen... fields) {
+        this.dimans = fields;
+        return this;
+    }
+
+    /**
+     * 指标字段
+     * @param fields
+     * @return
+     */
+    public StatisGather count(Index... fields) {
+        this.indics = fields;
+        return this;
+    }
+
+    /**
+     * 执行统计
+     * @return
+     * @throws IOException
+     */
+    public List<Map> assort() throws IOException {
         if (query == null) {
             query =  new MatchAllDocsQuery();
         }
@@ -101,13 +121,13 @@ public class StatisGather {
      */
     public static class Fetch implements Collector, LeafCollector {
 
-        private final Diman[] dimans;
+        private final Dimen[] dimans;
         private final Index[] indics;
         private final Map <Group, Map> dict; // 分组字典
         private final List<       Map> list; // 结果列表
 
-        public Fetch( Diman[] dimans, Index[] indics ) {
-            if (dimans == null) dimans = new Diman[]{};
+        public Fetch( Dimen[] dimans, Index[] indics ) {
+            if (dimans == null) dimans = new Dimen[]{};
             if (indics == null) indics = new Index[]{};
             if (dimans.length==0 && indics.length==0 ) {
                 throw new NullPointerException("Fields required");
@@ -122,7 +142,7 @@ public class StatisGather {
         @Override
         public LeafCollector getLeafCollector(LeafReaderContext lrc) throws IOException {
             LeafReader lr = lrc.reader();
-            for(Diman diman : dimans) {
+            for(Dimen diman : dimans) {
                 diman.prepare(lr);
             }
             for(Index index : indics) {
@@ -179,9 +199,9 @@ public class StatisGather {
     /**
      * 维度字段
      */
-    abstract public static class Diman extends Field {
+    abstract public static class Dimen extends Field {
 
-        public Diman(TYPE type, String field, String alias) {
+        public Dimen(TYPE type, String field, String alias) {
             super(type, field, alias);
         }
 
@@ -192,7 +212,7 @@ public class StatisGather {
     /**
      * 字段取值
      */
-    public static class Datum extends Diman {
+    public static class Datum extends Dimen {
 
         public Datum(TYPE type, String field, String alias) {
             super(type, field, alias);
@@ -218,7 +238,7 @@ public class StatisGather {
     /**
      * 区间取值
      */
-    public static class Scope extends Diman {
+    public static class Scope extends Dimen {
 
         private final Range[] ranges;
 

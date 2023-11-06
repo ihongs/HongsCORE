@@ -1,6 +1,7 @@
 package io.github.ihongs.test;
 
-import io.github.ihongs.dh.search.StatisGrader;
+import io.github.ihongs.dh.search.StatisGrader.Total;
+import io.github.ihongs.dh.search.StatisHandle.Range;
 import static junit.framework.TestCase.assertTrue;
 import org.junit.Test;
 
@@ -12,7 +13,7 @@ public class TestStatis {
 
     @Test
     public void testRange() {
-        StatisGrader.Range r = new StatisGrader.Range("[123,456)");
+        Range r = new Range("[123,456)");
 
         System.out.println(
                 r.toString()
@@ -31,8 +32,8 @@ public class TestStatis {
     }
 
     @Test
-    public void testRatio() {
-        StatisGrader.Total r = new StatisGrader.Total(new StatisGrader.Range(""));
+    public void testTotal() {
+        Total r = new Total(new Range(""));
         r.tap(123);
         r.tap(456);
 

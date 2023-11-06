@@ -1,6 +1,7 @@
 package io.github.ihongs.dh.search;
 
 import io.github.ihongs.dh.search.StatisHandle.Field;
+import io.github.ihongs.dh.search.StatisHandle.Range;
 import io.github.ihongs.util.Synt;
 import java.io.IOException;
 import java.util.Iterator;
@@ -123,7 +124,7 @@ public class StatisGrader {
     }
 
     /**
-     * 分类统计
+     * 执行统计
      * @return
      * @throws IOException
      */
@@ -131,7 +132,7 @@ public class StatisGrader {
         if (query == null) {
             query =  new MatchAllDocsQuery();
         }
-        finder.search(query, new Ferry(fields, counts, countx, styles));
+        finder.search(query, new Fetch(fields, counts, countx, styles));
         return counts;
     }
 
@@ -141,15 +142,25 @@ public class StatisGrader {
      */
     public static class Fetch implements Collector, LeafCollector {
 
-        protected final Field [] fields;
-        private   int   count  =   0   ;
+        private final Field[] fields;
+        private final Map<String, Map> counts;
+        private final Map<String, Set> countx;
+        private final Map<String, Integer> styles;
 
-        public Fetch(Field... fields) {
+        private int count = 0 ;
+
+        public Fetch (Field[] fields,
+                      Map<String, Map> counts,
+                      Map<String, Set> countx,
+                      Map<String, Integer> styles) {
             if (fields == null || fields.length == 0) {
                 throw new NullPointerException("Fields required");
             }
 
             this.fields = fields;
+            this.counts = counts;
+            this.countx = countx;
+            this.styles = styles;
         }
 
         @Override
@@ -163,62 +174,18 @@ public class StatisGrader {
 
         @Override
         public void collect(int i) throws IOException {
-            for(Field field : fields) {
-                field.collect(i);
-            }
-            count ++ ;
-        }
+            for(Field  f : fields) {
+                f.collect( i );
 
-        @Override
-        public void setScorer(Scorer s) {
-            // 不需要打分
-        }
+                String   k = f.alias;
+                Iterable a = f.getValues();
 
-        @Override
-        public boolean needsScores( ) {
-            return false;
-        }
-
-        public int count() {
-            return count;
-        }
-
-    }
-
-    /**
-     * 分类统计处理器
-     */
-    public static class Ferry extends Fetch {
-
-        private final Map<String, Map> counts;
-        private final Map<String, Set> countx;
-        private final Map<String, Integer> styles;
-
-        public Ferry (Field[] fields,
-                      Map<String, Map> counts,
-                      Map<String, Set> countx,
-                      Map<String, Integer> styles) {
-            super(fields);
-            this.counts = counts;
-            this.countx = countx;
-            this.styles = styles;
-        }
-
-        @Override
-        public void collect(int i) throws IOException {
-            super.collect(i);
-
-            for(Field  f :  fields) {
-                String k = f.alias;
-                Map cntc = counts.get(k);
                 Set cntx = countx.get(k);
-
+                Map cntc = counts.get(k);
                 if (cntc == null) {
                     cntc = new HashMap();
                     counts.put(k, cntc );
                 }
-
-                Iterable a = f.getValues( );
 
                 switch (Synt.defxult(styles.get(k), 0)) {
                 case TOTAL:   // 计数,求和,最小,最大
@@ -274,137 +241,24 @@ public class StatisGrader {
                     }
                 }}
             }
-        }
 
-    }
-
-    /**
-     * 数字区间
-     */
-    public static class Range implements Comparable {
-        public final double min;
-        public final double max;
-        public final boolean ge;
-        public final boolean le;
-
-        public Range(double n) {
-            min  = n ;
-            max  = n ;
-            ge   = true;
-            le   = true;
-        }
-
-        public Range(Number n) {
-            double v = n.doubleValue();
-            min  = v ;
-            max  = v ;
-            ge   = true;
-            le   = true;
-        }
-
-        public Range(Object s) {
-            Object[] a = Synt.toRange(s);
-            if (a != null) {
-                min = Synt.declare(a[0], Double.NEGATIVE_INFINITY);
-                max = Synt.declare(a[1], Double.POSITIVE_INFINITY);
-                ge  = (boolean) a[2];
-                le  = (boolean) a[3];
-            } else {
-                min = Double.NEGATIVE_INFINITY;
-                max = Double.POSITIVE_INFINITY;
-                ge  = true;
-                le  = true;
-            }
-        }
-
-        public boolean covers(double n) {
-            if (ge) { if (n <  min) {
-                return false;
-            }} else { if (n <= min) {
-                return false;
-            }}
-            if (le) { if (n >  max) {
-                return false;
-            }} else { if (n >= max) {
-                return false;
-            }}
-            return true;
-        }
-
-        public boolean covers(Number n) {
-            double x = n.doubleValue( );
-            return covers(x);
+            count ++;
         }
 
         @Override
-        public boolean equals(Object o) {
-            if ( o instanceof Range) {
-                Range that = (Range) o;
+        public void setScorer(Scorer s) {
+            // 不需要打分
+        }
 
-                return that.ge  == this.ge
-                    && that.le  == this.le
-                    && that.min == this.min
-                    && that.max == this.max;
-            }
+        @Override
+        public boolean needsScores( ) {
             return false;
         }
 
-        @Override
-        public int compareTo (Object o) {
-            if ( o instanceof Range) {
-                Range that = (Range) o;
-
-                if (this.max < that.max) {
-                    return -1;
-                }
-                if (this.max > that.max) {
-                    return  1;
-                }
-
-                if (that.le && !this.le) {
-                    return -1;
-                }
-                if (this.le && !that.le) {
-                    return  1;
-                }
-
-                if (this.min < that.min) {
-                    return -1;
-                }
-                if (this.min > that.min) {
-                    return  1;
-                }
-
-                if (this.ge && !that.ge) {
-                    return -1;
-                }
-                if (that.ge && !this.ge) {
-                    return  1;
-                }
-            }
-            return  0;
+        public int count() {
+            return count;
         }
 
-        @Override
-        public int hashCode() {
-            return toString().hashCode();
-        }
-
-        @Override
-        public String toString() {
-            // 不限则为空
-            if (ge && min == Double.NEGATIVE_INFINITY
-            &&  le && max == Double.POSITIVE_INFINITY) {
-                return "";
-            }
-            StringBuilder sb = new StringBuilder();
-            sb.append(ge ? "[" : "(");
-            sb.append(min != Double.NEGATIVE_INFINITY ? Synt.asString(min) : "");
-            sb.append(",");
-            sb.append(max != Double.POSITIVE_INFINITY ? Synt.asString(max) : "");
-            sb.append(le ? "]" : ")");
-            return sb.toString();
-        }
     }
 
     /**

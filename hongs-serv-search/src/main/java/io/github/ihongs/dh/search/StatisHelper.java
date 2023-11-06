@@ -8,13 +8,13 @@ import io.github.ihongs.action.FormSet;
 import io.github.ihongs.dh.lucene.LuceneRecord;
 import io.github.ihongs.dh.search.StatisHandle.TYPE;
 import io.github.ihongs.dh.search.StatisHandle.Field;
-import io.github.ihongs.dh.search.StatisGather.Diman;
+import io.github.ihongs.dh.search.StatisHandle.Range;
+import io.github.ihongs.dh.search.StatisGather.Dimen;
 import io.github.ihongs.dh.search.StatisGather.Index;
 import io.github.ihongs.dh.search.StatisGrader.Coach;
 import io.github.ihongs.dh.search.StatisGrader.Count;
 import io.github.ihongs.dh.search.StatisGrader.Tally;
 import io.github.ihongs.dh.search.StatisGrader.Total;
-import io.github.ihongs.dh.search.StatisGrader.Range;
 import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Synt;
 
@@ -428,7 +428,7 @@ public class StatisHelper {
                 return finder.count (q);
             }
 
-            StatisGrader.Fetch c = new StatisGrader.Ferry(fields, counts, countx, styles);
+            StatisGrader.Fetch c = new StatisGrader.Fetch(fields, counts, countx, styles);
 
             finder.search(q, c);
             return c . count( );
@@ -445,7 +445,8 @@ public class StatisHelper {
      * rd.rb 中根据字段类型区分维度指标, 维度将作为聚合条件, 指标将用于数值统计
      * 字段格式为: filed!func, 未加后缀的字段将作为维度
      * 指标后缀有:
-     *  !ratio  计数,求和,最小,最大
+     *  !total  计数,求和,最小,最大
+     *  !tally  同上,不求和
      *  !count  计数
      *  !sum    求和
      *  !min    最小
@@ -507,7 +508,8 @@ public class StatisHelper {
      * rd.rb 中根据字段类型区分维度指标, 维度将作为聚合条件, 指标将用于数值统计
      * 字段格式为: filed!func, 未加后缀的字段将作为维度
      * 指标后缀有:
-     *  !ratio  计数,求和,最小,最大
+     *  !total  计数,求和,最小,最大
+     *  !tally  同上,不求和
      *  !count  计数
      *  !sum    求和
      *  !min    最小
@@ -810,7 +812,7 @@ public class StatisHelper {
             return   null;
         }
 
-        List<Diman> dimans = new ArrayList();
+        List<Dimen> dimens = new ArrayList();
         List<Index> indics = new ArrayList();
         Map <String, Map   > items = that.getFields();
         Map <String, String> types ;
@@ -954,12 +956,12 @@ public class StatisHelper {
             if (o instanceof Index) {
                 indics.add( (Index) o );
             } else {
-                dimans.add( (Diman) o );
+                dimens.add( (Dimen) o );
             }
         }
 
         return new Fields (
-            dimans.toArray(new Diman[dimans.size()]),
+            dimens.toArray(new Dimen[dimens.size()]),
             indics.toArray(new Index[indics.size()])
         );
     }
@@ -981,7 +983,7 @@ public class StatisHelper {
              */
             Set<String> rz = Dict.getValue (rd, Set.class, alias, Cnst.AR_KEY);
             if (null == rz ) rz = new LinkedHashSet();
-            String [  ] rs = rz . toArray(new String[rz.size()] );
+            String [  ] rs = rz . toArray(new String [rz.size()]);
             return new StatisGather.Scope(type, field, alias, rs);
         }
         case "first":
@@ -1014,9 +1016,9 @@ public class StatisHelper {
     private static final Function asString = (Function<Object, String>) Synt::asString;
 
     private static class Fields {
-        public final  Diman[] dimans;
+        public final  Dimen[] dimans;
         public final  Index[] indics;
-        public Fields(Diman[] dimans,
+        public Fields(Dimen[] dimans,
                       Index[] indics) {
             this.dimans = dimans;
             this.indics = indics;

@@ -245,12 +245,16 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      */
     @Override
     public Map recite(Map rd) throws HongsException {
-        Object id = rd.get (Cnst.ID_KEY);
+        /**
+         * 未指定 id 返回空 map
+         * 外部可能仅需选项数据等,
+         * 此时无需查询和返回信息.
+         * 由动作接口附加选项即可;
+         * 例如添加数据之前调接口.
+         */
+        Object id = Synt.asSingle(rd.get(Cnst.ID_KEY));
         if (id == null || "".equals(id)) {
-            throw new HongsException(400, "id required");
-        }
-        if (! (id instanceof String || id instanceof Number) ) {
-            throw new HongsException(400, "must be single id");
+            return new HashMap ( 5 );
         }
 
         Map info = getOne ( rd );

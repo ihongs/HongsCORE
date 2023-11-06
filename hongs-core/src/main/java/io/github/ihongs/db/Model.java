@@ -136,7 +136,7 @@ implements IEntity
 
     if (rd.containsKey(Cnst.ID_KEY))
     {
-      rd.put(table.primaryKey, rd.get(Cnst.ID_KEY));
+      rd.put(table.primaryKey , rd.get(Cnst.ID_KEY));
     }
 
     caze.setOption("MODEL_START", "search");
@@ -231,21 +231,21 @@ implements IEntity
       caze = fetchCase();
     }
 
-    if (rd.containsKey(Cnst.ID_KEY))
-    {
-      rd.put(table.primaryKey, rd.get(Cnst.ID_KEY));
-    }
-
     /**
-     * 只允许查单个 id
+     * 未指定 id 返回空 map
+     * 外部可能仅需选项数据等,
+     * 此时无需查询和返回信息.
+     * 由动作接口附加选项即可;
+     * 例如添加数据之前调接口.
      */
-    Object id = rd.get(table.primaryKey);
+    Object id = Synt.asSingle(rd.get ( Cnst.ID_KEY ));
     if (id == null || "".equals(id)) {
-      throw new HongsException (400, "id required");
-    }
-    if (! (id instanceof String || id instanceof Number)) {
-      throw new HongsException (400, "must be single id");
-    }
+        id =  Synt.asSingle(rd.get(table.primaryKey));
+    if (id == null || "".equals(id)) {
+        return new HashMap ( 5 );
+    }}
+
+    rd.put(table.primaryKey, id);
 
     caze.setOption("MODEL_START", "recite");
     this.filter(caze, rd);
@@ -369,7 +369,7 @@ implements IEntity
         return this.put(null, null);
     }
 
-    Set<String> ids = new LinkedHashSet();
+    Set ids =  new LinkedHashSet( );
     if (idz instanceof Collection ) {
         ids.addAll((Collection)idz);
     } else {
@@ -386,9 +386,9 @@ implements IEntity
     fc.setOption("MODEL_START", "update");
     permit(fc , rd , ids);
 
-    for (String id : ids)
+    for (Object id : ids)
     {
-      this.put( id , xd );
+      this.put( Synt.asString( id ), xd );
     }
 
     return ids.size();
@@ -427,7 +427,7 @@ implements IEntity
         return this.del(null, null);
     }
 
-    Set<String> ids = new LinkedHashSet();
+    Set ids =  new LinkedHashSet( );
     if (idz instanceof Collection ) {
         ids.addAll((Collection)idz);
     } else {
@@ -441,9 +441,9 @@ implements IEntity
     fc.setOption("MODEL_START", "delete");
     permit(fc , rd , ids);
 
-    for (String id : ids)
+    for (Object id : ids)
     {
-      this.del( id , fc );
+      this.del( Synt.asString( id ), fc );
     }
 
     return ids.size();
@@ -851,7 +851,10 @@ implements IEntity
   protected void permit(FetchCase caze, Map rd, Set id)
     throws HongsException
   {
-    Map wh = new HashMap();
+    if (id == null || id.isEmpty( )) {
+        return;
+    }
+    Map wh = new HashMap(4);
     if (rd.containsKey(Cnst.AR_KEY)) {
         wh.put(Cnst.AR_KEY, rd.get(Cnst.AR_KEY));
     }
@@ -885,7 +888,7 @@ implements IEntity
             throw new HongsException(1097, "Can not delete by id: " + er);
         } else
         {
-            throw new HongsException(1098, "Can not search by id: " + er);
+            throw new HongsException(1098, "Can not select by id: " + er);
         }
     }
   }

@@ -842,6 +842,7 @@ public final class Synt {
          */
         if (0 < arr.length) {
             if ( "".equals(arr[0])
+            ||  "-".equals(arr[0])
             ||  "∞".equals(arr[0])
             || "-∞".equals(arr[0]) ) {
                 arr[0] = null;
@@ -849,6 +850,7 @@ public final class Synt {
         }
         if (1 < arr.length) {
             if ( "".equals(arr[1])
+            ||  "+".equals(arr[1])
             ||  "∞".equals(arr[1])
             || "+∞".equals(arr[1]) ) {
                 arr[1] = null;

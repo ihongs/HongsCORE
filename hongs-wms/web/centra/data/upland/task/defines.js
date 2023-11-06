@@ -19,7 +19,7 @@ function in_centra_data_upland_topic_list(context, listobj) {
 
     // 点击标题打开
     listobj._fill_name = function(td, tt) {
-        $('<a href="javascript:;" class="review"></a>')
+        $('<a href="javascript:;" class="recite"></a>')
             .appendTo(td)
             .text    (tt);
     }

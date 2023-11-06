@@ -235,7 +235,7 @@
                     <th data-fn="id." data-ft="_check" class="_check">
                         <input name="id." type="checkbox" class="checkall"/>
                     </th>
-                    <%if ("browse".equals(_action)) {%>
+                    <%if ("search".equals(_action)) {%>
                     <th data-fn="_" data-ft="_admin" class="_admin _amenu">
                         <div class="dropdown invisible">
                             <a href="javascript:;" data-toggle="dropdown"><span class="bi bi-hi-action"></span></a>

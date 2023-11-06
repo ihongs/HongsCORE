@@ -163,36 +163,33 @@ implements IEntity
       ques = Synt.declare(rd.get(Cnst.QN_KEY), ques);
     }
 
-    Map data = new HashMap();
+    Map data = new HashMap (6); // {ok, ern, err, msg, list, page}
 
-    if (rows != 0)
+    // 页码等于 0 则不要列表数据
+    if (rows == 0)
     {
-      caze.from (table.tableName , table.name );
-      FetchPage fp = new FetchPage(caze, table);
-      fp.setPage(page);
-      fp.setQues(Math.abs(ques));
-      fp.setRows(Math.abs(rows));
-
-      // 页码等于 0 则不要列表数据
-      if (page != 0)
-      {
-        List list = fp.getList();
-        data.put( "list", list );
-      }
-
-      // 行数小于 0 则不要分页信息
-      if (rows  > 0)
-      {
-        Map  info = fp.getPage();
-        data.put( "page", info );
-      }
+      List list = table.fetchMore(caze);
+      data.put( "list", list );
+      return data;
     }
-    else
+
+    caze.from (table.tableName , table.name );
+    FetchPage fp = new FetchPage(caze, table);
+    fp.setPage(page);
+    fp.setQues(Math.abs(ques));
+    fp.setRows(Math.abs(rows));
+
+    // 行数等于 0 则不要使用分页
+    if (page != 0)
     {
-      // 行数等于 0 则不要使用分页
-        List list = table.fetchMore(caze);
-        data.put( "list", list );
+      List list = fp.getList();
+      data.put( "list", list );
     }
+//  if (rows != 0)
+//  {
+      Map  info = fp.getPage();
+      data.put( "page", info );
+//  }
 
     return data;
   }
@@ -242,7 +239,7 @@ implements IEntity
     if (id == null || "".equals(id)) {
         id =  Synt.asSingle(rd.get(table.primaryKey));
     if (id == null || "".equals(id)) {
-        return new HashMap ( 5 );
+        return new HashMap ( 6 );
     }}
 
     rd.put(table.primaryKey, id);
@@ -252,7 +249,7 @@ implements IEntity
 
     Map info = table.fetchLess(caze);
 
-    Map data = new HashMap();
+    Map data = new HashMap ( 6 );
     data.put( "info", info );
 
     /**
@@ -266,7 +263,7 @@ implements IEntity
         return data ;
     }
 
-    Map page = new HashMap();
+    Map page = new HashMap ( 2 );
     data.put( "page", page );
 
     /**

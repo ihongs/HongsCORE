@@ -195,7 +195,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
         // 指定行数 0, 则获取全部
         if (rn == 0) {
-            Map  data = new HashMap();
+            Map  data = new HashMap(6);
             List list = getAll(rd);
             data.put("list", list);
             return data;
@@ -211,12 +211,12 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         long rc =        roll.tots(); // real rows
         long vc = (long) roll.hits(); // view rows
         long pc = (long) Math.ceil((double) vc / rn);
-        int  st = rc > bn ? 1 : 0;
+        int  st = rc > bn ? 1 : 0 ;
 
-        Map  resp = new HashMap();
-        Map  page = new HashMap();
-        page.put(Cnst.RN_KEY, rn);
-        page.put(Cnst.PN_KEY, pn);
+        Map  resp = new HashMap(6);
+        Map  page = new HashMap(5);
+        page.put(Cnst.RN_KEY , rn);
+        page.put(Cnst.PN_KEY , pn);
         page.put("count", rc);
         page.put("total", pc);
         page.put("state", st);
@@ -254,13 +254,13 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
          */
         Object id = Synt.asSingle(rd.get(Cnst.ID_KEY));
         if (id == null || "".equals(id)) {
-            return new HashMap ( 5 );
+            return new HashMap(6);
         }
 
-        Map info = getOne ( rd );
+        Map info = getOne  ( rd );
 
-        Map data = new HashMap();
-        data.put( "info", info );
+        Map data = new HashMap(6);
+        data.put( "info" , info );
 
         /**
          * 与 list 保持一致, 用 rn 控制 page
@@ -273,29 +273,29 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             return data ;
         }
 
-        Map page = new HashMap();
-        data.put( "page", page );
+        Map page = new HashMap(2);
+        data.put( "page" , page );
 
         /**
          * 查不到可能是不存在、已删除或受限
          * 需通过 id 再查一遍，区分不同错误
          */
-        page.put(Cnst.RN_KEY,rn);
+        page.put(Cnst.RN_KEY, rn);
         if (null != info && ! info.isEmpty()) {
-            page.put("state", 1);
-            page.put("count", 1);
+            page.put("state", 1 );
+            page.put("count", 1 );
         } else
         if (rn >= 1 ) {
-            page.put("state", 0);
-            page.put("count", 0);
+            page.put("state", 0 );
+            page.put("count", 0 );
         } else
         if (null != getDoc( id.toString( ) )) {
-            page.put("state", 0);
-            page.put("count", 1);
+            page.put("state", 0 );
+            page.put("count", 1 );
         }  else
         {
-            page.put("state", 0);
-            page.put("count", 0);
+            page.put("state", 0 );
+            page.put("count", 0 );
         }
 
         return data;

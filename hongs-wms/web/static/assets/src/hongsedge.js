@@ -821,17 +821,12 @@ HsCate.prototype = {
                     }
 
                     if (t === "range"
-                    ||  t === "tally") {
+                    ||  t === "tally"
+                    ||  t === "total") {
                         that.setAmountCheck(n , d);
-                        that.setAcountChart(n , d);
-                    } else
-                    if (t === "total") {
-                        that.setAmountCheck(n , d);
-                        that.setAmountChart(n , d);
                     } else
                     {
                         that.setAcountCheck(n , d);
-                        that.setAcountChart(n , d);
                     }
 
                     k = n.find(".checkone2").attr( "name" );

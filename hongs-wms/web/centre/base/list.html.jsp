@@ -350,7 +350,7 @@
                .then(function() {
 
         // 权限控制
-        $.each({"create":".create", "update":".update", "delete":".delete"}
+        $.each({"recite":".recite", "create":".create", "update":".update", "delete":".delete"}
         , function(k, v) {
             if (! hsChkUri("<%=_module%>/<%=_entity%>/"+k+".act")) {
                 context.find(v).remove();

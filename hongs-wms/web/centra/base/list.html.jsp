@@ -30,7 +30,7 @@
                 <button type="button" class="checks btn btn-warning"><%=_locale.translate("fore.selall", _title)%></button>
                 <%} // End If %>
                 <button type="button" class="create btn btn-default"><%=_locale.translate("fore.create", _title)%></button>
-                <%if ("browse".equals(_action)) {%>
+                <%if ("search".equals(_action)) {%>
                 <button type="button" class="update for-choose btn btn-default"><%=_locale.translate("fore.update", _title)%></button>
                 <button type="button" class="recite for-choose btn btn-default"><%=_locale.translate("fore.recite", _title)%></button>
                 <button type="button" class="reveal for-choose btn btn-default" title="<%=_locale.translate("fore.reveal", _title)%>"><span class="bi bi-hi-reveal"></span></button>
@@ -500,8 +500,7 @@
                .then(function() {
 
         // 权限控制
-        $.each({"create":".create", "update":".update",
-                "delete":".delete", "reveal":".reveal"}
+        $.each({"recite":".recite", "create":".create", "update":".update", "delete":".delete", "reveal":".reveal"}
         , function(k, v) {
             if (! hsChkUri("<%=_module%>/<%=_entity%>/"+k+".act")) {
                 context.find(v).remove();

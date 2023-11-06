@@ -330,24 +330,12 @@ public final class Synt {
      * @return
      */
     public static Byte asByte(Object val) {
-        val = asNumber(val);
-        if (val == null) {
+        Number num = asNumber(val);
+        if (num == null) {
             return null;
         }
 
-        if (val instanceof Number) {
-            return ((Number) val ).byteValue();
-        } else
-        if (val instanceof String) {
-            String str = ((String) val).trim();
-            try {
-                return new BigDecimal(str).byteValue();
-            } catch (NumberFormatException ex) {
-                throw new ClassCastException("'" + val + "' can not be cast to byte");
-            }
-        }
-
-        return (Byte) val;
+        return num.byteValue();
     }
 
     /**
@@ -357,24 +345,12 @@ public final class Synt {
      * @return
      */
     public static Short asShort(Object val) {
-        val = asNumber(val);
-        if (val == null) {
+        Number num = asNumber(val);
+        if (num == null) {
             return null;
         }
 
-        if (val instanceof Number) {
-            return ((Number) val).shortValue();
-        } else
-        if (val instanceof String) {
-            String str = ((String) val).trim();
-            try {
-                return new BigDecimal(str).shortValue();
-            } catch (NumberFormatException ex) {
-                throw new ClassCastException("'" + val + "' can not be cast to short");
-            }
-        }
-
-        return (Short) val;
+        return num.shortValue();
     }
 
     /**
@@ -384,24 +360,12 @@ public final class Synt {
      * @return
      */
     public static Integer asInt(Object val) {
-        val = asNumber(val);
-        if (val == null) {
+        Number num = asNumber(val);
+        if (num == null) {
             return null;
         }
 
-        if (val instanceof Number) {
-            return ((Number) val ).intValue( );
-        } else
-        if (val instanceof String) {
-            String str = ((String) val).trim();
-            try {
-                return new BigDecimal(str).intValue();
-            } catch (NumberFormatException ex) {
-                throw new ClassCastException("'" + val + "' can not be cast to int");
-            }
-        }
-
-        return (Integer) val;
+        return num.intValue();
     }
 
     /**
@@ -411,24 +375,12 @@ public final class Synt {
      * @return
      */
     public static Long asLong(Object val) {
-        val = asNumber(val);
-        if (val == null) {
+        Number num = asNumber(val);
+        if (num == null) {
             return null;
         }
 
-        if (val instanceof Number) {
-            return ((Number) val ).longValue();
-        } else
-        if (val instanceof String) {
-            String str = ((String) val).trim();
-            try {
-                return new BigDecimal(str).longValue();
-            } catch (NumberFormatException ex) {
-                throw new ClassCastException("'" + val + "' can not be cast to long");
-            }
-        }
-
-        return (Long) val;
+        return num.longValue();
     }
 
     /**
@@ -438,24 +390,12 @@ public final class Synt {
      * @return
      */
     public static Float asFloat(Object val) {
-        val = asNumber(val);
-        if (val == null) {
+        Number num = asNumber(val);
+        if (num == null) {
             return null;
         }
 
-        if (val instanceof Number) {
-            return ((Number) val).floatValue();
-        } else
-        if (val instanceof String) {
-            String str = ((String) val).trim();
-            try {
-                return new BigDecimal(str).floatValue();
-            } catch (NumberFormatException ex) {
-                throw new ClassCastException("'" + val + "' can not be cast to float");
-            }
-        }
-
-        return (Float) val;
+        return num.floatValue();
     }
 
     /**
@@ -465,24 +405,12 @@ public final class Synt {
      * @return
      */
     public static Double asDouble(Object val) {
-        val = asNumber(val);
-        if (val == null) {
+        Number num = asNumber(val);
+        if (num == null) {
             return null;
         }
 
-        if (val instanceof Number) {
-            return ((Number)val).doubleValue();
-        } else
-        if (val instanceof String) {
-            String str = ((String) val).trim();
-            try {
-                return new BigDecimal(str).doubleValue();
-            } catch (NumberFormatException ex) {
-                throw new ClassCastException("'" + val + "' can not be cast to double");
-            }
-        }
-
-        return (Double) val;
+        return num.doubleValue();
     }
 
     /**
@@ -490,42 +418,51 @@ public final class Synt {
      * @param val
      * @return
      */
-    private static Object asNumber(Object val) {
+    public static Number asNumber(Object val) {
         val = asSingle(val);
-
         if (val == null) {
             return null;
         }
 
-        // 空串视为未取值
-        if ("".equals(val)) {
-            return null;
+        if (val instanceof Number) {
+            return ( Number ) val;
         }
 
         // 日期转为时间戳
         if (val instanceof Date) {
-            val = ( (Date) val ).getTime();
+            return ((Date) val ).getTime();
         } else
         if (val instanceof Calendar) {
-            val = ( (Calendar) val ).getTimeInMillis();
+            return ((Calendar) val ).getTimeInMillis();
         } else
         if (val instanceof Instant ) {
-            val = ( (Instant ) val ). toEpochMilli ( );
+            return ((Instant ) val ). toEpochMilli ( );
         } else
         if (val instanceof ZonedDateTime) {
-            val = ( (ZonedDateTime ) val).toInstant( ).toEpochMilli();
+            return ((ZonedDateTime ) val).toInstant( ).toEpochMilli();
         } else
         if (val instanceof LocalDateTime) {
-            val = ( (LocalDateTime ) val).atZone(getZoneId()).toInstant().toEpochMilli();
+            return ((LocalDateTime ) val).atZone(getZoneId()).toInstant().toEpochMilli();
         } else
         if (val instanceof LocalDate) {
-            val = ( (LocalDate) val ).atTime(LocalTime. MIN ).atZone(getZoneId()).toInstant().toEpochMilli();
+            return ((LocalDate) val ).atTime(LocalTime. MIN ).atZone(getZoneId()).toInstant().toEpochMilli();
         } else
         if (val instanceof LocalTime) {
-            val = ( (LocalTime) val ).atDate(LocalDate.EPOCH).atZone(getZoneId()).toInstant().toEpochMilli();
+            return ((LocalTime) val ).atDate(LocalDate.EPOCH).atZone(getZoneId()).toInstant().toEpochMilli();
         }
 
-        return val;
+        /**
+         * 尝试通过字符串转数字
+         */
+        String str = val.toString().trim();
+        if (str.isEmpty()) {
+            return null;
+        }
+        try {
+            return new BigDecimal(  str  );
+        } catch (NumberFormatException ex) {
+            throw  new ClassCastException("'" + val + "' can not be cast to number");
+        }
     }
 
     /**
@@ -567,7 +504,7 @@ public final class Synt {
      * @param val
      * @return
      */
-    private static Object asSingle(Object val) {
+    public static Object asSingle(Object val) {
         if (val == null) {
             return null;
         }

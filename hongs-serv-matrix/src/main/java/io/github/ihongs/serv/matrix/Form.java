@@ -428,7 +428,7 @@ public class Form extends Model {
         // 非常规动作不作限制
         String  mm = caze.getOption("MODEL_START" , "");
         if (!"search".equals(mm)
-        &&  !"detail".equals(mm)
+        &&  !"recite".equals(mm)
         &&  !"update".equals(mm)
         &&  !"delete".equals(mm)) {
             return;
@@ -919,7 +919,7 @@ public class Form extends Model {
             actn.appendChild ( docm.createTextNode(href +"search"+ Cnst.ACT_EXT) );
             actn = docm.createElement("action");
             role.appendChild ( actn );
-            actn.appendChild ( docm.createTextNode(href +"detail"+ Cnst.ACT_EXT) );
+            actn.appendChild ( docm.createTextNode(href +"recite"+ Cnst.ACT_EXT) );
             actn = docm.createElement("action");
             role.appendChild ( actn );
             actn.appendChild ( docm.createTextNode(href +"select"+ Cnst.ACT_EXT) );
@@ -990,7 +990,7 @@ public class Form extends Model {
             actn.appendChild ( docm.createTextNode(href +"reveal"+ Cnst.ACT_EXT) );
             actn = docm.createElement("action");
             role.appendChild ( actn );
-            actn.appendChild ( docm.createTextNode(href +"retail"+ Cnst.ACT_EXT) );
+            actn.appendChild ( docm.createTextNode(href +"remind"+ Cnst.ACT_EXT) );
             depn = docm.createElement("depend");
             role.appendChild ( depn );
             depn.appendChild ( docm.createTextNode(href +"search") );

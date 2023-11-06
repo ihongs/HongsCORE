@@ -26,7 +26,7 @@ public class RestDriver extends ApisDriver {
     private static final String   METHOD_DELETE = "DELETE";
 
     private static final String[] ACTION_GET    = new String[] {"search", "list"};
-    private static final String[] ACTION_GOT    = new String[] {"detail", "info"};
+    private static final String[] ACTION_GOT    = new String[] {"recite", "info"};
     private static final String[] ACTION_POST   = new String[] {"create", "save"};
     private static final String[] ACTION_PATCH  = new String[] {"update", "save"};
     private static final String[] ACTION_DELETE = new String[] {"delete", "drop"};

@@ -45,7 +45,7 @@ function in_centra_data_upland_theme_list(context, listobj) {
 }
 
 function in_centra_data_upland_theme_info(context, formobj) {
-    if (context.is(".base-info,.review-info"))
+    if (context.is(".base-info,.review-info,.recite-info"))
     context.one("loadOver", function(evt, rst) {
         var adm = H$("!centra/data/upland/admin");
         var uid = H$('%HsCUID' );

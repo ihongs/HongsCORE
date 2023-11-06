@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
  * 1.0.0 将 enum/menu 换成 enfo, create 增加 info, update 返回 size
  * 1.0.5 在 acount/amount 统计接口默认添加逆序 rb=!
  * 1.0.7 将 amount 转向 acount, 这俩接口已合并
- * 1.0.8 将单 id 的 search 转向 detail, 已分离
+ * 1.0.8 将单 id 的 search 转向 recite, 已分离
  * 支持 url-include 和 url-exclude
  *
  * @deprecated 仅为兼容
@@ -167,7 +167,7 @@ public class VersFilter extends ActionDriver {
                     String c = act.substring(0 , p);
                     if (c.endsWith("/search")) {
                            c = act.substring(0 + p);
-                        act  = act.substring(0 , p - 7) + "/detail" + c;
+                        act  = act.substring(0 , p - 7) + "/recite" + c;
                         Object id = rd.get(Cnst.ID_KEY);
                         if (id != null && ! "".equals(id)
                         && (id instanceof String || id instanceof Number) ) {

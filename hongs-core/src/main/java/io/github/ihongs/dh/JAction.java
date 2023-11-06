@@ -95,15 +95,15 @@ abstract public class JAction implements IActing, IAction {
     }
 
     @Override
-    @Action("detail")
+    @Action("recite")
     @Preset(conf="", form="", defs={"defense"})
     @Select(conf="", form="")
-    public void detail(ActionHelper helper) throws HongsException {
+    public void recite(ActionHelper helper) throws HongsException {
         IEntity sr = getEntity(helper);
         Map     rd = helper.getRequestData();
-                rd = getReqMap(helper, sr, "detail", rd);
-        Map     sd = sr.detail( rd );
-                sd = getRspMap(helper, sr, "detail", sd);
+                rd = getReqMap(helper, sr, "recite", rd);
+        Map     sd = sr.recite( rd );
+                sd = getRspMap(helper, sr, "recite", sd);
         helper.reply(sd);
     }
 

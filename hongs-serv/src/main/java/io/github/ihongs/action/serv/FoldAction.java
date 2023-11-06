@@ -247,7 +247,7 @@ public class FoldAction implements IAction {
 
     @Override
     @Deprecated
-    public void detail(ActionHelper helper) throws HongsException {
+    public void recite(ActionHelper helper) throws HongsException {
         // just search
     }
 

@@ -7,7 +7,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@include file="_boot_.jsp"%>
 <%
-    String _action = Synt.declare(request.getAttribute("list.action"), "browse");
+    String _action = Synt.declare(request.getAttribute("list.action"), "search");
     String _funcId = "in_"+(_module + "_" + _entity + "_list").replace('/', '_');
     String _pageId = /* */ (_module + "-" + _entity + "-list").replace('/', '-');
 
@@ -32,7 +32,7 @@
                 <button type="button" class="create btn btn-default"><%=_locale.translate("fore.create", _title)%></button>
                 <%if ("browse".equals(_action)) {%>
                 <button type="button" class="update for-choose btn btn-default"><%=_locale.translate("fore.update", _title)%></button>
-                <button type="button" class="review for-choose btn btn-default"><%=_locale.translate("fore.review", _title)%></button>
+                <button type="button" class="recite for-choose btn btn-default"><%=_locale.translate("fore.recite", _title)%></button>
                 <button type="button" class="reveal for-choose btn btn-default" title="<%=_locale.translate("fore.reveal", _title)%>"><span class="bi bi-hi-reveal"></span></button>
                 <button type="button" class="copies for-checks btn btn-default" title="<%=_locale.translate("fore.copies", _title)%>"><span class="bi bi-hi-export"></span></button>
                 <button type="button" class="delete for-checks btn btn-default" title="<%=_locale.translate("fore.delete", _title)%>"><span class="bi bi-hi-remove text-danger"></span></button>
@@ -241,7 +241,7 @@
                             <a href="javascript:;" data-toggle="dropdown"><span class="bi bi-hi-action"></span></a>
                             <ul class="dropdown-menu">
                                 <li><a href="javascript:;" class="update"><%=_locale.translate("fore.update", _title)%></a></li>
-                                <li><a href="javascript:;" class="review"><%=_locale.translate("fore.review", _title)%></a></li>
+                                <li><a href="javascript:;" class="recite"><%=_locale.translate("fore.recite", _title)%></a></li>
                                 <li><a href="javascript:;" class="reveal"><%=_locale.translate("fore.reveal", _title)%></a></li>
                                 <li><a href="javascript:;" class="delete"><span class="text-danger"><%=_locale.translate("fore.delete", _title)%></span></a></li>
                             </ul>
@@ -415,7 +415,7 @@
             [ '<%=_module%>/<%=_entity%>/form.html?<%=Cnst.ID_KEY%>={ID}',
               '.update', '@' ],
             [ '<%=_module%>/<%=_entity%>/info.html?<%=Cnst.ID_KEY%>={ID}',
-              '.review', '@' ],
+              '.recite', '@' ],
             [ '<%=_module%>/<%=_entity%>/snap.html?<%=Cnst.ID_KEY%>={ID}',
               '.reveal', '@' ]
         ],

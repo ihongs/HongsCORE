@@ -205,10 +205,10 @@ implements IEntity
    * @throws io.github.ihongs.HongsException
    */
   @Override
-  public Map detail(Map rd)
+  public Map recite(Map rd)
     throws HongsException
   {
-    return detail(rd, null);
+    return recite(rd, null);
   }
 
   /**
@@ -219,7 +219,7 @@ implements IEntity
    * @return 记录信息
    * @throws io.github.ihongs.HongsException
    */
-  public Map detail(Map rd, FetchCase caze)
+  public Map recite(Map rd, FetchCase caze)
     throws HongsException
   {
     if (rd == null)
@@ -247,7 +247,7 @@ implements IEntity
       throw new HongsException (400, "must be single id");
     }
 
-    caze.setOption("MODEL_START", "detail");
+    caze.setOption("MODEL_START", "recite");
     this.filter(caze, rd);
 
     Map info = table.fetchLess(caze);
@@ -779,21 +779,21 @@ implements IEntity
   }
 
   /**
-   * @deprecated 已废弃, 请改用 detail
+   * @deprecated 已废弃, 请改用 recite
    */
   public Map getInfo(Map rd)
     throws HongsException
   {
-    return detail (rd, null);
+    return recite (rd, null);
   }
 
   /**
-   * @deprecated 已废弃, 请改用 detail
+   * @deprecated 已废弃, 请改用 recite
    */
   public Map getInfo(Map rd, FetchCase caze)
     throws HongsException
   {
-    return detail (rd, caze);
+    return recite (rd, caze);
   }
 
   /**

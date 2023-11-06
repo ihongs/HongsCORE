@@ -7,7 +7,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@include file="_boot_.jsp"%>
 <%
-    String _action = Synt.declare(request.getAttribute("info.action"), "review");
+    String _action = Synt.declare(request.getAttribute("info.action"), "recite");
     String _funcId = "in_"+(_module + "_" + _entity + "_info").replace('/', '_');
     String _pageId = /* */ (_module + "-" + _entity + "-info").replace('/', '-');
 %>
@@ -246,9 +246,9 @@
 
     var formobj = context.hsForm({
         <%if ("reveal".equals(_action)) {%>
-        _url : "<%=_module%>/<%=_entity%>/retail.act?<%=Cnst.AB_KEY%>=_text,_fork,.fall,older,newer",
+        _url : "<%=_module%>/<%=_entity%>/remind.act?<%=Cnst.AB_KEY%>=_text,_fork,.fall,older,newer",
         <%} else {%>
-        _url : "<%=_module%>/<%=_entity%>/detail.act?<%=Cnst.AB_KEY%>=_text,_fork,.fall",
+        _url : "<%=_module%>/<%=_entity%>/recite.act?<%=Cnst.AB_KEY%>=_text,_fork,.fall",
         _reveal_url: "<%=_module%>/<%=_entity%>/snap.html" ,
         _update_url: "<%=_module%>/<%=_entity%>/form.html" ,
         _delete_act: "<%=_module%>/<%=_entity%>/delete.act",

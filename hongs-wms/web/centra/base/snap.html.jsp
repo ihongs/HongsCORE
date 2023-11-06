@@ -50,7 +50,7 @@
                         <div class="dropdown invisible">
                             <a href="javascript:;" data-toggle="dropdown"><span class="bi bi-hi-action"></span></a>
                             <ul class="dropdown-menu adm-menu">
-                                <li><a href="javascript:;" class="review">查看</a></li>
+                                <li><a href="javascript:;" class="remind">查看</a></li>
                                 <li><a href="javascript:;" class="revert">恢复</a></li>
                                 <li class="divider"></li>
                                 <li><a href="javascript:;" class="same-r">同资源的</a></li>
@@ -139,7 +139,7 @@
         listobj.send (tr, ms, "<%=_module%>/<%=_entity%>/revert.act"    , {id: id, rtime: ct});
     });
 
-    context.on("click", ".review", function() {
+    context.on("click", ".remind", function() {
         var lo = context.hsFind ("@" );
         var tr = $(this).closest("tr");
         var id =      tr.data(   "id");

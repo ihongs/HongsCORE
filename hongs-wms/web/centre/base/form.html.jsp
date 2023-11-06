@@ -516,7 +516,7 @@
         <%if ("create".equals(_action)) {%>
         _url : "<%=_module%>/<%=_entity%>/select.act?<%=Cnst.AB_KEY%>=.enfo,.info,.fall,_fork,_text",
         <%} else {%>
-        _url : "<%=_module%>/<%=_entity%>/detail.act?<%=Cnst.AB_KEY%>=.enfo,.info,.fall,_fork,_text",
+        _url : "<%=_module%>/<%=_entity%>/recite.act?<%=Cnst.AB_KEY%>=.enfo,.info,.fall,_fork,_text",
         <%} /* End if */ %>
         _data: loadres,
          initInfo: initres,

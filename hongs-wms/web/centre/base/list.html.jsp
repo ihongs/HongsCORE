@@ -244,13 +244,13 @@
             <div class="panel-body" style="display: table; width: 100%;">
                 <%if (_fields.containsKey(LOGO)) {%>
                 <div style="display: table-cell; width: 10px; padding: 0px; vertical-align: top;">
-                    <div class="review" style="height: 100px; overflow: hidden; cursor: pointer;">
+                    <div class="recite" style="height: 100px; overflow: hidden; cursor: pointer;">
                         <div data-fn="<%=LOGO%>" data-ft="_logo" style="width: 100px; height: 100px; margin-right: 15px; border-radius: 4px;"></div>
                     </div>
                 </div>
                 <%} /*End If*/%>
                 <div style="display: table-cell; width: 100%; padding: 0px; vertical-align: top;">
-                    <div class="review" style="height: 100px; overflow: hidden; cursor: pointer;">
+                    <div class="recite" style="height: 100px; overflow: hidden; cursor: pointer;">
                         <div data-fn="<%=NAME%>" style="color: #444;"></div>
                         <div data-fn="<%=NOTE%>" style="color: #888;"></div>
                     </div>

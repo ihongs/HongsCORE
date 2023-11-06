@@ -489,10 +489,10 @@ public class Data extends SearchEntity {
      * @return
      * @throws HongsException
      */
-    public Map retail(Map rd) throws HongsException {
+    public Map remind(Map rd) throws HongsException {
         FetchCase fc = getModel().fetchCase();
         fc.filter("`form_id`=?", getFormId());
-        Map rsp = getModel ().detail (rd, fc);
+        Map rsp = getModel ().recite (rd, fc);
 
         if (rsp.containsKey("info")) {
             Map inf = (Map) rsp.get("info");

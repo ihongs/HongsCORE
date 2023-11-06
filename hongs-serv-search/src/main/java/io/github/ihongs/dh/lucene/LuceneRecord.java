@@ -244,7 +244,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      * @throws HongsException
      */
     @Override
-    public Map detail(Map rd) throws HongsException {
+    public Map recite(Map rd) throws HongsException {
         Object id = rd.get (Cnst.ID_KEY);
         if (id == null || "".equals(id)) {
             throw new HongsException(400, "id required");

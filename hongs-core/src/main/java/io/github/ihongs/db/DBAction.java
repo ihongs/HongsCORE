@@ -92,16 +92,16 @@ public class DBAction implements IAction, IActing {
     }
 
     @Override
-    @Action("detail")
+    @Action("recite")
     @Preset(conf="", form="", defs={"defense"})
     @Select(conf="", form="")
-    public void detail(ActionHelper helper)
+    public void recite(ActionHelper helper)
     throws HongsException {
         Model   ett = getEntity(helper);
         Map     req = helper.getRequestData();
-                req = getReqMap(helper, ett, "detail", req);
-        Map     rsp = ett.detail(req);
-                rsp = getRspMap(helper, ett, "detail", rsp);
+                req = getReqMap(helper, ett, "recite", req);
+        Map     rsp = ett.recite(req);
+                rsp = getRspMap(helper, ett, "recite", rsp);
         helper.reply(rsp);
     }
 

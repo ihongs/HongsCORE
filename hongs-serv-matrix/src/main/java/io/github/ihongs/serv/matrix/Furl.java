@@ -97,7 +97,7 @@ public class Furl extends TreeModel {
         // 非常规动作不作限制
         String  mm = caze.getOption("MODEL_START" , "");
         if (!"search".equals(mm)
-        &&  !"detail".equals(mm)
+        &&  !"recite".equals(mm)
         &&  !"update".equals(mm)
         &&  !"delete".equals(mm)) {
             return;

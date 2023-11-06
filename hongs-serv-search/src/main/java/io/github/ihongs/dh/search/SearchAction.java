@@ -66,16 +66,6 @@ public class SearchAction extends JAction {
         super.search(helper);
     }
 
-    /**
-     * @deprecated 已并入 acount
-     */
-    @Action("amount")
-    @Preset(conf="", form="")
-    @Titles(conf="", form="")
-    public void amount(ActionHelper helper) throws HongsException {
-        acount(helper);
-    }
-
     @Action("acount")
     @Preset(conf="", form="")
     @Titles(conf="", form="")

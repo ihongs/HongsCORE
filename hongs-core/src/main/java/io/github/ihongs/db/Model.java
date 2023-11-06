@@ -139,8 +139,14 @@ implements IEntity
       rd.put(table.primaryKey , rd.get(Cnst.ID_KEY));
     }
 
+    // TODO: 临时兼容获取详情
+    Object id = rd.get(table.primaryKey);
+    if (id != null && ! "".equals(id) && !(id instanceof String || id instanceof Number)) {
+        return recite (rd , caze);
+    }
+
     caze.setOption("MODEL_START", "search");
-    this.filter(caze, rd);
+    this.filter( caze, rd );
 
     // 获取行数, 默认依从配置
     int rows = Cnst.RN_DEF ;

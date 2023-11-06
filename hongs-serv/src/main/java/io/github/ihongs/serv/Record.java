@@ -5,7 +5,7 @@ import io.github.ihongs.dh.Roster;
 /**
  * 简单数据存储
  * @author Hongs
- * @deprecated 与 java.lang.Record 重名, 已迁移到 io.github.ihongs.dh.Stores
+ * @deprecated 与 java.lang.Record 重名, 已迁移到 io.github.ihongs.dh.Roster
  */
 public class Record {
 

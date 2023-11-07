@@ -14,17 +14,18 @@ package io.github.ihongs;
  * </pre>
  *
  * @author Hongs
+ * @deprecated Use CruxException instead
  */
 public class HongsException
      extends      Exception
   implements HongsCause {
 
-    protected final HongsCurse that;
+    protected final HongsFault that;
 
     public HongsException(Throwable fact, int code, String desc, Object... data) {
         super(fact);
 
-        that = new HongsCurse(this, code, desc, data);
+        that = new HongsFault(this, code, desc, data);
     }
 
     public HongsException(Throwable fact, int code, String desc) {

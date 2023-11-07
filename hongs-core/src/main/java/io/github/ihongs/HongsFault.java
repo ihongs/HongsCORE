@@ -3,7 +3,7 @@ package io.github.ihongs;
 import io.github.ihongs.util.Syno;
 
 /**
- * 异常本地化工具
+ * 异常辅助工具
  *
  * 当 error 长在 128 以内, 且以 @ 开头,
  * 表示将从对应的配置文件和语言资源里读取,
@@ -12,7 +12,7 @@ import io.github.ihongs.util.Syno;
  *
  * @author Hongs
  */
-public final class HongsCurse {
+public final class HongsFault {
 
     public final Throwable cause;
     public final int       errno;
@@ -28,7 +28,7 @@ public final class HongsCurse {
      * @param error 描述
      * @param cases 参数
      */
-    HongsCurse (Throwable cause, int errno, String error, Object[] cases) {
+    HongsFault (Throwable cause, int errno, String error, Object[] cases) {
         // 从描述里提取配置名称
         if (error != null
         &&  error.length( ) >= 2

@@ -3,6 +3,7 @@ package io.github.ihongs;
 /**
  * 异常基类
  * @author Hongs
+ * @deprecated Use Crux instead
  */
 public interface HongsCause
 {

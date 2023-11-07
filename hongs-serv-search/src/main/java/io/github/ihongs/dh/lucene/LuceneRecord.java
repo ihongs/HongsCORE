@@ -179,7 +179,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
     public Map search(Map rd) throws HongsException {
         // TODO: 临时兼容获取详情
         Object id = rd.get(Cnst.ID_KEY);
-        if (id != null && ! "".equals(id) && !(id instanceof String || id instanceof Number)) {
+        if (id != null && ! "".equals(id) && (id instanceof String || id instanceof Number)) {
             return recite (rd);
         }
 

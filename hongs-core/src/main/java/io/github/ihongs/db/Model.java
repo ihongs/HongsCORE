@@ -141,7 +141,7 @@ implements IEntity
 
     // TODO: 临时兼容获取详情
     Object id = rd.get(table.primaryKey);
-    if (id != null && ! "".equals(id) && !(id instanceof String || id instanceof Number)) {
+    if (id != null && ! "".equals(id) && (id instanceof String || id instanceof Number)) {
         return recite (rd , caze);
     }
 

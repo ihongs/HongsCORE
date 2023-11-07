@@ -10,13 +10,13 @@ import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Arrays;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -187,7 +187,7 @@ public final class Synt {
 
     /**
      * 尝试转为 Map
-     * 可将 数组,List,Set 转为 Map, 其他情况构建一个值为空的 Map
+     * 可将 数组,List,Set 转为 Map, 其他情况构建一个键为空的 Map
      * @param val
      * @return
      */
@@ -232,10 +232,10 @@ public final class Synt {
 
         if (val instanceof Set ) {
             return ( Set ) val ;
-        } else if (val instanceof List) {
-            return new LinkedHashSet((List) val);
-        } else if (val instanceof Map ) {
-            return new LinkedHashSet(((Map) val).values());
+        } else if (val instanceof Collection) {
+            return new LinkedHashSet((Collection) val);
+        } else if (val instanceof Map) {
+            return new LinkedHashSet(((Map) val ).values());
         } else if (val instanceof Object[]) {
             return new LinkedHashSet(Arrays.asList((Object[]) val));
         } else {
@@ -258,12 +258,12 @@ public final class Synt {
 
         if (val instanceof List) {
             return ( List) val ;
-        } else if (val instanceof Set ) {
-            return new  ArrayList(( Set ) val);
-        } else if (val instanceof Map ) {
-            return new  ArrayList(((Map ) val).values());
+        } else if (val instanceof Collection) {
+            return new  ArrayList ((Collection) val);
+        } else if (val instanceof Map) {
+            return new  ArrayList (((Map) val ).values());
         } else if (val instanceof Object[]) {
-            return new  ArrayList(Arrays.asList((Object[]) val));
+            return new  ArrayList (Arrays.asList((Object[]) val));
         } else {
             List lst = new ArrayList(1);
             lst.add(val);
@@ -282,12 +282,12 @@ public final class Synt {
             return null;
         }
 
-        if (val instanceof Collection ) {
-            return ( Collection ) val ;
-        } else if (val instanceof Map ) {
-            return new  ArrayList(((Map ) val).values());
+        if (val instanceof Collection) {
+            return ( Collection ) val;
+        } else if (val instanceof Map) {
+            return new  ArrayList (((Map) val ).values());
         } else if (val instanceof Object[]) {
-            return new  ArrayList(Arrays.asList((Object[]) val));
+            return new  ArrayList (Arrays.asList((Object[]) val));
         } else {
             List lst = new ArrayList(1);
             lst.add(val);
@@ -533,9 +533,6 @@ public final class Synt {
                 case 1 : for (Object v3 : v2.values()) return v3;
                 default: throw new ClassCastException("'" + val + "' is not single");
             }
-        } else
-        if (val instanceof Iterable || val instanceof Iterator) {
-            throw new ClassCastException ("`" + val + "` can not assert for single");
         }
 
         return val;

@@ -259,13 +259,13 @@ public final class Synt {
         if (val instanceof List) {
             return ( List) val ;
         } else if (val instanceof Collection) {
-            return new  ArrayList ((Collection) val);
+            return new  ArrayList   ((Collection) val);
         } else if (val instanceof Map) {
-            return new  ArrayList (((Map) val ).values());
+            return new  ArrayList   (((Map) val ).values());
         } else if (val instanceof Object[]) {
-            return new  ArrayList (Arrays.asList((Object[]) val));
+            return new  ArrayList   (Arrays.asList((Object[]) val));
         } else {
-            List lst = new ArrayList(1);
+            List lst = new  ArrayList   (1);
             lst.add(val);
             return  lst ;
         }
@@ -283,13 +283,13 @@ public final class Synt {
         }
 
         if (val instanceof Collection) {
-            return ( Collection ) val;
+            return ( Collection ) val ;
         } else if (val instanceof Map) {
-            return new  ArrayList (((Map) val ).values());
+            return new  ArrayList   (((Map) val ).values());
         } else if (val instanceof Object[]) {
-            return new  ArrayList (Arrays.asList((Object[]) val));
+            return new  ArrayList   (Arrays.asList((Object[]) val));
         } else {
-            List lst = new ArrayList(1);
+            List lst = new  ArrayList   (1);
             lst.add(val);
             return  lst ;
         }

@@ -880,7 +880,7 @@ public final class Synt {
             case 1:
                 return new Object[] {arr[0], arr[0], true, true};
             default:
-                throw new ClassCastException("Range index size must be 2 to 4: "+arr);
+                throw new ClassCastException("Range array size must be 2 to 4: "+arr);
         }
     }
 

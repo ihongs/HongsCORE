@@ -250,7 +250,7 @@ body {
 
 #main-menubar .divider {
     color: rgba(51,51,51,0.8);
-    border-bottom: 1px solid rgba(51,51,51,0.2);
+    border-bottom: 1px dashed rgba(51,51,51,0.4);
     margin-right : 5px;
     margin-left  : 5px;
     font-size  : 1.2em;

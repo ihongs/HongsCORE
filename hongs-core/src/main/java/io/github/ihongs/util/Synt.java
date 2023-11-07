@@ -858,40 +858,29 @@ public final class Synt {
                     return arr;
                 }
 
-                Boolean gt_e, lt_e;
+                Boolean gte;
+                Boolean lte;
                 try {
-                    gt_e = defoult(asBool(arr[2]), false);
-                    lt_e = defoult(asBool(arr[3]), false);
-                }
-                catch (ClassCastException e) {
+                    gte = defoult(asBool(arr[2]), false);
+                    lte = defoult(asBool(arr[3]), false);
+                } catch ( ClassCastException e ) {
                     throw new ClassCastException("Range index 2,3 must be boolean: "+arr);
                 }
-
-                return new Object[] {
-                    arr[0], arr[1], gt_e, lt_e
-                };
+                return new Object[] {arr[0], arr[1], gte , lte };
             case 3:
-                Boolean gl_e;
+                Boolean gle;
                 try {
-                    gl_e = defoult(asBool(arr[2]), false);
-                }
-                catch (ClassCastException e) {
+                    gle = defoult(asBool(arr[2]), false);
+                } catch ( ClassCastException e ) {
                     throw new ClassCastException("Range index 2,3 must be boolean: "+arr);
                 }
-
-                return new Object[] {
-                    arr[0], arr[1], gl_e, gl_e
-                };
+                return new Object[] {arr[0], arr[1], gle , gle };
             case 2:
-                return new Object[] {
-                    arr[0], arr[1], true, true
-                };
+                return new Object[] {arr[0], arr[1], true, true};
             case 1:
-                return new Object[] {
-                    arr[0], arr[0], true, true
-                };
-
-            default:throw new ClassCastException("Range index size must be 2 to 4: "+arr);
+                return new Object[] {arr[0], arr[0], true, true};
+            default:
+                throw new ClassCastException("Range index size must be 2 to 4: "+arr);
         }
     }
 

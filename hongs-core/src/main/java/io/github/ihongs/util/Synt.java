@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -517,16 +518,8 @@ public final class Synt {
                 default: throw new ClassCastException("'" + val + "' is not single");
             }
         } else
-        if (val instanceof List) {
-            List v2 = (List) val;
-            switch ( v2.size() ) {
-                case 0 : return null;
-                case 1 : for (Object v3 : v2) return v3;
-                default: throw new ClassCastException("'" + val + "' is not single");
-            }
-        } else
-        if (val instanceof Set ) {
-            Set  v2 = (Set ) val;
+        if (val instanceof Collection) {
+          Collection v2 = (Collection) val;
             switch ( v2.size() ) {
                 case 0 : return null;
                 case 1 : for (Object v3 : v2) return v3;
@@ -534,12 +527,15 @@ public final class Synt {
             }
         } else
         if (val instanceof Map ) {
-            Map  v2 = (Map ) val;
+            Map v2 = (Map) val ;
             switch ( v2.size() ) {
                 case 0 : return null;
                 case 1 : for (Object v3 : v2.values()) return v3;
                 default: throw new ClassCastException("'" + val + "' is not single");
             }
+        } else
+        if (val instanceof Iterable || val instanceof Iterator) {
+            throw new ClassCastException ("`" + val + "` can not assert for single");
         }
 
         return val;

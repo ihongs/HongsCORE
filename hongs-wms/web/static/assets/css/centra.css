@@ -254,6 +254,7 @@ body {
     margin-right : 5px;
     margin-left  : 5px;
     font-size  : 1.2em;
+    text-align : center;
 }
 #main-menubar .divider span {
     display: block;

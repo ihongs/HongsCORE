@@ -530,7 +530,7 @@ public class Core
     return SUPER;
   }
 
-  public Object  get(String key)
+  public Object get(String key)
   {
     return sup().get(key);
   }
@@ -540,14 +540,14 @@ public class Core
     return sup().put(key, obj);
   }
 
-  public Object  remove(String key)
+  public Object remove(String key)
   {
     return sup().remove( key );
   }
 
   public boolean exists(String key)
   {
-    return sup().containsKey ( key);
+    return sup().containsKey(key);
   }
 
   /**
@@ -669,8 +669,7 @@ public class Core
   }
 
   /**
-   * 同 got(cln, cls)
-   * @deprecated
+   * @deprecated 同 got(cln, cls)
    * @param <T>
    * @param cln
    * @param cls
@@ -682,8 +681,7 @@ public class Core
   }
 
   /**
-   * 同 got(key, sup)
-   * @deprecated
+   * @deprecated 同 got(key, sup)
    * @param <T>
    * @param key
    * @param sup
@@ -698,12 +696,12 @@ public class Core
    * 设置指定对象
    * 会关闭旧对象(如果是 AutoCloseable)
    * @param key
-   * @param val
+   * @param obj
    */
-  public void set(String key, Object val)
+  public void set(String key, Object obj)
   {
-    Object  old = put(key, val);
-    if (old != val
+    Object old = put (key, obj);
+    if (old != obj
     &&  old != null
     &&  old instanceof AutoCloseable) {
       try
@@ -724,7 +722,7 @@ public class Core
    */
   public void unset(String key)
   {
-    Object  old = remove ( key);
+    Object old = remove (key);
     if (old != null
     &&  old instanceof AutoCloseable)
     {
@@ -905,11 +903,44 @@ public class Core
     }
 
     @Override
+    public Object put(String key, Object obj)
+    {
+      RWL.writeLock().lock();
+      try {
+        return super.put(key, obj);
+      } finally {
+        RWL.writeLock().unlock();
+      }
+    }
+
+    @Override
+    public Object remove(String key)
+    {
+      RWL.writeLock().lock();
+      try {
+        return super.remove(key);
+      } finally {
+        RWL.writeLock().unlock();
+      }
+    }
+
+    @Override
+    public boolean exists(String key)
+    {
+      RWL.readLock( ).lock();
+      try {
+        return super.exists(key);
+      } finally {
+        RWL.readLock( ).unlock();
+      }
+    }
+
+    @Override
     public void set(String key, Object obj)
     {
       RWL.writeLock().lock();
       try {
-        super.set(key,obj);
+        super.set(key , obj);
       } finally {
         RWL.writeLock().unlock();
       }
@@ -920,7 +951,7 @@ public class Core
     {
       RWL.writeLock().lock();
       try {
-        super.unset( key );
+        super.unset(key);
       } finally {
         RWL.writeLock().unlock();
       }
@@ -932,6 +963,17 @@ public class Core
       RWL.writeLock().lock();
       try {
         super.reset();
+      } finally {
+        RWL.writeLock().unlock();
+      }
+    }
+
+    @Override
+    public void close()
+    {
+      RWL.writeLock().lock();
+      try {
+        super.close();
       } finally {
         RWL.writeLock().unlock();
       }

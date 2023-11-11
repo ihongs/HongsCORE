@@ -473,15 +473,7 @@ public class FormSet
    * @return
    */
   public CoreLocale getCurrTranslator() {
-    try {
-      return CoreLocale.getInstance(name);
-    }
-    catch (HongsExemption e) {
-      if  (e.getErrno( ) != 826 ) {
-        throw e;
-      }
-      return new CoreLocale(null);
-    }
+    return CoreLocale.getMultiple(name);
   }
 
   /**

@@ -41,9 +41,9 @@
     <tag-class>io.github.ihongs.jsp.ConfTag</tag-class>
     <body-content>empty</body-content>
     <attribute>
-      <name>load</name>
+      <name>conf</name>
       <rtexprvalue>true</rtexprvalue>
-      <type>java.lang.String</type>
+      <type>java.lang.Object</type>
     </attribute>
     <attribute>
       <name>key</name>
@@ -66,9 +66,9 @@
     <tag-class>io.github.ihongs.jsp.LangTag</tag-class>
     <body-content>empty</body-content>
     <attribute>
-      <name>load</name>
+      <name>lang</name>
       <rtexprvalue>true</rtexprvalue>
-      <type>java.lang.String</type>
+      <type>java.lang.Object</type>
     </attribute>
     <attribute>
       <name>key</name>

@@ -45,8 +45,7 @@ public class FormAction {
     throws HongsException {
         Map rd = helper.getRequestData();
         String id = model.set(rd);
-        CoreLocale  ln = CoreLocale.getInstance().clone( );
-                    ln.load("matrix");
+        CoreLocale  ln = CoreLocale.getMultiple("matrix", "default");
         String ms = ln.translate("core.save.form.success");
         helper.reply(ms, id);
     }
@@ -57,8 +56,7 @@ public class FormAction {
     throws HongsException {
         Map rd = helper.getRequestData();
         int rn = model.delete(rd);
-        CoreLocale  ln = CoreLocale.getInstance().clone( );
-                    ln.load("matrix");
+        CoreLocale  ln = CoreLocale.getMultiple("matrix", "default");
         String ms = ln.translate("core.delete.form.success", null, Integer.toString(rn));
         helper.reply(ms, rn);
     }

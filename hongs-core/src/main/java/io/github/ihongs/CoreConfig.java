@@ -7,7 +7,8 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Properties;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 配置信息读取工具
@@ -34,46 +35,28 @@ public class CoreConfig
   implements CoreSerial.Mtimes
 {
 
-  private transient File fl = null;
-  private transient long ft = -1L ;
+  protected transient File file = null;
+  protected transient long time = -01L;
+
+  protected CoreConfig()
+  {
+    super(0);
+  }
 
   /**
    * 加载指定名称的配置
    * @param name
+   * @throws io.github.ihongs.CruxException
    */
   public CoreConfig(String name)
+    throws CruxException
   {
-    super(new Properties());
+    super(0);
 
     if (null != name)
     {
-      this.load(name);
+      this.lead(name);
     }
-
-    if (ft == -1)
-    {
-        ft  =  0;
-    }
-  }
-
-  /**
-   * 加载默认配置
-   */
-  public CoreConfig()
-  {
-    this("default");
-  }
-
-  @Override
-  public long dataModified()
-  {
-    return ft > 0 ? ft : 0;
-  }
-
-  @Override
-  public long fileModified()
-  {
-    return ft > 0 ? fl.lastModified() : 0;
   }
 
   @Override
@@ -82,15 +65,20 @@ public class CoreConfig
     return (CoreConfig) super.clone();
   }
 
-  /**
-   * 加载指定配置文件
-   * 注意:
-   * 如果通过 getInstance 取对象且 core.load.config.once=true (默认),
-   * 务必要先 clone 然后再去 load,
-   * 从而避免对全局配置对象的破坏.
-   * @param name
-   */
-  public void load(String name)
+  @Override
+  public long dataModified()
+  {
+    return time > 0 ? time : 0;
+  }
+
+  @Override
+  public long fileModified()
+  {
+    return time > 0 ? file.lastModified() : 0;
+  }
+
+  protected final void lead(String name)
+    throws CruxException
   {
     String      fn;
     boolean     ld;
@@ -103,20 +91,22 @@ public class CoreConfig
     is = this.getClass().getClassLoader().getResourceAsStream(fn);
     ld = is != null;
     if ( ld )  try {
+        if (defaults == null)
+            defaults  = new Properties ();
         defaults.load (is);
     }
     catch (IOException ex) {
-        throw new HongsExemption(ex, 827, "Can not read '"+name+".properties'");
+        throw new CruxException(ex, 827, "Can not read '"+name+".properties'");
     }
 
     // 优先尝试从配置目录的 .properties 加载数据
     try {
         fn = Core.CONF_PATH + File.separator + name + ".properties";
         is = new FileInputStream(fn);
-        this.load(is);
-        if (ft == -1) {
-            fl = new  File  ( fn );
-            ft = fl.lastModified();
+        this.load( is );
+        if (time == -1) {
+            file = new File(fn);
+            time = file.lastModified();
         }
         return;
     }
@@ -124,7 +114,7 @@ public class CoreConfig
         er = ex;
     }
     catch (IOException ex) {
-        throw new HongsExemption(ex, 827, "Can not read '"+name+".properties'");
+        throw new CruxException(ex, 827, "Can not read '"+name+".properties'");
     }
 
     // 然后尝试从配置目录的 .prop.xml 中加载数据
@@ -132,9 +122,9 @@ public class CoreConfig
         fn = Core.CONF_PATH + File.separator + name + Cnst.PROP_EXT + ".xml";
         is = new FileInputStream(fn);
         this.loadFromXML(is);
-        if (ft == -1) {
-            fl = new  File  ( fn );
-            ft = fl.lastModified();
+        if (time == -1) {
+            file = new File(fn);
+            time = file.lastModified();
         }
         return;
     }
@@ -142,15 +132,31 @@ public class CoreConfig
         er = ex;
     }
     catch (IOException ex) {
-        throw new HongsExemption(ex, 827, "Can not read '"+name+Cnst.PROP_EXT+".xml'");
+        throw new CruxException(ex, 827, "Can not read '"+name+Cnst.PROP_EXT+".xml'");
     }
 
-    // 没有额外的配置则将默认配置放到前台
-    if (ld) {
-        this.putAll(defaults);
-    } else {
-        throw new HongsExemption(er, 826, "Can not find '"+name+"' properties config");
+    if (! ld) {
+        throw new CruxException(er, 826, "Can not find '"+name+"' properties config");
     }
+    if (time == -1) {
+        time  =  0;
+    }
+  }
+
+  /**
+   * 加载指定配置文件
+   * 注意:
+   * 如果通过 getInstance 取对象且 core.load.config.once=true (默认),
+   * 务必要先 clone 然后再去 load,
+   * 从而避免对全局配置对象的破坏.
+   * @param name
+   * @throws io.github.ihongs.CruxException
+   * @deprecated 多重配置请使用 getMoreInst
+   */
+  public void load(String name)
+    throws CruxException
+  {
+    lead(name);
   }
 
   /**
@@ -160,16 +166,20 @@ public class CoreConfig
    * 务必要先 clone 然后再去 fill,
    * 从而避免对全局配置对象的破坏.
    * @param name
+   * @return false 无加载
+   * @deprecated 多重配置请使用 getMoreInst
    */
-  public void fill(String name)
+  public boolean fill(String name)
   {
     try {
-        this.load(name);
-    } catch (HongsExemption  e  ) {
-        if  (e.getErrno() != 826) {
-            throw e;
-        }
+      load(name);
+    } catch ( CruxException e) {
+      if (826 != e.getErrno()) {
+        throw e.toExemption( );
+      }
+      return false;
     }
+    return true ;
   }
 
   /**
@@ -267,33 +277,6 @@ public class CoreConfig
     }
   }
 
-  /**
-   * 获取默认配置
-   * @return
-   */
-  public Properties getDefaults()
-  {
-    return defaults;
-  }
-
-  /**
-   * 用默认值填充
-   * @return
-   */
-  public CoreConfig padDefaults()
-  {
-    if (defaults != null) {
-        for (Map.Entry et : defaults.entrySet()) {
-            Object k = et.getKey( );
-            if (this.containsKey(k) == false) {
-                this.put( k , et.getValue() );
-            }
-        }
-        defaults  = null;
-    }
-    return  this;
-  }
-
   //** 静态属性及方法 **/
 
   /**
@@ -311,6 +294,7 @@ public class CoreConfig
    * 如果配置为core.load.config.once为true则仅加载一次
    * @param name 配置名
    * @return 唯一配置实例
+   * @throws CruxExemption
    */
   public static CoreConfig getInstance(String name)
   {
@@ -330,8 +314,13 @@ public class CoreConfig
       return inst;
     }
 
+    try {
+      inst = new CoreConfig(name);
+    } catch (CruxException ex) {
+      throw ex.toExemption ( );
+    }
+
     CoreConfig conf;
-    inst =  new  CoreConfig(name);
     conf = "default".equals(name) ? inst : getInstance();
     if (conf.getProperty("core.load.config.once", false))
     {
@@ -343,6 +332,74 @@ public class CoreConfig
     }
 
     return inst;
+  }
+
+  /**
+   * 把多个配置合并到一起
+   *
+   * 从左往右的优先级递减.
+   * 给定参数为一个以上时,
+   * 总是创建新的视图对象.
+   * 配置文件缺失不报异常.
+   * 可用于替代旧 load/fill 加载子集方式
+   *
+   * @param names
+   * @return
+   */
+  public static CoreConfig getMultiple(String... names)
+  {
+    try {
+        if (names.length == 0) {
+            return getInstance();
+        }
+        if (names.length == 1) {
+            return getInstance(names[0]);
+        }
+    } catch (CruxExemption e ) {
+        if (e.getErrno() != 826) { // 826 文件不存在, 下同
+            throw e;
+        }
+        return new Multiple( );
+    }
+
+    List<Properties> p = new ArrayList(names.length);
+    for (String name : names ) {
+        try {
+            p.add(getInstance(name));
+        } catch (CruxExemption  e  ) {
+            if (e.getErrno() != 826) {
+                throw e;
+            }
+        }
+    }
+
+    return new Multiple(p.toArray(new Properties[p.size()]));
+  }
+
+  /**
+   * 复合型配置
+   */
+  public static class Multiple extends CoreConfig {
+
+      private  final  Properties [] props;
+
+      public Multiple(Properties... props) {
+          super();
+          this.props = props;
+      }
+
+      @Override
+      public String getProperty(String key) {
+          String val;
+          for(Properties prop : props) {
+              val = prop.getProperty(key);
+              if (val != null) {
+                  return val ;
+              }
+          }
+          return  super .getProperty(key);
+      }
+
   }
 
   /**
@@ -371,13 +428,15 @@ public class CoreConfig
       public String toString() {
           Core core = Core.getInstance();
           String nc = CoreConfig.class.getName()+"!"+conf;
-          if (!core.exists(nc)) try {
+          if (!core.exists(nc))
+          try {
               return  CoreConfig.getInstance(conf).getProperty(text, defs);
-          }
-          catch (HongsExemption ex) {
-          if (826 == ex.getErrno()) {
-              core.put( nc , null );
-          } else throw  ex ;
+          } catch ( CruxExemption e) {
+            if (826 == e.getErrno()) {
+              core.put ( nc , null );
+            } else {
+              throw e;
+            }
           }
           return defs;
       }

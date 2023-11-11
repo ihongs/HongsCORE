@@ -11,7 +11,7 @@ import javax.servlet.jsp.tagext.TagSupport;
  *
  * <h3>使用方法:</h3>
  * <pre>
- * &lt;hs:conf load"config.name"/&gt;
+ * &lt;hs:conf load"config.name|CoreConfig"/&gt;
  * &lt;hs:conf key="config.key" [esc="yes|no|EscapeSymbol"] [def="default.value"]/&gt;
  * </pre>
  *
@@ -20,7 +20,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 public class ConfTag extends TagSupport {
 
   private CoreConfig conf = null;
-  private String     load = null;
+  private String     name = null;
   private String     key  = null;
   private String     esc  = null;
   private String     def  = null;
@@ -30,12 +30,11 @@ public class ConfTag extends TagSupport {
     JspWriter out = this.pageContext.getOut();
 
     if (this.conf == null) {
-      conf = CoreConfig.getInstance().clone();
-    }
-
-    if (this.load != null) {
-      conf.load(this.load);
-    }
+    if (this.name == null) {
+      conf = CoreConfig.getInstance(/**/);
+    } else {
+      conf = CoreConfig.getInstance(name);
+    }}
 
     if (this.key  != null) {
       String str = conf.getProperty(this.key , this.def != null ? this.def : "");
@@ -70,8 +69,12 @@ public class ConfTag extends TagSupport {
     return TagSupport.SKIP_BODY;
   }
 
-  public void setLoad(String load) {
-    this.load = load;
+  public void setConf(Object conf) {
+    if (conf instanceof CoreConfig) {
+      this.conf = (CoreConfig) conf;
+    } else {
+      this.name = conf.toString ( );
+    }
   }
 
   public void setKey(String key) {

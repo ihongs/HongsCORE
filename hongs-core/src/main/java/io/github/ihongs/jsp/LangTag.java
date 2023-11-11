@@ -15,7 +15,7 @@ import javax.servlet.jsp.tagext.DynamicAttributes;
  *
  * <h3>使用方法:</h3>
  * <pre>
- * &lt;hs:lang load="locale.config.name"/&gt;
+ * &lt;hs:lang lang="locale.config.name|CoreLocale"/&gt;
  * &lt;hs:lang key="locale.config.key" [esc="yes|no|EscapeSymbol"] [_0="replacement0" _1="replacement1"]/&gt;
  * &lt;hs:lang key="locale.config.key" [esc="yes|no|EscapeSymbol"] [xx="replacementX" yy="replacementY"]/&gt;
  * &lt;hs:lang key="locale.config.key" [esc="yes|no|EscapeSymbol"] [rep=String[]|List&lt;String&gt;|Map&lt;String, String&gt;]/&gt;
@@ -26,7 +26,7 @@ import javax.servlet.jsp.tagext.DynamicAttributes;
 public class LangTag extends TagSupport implements DynamicAttributes {
 
   private CoreLocale lang = null;
-  private String     load = null;
+  private String     name = null;
   private String     key  = null;
   private String     esc  = null;
   private String[]             repArr = null;
@@ -38,12 +38,11 @@ public class LangTag extends TagSupport implements DynamicAttributes {
     JspWriter out = this.pageContext.getOut();
 
     if (this.lang == null) {
-      lang = CoreLocale.getInstance().clone();
-    }
-
-    if (this.load != null) {
-      lang.load(this.load);
-    }
+    if (this.name == null) {
+      lang = CoreLocale.getInstance(/**/);
+    } else {
+      lang = CoreLocale.getInstance(name);
+    }}
 
     if (this.key  != null) {
       String str;
@@ -90,8 +89,12 @@ public class LangTag extends TagSupport implements DynamicAttributes {
     return TagSupport.SKIP_BODY;
   }
 
-  public void setLoad(String load) {
-    this.load = load;
+  public void setConf(Object lang) {
+    if (lang instanceof CoreLocale) {
+      this.lang = (CoreLocale) lang;
+    } else {
+      this.name = lang.toString ( );
+    }
   }
 
   public void setKey(String key) {

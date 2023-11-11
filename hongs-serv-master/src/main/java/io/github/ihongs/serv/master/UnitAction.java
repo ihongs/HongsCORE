@@ -108,8 +108,7 @@ public class UnitAction {
     throws HongsException {
         Map rd = helper.getRequestData();
         String id = model.set(rd);
-        CoreLocale  ln = CoreLocale.getInstance().clone( );
-                    ln.load("master");
+        CoreLocale  ln = CoreLocale.getMultiple("master", "default");
         String ms = ln.translate("core.save.unit.success");
         helper.reply(ms, id);
     }
@@ -120,8 +119,7 @@ public class UnitAction {
     throws HongsException {
         Map rd = helper.getRequestData();
         int rn = model.delete(rd);
-        CoreLocale  ln = CoreLocale.getInstance().clone( );
-                    ln.load("master");
+        CoreLocale  ln = CoreLocale.getMultiple("master", "default");
         String ms = ln.translate("core.delete.unit.success", null,Integer.toString(rn));
         helper.reply(ms, rn);
     }

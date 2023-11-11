@@ -223,8 +223,7 @@ public class UserAction {
         }
         
         String id = model.set(rd);
-        CoreLocale  ln = CoreLocale.getInstance().clone( );
-                    ln.load("master");
+        CoreLocale  ln = CoreLocale.getMultiple("master", "default");
         String ms = ln.translate("core.save.user.success");
         helper.reply(ms, id);
 
@@ -271,8 +270,7 @@ public class UserAction {
 
         Map rd = helper.getRequestData();
         int rn = model.delete(rd);
-        CoreLocale  ln = CoreLocale.getInstance().clone( );
-                    ln.load("master");
+        CoreLocale  ln = CoreLocale.getMultiple("master", "default");
         String ms = ln.translate("core.delete.user.success", null,Integer.toString(rn));
         helper.reply(ms, rn);
     }

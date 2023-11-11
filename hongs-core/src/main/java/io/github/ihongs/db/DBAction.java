@@ -255,11 +255,10 @@ public class DBAction implements IAction, IActing {
         String ent = runner.getEntity(   );
         String cnt = Integer.toString(num);
 
-        CoreLocale locale = CoreLocale.getInstance().clone();
-        locale.fill(mod);
+        CoreLocale locale = CoreLocale.getMultiple(mod, "default");
 
         String key = "fore."+opr+"."+ent+".success";
-        if (!locale.containsKey(key)) {
+        if (locale.getProperty(key) == null) {
                key = "fore."+opr/**/+/**/".success";
         }
 

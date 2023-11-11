@@ -720,21 +720,15 @@ public class NaviMap
    * @return
    */
   public CoreLocale getCurrTranslator() {
-    CoreLocale lang;
-    try {
-      lang = CoreLocale.getInstance(name).clone();
+    // 包含下级语言资源
+    String[ ] names = new String[imports.size() + 1];
+    int i = 0;
+        names[i ++] = name;
+    for(String nam2 : imports) {
+        names[i ++] = nam2;
     }
-    catch (HongsExemption e) {
-      if  (e.getErrno( ) != 826 ) {
-        throw e;
-      }
-      lang = new CoreLocale(null);
-    }
-    // 需加载所有下级菜单语言资源
-    for ( String namz : imports ) {
-      lang.fill (namz);
-    }
-    return lang;
+
+    return CoreLocale.getMultiple(names);
   }
 
   /**

@@ -45,9 +45,8 @@ public class FurlAction {
     throws HongsException {
         Map rd = helper.getRequestData();
         String id = model.set(rd);
-        CoreLocale  lang = CoreLocale.getInstance().clone( );
-                    lang.load("matrix");
-        String ms = lang.translate("core.save.furl.success");
+        CoreLocale  ln = CoreLocale.getMultiple("matrix", "default");
+        String ms = ln.translate("core.save.furl.success");
         helper.reply(ms, id);
     }
 
@@ -57,8 +56,7 @@ public class FurlAction {
     throws HongsException {
         Map rd = helper.getRequestData();
         int rn = model.delete(rd);
-        CoreLocale  ln = CoreLocale.getInstance().clone( );
-                    ln.load("matrix");
+        CoreLocale  ln = CoreLocale.getMultiple("matrix", "default");
         String ms = ln.translate("core.delete.furl.success", null, Integer.toString(rn));
         helper.reply(ms, rn);
     }

@@ -375,7 +375,7 @@ public class AuthKit {
             ));
         } else
         if (! uid.equals(row.get("user_id"))) {
-            throw new HongsException("core.sign.oauth.diverse", unit, code, uid, row.get("user_id"));
+            throw new HongsException("@master:core.sign.oauth.diverse", unit, code, uid, row.get("user_id"));
         }
     }
 

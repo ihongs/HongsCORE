@@ -132,10 +132,10 @@ public abstract class CoreSerial
   /**
    * 从文件加载对象
    * @param file
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   protected final void load(File file)
-    throws HongsException
+    throws CruxException
   {
     try
     {
@@ -173,10 +173,10 @@ public abstract class CoreSerial
   /**
    * 将对象存入文件
    * @param file
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   protected final void save(File file)
-    throws HongsException
+    throws CruxException
   {
     // 文件不存在则创建
     if (!file.exists()) {
@@ -224,10 +224,10 @@ public abstract class CoreSerial
   /**
    * 从缓存获取属性写入当前对象
    * @param obj
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   protected void load(Object obj)
-    throws HongsException
+    throws CruxException
   {
     Map     map = ( Map ) obj ;
     Class   clazz = getClass();
@@ -295,10 +295,10 @@ public abstract class CoreSerial
   /**
    * 从当前对象获取属性写入缓存
    * @return
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   protected Object save()
-    throws HongsException
+    throws CruxException
   {
     Map     map   = new HashMap();
     Class   clazz = getClass();

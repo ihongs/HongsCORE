@@ -2,6 +2,8 @@ package io.github.ihongs.db.link;
 
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreLogger;
+import io.github.ihongs.CruxException;
+import io.github.ihongs.CruxExemption;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.dh.IReflux;
@@ -119,7 +121,7 @@ abstract public class Link
             this.connection.setAutoCommit(  !  this.REFLUX_MODE);
         }
     } catch (SQLException ex) {
-        throw new HongsException(ex, 1053);
+        throw new CruxException(ex, 1053);
     }
   }
 
@@ -135,7 +137,7 @@ abstract public class Link
             connection.setAutoCommit(false);
         }
     } catch (SQLException ex) {
-        throw new HongsExemption(ex, 1054);
+        throw new CruxExemption(ex, 1054);
     }
     REFLUX_MODE = true;
   }
@@ -153,7 +155,7 @@ abstract public class Link
             connection.commit ( );
         }
     } catch (SQLException ex) {
-        throw new HongsExemption(ex, 1055);
+        throw new CruxExemption(ex, 1055);
     }
     REFLUX_MODE = false;
   }
@@ -171,7 +173,7 @@ abstract public class Link
             connection.rollback();
         }
     } catch (SQLException ex) {
-        throw new HongsExemption(ex, 1056);
+        throw new CruxExemption(ex, 1056);
     }
     REFLUX_MODE = false;
   }
@@ -214,7 +216,7 @@ abstract public class Link
     }
     catch ( SQLException ex )
     {
-      throw new HongsException(ex, 1042);
+      throw new CruxException(ex, 1042);
     }
 
     return ps;
@@ -238,7 +240,7 @@ abstract public class Link
     }
     catch (SQLException ex)
     {
-      throw new HongsException(ex, 1041);
+      throw new CruxException(ex, 1041);
     }
 
     return ps;
@@ -260,7 +262,7 @@ abstract public class Link
     }
     catch (SQLException ex)
     {
-      throw new HongsException(ex, 1041);
+      throw new CruxException(ex, 1041);
     }
 
     return ps;
@@ -281,7 +283,7 @@ abstract public class Link
     }
     catch (SQLException ex)
     {
-      throw new HongsException(ex, 1034);
+      throw new CruxException(ex, 1034);
     }
   }
 
@@ -300,7 +302,7 @@ abstract public class Link
     }
     catch (SQLException ex)
     {
-      throw new HongsException(ex, 1035);
+      throw new CruxException(ex, 1035);
     }
   }
 
@@ -343,7 +345,7 @@ abstract public class Link
             limit  = 0;
         }
     } catch (SQLException ex) {
-        throw new HongsException(ex);
+        throw new CruxException(ex);
     }
 
     if (4 == (4 & Core.DEBUG))
@@ -373,7 +375,7 @@ abstract public class Link
     }
     catch (SQLException ex )
     {
-      throw new HongsException(ex, 1043);
+      throw new CruxException(ex, 1043);
     }
 
     return  new Loop(rs, ps);
@@ -479,7 +481,7 @@ abstract public class Link
     }
     catch (  SQLException  ex )
     {
-      throw new HongsException(ex, 1044);
+      throw new CruxException(ex, 1044);
     }
     finally
     {
@@ -516,7 +518,7 @@ abstract public class Link
     }
     catch (  SQLException  ex )
     {
-      throw new HongsException(ex, 1045);
+      throw new CruxException(ex, 1045);
     }
     finally
     {
@@ -537,7 +539,7 @@ abstract public class Link
   {
     if (values == null || values.isEmpty())
     {
-      throw new HongsException(1046, "Insert value can not be empty.");
+      throw new CruxException(1046, "Insert value can not be empty.");
     }
 
     table = quoteField(table);
@@ -583,11 +585,11 @@ abstract public class Link
   {
     if (values == null || values.isEmpty())
     {
-      throw new HongsException(1047, "Update value can not be empty.");
+      throw new CruxException(1047, "Update value can not be empty.");
     }
     if ( where == null ||  where.isEmpty())
     {
-      throw new HongsException(1048, "Update where can not be empty.");
+      throw new CruxException(1048, "Update where can not be empty.");
     }
 
     table = quoteField(table);
@@ -634,7 +636,7 @@ abstract public class Link
   {
     if ( where == null ||  where.isEmpty())
     {
-      throw new HongsException(1048, "Delete where can not be empty.");
+      throw new CruxException(1048, "Delete where can not be empty.");
     }
 
     table = quoteField(table);
@@ -751,7 +753,7 @@ abstract public class Link
 
     if (num != params.size())
     {
-      throw new HongsException(1049,
+      throw new CruxException(1049,
         "The number of '?' and the number of parameters are inconsistent."
         + " ?s: " + num + " params: " + params.size() + " SQL: " + sql);
     }
@@ -819,7 +821,7 @@ abstract public class Link
 
     if (num != params.size())
     {
-      throw new HongsException(1049,
+      throw new CruxException(1049,
         "The number of '?' and the number of parameters are inconsistent."
         + " ?s: " + num + " params: " + params.size() + " SQL: " + sql);
     }

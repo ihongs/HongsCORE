@@ -2,6 +2,7 @@ package io.github.ihongs.combat.serv;
 
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreRoster.Mathod;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.ActionRunner;
@@ -183,17 +184,17 @@ public class Common {
         ) {
           CombatHelper.preview(ois.readObject());
         }
-        catch (ClassNotFoundException e)
+        catch (ClassNotFoundException e )
         {
-          throw new HongsException(e, 904);
+          throw new CruxException(e, 904);
         }
-        catch ( FileNotFoundException e)
+        catch ( FileNotFoundException e )
         {
-          throw new HongsException(e, 903);
+          throw new CruxException(e, 903);
         }
-        catch (           IOException e)
+        catch (           IOException e )
         {
-          throw new HongsException(e, 902);
+          throw new CruxException(e, 902);
         }
         catch (HongsExemption e) // 1049
         {

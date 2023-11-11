@@ -1,8 +1,8 @@
 package io.github.ihongs.db.util;
 
 import io.github.ihongs.Cnst;
+import io.github.ihongs.CruxExemption;
 import io.github.ihongs.HongsException;
-import io.github.ihongs.HongsExemption;
 import io.github.ihongs.db.Model;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.dh.IFigure;
@@ -787,7 +787,7 @@ public class AssocCase {
         if (fv instanceof Map
         ||  fv instanceof Collection
         ||  fv instanceof Object [] ) {
-            throw new HongsExemption(1050, "Wrong value type for "+fn+rn);
+            throw new CruxExemption(1050, "Wrong value type for "+fn+rn);
         }
         return fv;
     }
@@ -1054,7 +1054,7 @@ public class AssocCase {
                 throw e.toExemption(  );
             }
             if (null == assoc) {
-                throw new HongsExemption(1026,
+                throw new CruxExemption(1026,
                     "Can not get table '"+ rn +"' in DB '"+ table.db.name +"'"
                 );
             }

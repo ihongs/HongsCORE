@@ -2,6 +2,7 @@ package io.github.ihongs.action.serv;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.NaviMap;
@@ -82,7 +83,7 @@ public class MenuAction {
             }
         }
 
-        throw new HongsException(404, "Can not find the menu " + m);
+        throw new CruxException(404, "Can not find the menu " + m);
     }
 
     @Action("list")

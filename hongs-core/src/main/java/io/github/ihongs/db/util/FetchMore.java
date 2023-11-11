@@ -148,7 +148,7 @@ public class FetchMore
     Set ids = map.keySet();
     if (ids.isEmpty())
     {
-      //throw new HongsException(1170, "Ids map is empty");
+      //throw new CruxException(1170, "Ids map is empty");
       return;
     }
 
@@ -216,7 +216,7 @@ public class FetchMore
 
         if (lst == null)
         {
-          //throw new HongsException(1170, "Line nums is null");
+          //throw new CruxException(1170, "Line nums is null");
           continue;
         }
 
@@ -247,7 +247,7 @@ public class FetchMore
 
         if (lst == null)
         {
-          //throw new HongsException(1170, "Line nums is null");
+          //throw new CruxException(1170, "Line nums is null");
           continue;
         }
 

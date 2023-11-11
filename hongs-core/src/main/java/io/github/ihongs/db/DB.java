@@ -3,6 +3,7 @@ package io.github.ihongs.db;
 import io.github.ihongs.db.util.FetchCase;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreLogger;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.db.link.Link;
 import io.github.ihongs.db.link.Loop;
@@ -160,7 +161,7 @@ public class DB
     }
     catch (SQLException ex)
     {
-      throw new HongsException(ex, 1031);
+      throw new CruxException(ex, 1031);
     }
 
     /**
@@ -186,11 +187,11 @@ public class DB
 
       if (origin.containsKey("jndi") == false)
       {
-        throw new HongsException(1021, "Can not find jndi in origin");
+        throw new CruxException(1021, "Can not find jndi in origin");
       }
       if (origin.containsKey("name") == false)
       {
-        throw new HongsException(1021, "Can not find name in origin");
+        throw new CruxException(1021, "Can not find name in origin");
       }
 
       String mode = (String)origin.get("jndi");
@@ -203,7 +204,7 @@ public class DB
       }
       catch (SQLException ex)
       {
-        throw new HongsException(ex, 1022 );
+        throw new CruxException(ex, 1022);
       }
       catch (javax.naming.NamingException ex )
       {
@@ -227,11 +228,11 @@ public class DB
 
       if (!source.containsKey("jdbc"))
       {
-        throw new HongsException(1023, "Can not find jdbc in source");
+        throw new CruxException(1023, "Can not find jdbc in source");
       }
       if (!source.containsKey("name"))
       {
-        throw new HongsException(1023, "Can not find name in source");
+        throw new CruxException(1023, "Can not find name in source");
       }
 
       String mode = (String)source.get("jdbc");
@@ -244,7 +245,7 @@ public class DB
       }
       catch (SQLException ex)
       {
-        throw new HongsException(ex, 1024 );
+        throw new CruxException(ex, 1024);
       }
 
       CoreLogger.trace("DB: Connect to '{}' by source mode: {} {} ", name, mode, namc);
@@ -255,11 +256,11 @@ public class DB
 
     if (ez !=null)
     {
-      throw new HongsException(ez, 1025);
+      throw new CruxException(ez, 1025);
     }
     else
     {
-      throw new HongsException(1025, "Can not find source or origin");
+      throw new CruxException(1025, "Can not find source or origin");
     }
 
     }
@@ -404,7 +405,7 @@ public class DB
 
     if (!this.tableConfigs.containsKey(tableName))
     {
-      throw new HongsException(1026, "Can not find config for table '"+this.name+"."+tableName+"'.");
+      throw new CruxException(1026, "Can not find config for table '"+this.name+"."+tableName+"'.");
     }
 
     /**
@@ -458,7 +459,7 @@ public class DB
     }
     catch (ClassNotFoundException ex)
     {
-      throw new HongsException(ex, 1027);
+      throw new CruxException(ex, 1027);
     }
 
     /**
@@ -471,11 +472,11 @@ public class DB
     }
     catch (NoSuchMethodException ex)
     {
-      throw new HongsException(ex, 1028);
+      throw new CruxException(ex, 1028);
     }
     catch (SecurityException ex)
     {
-      throw new HongsException(ex, 1028);
+      throw new CruxException(ex, 1028);
     }
 
     /**
@@ -488,19 +489,19 @@ public class DB
     }
     catch (InstantiationException ex)
     {
-      throw new HongsException(ex, 1029);
+      throw new CruxException(ex, 1029);
     }
     catch (IllegalAccessException ex)
     {
-      throw new HongsException(ex, 1029);
+      throw new CruxException(ex, 1029);
     }
     catch (IllegalArgumentException ex)
     {
-      throw new HongsException(ex, 1029);
+      throw new CruxException(ex, 1029);
     }
     catch (InvocationTargetException ex)
     {
-      throw new HongsException(ex, 1029);
+      throw new CruxException(ex, 1029);
     }
 
     this.tableObjects.put(tableName, tobj);
@@ -536,7 +537,7 @@ public class DB
 
     if (!this.tableConfigs.containsKey(tableName))
     {
-      throw new HongsException(1026, "Can not find config for table '"+this.name+"."+tableName+"'.");
+      throw new CruxException(1026, "Can not find config for table '"+this.name+"."+tableName+"'.");
     }
 
     /**
@@ -577,7 +578,7 @@ public class DB
     }
     catch (ClassNotFoundException ex)
     {
-      throw new HongsException(ex, 1037);
+      throw new CruxException(ex, 1037);
     }
 
     /**
@@ -590,11 +591,11 @@ public class DB
     }
     catch (NoSuchMethodException ex)
     {
-      throw new HongsException(ex, 1038);
+      throw new CruxException(ex, 1038);
     }
     catch (SecurityException ex)
     {
-      throw new HongsException(ex, 1038);
+      throw new CruxException(ex, 1038);
     }
 
     /**
@@ -607,19 +608,19 @@ public class DB
     }
     catch (InstantiationException ex)
     {
-      throw new HongsException(ex, 1039);
+      throw new CruxException(ex, 1039);
     }
     catch (IllegalAccessException ex)
     {
-      throw new HongsException(ex, 1039);
+      throw new CruxException(ex, 1039);
     }
     catch (IllegalArgumentException ex)
     {
-      throw new HongsException(ex, 1039);
+      throw new CruxException(ex, 1039);
     }
     catch (InvocationTargetException ex)
     {
-      throw new HongsException(ex, 1039);
+      throw new CruxException(ex, 1039);
     }
 
     this.modelObjects.put(tableName, mobj);

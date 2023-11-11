@@ -1,5 +1,7 @@
 package io.github.ihongs.db.util;
 
+import io.github.ihongs.CruxException;
+import io.github.ihongs.CruxExemption;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.db.link.Link;
 import io.github.ihongs.db.link.Loop;
@@ -653,7 +655,7 @@ public class FetchCase
     if (this.tableName == null
     ||  this.tableName.length() < 1)
     {
-        throw new Error(new HongsException(1162, "tableName can not be empty"));
+        throw new CruxExemption(1162, "tableName can not be empty");
     }
 
     // 表名
@@ -1375,7 +1377,7 @@ public class FetchCase
    */
   public Loop select() throws HongsException {
     if (_db_ == null) {
-      throw new HongsException(1163);
+      throw new CruxException(1163);
     }
 
     Loop rs = _db_.query(getSQL(), getStart(), getLimit(), getParams());
@@ -1426,7 +1428,7 @@ public class FetchCase
    */
   public int delete() throws HongsException {
     if (_db_ == null) {
-      throw new HongsException(1163);
+      throw new CruxException(1163);
     }
 
     // 删除条件中字段上的表名
@@ -1445,7 +1447,7 @@ public class FetchCase
    */
   public int update(Map<String, Object> dat) throws HongsException {
     if (_db_ == null) {
-      throw new HongsException(1163);
+      throw new CruxException(1163);
     }
 
     // 删除条件中字段上的表名
@@ -1465,7 +1467,7 @@ public class FetchCase
    */
   public int insert(Map<String, Object> dat) throws HongsException {
     if (_db_ == null) {
-      throw new HongsException(1163);
+      throw new CruxException(1163);
     }
 
     return _db_.insert(tableName, dat);

@@ -2,8 +2,9 @@ package io.github.ihongs.db;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
+import io.github.ihongs.CruxException;
+import io.github.ihongs.CruxExemption;
 import io.github.ihongs.HongsException;
-import io.github.ihongs.HongsExemption;
 import io.github.ihongs.db.util.FetchCase;
 import io.github.ihongs.db.util.FetchPage;
 import io.github.ihongs.db.util.AssocCase;
@@ -510,7 +511,7 @@ implements IEntity
     // 是否缺少n或v参数
     if (!rd.containsKey("n") || !rd.containsKey("v"))
     {
-      throw new HongsException(1085, "Param n or v can not be empty" );
+      throw new CruxException(1085, "Param n or v can not be empty");
     }
 
     String n = Synt.asString(rd.get("n"));
@@ -521,7 +522,7 @@ implements IEntity
     // 是否缺少n对应的字段
     if (!columns.containsKey(n))
     {
-      throw new HongsException(1086, "Column " + n + " is not exists");
+      throw new CruxException(1086, "Field " + n + " is not exists");
     }
 
     caze.filter("`"+this.table.name+"`.`"+n+"` = ?", v);
@@ -533,15 +534,15 @@ implements IEntity
       String field = Synt.asString(entry.getKey( ) );
       String value = Synt.asString(entry.getValue());
 
-      if (field.equals( this.table.primaryKey)
-      ||  field.equals( Cnst.ID_KEY))
+      if (field.equals(Cnst.ID_KEY)
+      ||  field.equals(this.table.primaryKey))
       {
       if (value != null && ! value.equals(""))
       {
         caze.filter("`"+this.table.name+"`.`"+this.table.primaryKey+"` != ?", value);
       }
-      } else
-      if (columns.containsKey(field))
+      }
+      else if (columns.containsKey(field))
       {
         caze.filter("`"+this.table.name+"`.`"+field+"` = ?", value);
       }
@@ -620,7 +621,7 @@ implements IEntity
   {
     if (id == null || id.length() == 0)
     {
-      throw new HongsException (1091, "ID can not be empty for add");
+      throw new CruxException(1091, "ID can not be empty for add");
     }
 
     // 存入主数据
@@ -647,12 +648,12 @@ implements IEntity
   {
     if (id == null || id.length() == 0)
     {
-      throw new HongsException (1092, "ID can not be empty for put");
+      throw new CruxException(1092, "ID can not be empty for put");
     }
 
     // 更新主数据
-    rd.remove(this.table.primaryKey );
-    int an = this.table.update ( rd , "`"+this.table.primaryKey+"` = ?", id);
+    rd.remove(this.table.primaryKey);
+    int an = this.table.update ( rd, "`"+this.table.primaryKey+"` = ?", id );
 
     // 更新子数据
     rd.put(this.table.primaryKey, id);
@@ -691,24 +692,24 @@ implements IEntity
   {
     if (id == null || id.length() == 0)
     {
-      throw new HongsException (1093, "ID can not be empty for del");
+      throw new CruxException(1093, "ID can not be empty for del");
     }
 
     // 删除主数据, 默认可使用逻辑删除
     int an;
-    if (caze == null || ! caze.getOption( "INCLUDE_REMOVED", false ) )
+    if (caze == null || ! caze.getOption("INCLUDE_REMOVED", false))
     {
-      an = this.table.remove ("`"+ this.table.primaryKey +"` = ?", id);
+      an = this.table.remove("`"+this.table.primaryKey+"` = ?", id);
     }
     else
     {
-      an = this.table.delete ("`"+ this.table.primaryKey +"` = ?", id);
+      an = this.table.delete("`"+this.table.primaryKey+"` = ?", id);
     }
 
     // 删除子数据
-    if (caze == null || ! caze.getOption( "EXCLUDE_HASMANY", false ) )
+    if (caze == null || ! caze.getOption("EXCLUDE_HASMANY", false))
     {
-      this.table.deleteSubValues ( id );
+      this.table.deleteSubValues(id);
     }
 
     return an;
@@ -725,7 +726,7 @@ implements IEntity
   {
     if (id == null || id.length() == 0)
     {
-      throw new HongsException (1094, "ID can not be empty for get");
+      throw new CruxException(1094, "ID can not be empty for get");
     }
 
     Map rd = new HashMap();
@@ -885,13 +886,13 @@ implements IEntity
         String er = zd.toString(  );
         String mm = caze.getOption("MODEL_START", "");
         if ("update".equals(mm)) {
-            throw new HongsException(1096, "Can not update by id: " + er);
+            throw new CruxException(1096, "Can not update by id: " + er);
         } else
         if ("delete".equals(mm)) {
-            throw new HongsException(1097, "Can not delete by id: " + er);
+            throw new CruxException(1097, "Can not delete by id: " + er);
         } else
         {
-            throw new HongsException(1098, "Can not select by id: " + er);
+            throw new CruxException(1098, "Can not select by id: " + er);
         }
     }
   }
@@ -1227,7 +1228,7 @@ implements IEntity
                 throw e.toExemption(  );
             }
             if (null == assoc) {
-                throw new HongsExemption(1026,
+                throw new CruxExemption(1026,
                     "Can not get table '"+ rn +"' in DB '"+ table.db.name +"'"
                 );
             }

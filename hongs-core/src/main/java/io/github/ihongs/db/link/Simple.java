@@ -1,6 +1,7 @@
 package io.github.ihongs.db.link;
 
 import io.github.ihongs.CoreLogger;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.db.DBConfig;
 import java.sql.Connection;
@@ -44,9 +45,9 @@ public class Simple extends Link {
 
             return connection;
         } catch (SQLException ex) {
-            throw new HongsException(ex, 1024);
-        } catch (ClassNotFoundException ex ) {
-            throw new HongsException(ex, 1024);
+            throw new CruxException(ex, 1024);
+        } catch (ClassNotFoundException ex) {
+            throw new CruxException(ex, 1024);
         }
     }
 

@@ -1,6 +1,7 @@
 package io.github.ihongs.action.serv;
 
 import io.github.ihongs.Core;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.ActionHelper;
@@ -58,7 +59,7 @@ public class ActsDriver
 
     if (act == null || act.length() == 0)
     {
-      helper.fault(new HongsException(404, "Action URI can not be empty."));
+      helper.fault(new CruxException(404, "Action URI can not be empty."));
       return;
     }
 
@@ -85,7 +86,7 @@ public class ActsDriver
     }
     catch (RuntimeException e)
     {
-      helper.fault(new HongsException(e, 500));
+      helper.fault(new CruxException(e, 500));
     }
   }
 

@@ -2,7 +2,7 @@ package io.github.ihongs.util.verify;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
-import io.github.ihongs.HongsExemption;
+import io.github.ihongs.CruxExemption;
 import io.github.ihongs.action.DownPart;
 import io.github.ihongs.action.UploadHelper;
 import io.github.ihongs.util.Syno;
@@ -275,10 +275,10 @@ public class IsFile extends Rule {
                 Files.createSymbolicLink(Paths.get(path), Paths.get(dist));
             }
             catch (StringIndexOutOfBoundsException ex) {
-                throw new HongsExemption("Wrong path/href setting");
+                throw new CruxExemption("Wrong path/href setting");
             }
             catch (IOException ex) {
-                throw new HongsExemption(ex);
+                throw new CruxExemption(ex);
             }
 
             /**
@@ -350,7 +350,7 @@ public class IsFile extends Rule {
         try {
             name = URLDecoder.decode(name, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            throw new HongsExemption(e);
+            throw new CruxExemption(e);
         }
 
 //      name = name.replace("%20","+");
@@ -376,7 +376,7 @@ public class IsFile extends Rule {
         try {
             name = URLEncoder.encode(name, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            throw new HongsExemption(e);
+            throw new CruxExemption(e);
         }
 
         name = name.replace("+","%20");

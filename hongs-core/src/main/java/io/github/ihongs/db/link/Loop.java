@@ -1,7 +1,8 @@
 package io.github.ihongs.db.link;
 
+import io.github.ihongs.CruxException;
+import io.github.ihongs.CruxExemption;
 import io.github.ihongs.HongsException;
-import io.github.ihongs.HongsExemption;
 import io.github.ihongs.util.Dict;
 import java.sql.Statement;
 import java.sql.ResultSet;
@@ -56,7 +57,7 @@ public class Loop implements Iterable<Map>, Iterator<Map>, AutoCloseable {
             try {
                 md = rs.getMetaData();
             } catch (SQLException ex) {
-                throw new HongsException(ex, 1150);
+                throw new CruxException(ex, 1150);
             }
         }
         return md;
@@ -70,10 +71,10 @@ public class Loop implements Iterable<Map>, Iterator<Map>, AutoCloseable {
                 for (int i = 1, j = md.getColumnCount(); i <= j; i ++) {
                     td.put(md.getColumnLabel(i), Class.forName(md.getColumnClassName(i)));
                 }
-            } catch (  SQLException ex ) {
-                throw new HongsException(ex, 1151);
+            } catch (SQLException ex) {
+                throw new CruxException(ex, 1151);
             } catch (ClassNotFoundException ex) {
-                throw new HongsException(ex, 1151);
+                throw new CruxException(ex, 1151);
             }
         }
         return td;
@@ -93,7 +94,7 @@ public class Loop implements Iterable<Map>, Iterator<Map>, AutoCloseable {
                 il = rs.next();
             } catch (SQLException ex) {
                 this.close(  );
-                throw new HongsExemption(ex, 1152);
+                throw new CruxExemption(ex, 1152);
             }
         }
         return  il;
@@ -112,9 +113,9 @@ public class Loop implements Iterable<Map>, Iterator<Map>, AutoCloseable {
         try {
 //          getMetaData();
             getTypeDict();
-        } catch (HongsException ex ) {
+        } catch (HongsException e) {
             this.close( );
-            throw  ex.toExemption( );
+            throw e.toExemption( );
         }
 
         // 获取行内每列数据
@@ -133,9 +134,9 @@ public class Loop implements Iterable<Map>, Iterator<Map>, AutoCloseable {
                 }
             }
             return  row ;
-        } catch (  SQLException ex ) {
+        } catch (SQLException ex) {
             this.close();
-            throw new HongsExemption(ex, 1153);
+            throw new CruxExemption(ex, 1153);
         }
     }
 
@@ -147,8 +148,8 @@ public class Loop implements Iterable<Map>, Iterator<Map>, AutoCloseable {
                     rs.close();
                 }
             }
-            catch (SQLException ex ) {
-                throw new HongsExemption(ex, 1035);
+            catch (SQLException ex) {
+                throw new CruxExemption(ex, 1035);
             }
         }
         finally {
@@ -157,8 +158,8 @@ public class Loop implements Iterable<Map>, Iterator<Map>, AutoCloseable {
                     ps.close();
                 }
             }
-            catch (SQLException ex ) {
-                throw new HongsExemption(ex, 1034);
+            catch (SQLException ex) {
+                throw new CruxExemption(ex, 1034);
             }
         }
     }

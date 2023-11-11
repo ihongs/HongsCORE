@@ -2,6 +2,7 @@ package io.github.ihongs.db;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.CoreSerial;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.db.link.Loop;
 
@@ -97,7 +98,7 @@ public class DBFields
     }
     catch (SQLException ex)
     {
-      throw new HongsException(ex, 1068);
+      throw new CruxException(ex, 1068);
     }
 
     // 由于 ResultSetMetaData 缺少默认值, 通过 DatabaseMetaData 作补充检测
@@ -120,7 +121,7 @@ public class DBFields
     }
     catch (SQLException ex)
     {
-      throw new HongsException(ex, 1068);
+      throw new CruxException(ex, 1068);
     }
   }
 

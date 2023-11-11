@@ -1,7 +1,7 @@
 package io.github.ihongs.util.verify;
 
 import io.github.ihongs.CoreLocale;
-import io.github.ihongs.HongsExemption;
+import io.github.ihongs.CruxExemption;
 import io.github.ihongs.util.Inst;
 import io.github.ihongs.util.Synt;
 import java.time.format.DateTimeParseException;
@@ -42,9 +42,9 @@ public class IsDate extends Rule {
         String  fmt = Synt.declare(getParam( "format" ), "");
         String  fwt =  fmt ;
         if ( "".equals(fmt)) {
-            fwt = CoreLocale.getInstance( ).getProperty("core.default." +typa+ ".format");
+            fwt = CoreLocale.getInstance().getProperty("core.default." +typa+ ".format");
             if (fwt == null) {
-                throw new HongsExemption("Can not recognize date type '"+typa+"'.");
+                throw new CruxExemption("Can not recognize date type '"+typa+"'.");
             }
         }
 
@@ -160,9 +160,9 @@ public class IsDate extends Rule {
     }
 
     private long getTime(String tim, long now) {
-        Matcher mat = Pattern.compile("^([+\\-])?(\\d+)$").matcher ( tim );
+        Matcher mat = Pattern.compile("^([+\\-])?(\\d+)$").matcher (tim);
         if (!mat.matches()) {
-            throw new HongsExemption ("Can not recognize time '"+tim+"'.");
+            throw new CruxExemption("Can not recognize time '"+tim+"'.");
         }
         long    msc = Synt.declare(mat.group(2), 0L);
         String  sym = mat.group(1);

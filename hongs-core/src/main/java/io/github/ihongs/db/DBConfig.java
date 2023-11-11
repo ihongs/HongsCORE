@@ -4,8 +4,9 @@ import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreRoster;
 import io.github.ihongs.CoreSerial;
+import io.github.ihongs.CruxException;
+import io.github.ihongs.CruxExemption;
 import io.github.ihongs.HongsException;
-import io.github.ihongs.HongsExemption;
 import io.github.ihongs.util.Syno;
 import java.io.File;
 import java.io.FileInputStream;
@@ -84,7 +85,7 @@ public class DBConfig
       return resTime > serTime ? (byte) 0 : (byte) 1;
     }
 
-    throw new HongsExemption(826, "Can not find the config file '" + name + Cnst.DB_EXT + ".xml'");
+    throw new CruxExemption(826, "Can not find the config file '" + name + Cnst.DB_EXT + ".xml'");
   }
 
   @Override
@@ -107,7 +108,7 @@ public class DBConfig
         is = CoreRoster.getResourceAsStream(fn);
         if (  is  ==  null )
         {
-            throw new HongsExemption(826, "Can not find the config file '" + name + Cnst.DB_EXT + ".xml'");
+            throw new CruxExemption(826, "Can not find the config file '" + name + Cnst.DB_EXT + ".xml'");
         }
     }
 
@@ -117,7 +118,7 @@ public class DBConfig
       try {
         is.close();
       } catch (IOException ex) {
-        throw new HongsException(ex);
+        throw new CruxException(ex);
       }
     }
 
@@ -174,7 +175,7 @@ public class DBConfig
     Element root = doc.getDocumentElement();
     if (!root.hasChildNodes())
     {
-      throw new HongsException(1063, "Can not find root element in config document.");
+      throw new CruxException(1063, "Can not find root element in config document.");
     }
 
     String attr;
@@ -277,15 +278,15 @@ public class DBConfig
     }
     catch (ParserConfigurationException ex)
     {
-      throw new  HongsException(ex, 1062);
+      throw new CruxException(ex, 1062);
     }
     catch (SAXException ex)
     {
-      throw new  HongsException(ex, 1062);
+      throw new CruxException(ex, 1062);
     }
     catch ( IOException ex)
     {
-      throw new  HongsException(ex, 1064);
+      throw new CruxException(ex, 1064);
     }
 
     return new DBConfig(doc);
@@ -310,15 +311,15 @@ public class DBConfig
     }
     catch (ParserConfigurationException ex)
     {
-      throw new  HongsException(ex, 1062);
+      throw new CruxException(ex, 1062);
     }
     catch (SAXException ex)
     {
-      throw new  HongsException(ex, 1062);
+      throw new CruxException(ex, 1062);
     }
     catch ( IOException ex)
     {
-      throw new  HongsException(ex, 1065);
+      throw new CruxException(ex, 1065);
     }
 
     return new DBConfig(doc);
@@ -343,15 +344,15 @@ public class DBConfig
     }
     catch (ParserConfigurationException ex)
     {
-      throw new  HongsException(ex, 1062);
+      throw new CruxException(ex, 1062);
     }
     catch (SAXException ex)
     {
-      throw new  HongsException(ex, 1062);
+      throw new CruxException(ex, 1062);
     }
     catch ( IOException ex)
     {
-      throw new  HongsException(ex, 1065);
+      throw new CruxException(ex, 1065);
     }
 
     return new DBConfig(doc);

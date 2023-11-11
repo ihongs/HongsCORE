@@ -3,6 +3,7 @@ package io.github.ihongs.db;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLocale;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.db.util.FetchCase;
 import io.github.ihongs.db.util.AssocMore;
@@ -93,17 +94,17 @@ public class Table
   {
     if (db == null)
     {
-      throw new HongsException(1071, "Param db can not be null");
+      throw new CruxException(1071, "Param db can not be null");
     }
 
     if (conf == null)
     {
-      throw new HongsException(1072, "Param conf can not be null");
+      throw new CruxException(1072, "Param conf can not be null");
     }
 
     if (!conf.containsKey("name"))
     {
-      throw new HongsException(1073, "Table name in conf required.");
+      throw new CruxException(1073, "Table name in conf required.");
     }
 
     this.db   =  db ;
@@ -861,32 +862,32 @@ public class Table
 
   private HongsException nullException(String field) {
     String error = "Value for field `$2` in table `$0.$1` can not be NULL";
-    return new HongsException(1074, error, db.name,name, field);
+    return new CruxException(1074, error, db.name,name, field);
   }
 
   private HongsException sizeException(String field, String value, int size) {
     String error = "Value for field `$2` in table `$0.$1` must be a less than $4, value: $3";
-    return new HongsException(1075, error, db.name,name, field, value, size);
+    return new CruxException (1075, error, db.name,name, field, value, size);
   }
 
   private HongsException scleException(String field, String value, int scle) {
     String error = "Scale for field `$2` in table `$0.$1` must be a less than $4, value: $3";
-    return new HongsException(1076, error, db.name,name, field, value, scle);
+    return new CruxException (1076, error, db.name,name, field, value, scle);
   }
 
   private HongsException numeException(String field, String value) {
     String error = "Value for field `$2` in table `$0.$1` must be a standard number, value: $3";
-    return new HongsException(1077, error, db.name,name, field, value);
+    return new CruxException (1077, error, db.name,name, field, value);
   }
 
   private HongsException unsiException(String field, String value) {
     String error = "Value for field `$2` in table `$0.$1` must be a unsigned number, value: $3";
-    return new HongsException(1078, error, db.name,name, field, value);
+    return new CruxException (1078, error, db.name,name, field, value);
   }
 
   private HongsException dateException(String field, String value, String format) {
     String error = "Value for field `$2` in table `$0.$1` must like '$4', value: $3";
-    return new HongsException(1079, error, db.name,name, field, value, format);
+    return new CruxException (1079, error, db.name,name, field, value, format);
   }
 
   /**

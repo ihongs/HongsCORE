@@ -1,6 +1,7 @@
 package io.github.ihongs.db.util;
 
 import io.github.ihongs.Core;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.util.Synt;
@@ -227,10 +228,10 @@ public class AssocMore {
             if (pk == null) pk = table .primaryKey;
             pk = "`"+tn+"`.`"+pk+"`";
             fk = "`"+an+"`.`"+fk+"`";
-        //  throw new HongsException(1171,  "Unsupported assoc type '"+tp+"'");
+        //  throw new CruxException(1171,  "Unsupported assoc type '"+tp+"'");
         } break;
         default:
-            throw new HongsException(1171, "Unrecognized assoc type '"+tp+"'");
+            throw new CruxException(1171, "Unrecognized assoc type '"+tp+"'");
         }
         caze2.on( pk +"="+ fk );
 
@@ -250,9 +251,9 @@ public class AssocMore {
             ji = FetchCase.FULL ;
         } break;
         case "CROSS":
-            throw new HongsException(1172,  "Unsupported assoc join '"+jn+"'");
+            throw new CruxException(1172,  "Unsupported assoc join '"+jn+"'");
         default:
-            throw new HongsException(1172, "Unrecognized assoc join '"+jn+"'");
+            throw new CruxException(1172, "Unrecognized assoc join '"+jn+"'");
         }
         caze2.by(ji);
 
@@ -332,7 +333,7 @@ public class AssocMore {
             }
         } break;
         default:
-            throw new HongsException(1171, "Unrecognized assoc type '"+tp+"'");
+            throw new CruxException(1171, "Unrecognized assoc type '"+tp+"'");
         }
 
         caze2.setOption("ASSOC_MERGE", "MERGE".equals(jn));
@@ -407,7 +408,7 @@ public class AssocMore {
         }
         else
         {
-          throw new HongsException(1175,
+          throw new CruxException(1175,
           "Sub data type for table '"+tb.name+"' must be Map");
         }
       }
@@ -424,7 +425,7 @@ public class AssocMore {
         }
         else
         {
-          throw new HongsException(1176,
+          throw new CruxException(1176,
           "Sub data type for table '"+tb.name+"' must be Map or List");
         }
       }

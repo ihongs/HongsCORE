@@ -3,9 +3,9 @@ package io.github.ihongs.action.serv;
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
+import io.github.ihongs.CruxException;
+import io.github.ihongs.CruxExemption;
 import io.github.ihongs.HongsCause;
-import io.github.ihongs.HongsException;
-import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
@@ -94,7 +94,7 @@ public class MoreAction {
     }
 
     @Action("eval")
-    public void eval(ActionHelper helper) throws HongsException {
+    public void eval(ActionHelper helper) throws CruxException {
         CoreConfig          cnf = CoreConfig.getInstance();
         HttpServletRequest  req = helper.getRequest( );
         HttpServletResponse rsp = helper.getResponse();
@@ -111,10 +111,10 @@ public class MoreAction {
             ias.add( "0:0:0:0:0:0:0:1" );
         }
         if (! sw ) {
-            throw new HongsException(400, "Illegal request!");
+            throw new CruxException(400, "Illegal request!");
         }
         if (! ias.contains(ip) ) {
-            throw new HongsException(400, "Illegal request.");
+            throw new CruxException(400, "Illegal request.");
         }
 
         Map    map = helper.getRequestData();
@@ -135,7 +135,7 @@ public class MoreAction {
     }
 
     @Action("exec")
-    public void exec(ActionHelper helper) throws HongsException {
+    public void exec(ActionHelper helper) throws CruxException {
         CoreConfig          cnf = CoreConfig.getInstance();
         HttpServletRequest  req = helper.getRequest( );
         HttpServletResponse rsp = helper.getResponse();
@@ -152,10 +152,10 @@ public class MoreAction {
             ias.add( "0:0:0:0:0:0:0:1" );
         }
         if (! sw ) {
-            throw new HongsException(400, "Illegal request!");
+            throw new CruxException(400, "Illegal request!");
         }
         if (! ias.contains(ip) ) {
-            throw new HongsException(400, "Illegal request.");
+            throw new CruxException(400, "Illegal request.");
         }
 
         Map    map = helper.getRequestData();
@@ -390,11 +390,11 @@ public class MoreAction {
             }
         }
         catch (IOException e) {
-            throw new HongsExemption( e );
+            throw new CruxExemption(e);
         }
     }
 
-    private Map data(Map map, String key) throws HongsException {
+    private Map data(Map map, String key) throws CruxException {
         Object obj = map.get (key);
         if (obj == null) {
             return new HashMap (0);
@@ -403,7 +403,7 @@ public class MoreAction {
             return Synt.toMap(obj);
         }
         catch (ClassCastException e) {
-            throw new HongsException(400, "Can not parse "+key);
+            throw new CruxException(400, "Can not parse "+key);
         }
     }
 

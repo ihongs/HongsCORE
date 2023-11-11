@@ -1,6 +1,7 @@
 package io.github.ihongs.db.util;
 
 import io.github.ihongs.Cnst;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Table;
@@ -110,9 +111,9 @@ public final class FetchPage
       return this.tb.db;
     } else
     {
-      Link link  = this.caze.linker( );
-      if ( link != null ) return link ;
-      throw new HongsException( 1163 );
+      Link link  = this.caze.linker();
+      if ( link != null ) return link;
+      throw new CruxException( 1163 );
     }
   }
 

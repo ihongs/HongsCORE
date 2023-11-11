@@ -1,6 +1,7 @@
 package io.github.ihongs.combat;
 
 import io.github.ihongs.Core;
+import io.github.ihongs.CruxExemption;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Synt;
@@ -397,9 +398,9 @@ public class CombatHelper
       }
       hlp = err.toString();
 
-      throw  new HongsExemption(838, hlp, hlp);
+      throw new CruxExemption(838, hlp, hlp);
     } else if (hlp != null && args.length == 0) {
-      throw  new HongsExemption(839, hlp, hlp);
+      throw new CruxExemption(839, hlp, hlp);
     }
 
     // 把剩余的参数放进去

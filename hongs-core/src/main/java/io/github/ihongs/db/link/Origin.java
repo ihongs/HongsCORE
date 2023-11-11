@@ -1,6 +1,7 @@
 package io.github.ihongs.db.link;
 
 import io.github.ihongs.CoreLogger;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.HongsException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -46,9 +47,9 @@ public class Origin extends Link {
 
             return connection;
         } catch (SQLException ex) {
-            throw new HongsException(ex, 1022);
+            throw new CruxException(ex, 1022);
         } catch (NamingException ex ) {
-            throw new HongsException(ex, 1022);
+            throw new CruxException(ex, 1022);
         }
     }
 

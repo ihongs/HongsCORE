@@ -1,5 +1,6 @@
 package io.github.ihongs.action.anno;
 
+import io.github.ihongs.CruxException;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
@@ -35,7 +36,7 @@ public class PermitInvoker implements FilterInvoker {
         boolean has = false;
 
         if (rol  == null) {
-            throw new HongsException(1101);
+            throw new CruxException(1101);
         }
 
         if (role == null || role.length < 1) {
@@ -62,7 +63,7 @@ public class PermitInvoker implements FilterInvoker {
         }
 
         if (! has) {
-            throw new HongsException(1103);
+            throw new CruxException(1103);
         }
 
         chains.doAction();

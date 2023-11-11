@@ -3,6 +3,7 @@ package io.github.ihongs.combat.serv;
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
@@ -92,11 +93,11 @@ public class Access {
                 ps.print( ln );
             }   ps.println(  );
         } catch (UnsupportedEncodingException ex ) {
-            throw new HongsException(ex, 1111);
+            throw new CruxException(ex, 1111);
         } catch (MalformedURLException ex) {
-            throw new HongsException(ex, 1111);
+            throw new CruxException(ex, 1111);
         } catch (IOException ex) {
-            throw new HongsException(ex, 1110);
+            throw new CruxException(ex, 1110);
         }
     }
 
@@ -163,11 +164,11 @@ public class Access {
                 ps.print( ln );
             }   ps.println(  );
         } catch (UnsupportedEncodingException ex ) {
-            throw  new  HongsException(ex);
+            throw new CruxException(ex);
         } catch (MalformedURLException ex) {
-            throw  new  HongsException(ex);
+            throw new CruxException(ex);
         } catch (IOException ex) {
-            throw  new  HongsException(ex);
+            throw new CruxException(ex);
         }
     }
 
@@ -219,11 +220,11 @@ public class Access {
         }
     }
 
-    private static Map data(String text) throws HongsException {
+    private static Map data(String text) throws CruxException {
         return Synt.toMap(text(text));
     }
 
-    private static String text(String text) throws HongsException {
+    private static String text(String text) throws CruxException {
         if (text == null ) {
             return   ""   ;
         }
@@ -242,7 +243,7 @@ public class Access {
         return text;
     }
 
-    private static String file(String path) throws HongsException {
+    private static String file(String path) throws CruxException {
         try (
             BufferedReader br = new BufferedReader(
                 new FileReader( new File (path) ) );
@@ -259,9 +260,9 @@ public class Access {
             }
             return sb.toString();
         } catch (FileNotFoundException ex) {
-            throw  new  HongsException(ex, "Can not find " + path);
+            throw new CruxException(ex, "Can not find " + path);
         } catch (IOException ex) {
-            throw  new  HongsException(ex, "Can not read " + path);
+            throw new CruxException(ex, "Can not read " + path);
         }
     }
 

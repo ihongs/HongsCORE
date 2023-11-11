@@ -2,7 +2,7 @@ package io.github.ihongs.action.serv;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
-import io.github.ihongs.HongsExemption;
+import io.github.ihongs.CruxExemption;
 import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
@@ -268,8 +268,8 @@ public class AutoFilter extends ActionDriver {
                               .get(action.substring(1) + "/search")
                               .getMclass( );
         } catch ( NullPointerException ex ) {
-            throw new HongsExemption(ex, 1130,
-                 "Auto action '" + action.substring(1) + "/search' is not exists");
+            throw new CruxExemption(ex, 1130,
+                "Auto action '" + action.substring(1) + "/search' is not exists");
         }
 
         cstset = new HashSet();
@@ -320,12 +320,12 @@ public class AutoFilter extends ActionDriver {
 
         File dir = new File(Core.BASE_PATH + layout);
         if (!dir.exists( )) {
-            throw new HongsExemption(1131,
-                 "Auto layout '" + layout.substring(1) + "' is not exists");
+            throw new CruxExemption(1131,
+                "Auto layout '" + layout.substring(1) + "' is not exists");
         }
         if (!dir.isDirectory()) {
-            throw new HongsExemption(1131,
-                 "Auto layout '" + layout.substring(1) + "' is not a directory");
+            throw new CruxExemption(1131,
+                "Auto layout '" + layout.substring(1) + "' is not a directory");
         }
 
         /**

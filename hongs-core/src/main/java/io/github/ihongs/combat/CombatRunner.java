@@ -6,8 +6,8 @@ import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLocale;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.CoreRoster;
+import io.github.ihongs.CruxExemption;
 import io.github.ihongs.HongsCause;
-import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
@@ -63,14 +63,14 @@ public class CombatRunner implements Runnable
     // 提取动作
     if (null == act || act.length() < 1)
     {
-      throw new HongsExemption(835, "Combat name can not be empty.");
+      throw new CruxExemption(835, "Combat name can not be empty.");
     }
 
     // 获取方法
     Method met = getCombats().get( act );
     if (null == met)
     {
-      throw new HongsExemption(835, "Combat "+act+" is not exists.");
+      throw new CruxExemption(835, "Combat "+act+" is not exists.");
     }
 
     this.met  = met ;
@@ -160,14 +160,14 @@ public class CombatRunner implements Runnable
     // 提取动作
     if (null == act || act.length() < 1)
     {
-      throw new HongsExemption(835, "Combat name can not be empty.");
+      throw new CruxExemption(835, "Combat name can not be empty.");
     }
 
     // 获取方法
     Method met = getCombats().get( act );
     if (null == met)
     {
-      throw new HongsExemption(835, "Combat "+act+" is not exists.");
+      throw new CruxExemption(835, "Combat "+act+" is not exists.");
     }
 
     // 执行方法
@@ -177,15 +177,15 @@ public class CombatRunner implements Runnable
     }
     catch (   IllegalAccessException ex)
     {
-      throw new HongsExemption(ex, 836, "Illegal access for method "+met.getClass().getName()+"."+met.getName()+"(String[]).");
+      throw new CruxExemption(ex, 836, "Illegal access for method "+met.getClass().getName()+"."+met.getName()+"(String[]).");
     }
     catch ( IllegalArgumentException ex)
     {
-      throw new HongsExemption(ex, 836, "Illegal params for method "+met.getClass().getName()+"."+met.getName()+"(String[]).");
+      throw new CruxExemption(ex, 836, "Illegal params for method "+met.getClass().getName()+"."+met.getName()+"(String[]).");
     }
     catch (InvocationTargetException ex)
     {
-      throw new HongsExemption(ex.getCause(), 837);
+      throw new CruxExemption(ex.getCause(), 837);
     }
   }
 

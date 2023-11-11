@@ -4,6 +4,7 @@ import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLocale;
 import io.github.ihongs.CoreSerial;
+import io.github.ihongs.CruxExemption;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.ActionDriver;
@@ -323,7 +324,7 @@ public class SaclDriver
       // 未设置 core.fore.keys 不公开, 哪怕设置个空的都行
       if ( this.conf.getProperty("core.fore.keys", null) == null )
       {
-        throw new HongsExemption(404, "Conf for "+name+" is non-public");
+        throw new CruxExemption (404, "Conf for "+name+" is non-public");
       }
     }
 
@@ -453,7 +454,7 @@ public class SaclDriver
       // 未设置 core.fore.keys 不公开, 哪怕设置个空的都行
       if ( this.lang.getProperty("core.fore.keys", null) == null )
       {
-        throw new HongsExemption(404, "Lang for "+name+" is non-public");
+        throw new CruxExemption (404, "Lang for "+name+" is non-public");
       }
     }
 

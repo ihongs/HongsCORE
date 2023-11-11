@@ -1,6 +1,7 @@
 package io.github.ihongs.dh;
 
 import io.github.ihongs.CoreLocale;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
@@ -40,7 +41,7 @@ abstract public class JAction implements IActing, IAction {
          */
 
         if (ent.startsWith("_") || mod.endsWith("/" + ent)) {
-            throw new HongsException (404, "Unsupported Request!");
+            throw new CruxException(404 , "Unsupported Request!");
         }
 
         Map fs = null;
@@ -69,9 +70,9 @@ abstract public class JAction implements IActing, IAction {
             return;
         }
 
-        Set ca  = Synt.toSet(Dict.get(fs , null, "@", "callable"));
+        Set ca  = Synt.toSet(Dict.get(fs, null, "@", "callable"));
         if (ca != null && ! ca.contains(act)) {
-            throw new HongsException (405, "Unsupported Request.");
+            throw new CruxException(405 , "Unsupported Request.");
         }
     }
 

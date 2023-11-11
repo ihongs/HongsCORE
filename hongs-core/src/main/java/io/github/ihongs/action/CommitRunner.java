@@ -2,6 +2,7 @@ package io.github.ihongs.action;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.dh.IReflux;
@@ -43,7 +44,7 @@ public final class CommitRunner {
                     throw (HongsExemption) ex ;
                 }
 
-                throw new  HongsException (ex);
+                throw new   CruxException (ex);
             }
             return;
         }
@@ -85,7 +86,7 @@ public final class CommitRunner {
                 }
 
                 // 其他异常需包裹
-                throw new  HongsException (ex , 1109);
+                throw new   CruxException (ex , 1109);
             }
         } finally {
             // 重置

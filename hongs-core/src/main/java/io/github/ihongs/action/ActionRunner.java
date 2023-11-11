@@ -4,6 +4,7 @@ import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreRoster;
 import io.github.ihongs.CoreRoster.Mathod;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.anno.Action;
@@ -49,7 +50,7 @@ public class ActionRunner {
     private       int idx = -1;
 
     public ActionRunner(ActionHelper helper, Object object, String method)
-    throws HongsException {
+    throws CruxException {
         this.helper = helper;
         this.object = object;
         this.mclass = object.getClass();
@@ -60,9 +61,9 @@ public class ActionRunner {
             this.annarr = this.method.getAnnotations();
             this.len    = this.annarr.length;
         } catch (NoSuchMethodException ex) {
-            throw new HongsException(1104, "Can not find action '"+ mclass.getName() +"."+ method +"'");
+            throw new CruxException(1104, "Can not find action '"+ mclass.getName() +"."+ method +"'");
         } catch (    SecurityException ex) {
-            throw new HongsException(1104, "Can not exec action '"+ mclass.getName() +"."+ method +"'");
+            throw new CruxException(1104, "Can not exec action '"+ mclass.getName() +"."+ method +"'");
         }
 
         // 从注解中提取动作
@@ -85,10 +86,10 @@ public class ActionRunner {
     }
 
     public ActionRunner(ActionHelper helper, String action)
-    throws HongsException {
+    throws CruxException {
         Mathod mt = getActions().get(action);
-        if ( null == mt ) {
-            throw new HongsException(1104, "Can not find action '"+ action +"'");
+        if (null == mt ) {
+            throw new CruxException(1104, "Can not find action '"+ action +"'");
         }
 
         this.action = action;
@@ -109,10 +110,10 @@ public class ActionRunner {
      * @param ah
      * @param at
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
     public static ActionRunner newInstance(ActionHelper ah, String at)
-    throws HongsException {
+    throws CruxException {
         // 查询结构
         String ap = null; // 虚拟动作路径, 作为目标路径
         String aq = null; // 关联请求参数, 转为请求数据
@@ -284,9 +285,9 @@ public class ActionRunner {
         try {
             method.invoke(object, helper);
         } catch (   IllegalAccessException e) {
-            throw new HongsException(1108, "Illegal access for method '"+mclass.getName()+"."+method.getName()+"(ActionHelper).");
+            throw new CruxException(1108, "Illegal access for method '"+mclass.getName()+"."+method.getName()+"(ActionHelper).");
         } catch ( IllegalArgumentException e) {
-            throw new HongsException(1108, "Illegal params for method '"+mclass.getName()+"."+method.getName()+"(ActionHelper).");
+            throw new CruxException(1108, "Illegal params for method '"+mclass.getName()+"."+method.getName()+"(ActionHelper).");
         } catch (InvocationTargetException e) {
             Throwable  ex = e.getCause( );
             if (ex instanceof HongsExemption) {
@@ -295,7 +296,7 @@ public class ActionRunner {
             if (ex instanceof HongsException) {
                 throw (HongsException) ex;
             } else {
-                throw new HongsException(ex, 1106);
+                throw new CruxException(ex, 1106);
             }
         }
     }

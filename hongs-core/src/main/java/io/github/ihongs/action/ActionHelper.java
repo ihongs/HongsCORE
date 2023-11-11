@@ -5,6 +5,7 @@ import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLocale;
 import io.github.ihongs.CoreLogger;
+import io.github.ihongs.CruxExemption;
 import io.github.ihongs.HongsCause;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.util.Dict;
@@ -135,7 +136,7 @@ public class ActionHelper implements Cloneable
     }
     catch (UnsupportedEncodingException ex)
     {
-      throw new HongsExemption(ex, 1111, "Can not set encoding.");
+      throw new CruxExemption(ex, 1111, "Can not set encoding.");
     }
 
     this.request      = req ;
@@ -164,7 +165,7 @@ public class ActionHelper implements Cloneable
     }
     catch (UnsupportedEncodingException ex)
     {
-      throw new HongsExemption(ex, 1111, "Can not set encoding.");
+      throw new CruxExemption(ex, 1111, "Can not set encoding.");
     }
 
     this.request      = req ;
@@ -289,8 +290,8 @@ public class ActionHelper implements Cloneable
     // 无法转换则报 HTTP 400 错误
     try {
         return (Map) request.getAttribute(Cnst.REQUES_ATTR);
-    } catch ( ClassCastException ex) {
-        throw new HongsExemption(ex, 400);
+    } catch (ClassCastException ex) {
+        throw new CruxExemption(ex, 400);
     }
   }
 
@@ -305,13 +306,13 @@ public class ActionHelper implements Cloneable
         return null;
     }
     try {
-        return (Map) Dist.toObject ( request.getReader( ) );
-    } catch ( /**/HongsExemption ex) {
-        throw new HongsExemption(ex, 400 );
-    } catch ( ClassCastException ex) {
-        throw new HongsExemption(ex, 400 );
+        return (Map) Dist.toObject(request.getReader());
+    } catch (/**/HongsExemption ex) {
+        throw new CruxExemption(ex, 400 );
+    } catch (ClassCastException ex) {
+        throw new CruxExemption(ex, 400 );
     } catch (IOException ex) {
-        throw new HongsExemption(ex, 1114);
+        throw new CruxExemption(ex, 1114);
     }
   }
 
@@ -364,7 +365,7 @@ public class ActionHelper implements Cloneable
 
             // 检查大小
             if (sizeLimit > 0 && sizeLimit < size) {
-                throw new HongsExemption(400, "File size must not exceed "+ sizeLimit);
+                throw new CruxExemption(400, "File size must not exceed "+ sizeLimit);
             }
 
             if (accept != null || reject != null ) {
@@ -393,13 +394,13 @@ public class ActionHelper implements Cloneable
             && !accept.contains(kind)
             && !accept.contains(type)
             && !accept.contains(typa) ) {
-                throw new HongsExemption(400, "File type is not allowed");
+                throw new CruxExemption(400, "File type is not allowed");
             }
             if (reject != null
             && (reject.contains(kind)
             ||  reject.contains(type)
             ||  reject.contains(typa))) {
-                throw new HongsExemption(400, "File type is denied");
+                throw new CruxExemption(400, "File type is denied");
             }
 
             } // End if accept or reject
@@ -413,11 +414,11 @@ public class ActionHelper implements Cloneable
 
         return rd;
     } catch (IllegalStateException e) {
-        throw new HongsExemption(e, 400 ); // 上传受限, 如大小超标
+        throw new CruxExemption(e, 400 ); // 上传受限, 如大小超标
     } catch (ServletException e) {
-        throw new HongsExemption(e, 1113);
+        throw new CruxExemption(e, 1113);
     } catch (IOException e) {
-        throw new HongsExemption(e, 1113);
+        throw new CruxExemption(e, 1113);
     }
   }
 
@@ -449,7 +450,7 @@ public class ActionHelper implements Cloneable
 
   /**
    * 获取响应输出
-   * 注意: 当为虚拟请求时, 可能抛 HongsExemption, 错误码 1110
+   * 注意: 当为虚拟请求时, 可能抛 CruxExemption, 错误码 1110
    * @return 响应输出
    */
   public OutputStream getOutputStream()
@@ -466,17 +467,17 @@ public class ActionHelper implements Cloneable
       }
       catch (IOException ex)
       {
-        throw new HongsExemption(ex, 1110, "Can not get output stream.");
+        throw new CruxExemption(ex, 1110, "Can not get output stream.");
       }
     } else
     {
-        throw new HongsExemption(/**/1110, "Can not get output stream.");
+        throw new CruxExemption(/**/1110, "Can not get output stream.");
     }
   }
 
   /**
    * 获取响应输出
-   * 注意: 当为虚拟请求时, 可能抛 HongsExemption, 错误码 1110
+   * 注意: 当为虚拟请求时, 可能抛 CruxExemption, 错误码 1110
    * @return 响应输出
    */
   public Writer getOutputWriter()
@@ -493,11 +494,11 @@ public class ActionHelper implements Cloneable
       }
       catch (IOException ex)
       {
-        throw new HongsExemption(ex, 1110, "Can not get output writer.");
+        throw new CruxExemption(ex, 1110, "Can not get output writer.");
       }
     } else
     {
-        throw new HongsExemption(/**/1110, "Can not get output writer.");
+        throw new CruxExemption(/**/1110, "Can not get output writer.");
     }
   }
 
@@ -644,7 +645,7 @@ public class ActionHelper implements Cloneable
             try {
               return URLDecoder.decode(ce.getValue(), "UTF-8");
             } catch (UnsupportedEncodingException e) {
-              throw  new  HongsExemption ( e, 1111 );
+              throw new CruxExemption(e, 1111);
             }
           }
         }
@@ -699,7 +700,7 @@ public class ActionHelper implements Cloneable
         try {
           value = URLEncoder.encode(value,"UTF-8");
         } catch ( UnsupportedEncodingException e ) {
-          throw   new HongsExemption( e );
+          throw new CruxExemption(e);
         }
       }
       Cookie ce = new Cookie(name, value);
@@ -766,7 +767,7 @@ public class ActionHelper implements Cloneable
     try {
       helper = (ActionHelper) super.clone( );
     } catch ( CloneNotSupportedException e ) {
-      throw   new HongsExemption( e );
+      throw new CruxExemption(e);
     }
     helper.responseData = null;
     return helper;
@@ -1007,7 +1008,7 @@ public class ActionHelper implements Cloneable
 
         out.flush( );
     } catch ( IOException e ) {
-      throw new HongsExemption(e, 1110, "Can not send to client.");
+      throw new CruxExemption(e, 1110, "Can not send to client.");
     }
 
     this.responseData = null;
@@ -1054,7 +1055,7 @@ public class ActionHelper implements Cloneable
         out.write(txt);
     //  out.flush(   ); // 不必立即输出, 可能反复调用
     } catch ( IOException e ) {
-      throw new HongsExemption(e, 1110, "Can not send to client.");
+      throw new CruxExemption(e, 1110, "Can not send to client.");
     }
   }
 
@@ -1078,7 +1079,7 @@ public class ActionHelper implements Cloneable
       this.response.sendError(sc , msg);
       this.responseData = null;
     } catch ( IOException e ) {
-      throw new HongsExemption(e, 1110, "Can not send to client.");
+      throw new CruxExemption(e, 1110, "Can not send to client.");
     }
   }
 
@@ -1105,7 +1106,7 @@ public class ActionHelper implements Cloneable
       this.response.flushBuffer( );
       this.responseData = null;
     } catch ( IOException e ) {
-      throw new HongsExemption(e, 1110, "Can not send to client.");
+      throw new CruxExemption(e, 1110, "Can not send to client.");
     }
   }
 
@@ -1137,7 +1138,7 @@ public class ActionHelper implements Cloneable
       try {
         this.request.getRequestDispatcher(p).forward(request, response);
       } catch ( IOException|ServletException e ) {
-        throw new HongsExemption( e , 1110, "Can not send to client." );
+        throw new CruxExemption( e , 1110 , "Can not send to client." );
       }
     }
     else
@@ -1153,7 +1154,7 @@ public class ActionHelper implements Cloneable
         );
         this.responseData = null;
       } catch ( IOException e ) {
-        throw new HongsExemption( e , 1110, "Can not send to client." );
+        throw new CruxExemption( e , 1110 , "Can not send to client." );
       }
     }
   }
@@ -1182,7 +1183,7 @@ public class ActionHelper implements Cloneable
               k = s.substring(i, j);
               k = URLDecoder.decode(k, "UTF-8");
           } catch (UnsupportedEncodingException ex) {
-              throw new HongsExemption ( ex, 1111 );
+              throw new CruxExemption ( ex , 1111 );
           }
           if (j < s.length() && s.charAt(j) == '=') {
               j++;
@@ -1198,7 +1199,7 @@ public class ActionHelper implements Cloneable
               v = s.substring(i, j);
               v = URLDecoder.decode(v, "UTF-8");
           } catch (UnsupportedEncodingException ex) {
-              throw new HongsExemption ( ex, 1111 );
+              throw new CruxExemption ( ex , 1111 );
           }
           if (j < s.length() && s.charAt(j) == '&') {
               j++;

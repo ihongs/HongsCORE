@@ -8,7 +8,6 @@ import io.github.ihongs.CoreRoster;
 import io.github.ihongs.CoreSerial;
 import io.github.ihongs.CruxException;
 import io.github.ihongs.HongsException;
-import io.github.ihongs.HongsExemption;
 import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.daemon.Gate;
 import java.io.File;

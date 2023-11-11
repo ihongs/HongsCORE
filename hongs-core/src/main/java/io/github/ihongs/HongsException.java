@@ -22,50 +22,50 @@ public class HongsException
 
     protected final HongsFault that;
 
-    public HongsException(Throwable fact, int code, String desc, Object... data) {
-        super(fact);
+    public HongsException(Throwable cause, int errno, String error, Object... cases) {
+        super(cause);
 
-        that = new HongsFault(this, code, desc, data);
+        that = new HongsFault(this, errno, error, cases);
     }
 
-    public HongsException(Throwable fact, int code, String desc) {
-        this(fact, code, desc, (Object[]) null);
+    public HongsException(Throwable cause, int errno, String error) {
+        this(cause, errno, error, (Object[]) null);
     }
 
-    public HongsException(Throwable fact, int code) {
-        this(fact, code, null, (Object[]) null);
+    public HongsException(Throwable cause, int errno) {
+        this(cause, errno, null , (Object[]) null);
     }
 
-    public HongsException(Throwable fact, String desc, Object... data) {
-        this(fact, 0x0 , desc, data);
+    public HongsException(Throwable cause, String error, Object... cases) {
+        this(cause,  0x0 , error, cases);
     }
 
-    public HongsException(Throwable fact, String desc) {
-        this(fact, 0x0 , desc, (Object[]) null);
+    public HongsException(Throwable cause, String error) {
+        this(cause,  0x0 , error, (Object[]) null);
     }
 
-    public HongsException(Throwable fact) {
-        this(fact, 0x0 , null, (Object[]) null);
+    public HongsException(Throwable cause) {
+        this(cause,  0x0 , null , (Object[]) null);
     }
 
-    public HongsException(int code, String desc, Object... data) {
-        this(null, code, desc, data);
+    public HongsException(int errno, String error, Object... cases) {
+        this(null , errno, error, cases);
     }
 
-    public HongsException(int code, String desc) {
-        this(null, code, desc, (Object[]) null);
+    public HongsException(int errno, String error) {
+        this(null , errno, error, (Object[]) null);
     }
 
-    public HongsException(int code) {
-        this(null, code, null, (Object[]) null);
+    public HongsException(int errno) {
+        this(null , errno, null , (Object[]) null);
     }
 
-    public HongsException(String desc, Object... data) {
-        this(null, 0x0 , desc, data);
+    public HongsException(String error, Object... cases) {
+        this(null ,  0x0 , error, cases);
     }
 
-    public HongsException(String desc) {
-        this(null, 0x0 , desc, (Object[]) null);
+    public HongsException(String error) {
+        this(null ,  0x0 , error, (Object[]) null);
     }
 
     @Override

@@ -290,7 +290,7 @@ public class Core
     }
     catch ( ClassNotFoundException e )
     {
-      throw new HongsExemption(e, 821);
+      throw new CruxExemption (e, 821);
     }
 
     return  newInstance(clas);
@@ -343,19 +343,19 @@ public class Core
           throw ((HongsCause) ta).toExemption();
         }
 
-        throw new HongsExemption(ta, 823, "Can not build "+clas.getName());
+        throw new CruxExemption(ta, 823, "Can not build "+clas.getName());
       }
       catch (IllegalArgumentException ex)
       {
-        throw new HongsExemption(ex, 823, "Can not build "+clas.getName());
+        throw new CruxExemption(ex, 823, "Can not build "+clas.getName());
       }
       catch (  IllegalAccessException ex)
       {
-        throw new HongsExemption(ex, 823, "Can not build "+clas.getName());
+        throw new CruxExemption(ex, 823, "Can not build "+clas.getName());
       }
       catch (  SecurityException ex)
       {
-        throw new HongsExemption(ex, 823, "Can not build "+clas.getName());
+        throw new CruxExemption(ex, 823, "Can not build "+clas.getName());
       }
     }
     catch (NoSuchMethodException ez)
@@ -381,19 +381,19 @@ public class Core
           throw ((HongsCause) ta).toExemption();
         }
 
-        throw new HongsExemption(ex, 822, "Can not build "+clas.getName());
+        throw new CruxExemption(ex, 822, "Can not build "+clas.getName());
       }
       catch (InstantiationException ex)
       {
-        throw new HongsExemption(ex, 822, "Can not build "+clas.getName());
+        throw new CruxExemption(ex, 822, "Can not build "+clas.getName());
       }
       catch (IllegalAccessException ex)
       {
-        throw new HongsExemption(ex, 822, "Can not build "+clas.getName());
+        throw new CruxExemption(ex, 822, "Can not build "+clas.getName());
       }
       catch ( NoSuchMethodException ex)
       {
-        throw new HongsExemption(ex, 822, "Can not build "+clas.getName());
+        throw new CruxExemption(ex, 822, "Can not build "+clas.getName());
       }
     }
   }
@@ -572,11 +572,11 @@ public class Core
     Class  cls;
     try
     {
-      cls = Class.forName (cln);
+      cls = Class.forName( cln );
     }
     catch ( ClassNotFoundException e )
     {
-      throw new HongsExemption(e, 821);
+      throw new CruxExemption (e, 821);
     }
 
     return got(cln, cls);

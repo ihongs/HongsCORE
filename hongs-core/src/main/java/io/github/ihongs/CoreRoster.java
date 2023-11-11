@@ -112,7 +112,7 @@ public class CoreRoster {
                     clso = Class.forName (clsn);
                 }
                 catch (ClassNotFoundException ex) {
-                    throw  new HongsExemption(ex, 831, "Can not find class '" + clsn + "'.");
+                    throw  new  CruxExemption(ex, 831, "Can not find class '" + clsn + "'.");
                 }
 
                 // 从注解提取动作名
@@ -153,7 +153,7 @@ public class CoreRoster {
             // 检查方法是否合法
             Class[] prms = mtdo.getParameterTypes();
             if (prms == null || prms.length != 1 || !ActionHelper.class.isAssignableFrom(prms[0])) {
-                throw new HongsExemption(832, "Can not find action method '"+clsn+"."+mtdn+"(ActionHelper)'.");
+                throw new CruxExemption(832, "Can not find action method '"+clsn+"."+mtdn+"(ActionHelper)'.");
             }
 
             Mathod mtdx = new Mathod();
@@ -191,7 +191,7 @@ public class CoreRoster {
             // 检查方法是否合法
             Class[] prms = mtdo.getParameterTypes();
             if (prms == null || prms.length != 1 || !String[].class.isAssignableFrom(prms[0])) {
-                throw new HongsExemption(832, "Can not find combat method '"+clsn+"."+mtdn+"(String[])'.");
+                throw new CruxExemption(832, "Can not find combat method '"+clsn+"."+mtdn+"(String[])'.");
             }
 
             if ("__main__".equals(actx)) {
@@ -210,10 +210,10 @@ public class CoreRoster {
             try {
                 clss = getClassNames(pkgn, true );
             } catch (IOException ex) {
-                throw new HongsExemption(ex, 830, "Can not load package '" + pkgn + "'.");
+                throw new CruxExemption(ex, 830, "Can not load package '" + pkgn + "'.");
             }
             if (clss == null) {
-                throw new HongsExemption(830, "Can not find package '" + pkgn + "'.");
+                throw new CruxExemption(830, "Can not find package '" + pkgn + "'.");
             }
         } else
         if (pkgn.endsWith(".*" )) {
@@ -221,10 +221,10 @@ public class CoreRoster {
             try {
                 clss = getClassNames(pkgn, false);
             } catch (IOException ex) {
-                throw new HongsExemption(ex, 830, "Can not load package '" + pkgn + "'.");
+                throw new CruxExemption(ex, 830, "Can not load package '" + pkgn + "'.");
             }
             if (clss == null) {
-                throw new HongsExemption(830, "Can not find package '" + pkgn + "'.");
+                throw new CruxExemption(830, "Can not find package '" + pkgn + "'.");
             }
         } else {
             clss = new HashSet();
@@ -368,7 +368,7 @@ public class CoreRoster {
                                .getLastModified();
                 }
                 catch (IOException e) {
-                    throw new HongsExemption( e );
+                    throw new CruxExemption ( e );
                 }
         }
     }

@@ -18,48 +18,48 @@ package io.github.ihongs;
  */
 public class CruxException extends HongsException implements Crux {
 
-    public CruxException(Throwable fact, int code, String desc, Object... data) {
-        super(fact, code, desc, data);
+    public CruxException(Throwable cause, int errno, String error, Object... cases) {
+        super(cause, errno, error, cases);
     }
 
-    public CruxException(Throwable fact, int code, String desc) {
-        this(fact, code, desc, (Object[]) null);
+    public CruxException(Throwable cause, int errno, String error) {
+        this(cause, errno, error, (Object[]) null);
     }
 
-    public CruxException(Throwable fact, int code) {
-        this(fact, code, null, (Object[]) null);
+    public CruxException(Throwable cause, int errno) {
+        this(cause, errno, null , (Object[]) null);
     }
 
-    public CruxException(Throwable fact, String desc, Object... data) {
-        this(fact, 0x0 , desc, data);
+    public CruxException(Throwable cause, String error, Object... cases) {
+        this(cause,  0x0 , error, cases);
     }
 
-    public CruxException(Throwable fact, String desc) {
-        this(fact, 0x0 , desc, (Object[]) null);
+    public CruxException(Throwable cause, String error) {
+        this(cause,  0x0 , error, (Object[]) null);
     }
 
-    public CruxException(Throwable fact) {
-        this(fact, 0x0 , null, (Object[]) null);
+    public CruxException(Throwable cause) {
+        this(cause,  0x0 , null , (Object[]) null);
     }
 
-    public CruxException(int code, String desc, Object... data) {
-        this(null, code, desc, data);
+    public CruxException(int errno, String error, Object... cases) {
+        this(null , errno, error, cases);
     }
 
-    public CruxException(int code, String desc) {
-        this(null, code, desc, (Object[]) null);
+    public CruxException(int errno, String error) {
+        this(null , errno, error, (Object[]) null);
     }
 
-    public CruxException(int code) {
-        this(null, code, null, (Object[]) null);
+    public CruxException(int errno) {
+        this(null , errno, null , (Object[]) null);
     }
 
-    public CruxException(String desc, Object... data) {
-        this(null, 0x0 , desc, data);
+    public CruxException(String error, Object... cases) {
+        this(null ,  0x0 , error, cases);
     }
 
-    public CruxException(String desc) {
-        this(null, 0x0 , desc, (Object[]) null);
+    public CruxException(String error) {
+        this(null ,  0x0 , error, (Object[]) null);
     }
 
     @Override

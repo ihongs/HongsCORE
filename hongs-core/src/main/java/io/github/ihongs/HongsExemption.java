@@ -20,12 +20,12 @@ public class HongsExemption
   extends  RuntimeException
   implements HongsCause {
 
-    protected final HongsFault that;
+    protected final HongsCurse that;
 
     public HongsExemption(Throwable cause, int errno, String error, Object... cases) {
         super(cause);
 
-        that = new HongsFault(this, errno, error, cases);
+        that = new HongsCurse(this, errno, error, cases);
     }
 
     public HongsExemption(Throwable cause, int errno, String error) {

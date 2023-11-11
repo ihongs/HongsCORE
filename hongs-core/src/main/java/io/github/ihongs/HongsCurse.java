@@ -12,7 +12,7 @@ import io.github.ihongs.util.Syno;
  *
  * @author Hongs
  */
-public final class HongsFault {
+public final class HongsCurse {
 
     public final Throwable cause;
     public final int       errno;
@@ -28,7 +28,7 @@ public final class HongsFault {
      * @param error 描述
      * @param cases 参数
      */
-    HongsFault (Throwable cause, int errno, String error, Object[] cases) {
+    HongsCurse (Throwable cause, int errno, String error, Object[] cases) {
         // 从描述里提取配置名称
         if (error != null
         &&  error.length( ) >= 2

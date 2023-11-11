@@ -177,9 +177,10 @@ public class CoreConfig
       if (826 != e.getErrno()) {
         throw e.toExemption( );
       }
+      CoreLogger.debug("CoreConfig {} is not found", name);
       return false;
     }
-    return true ;
+    return true;
   }
 
   /**
@@ -359,6 +360,7 @@ public class CoreConfig
         if (e.getErrno() != 826) { // 826 文件不存在, 下同
             throw e;
         }
+        CoreLogger.debug("CoreConfig {} is not found", names.length > 0 ? names[0] : "default");
         return new Multiple( );
     }
 
@@ -370,6 +372,7 @@ public class CoreConfig
             if (e.getErrno() != 826) {
                 throw e;
             }
+            CoreLogger.debug("CoreConfig {} is not found", name);
         }
     }
 

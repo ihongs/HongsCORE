@@ -24,9 +24,7 @@
         $module = $module.substring( 0, i );
 
         // 获取语言
-        $locale = CoreLocale.getInstance( ).clone(  );
-        $locale.fill($module);
-        $locale.fill($module +"/"+ $entity);
+        $locale = CoreLocale.getMultiple($module +"/"+ $entity, $module, "default");
 
         // 查找标题
         String[] a= {$module +"/"+ $entity , $module , "centra"};

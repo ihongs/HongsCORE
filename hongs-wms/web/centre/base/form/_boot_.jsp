@@ -29,9 +29,7 @@
         _module = _module.substring( 0, i );
 
         // 获取语言
-        _locale = CoreLocale.getInstance( ).clone(  );
-        _locale.fill(_module);
-        _locale.fill(_module +"/"+ _entity);
+        _locale = CoreLocale.getMultiple(_module +"/"+ _entity, _module, "default");
 
         // 获取字段
         String[] a= {_module +"/"+ _entity , _module};

@@ -1,11 +1,7 @@
 package io.github.ihongs.util;
 
-import static io.github.ihongs.Core.DEBUG;
-import io.github.ihongs.HongsExemption;
-
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-import org.json.simple.parser.ContainerFactory;
+import io.github.ihongs.Core;
+import io.github.ihongs.CruxExemption;
 
 import java.io.Reader;
 import java.io.IOException;
@@ -22,6 +18,10 @@ import java.util.Collection;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
+
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.json.simple.parser.ContainerFactory;
 
 /**
  * 数据格式工具
@@ -65,7 +65,7 @@ public final class Dist
     }
     catch (ParseException | IOException ex)
     {
-      throw new HongsExemption(ex, 855, "Can not parse data by json");
+      throw new CruxExemption(ex, 855, "Can not parse data by json");
     }
   }
 
@@ -82,7 +82,7 @@ public final class Dist
     }
     catch (ParseException ex)
     {
-      throw new HongsExemption(ex, 855, "Can not parse data by json");
+      throw new CruxExemption(ex, 855, "Can not parse data by json");
     }
   }
 
@@ -131,7 +131,7 @@ public final class Dist
    */
   public static void append(Appendable out, Object obj)
   {
-    append(out, obj, 2 > DEBUG);
+    append(out, obj, 2 > Core.DEBUG);
   }
 
   /**
@@ -148,7 +148,7 @@ public final class Dist
     }
     catch (IOException e)
     {
-      throw new HongsExemption(e, 856, "Can not write data for json");
+      throw new CruxExemption(e, 856, "Can not write data for json");
     }
   }
 
@@ -481,7 +481,7 @@ public final class Dist
             }
         }
         catch (IOException e)  {
-            throw new HongsExemption(e, 856, "Can not write data for json");
+            throw new CruxExemption(e, 856, "Can not write data for json");
         }
     }
 

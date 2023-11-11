@@ -3,13 +3,12 @@ package io.github.ihongs.jsp;
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
+import io.github.ihongs.CruxException;
+import io.github.ihongs.CruxExemption;
 import io.github.ihongs.HongsCause;
-import io.github.ihongs.HongsException;
-import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.util.Dist;
-import io.github.ihongs.util.Synt;
 import java.net.URLEncoder;
 import java.net.URLDecoder;
 import java.io.IOException;
@@ -75,7 +74,7 @@ abstract public class Pagelet extends ActionDriver implements HttpJspPage
                 if (ax instanceof HongsCause) {
                     ah.fault((HongsCause) ax);
                 } else {
-                    ah.fault(new HongsException(
+                    ah.fault(new CruxException(
                             ax != null ? ax : ex , ern , ( String ) msg ));
                 }
             } else {
@@ -197,7 +196,7 @@ abstract public class Pagelet extends ActionDriver implements HttpJspPage
       try {
           return URLEncoder.encode(str, "UTF-8");
       } catch (UnsupportedEncodingException ex ) {
-          throw new HongsExemption(ex, 1111);
+          throw new CruxExemption(ex, 1111);
       }
   }
 
@@ -211,7 +210,7 @@ abstract public class Pagelet extends ActionDriver implements HttpJspPage
       try {
           return URLDecoder.decode(str, "UTF-8");
       } catch (UnsupportedEncodingException ex ) {
-          throw new HongsExemption(ex, 1111);
+          throw new CruxExemption(ex, 1111);
       }
   }
 

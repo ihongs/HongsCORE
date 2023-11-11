@@ -1,6 +1,6 @@
 package io.github.ihongs.util;
 
-import io.github.ihongs.HongsExemption;
+import io.github.ihongs.CruxExemption;
 import io.github.ihongs.util.Synt.LOOP;
 
 import java.util.Arrays;
@@ -368,11 +368,11 @@ public final class Dict
     }
     if (keys.length ==  0)
     {
-      throw new HongsExemption(851, "Keys required, but empty gives");
+      throw new CruxExemption(851, "Keys required, but empty gives");
     }
     if (keys[0] == null || keys[0] instanceof Integer)
     {
-      throw new HongsExemption(851, "First key can not be null or ints, but it is " + keys[0]);
+      throw new CruxExemption(851, "First key can not be null or ints, but it is " + keys[0]);
     }
 
     put(map, val, keys, 0);
@@ -391,11 +391,11 @@ public final class Dict
     }
     if (keys.length ==  0)
     {
-      throw new HongsExemption(851, "Keys required, but empty gives");
+      throw new CruxExemption(851, "Keys required, but empty gives");
     }
     if (keys[0] == null || keys[0] instanceof Integer)
     {
-      throw new HongsExemption(851, "First key can not be null or ints, but it is " + keys[0]);
+      throw new CruxExemption(851, "First key can not be null or ints, but it is " + keys[0]);
     }
 
     del(map, keys, 0);
@@ -625,7 +625,7 @@ public final class Dict
                 break;
             case '[' :
                 if (fkh) {
-                    throw new HongsExemption(850, "Syntax error at " + end + " in " + path);
+                    throw new CruxExemption(850, "Syntax error at " + end + " in " + path);
                 }
                 if (beg != end) {
                     lst.add(path.substring(beg, end));
@@ -634,14 +634,14 @@ public final class Dict
                     lst.add( "" );
                 } else
                 if (']' != path.charAt(beg - 1)) { // 规避 a[b][c] 中的 ][
-                    throw new HongsExemption(850, "Syntax error at " + end + " in " + path);
+                    throw new CruxExemption(850, "Syntax error at " + end + " in " + path);
                 }
                 beg  = end + 1;
                 fkh  = true;
                 break;
             case ']' :
                 if (! fkh) {
-                    throw new HongsExemption(850, "Syntax error at " + end + " in " + path);
+                    throw new CruxExemption(850, "Syntax error at " + end + " in " + path);
                 }
                 if (beg != end) {
                     lst.add(path.substring(beg, end));
@@ -650,7 +650,7 @@ public final class Dict
                     lst.add(null);
                 } else
 //              if ('[' != path.charAt(beg - 1)) { // 这种情况其实并不存在
-                    throw new HongsExemption(850, "Syntax error at " + end + " in " + path);
+                    throw new CruxExemption(850, "Syntax error at " + end + " in " + path);
 //              }
                 beg  = end + 1;
                 fkh  = false;

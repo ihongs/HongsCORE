@@ -47,8 +47,7 @@ public class PresetHelper {
         return this;
     }
 
-    public PresetHelper addDefenseData(FormSet form, String... used)
-    throws HongsException {
+    public PresetHelper addDefenseData(FormSet form, String... used) {
         for(String usen : used) {
             try {
                 Map data  = form.getEnum(usen);
@@ -63,8 +62,7 @@ public class PresetHelper {
         return this;
     }
 
-    public PresetHelper addDefaultData(FormSet form, String... used)
-    throws HongsException {
+    public PresetHelper addDefaultData(FormSet form, String... used) {
         for(String usen : used) {
             try {
                 Map data  = form.getEnum(usen);

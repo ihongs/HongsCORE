@@ -1,7 +1,7 @@
 package io.github.ihongs.action;
 
 import io.github.ihongs.Core;
-import io.github.ihongs.HongsExemption;
+import io.github.ihongs.CruxExemption;
 import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
@@ -293,10 +293,10 @@ public class UploadHelper {
             a = m.digest(  );
         }
         catch (NoSuchAlgorithmException e) {
-            throw new HongsExemption(e, 1120);
+            throw new CruxExemption(e, 1120);
         }
         catch (IOException e) {
-            throw new HongsExemption(e, 1121);
+            throw new CruxExemption(e, 1121);
         }
 
         // 转为 16 进制

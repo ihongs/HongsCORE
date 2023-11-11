@@ -7,8 +7,8 @@ import io.github.ihongs.CoreLocale;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.CoreRoster;
 import io.github.ihongs.CoreSerial;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.HongsException;
-import io.github.ihongs.HongsExemption;
 import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.daemon.Gate;
@@ -154,7 +154,7 @@ public class FormSet
   }
 
   static protected boolean expired(String namz , long timz)
-    throws HongsException
+    throws CruxException
   {
     File serFile = new File(Core.DATA_PATH
                  + File.separator + "serial"
@@ -178,7 +178,7 @@ public class FormSet
       return timz < resTime;
     }
 
-    throw new HongsException(910, "Can not find the config file '" + namz + Cnst.FORM_EXT + ".xml'");
+    throw new CruxException(910, "Can not find the config file '" + namz + Cnst.FORM_EXT + ".xml'");
   }
 
   public boolean expired()
@@ -206,7 +206,7 @@ public class FormSet
         is = CoreRoster.getResourceAsStream(fn);
         if ( null == is )
         {
-            throw new HongsException(910, "Can not find the config file '" + name + Cnst.FORM_EXT + ".xml'");
+            throw new CruxException(910, "Can not find the config file '" + name + Cnst.FORM_EXT + ".xml'");
         }
     }
 
@@ -223,15 +223,15 @@ public class FormSet
     }
     catch ( IOException ex)
     {
-      throw new HongsException(ex, 911, "Read '" +name+Cnst.FORM_EXT+".xml' error");
+      throw new CruxException(ex, 911, "Read '" +name+Cnst.FORM_EXT+".xml' error");
     }
     catch (SAXException ex)
     {
-      throw new HongsException(ex, 911, "Parse '"+name+Cnst.FORM_EXT+".xml' error");
+      throw new CruxException(ex, 911, "Parse '"+name+Cnst.FORM_EXT+".xml' error");
     }
     catch (ParserConfigurationException ex)
     {
-      throw new HongsException(ex, 911, "Parse '"+name+Cnst.FORM_EXT+".xml' error");
+      throw new CruxException(ex, 911, "Parse '"+name+Cnst.FORM_EXT+".xml' error");
     }
 
     this.forms = new HashMap();
@@ -244,7 +244,7 @@ public class FormSet
       try {
         is.close();
       } catch (IOException ex) {
-        throw new HongsException(ex);
+        throw new CruxException(ex);
       }
     }
   }
@@ -386,7 +386,9 @@ public class FormSet
     }
   }
 
-  private Object parse(String type, String text) throws HongsException {
+  private Object parse(String type, String text)
+    throws CruxException
+  {
       if (null == type || "".equals(type)) {
           return  text.trim();
       } else {
@@ -424,14 +426,14 @@ public class FormSet
           return Synt.defoult(Synt.asDouble(text), (double) 0);
       }
 
-      throw new HongsException(914, "Unrecognized type '$0'", type);
+      throw new CruxException(914, "Unrecognized type '$0'", type);
   }
 
   public String getName() {
       return  this.name;
   }
 
-  public Map getEnum(String name) throws HongsException {
+  public Map getEnum(String name) throws CruxException {
     if (null == name) {
         throw new NullPointerException( "Enum name can not be null" );
     }
@@ -446,10 +448,10 @@ public class FormSet
     if (name . startsWith ("@")) {
         return  ( Map  )  Core.getInstance(name.substring(1));
     }
-    throw new HongsException(913, "Enum "+name+" in "+this.name+" is not exists");
+    throw new CruxException(913, "Enum "+name+" in "+this.name+" is not exists");
   }
 
-  public Map getForm(String name) throws HongsException {
+  public Map getForm(String name) throws CruxException {
     if (null == name) {
         throw new NullPointerException( "Form name can not be null" );
     }
@@ -464,7 +466,7 @@ public class FormSet
     if (name . startsWith ("@")) {
         return  ( Map  )  Core.getInstance(name.substring(1));
     }
-    throw new HongsException(912, "Form "+name+" in "+this.name+" is not exists");
+    throw new CruxException(912, "Form "+name+" in "+this.name+" is not exists");
   }
 
   /**

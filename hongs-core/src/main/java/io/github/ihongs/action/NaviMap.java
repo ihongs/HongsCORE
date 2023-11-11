@@ -6,6 +6,7 @@ import io.github.ihongs.CoreLocale;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.CoreRoster;
 import io.github.ihongs.CoreSerial;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.util.Synt;
@@ -197,7 +198,7 @@ public class NaviMap
   }
 
   static protected boolean expired(String namz , long timz)
-    throws HongsException
+    throws CruxException
   {
     File serFile = new File(Core.DATA_PATH
                  + File.separator + "serial"
@@ -221,17 +222,17 @@ public class NaviMap
       return timz < resTime;
     }
 
-    throw new HongsException(920, "Can not find the config file '" + namz + Cnst.NAVI_EXT + ".xml'");
+    throw new CruxException(920, "Can not find the config file '" + namz + Cnst.NAVI_EXT + ".xml'");
   }
 
   public boolean expired()
-    throws HongsException
+    throws CruxException
   {
     return expired (name, time);
   }
 
   public boolean expires()
-    throws HongsException
+    throws CruxException
   {
     /**
      * 逐一检查导入的配置
@@ -266,7 +267,7 @@ public class NaviMap
         is = CoreRoster.getResourceAsStream(fn);
         if (  is  ==  null )
         {
-            throw new HongsException(920, "Can not find the config file '" + name + Cnst.NAVI_EXT + ".xml'");
+            throw new CruxException(920, "Can not find the config file '" + name + Cnst.NAVI_EXT + ".xml'");
         }
     }
 
@@ -290,15 +291,15 @@ public class NaviMap
     }
     catch ( IOException ex)
     {
-      throw new HongsException(ex, 921, "Read '" +name+Cnst.NAVI_EXT+".xml' error");
+      throw new CruxException(ex, 921, "Read '" +name+Cnst.NAVI_EXT+".xml' error");
     }
     catch (SAXException ex)
     {
-      throw new HongsException(ex, 921, "Parse '"+name+Cnst.NAVI_EXT+".xml' error");
+      throw new CruxException(ex, 921, "Parse '"+name+Cnst.NAVI_EXT+".xml' error");
     }
     catch (ParserConfigurationException ex)
     {
-      throw new HongsException(ex, 921, "Parse '"+name+Cnst.NAVI_EXT+".xml' error");
+      throw new CruxException(ex, 921, "Parse '"+name+Cnst.NAVI_EXT+".xml' error");
     }
 
     this.menus = new LinkedHashMap();
@@ -315,7 +316,7 @@ public class NaviMap
       try {
         is.close();
       } catch (IOException ex) {
-        throw new HongsException(ex);
+        throw new CruxException(ex);
       }
     }
   }

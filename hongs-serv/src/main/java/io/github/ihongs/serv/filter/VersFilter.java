@@ -174,7 +174,7 @@ public class VersFilter extends ActionDriver {
                             req.getRequestDispatcher(act).include(req, rsp);
                             return;
                         }
-                    }
+                    } else
                     if (c.endsWith("/select")) {
                            c = act.substring(0 + p);
                         act  = act.substring(0 , p - 7) + "/recipe" + c;
@@ -226,7 +226,7 @@ public class VersFilter extends ActionDriver {
                 && (ab.contains("!enum")
                 ||  ab.contains("!menu")
                 ||  ab.contains("!info")) ) {
-                    rd.put(Cnst.ID_KEY, "");
+                    rd.put(Cnst.ID_KEY,"-");
                 }
                 if (ab.contains("!info")) {
                     ab.add(".info");

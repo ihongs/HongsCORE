@@ -2,8 +2,8 @@ package io.github.ihongs.server.init;
 
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
-import io.github.ihongs.HongsException;
-import io.github.ihongs.HongsExemption;
+import io.github.ihongs.CruxException;
+import io.github.ihongs.CruxExemption;
 import io.github.ihongs.db.DBConfig;
 import java.util.Map;
 import org.eclipse.jetty.server.Server;
@@ -53,8 +53,8 @@ public class SessInDB  implements Initer {
         DBConfig conf;
         try {
             conf= new DBConfig(dh);
-        } catch (HongsException e) {
-            throw new HongsExemption (e);
+        } catch ( CruxException e) {
+            throw e.toExemption( );
         }
 
         if (conf.link != null && conf.link.length() != 0 ) {
@@ -77,7 +77,7 @@ public class SessInDB  implements Initer {
             da.setDriverInfo(dt, dh);
             return da;
         } else {
-            throw new HongsExemption("Wrong session manager jdbc!");
+            throw new CruxExemption("Wrong session manager jdbc!");
         }
     }
 

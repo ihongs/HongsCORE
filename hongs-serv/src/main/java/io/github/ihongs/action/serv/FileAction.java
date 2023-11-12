@@ -2,7 +2,7 @@ package io.github.ihongs.action.serv;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.UploadHelper;
 import io.github.ihongs.action.anno.Action;
@@ -20,7 +20,7 @@ import javax.servlet.http.Part;
 public class FileAction {
 
     @Action("create")
-    public void create(ActionHelper helper) throws HongsException {
+    public void create(ActionHelper helper) throws CruxException {
         List  list = new  ArrayList  ();
         List  fils = Synt.asList (helper.getRequestData( ).get("file") );
         String uid = Synt.declare(helper.getSessibute(Cnst.UID_SES),"0");

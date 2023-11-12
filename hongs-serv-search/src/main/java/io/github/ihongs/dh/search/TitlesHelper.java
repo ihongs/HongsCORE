@@ -1,7 +1,7 @@
 package io.github.ihongs.dh.search;
 
 import io.github.ihongs.Cnst;
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
 import io.github.ihongs.action.FormSet;
@@ -63,21 +63,21 @@ public class TitlesHelper {
         return  this;
     }
 
-    public TitlesHelper addItemsByForm(Map fs ) throws HongsException  {
+    public TitlesHelper addItemsByForm(Map fs ) throws CruxException  {
         String conf = Dict.getValue( fs, "default", "@", "conf");
         String form = Dict.getValue( fs, "unknown", "@", "form");
         return addItemsByForm( conf, form, fs );
     }
 
     public TitlesHelper addItemsByForm(String conf, String form)
-    throws HongsException {
+    throws CruxException {
         Map fs = FormSet.getInstance(conf /**/)
                         .getForm    (form /**/);
         return addItemsByForm( conf, form, fs );
     }
 
     public TitlesHelper addItemsByForm(String conf, String form, Map<String, Map> fs)
-    throws HongsException {
+    throws CruxException {
         Map ts = FormSet.getInstance("default")
                         .getEnum ( "__types__");
         Iterator it = fs.entrySet().iterator( );
@@ -102,7 +102,7 @@ public class TitlesHelper {
                 Map    fe ;
                 try {
                        fe = FormSet.getInstance(xc).getEnum( xn ) ;
-                } catch ( HongsException ex) {
+                } catch ( CruxException ex) {
                 if (ex.getErrno() == 913 ) {
                     continue;
                 } else {
@@ -122,9 +122,9 @@ public class TitlesHelper {
      * 通过表单配置设置枚举数据(及关联关系)
      * @param info
      * @param md 1 绑定枚举, 8 绑定关联, 9 全绑定
-     * @throws HongsException
+     * @throws CruxException
      */
-    public void addTitle(Map info, byte md) throws HongsException {
+    public void addTitle(Map info, byte md) throws CruxException {
         addTitle(
             info,
             TEXT == (TEXT & md) ? enums : new HashMap(),
@@ -139,12 +139,12 @@ public class TitlesHelper {
      * @param info 为通过 counts 得到的 info
      * @param enums
      * @param forks
-     * @throws HongsException
+     * @throws CruxException
      */
     protected void addTitle(Map info,
             Map<String, Map<String, String>> enums,
             Map<String, Map<String, String>> forks)
-            throws HongsException {
+            throws CruxException {
         Iterator<Map.Entry> it = info.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry et = it.next ( );
@@ -240,9 +240,9 @@ public class TitlesHelper {
      * @param ls
      * @param fc
      * @param fn
-     * @throws HongsException
+     * @throws CruxException
      */
-    protected void addForks(List<List> ls, Map fc, String fn) throws HongsException {
+    protected void addForks(List<List> ls, Map fc, String fn) throws CruxException {
         String at = (String) fc.get("data-at");
         String vk = (String) fc.get("data-vk");
         String tk = (String) fc.get("data-tk");
@@ -320,9 +320,9 @@ public class TitlesHelper {
      * @param ls
      * @param fc
      * @param fn
-     * @throws HongsException
+     * @throws CruxException
      */
-    protected void addForkz(List<Object[]> ls, Map fc, String fn) throws HongsException {
+    protected void addForkz(List<Object[]> ls, Map fc, String fn) throws CruxException {
         String at = (String) fc.get("data-at");
         String vk = (String) fc.get("data-vk");
         String tk = (String) fc.get("data-tk");
@@ -416,7 +416,7 @@ public class TitlesHelper {
     public static class Titler implements FilterInvoker {
         @Override
         public void invoke(ActionHelper helper, ActionRunner chains, Annotation anno)
-        throws HongsException {
+        throws CruxException {
             Titles   ann  = (Titles) anno;
             String   conf = ann.conf();
             String   form = ann.form();
@@ -480,10 +480,10 @@ public class TitlesHelper {
                 sel.setItemsInForm( rb );
                 sel.addItemsByForm(conf, form, data );
                 sel.addTitle(enf , adds);
-            } catch (HongsException ex ) {
-                int  ec  = ex.getErrno();
-                if  (ec != 910 && ec != 911 && ec != 912) { // 非表单缺失
-                    throw  ex;
+            } catch ( CruxException ex ) {
+                int ec  = ex.getErrno( );
+                if (ec != 910 && ec != 911 && ec != 912) { // 非表单缺失
+                    throw ex;
                 }
             }
 

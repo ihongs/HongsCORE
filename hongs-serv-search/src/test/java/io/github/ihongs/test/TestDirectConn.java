@@ -2,7 +2,7 @@ package io.github.ihongs.test;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.dh.lucene.conn.Conn;
 import io.github.ihongs.dh.lucene.conn.DirectConn;
 import io.github.ihongs.dh.search.SearchEntity;
@@ -14,7 +14,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import static junit.framework.Assert.assertEquals;
-import org.junit.Test;
 
 public class TestDirectConn {
 
@@ -23,7 +22,7 @@ public class TestDirectConn {
     int waitTime = 30;  // 测试等待时间(秒)
 
     //@Test
-    public void testWriter() throws HongsException, InterruptedException, IOException {
+    public void testWriter() throws CruxException, InterruptedException, IOException {
         // 必要全局变量
         if (Core.DATA_PATH == null) {
             Core.DATA_PATH = "target/test/var";
@@ -68,8 +67,8 @@ public class TestDirectConn {
                     ));
                     assertEquals(id, info. get (Cnst.ID_KEY));
                 }
-                catch (HongsException ex) {
-                    ex.printStackTrace( );
+                catch (CruxException ex) {
+                    ex.printStackTrace();
                 }
             }
         };

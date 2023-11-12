@@ -2,7 +2,7 @@ package io.github.ihongs.serv.matrix;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.NaviMap;
 import io.github.ihongs.db.DB;
@@ -45,16 +45,16 @@ public class Furl extends TreeModel {
     protected String centra = "centra/data";
     protected String centre = "centre/data";
 
-    public Furl() throws HongsException {
+    public Furl() throws CruxException {
         this(DB.getInstance("matrix").getTable("furl"));
     }
 
-    public Furl(Table table) throws HongsException {
+    public Furl(Table table) throws CruxException {
         super(table);
     }
 
     @Override
-    public int add(String id, Map rd) throws HongsException {
+    public int add(String id, Map rd) throws CruxException {
         int n = super.add(id, rd);
 
         // 建立菜单配置
@@ -64,7 +64,7 @@ public class Furl extends TreeModel {
     }
 
     @Override
-    public int put(String id, Map rd) throws HongsException {
+    public int put(String id, Map rd) throws CruxException {
         int n = super.put(id, rd);
 
         // 更新菜单配置
@@ -74,7 +74,7 @@ public class Furl extends TreeModel {
     }
 
     @Override
-    public int del(String id) throws HongsException {
+    public int del(String id) throws CruxException {
         int n = super.del(id);
 
         // 更新菜单配置
@@ -84,7 +84,7 @@ public class Furl extends TreeModel {
     }
 
     @Override
-    protected void filter(FetchCase caze, Map rd) throws HongsException {
+    protected void filter(FetchCase caze, Map rd) throws CruxException {
         super.filter(caze, rd);
 
         // 超级管理员不做限制
@@ -164,7 +164,7 @@ public class Furl extends TreeModel {
     }
 
     public  void updateMenus()
-    throws HongsException {
+    throws CruxException {
         Document centraDocm, centreDocm;
         Element  centraRoot, centreRoot;
         Element  importNode;
@@ -207,7 +207,7 @@ public class Furl extends TreeModel {
             Document centraDocm, Element centraRoot,
             Document centreDocm, Element centreRoot,
             String id)
-    throws HongsException {
+    throws CruxException {
         Element importNode;
         List<Map> rows;
         int  cnt  = 0 ;
@@ -252,7 +252,7 @@ public class Furl extends TreeModel {
             Document centraDocm, Element centraRoot,
             Document centreDocm, Element centreRoot,
             String id)
-    throws HongsException {
+    throws CruxException {
         Element centraRoo2, centreRoo2;
         List<Map> rows;
 
@@ -295,7 +295,7 @@ public class Furl extends TreeModel {
             Document centraDocm, Element centraRoot,
             Document centreDocm, Element centreRoot,
             String id)
-    throws HongsException {
+    throws CruxException {
         Element centraHid2, centreHid2;
         List<Map> rows;
 
@@ -336,17 +336,17 @@ public class Furl extends TreeModel {
         }
     }
 
-    private Document makeDocument() throws HongsException {
+    private Document makeDocument() throws CruxException {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder        builder = factory.newDocumentBuilder();
             return  builder.newDocument();
         } catch (ParserConfigurationException e) {
-            throw new HongsException( e );
+            throw new CruxException(e);
         }
     }
 
-    private void saveDocument(File file, Document docm) throws HongsException {
+    private void saveDocument(File file, Document docm) throws CruxException {
         File fold = file.getParentFile();
         if (!fold.exists()) {
              fold.mkdirs();
@@ -367,15 +367,15 @@ public class Furl extends TreeModel {
 
             tr.transform(ds, sr);
         } catch (TransformerConfigurationException e) {
-            throw new HongsException(e);
+            throw new CruxException(e);
         } catch (UnsupportedEncodingException e) {
-            throw new HongsException(e);
+            throw new CruxException(e);
         } catch (IllegalArgumentException e) {
-            throw new HongsException(e);
+            throw new CruxException(e);
         } catch (FileNotFoundException e) {
-            throw new HongsException(e);
+            throw new CruxException(e);
         } catch ( TransformerException e) {
-            throw new HongsException(e);
+            throw new CruxException(e);
         }
     }
 

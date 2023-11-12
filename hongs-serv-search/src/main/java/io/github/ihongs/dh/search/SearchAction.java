@@ -1,7 +1,7 @@
 package io.github.ihongs.dh.search;
 
 import io.github.ihongs.Cnst;
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
 import io.github.ihongs.action.FormSet;
@@ -31,7 +31,7 @@ public class SearchAction extends JAction {
 
     @Override
     public IEntity getEntity(ActionHelper helper)
-    throws HongsException {
+    throws CruxException {
         ActionRunner runner = (ActionRunner)
            helper.getAttribute(ActionRunner.class.getName());
         return SearchEntity.getInstance (runner.getModule(), runner.getEntity());
@@ -41,7 +41,7 @@ public class SearchAction extends JAction {
     @Preset(conf="", form="")
     @Select(conf="", form="")
     @Override
-    public void search(ActionHelper helper) throws HongsException {
+    public void search(ActionHelper helper) throws CruxException {
         /**
          * 有指定查询条件则按匹配度排序
          */
@@ -69,7 +69,7 @@ public class SearchAction extends JAction {
     @Action("acount")
     @Preset(conf="", form="")
     @Titles(conf="", form="")
-    public void acount(ActionHelper helper) throws HongsException {
+    public void acount(ActionHelper helper) throws CruxException {
         SearchEntity sr = (SearchEntity) getEntity(helper);
         StatisHelper sh = new StatisHelper(sr);
 
@@ -90,7 +90,7 @@ public class SearchAction extends JAction {
     @Action("assort")
     @Preset(conf="", form="")
     @Select(conf="", form="")
-    public void assort(ActionHelper helper) throws HongsException {
+    public void assort(ActionHelper helper) throws CruxException {
         SearchEntity sr = (SearchEntity) getEntity(helper);
         StatisHelper sh = new StatisHelper(sr);
 
@@ -114,9 +114,9 @@ public class SearchAction extends JAction {
      * @param sr 字段配置
      * @param rd 请求数据
      * @param nb 1 acount, 2 assort
-     * @throws HongsException
+     * @throws CruxException
      */
-    protected void acheck(LuceneRecord sr, Map rd, int nb) throws HongsException {
+    protected void acheck(LuceneRecord sr, Map rd, int nb) throws CruxException {
         Set rb = Synt.toTerms(rd.get(Cnst.RB_KEY));
         Set ob = Synt.toTerms(rd.get(Cnst.OB_KEY));
         Map fs = sr.getFields( );
@@ -161,10 +161,10 @@ public class SearchAction extends JAction {
 
             Map fc = (Map)fs.get(fn);
             if (! fs.containsKey(fn)) {
-                throw new HongsException(400, "Field '"+fn+"' is not existent");
+                throw new CruxException(400, "Field '"+fn+"' is not existent");
             }
             if (! ns.contains   (fn)) {
-                throw new HongsException(400, "Field '"+fn+"' is not statable");
+                throw new CruxException(400, "Field '"+fn+"' is not statable");
             }
 
             /**
@@ -182,7 +182,7 @@ public class SearchAction extends JAction {
                 &&  !  "date" .equals(t)
                 &&  !("hidden".equals(t) && ks.contains(k))
                 &&  !( "enum" .equals(t) && ks.contains(k))) {
-                    throw new HongsException(400, "Field '"+fn+"' is not numeric");
+                    throw new CruxException(400, "Field '"+fn+"' is not numeric");
                 }
             }
 
@@ -197,7 +197,7 @@ public class SearchAction extends JAction {
                 String xn = Synt.defxult((String) fc.get("enum"), (String) fn);
                 try {
                     ar = FormSet.getInstance(xc).getEnum(xn).keySet();
-                } catch (HongsException e) {
+                } catch (CruxException e) {
                 if ( 913 != e.getErrno() ) {
                     throw e; // 非枚举缺失异常
                 }}
@@ -236,7 +236,7 @@ public class SearchAction extends JAction {
                 fn = fn.substring(0, fn.length() - 1);
             }
             if (rb == null || ! rb.contains(fn)) {
-                throw new HongsException(400, "Field '"+fu+"' can not be sorted");
+                throw new CruxException(400, "Field '"+fu+"' can not be sorted");
             }
         }
     }

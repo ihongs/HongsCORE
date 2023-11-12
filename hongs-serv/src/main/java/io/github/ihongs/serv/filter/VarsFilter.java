@@ -3,8 +3,8 @@ package io.github.ihongs.serv.filter;
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.HongsCause;
-import io.github.ihongs.HongsException;
-import io.github.ihongs.HongsExemption;
+import io.github.ihongs.CruxException;
+import io.github.ihongs.CruxExemption;
 import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.util.Syno;
@@ -141,7 +141,7 @@ public class VarsFilter extends ActionDriver {
             try {
                 srCheck(rd, sr_limit, sr_level, 0,1);
             }
-            catch (HongsException|HongsExemption ex) {
+            catch (CruxException | CruxExemption ex) {
                 hlpr.fault( ex );
                 return;
             }
@@ -154,7 +154,7 @@ public class VarsFilter extends ActionDriver {
                 wd  = wdSplit (wd, wd_split);
                 rd. put ( Cnst.WD_KEY , wd );
             }
-            catch (HongsException|HongsExemption ex) {
+            catch (CruxException | CruxExemption ex) {
                 hlpr.fault( ex );
                 return;
             }
@@ -163,7 +163,7 @@ public class VarsFilter extends ActionDriver {
         chain.doFilter(req, rsp);
     }
 
-    private int srCheck(Object od, int limit, int level, int t, int l) throws HongsException {
+    private int srCheck(Object od, int limit, int level, int t, int l) throws CruxException {
         if (od == null) {
             return t;
         }
@@ -174,11 +174,11 @@ public class VarsFilter extends ActionDriver {
             t = srCount(rd.get(Cnst.OR_KEY), limit, level, t, l);
             return t;
         } else {
-            throw new HongsException(400, Cnst.AR_KEY+"/"+Cnst.NR_KEY+"/"+Cnst.OR_KEY+" item must be json object");
+            throw new CruxException(400, Cnst.AR_KEY+"/"+Cnst.NR_KEY+"/"+Cnst.OR_KEY+" item must be json object");
         }
     }
 
-    private int srCount(Object od, int limit, int level, int t, int l) throws HongsException {
+    private int srCount(Object od, int limit, int level, int t, int l) throws CruxException {
         if (od == null) {
             return t;
         }
@@ -207,23 +207,23 @@ public class VarsFilter extends ActionDriver {
             }
             return t;
         } else {
-            throw new HongsException(400, Cnst.AR_KEY+"/"+Cnst.NR_KEY+"/"+Cnst.OR_KEY+" must be json array or object");
+            throw new CruxException(400, Cnst.AR_KEY+"/"+Cnst.NR_KEY+"/"+Cnst.OR_KEY+" must be json array or object");
         }
     }
 
-    private void srLimit(int limit, int t) throws HongsException {
+    private void srLimit(int limit, int t) throws CruxException {
         if (limit != 0 && limit < t) {
-            throw new HongsException(400, Cnst.AR_KEY+"/"+Cnst.NR_KEY+"/"+Cnst.OR_KEY+" can not exceed "+limit+" groups");
+            throw new CruxException(400, Cnst.AR_KEY+"/"+Cnst.NR_KEY+"/"+Cnst.OR_KEY+" can not exceed "+limit+" groups");
         }
     }
 
-    private void srLevel(int level, int l) throws HongsException {
+    private void srLevel(int level, int l) throws CruxException {
         if (level != 0 && level < l) {
-            throw new HongsException(400, Cnst.AR_KEY+"/"+Cnst.NR_KEY+"/"+Cnst.OR_KEY+" can not exceed "+level+" layers");
+            throw new CruxException(400, Cnst.AR_KEY+"/"+Cnst.NR_KEY+"/"+Cnst.OR_KEY+" can not exceed "+level+" layers");
         }
     }
 
-    private String wdSplit(String wd, String fn) throws HongsException {
+    private String wdSplit(String wd, String fn) throws CruxException {
         if (! fn.equals("split")) {
             // 调用分词方法
             Function<String, String> fx = (Function) Core.getInstance(fn);

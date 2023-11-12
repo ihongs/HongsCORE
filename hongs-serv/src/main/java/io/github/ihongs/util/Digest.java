@@ -1,7 +1,7 @@
 package io.github.ihongs.util;
 
 import io.github.ihongs.Core;
-import io.github.ihongs.HongsExemption;
+import io.github.ihongs.CruxExemption;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -29,8 +29,8 @@ public final class Digest {
     public Digest(String type) {
         try {
             DIGEST = MessageDigest.getInstance(type);
-        } catch ( NoSuchAlgorithmException e) {
-            throw new HongsExemption(e);
+        } catch (NoSuchAlgorithmException e) {
+            throw new CruxExemption(e);
         }
     }
 

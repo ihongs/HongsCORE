@@ -3,7 +3,7 @@ package io.github.ihongs.serv.matrix;
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreLogger;
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.daemon.Async;
@@ -116,9 +116,9 @@ public class Casc {
      * @param aq 关联代码
      * @param id 主键取值
      * @param ct 操作时间
-     * @throws HongsException
+     * @throws CruxException
      */
-    public static void update(Set<String> aq, Object id, long ct) throws HongsException {
+    public static void update(Set<String> aq, Object id, long ct) throws CruxException {
         for(String at : aq) {
             if (at == null || at.isEmpty()) {
                 continue;
@@ -148,9 +148,9 @@ public class Casc {
      * @param aq 关联代码
      * @param id 主键取值
      * @param ct 操作时间
-     * @throws HongsException
+     * @throws CruxException
      */
-    public static void delete(Set<String> aq, Object id, long ct) throws HongsException {
+    public static void delete(Set<String> aq, Object id, long ct) throws CruxException {
         for(String at : aq) {
             if (at == null || at.isEmpty()) {
                 continue;
@@ -181,9 +181,9 @@ public class Casc {
      * @param fk 关联字段, 多个用分号分隔
      * @param fv 关联取值
      * @param ct 操作时间
-     * @throws HongsException
+     * @throws CruxException
      */
-    public static void update(Data inst, String fk, Object fv, long ct) throws HongsException {
+    public static void update(Data inst, String fk, Object fv, long ct) throws CruxException {
         // 可能多个关联指向同一资源
         Map  ar = new HashMap();
         Set  or = new HashSet();
@@ -213,9 +213,9 @@ public class Casc {
      * @param fk 关联字段, 多个用分号分隔
      * @param fv 关联取值
      * @param ct 操作时间
-     * @throws HongsException
+     * @throws CruxException
      */
-    public static void delete(Data inst, String fk, Object fv, long ct) throws HongsException {
+    public static void delete(Data inst, String fk, Object fv, long ct) throws CruxException {
         // 可能多个关联指向同一资源
         Map  ar = new HashMap();
         Set  or = new HashSet();

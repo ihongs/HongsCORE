@@ -2,7 +2,7 @@ package io.github.ihongs.serv.centra;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.CoreLocale;
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.action.anno.CommitSuccess;
@@ -25,10 +25,10 @@ public class MineAction {
     @Action("info")
     @Preset(conf="master", form="mine")
     public void mineInfo(ActionHelper ah)
-    throws HongsException {
+    throws CruxException {
         Object id = ah.getSessibute(Cnst.UID_SES);
         if (id == null || "".equals(id) ) {
-            throw new  HongsException ( 401, "" );
+            throw new  CruxException ( 401 , "" );
         }
 
         UserAction ua = new UserAction( );
@@ -41,10 +41,10 @@ public class MineAction {
     @Action("same")
     @Preset(conf="master", form="mine")
     public void sameName(ActionHelper ah)
-    throws HongsException {
+    throws CruxException {
         Object id = ah.getSessibute(Cnst.UID_SES);
         if (id == null || "".equals(id) ) {
-            throw new  HongsException ( 401, "" );
+            throw new  CruxException ( 401 , "" );
         }
 
         UserAction ua = new UserAction( );
@@ -58,10 +58,10 @@ public class MineAction {
     @Verify(conf="master", form="mine", type=1, trim=1)
     @CommitSuccess
     public void mineSave(ActionHelper ah)
-    throws HongsException {
+    throws CruxException {
         Object id = ah.getSessibute(Cnst.UID_SES);
         if (id == null || "".equals(id) ) {
-            throw new  HongsException ( 401, "" );
+            throw new  CruxException ( 401 , "" );
         }
 
         Map rd = ah.getRequestData();

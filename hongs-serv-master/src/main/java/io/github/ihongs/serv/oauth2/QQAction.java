@@ -3,7 +3,7 @@ package io.github.ihongs.serv.oauth2;
 import io.github.ihongs.Cnst;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLogger;
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.action.anno.CommitSuccess;
@@ -24,11 +24,11 @@ public class QQAction {
     /**
      * QQ Web 登录回调
      * @param helper
-     * @throws HongsException
+     * @throws CruxException
      */
     @Action("web/create")
     @CommitSuccess
-    public void inWeb(ActionHelper helper) throws HongsException {
+    public void inWeb(ActionHelper helper) throws CruxException {
         CoreConfig cc = CoreConfig.getInstance("oauth2");
         String  appId = cc.getProperty("oauth2.qq.web.app.id" );
         String  appSk = cc.getProperty("oauth2.qq.web.app.key");
@@ -55,7 +55,7 @@ public class QQAction {
             }
 
             AuthKit.redirect(helper, back);
-        } catch (HongsException exc) {
+        } catch (CruxException exc) {
             AuthKit.redirect(helper, exc );
             CoreLogger.error(/*****/ exc );
         }
@@ -64,11 +64,11 @@ public class QQAction {
     /**
      * QQ WAP 登录回调
      * @param helper
-     * @throws HongsException
+     * @throws CruxException
      */
     @Action("wap/create")
     @CommitSuccess
-    public void inWap(ActionHelper helper) throws HongsException {
+    public void inWap(ActionHelper helper) throws CruxException {
         CoreConfig cc = CoreConfig.getInstance("oauth2");
         String  appId = cc.getProperty("oauth2.qq.wap.app.id" );
         String  appSk = cc.getProperty("oauth2.qq.wap.app.key");
@@ -95,14 +95,14 @@ public class QQAction {
             }
 
             AuthKit.redirect(helper, back);
-        } catch (HongsException exc) {
+        } catch (CruxException exc) {
             AuthKit.redirect(helper, exc );
             CoreLogger.error(/*****/ exc );
         }
     }
 
     public static Map getUserInfo(String code, String appId, String appSk, String rurl, boolean inQQ)
-    throws HongsException {
+    throws CruxException {
         Map    req;
         Map    rsp;
         int    err;
@@ -124,7 +124,7 @@ public class QQAction {
 
         err = Synt.declare(rsp.get("code"), 0);
         if (err != 0) {
-            throw new HongsException("Get token error\r\n"+Dist.toString(rsp));
+            throw new CruxException("Get token error\r\n"+Dist.toString(rsp));
         }
         token = (String) rsp.get("access_token");
 
@@ -137,7 +137,7 @@ public class QQAction {
 
         err = Synt.declare(rsp.get("code"), 0);
         if (err != 0) {
-            throw new HongsException("Get open id error\r\n"+Dist.toString(rsp));
+            throw new CruxException("Get open id error\r\n"+Dist.toString(rsp));
         }
         opnId = (String) rsp.get("openid");
 
@@ -150,7 +150,7 @@ public class QQAction {
 
         err = Synt.declare(rsp.get("ret"), 0);
         if (err != 0) {
-            throw new HongsException("Get user info error\r\n"+Dist.toString(rsp));
+            throw new CruxException("Get user info error\r\n"+Dist.toString(rsp));
         }
         opuId = (String) rsp.get("unionid");
 

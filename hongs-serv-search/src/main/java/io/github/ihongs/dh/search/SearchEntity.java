@@ -1,7 +1,7 @@
 package io.github.ihongs.dh.search;
 
 import io.github.ihongs.Core;
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.action.FormSet;
 import io.github.ihongs.dh.lucene.LuceneRecord;
 
@@ -32,9 +32,9 @@ public class SearchEntity extends LuceneRecord {
      * @param conf
      * @param form
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
-    public static SearchEntity getInstance(String conf, String form) throws HongsException {
+    public static SearchEntity getInstance(String conf, String form) throws CruxException {
         String code = SearchEntity.class.getName() +":"+ conf +":"+ form;
         Core   core = Core.getInstance( );
         SearchEntity  inst = (SearchEntity) core.get(code);
@@ -65,7 +65,7 @@ public class SearchEntity extends LuceneRecord {
 
     @Override
     protected void permit(Map rd, Set ids, int ern)
-    throws HongsException {
+    throws CruxException {
         /**
          * 遇到中途关闭情况再查一遍
          * 还那么倒霉只好就这样算了
@@ -73,47 +73,47 @@ public class SearchEntity extends LuceneRecord {
          */
         try {
             super.permit(rd, ids, ern);
-        } catch (Lost ex) {
+        } catch (Lost e) {
             super.permit(rd, ids, ern);
         }
     }
 
     @Override
     public Map  search(Map rd)
-    throws HongsException {
+    throws CruxException {
         try {
             return super.search(rd);
-        } catch (Lost ex) {
+        } catch (Lost e) {
             return super.search(rd);
         }
     }
 
     @Override
     public Map  get(String id)
-    throws HongsException {
+    throws CruxException {
         try {
             return super.get(id);
-        } catch (Lost ex) {
+        } catch (Lost e) {
             return super.get(id);
         }
     }
 
     @Override
     public Map  getOne(Map rd)
-    throws HongsException {
+    throws CruxException {
         try {
             return super.getOne(rd);
-        } catch (Lost ex) {
+        } catch (Lost e) {
             return super.getOne(rd);
         }
     }
 
     @Override
     public List getAll(Map rd)
-    throws HongsException {
+    throws CruxException {
         try {
             return super.getAll(rd);
-        } catch (Lost ex) {
+        } catch (Lost e) {
             return super.getAll(rd);
         }
     }

@@ -4,7 +4,7 @@
 <%@page import="java.util.Set"%>
 <%@page import="io.github.ihongs.Cnst"%>
 <%@page import="io.github.ihongs.Core"%>
-<%@page import="io.github.ihongs.HongsException"%>
+<%@page import="io.github.ihongs.CruxException"%>
 <%@page import="io.github.ihongs.action.ActionHelper"%>
 <%@page import="io.github.ihongs.action.ActionRunner"%>
 <%@page import="io.github.ihongs.action.NaviMap"%>
@@ -17,7 +17,7 @@
     /**
      * 获取用户所属的全部部门ID
      */
-    private Set getUserUnitIds(Object uid) throws HongsException {
+    private Set getUserUnitIds(Object uid) throws CruxException {
         List<Map> rows = DB
             .getInstance("master")
             .getTable("user_unit")
@@ -76,7 +76,7 @@
          * 限制用户发新的主题
          */
         if (! NaviMap.getInstance("centra").chkAuth("centra/data/upland/admin")) {
-            throw new HongsException(403, "您无权新建/重建主题");
+            throw new CruxException(403, "您无权新建/重建主题");
         }
     }
 

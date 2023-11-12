@@ -1,7 +1,7 @@
 package io.github.ihongs.dh.lucene;
 
 import io.github.ihongs.Cnst;
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.combat.CombatHelper;
 import io.github.ihongs.combat.anno.Combat;
@@ -19,7 +19,7 @@ import java.util.Map;
 public class LuceneCombat {
 
     @Combat("search")
-    public static void search(String[] args) throws HongsException {
+    public static void search(String[] args) throws CruxException {
         Map opts = CombatHelper.getOpts(args, new String[ ] {
             "conf=s",
             "form=s",
@@ -40,7 +40,7 @@ public class LuceneCombat {
     }
 
     @Combat("delete")
-    public static void delete(String[] args) throws HongsException {
+    public static void delete(String[] args) throws CruxException {
         Map opts = CombatHelper.getOpts(args, new String[ ] {
             "conf=s",
             "form=s",
@@ -59,7 +59,7 @@ public class LuceneCombat {
             }
             so.commit( );
         }
-        catch (HongsException ex) {
+        catch (CruxException ex) {
             so.cancel( );
             throw ex;
         }
@@ -69,7 +69,7 @@ public class LuceneCombat {
     }
 
     @Combat("update")
-    public static void update(String[] args) throws HongsException {
+    public static void update(String[] args) throws CruxException {
         Map opts = CombatHelper.getOpts(args, new String[ ] {
             "conf=s",
             "form=s",
@@ -91,7 +91,7 @@ public class LuceneCombat {
             }
             so.commit( );
         }
-        catch (HongsException ex) {
+        catch (CruxException ex) {
             so.cancel( );
             throw ex;
         }
@@ -101,7 +101,7 @@ public class LuceneCombat {
     }
 
     @Combat("create")
-    public static void create(String[] args) throws HongsException {
+    public static void create(String[] args) throws CruxException {
         Map opts = CombatHelper.getOpts(args, new String[ ] {
             "conf=s",
             "form=s",
@@ -128,7 +128,7 @@ public class LuceneCombat {
             }
             so.commit( );
         }
-        catch (HongsException ex) {
+        catch (CruxException ex) {
             so.cancel( );
             throw ex;
         }

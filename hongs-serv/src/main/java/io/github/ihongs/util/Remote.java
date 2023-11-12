@@ -1,7 +1,7 @@
 package io.github.ihongs.util;
 
 import io.github.ihongs.CoreConfig;
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionHelper;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -74,12 +74,12 @@ public final class Remote {
      *
      * @param url
      * @return
-     * @throws HongsException
+     * @throws CruxException
      * @throws StatusException
      * @throws SimpleException
      */
     public static String get (String url)
-            throws HongsException, StatusException, SimpleException {
+            throws CruxException, StatusException, SimpleException {
         return request(METHOD.GET , FORMAT.FORM, url, null, null);
     }
 
@@ -94,12 +94,12 @@ public final class Remote {
      * @param url
      * @param data
      * @return
-     * @throws HongsException
+     * @throws CruxException
      * @throws StatusException
      * @throws SimpleException
      */
     public static String get (String url, Map<String, Object> data)
-            throws HongsException, StatusException, SimpleException {
+            throws CruxException, StatusException, SimpleException {
         return request(METHOD.GET , FORMAT.FORM, url, data, null);
     }
 
@@ -115,12 +115,12 @@ public final class Remote {
      * @param url
      * @param data
      * @return
-     * @throws HongsException
+     * @throws CruxException
      * @throws StatusException
      * @throws SimpleException
      */
     public static String post(String url, Map<String, Object> data)
-            throws HongsException, StatusException, SimpleException {
+            throws CruxException, StatusException, SimpleException {
         return request(METHOD.POST, FORMAT.FORM, url, data, null);
     }
 
@@ -136,12 +136,12 @@ public final class Remote {
      * @param url
      * @param data
      * @return
-     * @throws HongsException
+     * @throws CruxException
      * @throws StatusException
      * @throws SimpleException
      */
     public static String part(String url, Map<String, Object> data)
-            throws HongsException, StatusException, SimpleException {
+            throws CruxException, StatusException, SimpleException {
         return request(METHOD.POST, FORMAT.PART, url, data, null);
     }
 
@@ -150,12 +150,12 @@ public final class Remote {
      *
      * @param url
      * @param file
-     * @throws HongsException
+     * @throws CruxException
      * @throws StatusException
      * @throws SimpleException
      */
     public static void save(String url, File file)
-            throws HongsException, StatusException, SimpleException {
+            throws CruxException, StatusException, SimpleException {
         request( METHOD.GET , FORMAT.FORM, url, null, null, file);
     }
 
@@ -168,12 +168,12 @@ public final class Remote {
      * @param data
      * @param head
      * @return
-     * @throws HongsException
+     * @throws CruxException
      * @throws StatusException
      * @throws SimpleException
      */
     public static String request(METHOD type, FORMAT kind, String url, Map data, Map head)
-            throws HongsException, StatusException, SimpleException {
+            throws CruxException, StatusException, SimpleException {
         final String         [ ] txt = new String         [1];
         final SimpleException[ ] err = new SimpleException[1];
         request(type, kind, url, data, head, (rsp) -> {
@@ -197,12 +197,12 @@ public final class Remote {
      * @param data
      * @param head
      * @param file
-     * @throws HongsException
+     * @throws CruxException
      * @throws StatusException
      * @throws SimpleException
      */
     public static void request(METHOD type, FORMAT kind, String url, Map data, Map head, File file)
-            throws HongsException, StatusException, SimpleException {
+            throws CruxException, StatusException, SimpleException {
         final SimpleException[ ] err = new SimpleException[1];
         request(type, kind, url, data, head, (rsp) -> {
             // 建立目录
@@ -234,12 +234,12 @@ public final class Remote {
      * @param data
      * @param head
      * @param out
-     * @throws HongsException
+     * @throws CruxException
      * @throws StatusException
      * @throws SimpleException
      */
     public static void request(METHOD type, FORMAT kind, String url, Map data, Map head, OutputStream out)
-            throws HongsException, StatusException, SimpleException {
+            throws CruxException, StatusException, SimpleException {
         final SimpleException[ ] err = new SimpleException[1];
         request(type, kind, url, data, head, (rsp) -> {
             try {
@@ -263,12 +263,12 @@ public final class Remote {
      * @param data
      * @param head
      * @param con
-     * @throws HongsException
+     * @throws CruxException
      * @throws StatusException
      * @throws SimpleException
      */
     public static void request(METHOD type, FORMAT kind, String url, Map data, Map head, Consumer<HttpResponse> con)
-            throws HongsException, StatusException, SimpleException {
+            throws CruxException, StatusException, SimpleException {
         if (url == null) {
             throw new NullPointerException("Request url can not be null");
         }
@@ -409,10 +409,10 @@ public final class Remote {
      *
      * @param data
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
     public static HttpEntity buildJson(Map<String, Object> data)
-            throws HongsException {
+            throws CruxException {
         StringEntity enti = new StringEntity(Dist.toString(data), "UTF-8");
                      enti.setContentType/**/("application/json");
                      enti.setContentEncoding("UTF-8");
@@ -428,10 +428,10 @@ public final class Remote {
      *
      * @param data
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
     public static HttpEntity buildPost(Map<String, Object> data)
-            throws HongsException {
+            throws CruxException {
         List<NameValuePair> pair = new ArrayList(data.size());
         for (Map.Entry<String, Object> et : data.entrySet ()) {
             String n = et.getKey(  );
@@ -459,7 +459,7 @@ public final class Remote {
             return new UrlEncodedFormEntity(pair, "UTF-8");
         }
         catch (UnsupportedEncodingException e) {
-            throw  new HongsException(e, 1111);
+            throw  new CruxException(e , 1111);
         }
     }
 
@@ -473,10 +473,10 @@ public final class Remote {
      *
      * @param data
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
     public static HttpEntity buildPart(Map<String, Object> data)
-            throws HongsException {
+            throws CruxException {
         MultipartEntityBuilder part = MultipartEntityBuilder.create();
         part.setMode( HttpMultipartMode.BROWSER_COMPATIBLE );
         part.setCharset( Charset.forName("UTF-8") );
@@ -526,7 +526,7 @@ public final class Remote {
      * getUrl() 的 Url 为当前请求地址
      * getRsp() 在 3xx 时返回跳转地址, 其他情况则返回响应文本
      */
-    public static class StatusException extends HongsException {
+    public static class StatusException extends CruxException {
 
         private final String url;
         private final String rsp;
@@ -565,7 +565,7 @@ public final class Remote {
      * 可通过 getCuase() 获取具体异常对象,
      * 通常为 URISyntaxException, IOException
      */
-    public static class SimpleException extends HongsException {
+    public static class SimpleException extends CruxException {
 
         private final String url;
 

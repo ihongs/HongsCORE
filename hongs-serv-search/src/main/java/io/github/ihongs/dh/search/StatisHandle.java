@@ -1,6 +1,6 @@
 package io.github.ihongs.dh.search;
 
-import io.github.ihongs.HongsExemption;
+import io.github.ihongs.CruxExemption;
 import io.github.ihongs.util.Synt;
 import java.io.IOException;
 import java.util.Iterator;
@@ -271,7 +271,7 @@ public final class StatisHandle {
                         return /***/ values.longValue();
                 }
             } catch (IOException e ) {
-                throw new HongsExemption(e);
+                throw new CruxExemption(e);
             }
         }
 
@@ -330,7 +330,7 @@ public final class StatisHandle {
                         return /***/ values.nextValue();
                 }
             } catch (IOException e ) {
-                throw new HongsExemption(e);
+                throw new CruxExemption(e);
             }
         }
 
@@ -378,7 +378,7 @@ public final class StatisHandle {
             try {  j  = NO_MORE_VALS;
                 return values.binaryValue().utf8ToString();
             } catch (IOException e ) {
-                throw new HongsExemption(e);
+                throw new CruxExemption(e);
             }
         }
 
@@ -429,7 +429,7 @@ public final class StatisHandle {
                 j = values.nextOrd();
                 return s;
             } catch (IOException e ) {
-                throw new HongsExemption(e);
+                throw new CruxExemption(e);
             }
         }
 

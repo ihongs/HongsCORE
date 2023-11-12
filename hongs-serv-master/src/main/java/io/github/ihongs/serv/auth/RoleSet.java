@@ -3,7 +3,7 @@ package io.github.ihongs.serv.auth;
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreSerial;
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Table;
@@ -30,7 +30,7 @@ public class RoleSet extends CoreSerial implements CoreSerial.Mtimes, Set<String
 
     public Set <String> roles = null;
 
-    private RoleSet(String userId) throws HongsException {
+    private RoleSet(String userId) throws CruxException {
         String path = "master/role/" + Syno.splitPath(userId);
         this.userId = userId;
         this.file   = init  ( path );
@@ -48,7 +48,7 @@ public class RoleSet extends CoreSerial implements CoreSerial.Mtimes, Set<String
     }
 
     @Override
-    protected byte expires(File f) throws HongsException {
+    protected byte expires(File f) throws CruxException {
         DB        db;
         Table     tb;
         Table     td;
@@ -91,7 +91,7 @@ public class RoleSet extends CoreSerial implements CoreSerial.Mtimes, Set<String
             }
             ot = Synt.declare(ah.getSessibute(Cnst.UST_SES) , 0L);
             if (ot < pt && 0 < ot && 0 < pt) {
-                throw new HongsException(401, "@master:core.password.changed");
+                throw new CruxException(401, "@master:core.password.changed");
             }
         }
 
@@ -125,7 +125,7 @@ public class RoleSet extends CoreSerial implements CoreSerial.Mtimes, Set<String
     }
 
     @Override
-    protected void imports() throws HongsException {
+    protected void imports() throws CruxException {
         roles = new HashSet();
 
         DB        db;
@@ -180,7 +180,7 @@ public class RoleSet extends CoreSerial implements CoreSerial.Mtimes, Set<String
     //** 构造工厂方法 **/
 
     public static RoleSet getInstance(String userId)
-    throws HongsException {
+    throws CruxException {
         String  k = RoleSet.class.getName() +":"+ userId;
         Core    c = Core.getInstance( );
         if ( c.exists( k ) ) { // 可以为空, 因此不用 isset
@@ -195,7 +195,7 @@ public class RoleSet extends CoreSerial implements CoreSerial.Mtimes, Set<String
     }
 
     public static RoleSet getInstance()
-    throws HongsException {
+    throws CruxException {
         Object id = Core.getInstance (ActionHelper.class)
                         .getSessibute(   Cnst.UID_SES   );
         if (id ==  null) {

@@ -1,7 +1,7 @@
 package io.github.ihongs.serv.centra;
 
 import io.github.ihongs.Cnst;
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
 import io.github.ihongs.action.anno.Action;
@@ -30,11 +30,11 @@ public class DataAction extends SearchAction {
      *  方法 Action 注解的命名只能是 "动作名称", 不得含子级实体名称
      * @param helper
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
     @Override
     public IEntity getEntity(ActionHelper helper)
-    throws HongsException {
+    throws CruxException {
         ActionRunner runner = (ActionRunner) helper.getAttribute(ActionRunner.class.getName());
         Data   entity = Data.getInstance(runner.getModule(), runner.getEntity());
         String userId = (String) helper.getSessibute(Cnst.UID_SES);
@@ -45,7 +45,7 @@ public class DataAction extends SearchAction {
 
     @Override
     protected Map getReqMap(ActionHelper helper, IEntity ett, String opr, Map req)
-    throws HongsException {
+    throws CruxException {
         req = super.getReqMap(helper, ett, opr, req);
 
         // 默认的终端标识
@@ -67,7 +67,7 @@ public class DataAction extends SearchAction {
 
     @Override
     public void acting(ActionHelper helper, ActionRunner runner)
-    throws HongsException {
+    throws CruxException {
         super.acting(helper, runner);
 
         String ent = runner.getEntity();
@@ -92,7 +92,7 @@ public class DataAction extends SearchAction {
 
     @Action("revert")
     @CommitSuccess
-    public void revert(ActionHelper helper) throws HongsException {
+    public void revert(ActionHelper helper) throws CruxException {
         Data   ett = (Data) getEntity(helper);
         Map    req = helper.getRequestData( );
 
@@ -111,7 +111,7 @@ public class DataAction extends SearchAction {
 
     @Action("reveal")
     @Select(conf="", form="")
-    public void reveal(ActionHelper helper) throws HongsException {
+    public void reveal(ActionHelper helper) throws CruxException {
         Data   ett = (Data) getEntity(helper);
         Map    req = helper.getRequestData( );
         Map    rsp = ett.reveal(req);
@@ -120,7 +120,7 @@ public class DataAction extends SearchAction {
 
     @Action("remind")
     @Select(conf="", form="")
-    public void remind(ActionHelper helper) throws HongsException {
+    public void remind(ActionHelper helper) throws CruxException {
         Data   ett = (Data) getEntity(helper);
         Map    req = helper.getRequestData( );
         Map    rsp = ett.remind(req);

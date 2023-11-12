@@ -2,7 +2,7 @@ package io.github.ihongs.server.init;
 
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreRoster;
-import io.github.ihongs.HongsExemption;
+import io.github.ihongs.CruxExemption;
 import java.io.IOException;
 import java.util.EventListener;
 import java.util.Arrays;
@@ -103,9 +103,9 @@ public class Loader implements Initer {
             EventListener evto = (EventListener) clso.newInstance();
             context.addEventListener(evto);
         } catch (InstantiationException e) {
-            throw new HongsExemption(e);
+            throw new CruxExemption(e);
         } catch (IllegalAccessException e) {
-            throw new HongsExemption(e);
+            throw new CruxExemption(e);
         }
     }
 
@@ -113,8 +113,8 @@ public class Loader implements Initer {
         Class  clso;
         try {
             clso = Class.forName(clsn);
-        } catch (ClassNotFoundException ex ) {
-            throw new HongsExemption(ex, "Can not find class '" + clsn + "'.");
+        } catch (ClassNotFoundException e) {
+            throw new CruxExemption(e, "Can not find class '" + clsn + "'.");
         }
         return clso;
     }
@@ -127,10 +127,10 @@ public class Loader implements Initer {
             try {
                 clss = CoreRoster.getClassNames(pkgn, true );
             } catch (IOException ex) {
-                throw new HongsExemption(ex, "Can not load package '" + pkgn + "'.");
+                throw new CruxExemption(ex, "Can not load package '" + pkgn + "'.");
             }
             if (clss == null) {
-                throw new HongsExemption("Can not find package '" + pkgn + "'.");
+                throw new CruxExemption("Can not find package '" + pkgn + "'.");
             }
         } else
         if (pkgn.endsWith(".*" )) {
@@ -138,10 +138,10 @@ public class Loader implements Initer {
             try {
                 clss = CoreRoster.getClassNames(pkgn, false);
             } catch (IOException ex) {
-                throw new HongsExemption(ex, "Can not load package '" + pkgn + "'.");
+                throw new CruxExemption(ex, "Can not load package '" + pkgn + "'.");
             }
             if (clss == null) {
-                throw new HongsExemption("Can not find package '" + pkgn + "'.");
+                throw new CruxExemption("Can not find package '" + pkgn + "'.");
             }
         } else {
             clss = new HashSet();

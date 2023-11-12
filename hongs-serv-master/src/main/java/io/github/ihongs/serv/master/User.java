@@ -2,7 +2,7 @@ package io.github.ihongs.serv.master;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Model;
@@ -22,38 +22,38 @@ public class User
 extends Model {
 
     public User()
-    throws HongsException {
+    throws CruxException {
         this(DB.getInstance("master").getTable("user"));
     }
 
     public User(Table table)
-    throws HongsException {
+    throws CruxException {
         super(table);
     }
 
     @Override
-    public String add(Map data) throws HongsException {
+    public String add(Map data) throws CruxException {
         permit(null, data);
 
         return super.add(data);
     }
 
     @Override
-    public int put(String id, Map data) throws HongsException {
+    public int put(String id, Map data) throws CruxException {
         permit( id , data);
 
         return super.put(id, data);
     }
 
     @Override
-    public int del(String id, FetchCase caze) throws HongsException {
+    public int del(String id, FetchCase caze) throws CruxException {
         permit( id , null);
 
         return super.del(id, caze);
     }
 
     @Override
-    public Map getList(Map rd, FetchCase caze) throws HongsException {
+    public Map getList(Map rd, FetchCase caze) throws CruxException {
         if (caze == null) {
             caze = new FetchCase();
         }
@@ -69,7 +69,7 @@ extends Model {
 
     @Override
     protected void filter(FetchCase caze, Map req)
-    throws HongsException {
+    throws CruxException {
         /**
          * 非超级管理员或在超级管理组
          * 限制查询为当前管辖范围以内
@@ -97,7 +97,7 @@ extends Model {
                     .filter ("`units2`.`unit_id` IN (?)" , set );
             } else
             if (set.contains(pid) == false) {
-                throw new HongsException(400, "@master:master.user.area.error");
+                throw new CruxException(400, "@master:master.user.area.error");
             }
             }
         }
@@ -129,7 +129,7 @@ extends Model {
         super.filter(caze, req);
     }
 
-    protected void permit(String id, Map data) throws HongsException {
+    protected void permit(String id, Map data) throws CruxException {
         if (data != null) {
             // 登录账号, 空串可能导致重复
             if (data.containsKey("username") ) {
@@ -169,7 +169,7 @@ extends Model {
                 List list = Synt.asList(data.get( "roles" ));
                 AuthKit.cleanUserRoles (list, id);
             //  if ( list.isEmpty() ) {
-            //      throw new HongsException(400, "@master:master.user.role.error");
+            //      throw new CruxException(400, "@master:master.user.role.error");
             //  }
                 data.put("roles", list);
             }
@@ -180,7 +180,7 @@ extends Model {
                 List list = Synt.asList(data.get( "units" ));
                 AuthKit.cleanUserUnits (list, id);
                 if ( list.isEmpty() ) {
-                    throw new HongsException(400, "@master:master.user.unit.error");
+                    throw new CruxException(400, "@master:master.user.unit.error");
                 }
                 data.put("units", list);
             }
@@ -202,7 +202,7 @@ extends Model {
                 return;
             }}
 
-            throw new HongsException(400, "@master:master.user.area.error");
+            throw new CruxException(400, "@master:master.user.area.error");
         }
     }
 

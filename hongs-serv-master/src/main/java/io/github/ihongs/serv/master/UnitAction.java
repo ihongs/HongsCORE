@@ -2,7 +2,7 @@ package io.github.ihongs.serv.master;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.CoreLocale;
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.NaviMap;
 import io.github.ihongs.action.anno.Action;
@@ -28,14 +28,14 @@ public class UnitAction {
     private final Unit model;
 
     public UnitAction()
-    throws HongsException {
+    throws CruxException {
         model = (Unit) DB.getInstance("master").getModel("unit");
     }
 
     @Action("list")
     @Select(conf="master", form="unit")
     public void getList(ActionHelper helper)
-    throws HongsException {
+    throws CruxException {
         Map  rd = helper.getRequestData();
         byte wd =  Synt.declare(rd.get("with-units") , (byte) 0);
      boolean fd =  Synt.declare(rd.get("find-depth") ,  false  );
@@ -76,7 +76,7 @@ public class UnitAction {
     @Action("info")
     @Select(conf="master", form="unit")
     public void getInfo(ActionHelper helper)
-    throws HongsException {
+    throws CruxException {
         Map    rd = helper.getRequestData(  );
         String id = helper.getParameter("id");
         String nc = helper.getParameter("with-roles");
@@ -105,7 +105,7 @@ public class UnitAction {
     @Action("save")
     @CommitSuccess
     public void doSave(ActionHelper helper)
-    throws HongsException {
+    throws CruxException {
         Map rd = helper.getRequestData();
         String id = model.set(rd);
         CoreLocale  ln = CoreLocale.getMultiple("master", "default");
@@ -116,7 +116,7 @@ public class UnitAction {
     @Action("delete")
     @CommitSuccess
     public void doDelete(ActionHelper helper)
-    throws HongsException {
+    throws CruxException {
         Map rd = helper.getRequestData();
         int rn = model.delete(rd);
         CoreLocale  ln = CoreLocale.getMultiple("master", "default");
@@ -126,7 +126,7 @@ public class UnitAction {
 
     @Action("unique")
     public void isUnique(ActionHelper helper)
-    throws HongsException {
+    throws CruxException {
         Map rd = helper.getRequestData();
         FetchCase fc = model.fetchCase();
         fc.setOption("INCLUDE_REMOVED", Synt.declare(rd.get("include-removed"), false));

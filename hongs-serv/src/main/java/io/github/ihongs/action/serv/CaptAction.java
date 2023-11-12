@@ -1,7 +1,7 @@
 package io.github.ihongs.action.serv;
 
 import io.github.ihongs.CoreConfig;
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.util.Synt;
@@ -16,7 +16,7 @@ import java.io.IOException;
 public class CaptAction {
 
     @Action("create")
-    public void create(ActionHelper helper) throws HongsException, IOException {
+    public void create(ActionHelper helper) throws CruxException, IOException {
         int    h  = Synt.declare(helper.getParameter("h"), 40);
         String b  = Synt.declare(helper.getParameter("b"), "");
         String f  = Synt.declare(helper.getParameter("f"), "");

@@ -4,7 +4,7 @@ import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLocale;
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.action.anno.CommitSuccess;
@@ -36,12 +36,12 @@ public class SignAction {
     /**
      * 登录
      * @param ah
-     * @throws HongsException
+     * @throws CruxException
      */
     @Action("create")
     @Verify(conf="master", form="sign")
     @CommitSuccess
-    public void signCreate(ActionHelper ah) throws HongsException {
+    public void signCreate(ActionHelper ah) throws CruxException {
         String place    = Synt.declare(ah.getParameter("place"), "centre");
         String username = Synt.declare(ah.getParameter("username"), "");
         String password = Synt.declare(ah.getParameter("password"), "");
@@ -156,10 +156,10 @@ public class SignAction {
      * 更新
      * 此动作可维持会话不过期
      * @param ah
-     * @throws HongsException
+     * @throws CruxException
      */
     @Action("update")
-    public void signUpdate(ActionHelper ah) throws HongsException {
+    public void signUpdate(ActionHelper ah) throws CruxException {
         HttpSession ss  =  ah.getRequest( ).getSession( false );
         if (null == ss || null == ss.getAttribute(Cnst.UID_SES) ) {
             ah.reply(AuthKit.getWrong(null, "core.sign.phase.invalid"));
@@ -188,10 +188,10 @@ public class SignAction {
      * 登出
      * 此动作可以清除会话数据
      * @param ah
-     * @throws HongsException
+     * @throws CruxException
      */
     @Action("delete")
-    public void signDelete(ActionHelper ah) throws HongsException {
+    public void signDelete(ActionHelper ah) throws CruxException {
         HttpSession ss  =  ah.getRequest( ).getSession( false );
         if (null == ss || null == ss.getAttribute(Cnst.UID_SES) ) {
             ah.reply(AuthKit.getWrong(null, "core.sign.phase.invalid"));

@@ -1,7 +1,7 @@
 package io.github.ihongs.serv.centre;
 
 import io.github.ihongs.CoreConfig;
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.action.anno.CommitSuccess;
@@ -12,7 +12,6 @@ import io.github.ihongs.serv.master.User;
 import io.github.ihongs.util.Synt;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * 登录动作
@@ -24,16 +23,16 @@ public class SignAction extends io.github.ihongs.serv.centra.SignAction {
     /**
      * 登录
      * @param ah
-     * @throws HongsException
+     * @throws CruxException
      */
     @Action("create")
     @Verify(conf="master", form="sign")
     @CommitSuccess
     @Override
-    public void signCreate(ActionHelper ah) throws HongsException {
+    public void signCreate(ActionHelper ah) throws CruxException {
         CoreConfig cc = CoreConfig.getInstance("master");
         if(!cc.getProperty("core.public.sign.open",true)) {
-            throw new HongsException(404,"Sign in is not allowed");
+            throw new CruxException(404, "Sign in is not allowed");
         }
 
         super.signCreate(ah);
@@ -42,15 +41,15 @@ public class SignAction extends io.github.ihongs.serv.centra.SignAction {
     /**
      * 注册
      * @param ah
-     * @throws HongsException
+     * @throws CruxException
      */
     @Action("user/create")
     @Verify(conf="master", form="regs", type=0, trim=1)
     @CommitSuccess
-    public void userCreate(ActionHelper ah) throws HongsException {
+    public void userCreate(ActionHelper ah) throws CruxException {
         CoreConfig cc = CoreConfig.getInstance("master");
         if(!cc.getProperty("core.public.regs.open",true)) {
-            throw new HongsException(404,"Sign on is not allowed");
+            throw new CruxException(404, "Sign on is not allowed");
         }
 
         User uo = (User) DB.getInstance("master").getModel("user");
@@ -93,10 +92,10 @@ public class SignAction extends io.github.ihongs.serv.centra.SignAction {
     /**
      * 查重
      * @param ah
-     * @throws HongsException
+     * @throws CruxException
      */
     @Action("user/unique")
-    public void userUnique(ActionHelper ah) throws HongsException {
+    public void userUnique(ActionHelper ah) throws CruxException {
         User uo = (User) DB.getInstance("master").getModel("user");
         Map  rd = ah.getRequestData();
         boolean  v = uo.unique ( rd );

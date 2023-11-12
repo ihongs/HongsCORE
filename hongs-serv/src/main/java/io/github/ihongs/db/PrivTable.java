@@ -1,7 +1,7 @@
 package io.github.ihongs.db;
 
-import io.github.ihongs.HongsException;
-import io.github.ihongs.HongsExemption;
+import io.github.ihongs.CruxException;
+import io.github.ihongs.CruxExemption;
 import io.github.ihongs.db.link.Loop;
 import io.github.ihongs.db.util.AssocMore;
 import io.github.ihongs.db.util.FetchCase;
@@ -15,7 +15,7 @@ import java.util.function.Consumer;
  */
 public abstract class PrivTable extends Table implements Cloneable {
 
-    public PrivTable(DB db, Map conf) throws HongsException {
+    public PrivTable(DB db, Map conf) throws CruxException {
         super(db, conf);
     }
 
@@ -24,7 +24,7 @@ public abstract class PrivTable extends Table implements Cloneable {
         try {
             return (PrivTable) super.clone();
         } catch (CloneNotSupportedException e) {
-            throw new HongsExemption( e );
+            throw new CruxExemption( e );
         }
     }
 
@@ -68,7 +68,7 @@ public abstract class PrivTable extends Table implements Cloneable {
 
     @Override
     public int insert(Map<String, Object> values)
-    throws HongsException {
+    throws CruxException {
         // 加密
         encrypt().accept(values);
 
@@ -77,7 +77,7 @@ public abstract class PrivTable extends Table implements Cloneable {
 
     @Override
     public int update(Map<String, Object> values, String where, Object... params)
-    throws HongsException {
+    throws CruxException {
         // 加密
         encrypt().accept(values);
 
@@ -86,7 +86,7 @@ public abstract class PrivTable extends Table implements Cloneable {
 
     @Override
     public FetchCase fetchCase()
-    throws HongsException {
+    throws CruxException {
         FetchCase  fc = new PCase(this)
               .use(db).from(tableName, name);
         AssocMore.checkCase(fc, getParams());
@@ -103,7 +103,7 @@ public abstract class PrivTable extends Table implements Cloneable {
         }
 
         @Override
-        public int insert(Map<String, Object> values) throws HongsException {
+        public int insert(Map<String, Object> values) throws CruxException {
             // 加密
             table.encrypt().accept(values);
 
@@ -111,7 +111,7 @@ public abstract class PrivTable extends Table implements Cloneable {
         }
 
         @Override
-        public int update(Map<String, Object> values) throws HongsException {
+        public int update(Map<String, Object> values) throws CruxException {
             // 加密
             table.encrypt().accept(values);
 
@@ -119,7 +119,7 @@ public abstract class PrivTable extends Table implements Cloneable {
         }
 
         @Override
-        public Loop select() throws HongsException {
+        public Loop select() throws CruxException {
             return new PLoop(table, super.select());
         }
 
@@ -130,7 +130,7 @@ public abstract class PrivTable extends Table implements Cloneable {
         private final Consumer<Map> dc;
 
         public PLoop (PrivTable table, Loop loop)
-        throws HongsException {
+        throws CruxException {
             super(loop.getReusltSet(), loop.getStatement());
             this.dc = table.decrypt();
         }

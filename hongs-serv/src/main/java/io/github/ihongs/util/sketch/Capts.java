@@ -2,7 +2,7 @@ package io.github.ihongs.util.sketch;
 
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreRoster;
-import io.github.ihongs.HongsExemption;
+import io.github.ihongs.CruxExemption;
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.Color;
@@ -130,9 +130,9 @@ public class Capts {
             }
             font = Font.createFont(Font.TRUETYPE_FONT, is);
         } catch (FontFormatException ex) {
-            throw new HongsExemption(ex);
+            throw new CruxExemption (ex);
         } catch (IOException ex) {
-            throw new HongsExemption(ex);
+            throw new CruxExemption (ex);
         }
 
         for(int i  = 0; i < codeCount; i ++) {
@@ -227,7 +227,7 @@ public class Capts {
      */
     public static Capts captcha(int h, String b, String f) {
         if (h < 24 || h > 96) {
-            throw new HongsExemption(400 , "h must be 24~96 (px)");
+            throw new CruxExemption(400 , "h must be 24~96 (px)");
         }
 
         // 获取配置

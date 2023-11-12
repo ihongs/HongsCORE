@@ -185,9 +185,9 @@
             Map    enumData = null;
             try {
                 enumData  = FormSet.getInstance(enumConf).getEnum(enumName);
-            } catch ( HongsException ex) {
+            } catch (CruxException ex) {
             if (ex.getErrno() != 913 ) {
-                throw ex;
+                throw ex.toExemption();
             }}
 
             // 统计方法

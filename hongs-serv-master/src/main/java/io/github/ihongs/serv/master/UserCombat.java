@@ -1,7 +1,7 @@
 package io.github.ihongs.serv.master;
 
 import io.github.ihongs.CoreConfig;
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.combat.CombatHelper;
 import io.github.ihongs.combat.anno.Combat;
 import io.github.ihongs.db.DB;
@@ -23,10 +23,10 @@ public class UserCombat {
     /**
      * 归并命令
      * @param args
-     * @throws HongsException
+     * @throws CruxException
      */
     @Combat("uproot")
-    public static void uproot(String[] args) throws HongsException {
+    public static void uproot(String[] args) throws CruxException {
         Map opts = CombatHelper.getOpts(
             args ,
             "uid=s" ,
@@ -45,7 +45,7 @@ public class UserCombat {
             db.begin( );
             uproot(uid , uids);
             db.commit();
-        } catch (HongsException ex) {
+        } catch (CruxException ex) {
             db.cancel();
             throw ex;
         }
@@ -55,9 +55,9 @@ public class UserCombat {
      * 归并账号
      * @param uid  目标账号
      * @param uids 被并账号
-     * @throws HongsException
+     * @throws CruxException
      */
-    public static void uproot(String uid, Set<String> uids) throws HongsException {
+    public static void uproot(String uid, Set<String> uids) throws CruxException {
         DB    db;
         Table tb;
         Loop  lo;
@@ -224,7 +224,7 @@ public class UserCombat {
         for(String  n : u.split( "," )) {
             int p = n . indexOf( ":" );
             if (p < 0) {
-                throw new HongsException("Config item 'core.master.uproot' must be '[DB.]TABLE:FIELD'");
+                throw new CruxException("Config item 'core.master.uproot' must be '[DB.]TABLE:FIELD'");
             }
             String  t = n.substring(0 , p).trim();
             String  f = n.substring(1 + p).trim();

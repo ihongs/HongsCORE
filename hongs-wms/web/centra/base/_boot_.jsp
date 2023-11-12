@@ -1,5 +1,5 @@
 <%@page import="io.github.ihongs.CoreLocale"%>
-<%@page import="io.github.ihongs.HongsException"%>
+<%@page import="io.github.ihongs.CruxException"%>
 <%@page import="io.github.ihongs.action.ActionDriver"%>
 <%@page import="io.github.ihongs.action.FormSet"%>
 <%@page import="io.github.ihongs.dh.JFigure"%>
@@ -12,7 +12,7 @@
     /**
      * 获取全局搜索字段
      */
-    Set<String> getWordable(Map _fields) throws HongsException {
+    Set<String> getWordable(Map _fields) throws CruxException {
         Map fc = (Map) _fields.get("word");
         if (fc != null
         &&!Synt.declare(fc.get("readonly"), false)
@@ -31,7 +31,7 @@
     /**
      * 获取可搜索的字段
      */
-    Set<String> getSrchable(Map _fields) throws HongsException {
+    Set<String> getSrchable(Map _fields) throws CruxException {
         Sample   _sample = new Sample( _fields  );
         Set fs = _sample.getCaseNames("srchable");
         return fs;
@@ -79,8 +79,8 @@
             do {
                 try {
                     _config = name;
-                    _fields = FormSet.getInstance(name).getFormTranslated(_entity);
-                } catch (HongsException ex) {
+                    _fields = FormSet.getInstance(name).getForm(_entity);
+                } catch (CruxException ex) {
                     if (ex.getErrno() != 910
                     &&  ex.getErrno() != 912) { // 非表单缺失
                         throw ex;
@@ -96,8 +96,8 @@
 
                 try{
                     _config = name;
-                    _fieldx = FormSet.getInstance(name).getFormTranslated(_entity);
-                } catch (HongsException ex) {
+                    _fieldx = FormSet.getInstance(name).getForm(_entity);
+                } catch (CruxException ex) {
                     if (ex.getErrno() != 910
                     &&  ex.getErrno() != 912) { // 非表单缺失
                         throw ex ;
@@ -141,7 +141,7 @@
         }
 
         if (_fields == null) {
-            throw new HongsException(404, _locale.translate("core.error.no.thing"));
+            throw new CruxException(404, _locale.translate("core.error.no.thing"));
         }
     }
 %>

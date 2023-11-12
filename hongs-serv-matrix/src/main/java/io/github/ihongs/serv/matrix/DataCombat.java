@@ -3,7 +3,7 @@ package io.github.ihongs.serv.matrix;
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.CommitRunner;
 import io.github.ihongs.combat.CombatHelper;
@@ -34,11 +34,11 @@ public class DataCombat {
 
     @Combat("revert")
     public static void revert(String[] args)
-    throws HongsException, InterruptedException {
+    throws CruxException, InterruptedException {
         revert(args, new Inst());
     }
     public static void revert(String[] args, Inst df)
-    throws HongsException, InterruptedException {
+    throws CruxException, InterruptedException {
         Map opts = CombatHelper.getOpts(args, new String[] {
             "conf=s",
             "form=s",
@@ -131,7 +131,7 @@ public class DataCombat {
                 iw.deleteUnusedFiles();
                 iw.maybeMerge();
             } catch ( IOException ex ) {
-                throw new HongsException(ex);
+                throw new CruxException(ex);
             }
         }
 
@@ -207,11 +207,11 @@ public class DataCombat {
 
     @Combat("import")
     public static void impart(String[] args)
-    throws HongsException, InterruptedException {
+    throws CruxException, InterruptedException {
         impart(args, new Inst());
     }
     public static void impart(String[] args, Inst df)
-    throws HongsException, InterruptedException {
+    throws CruxException, InterruptedException {
         Map opts = CombatHelper.getOpts(args, new String[] {
             "conf=s",
             "form=s",
@@ -252,11 +252,11 @@ public class DataCombat {
 
     @Combat("update")
     public static void update(String[] args)
-    throws HongsException, InterruptedException {
+    throws CruxException, InterruptedException {
         update(args, new Inst());
     }
     public static void update(String[] args, Inst df)
-    throws HongsException, InterruptedException {
+    throws CruxException, InterruptedException {
         Map opts = CombatHelper.getOpts(args, new String[] {
             "conf=s",
             "form=s",
@@ -302,11 +302,11 @@ public class DataCombat {
 
     @Combat("delete")
     public static void delete(String[] args)
-    throws HongsException, InterruptedException {
+    throws CruxException, InterruptedException {
         delete(args, new Inst());
     }
     public static void delete(String[] args, Inst df)
-    throws HongsException, InterruptedException {
+    throws CruxException, InterruptedException {
         Map opts = CombatHelper.getOpts(args, new String[] {
             "conf=s",
             "form=s",
@@ -353,11 +353,11 @@ public class DataCombat {
 
     @Combat("search")
     public static void search(String[] args)
-    throws HongsException {
+    throws CruxException {
         search(args, new Inst());
     }
     public static void search(String[] args, Inst df)
-    throws HongsException {
+    throws CruxException {
         Map opts = CombatHelper.getOpts(args, new String[] {
             "conf=s",
             "form=s",
@@ -385,15 +385,15 @@ public class DataCombat {
     /**
      * 归并命令
      * @param args
-     * @throws HongsException
+     * @throws CruxException
      */
     @Combat("uproot")
     public static void uproot(String[] args)
-    throws HongsException {
+    throws CruxException {
         uproot(args, new Inst());
     }
     public static void uproot(String[] args, Inst df)
-    throws HongsException {
+    throws CruxException {
         Map opts = CombatHelper.getOpts(
             args ,
             "uid=s" ,
@@ -430,7 +430,7 @@ public class DataCombat {
                     String f = n.substring(1 + p);
                     uproot (df.getInstance(c , f), uid, uids);
                 }
-            } catch (HongsException ex) {
+            } catch (CruxException ex) {
                 throw ex.toExemption( );
             }
         });
@@ -440,9 +440,9 @@ public class DataCombat {
      * 归并账号(所有模型的数据)
      * @param uid
      * @param uids
-     * @throws HongsException
+     * @throws CruxException
      */
-    public static void uproot(String uid, Set<String> uids) throws HongsException {
+    public static void uproot(String uid, Set<String> uids) throws CruxException {
         Set<String> ents = new Inst( ).getAllPaths( );
         for(String n : ents) {
             int    p = n.lastIndexOf(".");
@@ -457,9 +457,9 @@ public class DataCombat {
      * @param ent
      * @param uid
      * @param uids
-     * @throws HongsException
+     * @throws CruxException
      */
-    public static void uproot(Data ent, String uid, Set<String> uids) throws HongsException {
+    public static void uproot(Data ent, String uid, Set<String> uids) throws CruxException {
         Map cols = ent .getFields();
         Set colz = new HashSet();
         Map relz = new HashMap();
@@ -549,7 +549,7 @@ public class DataCombat {
      */
     public static class Inst {
 
-        public Data getInstance(String conf, String form) throws HongsException {
+        public Data getInstance(String conf, String form) throws CruxException {
             return  Data . getInstance(conf, form);
         }
 
@@ -571,7 +571,7 @@ public class DataCombat {
                     String id = ro.get("id").toString();
                     ents.add("centra/data/" +id+"."+id);
                 }
-            } catch (HongsException ex) {
+            } catch (CruxException ex) {
                 throw ex.toExemption( );
             }
 
@@ -614,15 +614,15 @@ public class DataCombat {
             this.cascades = cascades;
         }
 
-        public void del(String id, Map sd, long ctime) throws HongsException {
+        public void del(String id, Map sd, long ctime) throws CruxException {
             that.del(id, sd, ctime);
         }
 
-        public void del(String id, Map sd) throws HongsException {
+        public void del(String id, Map sd) throws CruxException {
             that.delDoc( id );
         }
 
-        public void rev(String id, Map od, long ctime) throws HongsException {
+        public void rev(String id, Map od, long ctime) throws CruxException {
             String   uid   = that.getUserId();
             String   fid   = that.getFormId();
             Object[] param = new String[] {id, fid, "0"};
@@ -660,7 +660,7 @@ public class DataCombat {
             that.getTable().insert(nd);
         }
 
-        public void rev(String id, Map od) throws HongsException {
+        public void rev(String id, Map od) throws CruxException {
             if ( includes ) that.padInf(od, od);
             that.setDoc(id, that.padDoc(od  ) );
         }

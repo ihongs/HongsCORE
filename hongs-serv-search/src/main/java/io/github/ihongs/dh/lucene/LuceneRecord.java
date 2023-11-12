@@ -4,8 +4,8 @@ import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLogger;
-import io.github.ihongs.HongsException;
-import io.github.ihongs.HongsExemption;
+import io.github.ihongs.CruxException;
+import io.github.ihongs.CruxExemption;
 import io.github.ihongs.action.FormSet;
 import io.github.ihongs.dh.IEntity;
 import io.github.ihongs.dh.JFigure;
@@ -120,9 +120,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      * @param conf
      * @param form
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
-    public static LuceneRecord getInstance(String conf, String form) throws HongsException {
+    public static LuceneRecord getInstance(String conf, String form) throws CruxException {
         String code = LuceneRecord.class.getName() +":"+ conf +":"+ form;
         Core   core = Core.getInstance( );
         LuceneRecord  inst = (LuceneRecord) core.get(code);
@@ -173,10 +173,10 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      *
      * @param rd
      * @return 结构: {list: [], page: {}}
-     * @throws HongsException
+     * @throws CruxException
      */
     @Override
-    public Map search(Map rd) throws HongsException {
+    public Map search(Map rd) throws CruxException {
         // TODO: 临时兼容获取详情
         Object id = rd.get(Cnst.ID_KEY);
         if (id != null && ! "".equals(id) && (id instanceof String || id instanceof Number)) {
@@ -192,11 +192,11 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
         int rn = Synt.declare(rd.get(Cnst.RN_KEY), Cnst.RN_DEF);
         if (rn < 0) {
-            throw new HongsException(400 , "Wrong param " + Cnst.RN_KEY);
+            throw new CruxException (400 , "Wrong param " + Cnst.RN_KEY);
         }
         int pn = Synt.declare(rd.get(Cnst.PN_KEY), Cnst.PN_DEF);
         if (pn < 0) {
-            throw new HongsException(400 , "Wrong param " + Cnst.PN_KEY);
+            throw new CruxException (400 , "Wrong param " + Cnst.PN_KEY);
         }
 
         // 指定行数 0, 则获取全部
@@ -247,10 +247,10 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      *
      * @param rd
      * @return 结构: {info: {}, page: {}}
-     * @throws HongsException
+     * @throws CruxException
      */
     @Override
-    public Map recite(Map rd) throws HongsException {
+    public Map recite(Map rd) throws CruxException {
         /**
          * 未指定 id 返回空 map
          * 外部可能仅需选项数据等,
@@ -311,10 +311,10 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      * 创建记录
      * @param rd
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
     @Override
-    public String create(Map rd) throws HongsException {
+    public String create(Map rd) throws CruxException {
         /**
          * 外部用户不可指定 id
          * 想要指定只能使用 add
@@ -330,10 +330,10 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      * 更新记录
      * @param rd
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
     @Override
-    public int update(Map rd) throws HongsException {
+    public int update(Map rd) throws CruxException {
         Set<String> ids = Synt.asSet(rd.get(Cnst.ID_KEY));
         permit (rd, ids , 1096);
         int c = 0;
@@ -347,10 +347,10 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      * 删除记录
      * @param rd
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
     @Override
-    public int delete(Map rd) throws HongsException {
+    public int delete(Map rd) throws CruxException {
         Set<String> ids = Synt.asSet(rd.get(Cnst.ID_KEY));
         permit (rd, ids , 1097);
         int c = 0;
@@ -365,9 +365,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      * @param rd
      * @param ids
      * @param ern
-     * @throws HongsException 错误码 1096 更新, 1097 删除, 1098 查询
+     * @throws CruxException 错误码 1096 更新, 1097 删除, 1098 查询
      */
-    protected void permit(Map rd, Set ids, int ern) throws HongsException {
+    protected void permit(Map rd, Set ids, int ern) throws CruxException {
         if (rd  == null) {
             throw new NullPointerException( "rd can not be null" );
         }
@@ -402,13 +402,13 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                    zd . removeAll  (idz);
             String er = zd.toString(  );
             if (ern == 1096) {
-                throw new HongsException(ern, "Can not update by id: " + er);
+                throw new CruxException(ern, "Can not update by id: " + er);
             } else
             if (ern == 1097) {
-                throw new HongsException(ern, "Can not delete by id: " + er);
+                throw new CruxException(ern, "Can not delete by id: " + er);
             } else
             {
-                throw new HongsException(ern, "Can not search by id: " + er);
+                throw new CruxException(ern, "Can not search by id: " + er);
             }
         }
     }
@@ -416,9 +416,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
     /**
      * 唯一键值约束
      * @param nd
-     * @throws HongsException 错误码 1088
+     * @throws CruxException 错误码 1088
      */
-    protected void unique(Map nd, String id) throws HongsException {
+    protected void unique(Map nd, String id) throws CruxException {
         /**
          * 有 data-ut 表示其由外部进行检查
          * 多组唯一用 data-uk-xxx 进行定义
@@ -463,7 +463,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             }
 
             if (search(rd, 0, 1).hits() > 0) {
-                throw new HongsException(1088, "UNIQUE KEY $0 ($1)", fn, Syno.concat(",", us));
+                throw new CruxException(1088, "UNIQUE KEY $0 ($1)", fn, Syno.concat(",", us));
             }
         }
     }
@@ -474,9 +474,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      * 添加文档
      * @param rd
      * @return ID
-     * @throws HongsException
+     * @throws CruxException
      */
-    public String add(Map rd) throws HongsException {
+    public String add(Map rd) throws CruxException {
         String id = Synt.asString(rd.get(Cnst.ID_KEY));
         if (id == null || id.length() == 0) {
             id  =  Core.newIdentity();
@@ -492,9 +492,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      * @param id
      * @param rd
      * @return 1
-     * @throws HongsException
+     * @throws CruxException
      */
-    public int put(String id, Map rd) throws HongsException {
+    public int put(String id, Map rd) throws CruxException {
         if (id == null || id.length() == 0) {
             throw new NullPointerException("Id must be set in put");
         }
@@ -523,9 +523,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      * @param id
      * @param rd
      * @return 1
-     * @throws HongsException
+     * @throws CruxException
      */
-    public int set(String id, Map rd) throws HongsException {
+    public int set(String id, Map rd) throws CruxException {
         if (id == null || id.length() == 0) {
             throw new NullPointerException("Id must be set in set");
         }
@@ -553,9 +553,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      * 删除文档(delDoc 的别名)
      * @param id
      * @return 有 1, 无 0
-     * @throws HongsException
+     * @throws CruxException
      */
-    public int del(String id) throws HongsException {
+    public int del(String id) throws CruxException {
         if (id == null || id.length() == 0) {
             throw new NullPointerException("Id must be set in del");
         }
@@ -572,9 +572,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      * 获取文档信息
      * @param id
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
-    public Map get(String id) throws HongsException {
+    public Map get(String id) throws CruxException {
         Document doc = getDoc(id);
         if (doc != null) {
             return padDat ( doc );
@@ -587,9 +587,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      * 获取单个文档
      * @param rd
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
-    public Map getOne(Map rd) throws HongsException {
+    public Map getOne(Map rd) throws CruxException {
         Loop roll = search(rd, 0, 1);
         if   (   roll.hasNext( )) {
             return  roll.next( );
@@ -602,9 +602,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      * 获取全部文档
      * @param rd
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
-    public List getAll(Map rd) throws HongsException {
+    public List getAll(Map rd) throws CruxException {
         Loop roll = search(rd, 0, 0);
         List list = new ArrayList(roll.size());
         while  (  roll.hasNext()) {
@@ -619,9 +619,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      * @param begin 起始位置
      * @param limit 获取限制
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
-    public Loop search(Map rd, int begin, int limit) throws HongsException {
+    public Loop search(Map rd, int begin, int limit) throws CruxException {
         Query q = padQry(rd);
         Sort  s = padSrt(rd);
         Set   r = Synt.toTerms (rd.get(Cnst.RB_KEY));
@@ -636,7 +636,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
     //** 组件方法 **/
 
-    public void addDoc(String id, Document doc) throws HongsException {
+    public void addDoc(String id, Document doc) throws CruxException {
         writes.put(id, doc);
         if (!REFLUX_MODE) {
             commit();
@@ -646,7 +646,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         try {
             iw.addDocument (doc);
         } catch (IOException ex) {
-            throw new HongsException(ex);
+            throw new CruxException(ex);
         }
         if (!REFLUX_MODE) {
             commit();
@@ -654,7 +654,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         */
     }
 
-    public void setDoc(String id, Document doc) throws HongsException {
+    public void setDoc(String id, Document doc) throws CruxException {
         writes.put(id, doc);
         if (!REFLUX_MODE) {
             commit();
@@ -664,7 +664,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         try {
             iw.updateDocument (new Term("@"+Cnst.ID_KEY, id), doc);
         } catch (IOException ex) {
-            throw new HongsException(ex);
+            throw new CruxException(ex);
         }
         if (!REFLUX_MODE) {
             commit();
@@ -672,7 +672,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         */
     }
 
-    public void delDoc(String id) throws HongsException {
+    public void delDoc(String id) throws CruxException {
         writes.put(id,null);
         if (!REFLUX_MODE) {
             commit();
@@ -682,7 +682,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         try {
             iw.deleteDocuments(new Term("@"+Cnst.ID_KEY, id)     );
         } catch (IOException ex) {
-            throw new HongsException(ex);
+            throw new CruxException(ex);
         }
         if (!REFLUX_MODE) {
             commit();
@@ -690,7 +690,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         */
     }
 
-    public Document getDoc(String id) throws HongsException {
+    public Document getDoc(String id) throws CruxException {
         // 从预备写入缓冲区中读取
         if (writes.containsKey(id)) {
             return  writes.get(id);
@@ -743,7 +743,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         return doc;
     }
 
-    public Query padQry(Map rd) throws HongsException {
+    public Query padQry(Map rd) throws CruxException {
         BooleanQuery.Builder qr = new BooleanQuery.Builder();
 
         padQry(qr, rd);
@@ -756,7 +756,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         return new MatchAllDocsQuery( );
     }
 
-    public Sort  padSrt(Map rd) throws HongsException {
+    public Sort  padSrt(Map rd) throws CruxException {
         List<SortField> of = new ArrayList();
 
         padSrt(of, rd);
@@ -975,9 +975,8 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
              */
             if (p && f instanceof StringStock) {
                 try {
-                    ( ( StringStock ) f).analyser(getAnalyzer(m));
-                }
-                catch (HongsException x) {
+                    ((StringStock) f).analyser(getAnalyzer(m));
+                } catch ( CruxException x) {
                     throw x.toExemption( );
                 }
             }
@@ -1060,13 +1059,13 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      *
      * @param qr
      * @param rd
-     * @throws HongsException
+     * @throws CruxException
      */
-    protected void padQry(BooleanQuery.Builder qr, Map rd) throws HongsException {
+    protected void padQry(BooleanQuery.Builder qr, Map rd) throws CruxException {
         try {
             padQry(qr, rd, 0);
         } catch (BooleanQuery.TooManyClauses | ClassCastException | NullPointerException ex) {
-            throw new HongsException(ex, 400);
+            throw new CruxException(ex, 400);
         }
     }
 
@@ -1077,9 +1076,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      * @param qr
      * @param rd
      * @param r 递归层级
-     * @throws HongsException
+     * @throws CruxException
      */
-    protected void padQry(BooleanQuery.Builder qr, Map rd, int r) throws HongsException {
+    protected void padQry(BooleanQuery.Builder qr, Map rd, int r) throws CruxException {
         int i = 0, j = 0; // 条件数量, 否定数量, 计数规避全否定时查不到数据
 
         Map<String, Map> fields = getFields();
@@ -1258,10 +1257,10 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                         i ++ ; j ++ ;
                         break;
                     default:
-                        throw new HongsException(400, "Unsupported `is`: "+v);
+                        throw new CruxException(400, "Unsupported `is`: "+v);
                 }/*
                 } catch (ParseException e) {
-                    throw new HongsExemption(e);
+                    throw new CruxExemption(e);
                 }*/
             }
 
@@ -1451,7 +1450,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         v = rd.get(Cnst.AR_KEY);
         if ( v != null ) {
             if ( r > 2 ) {
-                throw new HongsException(400, "Key '" + Cnst.AR_KEY + "' can not exceed 2 layers");
+                throw new CruxException(400, "Key '" + Cnst.AR_KEY + "' can not exceed 2 layers");
             }
             Set<Map> set = Synt.asSet(v);
             if (set != null && ! set.isEmpty()) {
@@ -1480,7 +1479,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         v = rd.get(Cnst.NR_KEY);
         if ( v != null ) {
             if ( r > 2 ) {
-                throw new HongsException(400, "Key '" + Cnst.NR_KEY + "' can not exceed 2 layers");
+                throw new CruxException(400, "Key '" + Cnst.NR_KEY + "' can not exceed 2 layers");
             }
             Set<Map> set = Synt.asSet(v);
             if (set != null && ! set.isEmpty()) {
@@ -1509,7 +1508,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         v = rd.get(Cnst.OR_KEY);
         if ( v != null ) {
             if ( r > 2 ) {
-                throw new HongsException(400, "Key '" + Cnst.OR_KEY + "' can not exceed 2 layers");
+                throw new CruxException(400, "Key '" + Cnst.OR_KEY + "' can not exceed 2 layers");
             }
             Set<Map> set = Synt.asSet(v);
             if (set != null && ! set.isEmpty()) {
@@ -1569,9 +1568,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      *
      * @param of
      * @param rd
-     * @throws HongsException
+     * @throws CruxException
      */
-    protected void padSrt(List<SortField> of, Map rd) throws HongsException {
+    protected void padSrt(List<SortField> of, Map rd) throws CruxException {
         Set<String> ob = Synt.toTerms(rd.get(Cnst.OB_KEY));
         if (ob == null) {
             return;
@@ -1713,7 +1712,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
     public void begin() {
         if (REFLUX_MODE
         && !writes.isEmpty()) {
-            throw new HongsExemption(1054, "Uncommitted changes");
+            throw new CruxExemption(1054, "Uncommitted changes");
         }
         REFLUX_MODE = true ;
     }
@@ -1730,7 +1729,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         try {
             getDbConn().write(writes);
         } catch (IOException ex) {
-            throw new HongsExemption(ex, 1055);
+            throw new CruxExemption(ex, 1055);
         } finally {
             writes.clear();
             cursor = null ;
@@ -1749,7 +1748,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
     //  try {
     //      getDbConn().write(writes);
     //  } catch (IOException ex) {
-    //      throw new HongsExemption(ex, 1055);
+    //      throw new CruxExemption(ex, 1055);
     //  } finally {
             writes.clear();
             cursor = null ;
@@ -1812,30 +1811,30 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         return dbconn;
     }
 
-    public IndexWriter getWriter() throws HongsException {
+    public IndexWriter getWriter() throws CruxException {
         try {
             return getDbConn().getWriter();
         }
         catch (IOException ex) {
-            throw  new  HongsException(ex);
+            throw new CruxException(ex);
         }
     }
 
-    public IndexReader getReader() throws HongsException {
+    public IndexReader getReader() throws CruxException {
         try {
             return getDbConn().getReader();
         }
         catch (IOException ex) {
-            throw  new  HongsException(ex);
+            throw new CruxException(ex);
         }
     }
 
-    public IndexSearcher getFinder() throws HongsException {
+    public IndexSearcher getFinder() throws CruxException {
         try {
             return getDbConn().getFinder();
         }
         catch (IOException ex) {
-            throw  new  HongsException(ex);
+            throw new CruxException(ex);
         }
     }
 
@@ -1844,10 +1843,10 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
     /**
      * 存储分析器
      * @return
-     * @throws HongsException
+     * @throws CruxException
      * @deprecated 不再需要提前预设, 改为写入值时构建 TokenStream
      */
-    protected Analyzer getAnalyzer() throws HongsException {
+    protected Analyzer getAnalyzer() throws CruxException {
         /*Default*/ Analyzer  ad = new StandardAnalyzer();
         Map<String, Analyzer> az = new HashMap();
         Map<String, Map     > fs = getFields(  );
@@ -1866,9 +1865,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      * 存储分析器
      * @param fc 字段配置
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
-    protected Analyzer getAnalyzer(Map fc) throws HongsException {
+    protected Analyzer getAnalyzer(Map fc) throws CruxException {
         try {
             CustomAnalyzer.Builder cb = CustomAnalyzer.builder();
             String kn, an, ac; Map oc;
@@ -1931,9 +1930,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
             return cb.build();
         } catch (IOException ex) {
-            throw new HongsException(ex);
+            throw new CruxException(ex);
         } catch (IllegalArgumentException ex) {
-            throw new HongsException(ex);
+            throw new CruxException(ex);
         }
     }
 
@@ -1941,9 +1940,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      * 查询分析器
      * @param fc 字段配置
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
-    protected Analyzer getAnalyser(Map fc) throws HongsException {
+    protected Analyzer getAnalyser(Map fc) throws CruxException {
         try {
             CustomAnalyzer.Builder cb = CustomAnalyzer.builder();
             String kn, an, ac; Map oc;
@@ -2006,9 +2005,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
             return cb.build();
         } catch (IOException ex) {
-            throw new HongsException(ex);
+            throw new CruxException(ex);
         } catch (IllegalArgumentException ex) {
-            throw new HongsException(ex);
+            throw new CruxException(ex);
         }
     }
 
@@ -2078,7 +2077,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             if (null != k) {
                    t  = k;
             }
-        } catch (HongsException e) {
+        } catch ( CruxException e) {
             throw e.toExemption( );
         }
 
@@ -2188,8 +2187,8 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             // 获取查读对象
             try {
                 finder = that.getFinder();
-            } catch ( HongsException ex ) {
-                throw ex.toExemption(   );
+            } catch ( CruxException e) {
+                throw e.toExemption( );
             }
         }
 
@@ -2333,7 +2332,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
     /**
      * 查询中断异常
      */
-    public static class Lost extends HongsExemption {
+    public static class Lost extends CruxExemption {
 
         public Lost( AlreadyClosedException cause ) {
             super(cause, "@fore.retries");

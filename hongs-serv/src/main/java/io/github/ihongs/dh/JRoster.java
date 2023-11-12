@@ -1,6 +1,6 @@
 package io.github.ihongs.dh;
 
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.db.link.Loop;
@@ -26,7 +26,7 @@ public class JRoster<T> implements IRoster<T>, AutoCloseable {
     protected final boolean bytes;
     protected final   Table table;
 
-    protected JRoster(Table table) throws HongsException {
+    protected JRoster(Table table) throws CruxException {
         this. table = table;
 
         // 判断是采用序列化还是 JSON
@@ -36,7 +36,7 @@ public class JRoster<T> implements IRoster<T>, AutoCloseable {
         bytes  =  dt == Types.BLOB || dt == Types.BINARY ;
     }
 
-    public JRoster() throws HongsException {
+    public JRoster() throws CruxException {
         this(DB.getInstance("normal").getTable("roster"));
     }
 
@@ -44,10 +44,10 @@ public class JRoster<T> implements IRoster<T>, AutoCloseable {
      * 获取数据
      * @param key
      * @return
-     * @throws io.github.ihongs.HongsException
+     * @throws io.github.ihongs.CruxException
      */
     @Override
-    public T get(String key) throws HongsException {
+    public T get(String key) throws CruxException {
         long now = System.currentTimeMillis() / 1000;
 
         try (
@@ -73,13 +73,13 @@ public class JRoster<T> implements IRoster<T>, AutoCloseable {
             }
         }
         catch (SQLException ex) {
-            throw new  HongsException(ex, 1152);
+            throw new  CruxException(ex, 1152);
         }
         catch ( IOException ex) {
-            throw new  HongsException(ex);
+            throw new  CruxException(ex);
         }
         catch (ClassNotFoundException ex) {
-            throw new  HongsException(ex);
+            throw new  CruxException(ex);
         }
     }
 
@@ -90,7 +90,7 @@ public class JRoster<T> implements IRoster<T>, AutoCloseable {
      * @param exp
      */
     @Override
-    public void set(String key, T val, long exp) throws HongsException {
+    public void set(String key, T val, long exp) throws CruxException {
         // 序列化值
         byte[] arr = null;
         String str = null;
@@ -106,7 +106,7 @@ public class JRoster<T> implements IRoster<T>, AutoCloseable {
             arr = bos.toByteArray();
         }
         catch (IOException e) {
-            throw new HongsException(e);
+            throw new CruxException(e);
         }
 
         long now = System.currentTimeMillis() / 1000;
@@ -132,7 +132,7 @@ public class JRoster<T> implements IRoster<T>, AutoCloseable {
             }
         }
         catch ( SQLException e ) {
-            throw new HongsException(e, 1045);
+            throw new CruxException(e, 1045);
         }
 
         try (
@@ -153,7 +153,7 @@ public class JRoster<T> implements IRoster<T>, AutoCloseable {
             }
         }
         catch ( SQLException e ) {
-            throw new HongsException(e, 1045);
+            throw new CruxException(e, 1045);
         }
     }
 
@@ -161,10 +161,10 @@ public class JRoster<T> implements IRoster<T>, AutoCloseable {
      * 设置过期
      * @param key
      * @param exp
-     * @throws io.github.ihongs.HongsException
+     * @throws io.github.ihongs.CruxException
      */
     @Override
-    public void set(String key, long exp) throws HongsException {
+    public void set(String key, long exp) throws CruxException {
         long now = System.currentTimeMillis() / 1000;
 
 //      table.db.open( );
@@ -181,7 +181,7 @@ public class JRoster<T> implements IRoster<T>, AutoCloseable {
             ps.executeUpdate(  );
         }
         catch ( SQLException e ) {
-            throw new HongsException(e, 1045);
+            throw new CruxException(e, 1045);
         }
     }
 
@@ -190,7 +190,7 @@ public class JRoster<T> implements IRoster<T>, AutoCloseable {
      * @param key
      */
     @Override
-    public void del(String key) throws HongsException {
+    public void del(String key) throws CruxException {
 //      table.db.open( );
         table.db.ready();
 
@@ -203,7 +203,7 @@ public class JRoster<T> implements IRoster<T>, AutoCloseable {
             ps.executeUpdate(  );
         }
         catch ( SQLException e ) {
-            throw new HongsException(e, 1045);
+            throw new CruxException(e, 1045);
         }
     }
 
@@ -212,7 +212,7 @@ public class JRoster<T> implements IRoster<T>, AutoCloseable {
      * @param exp
      */
     @Override
-    public void del( long  exp) throws HongsException {
+    public void del( long  exp) throws CruxException {
 //      table.db.open( );
         table.db.ready();
 
@@ -225,12 +225,12 @@ public class JRoster<T> implements IRoster<T>, AutoCloseable {
             ps.executeUpdate(  );
         }
         catch ( SQLException e ) {
-            throw new HongsException(e, 1045);
+            throw new CruxException(e, 1045);
         }
     }
 
     @Override
-    public void close() throws HongsException {
+    public void close() throws CruxException {
         table.db.close();
     }
 

@@ -14,7 +14,7 @@
             if (menu != null) {
                 String hrel = (String) menu.get("hrel");
                 if ("!DENY".equals(hrel)) {
-                    throw new HongsException(404, _locale.translate("core.error.no.thing"));
+                    throw new CruxException(404, _locale.translate("core.error.no.thing"));
                 }
                 break;
             }
@@ -22,11 +22,11 @@
             if (menu != null) {
                 String hrel = (String) menu.get("hrel");
                 if ("!DENY".equals(hrel)) {
-                    throw new HongsException(404, _locale.translate("core.error.no.thing"));
+                    throw new CruxException(404, _locale.translate("core.error.no.thing"));
                 }
                 break;
             }
-        } catch (HongsException ex) {
+        } catch (CruxException ex) {
             // 忽略配置文件缺失的异常情况
             if (ex.getErrno() != 920) {
                 throw ex ;

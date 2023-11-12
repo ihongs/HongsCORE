@@ -4,7 +4,7 @@ import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLocale;
 import io.github.ihongs.CoreLogger;
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.dh.IAction;
@@ -63,7 +63,7 @@ public class FoldAction implements IAction {
 
     @Override
     @Action("search")
-    public void search(ActionHelper helper) throws HongsException {
+    public void search(ActionHelper helper) throws CruxException {
         CoreLocale lang = CoreLocale.getInstance("manage");
         String type = helper.getParameter("type");
         String path = helper.getParameter("path");
@@ -247,13 +247,13 @@ public class FoldAction implements IAction {
 
     @Override
     @Deprecated
-    public void recite(ActionHelper helper) throws HongsException {
+    public void recite(ActionHelper helper) throws CruxException {
         // just search
     }
 
     @Override
     @Action("create")
-    public void create(ActionHelper helper) throws HongsException {
+    public void create(ActionHelper helper) throws CruxException {
         CoreLocale lang = CoreLocale.getInstance("manage");
         String path = helper.getParameter("path");
         String type = helper.getParameter("type");
@@ -301,7 +301,7 @@ public class FoldAction implements IAction {
 
     @Override
     @Action("update")
-    public void update(ActionHelper helper) throws HongsException {
+    public void update(ActionHelper helper) throws CruxException {
         CoreLocale lang = CoreLocale.getInstance("manage");
         String path = helper.getParameter("path");
         String dist = helper.getParameter("dist");
@@ -369,7 +369,7 @@ public class FoldAction implements IAction {
 
     @Override
     @Action("delete")
-    public void delete(ActionHelper helper) throws HongsException {
+    public void delete(ActionHelper helper) throws CruxException {
         CoreLocale  lang = CoreLocale.getInstance( "manage" );
         Set<String> list = Synt.asSet(helper.getRequestData().get("path"));
         if ( list == null || list.isEmpty() ) {

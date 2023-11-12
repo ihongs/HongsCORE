@@ -1,6 +1,6 @@
 package io.github.ihongs.combat.serv;
 
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.combat.CombatHelper;
 import io.github.ihongs.combat.anno.Combat;
 import io.github.ihongs.db.DB;
@@ -81,7 +81,7 @@ public class Cryptos {
     }
 
     @Combat("becrypt")
-    public static void becrypt(String[] args) throws HongsException {
+    public static void becrypt(String[] args) throws CruxException {
         Map opts = CombatHelper.getOpts(
             args,
             "table=s",
@@ -111,7 +111,7 @@ public class Cryptos {
         Table  tb  = DB.getInstance( ).getTable(tab);
         DB     db  = tb.db;
         if (! (tb instanceof PrivTable)) {
-            throw new HongsException("Table not crypto");
+            throw new CruxException("Table not crypto");
         }
 
         // 按参数改表名和密钥, 获取验证方法
@@ -170,10 +170,10 @@ public class Cryptos {
     /**
      * 更换数据库表密钥
      * @param args
-     * @throws HongsException
+     * @throws CruxException
      */
     @Combat("recrypt")
-    public static void recrypt(String[] args) throws HongsException {
+    public static void recrypt(String[] args) throws CruxException {
         Map opts = CombatHelper.getOpts(
             args,
             "table=s",
@@ -215,7 +215,7 @@ public class Cryptos {
         Table  tb = DB.getInstance( ).getTable(tab);
         DB     db = tb.db;
         if (! (tb instanceof PrivTable)) {
-            throw new HongsException("Table not crypto");
+            throw new CruxException("Table not crypto");
         }
 
         PrivTable oldTab = ((PrivTable) tb).clone();
@@ -247,17 +247,17 @@ public class Cryptos {
                     db.execute("CREATE TABLE `"+newTab.tableName+"` LIKE `"+oldTab.tableName+"`");
                 }
             }
-        } catch (HongsException ex) {
-            throw new HongsException("Create new table failed, please create manually." , ex);
+        } catch (CruxException ex) {
+            throw new CruxException("Create new table failed, please create manually." , ex);
         } catch (  SQLException ex) {
-            throw new HongsException(ex);
+            throw new CruxException(ex);
         }
 
         // 检查目标表是否为空
         Map one = db.fetchOne ("SELECT COUNT(1) AS `cnt` FROM `"+newTab.tableName+"`");
         int cxt = Synt.declare(one.get("cnt"), 0) - start;
         if (cxt > 0) {
-            throw new HongsException("Verify new table failed, please truncate table first.");
+            throw new CruxException("Verify new table failed, please truncate table first.");
         }
 
         // 获取总数以计算进度
@@ -290,7 +290,7 @@ public class Cryptos {
         CombatHelper.progres();
     }
 
-    private static Loop query(DB db, Table tb, String sql, int start, int limit) throws HongsException {
+    private static Loop query(DB db, Table tb, String sql, int start, int limit) throws CruxException {
         if (sql == null || sql.isEmpty()) {
             return db.query("SELECT * FROM `"+ tb.tableName +"`" , start, limit);
         } else {

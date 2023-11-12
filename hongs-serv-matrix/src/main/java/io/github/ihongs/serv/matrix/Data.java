@@ -3,8 +3,8 @@ package io.github.ihongs.serv.matrix;
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreLogger;
-import io.github.ihongs.HongsException;
-import io.github.ihongs.HongsExemption;
+import io.github.ihongs.CruxException;
+import io.github.ihongs.CruxExemption;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.FormSet;
 import io.github.ihongs.db.DB;
@@ -106,11 +106,11 @@ public class Data extends SearchEntity {
      * @param conf
      * @param form
      * @return
-     * @throws HongsException 表单获取失败
-     * @throws HongsExemption 实例构建失败
+     * @throws CruxException 表单获取失败
+     * @throws CruxExemption 实例构建失败
      * @throws ClassCastException 不是 Data 的子类
      */
-    public static Data getInstance(String conf , String form) throws HongsException {
+    public static Data getInstance(String conf , String form) throws CruxException {
         // 外部指定
         Map    dict = FormSet.getInstance(conf).getForm(form);
         String name = ( String ) Dict.get(dict, null, "@", "db-class");
@@ -119,7 +119,7 @@ public class Data extends SearchEntity {
             try {
                   type = Class.forName (name);
             } catch (ClassNotFoundException e) {
-                throw new HongsExemption(821, "Can not find class by name '"+name+"'." );
+                throw new CruxExemption(821, "Can not find class by name '"+name+"'." );
             }
 
             try {
@@ -140,13 +140,13 @@ public class Data extends SearchEntity {
                 if (ta instanceof StackOverflowError) {
                     throw (StackOverflowError) ta;
                 }
-                throw new HongsExemption(ta, 823, "Can not call '"+name+".getInstance'");
+                throw new CruxExemption(ta, 823, "Can not call '"+name+".getInstance'");
             } catch ( IllegalArgumentException ex) {
-                throw new HongsExemption(ex, 823, "Can not call '"+name+".getInstance'");
+                throw new CruxExemption(ex, 823, "Can not call '"+name+".getInstance'");
             } catch (   IllegalAccessException ex) {
-                throw new HongsExemption(ex, 823, "Can not call '"+name+".getInstance'");
+                throw new CruxExemption(ex, 823, "Can not call '"+name+".getInstance'");
             } catch (        SecurityException se) {
-                throw new HongsExemption(se, 823, "Can not call '"+name+".getInstance'");
+                throw new CruxExemption(se, 823, "Can not call '"+name+".getInstance'");
             }
         }
 
@@ -161,7 +161,7 @@ public class Data extends SearchEntity {
         return inst;
     }
 
-    public Table getTable() throws HongsException {
+    public Table getTable() throws CruxException {
         String tn = Synt.declare(getParams().get("db-table"), "data");
         if ("".equals(tn) || "none".equals(tn)) {
             return null;
@@ -169,7 +169,7 @@ public class Data extends SearchEntity {
         return DB.getInstance("matrix").getTable(tn);
     }
 
-    public Model getModel() throws HongsException {
+    public Model getModel() throws CruxException {
         String tn = Synt.declare(getParams().get("db-table"), "data");
         if ("".equals(tn) || "none".equals(tn)) {
             return null;
@@ -245,7 +245,7 @@ public class Data extends SearchEntity {
         do {
             try {
                 fields = FormSet.getInstance(cnf).getForm(form);
-            } catch (HongsException ex) {
+            } catch (CruxException ex) {
                 if (ex.getErrno() != 910
                 &&  ex.getErrno() != 912) { // 非表单缺失
                     throw ex.toExemption();
@@ -262,7 +262,7 @@ public class Data extends SearchEntity {
 
             try {
                 fieldx = FormSet.getInstance(cnf).getForm(form);
-            } catch (HongsException ex) {
+            } catch (CruxException ex) {
                 if (ex.getErrno() != 910
                 &&  ex.getErrno() != 912) { // 非表单缺失
                     throw ex.toExemption();
@@ -300,7 +300,7 @@ public class Data extends SearchEntity {
         }   while  ( false );
 
         if ( null == fields) {
-            throw new HongsExemption(910, "matrix:matrix.form.not.exists", conf, form);
+            throw new CruxExemption(910, "matrix:matrix.form.not.exists", conf, form);
         }
 
         setFields(fields);
@@ -418,10 +418,10 @@ public class Data extends SearchEntity {
      * 调用 put(String, Map, long)
      * @param rd
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
     @Override
-    public int update(Map rd) throws HongsException {
+    public int update(Map rd) throws CruxException {
         Set<String> ids = Synt.asSet(rd.get(Cnst.ID_KEY));
         permit (rd, ids , 1096);
         int  c = 0;
@@ -437,10 +437,10 @@ public class Data extends SearchEntity {
      * 调用 del(String, Map, long)
      * @param rd
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
     @Override
-    public int delete(Map rd) throws HongsException {
+    public int delete(Map rd) throws CruxException {
         Set<String> ids = Synt.asSet(rd.get(Cnst.ID_KEY));
         permit(rd , ids , 1097);
         int  c = 0;
@@ -456,9 +456,9 @@ public class Data extends SearchEntity {
      * 调用 rev(String, Map, long)
      * @param rd
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
-    public int revert(Map rd) throws HongsException {
+    public int revert(Map rd) throws CruxException {
         Set<String> ids = Synt.asSet(rd.get(Cnst.ID_KEY));
     //  permit(rd , ids , 1096);
         int  c = 0;
@@ -473,9 +473,9 @@ public class Data extends SearchEntity {
      * 查询历史记录
      * @param rd
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
-    public Map reveal(Map rd) throws HongsException {
+    public Map reveal(Map rd) throws CruxException {
         FetchCase fc = getModel().fetchCase();
         fc.filter("`form_id`=?", getFormId());
         Map rsp = getModel ().search (rd, fc);
@@ -487,9 +487,9 @@ public class Data extends SearchEntity {
      * 查询历史数据
      * @param rd
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
-    public Map remind(Map rd) throws HongsException {
+    public Map remind(Map rd) throws CruxException {
         FetchCase fc = getModel().fetchCase();
         fc.filter("`form_id`=?", getFormId());
         Map rsp = getModel ().recite (rd, fc);
@@ -540,10 +540,10 @@ public class Data extends SearchEntity {
      * 调用 add(String, Map, long)
      * @param rd
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
     @Override
-    public String add(Map rd) throws HongsException {
+    public String add(Map rd) throws CruxException {
         String id = Core.newIdentity();
         add(id,rd , System.currentTimeMillis() / 1000);
         return id ;
@@ -555,10 +555,10 @@ public class Data extends SearchEntity {
      * @param id
      * @param rd
      * @return 有更新为 1, 无更新为 0
-     * @throws HongsException
+     * @throws CruxException
      */
     @Override
-    public int put(String id, Map rd) throws HongsException {
+    public int put(String id, Map rd) throws CruxException {
         return put(id, rd, System.currentTimeMillis() / 1000);
     }
 
@@ -568,10 +568,10 @@ public class Data extends SearchEntity {
      * @param id
      * @param rd
      * @return 有更新为 1, 无更新为 0
-     * @throws HongsException
+     * @throws CruxException
      */
     @Override
-    public int set(String id, Map rd) throws HongsException {
+    public int set(String id, Map rd) throws CruxException {
         return set(id, rd, System.currentTimeMillis() / 1000);
     }
 
@@ -580,10 +580,10 @@ public class Data extends SearchEntity {
      * 调用 del(String, Map, long)
      * @param id
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
     @Override
-    public int del(String id) throws HongsException {
+    public int del(String id) throws CruxException {
         Map rd = new HashMap( );
         return del(id, rd, System.currentTimeMillis() / 1000);
     }
@@ -594,9 +594,9 @@ public class Data extends SearchEntity {
      * @param rd
      * @param ctime
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
-    public int add(String id, Map rd, long ctime) throws HongsException {
+    public int add(String id, Map rd, long ctime) throws CruxException {
         Map dd = new HashMap();
         padInf(dd, rd);
 
@@ -649,9 +649,9 @@ public class Data extends SearchEntity {
      * @param rd
      * @param ctime
      * @return 有更新为 1, 无更新为 0
-     * @throws HongsException
+     * @throws CruxException
      */
-    public int put(String id, Map rd, long ctime) throws HongsException {
+    public int put(String id, Map rd, long ctime) throws CruxException {
         Map dd = get(id);
         int t  = dd.isEmpty()? 1: 2;
         int i  = padInf(dd , rd);
@@ -681,10 +681,10 @@ public class Data extends SearchEntity {
             .getOne( );
         if (! od.isEmpty()) {
             if (Synt.declare(od.get("state"), 0  ) ==  0   ) {
-                throw new HongsException(404, "@matrix:matrix.item.is.removed", getFormId(), id);
+                throw new CruxException(404, "@matrix:matrix.item.is.removed", getFormId(), id);
             }
             if (Synt.declare(od.get("ctime"), 0L ) >= ctime) {
-                throw new HongsException(400, "@matrix:matrix.wait.one.second", getFormId(), id);
+                throw new CruxException(400, "@matrix:matrix.wait.one.second", getFormId(), id);
             }
         }
 
@@ -729,9 +729,9 @@ public class Data extends SearchEntity {
      * @param rd
      * @param ctime
      * @return 有更新为 1, 无更新为 0
-     * @throws HongsException
+     * @throws CruxException
      */
-    public int set(String id, Map rd, long ctime) throws HongsException {
+    public int set(String id, Map rd, long ctime) throws CruxException {
         Map dd = get(id);
         int t  = dd.isEmpty()? 1: 2;
         int i  = padInf(dd , rd);
@@ -761,10 +761,10 @@ public class Data extends SearchEntity {
             .getOne( );
         if (! od.isEmpty()) {
             if (Synt.declare(od.get("state"), 0  ) ==  0   ) {
-                throw new HongsException(404, "@matrix:matrix.item.is.removed", getFormId(), id);
+                throw new CruxException(404, "@matrix:matrix.item.is.removed", getFormId(), id);
             }
             if (Synt.declare(od.get("ctime"), 0L ) >= ctime) {
-            //  throw new HongsException(400, "@matrix:matrix.wait.one.second", getFormId(), id);
+            //  throw new CruxException(400, "@matrix:matrix.wait.one.second", getFormId(), id);
                 ctime = 0;
             }
         }
@@ -838,9 +838,9 @@ public class Data extends SearchEntity {
      * @param rd
      * @param ctime
      * @return 有更新为 1, 无更新为 0
-     * @throws HongsException
+     * @throws CruxException
      */
-    public int del(String id, Map rd, long ctime) throws HongsException {
+    public int del(String id, Map rd, long ctime) throws CruxException {
         delDoc(id);
 
         Table table = getTable();
@@ -862,7 +862,7 @@ public class Data extends SearchEntity {
             return 0; // 删除是幂等的可重复调用
         }
         if (Synt.declare(od.get("ctime"), 0L ) >= ctime) {
-            throw new HongsException(400, "@matrix:matrix.wait.one.second", getFormId(), id);
+            throw new CruxException(400, "@matrix:matrix.wait.one.second", getFormId(), id);
         }
 
         Map ud = new HashMap();
@@ -905,9 +905,9 @@ public class Data extends SearchEntity {
      * @param rd
      * @param ctime
      * @return 有更新为 1, 无更新为 0
-     * @throws HongsException
+     * @throws CruxException
      */
-    public int end(String id, Map rd, long ctime) throws HongsException {
+    public int end(String id, Map rd, long ctime) throws CruxException {
         delDoc(id);
 
         Table table = getTable();
@@ -929,7 +929,7 @@ public class Data extends SearchEntity {
             return 0; // 删除是幂等的可重复调用
         }
         if (Synt.declare(od.get("ctime"), 0L ) >= ctime) {
-        //  throw new HongsException(400, "@matrix:matrix.wait.one.second", getFormId(), id);
+        //  throw new CruxException(400, "@matrix:matrix.wait.one.second", getFormId(), id);
             ctime  = 0;
         }
 
@@ -992,12 +992,12 @@ public class Data extends SearchEntity {
      * @param rd
      * @param ctime
      * @return 有更新为 1, 无更新为 0
-     * @throws HongsException
+     * @throws CruxException
      */
-    public int rev(String id, Map rd, long ctime) throws HongsException {
+    public int rev(String id, Map rd, long ctime) throws CruxException {
         Table table = getTable();
         if (table == null) {
-            throw new HongsException(405, "@matrix:matrix.rev.unsupported", getFormId());
+            throw new CruxException(405, "@matrix:matrix.rev.unsupported", getFormId());
         }
 
         String   uid   = getUserId();
@@ -1034,10 +1034,10 @@ public class Data extends SearchEntity {
             .select("ctime")
             .getOne( );
         if (od.isEmpty()) {
-        //  throw new HongsException(404, "@matrix:matrix.node.not.exists", getFormId(), id);
+        //  throw new CruxException(404, "@matrix:matrix.node.not.exists", getFormId(), id);
         } else
         if (Synt.declare(od.get("ctime"), 0L ) >= ctime) {
-            throw new HongsException(400, "@matrix:matrix.wait.one.second", getFormId(), id);
+            throw new CruxException(400, "@matrix:matrix.wait.one.second", getFormId(), id);
         }
 
         // 获取快照数据
@@ -1046,12 +1046,12 @@ public class Data extends SearchEntity {
         //  .assort("ctime  DESC")
             .getOne( );
         if (sd.isEmpty()) {
-            throw new HongsException(404, "@matrix:matrix.node.not.exists", getFormId(), id, ctime);
+            throw new CruxException(404, "@matrix:matrix.node.not.exists", getFormId(), id, ctime);
         }
         // 删除时保留的是删除前的快照, 即使为最终记录仍然可以恢复
         if (Synt.declare(sd.get("state"), 0  ) !=  0   ) {
         if (Synt.declare(sd.get("etime"), 0L ) ==  0L  ) {
-            throw new HongsException(400, "@matrix:matrix.node.is.current", getFormId(), id, ctime);
+            throw new CruxException(400, "@matrix:matrix.node.is.current", getFormId(), id, ctime);
         }}
 
         // 保存到文档库
@@ -1125,14 +1125,14 @@ public class Data extends SearchEntity {
 
     @Override
     public void setDoc(String id, Document doc)
-    throws HongsException {
+    throws CruxException {
         super.setDoc(id , doc);
         setIds. add (id);
     }
 
     @Override
     public void delDoc(String id)
-    throws HongsException {
+    throws CruxException {
         super.delDoc(id);
         delIds. add (id);
     }
@@ -1143,10 +1143,10 @@ public class Data extends SearchEntity {
      * @param rd
      * @param ds
      * @param ec
-     * @throws HongsException
+     * @throws CruxException
      */
     @Override
-    protected void permit(Map rd, Set ds, int ec) throws HongsException {
+    protected void permit(Map rd, Set ds, int ec) throws CruxException {
         super.permit(rd, ds, ec);
 
         // 检查被引用状况
@@ -1156,7 +1156,7 @@ public class Data extends SearchEntity {
     }
 
     @Override
-    protected void padQry(BooleanQuery.Builder qr, Map rd) throws HongsException {
+    protected void padQry(BooleanQuery.Builder qr, Map rd) throws CruxException {
         // 限定分区范围
         String pd = getPartId();
         if (null != pd && ! pd.isEmpty( )) {
@@ -1189,7 +1189,7 @@ public class Data extends SearchEntity {
         try {
             includes(dd, rd);
         }
-        catch (HongsException ex ) {
+        catch (CruxException ex ) {
             throw ex.toExemption();
         }
 
@@ -1274,10 +1274,10 @@ public class Data extends SearchEntity {
      * @param dd
      * @param fn
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
     protected String getText(Map dd, String fn)
-    throws HongsException {
+    throws CruxException {
         String s;
         if (dd.containsKey(fn)) {
             s  = Synt.asString(dd.get (fn));
@@ -1496,7 +1496,7 @@ public class Data extends SearchEntity {
             try {
                 return FormSet.getInstance(conf).getEnum(form+".cascade");
             }
-            catch (HongsException ex) {
+            catch (CruxException ex ) {
             if (910 != ex.getErrno( )
             &&  913 != ex.getErrno()) {
                 throw  ex.toExemption();
@@ -1510,7 +1510,7 @@ public class Data extends SearchEntity {
             try {
                 return FormSet.getInstance(canf).getEnum(form+".cascade");
             }
-            catch (HongsException ex) {
+            catch (CruxException ex ) {
             if (910 != ex.getErrno( )
             &&  913 != ex.getErrno()) {
                 throw  ex.toExemption();
@@ -1531,7 +1531,7 @@ public class Data extends SearchEntity {
             try {
                 return FormSet.getInstance(conf).getEnum(form+".include");
             }
-            catch (HongsException ex) {
+            catch (CruxException ex ) {
             if (910 != ex.getErrno( )
             &&  913 != ex.getErrno()) {
                 throw  ex.toExemption();
@@ -1545,7 +1545,7 @@ public class Data extends SearchEntity {
             try {
                 return FormSet.getInstance(canf).getEnum(form+".include");
             }
-            catch (HongsException ex) {
+            catch (CruxException ex ) {
             if (910 != ex.getErrno( )
             &&  913 != ex.getErrno()) {
                 throw  ex.toExemption();
@@ -1617,9 +1617,9 @@ public class Data extends SearchEntity {
      * 将被引用的部分复制过来
      * @param dd 旧的数据
      * @param rd 新的数据
-     * @throws HongsException
+     * @throws CruxException
      */
-    protected void includes(Map dd, Map rd) throws HongsException {
+    protected void includes(Map dd, Map rd) throws CruxException {
         Map<String, Object> aq = getIncludes();
         if (aq == null || aq.isEmpty()) {
             return;
@@ -1707,9 +1707,9 @@ public class Data extends SearchEntity {
      * 引用检查
      * 检查被哪些资源关联引用
      * @param rs 将删除的
-     * @throws HongsException
+     * @throws CruxException
      */
-    protected void depletes(Set rs) throws HongsException {
+    protected void depletes(Set rs) throws CruxException {
         Map<String, Object> aq = getCascades();
         if (aq == null || aq.isEmpty()) {
             return;
@@ -1763,7 +1763,7 @@ public class Data extends SearchEntity {
             nb.setLength(nb.length() - 2);
 
             // 抛出异常告知依赖情况
-            throw new HongsException(1097, "@matrix:core.delete.depend.error", nb);
+            throw new CruxException(1097, "@matrix:core.delete.depend.error", nb);
         }
     }
 

@@ -1,7 +1,7 @@
 package io.github.ihongs.db;
 
 import io.github.ihongs.Cnst;
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.db.util.FetchCase;
 import io.github.ihongs.db.util.FetchMore;
 import io.github.ihongs.util.Synt;
@@ -98,10 +98,10 @@ public class TreeModel extends Model
    * 请指定被搜索的字段.
    *
    * @param table
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public TreeModel(Table table)
-    throws HongsException
+    throws CruxException
   {
     super( table );
 
@@ -129,62 +129,15 @@ public class TreeModel extends Model
    * 调用 Mtree 中相同方法并不会使用此 model 的方法
    *
    * @param model
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public TreeModel(Model model)
-    throws HongsException
+    throws CruxException
   {
     this ( model.table );
   }
 
   //** 标准动作方法 **/
-
-  @Override
-  public Map getInfo(Map rd, FetchCase caze)
-    throws HongsException
-  {
-    if (rd == null)
-    {
-      rd = new HashMap();
-    }
-
-    Map info = super.getInfo(rd, caze);
-
-    //** 附带路径 **/
-
-    if (info.isEmpty())
-    {
-        return info;
-    }
-
-    byte   pth = Synt.declare(rd.get(this.pathKey), (byte) 0);
-    String pid = Synt.declare(rd.get(this.pidKey ), "" );
-    if (pid.length() == 0)
-    {
-        pid = this.rootId;
-    }
-
-    if (pth == 1)
-    {
-      String id = Synt.asString(info.get(this.table.primaryKey));
-      info.put(this.pathKey, this.getParentIds(id, pid));
-    }
-    else
-    if (pth == 2)
-    {
-      String id = Synt.asString(info.get(this.table.primaryKey));
-      info.put(this.pathKey, this.getParents  (id, pid));
-    }
-
-    return info;
-  }
-
-  @Override
-  public Map getInfo(Map rd)
-    throws HongsException
-  {
-    return this.getInfo(rd, null);
-  }
 
   /**
    * 获取列表
@@ -196,11 +149,11 @@ public class TreeModel extends Model
    * @param rd
    * @param caze
    * @return 树列表
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   @Override
-  public Map getList(Map rd, FetchCase caze)
-    throws HongsException
+  public Map search(Map rd, FetchCase caze)
+    throws CruxException
   {
     if (rd == null)
     {
@@ -209,6 +162,12 @@ public class TreeModel extends Model
     if (caze == null)
     {
       caze = fetchCase();
+    }
+
+    // TODO: 临时兼容获取详情
+    Object jd = rd.get(table.primaryKey);
+    if (jd != null && ! "".equals(jd) && (jd instanceof String || jd instanceof Number)) {
+        return recite (rd , caze);
     }
 
     //** 默认字段 **/
@@ -312,18 +271,44 @@ public class TreeModel extends Model
     return data;
   }
 
-  /**
-   * 获取树
-   *
-   * @param rd
-   * @return 树列表
-   * @throws io.github.ihongs.HongsException
-   */
   @Override
-  public Map getList(Map rd)
-    throws HongsException
+  public Map recite(Map rd, FetchCase caze)
+    throws CruxException
   {
-    return this.getList(rd, null);
+    if (rd == null)
+    {
+      rd = new HashMap();
+    }
+
+    Map info = super.getInfo(rd, caze);
+
+    //** 附带路径 **/
+
+    if (info.isEmpty())
+    {
+        return info;
+    }
+
+    byte   pth = Synt.declare(rd.get(this.pathKey), (byte) 0);
+    String pid = Synt.declare(rd.get(this.pidKey ), "" );
+    if (pid.length() == 0)
+    {
+        pid = this.rootId;
+    }
+
+    if (pth == 1)
+    {
+      String id = Synt.asString(info.get(this.table.primaryKey));
+      info.put(this.pathKey, this.getParentIds(id, pid));
+    }
+    else
+    if (pth == 2)
+    {
+      String id = Synt.asString(info.get(this.table.primaryKey));
+      info.put(this.pathKey, this.getParents  (id, pid));
+    }
+
+    return info;
   }
 
   //** 标准模型方法 **/
@@ -334,11 +319,11 @@ public class TreeModel extends Model
    * @param id
    * @param rd
    * @return 节点ID
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   @Override
   public int add(String id, Map rd)
-    throws HongsException
+    throws CruxException
   {
     if (rd == null)
     {
@@ -381,11 +366,11 @@ public class TreeModel extends Model
    * @param id
    * @param rd
    * @return 节点ID
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   @Override
   public int put(String id, Map rd)
-    throws HongsException
+    throws CruxException
   {
     if (rd == null)
     {
@@ -463,11 +448,11 @@ public class TreeModel extends Model
    * @param id
    * @param caze
    * @return 删除条数
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   @Override
   public int del(String id, FetchCase caze)
-    throws HongsException
+    throws CruxException
   {
     String pid = this.getParentId(id);
     int on = this.getSerialNum(id);
@@ -492,7 +477,7 @@ public class TreeModel extends Model
 
   @Override
   protected void filter(FetchCase caze, Map rd)
-    throws HongsException
+    throws CruxException
   {
     super.filter(caze, rd);
 
@@ -520,7 +505,7 @@ public class TreeModel extends Model
   //** 树基础操作 **/
 
   public String getParentId(String id)
-    throws HongsException
+    throws CruxException
   {
     String sql = "SELECT `"
             + this.pidKey +
@@ -536,13 +521,13 @@ public class TreeModel extends Model
   }
 
   public List<String> getParentIds(String id)
-    throws HongsException
+    throws CruxException
   {
     return this.getParentIds(id, this.rootId);
   }
 
   public List<String> getParentIds(String id, String rootId)
-    throws HongsException
+    throws CruxException
   {
     List<String> ids = new ArrayList();
     String  pid = this.getParentId(id);
@@ -558,13 +543,13 @@ public class TreeModel extends Model
   }
 
   public List<Map> getParents(String id)
-    throws HongsException
+    throws CruxException
   {
     return this.getParents(id, this.rootId);
   }
 
   public List<Map> getParents(String id, String rootId)
-    throws HongsException
+    throws CruxException
   {
     List<String> ids = getParentIds (id, rootId);
     List<Map>    nds = new ArrayList(ids.size());
@@ -590,13 +575,13 @@ public class TreeModel extends Model
   }
 
   public List<String> getChildIds(String id)
-    throws HongsException
+    throws CruxException
   {
     return this.getChildIds(id, false);
   }
 
   public List<String> getChildIds(String id, boolean all)
-    throws HongsException
+    throws CruxException
   {
     String sql;
     if (this.cnumKey == null)
@@ -656,13 +641,13 @@ public class TreeModel extends Model
   }
 
   public List<Map> getChilds(String id)
-    throws HongsException
+    throws CruxException
   {
     return this.getChilds(id, false);
   }
 
   public List<Map> getChilds(String id, boolean all)
-    throws HongsException
+    throws CruxException
   {
     String sql;
     sql = "SELECT * FROM `"
@@ -704,7 +689,7 @@ public class TreeModel extends Model
   //** 子数目相关 **/
 
   public int getChildsNum(String id)
-    throws HongsException
+    throws CruxException
   {
     if (this.cnumKey == null)
     {
@@ -732,13 +717,13 @@ public class TreeModel extends Model
   }
 
   public int getRealChildsNum(String id)
-    throws HongsException
+    throws CruxException
   {
     return this.getRealChildsNum(id, null);
   }
 
   public int getRealChildsNum(String id, Collection excludeIds)
-    throws HongsException
+    throws CruxException
   {
     String sql = "SELECT COUNT(`"
             + this.table.primaryKey +
@@ -767,7 +752,7 @@ public class TreeModel extends Model
   }
 
   public void setChildsNum(String id, int num)
-    throws HongsException
+    throws CruxException
   {
     if (this.cnumKey == null)
     {
@@ -791,7 +776,7 @@ public class TreeModel extends Model
   }
 
   public void chgChildsNum(String id, int off)
-    throws HongsException
+    throws CruxException
   {
     if (this.cnumKey == null || off == 0)
     {
@@ -815,7 +800,7 @@ public class TreeModel extends Model
   //** 排序号相关 **/
 
   public int getSerialNum(String id)
-    throws HongsException
+    throws CruxException
   {
     if (this.snumKey == null)
     {
@@ -841,13 +826,13 @@ public class TreeModel extends Model
   }
 
   public int getLastSerialNum(String pid)
-    throws HongsException
+    throws CruxException
   {
     return this.getLastSerialNum(pid, null);
   }
 
   public int getLastSerialNum(String pid, Collection excludeIds)
-    throws HongsException
+    throws CruxException
   {
     if (this.snumKey == null)
     {
@@ -883,7 +868,7 @@ public class TreeModel extends Model
   }
 
   public void setSerialNum(String id, int num)
-    throws HongsException
+    throws CruxException
   {
     if (this.snumKey == null)
     {
@@ -910,7 +895,7 @@ public class TreeModel extends Model
   }
 
   public void chgSerialNum(String id, int off)
-    throws HongsException
+    throws CruxException
   {
     if (this.snumKey == null || off == 0)
     {
@@ -944,7 +929,7 @@ public class TreeModel extends Model
   }
 
   public void chgSerialNum(String pid, int off, int pos1, int pos2)
-    throws HongsException
+    throws CruxException
   {
     if (this.snumKey == null || off == 0 || (pos1 < 0 && pos2 < 0))
     {
@@ -985,10 +970,10 @@ public class TreeModel extends Model
   /**
    * 检查并修复下级数量和序号
    * @param pid
-   * @throws HongsException
+   * @throws CruxException
    */
   public void fixChildsAndSerialNum(String pid)
-    throws HongsException
+    throws CruxException
   {
     String sql;
     String cid;

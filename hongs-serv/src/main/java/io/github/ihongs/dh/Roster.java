@@ -2,7 +2,7 @@ package io.github.ihongs.dh;
 
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 
 /**
  * 简单数据存储
@@ -10,7 +10,7 @@ import io.github.ihongs.HongsException;
  */
 public class Roster {
 
-    private static IRoster getModel() throws HongsException {
+    private static IRoster getModel() throws CruxException {
         String cls = CoreConfig.getInstance().getProperty("core.normal.roster.model");
         if (null == cls || 0 == cls.length()) {
                cls = JRoster.class.getName( );
@@ -26,9 +26,8 @@ public class Roster {
     public static Object get(String key) {
         try {
             return getModel().get(key);
-        }
-        catch (HongsException ex ) {
-            throw ex.toExemption();
+        } catch ( CruxException e) {
+            throw e.toExemption( );
         }
     }
 
@@ -41,9 +40,8 @@ public class Roster {
     public static void set(String key, Object val, long exp) {
         try {
             getModel().set(key, val, exp);
-        }
-        catch (HongsException ex ) {
-            throw ex.toExemption();
+        } catch ( CruxException e) {
+            throw e.toExemption( );
         }
     }
 
@@ -57,9 +55,8 @@ public class Roster {
         exp += System.currentTimeMillis() / 1000;
         try {
             getModel().set(key, val, exp);
-        }
-        catch (HongsException ex ) {
-            throw ex.toExemption();
+        } catch ( CruxException e) {
+            throw e.toExemption( );
         }
     }
 
@@ -71,9 +68,8 @@ public class Roster {
     public static void set(String key, long exp) {
         try {
             getModel().set(key, exp);
-        }
-        catch (HongsException ex ) {
-            throw ex.toExemption();
+        } catch ( CruxException e) {
+            throw e.toExemption( );
         }
     }
 
@@ -86,9 +82,8 @@ public class Roster {
         exp += System.currentTimeMillis() / 1000;
         try {
             getModel().set(key, exp);
-        }
-        catch (HongsException ex ) {
-            throw ex.toExemption();
+        } catch ( CruxException e) {
+            throw e.toExemption( );
         }
     }
 
@@ -99,9 +94,8 @@ public class Roster {
     public static void del(String key) {
         try {
             getModel().del(key);
-        }
-        catch (HongsException ex ) {
-            throw ex.toExemption();
+        } catch ( CruxException e) {
+            throw e.toExemption( );
         }
     }
 
@@ -112,9 +106,8 @@ public class Roster {
     public static void del(long exp) {
         try {
             getModel().del(exp);
-        }
-        catch (HongsException ex ) {
-            throw ex.toExemption();
+        } catch ( CruxException e) {
+            throw e.toExemption( );
         }
     }
 

@@ -1,7 +1,7 @@
 package io.github.ihongs.serv.matrix;
 
 import io.github.ihongs.CoreLocale;
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.action.anno.CommitSuccess;
@@ -18,13 +18,13 @@ public class FurlAction {
     
     protected final Furl model;
 
-    public FurlAction() throws HongsException {
+    public FurlAction() throws CruxException {
         model = (Furl) DB.getInstance("matrix").getModel("furl");
     }
 
     @Action("list")
     public void getList(ActionHelper helper)
-    throws HongsException {
+    throws CruxException {
         Map rd = helper.getRequestData();
         Map sd = model.getList(rd);
         helper.reply(sd);
@@ -32,7 +32,7 @@ public class FurlAction {
 
     @Action("info")
     public void getInfo(ActionHelper helper)
-    throws HongsException {
+    throws CruxException {
         Map rd = helper.getRequestData();
         Map sd = model.getInfo(rd);
         helper.reply(sd);
@@ -42,7 +42,7 @@ public class FurlAction {
     @Verify(conf="matrix", form="furl")
     @CommitSuccess
     public void doSave(ActionHelper helper)
-    throws HongsException {
+    throws CruxException {
         Map rd = helper.getRequestData();
         String id = model.set(rd);
         CoreLocale  ln = CoreLocale.getMultiple("matrix", "default");
@@ -53,7 +53,7 @@ public class FurlAction {
     @Action("delete")
     @CommitSuccess
     public void doDelete(ActionHelper helper)
-    throws HongsException {
+    throws CruxException {
         Map rd = helper.getRequestData();
         int rn = model.delete(rd);
         CoreLocale  ln = CoreLocale.getMultiple("matrix", "default");
@@ -63,7 +63,7 @@ public class FurlAction {
 
     @Action("unique")
     public void isUnique(ActionHelper helper)
-    throws HongsException {
+    throws CruxException {
         Map rd = helper.getRequestData();
         boolean un = model.unique(rd);
         helper.reply(null, un ? 1:0 );

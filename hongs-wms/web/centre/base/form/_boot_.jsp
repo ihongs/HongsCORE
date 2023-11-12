@@ -1,5 +1,5 @@
 <%@page import="io.github.ihongs.CoreLocale"%>
-<%@page import="io.github.ihongs.HongsException"%>
+<%@page import="io.github.ihongs.CruxException"%>
 <%@page import="io.github.ihongs.action.ActionDriver"%>
 <%@page import="io.github.ihongs.action.FormSet"%>
 <%@page import="java.util.LinkedHashMap"%>
@@ -44,7 +44,7 @@
             do {
                 try {
                     _fields = FormSet.getInstance(name).getFormTranslated(_entity);
-                } catch (HongsException ex) {
+                } catch (CruxException ex) {
                     if (ex.getErrno() != 910
                     &&  ex.getErrno() != 912) { // 非表单缺失
                         throw ex;
@@ -60,7 +60,7 @@
 
                 try{
                     _fieldx = FormSet.getInstance(name).getFormTranslated(_entity);
-                } catch (HongsException ex) {
+                } catch (CruxException ex) {
                     if (ex.getErrno() != 910
                     &&  ex.getErrno() != 912) { // 非表单缺失
                         throw ex ;
@@ -91,7 +91,7 @@
         }
 
         if (_fields == null) {
-            throw new HongsException(404, _locale.translate("core.error.no.thing"));
+            throw new CruxException(404, _locale.translate("core.error.no.thing"));
         }
     }
 %>

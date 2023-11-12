@@ -3,7 +3,7 @@
 <%@page import="java.util.Set"%>
 <%@page import="io.github.ihongs.Cnst"%>
 <%@page import="io.github.ihongs.Core"%>
-<%@page import="io.github.ihongs.HongsException"%>
+<%@page import="io.github.ihongs.CruxException"%>
 <%@page import="io.github.ihongs.action.ActionHelper"%>
 <%@page import="io.github.ihongs.action.ActionRunner"%>
 <%@page import="io.github.ihongs.action.NaviMap"%>
@@ -19,7 +19,7 @@
     /**
      * 获取用户所属的全部部门ID
      */
-    private Set getUserUnitIds(Object uid) throws HongsException {
+    private Set getUserUnitIds(Object uid) throws CruxException {
         List<Map> rows = DB
             .getInstance("master")
             .getTable("user_unit")
@@ -58,7 +58,7 @@
             if (oid != null && !"".equals(oid)) {
                 if (!(oid instanceof String)
                 ||  !(oid instanceof Number)) {
-                    throw new HongsException(400, "仅支持单个 "+Cnst.ID_KEY+", 不支持 eq,in 等方式");
+                    throw new CruxException(400, "仅支持单个 "+Cnst.ID_KEY+", 不支持 eq,in 等方式");
                 }
 
                 row = Data
@@ -68,7 +68,7 @@
                         Cnst.ID_KEY, oid
                     ));
                 if (row == null || row.isEmpty()) {
-                    throw  new  HongsException(404, "不存在对应的评论" );
+                    throw  new  CruxException(404, "不存在对应的评论" );
                 }
                 tid = Synt.asString(row.get(TOPIC_ID_FN));
 
@@ -79,7 +79,7 @@
                         Cnst.ID_KEY, tid
                     ));
                 if (row == null || row.isEmpty()) {
-                    throw  new  HongsException(404, "不存在对应的话题" );
+                    throw  new  CruxException(404, "不存在对应的话题" );
                 }
                 tid = Synt.asString(row.get(THEME_ID_FN));
 
@@ -90,7 +90,7 @@
             if (oid != null && !"".equals(oid)) {
                 if (!(oid instanceof String)
                 ||  !(oid instanceof Number)) {
-                    throw new HongsException(400, "仅支持单个 "+TOPIC_ID_FN+", 不支持 eq,in 等方式");
+                    throw new CruxException(400, "仅支持单个 "+TOPIC_ID_FN+", 不支持 eq,in 等方式");
                 }
 
                 row = Data
@@ -100,14 +100,14 @@
                         Cnst.ID_KEY, tid
                     ));
                 if (row == null || row.isEmpty()) {
-                    throw  new  HongsException(404, "不存在对应的话题" );
+                    throw  new  CruxException(404, "不存在对应的话题" );
                 }
                 tid = Synt.asString(row.get(THEME_ID_FN));
 
                 break ID;
             }
 
-            throw new HongsException(400, "缺少必要的 "+Cnst.ID_KEY+" 或 "+TOPIC_ID_FN);
+            throw new CruxException(400, "缺少必要的 "+Cnst.ID_KEY+" 或 "+TOPIC_ID_FN);
         }
 
         row = Data
@@ -117,7 +117,7 @@
                 Cnst.ID_KEY, tid
             ));
         if (row == null || row.isEmpty()) {
-            throw  new  HongsException(404, "不存在对应的主题" );
+            throw  new  CruxException(404, "不存在对应的主题" );
         }
 
         /**
@@ -152,7 +152,7 @@
                 break DO;
             }
 
-            throw  new  HongsException(403, "无权访问上级主题" );
+            throw  new  CruxException(403, "无权访问上级主题" );
         }
 
         if (! owned
@@ -166,7 +166,7 @@
                     "cuser"    , uid
                 ));
             if (row == null || row.isEmpty()) {
-                throw  new  HongsException(403, "无权修改当前消息" );
+                throw  new  CruxException(403, "无权修改当前消息" );
             }
         }
     }

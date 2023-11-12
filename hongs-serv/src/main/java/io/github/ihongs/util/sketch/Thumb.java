@@ -1,6 +1,6 @@
 package io.github.ihongs.util.sketch;
 
-import io.github.ihongs.HongsExemption;
+import io.github.ihongs.CruxExemption;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -116,9 +116,9 @@ public class Thumb {
                       : Integer.parseInt (x[3].trim());
                 return setColor(new Color(r, g, b, a));
             }
-            throw new HongsExemption("Unable to parse color value: "+str);
+            throw new CruxExemption("Unable to parse color value: "+str);
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
-            throw new HongsExemption("Unable to parse color value: "+str);
+            throw new CruxExemption("Unable to parse color value: "+str);
         }
     }
 
@@ -158,7 +158,7 @@ public class Thumb {
             case "bottom right" :
                 return setAlign(Positions.BOTTOM_RIGHT );
             default:
-                throw new HongsExemption("Unsupported place value: "+str);
+                throw new CruxExemption("Unsupported place value: "+str);
         }
     }
 

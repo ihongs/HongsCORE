@@ -1,5 +1,5 @@
 <%@page import="io.github.ihongs.CoreLocale"%>
-<%@page import="io.github.ihongs.HongsException"%>
+<%@page import="io.github.ihongs.CruxException"%>
 <%@page import="io.github.ihongs.action.ActionDriver"%>
 <%@page import="io.github.ihongs.action.NaviMap"%>
 <%@page import="io.github.ihongs.util.Synt"%>
@@ -45,7 +45,7 @@
                     $title  = Synt.declare (menu.get("text"),"");
                 break;
             }
-        } catch (HongsException ex) {
+        } catch (CruxException ex) {
             // 忽略配置文件缺失的异常情况
             if (ex.getErrno() != 920) {
                 throw ex ;
@@ -54,7 +54,7 @@
 
         // 没菜单配置则抛出资源缺失异常
         if ($title == null) {
-            throw new HongsException(404, $locale.translate("core.error.no.thing"));
+            throw new CruxException(404, $locale.translate("core.error.no.thing"));
         }
     }
 %>

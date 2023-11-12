@@ -2,7 +2,7 @@ package io.github.ihongs.serv.matrix;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.FormSet;
 import io.github.ihongs.action.NaviMap;
@@ -54,16 +54,16 @@ public class Form extends Model {
     protected String upload = "static/upload/data";
     protected static final  String SERI_DATA_PATH = Core.DATA_PATH + "/serial";
 
-    public Form() throws HongsException {
+    public Form() throws CruxException {
         this(DB.getInstance("matrix").getTable("form"));
     }
 
-    public Form(Table table) throws HongsException {
+    public Form(Table table) throws CruxException {
         super(table);
     }
 
     @Override
-    public int put(String id, Map rd) throws HongsException {
+    public int put(String id, Map rd) throws CruxException {
         Map xd = table.fetchCase()
                 .filter("id = ?", id)
                 .select("state,name")
@@ -78,10 +78,10 @@ public class Form extends Model {
         // 冻结意味着手动修改了配置
         // 再操作可能会冲掉自定配置
         if ("8".equals(stax)) {
-            throw new HongsException(400, "表单冻结, 禁止操作");
+            throw new CruxException(400, "表单冻结, 禁止操作");
         }
         if ("0".equals(stax)) {
-            throw new HongsException(404, "表单缺失, 无法操作");
+            throw new CruxException(404, "表单缺失, 无法操作");
         }
 
         int n  = superPut (id , rd);
@@ -116,7 +116,7 @@ public class Form extends Model {
     }
 
     @Override
-    public int add(String id, Map rd) throws HongsException {
+    public int add(String id, Map rd) throws CruxException {
         String stat = Synt.asString(rd.get("state"));
         String name = Synt.asString(rd.get("name" ));
         List   conf = parseConf(id, rd);
@@ -141,7 +141,7 @@ public class Form extends Model {
     }
 
     @Override
-    public int del(String id, FetchCase fc) throws HongsException {
+    public int del(String id, FetchCase fc) throws CruxException {
         int n  = superDel(id, fc);
         if (n != 0) {
             // 记录配置变更
@@ -160,15 +160,15 @@ public class Form extends Model {
         return n;
     }
 
-    protected final int superPut(String id, Map rd) throws HongsException {
+    protected final int superPut(String id, Map rd) throws CruxException {
         return super.put(id, rd);
     }
 
-    protected final int superAdd(String id, Map rd) throws HongsException {
+    protected final int superAdd(String id, Map rd) throws CruxException {
         return super.add(id, rd);
     }
 
-    protected final int superDel(String id, FetchCase fc) throws HongsException {
+    protected final int superDel(String id, FetchCase fc) throws CruxException {
         return super.del(id, fc);
     }
 
@@ -177,9 +177,9 @@ public class Form extends Model {
      * @param id
      * @param conf
      * @return 0 无变化, 1 有变化, 2 字段类型有变, 4 数量类型有变
-     * @throws HongsException
+     * @throws CruxException
      */
-    protected int storeConf(String id, Object conf) throws HongsException {
+    protected int storeConf(String id, Object conf) throws CruxException {
         Object uid = ActionHelper.getInstance().getSessibute(Cnst.UID_SES);
         long   now = System.currentTimeMillis() / 1000;
         String tbl = db.getTable(  "data"  ).tableName;
@@ -247,7 +247,7 @@ public class Form extends Model {
         return 1;
     }
 
-    protected List<Map> parseConf(String id, Map rd) throws HongsException {
+    protected List<Map> parseConf(String id, Map rd) throws CruxException {
         List<Map> flds = null;
         String conf = (String) rd.get("conf");
         String name = (String) rd.get("name");
@@ -415,7 +415,7 @@ public class Form extends Model {
     }
 
     @Override
-    protected void filter(FetchCase caze, Map rd) throws HongsException {
+    protected void filter(FetchCase caze, Map rd) throws CruxException {
         super.filter(caze, rd);
 
         // 超级管理员不做限制
@@ -451,7 +451,7 @@ public class Form extends Model {
         caze.filter("`"+table.name+"`.`id` IN (?)", rs);
     }
 
-    protected void insertAuthRole(String id) throws HongsException {
+    protected void insertAuthRole(String id) throws CruxException {
         ActionHelper helper = Core.getInstance(ActionHelper.class);
         String uid = (String) helper.getSessibute ( Cnst.UID_SES );
         String tan ;
@@ -490,7 +490,7 @@ public class Form extends Model {
         }
     }
 
-    protected void deleteAuthRole(String id) throws HongsException {
+    protected void deleteAuthRole(String id) throws CruxException {
         ActionHelper helper = Core.getInstance(ActionHelper.class);
         String uid = (String) helper.getSessibute ( Cnst.UID_SES );
         String tan;
@@ -551,7 +551,7 @@ public class Form extends Model {
         if (file.exists()) file.delete();
     }
 
-    protected void updateFormConf(String id, String stat, List<Map> conf) throws HongsException {
+    protected void updateFormConf(String id, String stat, List<Map> conf) throws CruxException {
         File     file;
         Document docm;
         Element  root, form, item, defs, defi;
@@ -636,7 +636,7 @@ public class Form extends Model {
                     int    p;
                     String l;
                     p = k.indexOf(':', 1);
-                    if (p < 0) throw new HongsException(400, "Wrong param name '"+k+"', must be '.name:code'");
+                    if (p < 0) throw new CruxException(400, "Wrong param name '"+k+"', must be '.name:code'");
                     l = k.substring(1+ p);
                     k = k.substring(0, p);
                     k = n.equals("@") ? id + k : n + k;
@@ -877,7 +877,7 @@ public class Form extends Model {
         }
     }
 
-    protected void updateFormMenu(String id, String stat, String name) throws HongsException {
+    protected void updateFormMenu(String id, String stat, String name) throws CruxException {
         File     file;
         String   href;
         Document docm;
@@ -1127,7 +1127,7 @@ public class Form extends Model {
         saveDocument(file , docm);
     }
 
-    protected void updateUnitMenu(String id) throws HongsException {
+    protected void updateUnitMenu(String id) throws CruxException {
         new Furl().updateMenus( );
     }
 
@@ -1137,9 +1137,9 @@ public class Form extends Model {
      * @param fc
      * @param fs
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
-    protected String getFieldName(Map fc, Set fs) throws HongsException {
+    protected String getFieldName(Map fc, Set fs) throws CruxException {
         Table  tab = db.getTable ("feed");
         String sql = "SELECT `fn` FROM `"+tab.tableName+"` WHERE `ft` = ? AND `fn` NOT IN (?) ORDER BY `fn`";
 
@@ -1190,7 +1190,7 @@ public class Form extends Model {
             if (null != k) {
                    t  = k;
             }
-        } catch (HongsException e) {
+        } catch ( CruxException e) {
             throw e.toExemption( );
         }
 
@@ -1211,17 +1211,17 @@ public class Form extends Model {
         }
     }
 
-    private Document makeDocument() throws HongsException {
+    private Document makeDocument() throws CruxException {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder        builder = factory.newDocumentBuilder();
             return  builder.newDocument();
         } catch (ParserConfigurationException e) {
-            throw new HongsException( e );
+            throw new CruxException(e);
         }
     }
 
-    private Document readDocument(File file) throws HongsException {
+    private Document readDocument(File file) throws CruxException {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder        builder = factory.newDocumentBuilder();
@@ -1243,15 +1243,15 @@ public class Form extends Model {
                 return builder.newDocument( );
             }
         } catch (ParserConfigurationException e) {
-            throw new HongsException( e );
+            throw new CruxException(e);
         } catch (SAXException e) {
-            throw new HongsException( e );
+            throw new CruxException(e);
         } catch ( IOException e) {
-            throw new HongsException( e );
+            throw new CruxException(e);
         }
     }
 
-    private void saveDocument(File file, Document docm) throws HongsException {
+    private void saveDocument(File file, Document docm) throws CruxException {
         File fold = file.getParentFile();
         if (!fold.exists()) {
              fold.mkdirs();
@@ -1272,15 +1272,15 @@ public class Form extends Model {
 
             tr.transform(ds, sr);
         } catch (TransformerConfigurationException e) {
-            throw new HongsException(e);
+            throw new CruxException(e);
         } catch (UnsupportedEncodingException e) {
-            throw new HongsException(e);
+            throw new CruxException(e);
         } catch (IllegalArgumentException e) {
-            throw new HongsException(e);
+            throw new CruxException(e);
         } catch (FileNotFoundException e) {
-            throw new HongsException(e);
+            throw new CruxException(e);
         } catch ( TransformerException e) {
-            throw new HongsException(e);
+            throw new CruxException(e);
         }
     }
 

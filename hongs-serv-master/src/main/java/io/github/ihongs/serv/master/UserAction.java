@@ -3,7 +3,7 @@ package io.github.ihongs.serv.master;
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreLocale;
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.NaviMap;
 import io.github.ihongs.action.anno.Action;
@@ -38,14 +38,14 @@ public class UserAction {
     private final User model;
 
     public UserAction()
-    throws HongsException {
+    throws CruxException {
         model = (User) DB.getInstance("master").getModel("user");
     }
 
     @Action("list")
     @Select(conf="master", form="user")
     public void getList(ActionHelper helper)
-    throws HongsException {
+    throws CruxException {
         Map  rd = helper.getRequestData();
         byte wd =  Synt.declare(rd.get("with-units") , (byte) 0);
      boolean fd =  Synt.declare(rd.get("find-depth") ,  false  );
@@ -118,7 +118,7 @@ public class UserAction {
     @Action("info")
     @Select(conf="master", form="user")
     public void getInfo(ActionHelper helper)
-    throws HongsException {
+    throws CruxException {
         Map    rd = helper.getRequestData(  );
         String id = helper.getParameter("id");
         String nc = helper.getParameter("with-roles");
@@ -155,7 +155,7 @@ public class UserAction {
     @Verify(conf="master", form="user")
     @CommitSuccess
     public void doSave(ActionHelper helper)
-    throws HongsException {
+    throws CruxException {
         Map rd = helper.getRequestData();
 
         // Ignore empty password in update
@@ -254,7 +254,7 @@ public class UserAction {
     @Action("delete")
     @CommitSuccess
     public void doDelete(ActionHelper helper)
-    throws HongsException {
+    throws CruxException {
         // 不能删除自己和超级管理员
         Set rs = Synt.asSet(helper.getParameter(Cnst. ID_KEY ));
         if (rs != null) {
@@ -277,7 +277,7 @@ public class UserAction {
 
     @Action("unique")
     public void isUnique(ActionHelper helper)
-    throws HongsException {
+    throws CruxException {
         Map rd = helper.getRequestData();
         FetchCase fc = model.fetchCase();
         fc.setOption("INCLUDE_REMOVED", Synt.declare(rd.get("include-removed"), false));

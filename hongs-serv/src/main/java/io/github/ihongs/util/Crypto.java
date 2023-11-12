@@ -1,6 +1,6 @@
 package io.github.ihongs.util;
 
-import io.github.ihongs.HongsExemption;
+import io.github.ihongs.CruxExemption;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.Base64;
@@ -109,7 +109,7 @@ public class Crypto {
                     ci.init(md, ks);
                 }
             } catch (GeneralSecurityException ex) {
-                throw new HongsExemption (ex);
+                throw new CruxExemption(ex);
             }
         }
 
@@ -139,7 +139,7 @@ public class Crypto {
             if (bs != null && ci != null) try {
                 bs = ci.doFinal (bs);
             } catch (GeneralSecurityException ex) {
-                throw new HongsExemption(ex, "@normal:core.encrypt.failed");
+                throw new CruxExemption(ex, "@normal:core.encrypt.failed");
             }
             return bs;
         }
@@ -155,7 +155,7 @@ public class Crypto {
                 db = ba. encode (db);
                 ds = new String (db, StandardCharsets.UTF_8);
             } catch (GeneralSecurityException ex) {
-                throw new HongsExemption(ex, "@normal:core.encrypt.failed");
+                throw new CruxExemption(ex, "@normal:core.encrypt.failed");
             }
             return ds;
         }
@@ -176,7 +176,7 @@ public class Crypto {
             if (bs != null && ci != null) try {
                 bs = ci.doFinal (bs);
             } catch (GeneralSecurityException ex) {
-                throw new HongsExemption(ex, "@normal:core.decrypt.failed");
+                throw new CruxExemption(ex, "@normal:core.decrypt.failed");
             }
             return bs;
         }
@@ -192,9 +192,9 @@ public class Crypto {
                 db = ci.doFinal (db);
                 ds = new String (db, StandardCharsets.UTF_8);
             } catch (GeneralSecurityException ex) {
-                throw new HongsExemption (ex, "@normal:core.decrypt.failed");
+                throw new CruxExemption(ex, "@normal:core.decrypt.failed");
             } catch (IllegalArgumentException ex) {
-                throw new HongsExemption (ex, "@normal:core.decrypt.invalid", ds);
+                throw new CruxExemption(ex, "@normal:core.decrypt.invalid", ds);
             }
             return ds;
         }

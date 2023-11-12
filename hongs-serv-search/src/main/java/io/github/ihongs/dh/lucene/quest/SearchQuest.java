@@ -1,6 +1,6 @@
 package io.github.ihongs.dh.lucene.quest;
 
-import io.github.ihongs.HongsExemption;
+import io.github.ihongs.CruxExemption;
 import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
 import java.util.Map;
@@ -117,8 +117,8 @@ public class SearchQuest extends StringQuest {
         try {
             Query  q2 = qp.parse(v2);
             return q2 ;
-        } catch ( ParseException e) {
-            throw new HongsExemption(e);
+        } catch ( ParseException e ) {
+            throw new CruxExemption(e);
         }
     }
 

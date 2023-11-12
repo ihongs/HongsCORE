@@ -3,10 +3,9 @@ package io.github.ihongs.action.serv;
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
-import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.daemon.Chore;
 import io.github.ihongs.util.daemon.Gate;
@@ -38,7 +37,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 public class InfoAction {
 
     @Action("search")
-    public void search(ActionHelper helper) throws HongsException {
+    public void search(ActionHelper helper) throws CruxException {
         Map  rsp = new HashMap();
         Map  req = helper.getRequestData();
         long now = System.currentTimeMillis();

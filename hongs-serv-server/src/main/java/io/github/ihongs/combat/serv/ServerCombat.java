@@ -2,8 +2,8 @@ package io.github.ihongs.combat.serv;
 
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
-import io.github.ihongs.HongsException;
-import io.github.ihongs.HongsExemption;
+import io.github.ihongs.CruxException;
+import io.github.ihongs.CruxExemption;
 import io.github.ihongs.combat.anno.Combat;
 import io.github.ihongs.server.init.Initer;
 
@@ -29,7 +29,7 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 public class ServerCombat {
 
     @Combat("__main__")
-    public static void exec (String[] args) throws HongsException {
+    public static void exec (String[] args) throws CruxException {
         if (args.length > 0) {
             String [ ] opts = new String [ -1+ args.length];
             System . arraycopy(args,1, opts,0, opts.length);
@@ -46,7 +46,7 @@ public class ServerCombat {
     }
 
     @Combat("share")
-    public static void share(String[] args) throws HongsException {
+    public static void share(String[] args) throws CruxException {
         int    port = args.length >0 ? Integer.parseInt(args[0]) : 8080;
         String conf = Core.CORE_PATH + File.separator + "web.xml";
         if ( ! (new File(conf)).exists( ) ) {
@@ -120,14 +120,14 @@ public class ServerCombat {
 
             server.join( );
         } catch (Exception e) {
-            throw new HongsException(e);
+            throw new CruxException(e);
         } catch (Error     e) {
-            throw new HongsExemption(e);
+            throw new CruxExemption(e);
         }
     }
 
     @Combat("start")
-    public static void start(String[] args) throws HongsException {
+    public static void start(String[] args) throws CruxException {
         int    port = args.length >0 ? Integer.parseInt(args[0]) : 8080;
         String proc = ManagementFactory.getRuntimeMXBean().getName().split("@", 2)[0]; // 进程ID
         String conf = Core.CORE_PATH + File.separator + "web.xml";
@@ -153,7 +153,7 @@ public class ServerCombat {
             fw.write(proc + " " + port);
             fw.close();
         } catch (IOException e) {
-            throw new HongsException(e);
+            throw new CruxException(e);
         }
 
         CoreConfig cc = CoreConfig.getInstance("defines");
@@ -221,18 +221,18 @@ public class ServerCombat {
                 }
 
                 try {
-                    ((Initer) Class.forName (n).getDeclaredConstructor().newInstance())
+                    ((Initer) Class.forName(n).getDeclaredConstructor().newInstance())
                         .init(webapp);
                 } catch (ClassNotFoundException e) {
-                    throw new HongsExemption(e);
+                    throw new CruxExemption(e);
                 } catch ( NoSuchMethodException e) {
-                    throw new HongsExemption(e);
+                    throw new CruxExemption(e);
                 } catch (InstantiationException e) {
-                    throw new HongsExemption(e);
+                    throw new CruxExemption(e);
                 } catch (IllegalAccessException e) {
-                    throw new HongsExemption(e);
+                    throw new CruxExemption(e);
                 } catch (InvocationTargetException e) {
-                    throw new HongsExemption(e);
+                    throw new CruxExemption(e);
                 }
             }
         }
@@ -261,9 +261,9 @@ public class ServerCombat {
 
             server.join( );
         } catch (Exception e) {
-            throw new HongsException(e);
+            throw new CruxException(e);
         } catch (Error     e) {
-            throw new HongsExemption(e);
+            throw new CruxExemption(e);
         }
     }
 

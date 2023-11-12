@@ -2,8 +2,8 @@ package io.github.ihongs.serv.matrix;
 
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
-import io.github.ihongs.HongsException;
-import io.github.ihongs.HongsExemption;
+import io.github.ihongs.CruxException;
+import io.github.ihongs.CruxExemption;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.db.PrivTable;
 import io.github.ihongs.util.Crypto;
@@ -27,7 +27,7 @@ public class DataTable extends PrivTable {
     private Consumer<Map> enc = null;
     private Consumer<Map> dec = null;
 
-    public DataTable (DB db, Map conf) throws HongsException {
+    public DataTable (DB db, Map conf) throws CruxException {
         super(db, conf);
     }
 
@@ -124,7 +124,7 @@ public class DataTable extends PrivTable {
                 && !fv.isEmpty()
                 && !fv.startsWith("{")
                 && !fv.startsWith("[")) {
-                    throw new HongsExemption(DATA_FIELD+" not decrypt");
+                    throw new CruxExemption(DATA_FIELD+" not decrypt");
                 }
             }
         };

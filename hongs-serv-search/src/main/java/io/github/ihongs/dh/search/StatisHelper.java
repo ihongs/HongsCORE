@@ -3,7 +3,7 @@ package io.github.ihongs.dh.search;
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreLogger;
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.action.FormSet;
 import io.github.ihongs.dh.lucene.LuceneRecord;
 import io.github.ihongs.dh.search.StatisHandle.TYPE;
@@ -69,9 +69,9 @@ public class StatisHelper {
      *
      * @param rd
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
-    public Map acount(Map rd) throws HongsException {
+    public Map acount(Map rd) throws CruxException {
         IndexSearcher finder = that.getFinder();
 
         Set<String> ab = Synt.toTerms(rd.get(Cnst.AB_KEY));
@@ -109,7 +109,7 @@ public class StatisHelper {
         for(String k : rb) {
             Function f = getGraderFormat(k);
             if (null == f) {
-                throw new HongsException(400, "Field "+f+" is not exists");
+                throw new CruxException(400, "Field "+f+" is not exists");
             }
 
             // 默认统计
@@ -255,8 +255,8 @@ public class StatisHelper {
                     vd.put(k , vm);
                 }
 
-                } catch ( ClassCastException ex) {
-                    throw new HongsException(ex, 400); // 数据转换失败
+                } catch (ClassCastException ex) {
+                    throw new CruxException(ex, 400); // 数据转换失败
                 }
             }
 
@@ -414,7 +414,7 @@ public class StatisHelper {
             Map<String , Map    > counts,
             Map<String , Set    > countx,
             Map<String , Integer> styles
-    ) throws HongsException {
+    ) throws CruxException {
         Field[] fields = getGraderFields(counts.keySet(), rd);
 
         try {
@@ -425,7 +425,7 @@ public class StatisHelper {
             }
 
             if (counts.isEmpty()) {
-                return finder.count (q);
+                return finder.count(q);
             }
 
             StatisGrader.Fetch c = new StatisGrader.Fetch(fields, counts, countx, styles);
@@ -433,7 +433,7 @@ public class StatisHelper {
             finder.search(q, c);
             return c . count( );
         } catch (IOException e) {
-            throw new HongsException(e);
+            throw new CruxException(e);
         }
     }
 
@@ -460,9 +460,9 @@ public class StatisHelper {
      *
      * @param rd
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
-    public List<Map> assort (Map rd) throws HongsException {
+    public List<Map> assort (Map rd) throws CruxException {
         Set<String> rb = Synt.toTerms(rd.get(Cnst.RB_KEY));
             Fields  fs = this.getGatherFields ( rb , rd ) ;
         if (null == fs ) {
@@ -484,7 +484,7 @@ public class StatisHelper {
             finder.search( q, c );
             list = c.getResult( );
         } catch ( IOException e ) {
-            throw new HongsException(e);
+            throw new CruxException(e);
         }
 
         Set<String> ob = Synt.toTerms(rd.get(Cnst.OB_KEY));
@@ -525,9 +525,9 @@ public class StatisHelper {
      * @param rn 条数
      * @param pn 页码
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
-    public Map assort (Map rd, int rn, int pn) throws HongsException {
+    public Map assort (Map rd, int rn, int pn) throws CruxException {
         List list = assort ( rd );
 
         Map  page = new HashMap();
@@ -584,7 +584,7 @@ public class StatisHelper {
      * @param rd
      * @param fx
      */
-    public void search(Map rd, final Consumer<Field[]> fx) throws HongsException {
+    public void search(Map rd, final Consumer<Field[]> fx) throws CruxException {
         Set<String> rb = Synt.toTerms(rd.get(Cnst.RB_KEY));
         if (rb == null || rb.isEmpty()) {
             throw new NullPointerException("Search fields required.");
@@ -606,11 +606,11 @@ public class StatisHelper {
 
             finder.search( q, c );
         } catch ( IOException e ) {
-            throw new HongsException(e);
+            throw new CruxException(e);
         }
     }
 
-    private Function getGraderFormat(String x) throws HongsException {
+    private Function getGraderFormat(String x) throws CruxException {
         Map<String, String> types = FormSet.getInstance().getEnum("__types__");
         Map<String, Map   > items = that.getFields();
         Map  c  =  (Map)    items.get(x);
@@ -682,7 +682,7 @@ public class StatisHelper {
 
         try {
             types = FormSet.getInstance().getEnum("__types__");
-        } catch (HongsException e) {
+        } catch ( CruxException e) {
             throw e.toExemption( );
         }
 
@@ -819,7 +819,7 @@ public class StatisHelper {
 
         try {
             types = FormSet.getInstance().getEnum("__types__");
-        } catch (HongsException e) {
+        } catch ( CruxException e) {
             throw e.toExemption( );
         }
 

@@ -3,7 +3,7 @@ package io.github.ihongs.combat.serv;
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreLogger;
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.combat.CombatHelper;
 import io.github.ihongs.combat.CombatRunner;
 import io.github.ihongs.combat.anno.Combat;
@@ -54,10 +54,10 @@ public class SourceCombat {
     /**
      * 执行命令
      * @param args
-     * @throws HongsException
+     * @throws CruxException
      */
     @Combat("__main__")
-    public static void exec (String[] args) throws HongsException {
+    public static void exec (String[] args) throws CruxException {
         if (0 == args.length) {
             CombatHelper.println ("Usage: source FILE_OR_DIR1 FILE_OR_DIR2 ...");
             return;
@@ -136,7 +136,7 @@ public class SourceCombat {
     }
 
     private static void runSql(File fo, Looker lg)
-            throws HongsException {
+            throws CruxException {
         try (
             FileInputStream is = new FileInputStream(fo);
              BufferedReader in = new  BufferedReader(new InputStreamReader(is, "UTF-8"));
@@ -199,7 +199,7 @@ public class SourceCombat {
                     db.execute(ln);
                     //CombatHelper.progres(rp, String.format("Ok(%d) Er(%d) ET: %s", ok ++, er, Inst.phrase( et )));
                 }
-                catch (HongsException ex) {
+                catch (CruxException ex) {
                     lg.error(String.format("Error at line(%d) in file(%s): %s", rn, fo.getName(), ex.getMessage()));
                     //CombatHelper.progres(rp, String.format("Ok(%d) Er(%d) ET: %s", ok, er ++, Inst.phrase( et )));
                 }
@@ -219,7 +219,7 @@ public class SourceCombat {
                     db.execute(ln);
                     //CombatHelper.progres(rp, String.format("Ok(%d) Er(%d) ET: %s", ok ++, er, Inst.phrase( et )));
                 }
-                catch (HongsException ex) {
+                catch (CruxException ex) {
                     lg.error(String.format("Error at line(%d) in file(%s): %s", rn, fo.getName(), ex.getMessage()));
                     //CombatHelper.progres(rp, String.format("Ok(%d) Er(%d) ET: %s", ok, er ++, Inst.phrase( et )));
                 }
@@ -229,26 +229,26 @@ public class SourceCombat {
             //CombatHelper.progres();
         }
         catch (FileNotFoundException ex) {
-            throw new HongsException(ex);
+            throw new CruxException (ex);
         }
         catch (IOException ex) {
-            throw new HongsException(ex);
+            throw new CruxException (ex);
         }
     }
 
     private static void runXml(File fo, Looker lg)
-            throws HongsException {
+            throws CruxException {
         Document doc;
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder  dbn = dbf.newDocumentBuilder();
             doc = dbn.parse( fo );
         } catch (ParserConfigurationException ex) {
-            throw new HongsException(ex);
+            throw new CruxException(ex);
         } catch (SAXException ex) {
-            throw new HongsException(ex);
+            throw new CruxException(ex);
         } catch ( IOException ex) {
-            throw new HongsException(ex);
+            throw new CruxException(ex);
         }
 
         NodeList l = doc.getDocumentElement()
@@ -291,7 +291,7 @@ public class SourceCombat {
                     }
                     break ; }
                 default:
-                    throw new HongsException("Wrong tagName: " + t );
+                    throw new CruxException("Wrong tagName: " + t );
             }
         }
     }
@@ -332,8 +332,8 @@ public class SourceCombat {
             for (  String  q : b) {
                 db.execute(q , p);
             }
-        } catch (HongsException ex) {
-            lg.error(ex);
+        } catch (CruxException z) {
+            lg.error(z);
         }
     }
 

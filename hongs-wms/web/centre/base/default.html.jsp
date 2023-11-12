@@ -4,7 +4,7 @@
 <%
     // 仅开放接口则抛出资源缺失异常
     if ($hrel != null && $hrel.startsWith("!")) {
-        throw new HongsException(404, $locale.translate("core.error.no.thing"));
+        throw new CruxException(404, $locale.translate("core.error.no.thing"));
     }
     String $func = "in_"+($module+"_"+$entity).replace ('/', '_');
     String $href = $hrel == null || $hrel.isEmpty()

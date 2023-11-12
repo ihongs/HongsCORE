@@ -4,9 +4,8 @@ import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLocale;
-import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsCause;
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.VerifyHelper;
 import io.github.ihongs.db.DB;
@@ -53,10 +52,10 @@ public class AuthKit {
      *  - 无返回信息
      * @param helper
      * @param rst
-     * @throws HongsException
+     * @throws CruxException
      */
     public static void redirect(ActionHelper helper, Map rst)
-    throws HongsException {
+    throws CruxException {
         String k, v, r;
         CoreConfig cc = CoreConfig.getInstance("oauth2");
 
@@ -112,10 +111,10 @@ public class AuthKit {
      * 如指定特殊值则会返回错误信息
      * @param helper
      * @param err
-     * @throws HongsException
+     * @throws CruxException
      */
     public static void redirect(ActionHelper helper, HongsCause err)
-    throws HongsException {
+    throws CruxException {
         String k, v, r;
         CoreConfig cc = CoreConfig.getInstance("oauth2");
 
@@ -172,10 +171,10 @@ public class AuthKit {
      * @param uname 名称
      * @param uhead 头像
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
     public static Map userSign(ActionHelper ah, String unit, String uuid, String uname, String uhead)
-    throws HongsException {
+    throws CruxException {
         long      time = System.currentTimeMillis() / 1000 ;
         HttpSession sd = ah.getRequest( ).getSession(false);
 
@@ -224,10 +223,10 @@ public class AuthKit {
      * @param uname 名称
      * @param uhead 头像
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
     public static Map openSign(ActionHelper ah, String unit, String code, String uname, String uhead)
-    throws HongsException {
+    throws CruxException {
         DB    db = DB.getInstance("master");
         Table tb = db.getTable("user_sign");
         Table ub = db.getTable("user");
@@ -332,9 +331,9 @@ public class AuthKit {
      * 获取特征加密字符串
      * @param p
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
-    public static String getCrypt(String p) throws HongsException {
+    public static String getCrypt(String p) throws CruxException {
         try {
             MessageDigest m = MessageDigest.getInstance("MD5");
             byte[] a = m.digest(p.getBytes());
@@ -346,7 +345,7 @@ public class AuthKit {
             }
             return new String(b);
         }   catch (NoSuchAlgorithmException ex) {
-            throw  new HongsException(ex);
+            throw  new CruxException(ex);
         }
     }
 
@@ -357,10 +356,10 @@ public class AuthKit {
      * @param unit
      * @param code
      * @param uid
-     * @throws HongsException 
+     * @throws CruxException 
      */
     public static void setUserSign(String unit, String code, String uid)
-    throws HongsException {
+    throws CruxException {
         Table  tab = DB.getInstance("master").getTable("user_sign");
         Map    row = tab.fetchCase ()
             .filter("unit = ?", unit)
@@ -375,7 +374,7 @@ public class AuthKit {
             ));
         } else
         if (! uid.equals(row.get("user_id"))) {
-            throw new HongsException("@master:core.sign.oauth.diverse", unit, code, uid, row.get("user_id"));
+            throw new CruxException("@master:core.sign.oauth.diverse", unit, code, uid, row.get("user_id"));
         }
     }
 
@@ -383,9 +382,9 @@ public class AuthKit {
      * 获取分组拥有的权限
      * @param gid
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
-    public static Set getUnitRoles(String gid) throws HongsException {
+    public static Set getUnitRoles(String gid) throws CruxException {
         Table rel = DB.getInstance("master").getTable("unit_role");
         List<Map> lst = rel.fetchCase()
             .filter("unit_id = ?", gid)
@@ -402,9 +401,9 @@ public class AuthKit {
      * 获取用户拥有的权限
      * @param uid
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
-    public static Set getUserRoles(String uid) throws HongsException {
+    public static Set getUserRoles(String uid) throws CruxException {
         Table rel = DB.getInstance("master").getTable("user_role");
         List<Map> lst = rel.fetchCase()
             .filter("user_id = ?",uid)
@@ -421,9 +420,9 @@ public class AuthKit {
      * 获取用户所在的分组
      * @param uid
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
-    public static Set getUserUnits(String uid) throws HongsException {
+    public static Set getUserUnits(String uid) throws CruxException {
         Table rel = DB.getInstance("master").getTable("unit_user");
         List<Map> lst = rel.fetchCase()
             .filter("user_id = ?", uid)
@@ -440,9 +439,9 @@ public class AuthKit {
      * 获取管理的全部分组
      * @param uid
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
-    public static Set getManaUnits(String uid) throws HongsException {
+    public static Set getManaUnits(String uid) throws CruxException {
         Table rel = DB.getInstance("master").getTable("unit_user");
         List<Map> lst = rel.fetchCase()
             .filter("type = ?"   , 1  )
@@ -463,9 +462,9 @@ public class AuthKit {
      * 获取管理的顶层分组
      * @param uid
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
-    public static Set getLeadUnits(String uid) throws HongsException {
+    public static Set getLeadUnits(String uid) throws CruxException {
         Table rel = DB.getInstance("master").getTable("unit_user");
         List<Map> lst = rel.fetchCase()
             .filter("type = ?"   , 1  )
@@ -486,9 +485,9 @@ public class AuthKit {
      * 操作人员无法增减自己没有的权限
      * @param list 权限设置数据
      * @param gid  部门ID
-     * @throws HongsException
+     * @throws CruxException
      */
-    public static void cleanUnitRoles(List<Map> list, String gid) throws HongsException {
+    public static void cleanUnitRoles(List<Map> list, String gid) throws CruxException {
         String cid = (String) Core.getInstance(ActionHelper.class).getSessibute("uid");
         if (Cnst.ADM_UID.equals(cid)) {
             cleanListItems(list,"role");
@@ -510,9 +509,9 @@ public class AuthKit {
      * 操作人员无法增减自己没有的权限
      * @param list 权限设置数据
      * @param uid  用户ID
-     * @throws HongsException
+     * @throws CruxException
      */
-    public static void cleanUserRoles(List<Map> list, String uid) throws HongsException {
+    public static void cleanUserRoles(List<Map> list, String uid) throws CruxException {
         String cid = (String) Core.getInstance(ActionHelper.class).getSessibute("uid");
         if (Cnst.ADM_UID.equals(cid)) {
             cleanListItems(list,"role");
@@ -534,9 +533,9 @@ public class AuthKit {
      * 操作人员无法增减自己不在的部门
      * @param list 权限设置数据
      * @param uid  用户ID
-     * @throws HongsException
+     * @throws CruxException
      */
-    public static void cleanUserUnits(List<Map> list, String uid) throws HongsException {
+    public static void cleanUserUnits(List<Map> list, String uid) throws CruxException {
         String cid = (String) Core.getInstance(ActionHelper.class).getSessibute("uid");
         if (Cnst.ADM_UID.equals(cid)) {
             cleanListItems(list,"unit_id");
@@ -553,7 +552,7 @@ public class AuthKit {
         cleanListItems(list,"unit_id",uds);
     }
 
-    private static String getDeepPath(String id, Unit dp) throws HongsException {
+    private static String getDeepPath(String id, Unit dp) throws CruxException {
         List <String> ds = dp.getParentIds(id);
         StringBuilder sb = new StringBuilder();
         Collections.reverse(ds);

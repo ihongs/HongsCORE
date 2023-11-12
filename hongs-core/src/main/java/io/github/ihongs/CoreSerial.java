@@ -51,19 +51,19 @@ public abstract class CoreSerial
 
   /**
    * 从外部获取属性写入当前对象
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   abstract protected void imports()
-    throws HongsException;
+    throws CruxException;
 
   /**
    * 检查缓存有效性
    * @param file
    * @return 0 重载, 1 有效, -1 失效(删除文件)
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   protected byte expires(File file)
-    throws HongsException
+    throws CruxException
   {
     return file.exists()
         ? (byte) 1
@@ -73,10 +73,10 @@ public abstract class CoreSerial
   /**
    * 加载或引入数据
    * @param name
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   protected final File init(String name)
-    throws HongsException
+    throws CruxException
   {
     File   file = new File(Core.DATA_PATH + "/serial/" + name + ".ser");
     init  (file);
@@ -86,10 +86,10 @@ public abstract class CoreSerial
   /**
    * 加载或引入数据
    * @param file
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   protected final void init(File file)
-    throws HongsException
+    throws CruxException
   {
          String path = file.getAbsolutePath();
     Gate.Leader lock = Gate.getLeader(CoreSerial.class.getName() + ":" + path);

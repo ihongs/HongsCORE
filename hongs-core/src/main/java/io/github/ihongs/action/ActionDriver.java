@@ -5,7 +5,7 @@ import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLocale;
 import io.github.ihongs.CoreLogger;
-import io.github.ihongs.HongsCause;
+import io.github.ihongs.CruxCause;
 import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Inst;
 import io.github.ihongs.util.Syno;
@@ -339,15 +339,15 @@ public class ActionDriver implements Filter, Servlet {
             } catch (ServletException | RuntimeException ex) {
                 // 30x,40x 错误不需要记录到日志
                 if (4 != (4 & Core.DEBUG)) {
-                    Throwable cx = ex.getCause( );
-                    if (cx instanceof HongsCause) {
-                        int st = ((HongsCause)cx).getState();
+                    Throwable cx = ex .getCause();
+                    if (cx instanceof CruxCause ) {
+                        int st = ((CruxCause) cx).getState();
                         if (299 < st && st < 500) {
                             throw ex;
                         }
                     }
-                    if (ex instanceof HongsCause) {
-                        int st = ((HongsCause)ex).getState();
+                    if (ex instanceof CruxCause ) {
+                        int st = ((CruxCause) ex).getState();
                         if (299 < st && st < 500) {
                             throw ex;
                         }

@@ -3,9 +3,9 @@ package io.github.ihongs.action.serv;
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
+import io.github.ihongs.CruxCause;
 import io.github.ihongs.CruxException;
 import io.github.ihongs.CruxExemption;
-import io.github.ihongs.HongsCause;
 import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
@@ -330,9 +330,9 @@ public class MoreAction {
 
         try {
             req.getRequestDispatcher("/" + act).include(req, rsp);
-        } catch (ServletException | IOException ex ) {
-            if (ex.getCause() instanceof HongsCause) {
-                HongsCause  ez = ( HongsCause ) ex.getCause( );
+        } catch (ServletException | IOException ex) {
+            if (ex.getCause() instanceof CruxCause) {
+                CruxCause ez = (CruxCause) ex.getCause();
                 String en = Integer.toHexString(ez.getErrno());
                 Map map = new HashMap(4);
                 map.put("ok" ,  false  );

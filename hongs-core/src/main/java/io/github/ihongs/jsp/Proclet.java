@@ -1,8 +1,8 @@
 package io.github.ihongs.jsp;
 
 import io.github.ihongs.Core;
+import io.github.ihongs.CruxCause;
 import io.github.ihongs.CruxException;
-import io.github.ihongs.HongsCause;
 import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.ActionHelper;
 import java.io.IOException;
@@ -50,18 +50,18 @@ abstract public class Proclet extends ActionDriver implements HttpJspPage
     }
     catch (ServletException ex )
     {
-        Throwable ax = ex.getCause( );
-        if (ax == null) { ax = ex ; }
-        if (ax instanceof HongsCause) {
-            ah.fault((HongsCause) ax);
+        Throwable ax = ex.getCause();
+        if (ax == null) { ax = ex; }
+        if (ax instanceof CruxCause) {
+            ah.fault((CruxCause) ax);
         } else {
             ah.fault( new CruxException(ax) );
         }
     }
     catch (RuntimeException ax )
     {
-        if (ax instanceof HongsCause) {
-            ah.fault((HongsCause) ax);
+        if (ax instanceof CruxCause) {
+            ah.fault((CruxCause) ax);
         } else {
             ah.fault( new CruxException(ax) );
         }

@@ -16,10 +16,16 @@ package io.github.ihongs;
  *
  * @author Hongs
  */
-public class CruxException extends HongsException implements Crux {
+public class CruxException
+  extends        Exception
+  implements CruxCause {
+
+    protected final CruxFault that;
 
     public CruxException(Throwable cause, int errno, String error, Object... cases) {
-        super(cause, errno, error, cases);
+        super(cause);
+
+        that = new CruxFault(this, errno, error, cases);
     }
 
     public CruxException(Throwable cause, int errno, String error) {
@@ -70,6 +76,46 @@ public class CruxException extends HongsException implements Crux {
     @Override
     public CruxExemption toExemption() {
         return new CruxExemption((Throwable) this.getCause(), this.getErrno(), this.getError(), this.getCases());
+    }
+
+    @Override
+    public int getErrno() {
+        return that.errno;
+    }
+
+    @Override
+    public String getError() {
+        return that.error;
+    }
+
+    @Override
+    public Object[] getCases() {
+        return that.cases;
+    }
+
+    @Override
+    public int getState() {
+        return that.getState();
+    }
+
+    @Override
+    public String getStage() {
+        return that.getStage();
+    }
+
+    @Override
+    public String toString() {
+        return that.toString();
+    }
+
+    @Override
+    public String getMessage() {
+        return that.getMessage();
+    }
+
+    @Override
+    public String getLocalizedMessage() {
+        return that.getLocalizedMessage();
     }
 
 }

@@ -3,9 +3,9 @@ package io.github.ihongs.jsp;
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
+import io.github.ihongs.CruxCause;
 import io.github.ihongs.CruxException;
 import io.github.ihongs.CruxExemption;
-import io.github.ihongs.HongsCause;
 import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.util.Dist;
@@ -68,11 +68,11 @@ abstract public class Pagelet extends ActionDriver implements HttpJspPage
             if (err != null) {
                 Throwable ex = (Throwable)err;
                 Throwable ax = ex.getCause( );
-                if (ex instanceof HongsCause) {
-                    ah.fault((HongsCause) ex);
+                if (ex instanceof CruxCause) {
+                    ah.fault((CruxCause) ex);
                 } else
-                if (ax instanceof HongsCause) {
-                    ah.fault((HongsCause) ax);
+                if (ax instanceof CruxCause) {
+                    ah.fault((CruxCause) ax);
                 } else {
                     ah.fault(new CruxException(
                             ax != null ? ax : ex , ern , ( String ) msg ));
@@ -99,7 +99,7 @@ abstract public class Pagelet extends ActionDriver implements HttpJspPage
       if (ax == null) { ax = ex ; }
 
       String er = ax.getLocalizedMessage();
-      int eo  = ax instanceof HongsCause ? ( (HongsCause) ax).getState() : 0;
+      int eo  = ax instanceof CruxCause ? ( (CruxCause) ax).getState() : 0;
       if (eo >= 600 || eo < 400)
       {
           eo  = HttpServletResponse.SC_INTERNAL_SERVER_ERROR ;
@@ -114,7 +114,7 @@ abstract public class Pagelet extends ActionDriver implements HttpJspPage
     catch (RuntimeException ax )
     {
       String er = ax.getLocalizedMessage();
-      int eo  = ax instanceof HongsCause ? ( (HongsCause) ax).getState() : 0;
+      int eo  = ax instanceof CruxCause ? ( (CruxCause) ax).getState() : 0;
       if (eo >= 600 || eo < 400)
       {
           eo  = HttpServletResponse.SC_INTERNAL_SERVER_ERROR ;

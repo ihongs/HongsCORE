@@ -5,8 +5,8 @@ import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLocale;
 import io.github.ihongs.CoreLogger;
+import io.github.ihongs.CruxCause;
 import io.github.ihongs.CruxExemption;
-import io.github.ihongs.HongsCause;
 import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Dist;
 
@@ -867,7 +867,7 @@ public class ActionHelper implements Cloneable
    * 返回异常信息
    * @param ex
    */
-  public void fault(HongsCause ex)
+  public void fault(CruxCause ex)
   {
     HttpServletResponse rs = getResponse();
     Throwable ta = (Throwable) ex;

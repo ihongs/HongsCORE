@@ -12,7 +12,7 @@ import io.github.ihongs.util.Syno;
  *
  * @author Hongs
  */
-public final class HongsCurse {
+public final class CruxFault {
 
     public final Throwable cause;
     public final int       errno;
@@ -28,7 +28,7 @@ public final class HongsCurse {
      * @param error 描述
      * @param cases 参数
      */
-    HongsCurse (Throwable cause, int errno, String error, Object[] cases) {
+    CruxFault (Throwable cause, int errno, String error, Object[] cases) {
         // 从描述里提取配置名称
         if (error != null
         &&  error.length( ) >= 2
@@ -218,7 +218,7 @@ public final class HongsCurse {
     public CoreConfig getConfig() {
         try {
             return CoreConfig.getInstance(conf);
-        } catch (HongsExemption e) {
+        } catch (CruxExemption e) {
             String defs = "default";
         if (826 == e.getErrno()
         && ! defs.equals(conf)) {
@@ -242,7 +242,7 @@ public final class HongsCurse {
 
         try {
             return CoreLocale.getInstance(conf);
-        } catch (HongsExemption e) {
+        } catch (CruxExemption e) {
             String defs = "default";
         if (826 == e.getErrno()
         && ! defs.equals(conf)) {

@@ -4,7 +4,7 @@ import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLocale;
-import io.github.ihongs.HongsCause;
+import io.github.ihongs.CruxCause;
 import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.VerifyHelper;
@@ -113,7 +113,7 @@ public class AuthKit {
      * @param err
      * @throws CruxException
      */
-    public static void redirect(ActionHelper helper, HongsCause err)
+    public static void redirect(ActionHelper helper, CruxCause err)
     throws CruxException {
         String k, v, r;
         CoreConfig cc = CoreConfig.getInstance("oauth2");

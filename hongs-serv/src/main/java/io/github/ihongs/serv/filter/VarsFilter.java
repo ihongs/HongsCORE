@@ -2,7 +2,7 @@ package io.github.ihongs.serv.filter;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
-import io.github.ihongs.HongsCause;
+import io.github.ihongs.CruxCause;
 import io.github.ihongs.CruxException;
 import io.github.ihongs.CruxExemption;
 import io.github.ihongs.action.ActionDriver;
@@ -108,10 +108,10 @@ public class VarsFilter extends ActionDriver {
         try {
             rd = hlpr.getRequestData();
         } catch (Throwable e) {
-            if (e instanceof HongsCause) {
-                hlpr.fault( (HongsCause) e );
+            if (e instanceof CruxCause) {
+                hlpr.fault( (CruxCause) e);
             } else {
-                hlpr.fault( e.getMessage() );
+                hlpr.fault(e.getMessage());
             }
             return;
         }

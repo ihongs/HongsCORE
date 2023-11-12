@@ -338,9 +338,9 @@ public class Core
         }
 
         // 框架常规异常, 可以直接抛出
-        if (ta instanceof HongsCause )
+        if (ta instanceof CruxCause )
         {
-          throw ((HongsCause) ta).toExemption();
+          throw ((CruxCause) ta).toExemption();
         }
 
         throw new CruxExemption(ta, 823, "Can not build "+clas.getName());
@@ -376,9 +376,9 @@ public class Core
         }
 
         // 框架常规异常, 可以直接抛出
-        if (ta instanceof HongsCause )
+        if (ta instanceof CruxCause )
         {
-          throw ((HongsCause) ta).toExemption();
+          throw ((CruxCause) ta).toExemption();
         }
 
         throw new CruxExemption(ex, 822, "Can not build "+clas.getName());

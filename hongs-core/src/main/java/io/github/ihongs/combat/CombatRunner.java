@@ -6,8 +6,8 @@ import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLocale;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.CoreRoster;
+import io.github.ihongs.CruxCause;
 import io.github.ihongs.CruxExemption;
-import io.github.ihongs.HongsCause;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
@@ -112,9 +112,9 @@ public class CombatRunner implements Runnable
     }
     catch (Throwable e)
     {
-      if (e instanceof HongsCause)
+      if (e instanceof CruxCause)
       {
-        switch (((HongsCause) e).getErrno())
+        switch (((CruxCause) e).getErrno())
         {
           case 835: c = 2; break;
           case 836: c = 3; break;

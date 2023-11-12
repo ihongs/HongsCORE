@@ -3,9 +3,8 @@ package io.github.ihongs;
 /**
  * 异常基类
  * @author Hongs
- * @deprecated Use Crux instead
  */
-public interface HongsCause
+public interface CruxCause
 {
 
     public int getErrno();
@@ -24,8 +23,8 @@ public interface HongsCause
 
     public String getLocalizedMessage();
 
-    public HongsException toException();
+    public CruxException toException();
 
-    public HongsExemption toExemption();
+    public CruxExemption toExemption();
 
 }

@@ -1,6 +1,6 @@
 package io.github.ihongs.util.verify;
 
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.action.VerifyHelper;
 import io.github.ihongs.util.Synt;
 import java.util.Set;
@@ -60,9 +60,9 @@ public class IsForm extends Rule {
          * 填充字段配置所指定的规则
          */
         try {
-            hlpr.addRulesByForm (conf , name);
-        } catch ( HongsException ex) {
-            throw ex.toExemption(  );
+            hlpr.addRulesByForm(conf, name);
+        } catch ( CruxException e) {
+            throw e.toExemption( );
         }
 
         return  hlpr.verify(Synt.asMap(value), update, prompt);

@@ -1,6 +1,6 @@
 package io.github.ihongs.util.verify;
 
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.action.FormSet;
 import java.util.Collection;
 import java.util.Map;
@@ -43,7 +43,7 @@ public class Ordinary extends Rule {
                 if ("object".equals(kind) || "form".equals(kind)) {
                     return value;
                 }
-            } catch (HongsException e) {
+            } catch ( CruxException e) {
                 throw e.toExemption( );
             }
 

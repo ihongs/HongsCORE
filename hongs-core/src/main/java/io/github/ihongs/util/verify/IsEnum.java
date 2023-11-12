@@ -1,6 +1,6 @@
 package io.github.ihongs.util.verify;
 
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.action.FormSet;
 import io.github.ihongs.util.Synt;
 import java.util.Map;
@@ -38,8 +38,8 @@ public class IsEnum extends Rule {
         Map data;
         try {
             data = FormSet.getInstance(conf).getEnum(name);
-        } catch (HongsException ex) {
-            throw ex.toExemption( );
+        } catch ( CruxException e) {
+            throw e.toExemption( );
         }
         if (! data.containsKey( value.toString( ) ) ) {
             throw new Wrong("@fore.form.not.in.enum");

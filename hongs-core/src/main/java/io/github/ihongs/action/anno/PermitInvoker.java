@@ -1,7 +1,7 @@
 package io.github.ihongs.action.anno;
 
+import io.github.ihongs.CruxException
 import io.github.ihongs.CruxException;
-import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
 import io.github.ihongs.action.NaviMap;
@@ -15,7 +15,7 @@ import java.util.Set;
 public class PermitInvoker implements FilterInvoker {
 
     @Override
-    public void invoke(ActionHelper helper, ActionRunner chains, Annotation anno) throws HongsException {
+    public void invoke(ActionHelper helper, ActionRunner chains, Annotation anno) throws CruxException {
         Permit   ann  = (Permit) anno;
         String   conf = ann.conf();
         String[] role = ann.role();

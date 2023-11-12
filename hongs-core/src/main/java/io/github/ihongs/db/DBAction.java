@@ -3,7 +3,6 @@ package io.github.ihongs.db;
 import io.github.ihongs.Cnst;
 import io.github.ihongs.CoreLocale;
 import io.github.ihongs.CruxException;
-import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
 import io.github.ihongs.action.FormSet;
@@ -29,7 +28,7 @@ import java.util.Set;
 public class DBAction implements IAction, IActing {
 
     @Override
-    public void acting(ActionHelper helper, ActionRunner runner) throws HongsException {
+    public void acting(ActionHelper helper, ActionRunner runner) throws CruxException {
         String act = runner.getHandle();
         String ent = runner.getEntity();
         String mod = runner.getModule();
@@ -51,9 +50,9 @@ public class DBAction implements IAction, IActing {
             try {
                 fs = FormSet.getInstance(mod).getForm(ent);
                 break;
-            } catch ( HongsException ex) {
-            if (ex.getErrno() != 910
-            &&  ex.getErrno() != 912) { // 非表单缺失
+            } catch (CruxException ex) {
+            if (ex.getErrno( ) != 910
+            &&  ex.getErrno( ) != 912) { // 非表单缺失
                 throw ex;
             }}
 
@@ -61,10 +60,10 @@ public class DBAction implements IAction, IActing {
 
             try {
                 fs = FormSet.getInstance(mod).getForm(ent);
-                runner.setModule ( mod );
-            } catch ( HongsException ex) {
-            if (ex.getErrno() != 910
-            &&  ex.getErrno() != 912) { // 非表单缺失
+                runner.setModule (mod);
+            } catch (CruxException ex) {
+            if (ex.getErrno( ) != 910
+            &&  ex.getErrno( ) != 912) { // 非表单缺失
                 throw ex;
             }}
         } while (false) ;
@@ -83,7 +82,7 @@ public class DBAction implements IAction, IActing {
     @Preset(conf="", form="", defs={"defense"})
     @Select(conf="", form="")
     public void search(ActionHelper helper)
-    throws HongsException {
+    throws CruxException {
         Model   ett = getEntity(helper);
         Map     req = helper.getRequestData();
                 req = getReqMap(helper, ett, "search", req);
@@ -97,7 +96,7 @@ public class DBAction implements IAction, IActing {
     @Preset(conf="", form="", defs={"defense"})
     @Select(conf="", form="")
     public void recite(ActionHelper helper)
-    throws HongsException {
+    throws CruxException {
         Model   ett = getEntity(helper);
         Map     req = helper.getRequestData();
                 req = getReqMap(helper, ett, "recite", req);
@@ -112,7 +111,7 @@ public class DBAction implements IAction, IActing {
     @Verify(conf="", form="")
     @CommitSuccess
     public void create(ActionHelper helper)
-    throws HongsException {
+    throws CruxException {
         Model   ett = getEntity(helper);
         Map     req = helper.getRequestData();
                 req = getReqMap(helper, ett, "create", req);
@@ -127,7 +126,7 @@ public class DBAction implements IAction, IActing {
     @Verify(conf="", form="")
     @CommitSuccess
     public void update(ActionHelper helper)
-    throws HongsException {
+    throws CruxException {
         Model   ett = getEntity(helper);
         Map     req = helper.getRequestData();
                 req = getReqMap(helper, ett, "update", req);
@@ -141,7 +140,7 @@ public class DBAction implements IAction, IActing {
     @Preset(conf="", form="", defs={"defence"})
     @CommitSuccess
     public void delete(ActionHelper helper)
-    throws HongsException {
+    throws CruxException {
         Model   ett = getEntity(helper);
         Map     req = helper.getRequestData();
                 req = getReqMap(helper, ett, "delete", req);
@@ -152,7 +151,7 @@ public class DBAction implements IAction, IActing {
 
     @Action("exists")
     public void isExists(ActionHelper helper)
-    throws HongsException {
+    throws CruxException {
         Model   ett = getEntity(helper);
         Map     req = helper.getRequestData();
                 req = getReqMap(helper, ett, "exists", req);
@@ -164,7 +163,7 @@ public class DBAction implements IAction, IActing {
 
     @Action("unique")
     public void isUnique(ActionHelper helper)
-    throws HongsException {
+    throws CruxException {
         Model   ett = getEntity(helper);
         Map     req = helper.getRequestData();
                 req = getReqMap(helper, ett, "unique", req);
@@ -181,10 +180,10 @@ public class DBAction implements IAction, IActing {
      *  方法 Action 注解的命名只能是 "动作名称", 不得含子级实体名称
      * @param helper
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
     protected Model  getEntity(ActionHelper helper)
-    throws HongsException {
+    throws CruxException {
         ActionRunner runner = (ActionRunner)
            helper.getAttribute(ActionRunner.class.getName());
         return DB.getInstance (runner.getModule( ))
@@ -198,10 +197,10 @@ public class DBAction implements IAction, IActing {
      * @param opr
      * @param req
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
     protected  Map   getReqMap(ActionHelper helper, Model ett, String opr, Map req)
-    throws HongsException {
+    throws CruxException {
         // 补充主键
         if (!Cnst.ID_KEY.equals(ett.table.primaryKey)) {
             if (req.containsKey(Cnst.ID_KEY)) {
@@ -218,10 +217,10 @@ public class DBAction implements IAction, IActing {
      * @param opr
      * @param rsp
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
     protected  Map   getRspMap(ActionHelper helper, Model ett, String opr, Map rsp)
-    throws HongsException {
+    throws CruxException {
         // 补充标准 ID
         if (!Cnst.ID_KEY.equals(ett.table.primaryKey)) {
             if (rsp.containsKey("info")) {
@@ -245,10 +244,10 @@ public class DBAction implements IAction, IActing {
      * @param opr
      * @param num
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
     protected String getRspMsg(ActionHelper helper, Model ett, String opr, int num)
-    throws HongsException {
+    throws CruxException {
         ActionRunner runner = (ActionRunner)
            helper.getAttribute(ActionRunner.class.getName());
 

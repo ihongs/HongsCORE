@@ -2,8 +2,7 @@ package io.github.ihongs.action.serv;
 
 import io.github.ihongs.Core;
 import io.github.ihongs.CruxException;
-import io.github.ihongs.HongsException;
-import io.github.ihongs.HongsExemption;
+import io.github.ihongs.CruxExemption;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
 import io.github.ihongs.action.ActionDriver;
@@ -76,11 +75,11 @@ public class ActsDriver
     {
       new ActionRunner(helper,act).doAction();
     }
-    catch (  HongsException e)
+    catch (CruxException e)
     {
       helper.fault(e);
     }
-    catch (  HongsExemption e)
+    catch (CruxExemption e)
     {
       helper.fault(e);
     }

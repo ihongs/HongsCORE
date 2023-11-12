@@ -7,7 +7,6 @@ import io.github.ihongs.CoreLocale;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.CruxExemption;
 import io.github.ihongs.HongsCause;
-import io.github.ihongs.HongsExemption;
 import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Dist;
 
@@ -307,9 +306,7 @@ public class ActionHelper implements Cloneable
     }
     try {
         return (Map) Dist.toObject(request.getReader());
-    } catch (/**/HongsExemption ex) {
-        throw new CruxExemption(ex, 400 );
-    } catch (ClassCastException ex) {
+    } catch (RuntimeException ex) {
         throw new CruxExemption(ex, 400 );
     } catch (IOException ex) {
         throw new CruxExemption(ex, 1114);

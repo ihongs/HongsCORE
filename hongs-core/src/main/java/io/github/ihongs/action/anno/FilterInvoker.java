@@ -1,8 +1,8 @@
 package io.github.ihongs.action.anno;
 
-import io.github.ihongs.action.ActionRunner;
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionHelper;
+import io.github.ihongs.action.ActionRunner;
 import java.lang.annotation.Annotation;
 
 /**
@@ -13,5 +13,5 @@ import java.lang.annotation.Annotation;
  * @author Hongs
  */
 public interface FilterInvoker {
-    public void invoke(ActionHelper helper, ActionRunner runner, Annotation anno) throws HongsException;
+    public void invoke(ActionHelper helper, ActionRunner runner, Annotation anno) throws CruxException;
 }

@@ -5,8 +5,7 @@ import io.github.ihongs.Core;
 import io.github.ihongs.CoreRoster;
 import io.github.ihongs.CoreRoster.Mathod;
 import io.github.ihongs.CruxException;
-import io.github.ihongs.HongsException;
-import io.github.ihongs.HongsExemption;
+import io.github.ihongs.CruxExemption;
 import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.action.anno.Assign;
 import io.github.ihongs.action.anno.Filter;
@@ -216,9 +215,9 @@ public class ActionRunner {
     /**
      * 执行初始方法
      * 会执行 acting 方法, doAction,doInvoke 内已调
-     * @throws HongsException
+     * @throws CruxException
      */
-    public void doActing() throws HongsException {
+    public void doActing() throws CruxException {
         // Reset
         idx = 0;
 
@@ -235,9 +234,9 @@ public class ActionRunner {
     /**
      * 执行动作方法
      * 会执行 action 方法上 annotation 指定的过滤器
-     * @throws HongsException
+     * @throws CruxException
      */
-    public void doAction() throws HongsException {
+    public void doAction() throws CruxException {
         // 如果正处于链头, 则作初始化
         if ( idx == low ) {
             doActing();
@@ -273,9 +272,9 @@ public class ActionRunner {
     /**
      * 执行动作方法
      * 不执行 action 方法上 annotation 指定的过滤器
-     * @throws HongsException
+     * @throws CruxException
      */
-    public void doInvoke() throws HongsException {
+    public void doInvoke() throws CruxException {
         if (idx == low) {
             doActing( );
         } else {
@@ -289,12 +288,12 @@ public class ActionRunner {
         } catch ( IllegalArgumentException e) {
             throw new CruxException(1108, "Illegal params for method '"+mclass.getName()+"."+method.getName()+"(ActionHelper).");
         } catch (InvocationTargetException e) {
-            Throwable  ex = e.getCause( );
-            if (ex instanceof HongsExemption) {
-                throw (HongsExemption) ex;
+            Throwable ex = e.getCause ( );
+            if ( ex instanceof CruxExemption) {
+                throw (CruxExemption) ex ;
             } else
-            if (ex instanceof HongsException) {
-                throw (HongsException) ex;
+            if ( ex instanceof CruxException) {
+                throw (CruxException) ex ;
             } else {
                 throw new CruxException(ex, 1106);
             }

@@ -2,7 +2,6 @@ package io.github.ihongs.dh;
 
 import io.github.ihongs.CoreLocale;
 import io.github.ihongs.CruxException;
-import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
 import io.github.ihongs.action.FormSet;
@@ -27,7 +26,7 @@ import java.util.Set;
 abstract public class JAction implements IActing, IAction {
 
     @Override
-    public void acting(ActionHelper helper, ActionRunner runner) throws HongsException {
+    public void acting(ActionHelper helper, ActionRunner runner) throws CruxException {
         String act = runner.getHandle();
         String ent = runner.getEntity();
         String mod = runner.getModule();
@@ -49,9 +48,9 @@ abstract public class JAction implements IActing, IAction {
             try {
                 fs = FormSet.getInstance(mod).getForm(ent);
                 break;
-            } catch ( HongsException ex) {
-            if (ex.getErrno() != 910
-            &&  ex.getErrno() != 912) { // 非表单缺失
+            } catch (CruxException ex) {
+            if (ex.getErrno( ) != 910
+            &&  ex.getErrno( ) != 912) { // 非表单缺失
                 throw ex;
             }}
 
@@ -59,10 +58,10 @@ abstract public class JAction implements IActing, IAction {
 
             try {
                 fs = FormSet.getInstance(mod).getForm(ent);
-                runner.setModule ( mod );
-            } catch ( HongsException ex) {
-            if (ex.getErrno() != 910
-            &&  ex.getErrno() != 912) { // 非表单缺失
+                runner.setModule (mod);
+            } catch (CruxException ex) {
+            if (ex.getErrno( ) != 910
+            &&  ex.getErrno( ) != 912) { // 非表单缺失
                 throw ex;
             }}
         } while (false) ;
@@ -78,7 +77,7 @@ abstract public class JAction implements IActing, IAction {
 
     @Action("select")
     @Select(conf="", form="")
-    public void select(ActionHelper helper) throws HongsException {
+    public void select(ActionHelper helper) throws CruxException {
         helper.reply("");
     }
 
@@ -86,7 +85,7 @@ abstract public class JAction implements IActing, IAction {
     @Action("search")
     @Preset(conf="", form="", defs={"defense"})
     @Select(conf="", form="")
-    public void search(ActionHelper helper) throws HongsException {
+    public void search(ActionHelper helper) throws CruxException {
         IEntity sr = getEntity(helper);
         Map     rd = helper.getRequestData();
                 rd = getReqMap(helper, sr, "search", rd);
@@ -99,7 +98,7 @@ abstract public class JAction implements IActing, IAction {
     @Action("recite")
     @Preset(conf="", form="", defs={"defense"})
     @Select(conf="", form="")
-    public void recite(ActionHelper helper) throws HongsException {
+    public void recite(ActionHelper helper) throws CruxException {
         IEntity sr = getEntity(helper);
         Map     rd = helper.getRequestData();
                 rd = getReqMap(helper, sr, "recite", rd);
@@ -113,7 +112,7 @@ abstract public class JAction implements IActing, IAction {
     @Preset(conf="", form="", deft={".default"})
     @Verify(conf="", form="")
     @CommitSuccess
-    public void create(ActionHelper helper) throws HongsException {
+    public void create(ActionHelper helper) throws CruxException {
         IEntity sr = getEntity(helper);
         Map     rd = helper.getRequestData();
                 rd = getReqMap(helper, sr, "create", rd);
@@ -127,7 +126,7 @@ abstract public class JAction implements IActing, IAction {
     @Preset(conf="", form="", defs={".defence"})
     @Verify(conf="", form="")
     @CommitSuccess
-    public void update(ActionHelper helper) throws HongsException {
+    public void update(ActionHelper helper) throws CruxException {
         IEntity sr = getEntity(helper);
         Map     rd = helper.getRequestData();
                 rd = getReqMap(helper, sr, "update", rd);
@@ -140,7 +139,7 @@ abstract public class JAction implements IActing, IAction {
     @Action("delete")
     @Preset(conf="", form="", defs={".defence"})
     @CommitSuccess
-    public void delete(ActionHelper helper) throws HongsException {
+    public void delete(ActionHelper helper) throws CruxException {
         IEntity sr = getEntity(helper);
         Map     rd = helper.getRequestData();
                 rd = getReqMap(helper, sr, "delete", rd);
@@ -156,10 +155,10 @@ abstract public class JAction implements IActing, IAction {
      *  方法 Action 注解的命名只能是 "动作名称", 不得含子级实体名称
      * @param helper
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
     abstract public IEntity getEntity(ActionHelper helper)
-    throws HongsException;
+    throws CruxException;
 
     /**
      * 获取请求数据
@@ -168,10 +167,10 @@ abstract public class JAction implements IActing, IAction {
      * @param opr
      * @param req
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
     protected  Map   getReqMap(ActionHelper helper, IEntity ett, String opr, Map req)
-    throws HongsException {
+    throws CruxException {
         return req;
     }
 
@@ -182,10 +181,10 @@ abstract public class JAction implements IActing, IAction {
      * @param opr
      * @param rsp
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
     protected  Map   getRspMap(ActionHelper helper, IEntity ett, String opr, Map rsp)
-    throws HongsException {
+    throws CruxException {
         return rsp;
     }
 
@@ -196,10 +195,10 @@ abstract public class JAction implements IActing, IAction {
      * @param opr
      * @param num
      * @return
-     * @throws HongsException
+     * @throws CruxException
      */
     protected String getRspMsg(ActionHelper helper, IEntity ett, String opr, int num)
-    throws HongsException {
+    throws CruxException {
         ActionRunner runner = (ActionRunner)
            helper.getAttribute(ActionRunner.class.getName());
 

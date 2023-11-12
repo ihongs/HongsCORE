@@ -3,7 +3,7 @@ package io.github.ihongs.action.anno;
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreLogger;
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
 import io.github.ihongs.action.FormSet;
@@ -34,7 +34,7 @@ public class VerifyInvoker implements FilterInvoker {
 
     @Override
     public void invoke(ActionHelper helper, ActionRunner chains, Annotation anno)
-    throws HongsException {
+    throws CruxException {
         Verify  ann  = (Verify) anno;
         String  conf = ann.conf();
         String  form = ann.form();
@@ -126,7 +126,7 @@ public class VerifyInvoker implements FilterInvoker {
             }
 
             return;
-        } catch (HongsException  ex) {
+        } catch (CruxException  ex ) {
             int  ec  = ex.getErrno();
             if  (ec != 910 && ec != 911 && ec != 912) { // 非表单缺失
                 throw  ex;

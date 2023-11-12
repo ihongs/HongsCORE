@@ -2,7 +2,6 @@ package io.github.ihongs.db.util;
 
 import io.github.ihongs.CruxException;
 import io.github.ihongs.CruxExemption;
-import io.github.ihongs.HongsException;
 import io.github.ihongs.db.link.Link;
 import io.github.ihongs.db.link.Loop;
 import io.github.ihongs.util.Synt;
@@ -1228,10 +1227,10 @@ public class FetchCase
    *
    * @param name
    * @return
-   * @throws HongsException
+   * @throws CruxException
    */
   public FetchCase gotJoin(String... name)
-    throws HongsException
+    throws CruxException
   {
     FetchCase caze = this;
     for (String n : name)
@@ -1322,7 +1321,7 @@ public class FetchCase
       Link.checkSQLParams(sb, paramz);
       Link.mergeSQLParams(sb, paramz);
     }
-    catch (HongsException ex)
+    catch (CruxException ex)
     {
       throw  new  Error ( ex);
     }
@@ -1373,9 +1372,9 @@ public class FetchCase
   /**
    * 查询并获取记录迭代
    * @return
-   * @throws HongsException
+   * @throws CruxException
    */
-  public Loop select() throws HongsException {
+  public Loop select() throws CruxException {
     if (_db_ == null) {
       throw new CruxException(1163);
     }
@@ -1391,9 +1390,9 @@ public class FetchCase
   /**
    * 查询并获取全部结果
    * @return
-   * @throws HongsException
+   * @throws CruxException
    */
-  public List getAll() throws HongsException {
+  public List getAll() throws CruxException {
     List<Map> ra = new ArrayList( );
          Map  ro ;
 
@@ -1409,9 +1408,9 @@ public class FetchCase
   /**
    * 查询并获取单个结果
    * @return
-   * @throws HongsException
+   * @throws CruxException
    */
-  public Map  getOne() throws HongsException {
+  public Map  getOne() throws CruxException {
     this.limit(1);
 
     try (Loop rs = select()) {
@@ -1424,9 +1423,9 @@ public class FetchCase
    * 删除全部匹配的记录
    * 注意: 考虑到 SQL 兼容性, 忽略了 join 的条件, 有 :n, xx.n 的字段条件会报 SQL 错误
    * @return
-   * @throws HongsException
+   * @throws CruxException
    */
-  public int delete() throws HongsException {
+  public int delete() throws CruxException {
     if (_db_ == null) {
       throw new CruxException(1163);
     }
@@ -1443,9 +1442,9 @@ public class FetchCase
    * 注意: 考虑到 SQL 兼容性, 忽略了 join 的条件, 有 :n, xx.n 的字段条件会报 SQL 错误
    * @param dat
    * @return
-   * @throws HongsException
+   * @throws CruxException
    */
-  public int update(Map<String, Object> dat) throws HongsException {
+  public int update(Map<String, Object> dat) throws CruxException {
     if (_db_ == null) {
       throw new CruxException(1163);
     }
@@ -1463,9 +1462,9 @@ public class FetchCase
    * 但为保障支持的语句完整让 FetchCase 看着像 ORM 还是放一个
    * @param dat
    * @return
-   * @throws HongsException
+   * @throws CruxException
    */
-  public int insert(Map<String, Object> dat) throws HongsException {
+  public int insert(Map<String, Object> dat) throws CruxException {
     if (_db_ == null) {
       throw new CruxException(1163);
     }

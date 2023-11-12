@@ -7,7 +7,6 @@ import io.github.ihongs.CoreLogger;
 import io.github.ihongs.CoreRoster;
 import io.github.ihongs.CoreSerial;
 import io.github.ihongs.CruxException;
-import io.github.ihongs.HongsException;
 import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.daemon.Gate;
 import java.io.File;
@@ -137,14 +136,14 @@ public class NaviMap
   public /**/String  session = null;
 
   public NaviMap(String name)
-    throws HongsException
+    throws CruxException
   {
     this.name = name ;
     this.init ( /**/);
   }
 
   public final void init()
-    throws HongsException
+    throws CruxException
   {
     File serFile = new File(Core.DATA_PATH
                  + File.separator + "serial"
@@ -248,7 +247,7 @@ public class NaviMap
 
   @Override
   protected void imports()
-    throws HongsException
+    throws CruxException
   {
     InputStream is;
     String      fn;
@@ -321,7 +320,7 @@ public class NaviMap
   }
 
   private void parse(Element element, Map menus, Map manus, Map roles, Set imports, Set actions, Set depends)
-    throws HongsException
+    throws CruxException
   {
     if (!element.hasChildNodes())
     {
@@ -493,7 +492,7 @@ public class NaviMap
               }
           }
         }
-        catch (HongsException ex )
+        catch (CruxException ex )
         {
           // 找不到文件仅将错误写到日志
           if (920 == ex.getErrno())
@@ -605,9 +604,9 @@ public class NaviMap
    * 获取角色集合(与当前请求相关)
    * 注意: 并不包含其依赖的角色
    * @return session 为空则返回 null
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
-  public Set<String> getRoleSet() throws HongsException {
+  public Set<String> getRoleSet() throws CruxException {
       if (session == null || session.length() == 0) {
           CoreLogger.warn("Can not get roles for menu " + name);
           return null;
@@ -627,9 +626,9 @@ public class NaviMap
    * 获取权限集合(与当前请求相关)
    * 注意: 包含依赖的角色的权限
    * @return session 为空则返回 null
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
-  public Set<String> getAuthSet() throws HongsException {
+  public Set<String> getAuthSet() throws CruxException {
       Set<String> roleset = getRoleSet();
       if (null == roleset)  return null ;
       return getRoleAuths(roleset);
@@ -640,9 +639,9 @@ public class NaviMap
    * 注意: 并不包含其依赖的角色, 配置里没登记角色也返 true
    * @param role
    * @return 可访问则为 true
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
-  public boolean chkRole(String role) throws HongsException {
+  public boolean chkRole(String role) throws CruxException {
       Set<String> roleset = getRoleSet( );
       if (null == roleset) {
           return !roles.containsKey(role);
@@ -655,9 +654,9 @@ public class NaviMap
    * 注意: 包含依赖的角色的权限, 配置里没登记动作也返 true
    * @param auth
    * @return 可访问则为 true
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
-  public boolean chkAuth(String auth) throws HongsException {
+  public boolean chkAuth(String auth) throws CruxException {
       Set<String> authset = getAuthSet( );
       if (null == authset) {
           return !actions.contains (auth);
@@ -669,9 +668,9 @@ public class NaviMap
    * 检查页面权限(与当前请求相关)
    * @param name
    * @return 有一个配置角色即为 true
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
-  public boolean chkMenu(String name) throws HongsException {
+  public boolean chkMenu(String name) throws CruxException {
       Map menu = getMenu(name);
       if (null == menu) {
           return false;
@@ -754,10 +753,10 @@ public class NaviMap
   /**
    * 获取当前用户有权的菜单
    * @return
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public List<Map> getMenuTranslated()
-  throws HongsException {
+  throws CruxException {
       Set rolez =   getRoleSet();
       if (rolez == null) {
           rolez =  new HashSet();
@@ -766,7 +765,7 @@ public class NaviMap
   }
 
   public List<Map> getMenuTranslated(int d)
-  throws HongsException {
+  throws CruxException {
       Set rolez =   getRoleSet();
       if (rolez == null) {
           rolez =  new HashSet();
@@ -779,7 +778,7 @@ public class NaviMap
   }
 
   public List<Map> getMenuTranslated(String name)
-  throws HongsException {
+  throws CruxException {
       Set rolez =   getRoleSet();
       if (rolez == null) {
           rolez =  new HashSet();
@@ -788,7 +787,7 @@ public class NaviMap
   }
 
   public List<Map> getMenuTranslated(String name, int d)
-  throws HongsException {
+  throws CruxException {
       Set rolez =   getRoleSet();
       if (rolez == null) {
           rolez =  new HashSet();
@@ -884,10 +883,10 @@ public class NaviMap
   /**
    * 获取当前用户有权的角色
    * @return
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public List<Map> getRoleTranslated()
-  throws HongsException {
+  throws CruxException {
       Set rolez =   getRoleSet();
       if (rolez == null) {
           rolez =  new HashSet();
@@ -896,7 +895,7 @@ public class NaviMap
   }
 
   public List<Map> getRoleTranslated(int d)
-  throws HongsException {
+  throws CruxException {
       Set rolez =   getRoleSet();
       if (rolez == null) {
           rolez =  new HashSet();
@@ -909,7 +908,7 @@ public class NaviMap
   }
 
   public List<Map> getRoleTranslated(String name)
-  throws HongsException {
+  throws CruxException {
       Set rolez =   getRoleSet();
       if (rolez == null) {
           rolez =  new HashSet();
@@ -918,7 +917,7 @@ public class NaviMap
   }
 
   public List<Map> getRoleTranslated(String name, int d)
-  throws HongsException {
+  throws CruxException {
       Set rolez =   getRoleSet();
       if (rolez == null) {
           rolez =  new HashSet();
@@ -1077,7 +1076,7 @@ public class NaviMap
     return CoreRoster.getResourceModified(fn) > 0;
   }
 
-  public static NaviMap getInstance(String name) throws HongsException {
+  public static NaviMap getInstance(String name) throws CruxException {
       Core    core =  Core.getInstance ();
       String  code =  NaviMap.class.getName() + ":" + name;
       NaviMap inst = (NaviMap) core.get(code);
@@ -1088,7 +1087,7 @@ public class NaviMap
       return inst;
   }
 
-  public static NaviMap getInstance() throws HongsException {
+  public static NaviMap getInstance() throws CruxException {
       return getInstance("default");
   }
 

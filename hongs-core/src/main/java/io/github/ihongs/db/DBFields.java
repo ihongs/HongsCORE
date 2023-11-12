@@ -3,7 +3,6 @@ package io.github.ihongs.db;
 import io.github.ihongs.Cnst;
 import io.github.ihongs.CoreSerial;
 import io.github.ihongs.CruxException;
-import io.github.ihongs.HongsException;
 import io.github.ihongs.db.link.Loop;
 
 import java.util.Map;
@@ -36,7 +35,7 @@ public class DBFields
   public Map<String, Map> fields;
 
   public DBFields(DB db, String tn)
-    throws HongsException
+    throws CruxException
   {
     this.db = db;
     this.tn = tn;
@@ -51,14 +50,14 @@ public class DBFields
   }
 
   public DBFields(Table table)
-    throws HongsException
+    throws CruxException
   {
     this(table.db, table.tableName);
   }
 
   @Override
   protected final void imports()
-    throws HongsException
+    throws CruxException
   {
     fields = new LinkedHashMap();
 

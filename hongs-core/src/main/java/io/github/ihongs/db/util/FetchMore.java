@@ -1,6 +1,6 @@
 package io.github.ihongs.db.util;
 
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.db.link.Loop;
@@ -122,10 +122,10 @@ public class FetchMore
    * @param caze  附加查询
    * @param map   映射关系
    * @param col   关联字段
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public void join(Table table, FetchCase caze, Map<String, List> map, String col)
-    throws HongsException
+    throws CruxException
   {
     if (map.isEmpty())
     {
@@ -319,10 +319,10 @@ public class FetchMore
    * @param caze  附加查询
    * @param key   映射关系
    * @param col   关联字段
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public void join(Table table, FetchCase caze, String key, String col)
-    throws HongsException
+    throws CruxException
   {
     Map<String, List> map = this.mapped(key);
     join(table, caze, map , col);
@@ -334,10 +334,10 @@ public class FetchMore
    * @param table 关联表
    * @param key   映射键名
    * @param col   关联字段
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public void join(Table table, String key, String col)
-    throws HongsException
+    throws CruxException
   {
     join(table, new FetchCase( ), key, col);
   }
@@ -347,10 +347,10 @@ public class FetchMore
    * 类似 SQL: JOIN table ON table.col = super.col
    * @param table 关联表
    * @param col   关联字段
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public void join(Table table, String col)
-    throws HongsException
+    throws CruxException
   {
     join(table, new FetchCase( ), col, col);
   }

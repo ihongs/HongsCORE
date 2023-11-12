@@ -1,7 +1,7 @@
 package io.github.ihongs.dh;
 
 import io.github.ihongs.CoreSerial;
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,12 +17,12 @@ abstract public class StoreData<K,V> extends CoreSerial implements Map<K,V> {
 
     protected Map<K,V> data;
 
-    public StoreData(String name, Map data) throws HongsException {
+    public StoreData(String name, Map data) throws CruxException {
         this.data = data;
         init(name);
     }
 
-    public StoreData(String name) throws HongsException {
+    public StoreData(String name) throws CruxException {
         this(name , new HashMap() );
     }
 

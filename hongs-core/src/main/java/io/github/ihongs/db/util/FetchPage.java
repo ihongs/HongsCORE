@@ -2,7 +2,6 @@ package io.github.ihongs.db.util;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.CruxException;
-import io.github.ihongs.HongsException;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.db.link.Link;
@@ -100,7 +99,7 @@ public final class FetchPage
   }
 
   private Link gotLink()
-    throws HongsException
+    throws CruxException
   {
     if (this.db != null)
     {
@@ -118,7 +117,7 @@ public final class FetchPage
   }
 
   private List gotList()
-    throws HongsException
+    throws CruxException
   {
     if (this.tb != null)
     {
@@ -134,7 +133,7 @@ public final class FetchPage
   }
 
   public List getList()
-    throws HongsException
+    throws CruxException
   {
     // 设置分页
     caze.limit((this.page - 1) * this.rows, this.rows);
@@ -160,7 +159,7 @@ public final class FetchPage
   }
 
   public Map getPage()
-    throws HongsException
+    throws CruxException
   {
     this.info.put(Cnst.PN_KEY, this.page);
     this.info.put(Cnst.QN_KEY, this.ques);

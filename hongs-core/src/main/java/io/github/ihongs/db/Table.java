@@ -4,7 +4,6 @@ import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLocale;
 import io.github.ihongs.CruxException;
-import io.github.ihongs.HongsException;
 import io.github.ihongs.db.util.FetchCase;
 import io.github.ihongs.db.util.AssocMore;
 import io.github.ihongs.util.Synt;
@@ -90,7 +89,7 @@ public class Table
   protected Map relats;
 
   public Table(DB db, Map conf)
-    throws HongsException
+    throws CruxException
   {
     if (db == null)
     {
@@ -171,10 +170,10 @@ public class Table
    * 可用 getAll, getOne  得到结果, 以及 delete, update 操作数据
    * 但与 fetchMore,fetchLess 不同, 不会自动关联和排除已删的数据
    * @return 绑定了 db, table 的查询对象
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public FetchCase fetchCase()
-    throws HongsException
+    throws CruxException
   {
     FetchCase  fc = new FetchCase()
           .use(db).from(tableName, name);
@@ -186,10 +185,10 @@ public class Table
    * 查询多条记录(会根据配置自动关联)
    * @param caze
    * @return 全部记录
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public List fetchMore(FetchCase caze)
-    throws HongsException
+    throws CruxException
   {
     caze.from(tableName, name);
 
@@ -220,10 +219,10 @@ public class Table
    * 获取单条记录(会根据配置自动关联)
    * @param caze
    * @return 单条记录
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public Map fetchLess(FetchCase caze)
-    throws HongsException
+    throws CruxException
   {
     caze.limit(1);
     List<Map> rows = this.fetchMore(caze);
@@ -242,10 +241,10 @@ public class Table
    * 插入数据
    * @param values
    * @return 插入条数
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public int insert(Map<String, Object> values)
-    throws HongsException
+    throws CruxException
   {
     String mtime = getField("mtime");
     String ctime = getField("ctime");
@@ -288,10 +287,10 @@ public class Table
    * @param where
    * @param params
    * @return 更新条数
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public int update(Map<String, Object> values, String where, Object... params)
-    throws HongsException
+    throws CruxException
   {
     String mtime = getField("mtime");
 
@@ -321,10 +320,10 @@ public class Table
    * @param where
    * @param params
    * @return 删除条数
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public int remove(String where, Object... params)
-    throws HongsException
+    throws CruxException
   {
     String rstat = getField ( "state" );
     String rflag = getState ("removed");
@@ -350,10 +349,10 @@ public class Table
    * @param where
    * @param params
    * @return
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public int delete(String where, Object... params)
-    throws HongsException
+    throws CruxException
   {
     return this.db.delete(this.tableName, where, params);
   }
@@ -373,10 +372,10 @@ public class Table
   /**
    * 获取字段(包含名称及类型等)
    * @return 全部字段信息
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public Map getFields()
-    throws HongsException
+    throws CruxException
   {
     if (null == this.fields)
     {
@@ -389,10 +388,10 @@ public class Table
    * 获取特殊字段名
    * @param field
    * @return
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public String getField(String field)
-    throws HongsException
+    throws CruxException
   {
     String param = (String) params.get("field."+ field);
     if (null != param) {
@@ -519,10 +518,10 @@ public class Table
    * 用于Model中, Table中不自动删除关联数据
    *
    * @param ids
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public void deleteSubValues(Object... ids)
-    throws HongsException
+    throws CruxException
   {
     AssocMore.deleteMore(this, assocs , ids);
   }
@@ -533,10 +532,10 @@ public class Table
    * 用于Model中, Table中不自动写入关联数据
    *
    * @param values
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public void insertSubValues(Map values)
-    throws HongsException
+    throws CruxException
   {
     AssocMore.insertMore(this, assocs , values);
   }
@@ -560,10 +559,10 @@ public class Table
    * @param values
    * @param isNew 新增还是修改
    * @return 可供提交的数据
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   private Map checkMainValues(Map values, boolean isNew)
-    throws HongsException
+    throws CruxException
   {
     Map mainValues = new HashMap();
 
@@ -860,32 +859,32 @@ public class Table
 
   //** 私有方法 **/
 
-  private HongsException nullException(String field) {
+  private CruxException nullException(String field) {
     String error = "Value for field `$2` in table `$0.$1` can not be NULL";
     return new CruxException(1074, error, db.name,name, field);
   }
 
-  private HongsException sizeException(String field, String value, int size) {
+  private CruxException sizeException(String field, String value, int size) {
     String error = "Value for field `$2` in table `$0.$1` must be a less than $4, value: $3";
     return new CruxException (1075, error, db.name,name, field, value, size);
   }
 
-  private HongsException scleException(String field, String value, int scle) {
+  private CruxException scleException(String field, String value, int scle) {
     String error = "Scale for field `$2` in table `$0.$1` must be a less than $4, value: $3";
     return new CruxException (1076, error, db.name,name, field, value, scle);
   }
 
-  private HongsException numeException(String field, String value) {
+  private CruxException numeException(String field, String value) {
     String error = "Value for field `$2` in table `$0.$1` must be a standard number, value: $3";
     return new CruxException (1077, error, db.name,name, field, value);
   }
 
-  private HongsException unsiException(String field, String value) {
+  private CruxException unsiException(String field, String value) {
     String error = "Value for field `$2` in table `$0.$1` must be a unsigned number, value: $3";
     return new CruxException (1078, error, db.name,name, field, value);
   }
 
-  private HongsException dateException(String field, String value, String format) {
+  private CruxException dateException(String field, String value, String format) {
     String error = "Value for field `$2` in table `$0.$1` must like '$4', value: $3";
     return new CruxException (1079, error, db.name,name, field, value, format);
   }
@@ -897,10 +896,10 @@ public class Table
    * @param tnam
    * @param pkey
    * @return
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public static Table newInstance(DB db, String name, String tnam, String pkey)
-    throws HongsException
+    throws CruxException
   {
     Map map = new HashMap();
     map.put("name" , name );
@@ -916,10 +915,10 @@ public class Table
    * @param name
    * @param pkey
    * @return
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public static Table newInstance(DB db, String name, String pkey)
-    throws HongsException
+    throws CruxException
   {
     return newInstance(db, name, name, pkey);
   }
@@ -929,10 +928,10 @@ public class Table
    * @param db
    * @param name
    * @return
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public static Table newInstance(DB db, String name)
-    throws HongsException
+    throws CruxException
   {
     return newInstance(db, name, name, null);
   }

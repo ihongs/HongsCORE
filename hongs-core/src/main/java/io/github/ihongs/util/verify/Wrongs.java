@@ -1,7 +1,7 @@
 package io.github.ihongs.util.verify;
 
 import io.github.ihongs.CoreLocale;
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.util.Dict;
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -13,12 +13,12 @@ import java.util.Map;
  * 错误集合
  * @author Hongs
  */
-public class Wrongs extends HongsException {
-  protected final Map<String,Wrong> wrongs ;
+public class Wrongs extends CruxException {
+  protected final Map<String,Wrong> wrongs;
   private Causes caus = null;
 
     public Wrongs(Map<String,Wrong> wrongs) {
-        super( "@fore.form.invalid" );
+        super("@fore.form.invalid");
         this.wrongs = wrongs;
     }
 

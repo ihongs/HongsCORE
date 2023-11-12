@@ -1,6 +1,6 @@
 package io.github.ihongs.util.verify;
 
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.action.FormSet;
 import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
@@ -71,7 +71,7 @@ public class IsString extends Rule {
         Map<String,String> pats;
         try {
             pats = FormSet.getInstance().getEnum("__typos__");
-        } catch (HongsException e) {
+        } catch ( CruxException e) {
             throw e.toExemption( );
         }
             String type = Synt.asString(getParam("__type__"));

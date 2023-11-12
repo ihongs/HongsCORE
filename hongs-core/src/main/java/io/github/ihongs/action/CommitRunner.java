@@ -3,8 +3,7 @@ package io.github.ihongs.action;
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CruxException;
-import io.github.ihongs.HongsException;
-import io.github.ihongs.HongsExemption;
+import io.github.ihongs.CruxExemption;
 import io.github.ihongs.dh.IReflux;
 import java.util.Collection;
 
@@ -24,12 +23,12 @@ public final class CommitRunner {
     }
 
     static public void run( Run run)
-    throws HongsException, HongsExemption {
+    throws CruxException, CruxExemption {
         run(run, Core.getInstance());
     }
 
     static public void run( Run run, Core core)
-    throws HongsException, HongsExemption {
+    throws CruxException, CruxExemption {
         // 全局中标识为事务模式
         // 外部已指定则不再处理
         if (core.isset(Cnst.REFLUX_MODE)) {
@@ -37,14 +36,14 @@ public final class CommitRunner {
                 // 执行
                 run.run();
             } catch (Throwable ex) {
-                if (ex instanceof HongsException) {
-                    throw (HongsException) ex ;
+                if (ex instanceof CruxException) {
+                    throw (CruxException) ex ;
                 } else
-                if (ex instanceof HongsExemption) {
-                    throw (HongsExemption) ex ;
+                if (ex instanceof CruxExemption) {
+                    throw (CruxExemption) ex ;
                 }
 
-                throw new   CruxException (ex);
+                throw new  CruxException (ex);
             }
             return;
         }
@@ -78,15 +77,15 @@ public final class CommitRunner {
                     }
                 }
 
-                if (ex instanceof HongsException) {
-                    throw (HongsException) ex ;
+                if (ex instanceof CruxException) {
+                    throw (CruxException) ex ;
                 } else
-                if (ex instanceof HongsExemption) {
-                    throw (HongsExemption) ex ;
+                if (ex instanceof CruxExemption) {
+                    throw (CruxExemption) ex ;
                 }
 
                 // 其他异常需包裹
-                throw new   CruxException (ex , 1109);
+                throw new  CruxException (ex , 1109);
             }
         } finally {
             // 重置

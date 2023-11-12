@@ -3,7 +3,7 @@ package io.github.ihongs.util.daemon;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.CoreSerial;
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 
 import java.io.File;
 import java.io.PrintStream;
@@ -65,9 +65,8 @@ public abstract class Batch<T> extends CoreSerial implements AutoCloseable {
             if (back.exists()) {
                 try {
                     load(back);
-                }
-                catch (HongsException ex ) {
-                    throw ex.toExemption();
+                } catch ( CruxException e) {
+                    throw e.toExemption( );
                 }
             }
         } else {
@@ -125,8 +124,8 @@ public abstract class Batch<T> extends CoreSerial implements AutoCloseable {
                 file.delete();
             }
         }
-        catch (HongsException ex) {
-            CoreLogger.error( ex);
+        catch (CruxException ex) {
+            CoreLogger.error(ex);
         }
     }
 

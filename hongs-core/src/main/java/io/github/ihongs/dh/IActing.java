@@ -1,6 +1,6 @@
 package io.github.ihongs.dh;
 
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
 
@@ -10,6 +10,6 @@ import io.github.ihongs.action.ActionRunner;
  */
 public interface IActing {
 
-    public void acting(ActionHelper helper, ActionRunner runner) throws HongsException;
+    public void acting(ActionHelper helper, ActionRunner runner) throws CruxException;
 
 }

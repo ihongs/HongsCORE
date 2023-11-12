@@ -8,7 +8,6 @@ import io.github.ihongs.CoreLogger;
 import io.github.ihongs.CoreRoster;
 import io.github.ihongs.CoreSerial;
 import io.github.ihongs.CruxException;
-import io.github.ihongs.HongsException;
 import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.daemon.Gate;
@@ -95,14 +94,14 @@ public class FormSet
   public Map<String, Map> enums;
 
   public FormSet(String name)
-    throws HongsException
+    throws CruxException
   {
     this.name = name ;
     this.init ( /**/);
   }
 
   public final void init()
-    throws HongsException
+    throws CruxException
   {
     File serFile = new File(Core.DATA_PATH
                  + File.separator + "serial"
@@ -182,14 +181,14 @@ public class FormSet
   }
 
   public boolean expired()
-    throws HongsException
+    throws CruxException
   {
     return expired (name, time);
   }
 
   @Override
   protected void imports()
-    throws HongsException
+    throws CruxException
   {
     InputStream is;
     String      fn;
@@ -250,7 +249,7 @@ public class FormSet
   }
 
   private void parse(Element element, Map forms, Map enums)
-    throws HongsException
+    throws CruxException
   {
     if (!element.hasChildNodes())
     {
@@ -483,10 +482,10 @@ public class FormSet
    * @deprecated 输出时会翻译, 不必预先翻译, 只需 getEnum
    * @param namc 枚举名称
    * @return
-   * @throws HongsException
+   * @throws CruxException
    */
   public Map getEnumTranslated(String namc)
-    throws HongsException
+    throws CruxException
   {
     return getEnum(namc);
     /* 2022/04/15 输出时会翻译
@@ -510,10 +509,10 @@ public class FormSet
    * @deprecated 输出时会翻译, 不必预先翻译, 只需 getForm
    * @param namc 表单名称
    * @return
-   * @throws HongsException
+   * @throws CruxException
    */
   public Map getFormTranslated(String namc)
-    throws HongsException
+    throws CruxException
   {
     return getForm(namc);
     /* 2022/04/15 输出时会翻译
@@ -636,7 +635,7 @@ public class FormSet
     return CoreRoster.getResourceModified(fn) > 0;
   }
 
-  public static FormSet getInstance(String name) throws HongsException {
+  public static FormSet getInstance(String name) throws CruxException {
       Core    core =  Core.getInstance ();
       String  code =  FormSet.class.getName() + ":" + name;
       FormSet inst = (FormSet) core.get(code);
@@ -647,7 +646,7 @@ public class FormSet
       return inst;
   }
 
-  public static FormSet getInstance() throws HongsException {
+  public static FormSet getInstance() throws CruxException {
       return getInstance("default");
   }
 

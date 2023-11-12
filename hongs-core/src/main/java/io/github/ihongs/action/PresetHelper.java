@@ -1,7 +1,7 @@
 package io.github.ihongs.action;
 
 import io.github.ihongs.CoreLogger;
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Synt;
@@ -54,7 +54,7 @@ public class PresetHelper {
                 if (data != null) {
                     addDefenseData(data);
                 }
-            } catch(HongsException drop) {
+            } catch (CruxException drop) {
                 // Ignore enum data not exists.
                 CoreLogger.trace("Defense preset data missing, {}", drop.getError());
             }
@@ -69,7 +69,7 @@ public class PresetHelper {
                 if (data != null) {
                     addDefaultData(data);
                 }
-            } catch(HongsException drop) {
+            } catch (CruxException drop) {
                 // Ignore enum data not exists.
                 CoreLogger.trace("Default preset data missing, {}", drop.getError());
             }
@@ -87,10 +87,10 @@ public class PresetHelper {
      * @param deft 默认值
      * @param defs 防御值
      * @return
-     * @throws io.github.ihongs.HongsException
+     * @throws io.github.ihongs.CruxException
      */
     public PresetHelper addItemsByForm(String conf, String name, String[] deft, String[] defs)
-    throws HongsException {
+    throws CruxException {
         FormSet form = FormSet.getInstance (conf);
 
         // 缺省指定

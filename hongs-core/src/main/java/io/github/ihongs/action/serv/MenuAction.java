@@ -3,7 +3,7 @@ package io.github.ihongs.action.serv;
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CruxException;
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.NaviMap;
 import io.github.ihongs.action.anno.Action;
@@ -38,7 +38,7 @@ public class MenuAction {
 
     @Action("__main__")
     public void menu(ActionHelper helper)
-    throws HongsException {
+    throws CruxException {
         String m = helper.getParameter("m"); // 配置名称
         String n = helper.getParameter("n"); // 节点标识
         String u = act;
@@ -88,7 +88,7 @@ public class MenuAction {
 
     @Action("list")
     public void list(ActionHelper helper)
-    throws HongsException {
+    throws CruxException {
         String m = helper.getParameter("m"); // 配置名称
         String n = helper.getParameter("n"); // 节点名称
         String d = helper.getParameter("d"); // 提取深度
@@ -115,7 +115,7 @@ public class MenuAction {
     }
 
     private String getRedirect(NaviMap site, Map<String, Map> mens)
-    throws  HongsException {
+    throws  CruxException {
         for (Map.Entry<String, Map> et : mens.entrySet()) {
             Map    item = et.getValue();
             String href = et.getKey  ();

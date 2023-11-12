@@ -1,6 +1,6 @@
 package io.github.ihongs.jsp;
 
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.action.NaviMap;
 import java.io.IOException;
 import javax.servlet.jsp.JspWriter;
@@ -36,7 +36,7 @@ public class AuthTag extends BodyTagSupport {
       this.ebb = (this.act == null || nav.chkAuth(this.act))
               && (this.rol == null || nav.chkRole(this.rol))
               && (this.men == null || nav.chkMenu(this.men));
-    } catch ( HongsException ex) {
+    } catch (  CruxException ex) {
       throw new JspException(ex);
     }
 

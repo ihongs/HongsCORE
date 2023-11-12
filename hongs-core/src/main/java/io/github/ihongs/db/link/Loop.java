@@ -2,7 +2,6 @@ package io.github.ihongs.db.link;
 
 import io.github.ihongs.CruxException;
 import io.github.ihongs.CruxExemption;
-import io.github.ihongs.HongsException;
 import io.github.ihongs.util.Dict;
 import java.sql.Statement;
 import java.sql.ResultSet;
@@ -28,7 +27,7 @@ public class Loop implements Iterable<Map>, Iterator<Map>, AutoCloseable {
     private       Boolean     il = null;
     private       boolean     ib;
 
-    public Loop(ResultSet rs, Statement ps) throws HongsException {
+    public Loop(ResultSet rs, Statement ps) throws CruxException {
         if (rs == null) {
             throw new NullPointerException("ResultSet can not be null");
         }
@@ -52,7 +51,7 @@ public class Loop implements Iterable<Map>, Iterator<Map>, AutoCloseable {
         return rs;
     }
 
-    public ResultSetMetaData getMetaData() throws HongsException {
+    public ResultSetMetaData getMetaData() throws CruxException {
         if (md == null) {
             try {
                 md = rs.getMetaData();
@@ -63,7 +62,7 @@ public class Loop implements Iterable<Map>, Iterator<Map>, AutoCloseable {
         return md;
     }
 
-    public Map<String,Class> getTypeDict() throws HongsException {
+    public Map<String,Class> getTypeDict() throws CruxException {
         if (td == null) {
             getMetaData();
             try {
@@ -113,7 +112,7 @@ public class Loop implements Iterable<Map>, Iterator<Map>, AutoCloseable {
         try {
 //          getMetaData();
             getTypeDict();
-        } catch (HongsException e) {
+        } catch (CruxException e) {
             this.close( );
             throw e.toExemption( );
         }

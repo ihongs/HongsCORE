@@ -1,6 +1,6 @@
 package io.github.ihongs.dh;
 
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.action.FormSet;
 import io.github.ihongs.util.Synt;
 import java.util.LinkedHashMap;
@@ -100,7 +100,7 @@ public class JFigure implements IFigure {
                     .getInstance()
                     .getEnum("__cases__"))
                     .get( x );
-        } catch (HongsException e) {
+        } catch ( CruxException e) {
             throw e.toExemption( );
         }
     }

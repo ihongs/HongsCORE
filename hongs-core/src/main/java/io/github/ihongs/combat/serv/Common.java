@@ -3,8 +3,7 @@ package io.github.ihongs.combat.serv;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreRoster.Mathod;
 import io.github.ihongs.CruxException;
-import io.github.ihongs.HongsException;
-import io.github.ihongs.HongsExemption;
+import io.github.ihongs.CruxExemption;
 import io.github.ihongs.action.ActionRunner;
 import io.github.ihongs.combat.CombatHelper;
 import io.github.ihongs.combat.CombatRunner;
@@ -169,7 +168,7 @@ public class Common {
     }
 
     @Combat("view-serial")
-    public static void viewSerial(String[] args) throws HongsException {
+    public static void viewSerial(String[] args) throws CruxException {
         if (args.length == 0) {
           CombatHelper.println(
                 "Usage: common.view-serial serial/file/path"
@@ -196,7 +195,7 @@ public class Common {
         {
           throw new CruxException(e, 902);
         }
-        catch (HongsExemption e) // 1049
+        catch ( CruxExemption e) // 1049
         {
           throw e.toException( );
         }

@@ -4,8 +4,8 @@ import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLocale;
-import io.github.ihongs.HongsException;
-import io.github.ihongs.HongsExemption;
+import io.github.ihongs.CruxException;
+import io.github.ihongs.CruxExemption;
 import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.NaviMap;
@@ -111,7 +111,7 @@ public class AuthFilter
       {
         this.siteMap = NaviMap.getInstance(s);
       }
-      catch (HongsException ex)
+      catch (CruxException ex)
       {
         throw new ServletException(ex);
       }
@@ -122,7 +122,7 @@ public class AuthFilter
       {
         this.siteMap = NaviMap.getInstance( );
       }
-      catch (HongsException ex)
+      catch (CruxException ex)
       {
         throw new ServletException(ex);
       }
@@ -203,7 +203,7 @@ public class AuthFilter
     if ( fmt == 0 || fmt > dmt ) {
         try {
             siteMap.init();
-        } catch (HongsException e) {
+        } catch (CruxException e) {
             throw new ServletException(e);
         }
     }
@@ -228,16 +228,16 @@ public class AuthFilter
 
         try {
             authset = siteMap.getAuthSet();
-        } catch (HongsException e) {
-            int  c  = e.getState();
-            if ( c >= 401 && c <= 403 ) {
+        } catch ( CruxException e) {
+            int c  = e.getState( );
+            if (c >= 401 && c <= 403 ) {
                 doFailed(core, hlpr, (byte) (c - 400), e.getLocalizedMessage(), null);
                 return;
             }
             throw e.toExemption( );
-        } catch (HongsExemption e) {
-            int  c  = e.getState();
-            if ( c >= 401 && c <= 403 ) {
+        } catch ( CruxExemption e) {
+            int c  = e.getState( );
+            if (c >= 401 && c <= 403 ) {
                 doFailed(core, hlpr, (byte) (c - 400), e.getLocalizedMessage(), null);
                 return;
             }

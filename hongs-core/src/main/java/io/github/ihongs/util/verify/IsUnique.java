@@ -1,7 +1,7 @@
 package io.github.ihongs.util.verify;
 
 import io.github.ihongs.Cnst;
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
 import io.github.ihongs.util.Synt;
@@ -132,8 +132,8 @@ public class IsUnique extends Rule {
             ah.setRequestData( ud );
             try {
                 ActionRunner.newInstance(ah, ut).doInvoke();
-            } catch (HongsException ex) {
-                throw ex.toExemption( );
+            } catch ( CruxException e) {
+                throw e.toExemption( );
             }
 
             SD: {
@@ -171,8 +171,8 @@ public class IsUnique extends Rule {
         ah.setRequestData( rd );
         try {
             ActionRunner.newInstance(ah, ut).doInvoke();
-        } catch (HongsException ex) {
-            throw ex.toExemption( );
+        } catch ( CruxException e) {
+            throw e.toExemption( );
         }
 
         // 对比结果

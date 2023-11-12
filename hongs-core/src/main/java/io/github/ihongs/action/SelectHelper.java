@@ -2,7 +2,7 @@ package io.github.ihongs.action;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.dh.MergeMore;
 import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Dist;
@@ -163,19 +163,19 @@ public class SelectHelper {
         return  this;
     }
 
-    public SelectHelper addItemsByForm(Map fs ) throws HongsException {
+    public SelectHelper addItemsByForm(Map fs ) throws CruxException {
         String conf = Dict.getValue( fs, "default", "@", "conf");
         String form = Dict.getValue( fs, "unknown", "@", "form");
         return addItemsByForm( conf, form, fs );
     }
 
-    public SelectHelper addItemsByForm(String conf, String form) throws HongsException {
+    public SelectHelper addItemsByForm(String conf, String form) throws CruxException {
         Map fs = FormSet.getInstance(conf /**/)
                         .getForm    (form /**/);
         return addItemsByForm( conf, form, fs );
     }
 
-    public SelectHelper addItemsByForm(String conf, String form, Map fs) throws HongsException {
+    public SelectHelper addItemsByForm(String conf, String form, Map fs) throws CruxException {
         Map ts = FormSet.getInstance("default")
                         .getEnum ( "__types__");
         Iterator it = fs.entrySet().iterator( );
@@ -396,7 +396,7 @@ public class SelectHelper {
                 new SelectHelper()
                     . addItemsByForm( fields )
                     . select( valuez, action );
-            } catch (HongsException e) {
+            } catch (CruxException e) {
                 throw e.toExemption( );
             }
 
@@ -645,7 +645,7 @@ public class SelectHelper {
                 } else {
                     ar.doAction();
                 }
-            } catch (HongsException e) {
+            } catch (CruxException e) {
                 throw e.toExemption( );
             }
 

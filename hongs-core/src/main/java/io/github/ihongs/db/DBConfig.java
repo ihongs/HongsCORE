@@ -6,7 +6,6 @@ import io.github.ihongs.CoreRoster;
 import io.github.ihongs.CoreSerial;
 import io.github.ihongs.CruxException;
 import io.github.ihongs.CruxExemption;
-import io.github.ihongs.HongsException;
 import io.github.ihongs.util.Syno;
 import java.io.File;
 import java.io.FileInputStream;
@@ -59,7 +58,7 @@ public class DBConfig
   protected transient String name;
 
   public DBConfig(String name)
-    throws HongsException
+    throws CruxException
   {
     this.name = name;
     this.init ( name + Cnst.DB_EXT);
@@ -67,7 +66,7 @@ public class DBConfig
 
   @Override
   protected byte expires(File serFile)
-    throws HongsException
+    throws CruxException
   {
     long serTime = serFile.lastModified();
 
@@ -90,7 +89,7 @@ public class DBConfig
 
   @Override
   protected void imports()
-    throws HongsException
+    throws CruxException
   {
     InputStream is;
     String      fn;
@@ -163,7 +162,7 @@ public class DBConfig
   }));
 
   public DBConfig(Document doc)
-    throws HongsException
+    throws CruxException
   {
     /**
      * 仅当type为BLS_TO或HAS_ONE时join可用;
@@ -264,10 +263,10 @@ public class DBConfig
    *
    * @param df
    * @return 配置对象
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public static DBConfig parseByFile(File df)
-    throws HongsException
+    throws CruxException
   {
     Document doc;
     try
@@ -297,10 +296,10 @@ public class DBConfig
    *
    * @param ds
    * @return 配置对象
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public static DBConfig parseByStream(InputStream ds)
-    throws HongsException
+    throws CruxException
   {
     Document doc;
     try
@@ -330,10 +329,10 @@ public class DBConfig
    *
    * @param ds
    * @return 配置对象
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public static DBConfig parseBySource(InputSource ds)
-    throws HongsException
+    throws CruxException
   {
     Document doc;
     try

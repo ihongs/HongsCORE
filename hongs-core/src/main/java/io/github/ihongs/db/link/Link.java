@@ -4,8 +4,6 @@ import io.github.ihongs.Core;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.CruxException;
 import io.github.ihongs.CruxExemption;
-import io.github.ihongs.HongsException;
-import io.github.ihongs.HongsExemption;
 import io.github.ihongs.dh.IReflux;
 import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
@@ -47,7 +45,7 @@ abstract public class Link
   protected  boolean  REFLUX_MODE;
 
   public Link(String name)
-    throws HongsException
+    throws CruxException
   {
     this.name = name;
   }
@@ -55,10 +53,10 @@ abstract public class Link
   /**
    * 开启连接
    * @return
-   * @throws HongsException
+   * @throws CruxException
    */
   public abstract Connection open()
-    throws HongsException;
+    throws CruxException;
 
   /**
    * 关闭连接
@@ -109,10 +107,10 @@ abstract public class Link
 
   /**
    * 执行准备
-   * @throws HongsException
+   * @throws CruxException
    */
   public void ready( )
-    throws HongsException
+    throws CruxException
   {
     this.open(); // 先连接数据库
 
@@ -186,10 +184,10 @@ abstract public class Link
    * @param sql
    * @param params
    * @return PreparedStatement对象
-   * @throws HongsException
+   * @throws CruxException
    */
   public PreparedStatement prepareStatement(String sql, Object... params)
-    throws HongsException
+    throws CruxException
   {
     /**
      * 检查SQL语句及Params
@@ -227,10 +225,10 @@ abstract public class Link
    * 异常代码为: 1041
    * @param sql
    * @return PreparedStatement对象
-   * @throws HongsException
+   * @throws CruxException
    */
   public PreparedStatement prepareStatement(String sql)
-    throws HongsException
+    throws CruxException
   {
     PreparedStatement ps;
 
@@ -249,10 +247,10 @@ abstract public class Link
   /**
    * 当需要在createStatement时设定参数, 可重载该方法
    * @return Statement对象
-   * @throws HongsException
+   * @throws CruxException
    */
   public Statement createStatement()
-    throws HongsException
+    throws CruxException
   {
     Statement ps;
 
@@ -271,10 +269,10 @@ abstract public class Link
   /**
    * 关闭Statement
    * @param ps
-   * @throws HongsException
+   * @throws CruxException
    */
   public void closeStatement(Statement ps)
-    throws HongsException
+    throws CruxException
   {
     try
     {
@@ -290,10 +288,10 @@ abstract public class Link
   /**
    * 关闭ResultSet
    * @param rs
-   * @throws HongsException
+   * @throws CruxException
    */
   public void closeResultSet(ResultSet rs)
-    throws HongsException
+    throws CruxException
   {
     try
     {
@@ -315,10 +313,10 @@ abstract public class Link
    * @param limit
    * @param params
    * @return 查询结果
-   * @throws HongsException
+   * @throws CruxException
    */
   public Loop query(String sql, int start, int limit, Object... params)
-    throws HongsException
+    throws CruxException
   {
     /**
      * 由于 SQLite 等不支持 absolute 方法
@@ -389,10 +387,10 @@ abstract public class Link
    * @param limit
    * @param params
    * @return 全部数据
-   * @throws HongsException
+   * @throws CruxException
    */
   public List fetch(String sql, int start, int limit, Object... params)
-    throws HongsException
+    throws CruxException
   {
     List<Map<String, Object>> rows = new ArrayList();
          Map<String, Object>  row  ;
@@ -413,10 +411,10 @@ abstract public class Link
    * @param sql
    * @param params
    * @return 全部数据
-   * @throws HongsException
+   * @throws CruxException
    */
   public List fetchAll(String sql, Object... params)
-    throws HongsException
+    throws CruxException
   {
     List<Map<String, Object>> rows = new ArrayList();
          Map<String, Object>  row  ;
@@ -437,10 +435,10 @@ abstract public class Link
    * @param sql
    * @param params
    * @return 单条数据
-   * @throws HongsException
+   * @throws CruxException
    */
   public Map  fetchOne(String sql, Object... params)
-    throws HongsException
+    throws CruxException
   {
     try (Loop rs = query(sql, 0, 1, params))
     {
@@ -457,10 +455,10 @@ abstract public class Link
    * @param sql
    * @param params
    * @return 成功或失败
-   * @throws HongsException
+   * @throws CruxException
    */
   public boolean execute(String sql, Object... params)
-    throws HongsException
+    throws CruxException
   {
     this.ready();
 
@@ -494,10 +492,10 @@ abstract public class Link
    * @param sql
    * @param params
    * @return 更新的条数
-   * @throws HongsException
+   * @throws CruxException
    */
   public int updates(String sql, Object... params)
-    throws HongsException
+    throws CruxException
   {
     this.ready();
 
@@ -532,10 +530,10 @@ abstract public class Link
    * @param table
    * @param values
    * @return 插入条数
-   * @throws HongsException
+   * @throws CruxException
    */
   public int insert(String table, Map<String, Object> values)
-    throws HongsException
+    throws CruxException
   {
     if (values == null || values.isEmpty())
     {
@@ -578,10 +576,10 @@ abstract public class Link
    * @param where
    * @param params
    * @return 更新条数
-   * @throws HongsException
+   * @throws CruxException
    */
   public int update(String table, Map<String, Object> values, String where, Object... params)
-    throws HongsException
+    throws CruxException
   {
     if (values == null || values.isEmpty())
     {
@@ -629,10 +627,10 @@ abstract public class Link
    * @param where
    * @param params
    * @return 删除条数
-   * @throws HongsException
+   * @throws CruxException
    */
   public int delete(String table, String where, Object... params)
-    throws HongsException
+    throws CruxException
   {
     if ( where == null ||  where.isEmpty())
     {
@@ -676,10 +674,10 @@ abstract public class Link
    * 检查SQL数据项
    * @param sql
    * @param params
-   * @throws HongsException
+   * @throws CruxException
    */
   public static void checkSQLParams(StringBuilder sql, List params)
-    throws HongsException
+    throws CruxException
   {
     if (params == null)
     {
@@ -764,10 +762,10 @@ abstract public class Link
    * 调用本方法前务必先调用内checkSQLParams
    * @param sql
    * @param params
-   * @throws HongsException
+   * @throws CruxException
    */
   public static void mergeSQLParams(StringBuilder sql, List params)
-    throws HongsException
+    throws CruxException
   {
     if (params == null)
     {

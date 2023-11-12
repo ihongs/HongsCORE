@@ -4,7 +4,6 @@ import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CruxException;
 import io.github.ihongs.CruxExemption;
-import io.github.ihongs.HongsException;
 import io.github.ihongs.db.util.FetchCase;
 import io.github.ihongs.db.util.FetchPage;
 import io.github.ihongs.db.util.AssocCase;
@@ -78,10 +77,10 @@ implements IEntity
    * 请指定被搜索的字段.
    *
    * @param table
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public Model(Table table)
-    throws HongsException
+    throws CruxException
   {
     this.table = table;
     this.db = table.db;
@@ -100,11 +99,11 @@ implements IEntity
    *
    * @param rd
    * @return 单页列表
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   @Override
   public Map search(Map rd)
-    throws HongsException
+    throws CruxException
   {
     return search(rd, null);
   }
@@ -121,10 +120,10 @@ implements IEntity
    * @param rd
    * @param caze
    * @return 单页列表
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public Map search(Map rd, FetchCase caze)
-    throws HongsException
+    throws CruxException
   {
     if (rd == null)
     {
@@ -206,11 +205,11 @@ implements IEntity
    *
    * @param rd
    * @return 记录信息
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   @Override
   public Map recite(Map rd)
-    throws HongsException
+    throws CruxException
   {
     return recite(rd, null);
   }
@@ -221,10 +220,10 @@ implements IEntity
    * @param rd
    * @param caze
    * @return 记录信息
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public Map recite(Map rd, FetchCase caze)
-    throws HongsException
+    throws CruxException
   {
     if (rd == null)
     {
@@ -307,11 +306,11 @@ implements IEntity
    *
    * @param rd
    * @return 新增编号
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   @Override
   public String create(Map rd)
-    throws HongsException
+    throws CruxException
   {
     return this.create(rd, null);
   }
@@ -322,10 +321,10 @@ implements IEntity
    * @param rd
    * @param caze
    * @return 新增编号
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public String create(Map rd, FetchCase caze)
-    throws HongsException
+    throws CruxException
   {
     String id = caze == null ? null
      : (String) caze.getOption(Cnst.ID_KEY);
@@ -345,11 +344,11 @@ implements IEntity
    *
    * @param rd
    * @return 更新条数
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   @Override
   public int update(Map rd)
-    throws HongsException
+    throws CruxException
   {
     return this.update(rd, null);
   }
@@ -360,10 +359,10 @@ implements IEntity
    * @param rd
    * @param caze
    * @return 更新条数
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public int update(Map rd, FetchCase caze)
-    throws HongsException
+    throws CruxException
   {
     Object idz = rd.get ( Cnst.ID_KEY );
     if (idz == null) {
@@ -403,11 +402,11 @@ implements IEntity
    *
    * @param rd
    * @return 删除条数
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   @Override
   public int delete(Map rd)
-    throws HongsException
+    throws CruxException
   {
     return this.delete(rd, null);
   }
@@ -418,10 +417,10 @@ implements IEntity
    * @param rd
    * @param caze
    * @return 删除条数
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public int delete(Map rd, FetchCase caze)
-    throws HongsException
+    throws CruxException
   {
     Object idz = rd.get ( Cnst.ID_KEY );
     if (idz == null) {
@@ -456,13 +455,13 @@ implements IEntity
   //** 扩展动作方法 **/
 
   public boolean unique(Map rd)
-    throws HongsException
+    throws CruxException
   {
     return  unique(rd, null);
   }
 
   public boolean unique(Map rd, FetchCase caze)
-    throws HongsException
+    throws CruxException
   {
     return !exists(rd, caze);
   }
@@ -472,10 +471,10 @@ implements IEntity
    *
    * @param rd
    * @return 存在为true, 反之为false
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public boolean exists(Map rd)
-    throws HongsException
+    throws CruxException
   {
     return  exists(rd, null);
   }
@@ -486,10 +485,10 @@ implements IEntity
    * @param rd
    * @param caze
    * @return 存在为true, 反之为false
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public boolean exists(Map rd, FetchCase caze)
-    throws HongsException
+    throws CruxException
   {
     if (rd == null)
     {
@@ -559,10 +558,10 @@ implements IEntity
    * 有 id 则修改, 无 id 则添加
    * @param rd
    * @return
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public String set(Map rd)
-    throws HongsException
+    throws CruxException
   {
     String id = Synt.asString(rd.get(this.table.primaryKey));
     if (id == null || id.length() == 0)
@@ -598,10 +597,10 @@ implements IEntity
    *
    * @param rd
    * @return 记录ID
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public String add(Map rd)
-    throws HongsException
+    throws CruxException
   {
     String id = Core.newIdentity();
     add(id,rd);
@@ -614,10 +613,10 @@ implements IEntity
    * @param id
    * @param rd
    * @return 添加条数
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public int add(String id, Map rd)
-    throws HongsException
+    throws CruxException
   {
     if (id == null || id.length() == 0)
     {
@@ -641,10 +640,10 @@ implements IEntity
    * @param rd
    * @param id
    * @return 更新条数
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public int put(String id, Map rd)
-    throws HongsException
+    throws CruxException
   {
     if (id == null || id.length() == 0)
     {
@@ -667,10 +666,10 @@ implements IEntity
    *
    * @param id
    * @return 删除条数
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public int del(String id)
-    throws HongsException
+    throws CruxException
   {
     return this.del(id, null);
   }
@@ -685,10 +684,10 @@ implements IEntity
    * @param id
    * @param caze
    * @return 删除条数
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public int del(String id, FetchCase caze)
-    throws HongsException
+    throws CruxException
   {
     if (id == null || id.length() == 0)
     {
@@ -716,13 +715,13 @@ implements IEntity
   }
 
   public Map get(String id)
-    throws HongsException
+    throws CruxException
   {
     return this.get(id, null);
   }
 
   public Map get(String id, FetchCase caze)
-    throws HongsException
+    throws CruxException
   {
     if (id == null || id.length() == 0)
     {
@@ -741,13 +740,13 @@ implements IEntity
   }
 
   public Map getOne(Map rd)
-    throws HongsException
+    throws CruxException
   {
     return this.getOne(rd, null);
   }
 
   public Map getOne(Map rd, FetchCase caze)
-    throws HongsException
+    throws CruxException
   {
     if (rd == null) {
         rd = new HashMap();
@@ -762,13 +761,13 @@ implements IEntity
   }
 
   public List getAll(Map rd)
-    throws HongsException
+    throws CruxException
   {
     return this.getAll(rd, null);
   }
 
   public List getAll(Map rd, FetchCase caze)
-    throws HongsException
+    throws CruxException
   {
     if (rd == null) {
         rd = new HashMap();
@@ -786,7 +785,7 @@ implements IEntity
    * @deprecated 已废弃, 请改用 recite
    */
   public Map getInfo(Map rd)
-    throws HongsException
+    throws CruxException
   {
     return recite (rd, null);
   }
@@ -795,7 +794,7 @@ implements IEntity
    * @deprecated 已废弃, 请改用 recite
    */
   public Map getInfo(Map rd, FetchCase caze)
-    throws HongsException
+    throws CruxException
   {
     return recite (rd, caze);
   }
@@ -804,7 +803,7 @@ implements IEntity
    * @deprecated 已废弃, 请改用 search
    */
   public Map getList(Map rd)
-    throws HongsException
+    throws CruxException
   {
     return search (rd, null);
   }
@@ -813,7 +812,7 @@ implements IEntity
    * @deprecated 已废弃, 请改用 search
    */
   public Map getList(Map rd, FetchCase caze)
-    throws HongsException
+    throws CruxException
   {
     return search (rd, caze);
   }
@@ -824,9 +823,9 @@ implements IEntity
    * 后续构建查询语句仅作简单拼接
    * 您必须严格的使用表和字段别名
    * @return
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
-  public FetchCase fetchCase() throws HongsException
+  public FetchCase fetchCase() throws CruxException
   {
       return table.fetchCase().setOption("CLEVER_MODE", false);
   }
@@ -850,10 +849,10 @@ implements IEntity
    * @param caze
    * @param rd
    * @param id
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   protected void permit(FetchCase caze, Map rd, Set id)
-    throws HongsException
+    throws CruxException
   {
     if (id == null || id.isEmpty( )) {
         return;
@@ -927,10 +926,10 @@ implements IEntity
    *
    * @param caze
    * @param rd
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   protected void filter(FetchCase caze, Map rd)
-    throws HongsException
+    throws CruxException
   {
     /**
      * 如果没指定查询的表、字段
@@ -1187,7 +1186,7 @@ implements IEntity
                 k = ax +/**/ k /**/; // 外部键
                 al.put(k , new Object[] {f, l, caze});
             }
-        } catch (HongsException e ) {
+        } catch (CruxException e ) {
             throw e.toExemption(  );
         }
 
@@ -1224,7 +1223,7 @@ implements IEntity
             try {
                 assoc = table.db.getTable(rn);
                 caxe  = caze .   gotJoin (tn);
-            } catch (HongsException e ) {
+            } catch (CruxException e ) {
                 throw e.toExemption(  );
             }
             if (null == assoc) {

@@ -2,7 +2,6 @@ package io.github.ihongs.db.util;
 
 import io.github.ihongs.Core;
 import io.github.ihongs.CruxException;
-import io.github.ihongs.HongsException;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.util.Synt;
 import java.util.ArrayList;
@@ -115,7 +114,7 @@ public class AssocMore {
 
   private static void checkCase(FetchCase caze, Map params,
           String xn, String an, Table table)
-          throws HongsException {
+          throws CruxException {
     checkCase(caze, params );
 
     if (an == null) {
@@ -145,11 +144,11 @@ public class AssocMore {
    * @param caze   查询体
    * @param assocs 关联配置
    * @return 结果列表
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public static List fetchMore
     (Table table, FetchCase caze, Map assocs)
-  throws HongsException {
+  throws CruxException {
     if (assocs == null) {
         assocs = new HashMap ();
     }
@@ -167,7 +166,7 @@ public class AssocMore {
 
   private static void fetchMore
     (Table table, FetchCase caze, Map assocs, List lnks2, String pn)
-  throws HongsException {
+  throws CruxException {
     Set tns = (Set)caze.getOption("ASSOCS");
     Set tps = (Set)caze.getOption("ASSOC_TYPES");
     Set jns = (Set)caze.getOption("ASSOC_JOINS");
@@ -271,7 +270,7 @@ public class AssocMore {
 
   private static void fetchMore
     (Table table, FetchCase caze, List rows2, List lnks2)
-  throws HongsException {
+  throws CruxException {
     Set tns = (Set)caze.getOption("ASSOCS");
     Set tps = (Set)caze.getOption("ASSOC_TYPES");
     FetchMore join = new FetchMore( rows2 );
@@ -362,10 +361,10 @@ public class AssocMore {
    * @param table  主表
    * @param assocs 关联配置
    * @param values 要插入的数据
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public static void insertMore(Table table, Map assocs, Map values)
-    throws HongsException
+    throws CruxException
   {
     if ( assocs == null || assocs.isEmpty( ) ) return;
 
@@ -550,10 +549,10 @@ public class AssocMore {
    * @param table  主表
    * @param assocs 关联配置
    * @param ids    要删除的外键
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public static void deleteMore(Table table, Map assocs, Object... ids)
-    throws HongsException
+    throws CruxException
   {
     if ( assocs == null || assocs.isEmpty( ) ) return;
 
@@ -615,7 +614,7 @@ public class AssocMore {
      * @param keys   判断改变的键
      * @param where  更新/删除范围
      * @param params where 的参数
-     * @throws io.github.ihongs.HongsException
+     * @throws io.github.ihongs.CruxException
      */
     public static void updateMore(
         Table        table,
@@ -623,7 +622,7 @@ public class AssocMore {
         String[ ]    keys,
         String       where,
         Object...    params
-    )   throws HongsException
+    )   throws CruxException
     {
         List<Object> params1 = Arrays.asList(params);
         List<Object> params2;

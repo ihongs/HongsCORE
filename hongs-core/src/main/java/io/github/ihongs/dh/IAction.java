@@ -1,6 +1,6 @@
 package io.github.ihongs.dh;
 
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionHelper;
 
 /**
@@ -9,14 +9,14 @@ import io.github.ihongs.action.ActionHelper;
  */
 public interface IAction {
 
-    public void search(ActionHelper helper) throws HongsException;
+    public void search(ActionHelper helper) throws CruxException;
 
-    public void recite(ActionHelper helper) throws HongsException;
+    public void recite(ActionHelper helper) throws CruxException;
 
-    public void create(ActionHelper helper) throws HongsException;
+    public void create(ActionHelper helper) throws CruxException;
 
-    public void update(ActionHelper helper) throws HongsException;
+    public void update(ActionHelper helper) throws CruxException;
 
-    public void delete(ActionHelper helper) throws HongsException;
+    public void delete(ActionHelper helper) throws CruxException;
 
 }

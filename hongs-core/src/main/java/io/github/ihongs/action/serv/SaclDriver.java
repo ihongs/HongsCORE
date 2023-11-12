@@ -5,8 +5,8 @@ import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLocale;
 import io.github.ihongs.CoreSerial;
 import io.github.ihongs.CruxExemption;
-import io.github.ihongs.HongsException;
-import io.github.ihongs.HongsExemption;
+import io.github.ihongs.CruxException;
+import io.github.ihongs.CruxExemption;
 import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.NaviMap;
@@ -127,12 +127,12 @@ public class SaclDriver
 
       s = Dist.toString(datamap);
     }
-    catch (IllegalArgumentException ex) {
-      helper.error(500, ex.getMessage());
+    catch (CruxException|CruxExemption ex) {
+      helper.error(404, ex.getMessage());
       return;
     }
-    catch (HongsException|HongsExemption ex) {
-      helper.error(404, ex.getMessage());
+    catch (IllegalArgumentException ex) {
+      helper.error(500, ex.getMessage());
       return;
     }
 
@@ -179,18 +179,18 @@ public class SaclDriver
 
     Conf mk;
     try {
-      mk = new Conf ( name );
+      mk = new Conf( name );
     }
-    catch (HongsExemption e) {
+    catch (CruxExemption e) {
       helper.error(404, e.getMessage());
       return;
     }
 
-    long m = mk.modified ( );
+    long m = mk.modified( );
     if ( m < 1 ) {
-      m  = Core.STARTS_TIME ;
+      m  = Core.STARTS_TIME;
     }
-    m =  m  / 1000L * 1000L ; // HTTP 时间精确到秒
+    m =  m / 1000L * 1000L ; // HTTP 时间精确到秒
 
     /**
      * 如果指定配置的数据并没有改变
@@ -255,18 +255,18 @@ public class SaclDriver
 
     Lang mk;
     try {
-      mk = new Lang ( name );
+      mk = new Lang( name );
     }
-    catch (HongsExemption e) {
-      helper.error(404, e.getMessage());
+    catch (CruxExemption e) {
+      helper.error(404 , e.getMessage());
       return;
     }
 
-    long m = mk.modified ( );
+    long m = mk.modified( );
     if ( m < 1 ) {
-      m  = Core.STARTS_TIME ;
+      m  = Core.STARTS_TIME;
     }
-    m =  m  / 1000L * 1000L ; // HTTP 时间精确到秒
+    m =  m / 1000L * 1000L ; // HTTP 时间精确到秒
 
     /**
      * 如果指定语言的数据并没有改变

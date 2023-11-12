@@ -1,6 +1,6 @@
 package io.github.ihongs.action.anno;
 
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
 import io.github.ihongs.action.CommitRunner;
@@ -17,8 +17,8 @@ public class CommitInvoker implements FilterInvoker {
 
     @Override
     public void invoke(ActionHelper helper, ActionRunner chains, Annotation anno)
-    throws HongsException {
-        CommitRunner.run( () -> chains.doAction() );
+    throws CruxException {
+        CommitRunner.run(() -> chains.doAction());
     }
 
 }

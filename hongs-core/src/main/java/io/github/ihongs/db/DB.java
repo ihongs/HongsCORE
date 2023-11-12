@@ -4,7 +4,6 @@ import io.github.ihongs.db.util.FetchCase;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.CruxException;
-import io.github.ihongs.HongsException;
 import io.github.ihongs.db.link.Link;
 import io.github.ihongs.db.link.Loop;
 import io.github.ihongs.db.link.Origin;
@@ -112,13 +111,13 @@ public class DB
   private   final  Map origin;
 
   public DB(  String name)
-    throws HongsException
+    throws CruxException
   {
     this (new DBConfig(name));
   }
 
   public DB(DBConfig conf)
-    throws HongsException
+    throws CruxException
   {
     super(conf.name);
 
@@ -146,7 +145,7 @@ public class DB
 
   @Override
   public Connection open()
-    throws HongsException
+    throws CruxException
   {
     TOP: do
     {
@@ -274,10 +273,10 @@ public class DB
    * <p>注: 调query实现</p>
    * @param caze
    * @return 全部数据
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public Loop queryMore(FetchCase caze)
-    throws HongsException
+    throws CruxException
   {
     return caze.use(this).select();
   }
@@ -287,10 +286,10 @@ public class DB
    * <p>注: 调fetch实现</p>
    * @param caze
    * @return 全部数据
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public List fetchMore(FetchCase caze)
-    throws HongsException
+    throws CruxException
   {
     return caze.use(this).getAll();
   }
@@ -300,10 +299,10 @@ public class DB
    * <p>注: 调fetch实现</p>
    * @param caze
    * @return 单条数据
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public Map  fetchLess(FetchCase caze)
-    throws HongsException
+    throws CruxException
   {
     return caze.use(this).getOne();
   }
@@ -332,10 +331,10 @@ public class DB
    * 快速取 FetchCase
    * @param tableName 内部表名
    * @return
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public FetchCase with (String tableName)
-    throws HongsException
+    throws CruxException
   {
     Table  tableInst = getTable(tableName);
     return fetchCase().from(tableInst.tableName, tableInst.name);
@@ -381,10 +380,10 @@ public class DB
    * 表名可以为"库名.表名"
    * @param tableName table 对象的 name
    * @return 指定表对象
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public Table getTable(String tableName)
-    throws HongsException
+    throws CruxException
   {
     /**
      * 表名可以是"数据库.表名"
@@ -513,10 +512,10 @@ public class DB
    * 表名可以为"库名.表名"
    * @param tableName table 对象的 name
    * @return 指定表模型
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public Model getModel(String tableName)
-    throws HongsException
+    throws CruxException
   {
     /**
      * 表名可以是"数据库.表名"
@@ -637,17 +636,17 @@ public class DB
    * </p>
    * <pre>
     public static XxDB getInstance()
-       throws HongsException
+       throws CruxException
     {
        return new XxDB();
     }
    * </pre>
    * @param name
    * @return 指定DB对象
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public static DB getInstance(String name)
-    throws HongsException
+    throws CruxException
   {
     String cn = DB.class.getName() +":"+ name;
     Core core = Core.getInstance();
@@ -679,16 +678,16 @@ public class DB
    * </p>
    * <pre>
     public static XxxDB getInstance()
-      throws HongsException
+      throws CruxException
     {
       return new  XxxDB();
     }
    * </pre>
    * @return 默认DB对象
-   * @throws io.github.ihongs.HongsException
+   * @throws io.github.ihongs.CruxException
    */
   public static DB getInstance()
-    throws HongsException
+    throws CruxException
   {
     return DB.getInstance("default");
   }

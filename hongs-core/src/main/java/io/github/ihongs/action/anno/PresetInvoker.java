@@ -1,7 +1,7 @@
 package io.github.ihongs.action.anno;
 
 import io.github.ihongs.Cnst;
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
 import io.github.ihongs.action.PresetHelper;
@@ -25,7 +25,7 @@ public class PresetInvoker implements FilterInvoker {
 
     @Override
     public void invoke(ActionHelper helper, ActionRunner chains, Annotation anno)
-    throws HongsException {
+    throws CruxException {
         Preset   ann  = (Preset) anno;
         String   conf = ann.conf();
         String   form = ann.form();
@@ -82,10 +82,10 @@ public class PresetInvoker implements FilterInvoker {
             pre = new PresetHelper();
             pre.addItemsByForm(conf, form, deft, defs);
             pre.preset(req, helper );
-        } catch (HongsException  ex) {
+        } catch (CruxException  ex ) {
             int  ec  = ex.getErrno();
             if  (ec != 910 && ec != 911 && ec != 913 ) { // 非枚举缺失
-                throw ex ;
+                throw  ex;
             }
         }
 

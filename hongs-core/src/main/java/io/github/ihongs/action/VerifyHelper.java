@@ -1,7 +1,6 @@
 package io.github.ihongs.action;
 
 import io.github.ihongs.CruxException;
-import io.github.ihongs.HongsException;
 import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.verify.Default;
@@ -46,19 +45,19 @@ public class VerifyHelper extends Verify {
         super();
     }
 
-    public VerifyHelper addRulesByForm(Map fs ) throws HongsException {
+    public VerifyHelper addRulesByForm(Map fs ) throws CruxException {
         String conf = Dict.getValue( fs, "default", "@", "conf");
         String form = Dict.getValue( fs, "unknown", "@", "form");
         return addRulesByForm( conf, form, fs );
     }
 
-    public VerifyHelper addRulesByForm(String conf, String form) throws HongsException {
+    public VerifyHelper addRulesByForm(String conf, String form) throws CruxException {
         Map fs = FormSet.getInstance(conf /**/)
                         .getForm    (form /**/);
         return addRulesByForm( conf, form, fs );
     }
 
-    public VerifyHelper addRulesByForm(String conf, String form, Map fs) throws HongsException {
+    public VerifyHelper addRulesByForm(String conf, String form, Map fs) throws CruxException {
         FormSet  formSet;
         formSet= FormSet.getInstance("default");
         Map ts = formSet.getEnum ( "__types__");

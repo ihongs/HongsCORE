@@ -4,7 +4,6 @@ import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CruxException;
-import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
 import io.github.ihongs.combat.CombatHelper;
@@ -47,7 +46,7 @@ import java.util.Map;
 public class Access {
 
     @Combat("exec")
-    public static void exec(String[] args) throws HongsException {
+    public static void exec(String[] args) throws CruxException {
         if (args.length == 0) {
             CombatHelper.ERR.get().println(
                   "Usage: COMBAT_NAME [ARG_0] [ARG_1] ..."
@@ -102,7 +101,7 @@ public class Access {
     }
 
     @Combat("eval")
-    public static void eval(String[] args) throws HongsException {
+    public static void eval(String[] args) throws CruxException {
         Map<String, Object> opts;
         opts = CombatHelper.getOpts(args ,
             "request:s", "context:s", "session:s", "cookies:s", "!A"
@@ -173,7 +172,7 @@ public class Access {
     }
 
     @Combat("call")
-    public static void call(String[] args) throws HongsException {
+    public static void call(String[] args) throws CruxException {
         Map<String, Object> opts;
         opts = CombatHelper.getOpts(args ,
             "request:s", "context:s", "session:s", "cookies:s", "!A"

@@ -1,12 +1,12 @@
 package io.github.ihongs.util.verify;
 
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 
 /**
  * 单项错误
  * @author Hongs
  */
-public class Wrong extends HongsException {
+public class Wrong extends CruxException {
     private String name = null;
 
     public Wrong(Throwable cause, String term, Object ... opts) {

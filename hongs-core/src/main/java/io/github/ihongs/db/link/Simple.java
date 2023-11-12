@@ -2,7 +2,6 @@ package io.github.ihongs.db.link;
 
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.CruxException;
-import io.github.ihongs.HongsException;
 import io.github.ihongs.db.DBConfig;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -20,7 +19,7 @@ public class Simple extends Link {
     private final Properties info;
 
     public  Simple(String jdbc, String name, Properties info)
-            throws HongsException {
+            throws CruxException {
         super(name);
 
         this.jdbc = jdbc;
@@ -29,13 +28,13 @@ public class Simple extends Link {
     }
 
     public  Simple(String jdbc, String name)
-            throws HongsException {
+            throws CruxException {
         this( jdbc, name, new Properties() );
     }
 
     @Override
     public  Connection open()
-            throws HongsException {
+            throws CruxException {
         try {
             if (connection == null || connection.isClosed()) {
                 connection  = open( jdbc , path , info );

@@ -1,8 +1,8 @@
 package io.github.ihongs.db.util;
 
 import io.github.ihongs.Cnst;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.CruxExemption;
-import io.github.ihongs.HongsException;
 import io.github.ihongs.db.Model;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.dh.IFigure;
@@ -1018,7 +1018,7 @@ public class AssocCase {
                 f = tx +"`"+ f +"`";
                 al.put(k , f);
             }
-        } catch (HongsException e ) {
+        } catch (CruxException e ) {
             throw e.toExemption(  );
         }
 
@@ -1050,8 +1050,8 @@ public class AssocCase {
 
             try {
                 assoc = table.db.getTable(rn);
-            } catch (HongsException e ) {
-                throw e.toExemption(  );
+            } catch ( CruxException e) {
+                throw e.toExemption( );
             }
             if (null == assoc) {
                 throw new CruxExemption(1026,

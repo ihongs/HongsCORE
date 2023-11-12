@@ -1,6 +1,6 @@
 package io.github.ihongs.test;
 
-import io.github.ihongs.HongsException;
+import io.github.ihongs.CruxException;
 import io.github.ihongs.db.util.AssocCase;
 import io.github.ihongs.db.util.FetchCase;
 import io.github.ihongs.util.Synt;
@@ -17,7 +17,7 @@ import org.junit.Test;
 public class TestDB {
 
     @Test
-    public void testFetchCase() throws HongsException {
+    public void testFetchCase() throws CruxException {
         FetchCase caze = new FetchCase(FetchCase.CLEVER);
         FetchCase copy ;
         String    vali ;
@@ -82,7 +82,7 @@ public class TestDB {
     }
 
     @Test
-    public void testAssocCase() throws HongsException {
+    public void testAssocCase() throws CruxException {
         FetchCase fc = new FetchCase(  );
         AssocCase ac = new AssocCase(fc);
         fc.from("a_table", "table1")

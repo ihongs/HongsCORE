@@ -142,7 +142,7 @@ public class TreeModel extends Model
   /**
    * 获取列表
    *
-   * 与 Model.getList 不同
+   * 与 Model.search 不同
    * 不给 colsKey 参数时仅获取基础字段
    * 不给 rowsKey 参数时不进行分页查询
    *
@@ -219,7 +219,7 @@ public class TreeModel extends Model
     {
       rd.put(Cnst.RN_KEY, 0); // 默认不分页
     }
-    Map  data = super.getList(rd, caze);
+    Map  data = super.search(rd, caze );
     List list = (List) data.get("list");
 
     //** 附带路径 **/
@@ -280,7 +280,7 @@ public class TreeModel extends Model
       rd = new HashMap();
     }
 
-    Map info = super.getInfo(rd, caze);
+    Map info = super.recite(rd, caze);
 
     //** 附带路径 **/
 

@@ -304,7 +304,7 @@
     });
 
     var filtobj = filtbox.hsForm({
-        _url: "<%=_module%>/<%=_entity%>/select.act?<%=Cnst.AB_KEY%>=.enfo",
+        _url: "<%=_module%>/<%=_entity%>/recipe.act?<%=Cnst.AB_KEY%>=.enfo",
         _doll__enum : hsListDollFilt,
         _fill__enum : hsListFillFilt,
         _fill__sort : hsListInitSort,

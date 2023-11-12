@@ -124,7 +124,7 @@
                 var context = $("#main-context>:last");
 
                 // 权限检查
-                if (! H$('!<%=$module%>/<%=$entity%>/select.act')) {
+                if (! H$('!<%=$module%>/<%=$entity%>/recipe.act')) {
                     context.find(">ul>li[data-tab=swap]").remove();
                 }
                 if (! H$('!<%=$module%>/<%=$entity%>/reveal.act')) {

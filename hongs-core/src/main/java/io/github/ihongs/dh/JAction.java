@@ -75,9 +75,9 @@ abstract public class JAction implements IActing, IAction {
         }
     }
 
-    @Action("select")
+    @Action("recipe")
     @Select(conf="", form="")
-    public void select(ActionHelper helper) throws CruxException {
+    public void recipe(ActionHelper helper) throws CruxException {
         helper.reply("");
     }
 

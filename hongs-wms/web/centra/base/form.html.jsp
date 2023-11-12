@@ -513,7 +513,7 @@
 
     var formobj = context.hsForm({
         <%if ("create".equals(_action)) {%>
-        _url : "<%=_module%>/<%=_entity%>/select.act?<%=Cnst.AB_KEY%>=.enfo,.info,.fall,_fork,_text",
+        _url : "<%=_module%>/<%=_entity%>/recipe.act?<%=Cnst.AB_KEY%>=.enfo,.info,.fall,_fork,_text",
         <%} else {%>
         _url : "<%=_module%>/<%=_entity%>/recite.act?<%=Cnst.AB_KEY%>=.enfo,.info,.fall,_fork,_text",
         <%if (! _fields.containsKey("memo")) {%>

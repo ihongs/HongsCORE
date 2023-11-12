@@ -922,7 +922,7 @@ public class Form extends Model {
             actn.appendChild ( docm.createTextNode(href +"recite"+ Cnst.ACT_EXT) );
             actn = docm.createElement("action");
             role.appendChild ( actn );
-            actn.appendChild ( docm.createTextNode(href +"select"+ Cnst.ACT_EXT) );
+            actn.appendChild ( docm.createTextNode(href +"recipe"+ Cnst.ACT_EXT) );
             actn = docm.createElement("action");
             role.appendChild ( actn );
             actn.appendChild ( docm.createTextNode(href +"acount"+ Cnst.ACT_EXT) );
@@ -944,7 +944,7 @@ public class Form extends Model {
             actn.appendChild ( docm.createTextNode(href +"create"+ Cnst.ACT_EXT) );
             actn = docm.createElement("action");
             role.appendChild ( actn );
-            actn.appendChild ( docm.createTextNode(href +"select"+ Cnst.ACT_EXT) );
+            actn.appendChild ( docm.createTextNode(href +"recipe"+ Cnst.ACT_EXT) );
             depn = docm.createElement("depend");
             role.appendChild ( depn );
             depn.appendChild ( docm.createTextNode("centra") );

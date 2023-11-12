@@ -1,6 +1,5 @@
 package io.github.ihongs.action.anno;
 
-import io.github.ihongs.CruxException
 import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;

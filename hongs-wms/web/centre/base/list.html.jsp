@@ -295,7 +295,7 @@
             [ '<%=_module%>/<%=_entity%>/form.html?<%=Cnst.ID_KEY%>={ID}',
               '.update', '@' ],
             [ '<%=_module%>/<%=_entity%>/info.html?<%=Cnst.ID_KEY%>={ID}',
-              '.review', '@' ]
+              '.recite', '@' ]
         ],
         fillList    : hsListFillItem,
         fillPage    : hsListFillPage,

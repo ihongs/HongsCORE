@@ -171,6 +171,8 @@ public class VersFilter extends ActionDriver {
                         Object id = rd.get(Cnst.ID_KEY);
                         if (id != null && ! "".equals(id)
                         && (id instanceof String || id instanceof Number) ) {
+                            Core.ACTION_NAME.set(act.substring( 1 ));
+                            req.setAttribute(Cnst.ACTION_ATTR, null);
                             req.getRequestDispatcher(act).include(req, rsp);
                             return;
                         }
@@ -178,6 +180,8 @@ public class VersFilter extends ActionDriver {
                     if (c.endsWith("/select")) {
                            c = act.substring(0 + p);
                         act  = act.substring(0 , p - 7) + "/recipe" + c;
+                        Core.ACTION_NAME.set(act.substring( 1 ));
+                        req.setAttribute(Cnst.ACTION_ATTR, null);
                         req.getRequestDispatcher(act).include(req, rsp);
                         return;
                     }
@@ -193,6 +197,8 @@ public class VersFilter extends ActionDriver {
                     if (c.endsWith("/amount")) {
                            c = act.substring(0 + p);
                         act  = act.substring(0 , p - 7) + "/acount" + c;
+                        Core.ACTION_NAME.set(act.substring( 1 ));
+                        req.setAttribute(Cnst.ACTION_ATTR, null);
                         req.getRequestDispatcher(act).include(req, rsp);
                         return;
                     }

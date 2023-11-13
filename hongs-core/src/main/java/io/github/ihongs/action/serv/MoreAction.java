@@ -325,8 +325,7 @@ public class MoreAction {
         // 重设路径
         act = act + Cnst.ACT_EXT ;
         Core.ACTION_NAME.set(act);
-        helper.setAttribute (Cnst.ACTION_ATTR, null);
-        helper.setAttribute (Cnst.ORIGIN_ATTR, null);
+        helper.setAttribute(Cnst.ACTION_ATTR, null);
 
         try {
             req.getRequestDispatcher("/" + act).include(req, rsp);

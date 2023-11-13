@@ -208,7 +208,6 @@ public class AutoFilter extends ActionDriver {
     private void include(ServletRequest req, ServletResponse rsp, String url, String uri)
             throws ServletException, IOException {
         // 虚拟路径
-        req.setAttribute(Cnst.ORIGIN_ATTR, Core.ACTION_NAME.get());
         req.setAttribute(Cnst.ACTION_ATTR, url.substring(1));
         // 转发请求
         req.getRequestDispatcher( uri ).include( req , rsp );
@@ -217,7 +216,6 @@ public class AutoFilter extends ActionDriver {
     private void forward(ServletRequest req, ServletResponse rsp, String url, String uri)
             throws ServletException, IOException {
         // 虚拟路径
-        req.setAttribute(Cnst.ORIGIN_ATTR, Core.ACTION_NAME.get());
         req.setAttribute(Cnst.ACTION_ATTR, url.substring(1));
         // 转发请求
         req.getRequestDispatcher( uri ).forward( req , rsp );

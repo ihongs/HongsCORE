@@ -126,8 +126,6 @@ public final class Cnst {
 
     public static final String ACTION_ATTR = "__ACTION_NAME__"; // 动作名称
 
-    public static final String ORIGIN_ATTR = "__ORIGIN_NAME__"; // 起源动作
-
     public static final String SERVER_ATTR = "__SERVER_HREF__"; // 服务前缀
 
     public static final String CLIENT_ATTR = "__CLIENT_ADDR__"; // 客户地址

@@ -86,7 +86,7 @@ public class VersFilter extends ActionDriver {
             if (vs.contains("1.0.7")) {
                 level += V107;
             }
-            if (vs.contains("1.1.8")) {
+            if (vs.contains("1.0.8")) {
                 level += V108;
             }
         }

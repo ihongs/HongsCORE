@@ -48,6 +48,7 @@ public class UserAction {
     throws CruxException {
         Map  rd = helper.getRequestData();
         byte wd =  Synt.declare(rd.get("with-units") , (byte) 0);
+        byte wg =  Synt.declare(rd.get("with-signs") , (byte) 0);
      boolean fd =  Synt.declare(rd.get("find-depth") ,  false  );
 
         // With sub units
@@ -66,6 +67,25 @@ public class UserAction {
         List<Map> list = (List) rd.get("list");
         if (list != null) {
 
+        // With all signs
+        if (wg == 1) {
+            Map<String, Map> maps = new HashMap( );
+            for ( Map info : list ) {
+                info.put( "signs" , new HashSet());
+                maps.put(info.get("id").toString(), info);
+            }
+
+            List<Map> rows = model.db.getTable("user_sign")
+                .fetchCase()
+                .filter("user_id IN (?)" , maps.keySet( ) )
+                .select("user_id, unit")
+                .getAll(   );
+            for ( Map unit : rows ) {
+                String uid = unit.remove("user_id").toString();
+                ((Set) maps.get(uid).get("signs") ).add(unit );
+            }
+        }
+            
         // With all units
         if (wd == 1) {
             Map<String, Map> maps = new HashMap( );

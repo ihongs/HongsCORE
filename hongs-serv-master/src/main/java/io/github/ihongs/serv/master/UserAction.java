@@ -85,7 +85,7 @@ public class UserAction {
                 ((Set) maps.get(uid).get("signs") ).add(unit );
             }
         }
-            
+
         // With all units
         if (wd == 1) {
             Map<String, Map> maps = new HashMap( );
@@ -193,7 +193,7 @@ public class UserAction {
         {
             cp = true ;
         }
-        
+
         /**
          * 2022/05/18
          * 提供一种可以清除密码的方式
@@ -241,7 +241,7 @@ public class UserAction {
             }
             rd.put("units", units);
         }
-        
+
         String id = model.set(rd);
         CoreLocale  ln = CoreLocale.getMultiple("master", "default");
         String ms = ln.translate("core.save.user.success");

@@ -176,18 +176,14 @@
             </div>
         </fieldset>
         <fieldset>
-            <legend data-toggle="hsDrop">获取列表或详情 <span class="caret"></span></legend>
+            <legend data-toggle="hsDrop">列表查询 <span class="caret"></span></legend>
             <div class="dropdown-body">
                 <div class="form-group">
                     <label class="control-label">接口</label>
                     <pre class="form-control-static">
-<b>列表: GET</b> <%=baseHref%>/api/<%=_module%>/<%=_entity%>
+<b>GET</b> <%=baseHref%>/api/<%=_module%>/<%=_entity%>
 或 <%=baseHref%>/<%=_module%>/<%=_entity%>/search<%=Cnst.API_EXT%>
 或 <%=baseHref%>/<%=_module%>/<%=_entity%>/search<%=Cnst.ACT_EXT%>
-<br/>
-<b>详情: GET</b> <%=baseHref%>/api/<%=_module%>/<%=_entity%>=ID
-或 <%=baseHref%>/<%=_module%>/<%=_entity%>/search<%=Cnst.API_EXT%>?<%=Cnst.ID_KEY%>=ID
-或 <%=baseHref%>/<%=_module%>/<%=_entity%>/search<%=Cnst.ACT_EXT%>?<%=Cnst.ID_KEY%>=ID
                     </pre>
                 </div>
                 <div class="form-group">
@@ -208,7 +204,7 @@
                 <div class="form-group">
                     <label class="control-label">返回</label>
                     <pre class="form-control-static">
-<b>列表:</b> {
+{
     "list": [{
         "字段名": "字段值"
     }],
@@ -219,10 +215,37 @@
         "count": "总行数",
         "state": "1 正常, 0 错误: count 等于 0 表示列表为空, count 大于 0 表示页码超出"
     },
-    "enfo": {}, // 参见 select<%=Cnst.ACT_EXT%> 接口
+    "enfo": {}, // 参见 recipe<%=Cnst.ACT_EXT%> 接口
     // ...
 }
-<b>详情:</b> {
+                    </pre>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend data-toggle="hsDrop">获取详情 <span class="caret"></span></legend>
+            <div class="dropdown-body">
+                <div class="form-group">
+                    <label class="control-label">接口</label>
+                    <pre class="form-control-static">
+<b>GET</b> <%=baseHref%>/api/<%=_module%>/<%=_entity%>=ID
+或 <%=baseHref%>/<%=_module%>/<%=_entity%>/recite<%=Cnst.API_EXT%>?<%=Cnst.ID_KEY%>=ID
+或 <%=baseHref%>/<%=_module%>/<%=_entity%>/recite<%=Cnst.ACT_EXT%>?<%=Cnst.ID_KEY%>=ID
+                    </pre>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">参数</label>
+                    <pre class="form-control-static">
+<%if (listable.length() > 0) {%>
+<b><%=Cnst.RB_KEY%></b>=列举, 取值: <%=listable.substring(1)%>; 逗号分隔, 字段前加 - 表示排除
+<%}%>
+<b><%=Cnst.AB_KEY%></b>=模式, .enfo 提供选项数据, .info 提供缺省数据, _text 补全选项文本, _time 附加数字时间, _link 附加完整链接, _fork 增加关联数据, .fall 深入子级表单(适用 form/part 类型)
+                    </pre>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">返回</label>
+                    <pre class="form-control-static">
+{
     "info": {
         "字段名": "字段值"
     },
@@ -230,6 +253,7 @@
         "count": "1 或 0"
         "state": "1 正常, 0 错误: count 等于 0 表示数据缺失, count 大于 0 表示无权查阅"
     },
+    "enfo": {}, // 参见 recipe<%=Cnst.ACT_EXT%> 接口
     // ...
 }
                     </pre>
@@ -327,7 +351,7 @@ id=ID 或 id.=ID1&id.=ID2...
                 <div class="form-group">
                     <label class="control-label">接口</label>
                     <pre class="form-control-static">
-<%=baseHref%>/<%=_module%>/<%=_entity%>/select<%=Cnst.ACT_EXT%>
+<%=baseHref%>/<%=_module%>/<%=_entity%>/recipe<%=Cnst.ACT_EXT%>
                     </pre>
                 </div>
                 <div class="form-group">
@@ -361,7 +385,6 @@ id=ID 或 id.=ID1&id.=ID2...
                     <label class="control-label">接口</label>
                     <pre class="form-control-static">
 计数: <%=baseHref%>/<%=_module%>/<%=_entity%>/acount<%=Cnst.ACT_EXT%>
-计算: <%=baseHref%>/<%=_module%>/<%=_entity%>/amount<%=Cnst.ACT_EXT%>
 聚合: <%=baseHref%>/<%=_module%>/<%=_entity%>/assort<%=Cnst.ACT_EXT%>
                     </pre>
                 </div>
@@ -369,8 +392,8 @@ id=ID 或 id.=ID1&id.=ID2...
                     <label class="control-label">参数</label>
                     <pre class="form-control-static">
 <b><%=Cnst.RN_KEY%></b>=条数, 按统计数量从多到少排列, 默认取前 <%=Cnst.RN_DEF%>
-<b><%=Cnst.RB_KEY%></b>=字段, 可用于统计的; acount 用于一般选项计数; amount 用于数值区间统计; assort 用于维度聚合计算.
-聚合计算中, 字段分维度和指标. 指标形式为: 字段!方法; 指标方法有: !count 计数, !sum 求和, !min 最小, !max 最大, !ratio 综合[sum,min,max], !crowd 去重计数, !flock 所有值, !first 首个值.
+<b><%=Cnst.RB_KEY%></b>=字段, 可用于统计的; acount 用于一般选项计数; assort 用于维度聚合计算.
+聚合计算中, 字段分维度和指标. 指标形式为: 字段!方法; 指标方法有: !count 计数, !sum 求和, !min 最小, !max 最大, !total 综合[sum,min,max], !crowd 去重计数, !flock 所有值, !first 首个值.
 聚合计算还可以接受类似 search<%=Cnst.ACT_EXT%> 接口的分页(<%=Cnst.PN_KEY%>)和排序(<%=Cnst.OB_KEY%>)参数.
                     </pre>
                 </div>

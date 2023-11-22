@@ -132,7 +132,7 @@ public class CombatRunner implements Runnable
     {
       Core.getInstance( ).close( );
       Core.getInterior( ).close( );
-      System.setProperty("EXIT", Integer.toString(c));
+      System.setProperty("ERRORLEVEL", Integer.toString(c));
 //    System.exit(c);
     }
   }

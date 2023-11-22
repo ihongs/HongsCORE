@@ -141,7 +141,7 @@ public class ServerCombat {
         // 检查进程
         if (ppid.exists() != false) {
             System.err.println("ERROR: The server has not exit, or did not exit normally.");
-            System.setProperty("EXIT", "126");
+            System.setProperty("ERRORLEVEL", "126");
 //          System.exit(126);
             return;
         }

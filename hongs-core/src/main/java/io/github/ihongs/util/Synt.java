@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Arrays;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.regex.Matcher;
@@ -1104,7 +1103,7 @@ public final class Synt {
      * @return
      */
     public static List filter(List data, Each leaf) {
-        List dat = new LinkedList();
+        List dat = new ArrayList(data.size());
         int i = 0;
         for (Object v : data) {
             v = leaf.run(v, null, i ++);
@@ -1126,7 +1125,7 @@ public final class Synt {
      * @return
      */
     public static Object[] filter(Object[] data, Each leaf) {
-        List dat = new LinkedList();
+        List dat = new ArrayList(data.length);
         int i = 0;
         for (Object v : data) {
             v = leaf.run(v, null, i ++);

@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -804,11 +803,11 @@ public class NaviMap
   }
 
   protected List<Map> getMenuTranslated(Map<String, Map> menus, Set<String> rolez, int j, int i) {
-      List<Map> list = new LinkedList();
-
       if (null == menus||(j != 0 && j <= i)) {
-          return  list;
+          return new ArrayList(0);
       }
+
+      List<Map> list = new ArrayList(menus.size());
 
       for(Map.Entry item : menus.entrySet()) {
           String h = (String) item.getKey();
@@ -937,11 +936,11 @@ public class NaviMap
       return getRoleTranslated(menus, rolez, j, i, new HashSet(), new ArrayList(0));
   }
   protected List<Map> getRoleTranslated(Map<String, Map> menus, Set<String> rolez, int j, int i, Set q, List p) {
-      List<Map> list = new LinkedList();
-
       if (null == menus||(j != 0 && j <= i)) {
-          return  list;
+          return new ArrayList(0);
       }
+
+      List<Map> list = new ArrayList(menus.size());
 
       for(Map.Entry item : menus.entrySet()) {
           Map v = (Map) item.getValue();
@@ -952,7 +951,7 @@ public class NaviMap
           String d = Synt.declare(v.get("hint"), "");
 
           if (r != null) {
-          List<Map> rolz = new LinkedList();
+          List<Map> rolz = new ArrayList(r.size( ) );
           for(String n : ( Set<String> ) r) {
               if (rolez != null
               && !rolez.contains(n)) {

@@ -60,6 +60,7 @@ public class FlashyConn implements Conn, Core.Singleton {
         Chore timer = Chore.getInstance();
         this.flushs = timer.runTimed ( () -> this.flush() ); // 间隔时间提交
         this.merges = timer.runDaily ( () -> this.merge() ); // 每天合并索引
+        this.limit  = CoreConfig.getInstance().getProperty("core.lucene.flush.limit", 1000); // 刷新限定
     }
 
     private final ReentrantReadWriteLock WL = new ReentrantReadWriteLock();
@@ -71,7 +72,9 @@ public class FlashyConn implements Conn, Core.Singleton {
     private  IndexWriter   writer = null;
     private  IndexReader   reader = null;
     private  IndexSearcher finder = null;
-    private volatile boolean vary = true;
+    private volatile boolean vary = true; // 变更标识
+    private volatile int    count = 0;    // 刷新计数
+    private final    int    limit    ;    // 刷新限定
 
     @Override
     public String getDbName() {
@@ -196,6 +199,8 @@ public class FlashyConn implements Conn, Core.Singleton {
     public void write(Map<String, Document> docs) throws IOException {
         IndexWriter iw = getWriter();
 
+        boolean flush = false;
+
         RL.writeLock().lock();
         try {
             if (docs != null)
@@ -207,10 +212,22 @@ public class FlashyConn implements Conn, Core.Singleton {
                 } else {
                     iw.deleteDocuments(new Term("@"+Cnst.ID_KEY, id)    );
                 }
+
+                count += 1;
             }
+
+            if (count >= limit) {
+                count  = 0;
+                flush  = true ;
+            }
+
             vary = true;
         } finally {
             RL.writeLock().unlock();
+        }
+
+        if (flush) {
+            flush( );
         }
     }
 

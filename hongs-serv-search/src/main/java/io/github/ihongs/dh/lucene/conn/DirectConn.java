@@ -63,7 +63,7 @@ public class DirectConn implements Conn {
     private  IndexWriter   writer = null;
     private  IndexReader   reader = null;
     private  IndexSearcher finder = null;
-    private volatile boolean vary = true;
+    private volatile boolean vary = true; // 变更标识
 
     @Override
     public String getDbName() {

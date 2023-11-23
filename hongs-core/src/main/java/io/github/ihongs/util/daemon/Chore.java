@@ -260,6 +260,61 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
     }
 
     /**
+     * 任务执行包装
+     * 规避异常导致后续任务不再执行
+     * 将截获并记录未处理的内部异常
+     */
+    public static class Actor implements Runnable {
+
+        private final Runnable R;
+        private final String N;
+        private final String L;
+        private final String Z;
+
+        /**
+         * @param task 任务
+         * @param name 对应 Core.ACTION_NAME
+         */
+        public Actor(Runnable task, String name) {
+            R= task;
+            N= name;
+            L= Core.ACTION_LANG.get();
+            Z= Core.ACTION_ZONE.get();
+        }
+
+        /**
+         * @param task 任务
+         */
+        public Actor(Runnable task) {
+            this(task,"Chore.Actor:"+Core.ACTION_NAME.get());
+        }
+
+        @Override
+        public void run() {
+            try {
+
+            Core c = Core.getInstance();
+            Core.ACTION_NAME.set(N);
+            Core.ACTION_LANG.set(L);
+            Core.ACTION_ZONE.set(Z);
+            Core.ACTION_TIME.set(System.currentTimeMillis());
+
+            try {
+                R.run ( );
+            } catch ( Throwable e ) {
+                CoreLogger.error(e);
+            } finally {
+                c.reset();
+            }
+
+            } catch ( Throwable e ) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    /**
      * 最小任务间隔
      * 规避定时任务执行太久致后续连续触发
      * 注意: 此封装的实例不得多点并行执行

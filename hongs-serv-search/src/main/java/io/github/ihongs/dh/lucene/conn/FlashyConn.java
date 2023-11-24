@@ -57,16 +57,16 @@ public class FlashyConn implements Conn, Core.Singleton {
         this.dbname = dbname;
         this.dbpath = dbpath;
 
-        Chore timer = Chore.getInstance();
-        this.flushs = timer.runTimed ( () -> this.flush() ); // 间隔时间提交
-        this.merges = timer.runDaily ( () -> this.merge() ); // 每天合并索引
-        this.limit  = CoreConfig.getInstance().getProperty("core.lucene.flush.limit", 1000); // 刷新限定
+        Chore      ch = Chore.getInstance();
+        CoreConfig cc = CoreConfig.getInstance();
+        this.limit  = cc.getProperty("core.lucene.flush.limit", 1000); // 超量刷新
+        int  timed  = cc.getProperty("core.lucene.flush.timed", 600 ); // 超时刷新
+        this.flushs = ch.ran( () -> this.flush(), timed,timed ); // 按完成时间来算
     }
 
     private final ReentrantReadWriteLock WL = new ReentrantReadWriteLock();
     private final ReentrantReadWriteLock RL = new ReentrantReadWriteLock();
     private final ScheduledFuture flushs;
-    private final ScheduledFuture merges;
     private final String   dbpath;
     private final String   dbname;
     private  IndexWriter   writer = null;
@@ -233,46 +233,28 @@ public class FlashyConn implements Conn, Core.Singleton {
 
     public void flush() {
         try {
-            if (writer == null
-            || !writer.isOpen()) {
-                return;
-            }
-
-            long tt = System.currentTimeMillis();
-
-            writer.commit();
-
-            tt = System.currentTimeMillis() - tt;
-            CoreLogger.trace("Flush lucene indexes: {}, TC: {} ms", dbname, tt);
-        } catch (IOException x) {
-            CoreLogger.error(x);
-        }
-    }
-
-    public void merge() {
         try {
             if (writer == null
             || !writer.isOpen()) {
                 return;
             }
 
-            long tt = System.currentTimeMillis();
+            writer.commit();
 
-            writer.maybeMerge();
-            writer.deleteUnusedFiles();
-
-            tt = System.currentTimeMillis() - tt;
-            CoreLogger.trace("Merge lucene indexes: {}, TC: {} ms", dbname, tt);
+            CoreLogger.trace("Flush the lucene recs for {}", dbname);
         } catch (IOException x) {
             CoreLogger.error(x);
+        }
+        } catch ( Throwable x ) {
+            x.printStackTrace();
         }
     }
 
     @Override
     public void close() {
         try {
+        try {
             flushs.cancel(false);
-            merges.cancel(false);
 
             if (writer != null
             &&  writer.isOpen()) {
@@ -290,6 +272,9 @@ public class FlashyConn implements Conn, Core.Singleton {
             CoreLogger.trace("Close the lucene conn for {}", dbname);
         } catch (IOException x) {
             CoreLogger.error(x);
+        }
+        } catch ( Throwable x ) {
+            x.printStackTrace();
         }
     }
 

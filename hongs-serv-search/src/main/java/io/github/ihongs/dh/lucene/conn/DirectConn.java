@@ -206,10 +206,11 @@ public class DirectConn implements Conn {
                     iw.deleteDocuments(new Term("@"+Cnst.ID_KEY, id)    );
                 }
             }
+            
             vary = true;
             iw.commit();
-            iw. maybeMerge ();
-            iw.deleteUnusedFiles ();
+        //  iw. maybeMerge ();
+        //  iw.deleteUnusedFiles ();
         } finally {
             RL.writeLock().unlock();
         }

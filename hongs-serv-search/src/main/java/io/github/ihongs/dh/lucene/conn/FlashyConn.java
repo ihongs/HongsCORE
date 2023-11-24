@@ -57,16 +57,32 @@ public class FlashyConn implements Conn, Core.Singleton {
         this.dbname = dbname;
         this.dbpath = dbpath;
 
-        Chore      ch = Chore.getInstance();
         CoreConfig cc = CoreConfig.getInstance();
         this.limit  = cc.getProperty("core.lucene.flush.limit", 1000); // 超量刷新
         int  timed  = cc.getProperty("core.lucene.flush.timed", 600 ); // 超时刷新
-        this.flushs = ch.ran( () -> this.flush(), timed,timed ); // 按完成时间来算
+
+        final FlashyConn  that  = this ;
+        this.flushr = new Runnable() {
+            private volatile boolean running; // 不必精确, 内部有锁
+            @Override
+            public void run() {
+                if (!running) {
+                    try {
+                        running = true ;
+                        that . flush ();
+                    } finally {
+                        running = false;
+                    }
+                }
+            }
+        };
+        this.flushs = Chore.getInstance().ran(this.flushr, timed , timed );
     }
 
     private final ReentrantReadWriteLock WL = new ReentrantReadWriteLock();
     private final ReentrantReadWriteLock RL = new ReentrantReadWriteLock();
     private final ScheduledFuture flushs;
+    private final Runnable flushr;
     private final String   dbpath;
     private final String   dbname;
     private  IndexWriter   writer = null;
@@ -227,7 +243,7 @@ public class FlashyConn implements Conn, Core.Singleton {
         }
 
         if (flush) {
-            flush( );
+            Chore.getInstance().exe(flushr); // 后台执行
         }
     }
 

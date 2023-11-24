@@ -322,8 +322,8 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
     public static class Least implements Runnable {
 
         private final Runnable R;
-        private final long L;
-        private       long T;
+        private final    long  L;
+        private volatile long  T;
 
         /**
          * @param task

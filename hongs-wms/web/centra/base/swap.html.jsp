@@ -502,7 +502,7 @@ id=ID 或 id.=ID1&id.=ID2...
     context.on("click", "a.view-enum", function() {
         var rb = $(this).text();
         $.get(
-            '<%=baseHref%>/<%=_module%>/<%=_entity%>/select<%=Cnst.ACT_EXT%>?<%=Cnst.AB_KEY%>=.enfo&<%=Cnst.RB_KEY%>='+rb,
+            '<%=baseHref%>/<%=_module%>/<%=_entity%>/recipe<%=Cnst.ACT_EXT%>?<%=Cnst.AB_KEY%>=.enfo&<%=Cnst.RB_KEY%>='+rb,
             function(rd) {
                 rd = rd.enfo[rb];
                 var table = $('<table class="table table-hover table-striped"></table>');

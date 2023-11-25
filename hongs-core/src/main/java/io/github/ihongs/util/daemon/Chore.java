@@ -117,7 +117,7 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
             SES.shutdownNow();
             if (! SES.isTerminated()) {
             if (! SES.awaitTermination(10, TimeUnit.SECONDS)) {
-                System.err.println("CORE-Chore is timeout!");
+                System.err.println("Chore shutdown timeout!");
             }}
         } catch ( InterruptedException e) {
             throw new RuntimeException(e);

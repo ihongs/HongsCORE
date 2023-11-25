@@ -120,7 +120,7 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
                 System.err.println("CORE-Chore is timeout!");
             }}
         } catch ( InterruptedException e) {
-            throw new RuntimeException(e) ;
+            throw new RuntimeException(e);
         }
     }
 

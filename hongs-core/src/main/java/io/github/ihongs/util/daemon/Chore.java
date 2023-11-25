@@ -113,10 +113,10 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
      */
     @Override
     public void close() {
-        SES.shutdown ();
         try {
+            SES.shutdownNow();
             if (! SES.isTerminated()) {
-            if (! SES.awaitTermination(1, TimeUnit.MINUTES)) {
+            if (! SES.awaitTermination(10, TimeUnit.SECONDS)) {
                 System.err.println("CORE-Chore is timeout!");
             }}
         } catch ( InterruptedException e) {

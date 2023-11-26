@@ -2,6 +2,7 @@ package io.github.ihongs.action;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
+import io.github.ihongs.CruxCause;
 import io.github.ihongs.CruxException;
 import io.github.ihongs.CruxExemption;
 import io.github.ihongs.dh.IReflux;
@@ -17,17 +18,12 @@ import java.util.Collection;
  */
 public final class CommitRunner {
 
-    static public interface Run {
-           public void run( )
-           throws Throwable ;
-    }
-
-    static public void run( Run run)
+    static public void run(Runnable run)
     throws CruxException, CruxExemption {
         run(run, Core.getInstance());
     }
 
-    static public void run( Run run, Core core)
+    static public void run(Runnable run, Core core)
     throws CruxException, CruxExemption {
         // 全局中标识为事务模式
         // 外部已指定则不再处理
@@ -36,14 +32,11 @@ public final class CommitRunner {
                 // 执行
                 run.run();
             } catch (Throwable ex) {
-                if (ex instanceof CruxException) {
-                    throw (CruxException) ex ;
-                } else
-                if (ex instanceof CruxExemption) {
-                    throw (CruxExemption) ex ;
+                if (ex instanceof CruxCause) {
+                    throw ((CruxCause) ex).toException();
+                } else {
+                    throw new CruxException( ex , 1109 );
                 }
-
-                throw new  CruxException (ex);
             }
             return;
         }
@@ -51,7 +44,7 @@ public final class CommitRunner {
         try {
             // 开启
             core.set( Cnst.REFLUX_MODE , true );
-            Hub  crux  = new Hub(core);
+            Flux crux = new Flux(core);
             Core.THREAD_CORE.set(crux);
             for(Object o : crux.values()) {
                 if (o instanceof IReflux) {
@@ -77,15 +70,11 @@ public final class CommitRunner {
                     }
                 }
 
-                if (ex instanceof CruxException) {
-                    throw (CruxException) ex ;
-                } else
-                if (ex instanceof CruxExemption) {
-                    throw (CruxExemption) ex ;
+                if (ex instanceof CruxCause) {
+                    throw ((CruxCause) ex).toException();
+                } else {
+                    throw new CruxException( ex , 1108 );
                 }
-
-                // 其他异常需包裹
-                throw new  CruxException (ex , 1109);
             }
         } finally {
             // 重置
@@ -99,13 +88,23 @@ public final class CommitRunner {
     }
 
     static public void commit(Core core) {
-        boolean b = core instanceof Hub;
-        Hub  crux = new Hub (core);
-        for(Object o : crux.values().toArray()) {
-            if (o instanceof IReflux) {
-                IReflux x = (IReflux) o;
-                        x.commit();
-                if (b)  x.begin ();
+        Boolean r = (Boolean) core.get(Cnst.REFLUX_MODE);
+        Flux crux = new Flux (core);
+        if (r != null && r == true) {
+            // 事务内提交后继续启用事务
+            for(Object o : crux.values().toArray()) {
+                if (o instanceof IReflux) {
+                    IReflux x = (IReflux) o;
+                    x.commit();
+                    x.begin ();
+                }
+            }
+        } else {
+            for(Object o : crux.values().toArray()) {
+                if (o instanceof IReflux) {
+                    IReflux x = (IReflux) o;
+                    x.commit();
+                }
             }
         }
     }
@@ -115,20 +114,30 @@ public final class CommitRunner {
     }
 
     static public void cancel(Core core) {
-        boolean b = core instanceof Hub;
-        Hub  crux = new Hub (core);
-        for(Object o : crux.values().toArray()) {
-            if (o instanceof IReflux) {
-                IReflux x = (IReflux) o;
-                        x.cancel();
-                if (b)  x.begin ();
+        Boolean r = (Boolean) core.get(Cnst.REFLUX_MODE);
+        Flux crux = new Flux (core);
+        if (r != null && r == true) {
+            // 事务内回滚后继续启用事务
+            for(Object o : crux.values().toArray()) {
+                if (o instanceof IReflux) {
+                    IReflux x = (IReflux) o;
+                    x.cancel();
+                    x.begin ();
+                }
+            }
+        } else {
+            for(Object o : crux.values().toArray()) {
+                if (o instanceof IReflux) {
+                    IReflux x = (IReflux) o;
+                    x.cancel();
+                }
             }
         }
     }
 
-    private static final class Hub extends Core {
+    private static final class Flux extends Core {
 
-        private Hub (Core core) {
+        private Flux (Core core) {
             super(core);
         }
 

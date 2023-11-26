@@ -431,7 +431,7 @@ public class DataCombat {
                     uproot (df.getInstance(c , f), uid, uids);
                 }
             } catch (CruxException ex) {
-                throw ex.toExemption( );
+                throw ex.toExemption();
             }
         });
     }

@@ -277,9 +277,9 @@ public class ActionRunner {
         try {
             method.invoke(object, helper);
         } catch (   IllegalAccessException e) {
-            throw new CruxException(1108, "Illegal access for method '"+mclass.getName()+"."+method.getName()+"(ActionHelper).");
+            throw new CruxException(1107, "Illegal access for method '"+mclass.getName()+"."+method.getName()+"(ActionHelper).");
         } catch ( IllegalArgumentException e) {
-            throw new CruxException(1108, "Illegal params for method '"+mclass.getName()+"."+method.getName()+"(ActionHelper).");
+            throw new CruxException(1107, "Illegal params for method '"+mclass.getName()+"."+method.getName()+"(ActionHelper).");
         } catch (InvocationTargetException e) {
             Throwable ex = e.getCause ( );
             if ( ex instanceof CruxExemption) {

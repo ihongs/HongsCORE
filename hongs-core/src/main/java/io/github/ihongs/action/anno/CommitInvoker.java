@@ -16,9 +16,14 @@ import java.lang.annotation.Annotation;
 public class CommitInvoker implements FilterInvoker {
 
     @Override
-    public void invoke(ActionHelper helper, ActionRunner chains, Annotation anno)
-    throws CruxException {
-        CommitRunner.run(() -> chains.doAction());
+    public void invoke(ActionHelper helper, ActionRunner chains, Annotation anno) throws CruxException {
+        CommitRunner.run(() -> {
+            try {
+                chains.doAction();
+            } catch (CruxException ex) {
+                throw ex.toExemption();
+            }
+        });
     }
 
 }

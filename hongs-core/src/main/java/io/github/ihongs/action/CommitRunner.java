@@ -99,10 +99,13 @@ public final class CommitRunner {
     }
 
     static public void commit(Core core) {
-        Hub  crux  = new Hub(core);
+        boolean b = core instanceof Hub;
+        Hub  crux = new Hub (core);
         for(Object o : crux.values().toArray()) {
             if (o instanceof IReflux) {
-                ((IReflux) o).commit();
+                IReflux x = (IReflux) o;
+                        x.commit();
+                if (b)  x.begin ();
             }
         }
     }
@@ -112,10 +115,13 @@ public final class CommitRunner {
     }
 
     static public void cancel(Core core) {
-        Hub  crux  = new Hub(core);
+        boolean b = core instanceof Hub;
+        Hub  crux = new Hub (core);
         for(Object o : crux.values().toArray()) {
             if (o instanceof IReflux) {
-                ((IReflux) o).cancel();
+                IReflux x = (IReflux) o;
+                        x.cancel();
+                if (b)  x.begin ();
             }
         }
     }

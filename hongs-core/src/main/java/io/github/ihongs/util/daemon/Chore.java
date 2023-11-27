@@ -123,7 +123,7 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
         try {
             if (! SES.isShutdown()) {
                   SES.shutdown  ( );
-            if (! SES.awaitTermination(5, TimeUnit.SECONDS)) {
+            if (! SES.awaitTermination(1, TimeUnit.SECONDS)) {
                   SES.shutdownNow();
             }}
         } catch ( InterruptedException e) {

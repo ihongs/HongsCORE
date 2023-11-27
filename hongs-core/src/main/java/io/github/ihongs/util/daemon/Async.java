@@ -14,6 +14,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 异步任务
@@ -24,9 +26,11 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public abstract class Async<T> extends CoreSerial implements AutoCloseable {
 
-    private transient File back = null;
-    public  transient ExecutorService  servs;
-    public  transient BlockingQueue<T> tasks;
+    private transient File  back = null;
+
+    public  transient final ThreadGroup      group;
+    public  transient final ExecutorService  servs;
+    public  transient final BlockingQueue<T> tasks;
 
     /**
      * @param name      任务集名称, 退出时保存现有任务待下次启动时执行, 为 null 则不保存
@@ -34,7 +38,20 @@ public abstract class Async<T> extends CoreSerial implements AutoCloseable {
      * @param maxServs  最多可用的线程数量
      */
     protected Async(String name, int maxTasks, int maxServs) {
-        servs = Executors.newCachedThreadPool(  );
+        final String code = name != null ? name : this.getClass().getSimpleName();
+
+        group = new ThreadGroup ( "CORE-Async-" + code );
+        servs = Executors.newCachedThreadPool(new ThreadFactory() {
+            final AtomicInteger a = new AtomicInteger(0);
+            @Override
+            public Thread newThread(Runnable r) {
+                Thread t = new Thread(group, r);
+                t.setName(group.getName()+"-"+a.incrementAndGet());
+                t.setDaemon(true);
+                return t ;
+            }
+        });
+
         tasks = new LinkedBlockingQueue(maxTasks);
 
         if (name != null) {
@@ -48,12 +65,10 @@ public abstract class Async<T> extends CoreSerial implements AutoCloseable {
                     throw e.toExemption( );
                 }
             }
-        } else {
-            name = this.getClass().getSimpleName();
         }
 
         for(int i = 0; i < maxServs; i ++) {
-            servs.execute(new Atask(this, "CORE-Async-"+name+"-"+i));
+            servs.execute(new Atask(this, code));
         }
     }
 

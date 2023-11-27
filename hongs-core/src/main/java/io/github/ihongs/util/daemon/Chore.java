@@ -32,6 +32,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloquy {
 
+    private final ThreadGroup TGS = new ThreadGroup ( "CORE-Chore" );
     private final ScheduledExecutorService SES;
     private final int DDP = 86400; // 24 小时
     private final int DDT ;
@@ -66,13 +67,12 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
         }
 
         SES = Executors.newScheduledThreadPool(ps, new ThreadFactory() {
-            final AtomicInteger a = new AtomicInteger( 0 );
+            final AtomicInteger a = new AtomicInteger(0);
             @Override
             public Thread newThread(Runnable r) {
-                Thread t ;
-                t = new Thread(r);
+                Thread t = new Thread( TGS , r);
+                t.setName(TGS.getName() + a.incrementAndGet());
                 t.setDaemon(true);
-                t.setName("CORE-Chore-" + a.incrementAndGet());
                 return t ;
             }
         });
@@ -88,6 +88,14 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
      */
     public ScheduledExecutorService getExecutor() {
         return SES;
+    }
+
+    /**
+     * 获取线程分组
+     * @return
+     */
+    public ThreadGroup getGroup() {
+        return TGS;
     }
 
     /**
@@ -108,16 +116,15 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
 
     /**
      * 关闭容器
-     * 请勿执行
-     * @deprecated 特供 Core.close 联调
+     * 请勿执行, 特供 Core.close 联调
      */
     @Override
     public void close() {
         try {
-            SES.shutdownNow();
-            if (! SES.isTerminated()) {
-            if (! SES.awaitTermination(10, TimeUnit.SECONDS)) {
-                System.err.println("Chore shutdown timeout!");
+            if (! SES.isShutdown()) {
+                  SES.shutdown  ( );
+            if (! SES.awaitTermination(5, TimeUnit.SECONDS)) {
+                  SES.shutdownNow();
             }}
         } catch ( InterruptedException e) {
             throw new RuntimeException(e);
@@ -286,7 +293,7 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
          * @param task 任务
          */
         public Actor(Runnable task) {
-            this(task,"Chore.Actor:"+Core.ACTION_NAME.get());
+            this(task, Core.ACTION_NAME.get() + ".run");
         }
 
         @Override

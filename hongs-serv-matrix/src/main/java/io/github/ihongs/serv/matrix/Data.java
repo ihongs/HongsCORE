@@ -300,7 +300,7 @@ public class Data extends SearchEntity {
         }   while  ( false );
 
         if ( null == fields) {
-            throw new CruxExemption(910, "matrix:matrix.form.not.exists", conf, form);
+            throw new CruxExemption(910, "@matrix:matrix.form.not.exists", conf, form);
         }
 
         setFields(fields);

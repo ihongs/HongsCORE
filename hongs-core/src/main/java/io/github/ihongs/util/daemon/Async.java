@@ -36,9 +36,10 @@ public abstract class Async<T> extends CoreSerial implements AutoCloseable {
      * @param name      任务集名称, 退出时保存现有任务待下次启动时执行, 为 null 则不保存
      * @param maxTasks  最多容纳的任务数量
      * @param maxServs  最多可用的线程数量
+     * @param daemon    是否设置为守护线程
      */
-    protected Async(String name, int maxTasks, int maxServs) {
-        final String code = name != null ? name : this.getClass().getSimpleName();
+    protected Async(String name, int maxTasks, int maxServs, final boolean daemon) {
+        final String code = name != null ? name : this.getClass().getSimpleName( );
 
         group = new ThreadGroup ( "CORE-Async-" + code );
         servs = Executors.newCachedThreadPool(new ThreadFactory() {
@@ -47,7 +48,7 @@ public abstract class Async<T> extends CoreSerial implements AutoCloseable {
             public Thread newThread(Runnable r) {
                 Thread t = new Thread(group, r);
                 t.setName(group.getName()+"-"+a.incrementAndGet());
-                t.setDaemon(true);
+                t.setDaemon(daemon);
                 return t ;
             }
         });
@@ -70,6 +71,15 @@ public abstract class Async<T> extends CoreSerial implements AutoCloseable {
         for(int i = 0; i < maxServs; i ++) {
             servs.execute(new Atask(this, code));
         }
+    }
+
+    /**
+     * @param name      任务集名称, 退出时保存现有任务待下次启动时执行, 为 null 则不保存
+     * @param maxTasks  最多容纳的任务数量
+     * @param maxServs  最多可用的线程数量
+     */
+    protected Async(String name, int maxTasks, int maxServs) {
+        this(name, maxTasks, maxServs, false);
     }
 
     @Override

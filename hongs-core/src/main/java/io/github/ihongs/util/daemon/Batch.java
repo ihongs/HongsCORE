@@ -44,9 +44,10 @@ public abstract class Batch<T> extends CoreSerial implements AutoCloseable {
      * @param timeout   间隔此毫秒时间后开始执行
      * @param sizeout   缓冲区长度达此数量后执行
      * @param diverse   是否去重(缓冲类型): true 为 Set, false 为 List
+     * @param daemon    是否设置为守护线程
      */
-    protected Batch(String name, int maxTasks, int maxServs, int timeout, int sizeout, boolean diverse) {
-        final String code = name != null ? name : this.getClass().getSimpleName();
+    protected Batch(String name, int maxTasks, int maxServs, int timeout, int sizeout, boolean diverse, final boolean daemon) {
+        final String code = name != null ? name : this.getClass().getSimpleName( );
 
         group = new ThreadGroup ( "CORE-Async-" + code );
         servs = Executors.newCachedThreadPool(new ThreadFactory() {
@@ -55,7 +56,7 @@ public abstract class Batch<T> extends CoreSerial implements AutoCloseable {
             public Thread newThread(Runnable r) {
                 Thread t = new Thread(group, r);
                 t.setName(group.getName()+"-"+a.incrementAndGet());
-                t.setDaemon(true);
+                t.setDaemon(daemon);
                 return t ;
             }
         });
@@ -91,6 +92,18 @@ public abstract class Batch<T> extends CoreSerial implements AutoCloseable {
         for(int i = 0; i < maxServs; i ++) {
             servs.execute(new Btask(this, code, i, timeout, sizeout));
         }
+    }
+
+    /**
+     * @param name      任务集名称, 退出时保存现有任务待下次启动时执行, 为 null 则不保存
+     * @param maxTasks  最多容纳的任务数量
+     * @param maxServs  最多可用的线程数量
+     * @param timeout   间隔此毫秒时间后开始执行
+     * @param sizeout   缓冲区长度达此数量后执行
+     * @param diverse   是否去重(缓冲类型): true 为 Set, false 为 List
+     */
+    protected Batch(String name, int maxTasks, int maxServs, int timeout, int sizeout, boolean diverse) {
+        this(name, maxTasks, maxServs, timeout, sizeout, diverse, false);
     }
 
     @Override

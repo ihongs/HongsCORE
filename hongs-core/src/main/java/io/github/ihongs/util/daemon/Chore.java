@@ -72,7 +72,7 @@ public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloqu
             public Thread newThread(Runnable r) {
                 Thread t = new Thread( TGS , r);
                 t.setName(TGS.getName() + a.incrementAndGet());
-                t.setDaemon(true);
+                t.setDaemon(false);
                 return t ;
             }
         });

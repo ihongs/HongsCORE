@@ -47,9 +47,9 @@ public abstract class Batch<T> extends CoreSerial implements AutoCloseable {
      * @param daemon    是否设置为守护线程
      */
     protected Batch(String name, int maxTasks, int maxServs, int timeout, int sizeout, boolean diverse, final boolean daemon) {
-        final String code = name != null ? name : this.getClass().getSimpleName( );
+        final String code = name != null ? name : this.getClass().getName();
 
-        group = new ThreadGroup ( "CORE-Async-" + code );
+        group = new ThreadGroup ( "CORE-Batch-" + code );
         servs = Executors.newCachedThreadPool(new ThreadFactory() {
             final AtomicInteger a = new AtomicInteger(0);
             @Override

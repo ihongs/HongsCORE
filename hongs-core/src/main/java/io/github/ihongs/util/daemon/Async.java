@@ -39,7 +39,7 @@ public abstract class Async<T> extends CoreSerial implements AutoCloseable {
      * @param daemon    是否设置为守护线程
      */
     protected Async(String name, int maxTasks, int maxServs, final boolean daemon) {
-        final String code = name != null ? name : this.getClass().getSimpleName( );
+        final String code = name != null ? name : this.getClass().getName();
 
         group = new ThreadGroup ( "CORE-Async-" + code );
         servs = Executors.newCachedThreadPool(new ThreadFactory() {

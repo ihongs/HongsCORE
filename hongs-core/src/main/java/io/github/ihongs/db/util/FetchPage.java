@@ -213,15 +213,11 @@ public final class FetchPage
         fn = tb.getField("psort");
         if (fn != null) {
           fc.order (fn);
-        }
-        fn = tb.getField("ctime");
-        if (fn != null) {
-          fc.order (fn);
-        }
+        } else {
         fn = tb.primaryKey;
         if (fn != null) {
           fc.order (fn);
-        }
+        }}
       }
 
       // 内部子查询

@@ -1323,7 +1323,15 @@ public class FetchCase
     }
     catch (CruxException ex)
     {
-      throw  new  Error ( ex);
+      throw new Error (ex);
+    }
+    if (limits.length > 0)
+    {
+      sb.append(" /* LIMIT ")
+        .append(getStart())
+        .append( "," )
+        .append(getLimit())
+        .append(" */");
     }
     return sb.toString();
   }

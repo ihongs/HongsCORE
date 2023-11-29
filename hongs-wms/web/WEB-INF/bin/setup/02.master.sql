@@ -20,10 +20,10 @@ CREATE TABLE `a_master_unit` (
 );
 
 CREATE INDEX `IK_a_master_unit_unit` ON `a_master_unit` (`pid`);
-CREATE INDEX `IK_a_master_unit_boost` ON `a_master_unit` (`boost`);
 CREATE INDEX `IK_a_master_unit_state` ON `a_master_unit` (`state`);
-CREATE INDEX `IK_a_master_unit_ctime` ON `a_master_unit` (`ctime`);
-CREATE INDEX `IK_a_master_unit_mtime` ON `a_master_unit` (`mtime`);
+CREATE INDEX `IK_a_master_unit_boost` ON `a_master_unit` (`boost` DESC);
+CREATE INDEX `IK_a_master_unit_ctime` ON `a_master_unit` (`ctime` DESC);
+CREATE INDEX `IK_a_master_unit_mtime` ON `a_master_unit` (`mtime` DESC);
 CREATE UNIQUE INDEX `UK_a_master_unit_name` ON `a_master_unit` (`name`,`pid`);
 
 INSERT INTO `a_master_unit` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('0',NULL,'ROOT','ROOT','1424075622','1424075622','0',1);
@@ -77,8 +77,8 @@ CREATE TABLE `a_master_user` (
   PRIMARY KEY (`id`)
 );
 
-CREATE INDEX `IK_a_master_user_ctime` ON `a_master_user` (`ctime`);
-CREATE INDEX `IK_a_master_user_mtime` ON `a_master_user` (`mtime`);
+CREATE INDEX `IK_a_master_user_ctime` ON `a_master_user` (`ctime` DESC);
+CREATE INDEX `IK_a_master_user_mtime` ON `a_master_user` (`mtime` DESC);
 CREATE INDEX `IK_a_master_user_state` ON `a_master_user` (`state`);
 CREATE INDEX `IK_a_master_user_username` ON `a_master_user` (`username`);
 CREATE UNIQUE INDEX `UK_a_master_user_username` ON `a_master_user` (`username`);

@@ -21,9 +21,9 @@ CREATE TABLE `a_matrix_furl` (
 
 CREATE INDEX `IK_a_matrix_furl_pid` ON `a_matrix_furl` (`pid`);
 CREATE INDEX `IK_a_matrix_furl_state` ON `a_matrix_furl` (`state`);
-CREATE INDEX `IK_a_matrix_furl_boost` ON `a_matrix_furl` (`boost`);
-CREATE INDEX `IK_a_matrix_furl_ctime` ON `a_matrix_furl` (`ctime`);
-CREATE INDEX `IK_a_matrix_furl_mtime` ON `a_matrix_furl` (`mtime`);
+CREATE INDEX `IK_a_matrix_furl_boost` ON `a_matrix_furl` (`boost` DESC);
+CREATE INDEX `IK_a_matrix_furl_ctime` ON `a_matrix_furl` (`ctime` DESC);
+CREATE INDEX `IK_a_matrix_furl_mtime` ON `a_matrix_furl` (`mtime` DESC);
 CREATE UNIQUE INDEX `UK_a_matrix_furl_name` ON `a_matrix_furl` (`name`,`pid`);
 
 --
@@ -48,9 +48,9 @@ CREATE TABLE `a_matrix_form` (
 
 CREATE INDEX `IK_a_matrix_form_furl` ON `a_matrix_form` (`furl_id`);
 CREATE INDEX `IK_a_matrix_form_state` ON `a_matrix_form` (`state`);
-CREATE INDEX `IK_a_matrix_form_boost` ON `a_matrix_form` (`boost`);
-CREATE INDEX `IK_a_matrix_form_ctime` ON `a_matrix_form` (`ctime`);
-CREATE INDEX `IK_a_matrix_form_mtime` ON `a_matrix_form` (`mtime`);
+CREATE INDEX `IK_a_matrix_form_boost` ON `a_matrix_form` (`boost` DESC);
+CREATE INDEX `IK_a_matrix_form_ctime` ON `a_matrix_form` (`ctime` DESC);
+CREATE INDEX `IK_a_matrix_form_mtime` ON `a_matrix_form` (`mtime` DESC);
 CREATE UNIQUE INDEX `UK_a_matrix_form_name` ON `a_matrix_form` (`name`,`furl_id`);
 
 --
@@ -78,9 +78,9 @@ CREATE INDEX `IK_a_matrix_data_form` ON `a_matrix_data` (`form_id`);
 CREATE INDEX `IK_a_matrix_data_user` ON `a_matrix_data` (`user_id`);
 CREATE INDEX `IK_a_matrix_data_meno` ON `a_matrix_data` (`meno`);
 CREATE INDEX `IK_a_matrix_data_state` ON `a_matrix_data` (`state`);
-CREATE INDEX `IK_a_matrix_data_ctime` ON `a_matrix_data` (`ctime`);
 CREATE INDEX `IK_a_matrix_data_etime` ON `a_matrix_data` (`etime`);
 CREATE INDEX `IK_a_matrix_data_rtime` ON `a_matrix_data` (`rtime`);
+CREATE INDEX `IK_a_matrix_data_ctime` ON `a_matrix_data` (`ctime` DESC);
 CREATE UNIQUE INDEX `UK_a_matrix_data_uk` ON `a_matrix_data` (`id`,`form_id`,`etime`);
 
 --

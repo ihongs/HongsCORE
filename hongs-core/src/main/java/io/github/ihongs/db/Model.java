@@ -163,10 +163,10 @@ implements IEntity
     }
 
     // 续查页数, 默认查总页数
-    int ques = 0;
-    if (rd.containsKey(Cnst.QN_KEY))
+    int plus = 0;
+    if (rd.containsKey(Cnst.PM_KEY))
     {
-      ques = Synt.declare(rd.get(Cnst.QN_KEY), ques);
+      plus = Synt.declare(rd.get(Cnst.PM_KEY), plus);
     }
 
     Map data = new HashMap (6); // {ok, ern, err, msg, list, page}
@@ -182,7 +182,7 @@ implements IEntity
     caze.from (table.tableName , table.name );
     FetchPage fp = new FetchPage(caze, table);
     fp.setPage(page);
-    fp.setQues(Math.abs(ques));
+    fp.setPlus(plus);
     fp.setRows(Math.abs(rows));
 
     // 行数等于 0 则不要使用分页

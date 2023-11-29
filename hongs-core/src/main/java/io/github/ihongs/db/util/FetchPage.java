@@ -6,7 +6,6 @@ import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.db.link.Link;
 import io.github.ihongs.db.link.Lump;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +27,7 @@ public final class FetchPage
 
   private int page = 1;
 
-  private int ques = 0;
+  private int plus = 0;
 
   private int rows = Cnst.RN_DEF;
 
@@ -59,16 +58,28 @@ public final class FetchPage
     chkInit( );
   }
 
+  /**
+   * 当前页码
+   * @param page 
+   */
   public void setPage(int page)
   {
     this.page = page;
   }
 
-  public void setQues(int ques)
+  /**
+   * 续查页数
+   * @param plus 
+   */
+  public void setPlus(int plus)
   {
-    this.ques = ques;
+    this.plus = plus;
   }
 
+  /**
+   * 每页条数
+   * @param rows 
+   */
   public void setRows(int rows)
   {
     this.rows = rows;
@@ -87,10 +98,10 @@ public final class FetchPage
       this.setPage(Integer.parseInt(page2.toString()));
     }
 
-    Object lnks2 = caze.getOption(Cnst.QN_KEY);
+    Object lnks2 = caze.getOption(Cnst.PM_KEY);
     if (lnks2 != null && lnks2.equals(""))
     {
-      this.setQues(Integer.parseInt(lnks2.toString()));
+      this.setPlus(Integer.parseInt(lnks2.toString()));
     }
 
     Object rows2 = caze.getOption(Cnst.RN_KEY);
@@ -164,7 +175,7 @@ public final class FetchPage
     throws CruxException
   {
     this.info.put(Cnst.PN_KEY, this.page);
-    this.info.put(Cnst.QN_KEY, this.ques);
+    this.info.put(Cnst.PM_KEY, this.plus);
     this.info.put(Cnst.RN_KEY, this.rows);
 
     // 列表为空则不用再计算了
@@ -177,10 +188,10 @@ public final class FetchPage
     // 有探查数则不用查全部了
     int start;
     int limit;
-    if (this.ques > 0)
+    if (this.plus > 0)
     {
       start = rows * (page - 1);
-      limit = rows *  ques + 1 ;
+      limit = rows *  plus + 1 ;
     }
     else
     {

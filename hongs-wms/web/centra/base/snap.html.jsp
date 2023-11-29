@@ -95,7 +95,7 @@
     context.find("[name='ctime.<%=Cnst.LE_REL%>']").val(hsGetSeria(loadpms, "ctime_le"));
 
     var listobj = context.hsList({
-        loadUrl : "<%=_module%>/<%=_entity%>/reveal.act?<%=Cnst.RB_KEY%>=data!,user.*&<%=Cnst.OB_KEY%>=ctime!&<%=Cnst.ID_KEY%>.=$<%=Cnst.ID_KEY%>&user_id=$user_id&meno=$meno",
+        loadUrl : "<%=_module%>/<%=_entity%>/reveal.act?<%=Cnst.RB_KEY%>=data!,user.*&<%=Cnst.OB_KEY%>=ctime!&<%=Cnst.PM_KEY%>=5&<%=Cnst.ID_KEY%>.=$<%=Cnst.ID_KEY%>&user_id=$user_id&meno=$meno",
         send    : hsSendWithMemo,
         _fill_stat: function(td , stat) {
             var st = statmap['' + stat];

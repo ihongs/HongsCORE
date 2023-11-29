@@ -318,41 +318,18 @@ abstract public class Link
   public Loop query(String sql, int start, int limit, Object... params)
     throws CruxException
   {
-    /**
-     * 由于 SQLite 等不支持 absolute 方法
-     * 故对这样的库采用组织语句的分页查询
-     */
-    if (limit == 0) {
-        this.open();
-    }   else   try  {
-        String dpn =
-        this.open()
-        .getMetaData()
-        .getDatabaseProductName()
-        .toUpperCase();
+    this.open();
 
-        if ("MYSQL".equals(dpn)
-        || "SQLITE".equals(dpn)) {
-            sql += " LIMIT ?,?";
-            Object[] paramz = new Object[params.length + 2];
-            System.arraycopy(params, 0, paramz, 0, params.length);
-            paramz[params.length + 0] = start;
-            paramz[params.length + 1] = limit;
-            params = paramz;
-            start  = 0;
-            limit  = 0;
-        }
-    } catch (SQLException ex) {
-        throw new CruxException(ex);
-    }
+    // 处理不同数据库的分页
+    Lump l = new Lump(this.connection, sql, start, limit, params);
+    sql    = l.getSql(   );
+    start  = l.getStart( );
+    limit  = l.getLimit( );
+    params = l.getParams();
 
     if (4 == (4 & Core.DEBUG))
     {
-      StringBuilder sb = new StringBuilder(sql);
-      List      paramz = new ArrayList(Arrays.asList(params));
-      checkSQLParams(sb, paramz);
-      mergeSQLParams(sb, paramz);
-      CoreLogger.debug("DB.query: "+ sb.toString());
+      CoreLogger.debug("DB.query: "+ l.toString());
     }
 
     PreparedStatement ps = this.prepareStatement(sql, params);

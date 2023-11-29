@@ -5,6 +5,8 @@ import io.github.ihongs.CruxException;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.db.link.Link;
+import io.github.ihongs.db.link.Lump;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -173,36 +175,65 @@ public final class FetchPage
     }
 
     // 有探查数则不用查全部了
+    int start;
     int limit;
     if (this.ques > 0)
     {
-      limit = rows * (ques + page - 1) + 1;
+      start = rows * (page - 1);
+      limit = rows *  ques + 1 ;
     }
     else
     {
+      start = 0;
       limit = 0;
     }
 
+    FetchCase fc = this.caze.clone();
+    Link      dl = this.gotLink();
+    String    sql;
+    Object[]  pms;
+
     // 组织总行数查询语句
-    String     sql;
-    Object[]   params;
-    FetchCase  caze2 = this.caze.clone().limit(limit);
-    if(clnSort(caze2))
+    if (clnCase(fc) || limit > 0)
     {
-      caze2.field("1");
-      params = caze2.getParams();
-      sql    = caze2.getSQL(   );
-      sql    = "SELECT COUNT(1) AS __count__ FROM (" + sql +") AS __table__";
+      // MySQL 中没排序仍然会遍历全部
+      if (tb != null) {
+        String fn;
+        fn = tb.getField("psort");
+        if (fn != null) {
+          fc.order (fn);
+        }
+        fn = tb.getField("ctime");
+        if (fn != null) {
+          fc.order (fn);
+        }
+        fn = tb.primaryKey;
+        if (fn != null) {
+          fc.order (fn);
+        }
+      }
+
+      // 内部子查询
+      fc.field("1");
+      sql = fc.getSQL(   );
+      pms = fc.getParams();
+
+      // 限制查询量
+      Lump  lp = new Lump(dl, sql, start, limit, pms);
+      sql = lp.getSql(   );
+      pms = lp.getParams();
+
+      sql = "SELECT COUNT(1) + "+start+" AS __count__ FROM ("+sql+") AS __table__";
     }
     else
     {
-      caze2.field(/**/"COUNT(1) AS __count__");
-      params = caze2.getParams();
-      sql    = caze2.getSQL(   );
+      fc.field("COUNT(1) AS __count__");
+      sql = fc.getSQL(   );
+      pms = fc.getParams();
     }
 
     // 计算总行数及总页数
-    Map row  = gotLink().fetchOne(sql, params);
+    Map row  = dl.fetchOne( sql, pms );
     if (row != null && ! row.isEmpty())
     {
       long rc, vc, pc;
@@ -223,7 +254,7 @@ public final class FetchPage
        * 那么只能作估值
        * 反之为精确数量
        */
-      if (limit == 0 || limit != rc) {
+      if (limit == 0 || limit + start != rc) {
           this.info.put("state", 1 );
       } else {
           this.info.put("state", 2 );
@@ -238,21 +269,16 @@ public final class FetchPage
     return this.info;
   }
 
-  /**
-   * 检查是否有启用分组
-   * 同时清空排序和查询
-   * @param caze
-   * @return
-   */
-  private boolean clnSort(FetchCase caze) {
+  private boolean clnCase(FetchCase caze) {
     boolean gos = caze.hasGroup();
-      caze.order( null );
-      caze.field( null );
-    for(FetchCase caze2 : caze.joinSet) {
-    if ( clnSort( caze2)) {
-            gos = true  ;
-    }}
-    return  gos;
+    for(FetchCase caz2 : caze.joinSet) {
+      if (clnCase(caz2)) {
+            gos = true ;
+      }
+    }
+    caze.order(null);
+    caze.field(null);
+    return  gos; // 有分组不能直接 COUNT
   }
 
 }

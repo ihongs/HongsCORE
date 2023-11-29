@@ -71,9 +71,9 @@ public class DBFields
         Map field = new HashMap();
         field.put("type" ,          md.getColumnType(i));
         field.put("size" ,          md.getPrecision (i));
-        field.put("scale",          md.getScale     (i));
-        field.put("unsigned",       md.isSigned     (i) != true);
-        field.put("required",       md.isNullable   (i) !=  1  );
+        field.put("scale",          md.getScale(i));
+        field.put("unsigned",    !  md.isSigned(i));
+        field.put("required",    !  md.isAutoIncrement(i) && md.isNullable(i) == ResultSetMetaData.columnNoNulls);
 
         // 用处不大的的属性:
         /*

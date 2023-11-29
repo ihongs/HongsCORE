@@ -598,6 +598,15 @@ public class Table
 
       Object value = values.get(namc);
 
+      if (! checked)
+      {
+        if (values.containsKey(namc))
+        {
+          mainValues.put(namc, value);
+        }
+        continue;
+      }
+
       /**
        * 如果存在该值, 而该值为空
        * 或不存在该值, 而处于新建
@@ -619,16 +628,6 @@ public class Table
         {
           throw nullException(namc);
         }
-        continue;
-      }
-
-      /**
-       * 如果关闭了检查或值不是基础类型, 则跳过数据检查
-       * 通常POST或GET过来的总是String, JSON过来的是String/Number/Boolean/Null
-       */
-      if (!checked || !(value instanceof String || value instanceof Number))
-      {
-        mainValues.put(namc, value);
         continue;
       }
 

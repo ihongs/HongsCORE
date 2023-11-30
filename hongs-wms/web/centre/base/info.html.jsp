@@ -7,7 +7,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@include file="_boot_.jsp"%>
 <%
-    String _action = Synt.declare(request.getAttribute("info.action"), "review");
+    String _action = Synt.declare(request.getAttribute("info.action"), "recite");
     String _funcId = "in_"+(_module + "_" + _entity + "_info").replace('/', '_');
     String _pageId = /* */ (_module + "-" + _entity + "-info").replace('/', '-');
 %>

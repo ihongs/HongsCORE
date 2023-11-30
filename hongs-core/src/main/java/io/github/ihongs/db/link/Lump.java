@@ -5,6 +5,7 @@ import io.github.ihongs.CruxExemption;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -89,8 +90,8 @@ public class Lump {
     @Override
     public String toString() {
         try {
-            StringBuilder sb = new StringBuilder(this.sql);
-            List ps = Arrays.asList(params);
+            StringBuilder sb = new StringBuilder (  sql  );
+            List ps = new ArrayList(Arrays.asList(params));
             Link.checkSQLParams ( sb , ps );
             Link.mergeSQLParams ( sb , ps );
             if (limit > 0) {

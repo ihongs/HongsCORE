@@ -20,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * 抽象数据连接
@@ -44,6 +45,11 @@ abstract public class Link
    */
   protected  boolean  REFLUX_MODE;
 
+  /**
+   * 匹配查询语句
+   */
+  private static final Pattern SELECT_PATT = Pattern.compile("^(SELECT|SHOW)\\s+", Pattern.CASE_INSENSITIVE);
+
   public Link(String name)
     throws CruxException
   {
@@ -59,70 +65,24 @@ abstract public class Link
     throws CruxException;
 
   /**
-   * 关闭连接
+   * 准备执行
+   * @return
+   * @throws CruxException
    */
-  @Override
-  public void close( )
+  public Connection dock()
+    throws CruxException
   {
-    try
-    {
-      if (this.connection != null
-      && !this.connection.isClosed())
-      {
-        try
-        {
-          /**
-           * 关闭之前先将未提交的语句提交
-           */
-          if (!connection.getAutoCommit())
-          {
-            try
-            {
-              connection.commit(  );
-            }
-            catch (SQLException ex)
-            {
-              connection.rollback();
-              throw ex;
-            }
-          }
-        }
-        finally
-        {
-          this.connection.close(  );
-
-          CoreLogger.trace("DB: Connection '{}' has been closed", name);
-        }
-      }
-    }
-    catch (SQLException er )
-    {
-      CoreLogger.error( er );
-    }
-    finally
-    {
-      this.connection = null;
-    }
-  }
-
-  /**
-   * 执行准备
-   */
-  public void ready( )
-  {
-    try {
-        this.open();
-    } catch (CruxException ex) {
-        throw ex.toExemption();
-    }
+    Connection connection = open();
 
     try {
-        if (this.connection.getAutoCommit() == this.REFLUX_MODE) {
-            this.connection.setAutoCommit(  !  this.REFLUX_MODE);
+        if (connection.getAutoCommit() == this.REFLUX_MODE) {
+            connection.setAutoCommit(  !  this.REFLUX_MODE);
         }
     } catch (SQLException ex) {
         throw new CruxExemption(ex, 1053);
     }
+
+    return  connection;
   }
 
   /**
@@ -131,7 +91,12 @@ abstract public class Link
   @Override
   public void begin( )
   {
-    this.ready();
+    Connection connection;
+    try {
+        connection = dock();
+    } catch (CruxException ex) {
+        throw ex.toExemption();
+    }
 
     try {
         if (connection != null
@@ -141,6 +106,7 @@ abstract public class Link
     } catch (SQLException ex) {
         throw new CruxExemption(ex, 1054);
     }
+
     REFLUX_MODE = true;
   }
 
@@ -150,6 +116,13 @@ abstract public class Link
   @Override
   public void commit()
   {
+    Connection connection;
+    try {
+        connection = dock();
+    } catch (CruxException ex) {
+        throw ex.toExemption();
+    }
+
     try {
         if (connection != null
         && !connection.isClosed()
@@ -159,6 +132,7 @@ abstract public class Link
     } catch (SQLException ex) {
         throw new CruxExemption(ex, 1055);
     }
+
     REFLUX_MODE = false;
   }
 
@@ -168,6 +142,13 @@ abstract public class Link
   @Override
   public void cancel()
   {
+    Connection connection;
+    try {
+        connection = dock();
+    } catch (CruxException ex) {
+        throw ex.toExemption();
+    }
+
     try {
         if (connection != null
         && !connection.isClosed()
@@ -177,50 +158,135 @@ abstract public class Link
     } catch (SQLException ex) {
         throw new CruxExemption(ex, 1056);
     }
+
     REFLUX_MODE = false;
+  }
+
+  /**
+   * 关闭连接
+   */
+  @Override
+  public void close( )
+  {
+    try
+    {
+      if (connection != null
+      && !connection.isClosed())
+      {
+        if (! connection.getAutoCommit())
+        {
+          // 关闭之前先将未提交的语句提交
+          try
+          {
+            connection.commit(  );
+          }
+          catch (SQLException ex)
+          {
+            connection.rollback();
+            throw ex;
+          }
+          finally
+          {
+            connection.close();
+            CoreLogger.trace("DB: Connection '{}' has been closed", name);
+          }
+        }
+        else
+        {
+            connection.close();
+            CoreLogger.trace("DB: Connection '{}' has been closed", name);
+        }
+      }
+    }
+    catch (SQLException er)
+    {
+      CoreLogger.error (er);
+    }
+    finally
+    {
+      connection = null;
+    }
   }
 
   /** 查询辅助 **/
 
   /**
-   * 预编译Statement并设置查询选项
-   * 可使用cacheStatement开缓存
-   * 务必先执行 open 或 ready
-   * @param sql
-   * @param params
-   * @return PreparedStatement对象
+   * 关闭ResultSet
+   * @param rs
    * @throws CruxException
    */
-  public PreparedStatement prepareStatement(String sql, Object... params)
+  public void close(ResultSet rs)
+    throws CruxException
+  {
+    try
+    {
+      if (rs != null && !rs.isClosed())
+      {
+        rs.close();
+      }
+    }
+    catch (SQLException ex)
+    {
+      throw new CruxException(ex, 1035);
+    }
+  }
+
+  /**
+   * 关闭Statement
+   * @param ps
+   * @throws CruxException
+   */
+  public void close(Statement ps)
+    throws CruxException
+  {
+    try
+    {
+      if (ps != null && !ps.isClosed())
+      {
+        ps.close();
+      }
+    }
+    catch (SQLException ex)
+    {
+      throw new CruxException(ex, 1034);
+    }
+  }
+
+  protected PreparedStatement prepare(Connection dc, String sql, Object... params)
     throws CruxException
   {
     /**
-     * 检查SQL语句及Params
-     * 以发现里面的Set对象
+     * 检查语句及参数.
+     * 参数里有集合时,
+     * 将向上扩充选项.
+     * 例如 WHERE xx = ? AND yy IN (?); [1, [2, 3]]
+     * 变为 WHERE xx = ? AND yy IN (?,?); [1, 2, 3]
      */
-    List       paramz;
-    StringBuilder sbl;
-    paramz = Arrays.asList(params);
-    paramz = new ArrayList(paramz);
-    sbl  = new StringBuilder (sql);
-    checkSQLParams ( sbl , paramz);
-    sql  = sbl.toString();
+    StringBuilder sb = new StringBuilder (  sql  );
+    List pz = new ArrayList(Arrays.asList(params));
+    checkSQLParams(sb,pz);
+    sql = sb.toString(  );
 
-    PreparedStatement ps = this.prepareStatement(sql);
+    PreparedStatement ps ;
+    try
+    {
+      ps = dc . prepareStatement( sql );
+    }
+    catch (SQLException ex)
+    {
+      throw new CruxException(ex, 1041);
+    }
 
-    /**
-     * 遍历params以执行PreparedStatement.setObject
-     * 如果开启字符串模式, 则参数均以字符串形式绑定
-     */
+    if (params.length > 0 )
     try
     {
       int i = 0;
-      for (Object x : paramz)
-      {
-        ps.setObject(++ i, x);
+      for ( Object po : pz)
+      {   i ++ ;
+        ps.setObject(i, po);
       }
     }
-    catch ( SQLException ex )
+    catch (SQLException ex)
     {
       throw new CruxException(ex, 1042);
     }
@@ -229,89 +295,221 @@ abstract public class Link
   }
 
   /**
-   * 当需要在prepareStatement时设定参数, 可重载该方法
-   * 务必先执行 open 或 ready
-   * 异常代码为: 1041
+   * 预处理语句
+   * 异常代码为: 1041, 1042
    * @param sql
+   * @param params
    * @return PreparedStatement对象
    * @throws CruxException
    */
-  public PreparedStatement prepareStatement(String sql)
+  public PreparedStatement prepare(String sql, Object... params)
     throws CruxException
   {
-    PreparedStatement ps;
-
-    try
+    // 分辨是查询语句还是执行语句
+    if ( SELECT_PATT.matcher(sql).find())
     {
-      ps = this.connection.prepareStatement(sql);
+      return prepare(open(), sql, params);
     }
-    catch (SQLException ex)
+    else
     {
-      throw new CruxException(ex, 1041);
+      return prepare(dock(), sql, params);
     }
-
-    return ps;
   }
 
+  /** 执行语句 **/
+
   /**
-   * 当需要在createStatement时设定参数, 可重载该方法
-   * 务必先执行 open 或 ready
-   * @return Statement对象
+   * 执行方法
+   * @param sql
+   * @param params
+   * @return 成功或失败
    * @throws CruxException
    */
-  public Statement createStatement()
+  public boolean execute(String sql, Object... params)
     throws CruxException
   {
-    Statement ps;
+    if (4 == (4 & Core.DEBUG))
+    {
+      StringBuilder sb = new StringBuilder(sql);
+      List      paramz = new ArrayList(Arrays.asList(params));
+      checkSQLParams(sb, paramz);
+      mergeSQLParams(sb, paramz);
+      CoreLogger.debug("DB.execute: " + sb.toString());
+    }
+
+    PreparedStatement ps = prepare(sql, params);
 
     try
     {
-      ps = this.connection.createStatement();
+      return ps.execute( /**/ );
     }
-    catch (SQLException ex)
+    catch (  SQLException ex  )
     {
-      throw new CruxException(ex, 1041);
+      throw new CruxException(ex, 1044);
     }
-
-    return ps;
-  }
-
-  /**
-   * 关闭Statement
-   * @param ps
-   * @throws CruxException
-   */
-  public void closeStatement(Statement ps)
-    throws CruxException
-  {
-    try
+    finally
     {
-      if (ps == null || ps.isClosed()) return;
-      ps.close();
-    }
-    catch (SQLException ex)
-    {
-      throw new CruxException(ex, 1034);
+            Link.this.close(ps);
     }
   }
 
   /**
-   * 关闭ResultSet
-   * @param rs
+   * 更新方法
+   * @param sql
+   * @param params
+   * @return 更新的条数
    * @throws CruxException
    */
-  public void closeResultSet(ResultSet rs)
+  public int updates(String sql, Object... params)
     throws CruxException
   {
+    if (4 == (4 & Core.DEBUG))
+    {
+      StringBuilder sb = new StringBuilder(sql);
+      List      paramz = new ArrayList(Arrays.asList(params));
+      checkSQLParams(sb, paramz);
+      mergeSQLParams(sb, paramz);
+      CoreLogger.debug("DB.updates: " + sb.toString());
+    }
+
+    PreparedStatement ps = prepare(sql, params);
+
     try
     {
-      if (rs == null || rs.isClosed()) return;
-      rs.close();
+      return ps.executeUpdate();
     }
-    catch (SQLException ex)
+    catch (  SQLException ex  )
     {
-      throw new CruxException(ex, 1035);
+      throw new CruxException(ex, 1045);
     }
+    finally
+    {
+            Link.this.close(ps);
+    }
+  }
+
+  /**
+   * 更新记录
+   * <p>注: 调用update(sql, params...)实现</p>
+   * @param table
+   * @param values
+   * @param where
+   * @param params
+   * @return 更新条数
+   * @throws CruxException
+   */
+  public int update(String table, Map<String, Object> values, String where, Object... params)
+    throws CruxException
+  {
+    if (values == null || values.isEmpty())
+    {
+      throw new CruxException(1047, "Update value can not be empty.");
+    }
+    if ( where == null ||  where.isEmpty())
+    {
+      throw new CruxException(1048, "Update where can not be empty.");
+    }
+
+    table = quoteField(table);
+
+    /** 组织语言 **/
+
+    List paramz = new ArrayList(values.size());
+    String   vs = "";
+    Iterator it = values.entrySet().iterator();
+    while (it.hasNext())
+    {
+      Map.Entry entry = (Map.Entry)it.next();
+      String field = (String)entry.getKey();
+      paramz.add((Object)entry.getValue());
+
+      vs += ", " + quoteField(field) + " = ?";
+    }
+
+    String sql = "UPDATE " + table
+               + " SET "   + vs.substring(2)
+               + " WHERE " + where;
+
+    if (params.length > 0)
+    {
+      paramz.addAll(Arrays.asList(params));
+    }
+
+    /** 执行更新 **/
+
+    return this.updates(sql, paramz.toArray());
+  }
+
+  /**
+   * 添加记录
+   * <p>注: 调用update(sql, params...)实现</p>
+   * @param table
+   * @param values
+   * @return 插入条数
+   * @throws CruxException
+   */
+  public int insert(String table, Map<String, Object> values)
+    throws CruxException
+  {
+    if (values == null || values.isEmpty())
+    {
+      throw new CruxException(1046, "Insert value can not be empty.");
+    }
+
+    table = quoteField(table);
+
+    /** 组织语句 **/
+
+    List paramz = new ArrayList(values.size());
+    String   fs = "";
+    String   vs = "";
+    Iterator it = values.entrySet().iterator();
+    while (it.hasNext())
+    {
+      Map.Entry entry = (Map.Entry)it.next();
+      String field = (String)entry.getKey();
+      paramz.add((Object)entry.getValue());
+
+      fs += ", " + quoteField(field);
+      vs += ", ?";
+    }
+
+    String sql = "INSERT INTO " + table
+               + " (" + fs.substring(2) + ")"
+               + " VALUES"
+               + " (" + vs.substring(2) + ")";
+
+    /** 执行更新 **/
+
+    return this.updates(sql, paramz.toArray());
+  }
+
+  /**
+   * 删除记录
+   * <p>注: 调用update(sql, params...)实现</p>
+   * @param table
+   * @param where
+   * @param params
+   * @return 删除条数
+   * @throws CruxException
+   */
+  public int delete(String table, String where, Object... params)
+    throws CruxException
+  {
+    if ( where == null ||  where.isEmpty())
+    {
+      throw new CruxException(1048, "Delete where can not be empty.");
+    }
+
+    table = quoteField(table);
+
+    /** 组织语句 **/
+
+    String sql = "DELETE FROM " + table + " WHERE " + where;
+
+    /** 执行更新 **/
+
+    return this.updates(sql, params);
   }
 
   //** 查询语句 **/
@@ -328,10 +526,8 @@ abstract public class Link
   public Loop query(String sql, int start, int limit, Object... params)
     throws CruxException
   {
-    this.open();
-
     // 处理不同数据库的分页
-    Lump l = new Lump(this.connection, sql, start, limit, params);
+    Lump l = new Lump(open(), sql, start, limit, params);
     sql    = l.getSql(   );
     start  = l.getStart( );
     limit  = l.getLimit( );
@@ -339,10 +535,10 @@ abstract public class Link
 
     if (4 == (4 & Core.DEBUG))
     {
-      CoreLogger.debug("DB.query: "+ l.toString());
+      CoreLogger.debug("DB.query: "+l.toString());
     }
 
-    PreparedStatement ps = this.prepareStatement(sql, params);
+    PreparedStatement ps = prepare(sql, params);
             ResultSet rs;
 
     try
@@ -433,206 +629,6 @@ abstract public class Link
         if (row == null) row = new LinkedHashMap( );
         return row;
     }
-  }
-
-  /** 执行语句 **/
-
-  /**
-   * 执行方法
-   * @param sql
-   * @param params
-   * @return 成功或失败
-   * @throws CruxException
-   */
-  public boolean execute(String sql, Object... params)
-    throws CruxException
-  {
-    this.ready();
-
-    if (4 == (4 & Core.DEBUG))
-    {
-      StringBuilder sb = new StringBuilder(sql);
-      List      paramz = new ArrayList(Arrays.asList(params));
-      checkSQLParams(sb, paramz);
-      mergeSQLParams(sb, paramz);
-      CoreLogger.debug("DB.execute: " + sb.toString());
-    }
-
-    PreparedStatement ps = this.prepareStatement(sql, params);
-
-    try
-    {
-      return ps.execute(/****/);
-    }
-    catch (  SQLException  ex )
-    {
-      throw new CruxException(ex, 1044);
-    }
-    finally
-    {
-      this.closeStatement( ps );
-    }
-  }
-
-  /**
-   * 更新方法
-   * @param sql
-   * @param params
-   * @return 更新的条数
-   * @throws CruxException
-   */
-  public int updates(String sql, Object... params)
-    throws CruxException
-  {
-    this.ready();
-
-    if (4 == (4 & Core.DEBUG))
-    {
-      StringBuilder sb = new StringBuilder(sql);
-      List      paramz = new ArrayList(Arrays.asList(params));
-      checkSQLParams(sb, paramz);
-      mergeSQLParams(sb, paramz);
-      CoreLogger.debug("DB.updates: " + sb.toString());
-    }
-
-    PreparedStatement ps = this.prepareStatement(sql, params);
-
-    try
-    {
-      return ps.executeUpdate();
-    }
-    catch (  SQLException  ex )
-    {
-      throw new CruxException(ex, 1045);
-    }
-    finally
-    {
-      this.closeStatement( ps );
-    }
-  }
-
-  /**
-   * 添加记录
-   * <p>注: 调用update(sql, params...)实现</p>
-   * @param table
-   * @param values
-   * @return 插入条数
-   * @throws CruxException
-   */
-  public int insert(String table, Map<String, Object> values)
-    throws CruxException
-  {
-    if (values == null || values.isEmpty())
-    {
-      throw new CruxException(1046, "Insert value can not be empty.");
-    }
-
-    table = quoteField(table);
-
-    /** 组织语句 **/
-
-    List paramz = new ArrayList(values.size());
-    String   fs = "";
-    String   vs = "";
-    Iterator it = values.entrySet().iterator();
-    while (it.hasNext())
-    {
-      Map.Entry entry = (Map.Entry)it.next();
-      String field = (String)entry.getKey();
-      paramz.add((Object)entry.getValue());
-
-      fs += ", " + quoteField(field);
-      vs += ", ?";
-    }
-
-    String sql = "INSERT INTO " + table
-               + " (" + fs.substring(2) + ")"
-               + " VALUES"
-               + " (" + vs.substring(2) + ")";
-
-    /** 执行更新 **/
-
-    return this.updates(sql, paramz.toArray());
-  }
-
-  /**
-   * 更新记录
-   * <p>注: 调用update(sql, params...)实现</p>
-   * @param table
-   * @param values
-   * @param where
-   * @param params
-   * @return 更新条数
-   * @throws CruxException
-   */
-  public int update(String table, Map<String, Object> values, String where, Object... params)
-    throws CruxException
-  {
-    if (values == null || values.isEmpty())
-    {
-      throw new CruxException(1047, "Update value can not be empty.");
-    }
-    if ( where == null ||  where.isEmpty())
-    {
-      throw new CruxException(1048, "Update where can not be empty.");
-    }
-
-    table = quoteField(table);
-
-    /** 组织语言 **/
-
-    List paramz = new ArrayList(values.size());
-    String   vs = "";
-    Iterator it = values.entrySet().iterator();
-    while (it.hasNext())
-    {
-      Map.Entry entry = (Map.Entry)it.next();
-      String field = (String)entry.getKey();
-      paramz.add((Object)entry.getValue());
-
-      vs += ", " + quoteField(field) + " = ?";
-    }
-
-    String sql = "UPDATE " + table
-               + " SET "   + vs.substring(2)
-               + " WHERE " + where;
-
-    if (params.length > 0)
-    {
-      paramz.addAll(Arrays.asList(params));
-    }
-
-    /** 执行更新 **/
-
-    return this.updates(sql, paramz.toArray());
-  }
-
-  /**
-   * 删除记录
-   * <p>注: 调用update(sql, params...)实现</p>
-   * @param table
-   * @param where
-   * @param params
-   * @return 删除条数
-   * @throws CruxException
-   */
-  public int delete(String table, String where, Object... params)
-    throws CruxException
-  {
-    if ( where == null ||  where.isEmpty())
-    {
-      throw new CruxException(1048, "Delete where can not be empty.");
-    }
-
-    table = quoteField(table);
-
-    /** 组织语句 **/
-
-    String sql = "DELETE FROM " + table + " WHERE " + where;
-
-    /** 执行更新 **/
-
-    return this.updates(sql, params);
   }
 
   //** 静态工具 **/
@@ -817,7 +813,7 @@ abstract public class Link
     throws Throwable
   {
     try {
-      this .close();
+      this .close (  );
     } finally {
       super.finalize();
     }

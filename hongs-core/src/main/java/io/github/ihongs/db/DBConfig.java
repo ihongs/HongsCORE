@@ -135,6 +135,8 @@ public class DBConfig
   //** 数据 **/
 
   public String link;
+  
+  public String dock;
 
   public String dbClass;
 
@@ -179,6 +181,7 @@ public class DBConfig
 
     String attr;
     this.link = null;
+    this.dock = null;
     this.dbClass = "";
     this.tableClass = "";
     this.modelClass = "";
@@ -202,11 +205,16 @@ public class DBConfig
 
       if (tagName.equals("config"))
       {
+        attr = getAttribute(element, "dock", null);
+        if (attr != null)
+        {
+          dock = attr;
+        }
         attr = getAttribute(element, "link", null);
         if (attr != null)
         {
-          DBConfig conf = new DBConfig(attr);
-          link  =  attr ;
+          link = attr;
+          DBConfig  conf = new DBConfig(attr);
           dbClass = conf.dbClass;
           tableClass = conf.tableClass;
           modelClass = conf.modelClass;

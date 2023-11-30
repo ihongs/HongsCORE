@@ -24,6 +24,7 @@ import java.lang.reflect.InvocationTargetException;
  * <p>
  * 当需要库对象时, 一般情况可调用其工厂方法getInstance获取;
  * 当需要扩展类时, 请从DB继承并实现一个无参getInstance方法.
+ * 当配置有dock时, 读写分离, 读连接为open, 写连接为dock.
  * </p>
  *
  * <h3>异常代码:</h3>
@@ -71,6 +72,7 @@ public class DB
    * 关联库
    */
   protected DB link = null;
+  protected DB dock = null;
 
   /**
    * 模型类
@@ -110,13 +112,7 @@ public class DB
   private   final  Map source;
   private   final  Map origin;
 
-  public DB(  String name)
-    throws CruxException
-  {
-    this (new DBConfig(name));
-  }
-
-  public DB(DBConfig conf)
+  protected DB(DBConfig conf)
     throws CruxException
   {
     super(conf.name);
@@ -141,19 +137,48 @@ public class DB
     {
         this.link  = /**/ DB.getInstance(conf.link);
     }
+
+    /**
+     * 当有指定 dock 则用此执行 execute 和 updates
+     */
+    if (conf.dock != null && ! "".equals(conf.dock))
+    {
+        this.dock  = /**/ DB.getInstance(conf.dock);
+    }
+  }
+
+  @Override
+  public Connection dock()
+    throws CruxException
+  {
+    if (dock != null)
+    {
+      return dock .dock();
+    }
+    else
+    {
+      return super.dock();
+    }
   }
 
   @Override
   public Connection open()
     throws CruxException
   {
+    if (link != null)
+    {
+      return link .open();
+    }
+
+    /** 自行连接数据源 **/
+
     TOP: do
     {
 
     try
     {
-      if (this.connection != null
-      && !this.connection.isClosed())
+      if (connection != null
+      && !connection.isClosed())
       {
         break;
       }
@@ -161,16 +186,6 @@ public class DB
     catch (SQLException ex)
     {
       throw new CruxException(ex, 1031);
-    }
-
-    /**
-     * 如上 link 描述, 直接使用关联对象连接
-     */
-    if (  this.link  != null)
-    {
-      this.connection = this.link.open();
-      CoreLogger.trace("DB: Connect to '{}' link '{}'", name, this.link.name);
-      break;
     }
 
     Exception ez  = null;
@@ -265,7 +280,7 @@ public class DB
     }
     while (false);
 
-    return this.connection;
+    return connection;
   }
 
   /**

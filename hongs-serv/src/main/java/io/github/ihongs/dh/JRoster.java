@@ -111,11 +111,11 @@ public class JRoster<T> implements IRoster<T>, AutoCloseable {
 
         long now = System.currentTimeMillis() / 1000;
 
-//      table.db.open( );
-        table.db.ready();
+//      table.db.open();
+//      table.db.dock();
 
         try (
-            PreparedStatement ps = table.db.prepareStatement(
+            PreparedStatement ps = table.db.prepare(
                       "UPDATE `" + table.tableName + "` SET data= ?, xtime= ?, mtime= ? WHERE id = ?"
             );
         ) {
@@ -136,7 +136,7 @@ public class JRoster<T> implements IRoster<T>, AutoCloseable {
         }
 
         try (
-            PreparedStatement ps = table.db.prepareStatement(
+            PreparedStatement ps = table.db.prepare(
                  "INSERT INTO `" + table.tableName + "` (data, xtime, mtime, id) VALUES (?, ?, ?, ?)"
             );
         ) {
@@ -167,11 +167,11 @@ public class JRoster<T> implements IRoster<T>, AutoCloseable {
     public void set(String key, long exp) throws CruxException {
         long now = System.currentTimeMillis() / 1000;
 
-//      table.db.open( );
-        table.db.ready();
+//      table.db.open();
+//      table.db.dock();
 
         try (
-            PreparedStatement ps = table.db.prepareStatement(
+            PreparedStatement ps = table.db.prepare(
                       "UPDATE `" + table.tableName + "` SET xtime = ?, mtime = ? WHERE id = ?"
             );
         ) {
@@ -191,11 +191,11 @@ public class JRoster<T> implements IRoster<T>, AutoCloseable {
      */
     @Override
     public void del(String key) throws CruxException {
-//      table.db.open( );
-        table.db.ready();
+//      table.db.open();
+//      table.db.dock();
 
         try (
-            PreparedStatement ps = table.db.prepareStatement(
+            PreparedStatement ps = table.db.prepare(
                  "DELETE FROM `" + table.tableName + "` WHERE id = ?"
             );
         ) {
@@ -213,11 +213,11 @@ public class JRoster<T> implements IRoster<T>, AutoCloseable {
      */
     @Override
     public void del( long  exp) throws CruxException {
-//      table.db.open( );
-        table.db.ready();
+//      table.db.open();
+//      table.db.dock();
 
         try (
-            PreparedStatement ps = table.db.prepareStatement(
+            PreparedStatement ps = table.db.prepare(
                  "DELETE FROM `" + table.tableName + "` WHERE xtime <= ? AND xtime != 0"
             );
         ) {

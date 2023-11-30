@@ -43,6 +43,7 @@
   <xs:element name="config">
     <xs:complexType>
       <xs:attribute name="link" type="xs:string"/>
+      <xs:attribute name="dock" type="xs:string"/>
       <xs:attribute name="dbClass" type="xs:string"/>
       <xs:attribute name="tableClass" type="xs:string"/>
       <xs:attribute name="modelClass" type="xs:string"/>

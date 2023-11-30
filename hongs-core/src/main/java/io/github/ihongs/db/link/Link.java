@@ -107,19 +107,21 @@ abstract public class Link
 
   /**
    * 执行准备
-   * @throws CruxException
    */
   public void ready( )
-    throws CruxException
   {
-    this.open(); // 先连接数据库
+    try {
+        this.open();
+    } catch (CruxException ex) {
+        throw ex.toExemption();
+    }
 
     try {
         if (this.connection.getAutoCommit() == this.REFLUX_MODE) {
             this.connection.setAutoCommit(  !  this.REFLUX_MODE);
         }
     } catch (SQLException ex) {
-        throw new CruxException(ex, 1053);
+        throw new CruxExemption(ex, 1053);
     }
   }
 
@@ -129,6 +131,8 @@ abstract public class Link
   @Override
   public void begin( )
   {
+    this.ready();
+
     try {
         if (connection != null
         && !connection.isClosed()) {
@@ -180,7 +184,8 @@ abstract public class Link
 
   /**
    * 预编译Statement并设置查询选项
-   * <p>可使用cacheStatement开启缓存</p>
+   * 可使用cacheStatement开缓存
+   * 务必先执行 open 或 ready
    * @param sql
    * @param params
    * @return PreparedStatement对象
@@ -225,6 +230,7 @@ abstract public class Link
 
   /**
    * 当需要在prepareStatement时设定参数, 可重载该方法
+   * 务必先执行 open 或 ready
    * 异常代码为: 1041
    * @param sql
    * @return PreparedStatement对象
@@ -249,6 +255,7 @@ abstract public class Link
 
   /**
    * 当需要在createStatement时设定参数, 可重载该方法
+   * 务必先执行 open 或 ready
    * @return Statement对象
    * @throws CruxException
    */

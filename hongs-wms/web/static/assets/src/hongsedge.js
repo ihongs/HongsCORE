@@ -1277,23 +1277,40 @@ function hsPickListMore(box, obj) {
     if (! obj) obj = box.closest(".HsList").data("HsList");
 
     $.hsWarn(
-        "确定跨页全选吗?\r\n当数据量较大时, 可能需要些时间, 期间无法执行其他操作.",
+        "确定跨页全选吗?\r\n当数据量较大时, 可能需要些时间, 期间无法执行其他操作. 不设页码范围将选择所有页.",
         function() {
+            var wb = $(this) .closest(".warnbox" );
+            var bn = parseInt(wb.find("[name=bn]").val() || -1);
+            var qn = parseInt(wb.find("[name=qn]").val() || -1);
+            if (bn > qn) {wb= bn; bn= qn; qn= wb;}
             setTimeout (function() {
                 var bar = $.hsWait("选择中, 请稍等...");
-                hsListPickMore(obj, -1, -1, function(pn, tn) {
+                hsListPickMore(obj, bn, qn, -1, function(pn, tn) {
                     if (pn !== tn) {
                         bar.prog(pn / tn, tn <= 0 ? "已选 "+pn+"页" : "已选 "+pn+"页, 共 "+tn+"页");
                     } else {
                         bar.hide();
-                        box.find(":checkbox.checkone").prop("checked", true);
-                        box.find(":checkbox.checkall").prop("checked", true);
+                        var dat = hsSerialMix({}, obj._url, obj._data);
+                            pn  = parseInt ( dat[ obj.pageKey ] || 1 );
+                        if (bn <= qn && bn <= pn && pn <= qn) {
+                            obj.load();
+                        //  box.find(":checkbox.checkone").prop("checked", true);
+                        //  box.find(":checkbox.checkall").prop("checked", true);
+                        }
                     }
                 });
             } , 0);
         },
         function() {
+            // Cancel
         }
+    ).find(".alert-footer").prepend(
+        '<div class="input-group pull-left" style="width: 300px">'
+      + '<span class="input-group-addon">页码范围, 从</span>'
+      + '<input name="bn" type="number" min="1" class="form-control" />'
+      + '<span class="input-group-addon">到</span>'
+      + '<input name="qn" type="number" min="1" class="form-control" />'
+      + '</div>'
     );
 }
 

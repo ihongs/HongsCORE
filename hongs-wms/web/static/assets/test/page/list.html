@@ -2,14 +2,14 @@
      data-load-url="data/search.json"
      data-send-urls-0="['data/create.json','.delete','您确定要删除此文章?']"
      data-open-urls-0="['page/form.html'        ,'.create','@']"
-     data-open-urls-1="['page/form.html?id={ID}','.modify','@']"
-     data-open-urls-2="['page/info.html?id={ID}','.review','@']">
+     data-open-urls-1="['page/form.html?id={ID}','.update','@']"
+     data-open-urls-2="['page/info.html?id={ID}','.recite','@']">
     <form class="findbox toolbox board row" onsubmit="return false;">
         <div class="col-md-6">
             <div class="btn-group">
                 <button type="button" class="create btn btn-default">创建文章</button>
-                <button type="button" class="modify for-choose btn btn-default">修改</button>
-                <button type="button" class="review for-choose btn btn-default">查看</button>
+                <button type="button" class="update for-choose btn btn-default">修改</button>
+                <button type="button" class="recite for-choose btn btn-default">查看</button>
                 <button type="button" class="delete for-checks btn btn-default" title="删除"><span class="bi bi-hi-remove text-danger"></span></button>
             </div>
         </div>
@@ -33,8 +33,8 @@
                         <div class="dropdown invisible">
                             <a href="javascript:;" data-toggle="dropdown"><span class="bi bi-hi-action"></span></a>
                             <ul class="dropdown-menu">
-                                <li><a href="javascript:;" class="modify">修改</a></li>
-                                <li><a href="javascript:;" class="review">查看</a></li>
+                                <li><a href="javascript:;" class="recite">查看</a></li>
+                                <li><a href="javascript:;" class="update">修改</a></li>
                                 <li><a href="javascript:;" class="delete"><span class="text-danger">删除</span></a></li>
                             </ul>
                         </div>

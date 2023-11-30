@@ -506,13 +506,14 @@ function hsListFillPick(cel, v, n) {
 /**
  * 列表跨页全选
  * @param {HsList} listObj
+ * @param {Number} bn 起始页码, 默认 1
+ * @param {Number} qn 最多页数, -1 不限
  * @param {Number} rn 单页数量, -1 不设
- * @param {Number} pn 最多页数, -1 不限
  * @param {Function} pf 进度回调函数(页码, 总数)
  */
-function hsListPickMore(listObj, rn, pn, pf) {
+function hsListPickMore(listObj, bn, qn, rn, pf) {
     if (rn === undefined) rn = -1;
-    if (pn === undefined) pn = -1;
+    if (qn === undefined) qn = -1;
     if (pf === undefined) pf = function() {};
 
     var vk  = listObj._id_key ||  "id" ;
@@ -525,10 +526,10 @@ function hsListPickMore(listObj, rn, pn, pf) {
     listObj.context.append(div);
     dat = hsSerialMix ({}, dat);
 
-    var sel = function(qn) {
+    var sel = function(pn) {
         if (rn > -1) {
             dat[listObj.rowsKey] = rn;
-        }   dat[listObj.pageKey] = qn;
+        }   dat[listObj.pageKey] = pn;
 
         listObj.ajax({
             "url"      : url,
@@ -552,8 +553,8 @@ function hsListPickMore(listObj, rn, pn, pf) {
                 if (! rst.ok
                 ||  ! rst.list
                 ||  ! rst.list.length) {
-                    qn = qn - 1 ;
-                    pf ( qn,qn );
+                    pn = pn - 1 ;
+                    pf ( pn,pn );
                     div.remove();
                     return ;
                 }
@@ -570,29 +571,29 @@ function hsListPickMore(listObj, rn, pn, pf) {
                 }
 
                 var gn = rst.page && rst.page.total || 0;
-                if (gn > 0 && gn <= qn) {
-                    pf ( qn,qn );
+                if (gn > 0 && gn <= pn) {
+                    pf ( pn,pn );
                     div.remove();
                     return ;
                 }
-                if (pn > 0 && pn <= qn) {
-                    pf ( qn,qn );
+                if (qn > 0 && qn <= pn) {
+                    pf ( pn,pn );
                     div.remove();
                     return ;
                 }
 
-                if (gn > 0 && pn > 0) {
-                    gn = Math.min(gn, pn);
+                if (gn > 0 && qn > 0) {
+                    gn = Math.min(gn, qn);
                 } else {
-                    gn = Math.max(gn, pn);
+                    gn = Math.max(gn, qn);
                 }
 
-                pf (qn, gn);
-                sel(qn + 1);
+                pf (pn, gn);
+                sel(pn + 1);
             }
         });
     };
-    sel(1);
+    sel(bn > 0 ? bn : 1);
 }
 
 (function($) {

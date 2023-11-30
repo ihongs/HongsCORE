@@ -193,10 +193,13 @@ abstract public class Link
      * 检查SQL语句及Params
      * 以发现里面的Set对象
      */
-    List      paramz = new ArrayList(Arrays.asList(params));
-    StringBuilder sb = new StringBuilder(sql);
-    checkSQLParams(sb, paramz);
-    sql = sb.toString();
+    List       paramz;
+    StringBuilder sbl;
+    paramz = Arrays.asList(params);
+    paramz = new ArrayList(paramz);
+    sbl  = new StringBuilder (sql);
+    checkSQLParams ( sbl , paramz);
+    sql  = sbl.toString();
 
     PreparedStatement ps = this.prepareStatement(sql);
 

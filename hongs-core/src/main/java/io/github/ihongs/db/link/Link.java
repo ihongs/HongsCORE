@@ -48,7 +48,7 @@ abstract public class Link
   /**
    * 匹配查询语句
    */
-  private static final Pattern SELECT_PATT = Pattern.compile("^(SELECT|SHOW)\\s+", Pattern.CASE_INSENSITIVE);
+  private static final Pattern SELECT_PATT = Pattern.compile("^(SHOW|SELECT|EXPLAIN|DESCRIBE)\\s", Pattern.CASE_INSENSITIVE);
 
   public Link(String name)
     throws CruxException
@@ -72,8 +72,34 @@ abstract public class Link
   public Connection dock()
     throws CruxException
   {
-    Connection connection = open();
+    return dock(true);
+  }
 
+  /**
+   * 准备执行
+   *
+   * 如果 open 中会用其他连接,
+   * 则此 dock 方法必须被重写,
+   * 跟随检查和使用外部连接.
+   *
+   * @param open true 立即连接, false 可以不连
+   * @return
+   * @throws CruxException
+   */
+  protected Connection dock(boolean open)
+    throws CruxException
+  {
+    if (! open)
+    try {
+        if (connection == null
+        ||  connection.isClosed()) {
+            return connection;
+        }
+    } catch (SQLException ex) {
+        throw new CruxExemption(ex, 1053);
+    }
+
+    this.open();
     try {
         if (connection.getAutoCommit() == this.REFLUX_MODE) {
             connection.setAutoCommit(  !  this.REFLUX_MODE);
@@ -93,7 +119,7 @@ abstract public class Link
   {
     Connection connection;
     try {
-        connection = dock();
+        connection = dock(false);
     } catch (CruxException ex) {
         throw ex.toExemption();
     }
@@ -118,7 +144,7 @@ abstract public class Link
   {
     Connection connection;
     try {
-        connection = dock();
+        connection = dock(false);
     } catch (CruxException ex) {
         throw ex.toExemption();
     }
@@ -144,7 +170,7 @@ abstract public class Link
   {
     Connection connection;
     try {
-        connection = dock();
+        connection = dock(false);
     } catch (CruxException ex) {
         throw ex.toExemption();
     }
@@ -334,10 +360,10 @@ abstract public class Link
       List      paramz = new ArrayList(Arrays.asList(params));
       checkSQLParams(sb, paramz);
       mergeSQLParams(sb, paramz);
-      CoreLogger.debug("DB.execute: " + sb.toString());
+      CoreLogger.debug ("DB.execute: " + sb.toString());
     }
 
-    PreparedStatement ps = prepare(sql, params);
+    PreparedStatement ps = prepare(dock(), sql, params);
 
     try
     {
@@ -369,10 +395,10 @@ abstract public class Link
       List      paramz = new ArrayList(Arrays.asList(params));
       checkSQLParams(sb, paramz);
       mergeSQLParams(sb, paramz);
-      CoreLogger.debug("DB.updates: " + sb.toString());
+      CoreLogger.debug ("DB.updates: " + sb.toString());
     }
 
-    PreparedStatement ps = prepare(sql, params);
+    PreparedStatement ps = prepare(dock(), sql, params);
 
     try
     {
@@ -535,10 +561,10 @@ abstract public class Link
 
     if (4 == (4 & Core.DEBUG))
     {
-      CoreLogger.debug("DB.query: "+l.toString());
+      CoreLogger.debug ( "DB.query: " + l.toString( ) );
     }
 
-    PreparedStatement ps = prepare(sql, params);
+    PreparedStatement ps = prepare(open(), sql, params);
             ResultSet rs;
 
     try

@@ -22,10 +22,14 @@ public class Lump {
 
     public Lump(String pn, String sql, int start, int limit, Object... params) {
         if (pn == null) {
-            throw new NullPointerException("DatabaseProductName required");
+            throw new NullPointerException("Database Product Name required");
         }
 
-        if (limit != 0) {
+        if (params == null) {
+            params =  new  Object [0];
+        }
+
+        if (limit != 0 || start != 0) {
             switch (pn.toUpperCase()) {
                 case "SQLITE"   :
                 case "MYSQL"    :
@@ -92,9 +96,9 @@ public class Lump {
         try {
             StringBuilder sb = new StringBuilder (  sql  );
             List ps = new ArrayList(Arrays.asList(params));
-            Link.checkSQLParams ( sb , ps );
-            Link.mergeSQLParams ( sb , ps );
-            if (limit > 0) {
+            Link.checkSQLParams( sb, ps );
+            Link.mergeSQLParams( sb, ps );
+            if (limit != 0 || start != 0) {
               sb.append(" /* LIMIT ")
                 .append(start)
                 .append( "," )

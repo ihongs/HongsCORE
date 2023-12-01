@@ -71,8 +71,8 @@ public class DB
   /**
    * 关联库
    */
-  protected DB link = null;
-  protected DB dock = null;
+  protected final DB link;
+  protected final DB dock;
 
   /**
    * 模型类
@@ -132,10 +132,14 @@ public class DB
      * 则直接用 link 库进行连接
      */
     if (conf.link != null && ! "".equals(conf.link)
-    && (source == null || source.isEmpty( ))
+    && (source == null || source.isEmpty() )
     && (origin == null || origin.isEmpty()))
     {
         this.link  = /**/ DB.getInstance(conf.link);
+    }
+    else
+    {
+        this.link  = null;
     }
 
     /**
@@ -145,19 +149,24 @@ public class DB
     {
         this.dock  = /**/ DB.getInstance(conf.dock);
     }
+    else
+    {
+        this.dock  = null;
+    }
   }
 
   @Override
-  public Connection dock()
+  protected Connection dock(boolean open)
     throws CruxException
   {
-    if (dock != null)
+    if (dock != null) {
+      return dock .dock(open);
+    } else
+    if (link != null) {
+      return link .dock(open);
+    } else
     {
-      return dock .dock();
-    }
-    else
-    {
-      return super.dock();
+      return super.dock(open);
     }
   }
 

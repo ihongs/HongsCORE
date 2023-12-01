@@ -65,28 +65,28 @@ abstract public class Link
     throws CruxException;
 
   /**
-   * 准备执行
+   * 连接准备
    * @return
    * @throws CruxException
    */
-  public Connection dock()
+  public Connection abut()
     throws CruxException
   {
-    return dock(true);
+    return abut(true);
   }
 
   /**
-   * 准备执行
+   * 连接准备
    *
    * 如果 open 中会用其他连接,
-   * 则此 dock 方法必须被重写,
-   * 跟随检查和使用外部连接.
+   * 则此 abut 方法必须被重写,
+   * 并跟随检查和使用外部连接.
    *
    * @param open true 立即连接, false 可以不连
    * @return
    * @throws CruxException
    */
-  protected Connection dock(boolean open)
+  protected Connection abut(boolean open)
     throws CruxException
   {
     if (! open)
@@ -119,7 +119,7 @@ abstract public class Link
   {
     Connection connection;
     try {
-        connection = dock(false);
+        connection = abut(false);
     } catch (CruxException ex) {
         throw ex.toExemption();
     }
@@ -144,7 +144,7 @@ abstract public class Link
   {
     Connection connection;
     try {
-        connection = dock(false);
+        connection = abut(false);
     } catch (CruxException ex) {
         throw ex.toExemption();
     }
@@ -170,7 +170,7 @@ abstract public class Link
   {
     Connection connection;
     try {
-        connection = dock(false);
+        connection = abut(false);
     } catch (CruxException ex) {
         throw ex.toExemption();
     }
@@ -338,7 +338,7 @@ abstract public class Link
     }
     else
     {
-      return prepare(dock(), sql, params);
+      return prepare(abut(), sql, params);
     }
   }
 
@@ -363,7 +363,7 @@ abstract public class Link
       CoreLogger.debug ("DB.execute: " + sb.toString());
     }
 
-    PreparedStatement ps = prepare(dock(), sql, params);
+    PreparedStatement ps = prepare(abut(), sql, params);
 
     try
     {
@@ -398,7 +398,7 @@ abstract public class Link
       CoreLogger.debug ("DB.updates: " + sb.toString());
     }
 
-    PreparedStatement ps = prepare(dock(), sql, params);
+    PreparedStatement ps = prepare(abut(), sql, params);
 
     try
     {
@@ -552,8 +552,10 @@ abstract public class Link
   public Loop query(String sql, int start, int limit, Object... params)
     throws CruxException
   {
+    Connection co = open();
+      
     // 处理不同数据库的分页
-    Lump l = new Lump(open(), sql, start, limit, params);
+    Lump l = new Lump(co, sql, start, limit, params);
     sql    = l.getSql(   );
     start  = l.getStart( );
     limit  = l.getLimit( );
@@ -561,10 +563,10 @@ abstract public class Link
 
     if (4 == (4 & Core.DEBUG))
     {
-      CoreLogger.debug ( "DB.query: " + l.toString( ) );
+      CoreLogger.debug("DB.query: " + l.toString());
     }
 
-    PreparedStatement ps = prepare(open(), sql, params);
+    PreparedStatement ps = prepare(co, sql, params);
             ResultSet rs;
 
     try

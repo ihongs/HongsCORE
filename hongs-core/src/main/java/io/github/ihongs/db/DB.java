@@ -156,17 +156,17 @@ public class DB
   }
 
   @Override
-  protected Connection dock(boolean open)
+  protected Connection abut(boolean open)
     throws CruxException
   {
     if (dock != null) {
-      return dock .dock(open);
+      return dock .abut(open);
     } else
     if (link != null) {
-      return link .dock(open);
+      return link .abut(open);
     } else
     {
-      return super.dock(open);
+      return super.abut(open);
     }
   }
 
@@ -179,7 +179,7 @@ public class DB
       return link .open();
     }
 
-    /** 自行连接数据源 **/
+    /** 连接数据源 **/
 
     TOP: do
     {

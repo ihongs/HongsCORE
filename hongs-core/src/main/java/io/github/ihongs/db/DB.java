@@ -69,12 +69,6 @@ public class DB
 {
 
   /**
-   * 关联库
-   */
-  protected final DB link;
-  protected final DB dock;
-
-  /**
    * 模型类
    */
   protected String modelClass;
@@ -109,8 +103,10 @@ public class DB
    */
   protected Map<String, Model> modelObjects;
 
-  private   final  Map source;
-  private   final  Map origin;
+  protected final Map source;
+  protected final Map origin;
+  protected final DB  link  ;
+  protected final DB  dock  ;
 
   protected DB(DBConfig conf)
     throws CruxException

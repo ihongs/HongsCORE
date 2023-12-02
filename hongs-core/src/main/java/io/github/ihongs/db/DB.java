@@ -24,7 +24,7 @@ import java.lang.reflect.InvocationTargetException;
  * <p>
  * 当需要库对象时, 一般情况可调用其工厂方法getInstance获取;
  * 当需要扩展类时, 请从DB继承并实现一个无参getInstance方法.
- * 当配置有dock时, 读写分离, 读连接为open, 写连接为dock.
+ * 当配置有dock时, 读写分离, 读连接为open, 写连接为open(true|false).
  * </p>
  *
  * <h3>异常代码:</h3>

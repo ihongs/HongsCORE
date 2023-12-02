@@ -33,7 +33,7 @@ abstract public class Link
   /**
    * 库名
    */
-  public String name;
+  public final String name;
 
   /**
    * 连接对象

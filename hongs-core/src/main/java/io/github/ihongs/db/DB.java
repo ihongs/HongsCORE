@@ -103,10 +103,10 @@ public class DB
    */
   protected Map<String, Model> modelObjects;
 
-  protected final Map source;
-  protected final Map origin;
-  protected final DB  link  ;
-  protected final DB  dock  ;
+  private final Map source;
+  private final Map origin;
+  private final DB  link  ;
+  private final DB  dock  ;
 
   protected DB(DBConfig conf)
     throws CruxException

@@ -155,28 +155,18 @@ public class DB
     }
   }
 
-  @Override
-  protected Connection abut(boolean open)
-    throws CruxException
-  {
-    if (dock != null) {
-      return dock .abut(open);
-    } else
-    if (link != null) {
-      return link .abut(open);
-    } else
-    {
-      return super.abut(open);
-    }
-  }
-
+  /**
+   * 开启读连接
+   * @return
+   * @throws CruxException
+   */
   @Override
   public Connection open()
     throws CruxException
   {
     if (link != null)
     {
-      return link .open();
+      return link.open();
     }
 
     /** 连接数据源 **/
@@ -290,6 +280,27 @@ public class DB
     while (false);
 
     return connection;
+  }
+
+  /**
+   * 开启写连接
+   * @param  open false 可以不连 true 立即连接
+   * @return open false 时可能为 null
+   * @throws CruxException
+   */
+  @Override
+  public Connection open(boolean open)
+    throws CruxException
+  {
+    if (dock != null) {
+      return dock .open(open);
+    } else
+    if (link != null) {
+      return link .open(open);
+    } else
+    {
+      return super.open(open);
+    }
   }
 
   /**

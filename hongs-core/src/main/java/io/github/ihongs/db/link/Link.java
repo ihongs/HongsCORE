@@ -58,6 +58,10 @@ abstract public class Link
 
   /**
    * 开启连接
+   *
+   * 当读写分离时,
+   * 将返回读连接.
+   *
    * @return
    * @throws CruxException
    */
@@ -65,28 +69,16 @@ abstract public class Link
     throws CruxException;
 
   /**
-   * 连接准备
-   * @return
+   * 准备连接
+   *
+   * 当读写分离时,
+   * 将返回写连接.
+   *
+   * @param  open false 可以不连 true 立即连接
+   * @return open false 时可能为 null
    * @throws CruxException
    */
-  public Connection abut()
-    throws CruxException
-  {
-    return abut(true);
-  }
-
-  /**
-   * 连接准备
-   *
-   * 如果 open 中会用其他连接,
-   * 则此 abut 方法必须被重写,
-   * 并跟随检查和使用外部连接.
-   *
-   * @param open true 立即连接, false 可以不连
-   * @return
-   * @throws CruxException
-   */
-  protected Connection abut(boolean open)
+  public Connection open(boolean open)
     throws CruxException
   {
     if (! open)
@@ -119,7 +111,7 @@ abstract public class Link
   {
     Connection connection;
     try {
-        connection = abut(false);
+        connection = open(false);
     } catch (CruxException ex) {
         throw ex.toExemption();
     }
@@ -144,7 +136,7 @@ abstract public class Link
   {
     Connection connection;
     try {
-        connection = abut(false);
+        connection = open(false);
     } catch (CruxException ex) {
         throw ex.toExemption();
     }
@@ -170,7 +162,7 @@ abstract public class Link
   {
     Connection connection;
     try {
-        connection = abut(false);
+        connection = open(false);
     } catch (CruxException ex) {
         throw ex.toExemption();
     }
@@ -278,7 +270,16 @@ abstract public class Link
     }
   }
 
-  protected PreparedStatement prepare(Connection dc, String sql, Object... params)
+  /**
+   * 预处理语句
+   * 异常代码为: 1041, 1042
+   * @param dc
+   * @param sql
+   * @param params
+   * @return PreparedStatement对象
+   * @throws CruxException
+   */
+  public PreparedStatement prepare(Connection dc, String sql, Object... params)
     throws CruxException
   {
     /**
@@ -334,11 +335,11 @@ abstract public class Link
     // 分辨是查询语句还是执行语句
     if ( SELECT_PATT.matcher(sql).find())
     {
-      return prepare(open(), sql, params);
+      return prepare(open(/**/), sql, params);
     }
     else
     {
-      return prepare(abut(), sql, params);
+      return prepare(open(true), sql, params);
     }
   }
 
@@ -357,13 +358,13 @@ abstract public class Link
     if (4 == (4 & Core.DEBUG))
     {
       StringBuilder sb = new StringBuilder(sql);
-      List      paramz = new ArrayList(Arrays.asList(params));
+      List paramz = new ArrayList(Arrays.asList(params));
       checkSQLParams(sb, paramz);
       mergeSQLParams(sb, paramz);
-      CoreLogger.debug ("DB.execute: " + sb.toString());
+      CoreLogger.debug( "DB.execute: " + sb.toString() );
     }
 
-    PreparedStatement ps = prepare(abut(), sql, params);
+    PreparedStatement ps = prepare(open(true), sql, params);
 
     try
     {
@@ -392,13 +393,13 @@ abstract public class Link
     if (4 == (4 & Core.DEBUG))
     {
       StringBuilder sb = new StringBuilder(sql);
-      List      paramz = new ArrayList(Arrays.asList(params));
+      List paramz = new ArrayList(Arrays.asList(params));
       checkSQLParams(sb, paramz);
       mergeSQLParams(sb, paramz);
-      CoreLogger.debug ("DB.updates: " + sb.toString());
+      CoreLogger.debug( "DB.updates: " + sb.toString() );
     }
 
-    PreparedStatement ps = prepare(abut(), sql, params);
+    PreparedStatement ps = prepare(open(true), sql, params);
 
     try
     {
@@ -553,7 +554,7 @@ abstract public class Link
     throws CruxException
   {
     Connection co = open();
-      
+
     // 处理不同数据库的分页
     Lump l = new Lump(co, sql, start, limit, params);
     sql    = l.getSql(   );

@@ -105,14 +105,14 @@ public class CombatRunner implements Runnable
    */
   public static void main(String[] args)
   {
-//  int c = 0;
+    int c = 0;
     try
     {
       exec(init(args) );
     }
     catch (Throwable e)
     {
-/*    if (e instanceof CruxCause)
+      if (e instanceof CruxCause)
       {
         switch (((CruxCause) e).getErrno())
         {
@@ -126,14 +126,13 @@ public class CombatRunner implements Runnable
       {
         c = 5;
       }
-*/
       CoreLogger.error(e);
     }
     finally
     {
       Core.getInstance( ).close( );
       Core.getInterior( ).close( );
-//    System.exit(c);
+      System.exit(c);
     }
   }
 

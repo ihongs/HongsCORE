@@ -632,15 +632,17 @@ public class Table
       }
 
       /**
-       * Double型如果直接用toString
-       * 则可能为科学计数法
-       * 会使校验的正则失效
+       * Number.toString
+       * 可能为科学计数法,
+       * 会使校验正则失效,
+       * 需要规避此种情况.
        */
-      String valueStr;
-      if (value instanceof Number ) {
-        valueStr = Synt .asString((Number) value);
+      String valueStr = Synt.asString (value);
+      if (valueStr != null) {
+          valueStr  = valueStr.trim();
       } else {
-        valueStr = value.toString().trim();
+          mainValues.put(namc, value);
+          continue;
       }
 
       int type = (Integer)column.get("type" );

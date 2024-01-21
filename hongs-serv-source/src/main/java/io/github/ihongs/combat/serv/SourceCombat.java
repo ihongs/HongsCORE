@@ -197,10 +197,12 @@ public class SourceCombat {
 
                 try {
                     db.execute(ln);
+                    ok ++;
                     //CombatHelper.progres(rp, String.format("Ok(%d) Er(%d) ET: %s", ok ++, er, Inst.phrase( et )));
                 }
                 catch (CruxException ex) {
                     lg.error(String.format("Error at line(%d) in file(%s): %s", rn, fo.getName(), ex.getMessage()));
+                    er ++;
                     //CombatHelper.progres(rp, String.format("Ok(%d) Er(%d) ET: %s", ok, er ++, Inst.phrase( et )));
                 }
             }
@@ -217,10 +219,12 @@ public class SourceCombat {
 
                 try {
                     db.execute(ln);
+                    ok ++;
                     //CombatHelper.progres(rp, String.format("Ok(%d) Er(%d) ET: %s", ok ++, er, Inst.phrase( et )));
                 }
                 catch (CruxException ex) {
                     lg.error(String.format("Error at line(%d) in file(%s): %s", rn, fo.getName(), ex.getMessage()));
+                    er ++;
                     //CombatHelper.progres(rp, String.format("Ok(%d) Er(%d) ET: %s", ok, er ++, Inst.phrase( et )));
                 }
             }

@@ -145,7 +145,7 @@ public class Thumb extends IsFile {
         }
 
             if (! mat ) {
-                throw new Wrong("fore.size.invalid", suf);
+                throw new Wrong("@fore.size.invalid", suf);
             }
 
             // 尺寸匹配, 无需改变

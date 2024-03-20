@@ -49,6 +49,44 @@ public class DataTable extends PrivTable {
             });
     }
 
+    /**
+     * 加密, 仅用于 data 字段
+     * @param dv
+     * @return
+     */
+    public String encrypt(String dv) {
+        // 加密
+        Crypto.Crypt enx = getCrypto().encrypt();
+        if (enx.valid()
+        &&  dv != null
+        && !dv.isEmpty()
+        && (dv.startsWith("{")
+        ||  dv.startsWith("["))) {
+            dv  = enx.apply(dv);
+        }
+
+        return dv;
+    }
+
+    /**
+     * 解密, 仅用于 data 字段
+     * @param dv
+     * @return
+     */
+    public String decrypt(String dv) {
+        // 解密
+        Crypto.Crypt dex = getCrypto().decrypt();
+        if (dex.valid()
+        &&  dv != null
+        && !dv.isEmpty()
+        && !dv.startsWith("{")
+        && !dv.startsWith("[")) {
+            dv  = dex.apply(dv);
+        }
+
+        return dv;
+    }
+
     @Override
     public Consumer<Map> encrypt() {
         if (enc == null) {
@@ -60,7 +98,8 @@ public class DataTable extends PrivTable {
                         String fv = Synt.asString(values.get(DATA_FIELD));
                         if (fv != null
                         && !fv.isEmpty()
-                        &&  fv.startsWith("{")) {
+                        && (fv.startsWith("{")
+                        ||  fv.startsWith("}"))) {
                             fv  = enx.apply(fv);
                             values.put(DATA_FIELD, fv);
                         }

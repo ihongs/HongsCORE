@@ -9,6 +9,7 @@ import io.github.ihongs.action.CommitRunner;
 import io.github.ihongs.combat.CombatHelper;
 import io.github.ihongs.combat.anno.Combat;
 import io.github.ihongs.db.DB;
+import io.github.ihongs.db.PrivTable;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.db.link.Loop;
 import io.github.ihongs.util.Dist;
@@ -21,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
@@ -157,17 +159,15 @@ public class DataCombat {
             if (Synt.declare(od.get("etime"), 0L) != 0L) {
             if (Synt.declare(od.get("state"), 1 ) >= 1 ) {
                 sd.put("rtime" , od.get("ctime"));
-                od = Synt.toMap( od.get("data" ));
-                od.putAll(sd);
-                da.rev(id,od,tc);
+                sd.put( "data" , od.get( "data"));
+                da.rev(id,sd,tc);
             }  else {
                 da.del(id,sd,tc);
             }} else {
             if (Synt.declare(od.get("state"), 1 ) >= 1 ) {
                 sd.put("rtime" , od.get("ctime"));
-                od = Synt.toMap( od.get("data" ));
-                od.putAll(sd);
-                da.rev(id,od);
+                sd.put( "data" , od.get( "data"));
+                da.rev(id,sd);
             }  else {
                 da.del(id,sd);
             }}
@@ -607,11 +607,21 @@ public class DataCombat {
         private final Data    that    ;
         private final boolean includes;
         private final boolean cascades;
+        private final Consumer<Map> dc;
 
-        public Casc (Data data, boolean includes, boolean cascades) {
+        public Casc (Data data, boolean includes, boolean cascades)
+        throws CruxException {
             this.that  =  data;
             this.includes = includes;
             this.cascades = cascades;
+
+            // 解密, 用于下方数据恢复
+            Table tb = data.getTable();
+            if (tb != null && tb instanceof PrivTable) {
+                dc  = ((PrivTable) tb).decrypt();
+            } else {
+                dc  = ( Map m ) -> { };
+            }
         }
 
         public void del(String id, Map sd, long ctime) throws CruxException {
@@ -622,15 +632,19 @@ public class DataCombat {
             that.delDoc( id );
         }
 
-        public void rev(String id, Map od, long ctime) throws CruxException {
+        public void rev(String id, Map sd, long ctime) throws CruxException {
             String   uid   = that.getUserId();
             String   fid   = that.getFormId();
             Object[] param = new String[] {id, fid, "0"};
             String   where = "`id`=? AND `form_id`=? AND `etime`=?";
-            long     rtime = Synt.declare (od. get( "rtime" ) , 0L);
+            long     rtime = Synt.declare (sd. get( "rtime" ), 0L );
 
-            if ( includes ) that.padInf(od, od);
-            that.setDoc(id, that.padDoc(od  ) );
+            // 解密并解析
+            dc.accept(sd);
+            Map od = that.getData((String) sd. get( "data" ));
+
+            if ( includes ) that.padInf(od,od);
+            that.setDoc(id, that.padDoc(od ) );
 
             Map ud = new HashMap();
             ud.put("etime", ctime);
@@ -650,19 +664,23 @@ public class DataCombat {
 
             // 操作备注和终端代码
             if (od.containsKey("memo")) {
-                nd.put("memo", that.getText(od, "memo"));
+                nd.put("memo", that.getText(sd, "memo"));
             }
             if (od.containsKey("meno")) {
-                nd.put("meno", that.getText(od, "meno"));
+                nd.put("meno", that.getText(sd, "meno"));
             }
 
             that.getTable().update(ud, where, param);
             that.getTable().insert(nd);
         }
 
-        public void rev(String id, Map od) throws CruxException {
-            if ( includes ) that.padInf(od, od);
-            that.setDoc(id, that.padDoc(od  ) );
+        public void rev(String id, Map sd) throws CruxException {
+            // 解密并解析
+            dc.accept(sd);
+            Map od = that.getData((String) sd. get( "data" ));
+
+            if ( includes ) that.padInf(od,od);
+            that.setDoc(id, that.padDoc(od ) );
         }
 
         public void commit( ) {

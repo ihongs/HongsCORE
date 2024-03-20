@@ -974,7 +974,7 @@ jQuery.fn.hsList = function(opts) {
     function(evt) {
         // 工具按钮有三类, 打开|打开选中|发送选中
         // 打开选中只能选一行, 发送选中可以选多行
-        // 复选框太小不便操作, 当点击表格列时单选
+        // 复选框太小不便操作, 当单击表格列时复选
         if ($(evt.target).is("a,input,textarea,button,select,option")
         ||  $(this).is(".dont-check,._admin,._amenu")) {
             return;
@@ -984,15 +984,31 @@ jQuery.fn.hsList = function(opts) {
         if (ck . is(":disabled")) {
             return;
         }
-        ck.prop( "checked" , ! ck.prop("checked") )
+        ck.prop( "checked" , !ck.prop("checked") )
           .change();
-        if ( this !== ck.closest("td")[0] ) {
+    })
+    .on("dblclick" , ".listbox tbody td",
+    function(evt) {
+        // 工具按钮有三类, 打开|打开选中|发送选中
+        // 打开选中只能选一行, 发送选中可以选多行
+        // 复选框太小不便操作, 当双击表格列时单选
+        if ($(evt.target).is("a,input,textarea,button,select,option")
+        ||  $(this).is(".dont-check,._admin,._amenu")) {
+            return;
+        }
+        var tr = $(this).closest("tr");
+        var ck = tr.find (".checkone");
+        if (ck . is(":disabled")) {
+            return;
+        }
+        ck.prop( "checked" , !ck.prop("checked") )
+          .change();
+        if (ck.closest("td")[0] !== this)
         tr.closest ("tbody")
           .find(".checkone:checked")
           .not (":disabled").not(ck)
           .prop( "checked" , false )
           .change();
-        }
     })
     .on("change", ".HsList .checkone",
     function() {

@@ -33,6 +33,7 @@
             String  type = Synt.asString(info.get("__type__"));
             String  text = Synt.asString(info.get("__text__"));
             String  hint = Synt.asString(info.get("__hint__"));
+            boolean rptd = Synt.declare(info.get("__repeated__"), false);
 
             // 显示 ID
             if (name.equals(Cnst.ID_KEY)) {
@@ -95,18 +96,27 @@
                             kind += "\" data-format=\"" + frmt;
                         }
                     } else
-                    if (  "select".equals(type)
+                    if (    "enum".equals(type)
+                    ||      "type".equals(type)
                     ||     "check".equals(type)
                     ||     "radio".equals(type)
-                    ||      "type".equals(type)
-                    ||      "enum".equals(type)) {
+                    ||    "select".equals(type)) {
                         // 选项类字段在查看页仅需读取其文本即可
                         name += "_text";
-                    }
-
-                    if (Synt.declare(info.get("__repeated__"), false)) {
+                        if (rptd) {
+                            name += ".";
+                        }
+                    } else
+                    if (    "fork".equals(type)
+                    ||      "pick".equals(type)
+                    ||      "file".equals(type)
+                    ||     "image".equals(type)
+                    ||     "video".equals(type)
+                    ||     "audio".equals(type)) {
                         // 为与表单一致而对多值字段的名称后加点
-                        name += ".";
+                        if (rptd) {
+                            name += ".";
+                        }
                     }
                 %>
                 <%if ("textarea".equals(type) || "textview".equals(type)) {%>

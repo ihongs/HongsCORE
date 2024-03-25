@@ -15,6 +15,9 @@ import io.github.ihongs.db.link.Loop;
 import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Synt;
 import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.HashMap;
@@ -74,7 +77,9 @@ public class DataCombat {
 
         Table  tb = dr.getTable();
         String tn = tb.tableName ;
-        Loop   lp   ; // 查询迭代
+        PreparedStatement ps;
+        ResultSet rs;
+        Loop      lp;
         int  c  = 0 ; // 操作总数
         int  i  = 0 ; // 变更计数
         int  j  = 0 ; // 事务计数
@@ -86,12 +91,12 @@ public class DataCombat {
             if (! ds.isEmpty() ) {
                 c  = ds.size();
                 qa = qa + " AND a.id IN (?)";
-                lp = tb.db.query(qa, 0, 0, form,  0, ds);
+                ps = tb.db.prepare (qa, form, ct, ds);
             } else {
-                lp = tb.db.query(qa, 0, 0, form,  0    );
                 c  = Synt .declare (
-                     tb.db.fetchOne(   qc, form,  0    )
+                     tb.db.fetchOne(qc, form, ct    )
                           .get("_cnt_"), 0 );
+                ps = tb.db.prepare (qa, form, ct    );
             }
         } else {
             String fx = "`x`.*"  ;
@@ -106,15 +111,25 @@ public class DataCombat {
                 qx = qx + " AND x.id IN (?)";
                 qa = qa + " GROUP BY `a`.id";
                 qx = "SELECT "+fx+" FROM `"+tn+"` AS `x`, ("+qa+") AS `b` "+qx;
-                lp = tb.db.query(qx, 0, 0, form, ct, ds, form, ct, ds);
+                ps = tb.db.prepare (qx, form, ct, ds, form, ct, ds);
             } else {
+                c  = Synt .declare (
+                     tb.db.fetchOne(qc, form, ct    )
+                          .get("_cnt_"), 0 );
                 qa = qa + " GROUP BY `a`.id";
                 qx = "SELECT "+fx+" FROM `"+tn+"` AS `x`, ("+qa+") AS `b` "+qx;
-                lp = tb.db.query(qx, 0, 0, form, ct    , form, ct    );
-                c  = Synt .declare (
-                     tb.db.fetchOne(   qc, form, ct    )
-                          .get("_cnt_"), 0 );
+                ps = tb.db.prepare (qx, form, ct    , form, ct    );
             }
+        }
+
+        // 规避 OOM, 连接参数需加 useCursorFetch=true
+        try {
+            tb.db.open().setAutoCommit(false);
+            ps.setFetchSize(10000);
+            rs = ps.executeQuery();
+            lp = new Loop(rs , ps);
+        } catch ( SQLException e ) {
+            throw new CruxException(e);
         }
 
         /**

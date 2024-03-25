@@ -13,7 +13,7 @@ xsi:schemaLocation="http://ihongs.github.io/hongs-core db.xsd">
   <source jdbc="org.sqlite.JDBC"
           name="jdbc:sqlite:default.db">
       <param name="connectionProperties">
-          autoReconnect=true;useUnicode=true;characterEncoding=utf8;zeroDateTimeBehavior=convertToNull
+          autoReconnect=true;useUnicode=true;useCursorFetch=true;characterEncoding=utf8;zeroDateTimeBehavior=convertToNull
       </param>
   </source>
   <!--

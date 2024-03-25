@@ -164,19 +164,23 @@
                 <button type="button" class="btn btn-sm btn-default form-control" data-toggle="hsFork" data-target="@" data-href="<%=al%>"><%=_locale.translate("fore.fork.select", text)%></button>
             <%} else if ("enum".equals(type) || "type".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
                 <select class="form-control" name="<%=name%>.<%=Cnst.ON_REL%>" data-ft="_enum"></select>
+            <%} else if (!_sd.contains(name)) {%>
+                <input class="form-control" type="text" name="<%=name%>.<%=Cnst.ON_REL%>" placeholder="精确匹配" />
+            <%} else if ("search".equals(type) || "textarea".equals(type) || "textview".equals(type)) {%>
+                <input class="form-control" type="text" name="<%=name%>.<%=Cnst.CQ_REL%>" placeholder="模糊匹配" />
             <%} else {%>
-                <%
-                    // 搜索类型优先模糊匹配
-                    if (_sd.contains(name)
-                    && (_wd.contains(name)
-                    ||  "textarea".equals(type)
-                    ||  "textview".equals(type))) {
-                        name += "."+ Cnst.CQ_REL + "\" placeholder=\"模糊搜索";
-                    } else {
-                        name += "."+ Cnst.ON_REL + "\" placeholder=\"精确查询";
-                    }
-                %>
-                <input type="text" class="form-control" name="<%=name%>" />
+                <div class="input-group input-group-sm">
+                    <input class="form-control" type="text" name="<%=name%>.<%=Cnst.CQ_REL%>" placeholder="模糊匹配" />
+                    <div class="input-group-btn">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a href="javascript:;" onclick="var inp = $(this).closest('div').siblings('input'); inp.attr('name', '<%=name%>.<%=Cnst.CQ_REL%>'); inp.attr('placeholder', '模糊匹配')">模糊匹配</a></li>
+                            <li><a href="javascript:;" onclick="var inp = $(this).closest('div').siblings('input'); inp.attr('name', '<%=name%>.<%=Cnst.ON_REL%>'); inp.attr('placeholder', '精确匹配')">精确匹配</a></li>
+                        </ul>
+                    </div>
+                </div>
             <%} /*End If */%>
             </div>
         </div>

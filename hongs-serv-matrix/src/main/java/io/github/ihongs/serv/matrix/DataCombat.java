@@ -83,22 +83,7 @@ public class DataCombat {
         int  c  = 0 ; // 操作总数
         int  i  = 0 ; // 变更计数
         int  j  = 0 ; // 事务计数
-        if (ct == 0) {
-            String fa = "`a`.*"  ;
-            String fc = "COUNT(*) AS _cnt_" ;
-            String qa = "SELECT "+fa+" FROM `"+tn+"` AS `a` WHERE `a`.`form_id` = ? AND `a`.`etime`  = ?";
-            String qc = "SELECT "+fc+" FROM `"+tn+"` AS `a` WHERE `a`.`form_id` = ? AND `a`.`etime`  = ?";
-            if (! ds.isEmpty() ) {
-                c  = ds.size();
-                qa = qa + " AND a.id IN (?)";
-                ps = tb.db.prepare (qa, form, ct, ds);
-            } else {
-                c  = Synt .declare (
-                     tb.db.fetchOne(qc, form, ct    )
-                          .get("_cnt_"), 0 );
-                ps = tb.db.prepare (qa, form, ct    );
-            }
-        } else {
+        if (ct != 0) {
             String fx = "`x`.*"  ;
             String fa = "`a`.id, MAX(a.ctime) AS ctime" ;
             String fc = "COUNT(DISTINCT a.id) AS _cnt_" ;
@@ -119,6 +104,21 @@ public class DataCombat {
                 qa = qa + " GROUP BY `a`.id";
                 qx = "SELECT "+fx+" FROM `"+tn+"` AS `x`, ("+qa+") AS `b` "+qx;
                 ps = tb.db.prepare (qx, form, ct    , form, ct    );
+            }
+        } else {
+            String fa = "`a`.*"  ;
+            String fc = "COUNT(*) AS _cnt_" ;
+            String qa = "SELECT "+fa+" FROM `"+tn+"` AS `a` WHERE `a`.`form_id` = ? AND `a`.`etime`  = ?";
+            String qc = "SELECT "+fc+" FROM `"+tn+"` AS `a` WHERE `a`.`form_id` = ? AND `a`.`etime`  = ?";
+            if (! ds.isEmpty() ) {
+                c  = ds.size();
+                qa = qa + " AND a.id IN (?)";
+                ps = tb.db.prepare (qa, form, ct, ds);
+            } else {
+                c  = Synt .declare (
+                     tb.db.fetchOne(qc, form, ct    )
+                          .get("_cnt_"), 0 );
+                ps = tb.db.prepare (qa, form, ct    );
             }
         }
 
@@ -162,13 +162,14 @@ public class DataCombat {
              Synt.declare (opts.get("cascades") , false)
         );
 
-        boolean pr = ( Core . DEBUG  ==  0 );
-        long tm = System.currentTimeMillis();
-        long tc = tm / 1000 ;
-        if (pr) CombatHelper.progres( i, c );
+        boolean pr = Core.DEBUG == 0 || Core.ENVIR == 0;
+        long tc = System.currentTimeMillis(/**/) / 1000;
 
         dr.begin ( );
-
+        if ( pr) {
+            CombatHelper.progres(i, c);
+        }
+        if ( ct  !=  0  ) {
         for(Map od : lp ) {
             String id = ( String ) od.get( Cnst.ID_KEY ) ;
             if (Synt.declare(od.get("etime"), 0L) != 0L) {
@@ -197,27 +198,45 @@ public class DataCombat {
                     CombatHelper.progres(i, c);
                 }
             }
-        }
-
+        }} else {
+        for(Map od : lp ) {
+            String id = ( String ) od.get( Cnst.ID_KEY ) ;
+            if (Synt.declare(od.get("state"), 1 ) >= 1 ) {
+                sd.put("rtime" , od.get("ctime"));
+                sd.put( "data" , od.get( "data"));
+                da.rev(id,sd);
+            }  else {
+                da.del(id,sd);
+            }
+                ds.remove(id);
+                i ++;
+                j ++;
+            if (j == bn) {
+                j  =  0;
+                da.commit(  );
+                dr.begin (  );
+                if ( pr) {
+                    CombatHelper.progres(i, c);
+                }
+            }
+        }}
         da.commit( );
-        dr.begin ( );
         if ( pr) {
             CombatHelper.progres(i, c);
+            CombatHelper.progres(    );
         }
+        CombatHelper.println("Revert "+i+" item(s) for "+form+" to "+dr.getDbName());
 
         /**
          * 删掉多余数据
          */
+        dr.begin ( );
         for(String id:ds) {
             dr.delDoc(id);
         }
-
         da.commit( );
-        if ( pr) {
-            CombatHelper.progres( );
-        }
-
-        CombatHelper.println("Revert "+i+" item(s) for "+form+" to "+dr.getDbName());
+        i=ds.size( );
+        CombatHelper.println("Remove "+i+" item(s) for "+form+" to "+dr.getDbName());
     }
 
     @Combat("import")

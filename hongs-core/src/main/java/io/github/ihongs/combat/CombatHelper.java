@@ -458,28 +458,29 @@ public class CombatHelper
     StringBuilder sb = new StringBuilder();
     Formatter     ft = new Formatter( sb );
 
-    if (text == null) text = "";
-    if (rate  <  0  ) rate = 0 ;
-    if (rate  >  1  ) rate = 1 ;
-
-    rate = rate * 100; // 百分比
-
-    sb.append("[");
-    for(int i = 0 ; i < 100; i += 5)
+    rate = rate * 100f;
+    int rt = Math.round(Math.max(Math.min(rate, 100f), 0f) / 5f);
+    sb.append('[');
+    for(int i = 00; i < rt; i ++)
     {
-      if (rate < i + 5)
-      {
-        sb.append(' ');
-      }
-      else
-      {
-        sb.append('=');
-      }
+      sb.append('=');
     }
-    sb.append("]");
+    for(int i = rt; i < 20; i ++)
+    {
+      sb.append(' ');
+    }
+    sb.append(']');
+    sb.append(' ');
 
-    ft.format(" %6.2f%% ", rate);
-    sb.append(/* extra */  text);
+    if (rate >= 0)
+    {
+      ft.format("%6.2f%% ", rate);
+    }
+
+    if (null != text)
+    {
+      sb.append(text);
+    }
 
     // 清除末尾多余字符
     // 并将光标移回行首
@@ -489,9 +490,8 @@ public class CombatHelper
     if (l > k ) sb.setLength (k);
     for(int i = l ; i < k; i ++)
     {
-      sb.append(" ");
-    }
-    sb.append( "\r");
+      sb.append(' ' );
+    } sb.append('\r');
 
     ERR.get().print(sb);
   }
@@ -506,10 +506,13 @@ public class CombatHelper
     if (tote > 0)
     {
       CombatHelper.progres( (float) done / tote, done+"/"+tote );
-    }
-    else
+    } else
+    if (done > 0)
     {
-      CombatHelper.progres( (float) 0 , "..." );
+      CombatHelper.progres( -1f, ""+done );
+    } else
+    {
+      CombatHelper.progres( -1f,  "..."  );
     }
   }
 

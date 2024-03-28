@@ -51,7 +51,7 @@ public class DataCombat {
             "memo:s",
             "time:i",
             "bufs:i",
-            "drop:b",
+            "truncate:b",
             "includes:b",
             "cascades:b",
             "!A",
@@ -121,6 +121,7 @@ public class DataCombat {
                 ps = tb.db.prepare (qa, form, ct    );
             }
         }
+        CombatHelper.println("Search "+c+" item(s) for "+form);
 
         // 规避 OOM, 连接参数需加 useCursorFetch=true
         try {
@@ -162,7 +163,7 @@ public class DataCombat {
              Synt.declare (opts.get("cascades") , false)
         );
 
-        boolean pr = Core.DEBUG == 0 || Core.ENVIR == 0;
+        boolean pr = Core.DEBUG == 0 && Core.ENVIR == 0;
         long tc = System.currentTimeMillis(/**/) / 1000;
 
         dr.begin ( );
@@ -230,13 +231,16 @@ public class DataCombat {
         /**
          * 删掉多余数据
          */
+        if (ds.isEmpty()) {
+            return;
+        }
         dr.begin ( );
         for(String id:ds) {
             dr.delDoc(id);
         }
         da.commit( );
         i=ds.size( );
-        CombatHelper.println("Remove "+i+" item(s) for "+form+" to "+dr.getDbName());
+        CombatHelper.println("Remove "+i+" item(s) for "+form+" in "+dr.getDbName());
     }
 
     @Combat("import")

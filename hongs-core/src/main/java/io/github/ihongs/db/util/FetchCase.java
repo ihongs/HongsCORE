@@ -77,7 +77,8 @@ public class FetchCase
   protected StringBuilder       groups;
   protected StringBuilder       havins;
   protected StringBuilder       orders;
-  protected int[]               limits;
+  protected int                 start ;
+  protected int                 limit ;
 
   protected List<Object>        wparams;
   protected List<Object>        vparams;
@@ -173,7 +174,8 @@ public class FetchCase
     this.groups     = new StringBuilder();
     this.havins     = new StringBuilder();
     this.orders     = new StringBuilder();
-    this.limits     = new int [ 0 ];
+    this.start      = 0;
+    this.limit      = 0;
     this.wparams    = new ArrayList();
     this.vparams    = new ArrayList();
     this.options    = new HashMap();
@@ -217,7 +219,8 @@ public class FetchCase
     this.groups     = new StringBuilder(caze.groups);
     this.havins     = new StringBuilder(caze.havins);
     this.orders     = new StringBuilder(caze.orders);
-    this.limits     = caze.limits.clone();
+    this.start      = caze.start;
+    this.limit      = caze.limit;
     this.wparams    = new ArrayList(caze.wparams);
     this.vparams    = new ArrayList(caze.vparams);
     this.options    = opts;
@@ -341,7 +344,8 @@ public class FetchCase
    */
   public FetchCase limit(int start, int limit)
   {
-    this.limits = limit == 0 ? new int[0] : new int[] {start, limit};
+    this.start = start;
+    this.limit = limit;
     return this;
   }
 
@@ -352,7 +356,8 @@ public class FetchCase
    */
   public FetchCase limit(int limit)
   {
-    this.limits = limit == 0 ? new int[0] : new int[] {  0  , limit};
+    this.limit = limit;
+    this.start = 0;
     return this;
   }
 
@@ -1046,12 +1051,14 @@ public class FetchCase
       return Pattern.compile(p).matcher(s).replaceAll("$1");
   }
 
-  public int getStart() {
-    return this.limits.length > 0 ? this.limits[0] : 0;
+  public int getStart()
+  {
+    return this.start;
   }
 
-  public int getLimit() {
-    return this.limits.length > 1 ? this.limits[1] : 0;
+  public int getLimit()
+  {
+    return this.limit;
   }
 
   /**
@@ -1317,7 +1324,26 @@ public class FetchCase
   {
     try
     {
-      return new Lump(_db_, getSQL(), getStart(), getLimit(), getParams()).toString();
+      if ( _db_ != null )
+      {
+        return new Lump(_db_, getSQL(), getStart(), getLimit(), getParams()).toString();
+      }
+      else
+      {
+        StringBuilder sb = getSQLStrs();
+        List ps = getParamsList();
+        Link.checkSQLParams (sb , ps);
+        Link.mergeSQLParams (sb , ps);
+        if (start != 0 || limit != 0)
+        {
+          sb.append(" /* LIMIT ")
+            .append(start)
+            .append( "," )
+            .append(limit)
+            .append(" */");
+        }
+        return sb.toString();
+      }
     }
     catch (CruxException ex)
     {

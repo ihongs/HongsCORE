@@ -154,8 +154,8 @@ public class Lump {
         try {
             StringBuilder sb = new StringBuilder (  sql  );
             List ps = new ArrayList(Arrays.asList(params));
-            Link.checkSQLParams( sb, ps );
-            Link.mergeSQLParams( sb, ps );
+            Link.checkSQLParams (sb , ps);
+            Link.mergeSQLParams (sb , ps);
             if (limit != 0 || start != 0) {
               sb.append(" /* LIMIT ")
                 .append(start)

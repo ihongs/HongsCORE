@@ -4,6 +4,7 @@ import io.github.ihongs.CruxException;
 import io.github.ihongs.CruxExemption;
 import io.github.ihongs.db.link.Link;
 import io.github.ihongs.db.link.Loop;
+import io.github.ihongs.db.link.Lump;
 import io.github.ihongs.util.Synt;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -1309,31 +1310,19 @@ public class FetchCase
 
   /**
    * 转换为字符串
-   * @return 合并了SQL/参数
+   * @return 合并了SQL的参数和分页
    */
   @Override
   public String toString()
   {
-    StringBuilder sb = this.getSQLStrs();
-    List  paramz  = this.getParamsList();
     try
     {
-      Link.checkSQLParams(sb, paramz);
-      Link.mergeSQLParams(sb, paramz);
+      return new Lump(_db_, getSQL(), getStart(), getLimit(), getParams()).toString();
     }
     catch (CruxException ex)
     {
-      throw new Error (ex);
+      throw ex.toExemption();
     }
-    if (limits.length > 0)
-    {
-      sb.append(" /* LIMIT ")
-        .append(getStart())
-        .append( "," )
-        .append(getLimit())
-        .append(" */");
-    }
-    return sb.toString();
   }
 
   /**
@@ -1376,7 +1365,7 @@ public class FetchCase
   {
     return _db_;
   }
-  
+
   /**
    * 查询并获取记录迭代
    * @return

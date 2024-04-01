@@ -557,7 +557,7 @@ abstract public class Link
 
     // 处理不同数据库的分页
     Lump l = new Lump(co, sql, start, limit, params);
-    sql    = l.getSql(   );
+    sql    = l.getSQL(   );
     start  = l.getStart( );
     limit  = l.getLimit( );
     params = l.getParams();

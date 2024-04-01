@@ -1,7 +1,6 @@
 package io.github.ihongs.db.link;
 
 import io.github.ihongs.CruxException;
-import io.github.ihongs.CruxExemption;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
@@ -10,7 +9,10 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * SQL 分块工具
+ * 分块查询支持
+ *
+ * 兼容不同数据库的分页语法, 区分并追加 LIMIT OFFSET 等
+ *
  * @author Hongs
  */
 public class Lump {
@@ -20,21 +22,76 @@ public class Lump {
     private int  limit;
     private Object[] params;
 
-    public Lump(String pn, String sql, int start, int limit, Object... params) {
-        if (pn == null) {
-            throw new NullPointerException("Database Product Name required");
+    public Lump(Link db, String sql, int start, int limit, Object... params)
+    throws CruxException {
+        if (db == null) {
+            throw new NullPointerException("DB Link required");
         }
 
+        String pn, pv;
+        try {
+            Connection  dc;
+            dc = db.open();
+            DatabaseMetaData   dm;
+            dm = dc.getMetaData();
+            pn = dm.getDatabaseProductName();
+            pv = dm.getDatabaseProductVersion();
+        } catch (SQLException ex) {
+            throw new CruxException(ex);
+        }
+
+        init(pn, pv, sql, start, limit, params);
+    }
+
+    public Lump(Connection dc, String sql, int start, int limit, Object... params)
+    throws CruxException {
+        if (dc == null) {
+            throw new NullPointerException("DB Connection required");
+        }
+
+        String pn, pv;
+        try {
+            DatabaseMetaData dm;
+            dm = dc.getMetaData();
+            pn = dm.getDatabaseProductName();
+            pv = dm.getDatabaseProductVersion();
+        } catch (SQLException ex) {
+            throw new CruxException(ex);
+        }
+
+        init(pn, pv, sql, start, limit, params);
+    }
+
+    public Lump(DatabaseMetaData dm, String sql, int start, int limit, Object... params)
+    throws CruxException {
+        if (dm == null) {
+            throw new NullPointerException("DatabaseMetaData required");
+        }
+
+        String pn, pv;
+        try {
+            pn = dm.getDatabaseProductName();
+            pv = dm.getDatabaseProductVersion();
+        }
+        catch (SQLException ex) {
+            throw new CruxException(ex);
+        }
+
+        init(pn, pv, sql, start, limit, params);
+    }
+
+    private void init(String pn, String pv, String sql, int start, int limit, Object... params) {
+        if (sql == null) {
+            throw new NullPointerException("SQL required");
+        }
         if (params == null) {
             params =  new  Object [0];
         }
 
         if (limit != 0 || start != 0) {
             switch (pn.toUpperCase()) {
-                case "SQLITE"   :
-                case "MYSQL"    :
-                case "MARIADB"  :
-                case "OCEANBASE": {
+                case "MYSQL"     :
+                case "MARIADB"   : {
                     sql += " LIMIT ?,?";
                     Object[] paramz = new Object[params.length + 2];
                     System.arraycopy (params, 0, paramz, 0, params.length);
@@ -44,7 +101,9 @@ public class Lump {
                     start  = 0;
                     limit  = 0;
                 } break;
-                case "POSTGRESQL" : {
+                case "SQLITE"    :
+                case "OCEANBASE" :
+                case "POSTGRESQL": {
                     sql += " LIMIT ? OFFSET ?";
                     Object[] paramz = new Object[params.length + 2];
                     System.arraycopy (params, 0, paramz, 0, params.length);
@@ -54,28 +113,27 @@ public class Lump {
                     start  = 0;
                     limit  = 0;
                 } break;
+                case "ORACLE"    :
+                case "SQLSERVER" : {
+                    sql += " OFFSET ? ROWS FETCH NEXT ? ROWS ONLY" ;
+                    Object[] paramz = new Object[params.length + 2];
+                    System.arraycopy (params, 0, paramz, 0, params.length);
+                    paramz[params.length + 0] = start;
+                    paramz[params.length + 1] = limit;
+                    params = paramz;
+                    start  = 0;
+                    limit  = 0;
+                } break;
             }
         }
 
-        this.sql    = sql ;
+        this.sql    = sql   ;
         this.start  = start ;
         this.limit  = limit ;
         this.params = params;
     }
 
-    public Lump(Link db, String sql, int start, int limit, Object... params) {
-        this(getPname(db), sql, start, limit, params );
-    }
-
-    public Lump(Connection dc, String sql, int start, int limit, Object... params) {
-        this(getPname(dc), sql, start, limit, params );
-    }
-
-    public Lump(DatabaseMetaData dm, String sql, int start, int limit, Object... params) {
-        this(getPname(dm), sql, start, limit, params );
-    }
-
-    public String getSql() {
+    public String getSQL() {
         return sql;
     }
 
@@ -108,32 +166,6 @@ public class Lump {
             return  sb.toString( );
         } catch ( CruxException e) {
             throw e.toExemption( );
-        }
-    }
-
-    private static String getPname(Link db) {
-        try {
-            return getPname(db.open().getMetaData());
-        } catch ( SQLException ex) {
-            throw new CruxExemption(ex);
-        } catch (CruxException ex) {
-            throw ex.toExemption();
-        }
-    }
-
-    private static String getPname(Connection dc) {
-        try {
-            return getPname(dc.getMetaData( ));
-        } catch ( SQLException ex) {
-            throw new CruxExemption(ex);
-        }
-    }
-
-    private static String getPname(DatabaseMetaData dm) {
-        try {
-            return dm.getDatabaseProductName();
-        } catch ( SQLException ex) {
-            throw new CruxExemption(ex);
         }
     }
 

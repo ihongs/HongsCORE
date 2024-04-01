@@ -227,7 +227,7 @@ public final class FetchPage
 
       // 限制查询量
       Lump  lp = new Lump(dl, sql, start, limit, pms);
-      sql = lp.getSql(   );
+      sql = lp.getSQL(   );
       pms = lp.getParams();
 
       sql = "SELECT COUNT(1) + "+start+" AS __count__ FROM ("+sql+") AS __table__";

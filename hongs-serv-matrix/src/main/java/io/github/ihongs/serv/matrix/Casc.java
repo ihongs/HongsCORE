@@ -7,6 +7,7 @@ import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.daemon.Async;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -85,6 +86,99 @@ public class Casc {
             finally {
                 core.reset();
             }
+        }
+
+    }
+
+    /**
+     * 混合读取, 写入目标
+     * 
+     * 仅能 get/put, 专供 Data 的 includes/incloses
+     */
+    public static final class Mixes implements Map {
+
+        public final Map ND;
+        public final Map OD;
+
+        /**
+         * @param nd 目标数据
+         * @param od 默认数据
+         */
+        public Mixes(Map nd, Map od) {
+            this.ND = nd;
+            this.OD = od;
+        }
+
+        @Override
+        public Object get (Object key) {
+            return ND.containsKey(key)
+                 ? ND.get (key)
+                 : OD.get (key);
+        }
+
+        @Override
+        public Object put (Object key , Object value) {
+            return ND.put (key, value);
+        }
+
+        @Override
+        @Deprecated
+        public Object remove(Object key) {
+            return ND.remove(key);
+        }
+
+        @Override
+        @Deprecated
+        public void putAll(Map map) {
+            ND.putAll(map);
+        }
+
+        @Override
+        @Deprecated
+        public void clear() {
+            ND.clear();
+        }
+
+        @Override
+        @Deprecated
+        public boolean isEmpty() {
+            return  ND.isEmpty();
+        }
+
+        @Override
+        @Deprecated
+        public boolean containsKey(Object key) {
+            return  ND.containsKey(key);
+        }
+
+        @Override
+        @Deprecated
+        public boolean containsValue(Object value) {
+            return  ND.containsKey(value);
+        }
+
+        @Override
+        @Deprecated
+        public int size() {
+            return ND.size();
+        }
+
+        @Override
+        @Deprecated
+        public Collection values() {
+            return ND.values();
+        }
+
+        @Override
+        @Deprecated
+        public Set keySet() {
+            return ND.keySet();
+        }
+
+        @Override
+        @Deprecated
+        public Set entrySet() {
+            return ND.entrySet();
         }
 
     }

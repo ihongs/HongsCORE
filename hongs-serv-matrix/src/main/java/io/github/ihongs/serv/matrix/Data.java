@@ -479,10 +479,10 @@ public class Data extends SearchEntity {
         FetchCase fc = getModel().fetchCase();
         fc.filter("`form_id`=?", getFormId());
         Map rsp = getModel ().search (rd, fc);
-        
+
         return rsp;
     }
-    
+
     /**
      * 查询历史数据
      * @param rd
@@ -1017,8 +1017,9 @@ public class Data extends SearchEntity {
                 .getOne( );
             if (Synt.declare(od.get("state"), 0) > 0) {
                 Map dd = getData((String) od.get("data"));
+                Map xd = new HashMap(00);
                 dd.put(Cnst.ID_KEY , id);
-                padInf(dd, dd);
+                padInf(dd, xd);
                 Document dc = padDoc(dd);
                 setDoc(id, dc);
             } else {
@@ -1056,8 +1057,9 @@ public class Data extends SearchEntity {
 
         // 保存到文档库
         Map dd = getData((String) sd.get("data"));
+        Map xd = new HashMap(00);
         dd.put(Cnst.ID_KEY , id);
-        padInf(dd, dd);
+        padInf(dd, xd);
         Document dc = padDoc(dd);
         setDoc(id, dc);
 
@@ -1185,14 +1187,23 @@ public class Data extends SearchEntity {
      * @return 0 无更新
      */
     protected int padInf(Map dd, Map rd) {
+        Map xd = new Casc.Mixes (rd, dd);
+
         // 填充关联冗余
         try {
-            includes(dd, rd);
-        }
-        catch (CruxException ex ) {
+            includes(xd);
+        } catch (CruxException ex) {
             throw ex.toExemption();
         }
 
+        // 扩充合并字段
+        try {
+            incloses(xd);
+        } catch (CruxException ex) {
+            throw ex.toExemption();
+        }
+
+        // 合并数据, 检查变更
         int i = 0;
         Map<String,Map> fs = getFields();
         for(String fn : fs . keySet()) {
@@ -1200,34 +1211,16 @@ public class Data extends SearchEntity {
                 continue;
             }
 
-            Object fr = rd.get(fn);
             Object fo = dd.get(fn);
+            Object fr = rd.get(fn);
             dd.put(fn , fr);
 
             // 跳过环境字段, 比如修改时间
-            if (! canSkip(fn, fr, fo)) {
+            if (!missable(fn, fo, fr)) {
                 i ++;
             }
         }
-
-        // 填充自述字段, 如名称关键词
-        if (i > 0) {
-            Map<String, Map> fields = getFields();
-            if (fields.containsKey("name")) {
-                Map m = fields.get("name");
-                if (Synt.declare(m.get("disabled"), false)) {
-                    dd.put("name", getName(dd));
-                }
-            }
-            if (fields.containsKey("word")) {
-                Map m = fields.get("word");
-                if (Synt.declare(m.get("disabled"), false)) {
-                    dd.put("word", getWord(dd));
-                }
-            }
-        }
-
-        return i;
+        return  i;
     }
 
     /**
@@ -1235,15 +1228,15 @@ public class Data extends SearchEntity {
      * 当返回 true 时跳过检查,
      * 如都是 true 则不做更新.
      * @param fn
-     * @param fr 新值
      * @param fo 旧值
+     * @param fr 新值
      * @return
      */
-    protected boolean canSkip(String fn, Object fr, Object fo) {
+    protected boolean missable(String fn, Object fo, Object fr) {
         if (Cnst. ID_KEY . equals (fn)) {
             return true ;
         }
-        if (getSkipable().contains(fn)) {
+        if (getMissable().contains(fn)) {
             return true ;
         }
         if (fr == null && fo == null) {
@@ -1436,7 +1429,7 @@ public class Data extends SearchEntity {
             return  wdCols;
         }
         Map fs  = (Map) getFields().get("word");
-        if (fs != null && !Synt.declare(fs.get("readonly"), false)) {
+        if (fs != null && !Synt.declare(fs.get("disabled"), false)) {
             wdCols = Synt.setOf("word");
         } else {
             wdCols = getCaseNames("wordable");
@@ -1454,7 +1447,7 @@ public class Data extends SearchEntity {
             return  nmCols;
         }
         Map fs  = (Map) getFields().get("name");
-        if (fs != null && !Synt.declare(fs.get("readonly"), false)) {
+        if (fs != null && !Synt.declare(fs.get("disabled"), false)) {
             nmCols = Synt.setOf("name");
         } else {
             nmCols = getCaseNames("nameable");
@@ -1467,11 +1460,11 @@ public class Data extends SearchEntity {
         return nmCols;
     }
 
-    public Set<String> getSkipable() {
+    public Set<String> getMissable() {
         if (null != skCols) {
             return  skCols;
         }
-        skCols = getCaseNames("skipable");
+        skCols = getCaseNames("missable");
         if (skCols == null
         ||  skCols.isEmpty( ) ) {
             skCols =  new  HashSet();
@@ -1613,97 +1606,6 @@ public class Data extends SearchEntity {
     }
 
     /**
-     * 内联包含
-     * 将被引用的部分复制过来
-     * @param dd 旧的数据
-     * @param rd 新的数据
-     * @throws CruxException
-     */
-    protected void includes(Map dd, Map rd) throws CruxException {
-        Map<String, Object> aq = getIncludes();
-        if (aq == null || aq.isEmpty()) {
-            return;
-        }
-
-        for(Map.Entry<String, Object> xt : aq.entrySet()) {
-            String at = xt.getKey  ();
-            Object av = xt.getValue();
-            if (at == null || at.isEmpty()) {
-                continue;
-            }
-
-            // 解析关联描述串, 格式: conf:form;fk
-            int     p = at.indexOf  (";");
-            String  k = at.substring(1+p);
-            String  c = at.substring(0,p);
-                    p =  c.indexOf  (":");
-            String  f =  c.substring(1+p);
-                    c =  c.substring(0,p);
-
-            // 解析字段映射表, 格式: f1:fa,f2:fb,fn
-            Map fm = Synt.toMap(av);
-            Set fs = new HashSet(fm.values());
-            Map fc = (Map) getFields().get(k);
-
-            // 获取关联外键值
-            Object v = rd.containsKey (k)
-                     ? rd.get(k)
-                     : dd.get(k);
-
-            // 处理未关联情况
-            if (v == null || "".equals(v)) {
-                for(Object ot : fm.entrySet()) {
-                    Map.Entry et = (Map.Entry) ot;
-                    rd.put(et.getKey(), null );
-                }
-                continue;
-            } else
-            if (v instanceof Collection && ((Collection)v).isEmpty()) {
-                for(Object ot : fm.entrySet()) {
-                    Map.Entry et = (Map.Entry) ot;
-                    rd.put(et.getKey(), new ArrayList(0) );
-                }
-                continue;
-            }
-
-            // 写入当前信息表
-            if (Synt.declare(fc.get("__repeated__"), false) == false) {
-                /**/  Map  fd = Data.getInstance(c, f).getOne(Synt.mapOf(
-                    Cnst.RB_KEY , fs,
-                    Cnst.ID_KEY , v
-                ));
-                for(Object ot : fm.entrySet()) {
-                    Map.Entry et = (Map.Entry) ot;
-                    rd.put(et.getKey(), fd.get(et.getValue()));
-                }
-            } else {
-                List <Map> fl = Data.getInstance(c, f).getAll(Synt.mapOf(
-                    Cnst.RB_KEY , fs,
-                    Cnst.ID_KEY , v
-                ));
-
-                // 多值汇总
-                Map<Object, List> fd = new HashMap(fs.size());
-                for(Object fn : fs) {
-                    fd.put(fn , new ArrayList(fl.size()));
-                }
-                for(  Map  fb : fl) {
-                for(Object fn : fs) {
-                    List fv = Synt.asList(fb.get(fn));
-                    if (fv != null) {
-                        fd.get(fn).addAll(fv);
-                    }
-                }}
-
-                for(Object ot : fm.entrySet()) {
-                    Map.Entry et = (Map.Entry) ot;
-                    rd.put(et.getKey(), fd.get(et.getValue()));
-                }
-            }
-        }
-    }
-
-    /**
      * 引用检查
      * 检查被哪些资源关联引用
      * @param rs 将删除的
@@ -1764,6 +1666,116 @@ public class Data extends SearchEntity {
 
             // 抛出异常告知依赖情况
             throw new CruxException(1097, "@matrix:core.delete.depend.error", nb);
+        }
+    }
+
+    /**
+     * 内联包含
+     * 将被引用的部分复制过来
+     * @param rd 混合数据
+     * @throws CruxException
+     */
+    protected void includes(Map rd) throws CruxException {
+        Map<String, Object> aq = getIncludes();
+        if (aq == null || aq.isEmpty()) {
+            return;
+        }
+
+        for(Map.Entry<String, Object> xt : aq.entrySet()) {
+            String at = xt.getKey  ();
+            Object av = xt.getValue();
+            if (at == null || at.isEmpty()) {
+                continue;
+            }
+
+            // 解析关联描述串, 格式: conf:form;fk
+            int     p = at.indexOf  (";");
+            String  k = at.substring(1+p);
+            String  c = at.substring(0,p);
+                    p =  c.indexOf  (":");
+            String  f =  c.substring(1+p);
+                    c =  c.substring(0,p);
+
+            // 解析字段映射表, 格式: f1:fa,f2:fb,fn
+            Map fm = Synt.toMap(av);
+            Set fs = new HashSet(fm.values());
+            Map fc = (Map) getFields().get(k);
+
+            // 获取关联外键值
+            Object v = rd.get(k);
+
+            // 处理未关联情况
+            if (v == null || "".equals(v)) {
+                for(Object ot : fm.entrySet()) {
+                    Map.Entry et = (Map.Entry) ot;
+                    rd.put(et.getKey(), null );
+                }
+                continue;
+            } else
+            if (v instanceof Collection && ((Collection)v).isEmpty()) {
+                for(Object ot : fm.entrySet()) {
+                    Map.Entry et = (Map.Entry) ot;
+                    rd.put(et.getKey(), new ArrayList(0) );
+                }
+                continue;
+            }
+
+            // 写入当前信息表
+            if (Synt.declare(fc.get("__repeated__"), false) == false) {
+                /**/  Map  fd = Data.getInstance(c, f).getOne(Synt.mapOf(
+                    Cnst.RB_KEY , fs,
+                    Cnst.ID_KEY , v
+                ));
+                for(Object ot : fm.entrySet()) {
+                    Map.Entry et = (Map.Entry) ot;
+                    rd.put(et.getKey(), fd.get(et.getValue()));
+                }
+            } else {
+                List <Map> fl = Data.getInstance(c, f).getAll(Synt.mapOf(
+                    Cnst.RB_KEY , fs,
+                    Cnst.ID_KEY , v
+                ));
+
+                // 多值汇总
+                Map<Object, List> fd = new HashMap(fs.size());
+                for(Object fn : fs) {
+                    fd.put(fn , new ArrayList(fl.size()));
+                }
+                for(  Map  fb : fl) {
+                for(Object fn : fs) {
+                    List fv = Synt.asList(fb.get(fn));
+                    if (fv != null) {
+                        fd.get(fn).addAll(fv);
+                    }
+                }}
+
+                for(Object ot : fm.entrySet()) {
+                    Map.Entry et = (Map.Entry) ot;
+                    rd.put(et.getKey(), fd.get(et.getValue()));
+                }
+            }
+        }
+    }
+
+    /**
+     * 内部扩充
+     * 处理多个字段合并的内容
+     * @param rd 混合数据
+     * @throws CruxException
+     */
+    protected void incloses(Map rd) throws CruxException {
+        Map<String, Map> fields = getFields();
+        if (fields.containsKey("name")) {
+            Map m = fields.get("name");
+            if (Synt.declare(m.get("disabled"), false)) {
+                rd.put("name", getName(rd));
+            }
+        }
+        if (fields.containsKey("word")) {
+            Map m = fields.get("word");
+            if (Synt.declare(m.get("disabled"), false)) {
+                rd.put("word", getWord(rd));
+            }
         }
     }
 

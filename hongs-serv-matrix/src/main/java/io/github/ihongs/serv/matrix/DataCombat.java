@@ -52,8 +52,9 @@ public class DataCombat {
             "time:i",
             "bufs:i",
             "truncate:b",
-            "includes:b",
             "cascades:b",
+            "includes:b",
+            "incloses:b",
             "!A",
             "?Usage: revert --conf CONF_NAME --form FORM_NAME [--time TIMESTAMP] ID0 ID1 ..."
         });
@@ -159,8 +160,9 @@ public class DataCombat {
          */
         Casc da = new Casc(
              dr ,
+             Synt.declare (opts.get("cascades") , false) ,
              Synt.declare (opts.get("includes") , false) ,
-             Synt.declare (opts.get("cascades") , false)
+             Synt.declare (opts.get("incloses") , false)
         );
 
         boolean pr = Core.DEBUG == 0 && Core.ENVIR == 0;
@@ -643,15 +645,17 @@ public class DataCombat {
     public static class Casc {
 
         private final Data    that    ;
-        private final boolean includes;
         private final boolean cascades;
+        private final boolean includes;
+        private final boolean incloses;
         private final Consumer<Map> dc;
 
-        public Casc (Data data, boolean includes, boolean cascades)
+        public Casc (Data data, boolean cascades, boolean includes, boolean incloses)
         throws CruxException {
             this.that  =  data;
-            this.includes = includes;
             this.cascades = cascades;
+            this.includes = includes;
+            this.incloses = incloses;
 
             // 解密, 用于下方数据恢复
             Table tb = data.getTable();
@@ -681,8 +685,9 @@ public class DataCombat {
             dc.accept(sd);
             Map od = that.getData((String) sd. get( "data" ));
 
-            if ( includes ) that.padInf(od,od);
-            that.setDoc(id, that.padDoc(od ) );
+            if (includes) that.includes(od);
+            if (incloses) that.incloses(od);
+            that.setDoc(id, that.padDoc(od));
 
             Map ud = new HashMap();
             ud.put("etime", ctime);
@@ -717,13 +722,14 @@ public class DataCombat {
             dc.accept(sd);
             Map od = that.getData((String) sd. get( "data" ));
 
-            if ( includes ) that.padInf(od,od);
-            that.setDoc(id, that.padDoc(od ) );
+            if (includes) that.includes(od);
+            if (incloses) that.incloses(od);
+            that.setDoc(id, that.padDoc(od));
         }
 
         public void commit( ) {
-            if ( cascades ) that.commit( );
-            else            that.submit( );
+            if (cascades) that.commit();
+            else          that.submit();
         }
 
     }

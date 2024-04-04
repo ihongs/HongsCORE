@@ -508,7 +508,6 @@ public class AssocCase {
 
             if ( vv instanceof Collection
             ||   vv instanceof Object[] ) {
-                // 与 IN 不同, 与 ON 相同
                 Set vs = Synt.asSet( vv );
                     vs.remove("");
                 if(!vs.isEmpty( )) {
@@ -551,42 +550,28 @@ public class AssocCase {
             if ( vo != null ) {
                 String   vn = Synt.asString(vo).toUpperCase();
                 switch ( vn ) {
-                    case "WELL":
-                    case "NOT-NULL":
-                        caze.filter(fn+" IS NOT NULL");
+                    case "EMPTY":
+                        caze.filter(fn+ " = ''");
                         break;
-                    case "NULL":
-                    case "NOT-WELL":
+                    case "NOT-EMPTY":
+                        caze.filter(fn+" != ''");
+                        break;
+                    case "NULL" :
                         caze.filter(fn+" IS NULL");
                         break;
-                    case "VALID":
-                    case "NOT-EMPTY":
-                        caze.filter("("+fn+" IS NOT NULL AND "+fn+" != '')");
+                    case "NOT-NULL" :
+                        caze.filter(fn+" IS NOT NULL");
                         break;
-                    case "EMTPY":
-                    case "NOT-VALID":
+                    case "NONE" :
                         caze.filter("("+fn+" IS NULL OR "+fn+" = '')");
+                        break;
+                    case "NOT-NONE" :
+                        caze.filter("("+fn+" IS NOT NULL AND "+fn+" != '')");
                         break;
                     default:
                         throw new UnsupportedOperationException("Unsupported `is`: "+vo);
                 }
             }
-
-            vo = vm.get(Cnst.ON_REL);
-            if ( vo != null ) {
-            if ( vo instanceof Collection
-            ||   vo instanceof Object[] ) {
-                // 与 in 不同, 会忽略空串
-                Set vz = Synt.asSet( vo );
-                    vz.remove("");
-                if(!vz.isEmpty( )) {
-                    caze.filter(fn+" IN (?)", vz );
-                }
-            } else {
-                if(!vo.equals("")) {
-                    caze.filter(fn+  " = ?" , vo );
-                }
-            }}
 
             // IN/NI 可以拆字符串, 如 fn.in=1,2 同 fn.in.=1&fn.in.=2
             vo = vm.get(Cnst.IN_REL);
@@ -603,11 +588,11 @@ public class AssocCase {
             }}
 
             vo = vm.get(Cnst.EQ_REL);
-            if ( vo != null ) {
+            if ( vo != null && !"".equals(vo) ) {
                 caze.filter(fn+ " = ?", alone(vo, kn, Cnst.EQ_REL));
             }
             vo = vm.get(Cnst.NE_REL);
-            if ( vo != null ) {
+            if ( vo != null && !"".equals(vo) ) {
                 caze.filter(fn+" != ?", alone(vo, kn, Cnst.NE_REL));
             }
 
@@ -649,12 +634,12 @@ public class AssocCase {
             fn = sf.get( kn );
             if ( fn != null ) {
 
-            vo = vm.get(Cnst.CQ_REL);
+            vo = vm.get(Cnst.SP_REL);
             if ( vo != null && !"".equals(vo) ) {
                 Set<String> ws = Synt.toWords(vo);
                 likes(caze, ws , fn , /**/"LIKE");
             }
-            vo = vm.get(Cnst.NC_REL);
+            vo = vm.get(Cnst.NS_REL);
             if ( vo != null && !"".equals(vo) ) {
                 Set<String> ws = Synt.toWords(vo);
                 likes(caze, ws , fn , "NOT LIKE");

@@ -14,12 +14,12 @@ import org.apache.lucene.util.automaton.Automaton;
  * 类似 SQL 的 `fn` IS NOT NULL AND `fn` != ''
  * @author Kevin
  */
-public class IsNotEmpty extends Query {
+public class IsNotNone extends Query {
 
     private final String field;
     private final Query  query;
 
-    public IsNotEmpty (String field) {
+    public IsNotNone (String field) {
         /**
          * From Lucene 9.x Automata.makeNonEmptyBinary()
          */

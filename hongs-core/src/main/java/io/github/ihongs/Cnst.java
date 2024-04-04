@@ -50,29 +50,27 @@ public final class Cnst {
 
     //** 关系符号 **/
 
-    public static final String OR_REL = "or"; // 条件关系  (or, nr, ar)
+    public static final String OR_REL = "or"; // 条件关系  (取值: or, nr, ar)
 
-    public static final String IS_REL = "is"; // 是否为空  (NULL, WELL)
+    public static final String IS_REL = "is"; // 是否为空  (取值: null, not-null, none, not-none, empty, not-empty)
+
+    public static final String SP_REL = "sp"; // 匹配
+
+    public static final String NS_REL = "ns"; // 不匹配
 
     public static final String EQ_REL = "eq"; // 等于
 
     public static final String NE_REL = "ne"; // 不等于
 
-    public static final String CQ_REL = "cq"; // 匹配
+    public static final String LT_REL = "lt"; // 小于
 
-    public static final String NC_REL = "nc"; // 不匹配
+    public static final String LE_REL = "le"; // 小于或等于
 
     public static final String GT_REL = "gt"; // 大于
 
     public static final String GE_REL = "ge"; // 大于或等于
 
-    public static final String LT_REL = "lt"; // 小于
-
-    public static final String LE_REL = "le"; // 小于或等于
-
     public static final String RG_REL = "rg"; // 区间
-
-    public static final String ON_REL = "on"; // 条件      ( 同 in, 排除空串 )
 
     public static final String IN_REL = "in"; // 包含
 

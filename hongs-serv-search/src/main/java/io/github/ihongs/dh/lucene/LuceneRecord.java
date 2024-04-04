@@ -1166,7 +1166,6 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             } else
             if (v instanceof Collection
             ||  v instanceof Object[ ]) {
-                // 与 IN 不同, 与 ON 相同
                 Set vs = Synt.asSet(v);
                     vs.remove("");
                 if(!vs.isEmpty( )) {
@@ -1214,77 +1213,62 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 Query  p ;
                 // try {
                 switch (a) {
-                    case "WELL" :
                     case "NOT-NULL" :
-                        // p = new QueryParser(b + k, new StandardAnalyzer()).parse("[* TO *]");
-                        p = new IsNotNull (b + k);
+                        p = new IsNotNull(b + k);
                         qr.add(p, BooleanClause.Occur.MUST);
                         i ++ ;
                         break;
                     case "NULL" :
-                    case "NOT-WELL" :
-                        // p = new QueryParser(b + k, new StandardAnalyzer()).parse("[* TO *]");
-                        p = new IsNotNull (b + k);
+                        p = new IsNotNull(b + k);
                         qr.add(p, BooleanClause.Occur.MUST_NOT);
                         i ++ ; j ++ ;
                         break;
-                    case "VALID":
-                    case "NOT-EMPTY":
-                        /*
-                        BooleanQuery.Builder  qx = new BooleanQuery.Builder();
-                        p = new QueryParser(b + k, new StandardAnalyzer()).parse("[* TO *]");
-                        qx.add(p, BooleanClause.Occur.MUST);
-                        p = new  TermQuery (new Term(b + k,""));
-                        qx.add(p, BooleanClause.Occur.MUST_NOT);
-                        qr.add(qx.build(), BooleanClause.Occur.MUST);
-                        */
-                        p = new IsNotEmpty(b + k);
+                    case "NOT-NONE" :
+                        p = new IsNotNone(b + k);
                         qr.add(p, BooleanClause.Occur.MUST);
                         i ++ ;
                         break;
+                    case "NONE" :
+                        p = new IsNotNone(b + k);
+                        qr.add(p, BooleanClause.Occur.MUST_NOT);
+                        i ++ ; j ++ ;
+                        break;
                     case "EMPTY":
-                    case "NOT-VALID":
-                        /*
-                        BooleanQuery.Builder  qz = new BooleanQuery.Builder();
-                        p = new QueryParser(b + k, new StandardAnalyzer()).parse("[* TO *]");
-                        qz.add(p, BooleanClause.Occur.MUST);
-                        p = new  TermQuery (new Term(b + k,""));
-                        qz.add(p, BooleanClause.Occur.MUST_NOT);
-                        qr.add(qz.build(), BooleanClause.Occur.MUST_NOT);
-                        */
-                        p = new IsNotEmpty(b + k);
+                        p = new IsEmpty(b + k);
+                        qr.add(p, BooleanClause.Occur.MUST);
+                        i ++ ;
+                        break;
+                    case "NOT-EMPTY":
+                        p = new IsEmpty(b + k);
                         qr.add(p, BooleanClause.Occur.MUST_NOT);
                         i ++ ; j ++ ;
                         break;
                     default:
                         throw new CruxException(400, "Unsupported `is`: "+v);
-                }/*
-                } catch (ParseException e) {
-                    throw new CruxExemption(e);
-                }*/
+                }
             }
 
             //** 精确匹配 **/
 
             v = vd.get(Cnst.EQ_REL);
-            if ( v != null ) {
+            if ( v != null && ! "".equals(v) ) {
                 qr.add(qa.whr(k, v), BooleanClause.Occur.MUST);
                 i ++;
             }
             v = vd.get(Cnst.NE_REL);
-            if ( v != null ) {
+            if ( v != null && ! "".equals(v) ) {
                 qr.add(qa.whr(k, v), BooleanClause.Occur.MUST_NOT);
                 i ++;  j ++;
             }
 
             //** 模糊匹配 **/
 
-            v = vd.get(Cnst.CQ_REL);
+            v = vd.get(Cnst.SP_REL);
             if ( v != null && ! "".equals(v) ) {
                 qr.add(qa.wdr(k, v), BooleanClause.Occur.MUST);
                 i ++;
             }
-            v = vd.get(Cnst.NC_REL);
+            v = vd.get(Cnst.NS_REL);
             if ( v != null && ! "".equals(v) ) {
                 qr.add(qa.wdr(k, v), BooleanClause.Occur.MUST_NOT);
                 i ++;  j ++;
@@ -1325,28 +1309,6 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                         i ++;
                 }
             }
-
-            v = vd.get(Cnst.ON_REL);
-            if ( v != null ) {
-            if ( v instanceof Collection
-            ||   v instanceof Object[]) {
-                // 与 IN 不同, 会忽略空串
-                Set vs = Synt.asSet(v);
-                    vs.remove("");
-                if(!vs.isEmpty( )) {
-                    BooleanQuery.Builder  qx = new BooleanQuery.Builder();
-                    for(Object vv : vs) {
-                        qx.add(qa.whr(k, vv), BooleanClause.Occur.SHOULD);
-                    }
-                        qr.add(qx.build (  ), BooleanClause.Occur.MUST  );
-                        i ++;
-                }
-            } else {
-                if (!v.equals("")) {
-                    qr.add(qa.whr(k, v), BooleanClause.Occur.MUST);
-                    i ++;
-                }
-            }}
 
             //** 区间查询 **/
 

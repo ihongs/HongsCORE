@@ -207,14 +207,13 @@ action 和 combat 使用 @Action 和 @Combat 注解来设置访问路径, 如果
 
     eq  等于
     ne  不等于
-    cq  匹配
-    nc  不匹配
+    sp  匹配
+    ns  不匹配
     gt  大于
     ge  大于或等于
     lt  小于
     le  小于或等于
     rg  区间
-    on  等于或包含
     in  包含
     ni  不包含
     is  空或非空

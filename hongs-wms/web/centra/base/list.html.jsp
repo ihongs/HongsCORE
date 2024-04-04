@@ -129,24 +129,28 @@
                         al = al + "&.deny=.create";
                     }}
                 %>
-                <ul class="pickbox pickmul" data-ft="_fork" data-fn="<%=name%>.<%=Cnst.ON_REL%>." data-ak="<%=ak%>" data-tk="<%=tk%>" data-vk="<%=vk%>" data-item-class="btn btn-sm btn-info" data-icon-class="-"></ul>
+                <ul class="pickbox pickmul" data-ft="_fork" data-fn="<%=name%>.<%=Cnst.IN_REL%>." data-ak="<%=ak%>" data-tk="<%=tk%>" data-vk="<%=vk%>" data-item-class="btn btn-sm btn-info" data-icon-class="-"></ul>
                 <button type="button" class="btn btn-sm btn-default form-control" data-toggle="hsFork" data-target="@" data-href="<%=al%>"><%=_locale.translate("fore.fork.select", text)%></button>
             <%} else if ("enum".equals(type) || "type".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
-                <select class="form-control" name="<%=name%>.<%=Cnst.ON_REL%>" data-ft="_enum"></select>
+                <select class="form-control" name="<%=name%>.<%=Cnst.EQ_REL%>" data-ft="_enum"></select>
             <%} else if (!_sd.contains(name)) {%>
-                <input class="form-control" type="text" name="<%=name%>.<%=Cnst.ON_REL%>" placeholder="精确匹配" />
+                <input class="form-control" type="text" name="<%=name%>.<%=Cnst.EQ_REL%>" placeholder="精确匹配" />
             <%} else if ("search".equals(type) || "textarea".equals(type) || "textview".equals(type)) {%>
-                <input class="form-control" type="text" name="<%=name%>.<%=Cnst.CQ_REL%>" placeholder="模糊匹配" />
+                <input class="form-control" type="text" name="<%=name%>.<%=Cnst.SP_REL%>" placeholder="模糊匹配" />
             <%} else {%>
                 <div class="input-group input-group-sm">
-                    <input class="form-control" type="text" name="<%=name%>.<%=Cnst.CQ_REL%>" placeholder="模糊匹配" />
-                    <div class="input-group-btn">
+                    <input class="form-control" type="text" name="<%=name%>.<%=Cnst.SP_REL%>" placeholder="模糊匹配" />
+                    <div class="input-group-btn input-group-sel">
                         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="javascript:;" onclick="var inp = $(this).closest('div').siblings('input'); inp.attr('name', '<%=name%>.<%=Cnst.CQ_REL%>'); inp.attr('placeholder', '模糊匹配')">模糊匹配</a></li>
-                            <li><a href="javascript:;" onclick="var inp = $(this).closest('div').siblings('input'); inp.attr('name', '<%=name%>.<%=Cnst.ON_REL%>'); inp.attr('placeholder', '精确匹配')">精确匹配</a></li>
+                            <li class="active">
+                                <a href="javascript:;" data-name="<%=name%>.<%=Cnst.SP_REL%>" data-placeholder="模糊匹配">模糊匹配</a>
+                            </li>
+                            <li>
+                                <a href="javascript:;" data-name="<%=name%>.<%=Cnst.EQ_REL%>" data-placeholder="精确匹配">精确匹配</a>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -497,6 +501,16 @@
         hsPickListMore(listbox);
     });
     hsSaveListCols(listbox, "<%=_pageId%>");
+
+    // 切换匹配模式
+    context.on("click", ".filtbox .input-group-sel li a", function() {
+        var opt = $(this);
+        var dat = $(this).data();
+        var inp = $(this).closest(".input-group-sel").siblings("input");
+        for(var n in dat) inp.attr(n,dat[n]);
+        opt.closest("li").addClass("active")
+           .siblings().removeClass("active");
+    });
 
     hsRequires("<%=_module%>/<%=_entity%>/defines.js", function() {
         // 外部定制

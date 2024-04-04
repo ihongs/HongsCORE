@@ -1277,7 +1277,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             //** 集合查询 **/
 
             // IN/NI/MI 可以拆字符串, 如 fn.in=1,2 同 fn.in.=1&fn.in.=2
-            v = vd.get(Cnst.MI_REL);
+            v = vd.get(Cnst.ON_REL);
             if ( v != null ) {
                 Set vs = Synt.toSet(v);
                 if(!vs.isEmpty( )) {
@@ -1287,7 +1287,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                     }
                 }
             }
-            v = vd.get(Cnst.NI_REL);
+            v = vd.get(Cnst.NO_REL);
             if ( v != null ) {
                 Set vs = Synt.toSet(v);
                 if(!vs.isEmpty( )) {
@@ -1346,12 +1346,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 i ++;
             }
 
-            Set s  = null;
-            v = vd.get(Cnst.RG_REL);
+            v = vd.get(Cnst.AT_REL);
             if (v != null) {
-                s  = Synt.asSet (v);
-            }
-
+            Set s  = Synt.asSet (v);
             if (s != null && ! s.isEmpty()) {
                 BooleanQuery.Builder qx = new BooleanQuery.Builder();
 
@@ -1377,6 +1374,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                     qr.add ( qz, BooleanClause.Occur.MUST  );
                     i ++;
                 }
+            }
             }
         }
 
@@ -1426,7 +1424,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 if (! qa.clauses().isEmpty()) {
                     // 权重
                     Query qb = qa;
-                    v = map.get(Cnst.WT_REL);
+                    v = map.get(Cnst.UP_REL);
                     if (v != null && !"".equals(v)) {
                         qb = new BoostQuery(qa, Synt.declare(v, 1f));
                     }
@@ -1455,7 +1453,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 if (! qa.clauses().isEmpty()) {
                     // 权重
                     Query qb = qa;
-                    v = map.get(Cnst.WT_REL);
+                    v = map.get(Cnst.UP_REL);
                     if (v != null && !"".equals(v)) {
                         qb = new BoostQuery(qa, Synt.declare(v, 1f));
                     }
@@ -1485,7 +1483,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 if (! qa.clauses().isEmpty()) {
                     // 权重
                     Query qb = qa;
-                    v = map.get(Cnst.WT_REL);
+                    v = map.get(Cnst.UP_REL);
                     if (v != null && !"".equals(v)) {
                         qb = new BoostQuery(qa, Synt.declare(v, 1f));
                     }

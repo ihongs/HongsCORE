@@ -580,7 +580,7 @@ public class AssocCase {
             if (!vs.isEmpty() ) {
                 caze.filter(fn+/**/" IN (?)", vs );
             }}
-            vo = vm.get(Cnst.NI_REL);
+            vo = vm.get(Cnst.NO_REL);
             if ( vo != null ) {
             Set  vs  = Synt.toSet (vo);
             if (!vs.isEmpty() ) {
@@ -620,7 +620,7 @@ public class AssocCase {
                 caze.filter(fn+" <= ?", alone(vo, kn, Cnst.LE_REL));
             }}
 
-            vo = vm.get(Cnst.RG_REL);
+            vo = vm.get(Cnst.AT_REL);
             if ( vo != null ) {
                 Set ir = Synt.asSet(vo);
                 if (ir != null && ! ir.isEmpty()) {

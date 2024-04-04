@@ -409,7 +409,7 @@ HsStat.prototype = {
             label = $('<label'+(!v[2] ? ' class="text-muted"' : '')+'></label>')
                 .attr("title", v[1] +" ("+ v[2] + (v[3] ? ","+ v[3] : "") + ")");
             check = $('<input type="checkbox" class="checkone2"/>')
-                .attr("name" , name + ".rg.")
+                .attr("name" , name + ".at.")
                 .attr("value", v[0]);
             title = $('<span></span>')
                 .text(v[1]);
@@ -868,7 +868,7 @@ HsCate.prototype = {
             label = $('<label'+(!v[2] ? ' class="text-muted"' : '')+'></label>')
                 .attr("title", v[1] +" ("+ v[2] + (v[3] ? ","+ v[3] : "") + ")");
             check = $('<input type="checkbox" class="checkone2"/>')
-                .attr("name" , name + ".rg.")
+                .attr("name" , name + ".at.")
                 .attr("value", v[0]);
             title = $('<span></span>')
                 .text(v[1]);

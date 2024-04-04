@@ -70,15 +70,15 @@ public final class Cnst {
 
     public static final String GE_REL = "ge"; // 大于或等于
 
-    public static final String RG_REL = "rg"; // 区间
+    public static final String AT_REL = "at"; // 区间
 
     public static final String IN_REL = "in"; // 包含
 
-    public static final String NI_REL = "ni"; // 不包含    (not in)
+    public static final String NO_REL = "no"; // 不包含
 
-    public static final String MI_REL = "mi"; // 全包含    (max in, DB 未实现)
+    public static final String ON_REL = "on"; // 全包含
 
-    public static final String WT_REL = "wt"; // 权重      (weight, DB 未实现)
+    public static final String UP_REL = "up"; // 加权
 
     //** 配置扩展 **/
 

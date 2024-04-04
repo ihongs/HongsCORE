@@ -128,21 +128,21 @@ public class StatisHelper {
                 String  CURR_IN_REL = Cnst.IN_REL;
                 switch(Synt.declare(vm.get(Cnst.RB_KEY), "")) {
                     case "total":
-                        CURR_IN_REL = Cnst.RG_REL;
+                        CURR_IN_REL = Cnst.AT_REL;
                         vf = (v) -> new Range(v);
                         cf = (v) -> new Total((Range)v);
                         cm = StatisGrader.TOTAL ;
                         styles.put(k, cm);
                         break;
                     case "tally":
-                        CURR_IN_REL = Cnst.RG_REL;
+                        CURR_IN_REL = Cnst.AT_REL;
                         vf = (v) -> new Range(v);
                         cf = (v) -> new Tally((Range)v);
                         cm = StatisGrader.TALLY ;
                         styles.put(k, cm);
                         break;
                     case "range":
-                        CURR_IN_REL = Cnst.RG_REL;
+                        CURR_IN_REL = Cnst.AT_REL;
                         vf = (v) -> new Range(v);
                         cf = (v) -> new Count(v);
                         cm = StatisGrader.RANGE ;

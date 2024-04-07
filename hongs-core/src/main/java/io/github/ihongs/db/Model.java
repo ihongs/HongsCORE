@@ -156,17 +156,17 @@ implements IEntity
     }
 
     // 获取页码, 默认为第一页
-    int page = 1;
+    int page = Cnst.PN_DEF;
     if (rd.containsKey(Cnst.PN_KEY))
     {
       page = Synt.declare(rd.get(Cnst.PN_KEY), page);
     }
 
     // 续查页数, 默认查总页数
-    int plus = 0;
-    if (rd.containsKey(Cnst.PM_KEY))
+    int plus = Cnst.QN_DEF;
+    if (rd.containsKey(Cnst.QN_KEY))
     {
-      plus = Synt.declare(rd.get(Cnst.PM_KEY), plus);
+      plus = Synt.declare(rd.get(Cnst.QN_KEY), plus);
     }
 
     Map data = new HashMap (6); // {ok, ern, err, msg, list, page}
@@ -182,7 +182,7 @@ implements IEntity
     caze.from (table.tableName , table.name );
     FetchPage fp = new FetchPage(caze, table);
     fp.setPage(page);
-    fp.setPlus(plus);
+    fp.setQues(plus);
     fp.setRows(Math.abs(rows));
 
     // 行数等于 0 则不要使用分页
@@ -913,7 +913,7 @@ implements IEntity
    *    多个字段排序: ob=a+b+c或ob=a!+b+c, !表示该字段逆序;
    * 3) 按照wd参数设置模糊查询,
    *    多关键词搜索: wd=x+y+z;
-   *    指定字段搜索: a.cq=x或a.b.cq=y, 同样也适用上述规则,
+   *    指定字段搜索: a.sp=x或a.b.sp=y, 同样也适用上述规则,
    *    a.b为搜索关联表, 注意: a,a.b必须在srchable中有指定;
    * 4) 如果有字段名相同的参数则获取与之对应的记录,
    *    可以在字段名后跟.加上.gt,.lt,.ge,.le,.ne分别表示&gt;,&lt;,&ge;,&le;,&ne;

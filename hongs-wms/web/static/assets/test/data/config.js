@@ -4,7 +4,7 @@ if(!window.HsCONF)window.HsCONF={};$.extend(window.HsCONF,{
 	"SERVER_ID":"0",
 	"BASE_HREF":".",
 	"pn.key":"pn",
-	"pm.key":"pm",
+	"qn.key":"qn",
 	"rn.key":"rn",
 	"ob.key":"ob",
 	"rb.key":"rb",

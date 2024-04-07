@@ -34,7 +34,7 @@ public final class Cnst {
 
     public static final String PN_KEY = "pn"; // 页码编号  (Page num)
 
-    public static final String PM_KEY = "pm"; // 续查页数  (Page max)
+    public static final String QN_KEY = "qn"; // 续查页数  (Page max)
 
     public static final String OB_KEY = "ob"; // 排序字段  (Order by)
 
@@ -50,17 +50,15 @@ public final class Cnst {
 
     //** 关系符号 **/
 
-    public static final String OR_REL = "or"; // 条件关系  (取值: or, nr, ar)
-
     public static final String IS_REL = "is"; // 是否为空  (取值: null, not-null, none, not-none, empty, not-empty)
-
-    public static final String SP_REL = "sp"; // 匹配
-
-    public static final String NS_REL = "ns"; // 不匹配
 
     public static final String EQ_REL = "eq"; // 等于
 
     public static final String NE_REL = "ne"; // 不等于
+
+    public static final String SP_REL = "sp"; // 匹配
+
+    public static final String NS_REL = "ns"; // 不匹配
 
     public static final String LT_REL = "lt"; // 小于
 

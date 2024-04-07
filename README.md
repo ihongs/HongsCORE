@@ -205,19 +205,20 @@ action 和 combat 使用 @Action 和 @Combat 注解来设置访问路径, 如果
 
 其中 eq 这样的标识为过滤操作符, 其含义为:
 
+    is  空或非空
     eq  等于
     ne  不等于
     sp  匹配
     ns  不匹配
-    gt  大于
-    ge  大于或等于
     lt  小于
     le  小于或等于
-    rg  区间
+    gt  大于
+    ge  大于或等于
+    at  区间
     in  包含
-    ni  不包含
-    is  空或非空
-    or  值关系为或
+    no  不包含
+    on  全包含
+    up  加权
 
 其中 wd 这样的参数有特定的意义, 列举如下:
 

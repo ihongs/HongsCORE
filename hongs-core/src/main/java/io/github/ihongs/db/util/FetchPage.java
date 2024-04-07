@@ -25,9 +25,9 @@ public final class FetchPage
 
   private final Map info = new HashMap();
 
-  private int page = 1;
+  private int page = Cnst.PN_DEF;
 
-  private int plus = 0;
+  private int ques = Cnst.QN_DEF;
 
   private int rows = Cnst.RN_DEF;
 
@@ -69,11 +69,11 @@ public final class FetchPage
 
   /**
    * 续查页数
-   * @param plus 
+   * @param ques 
    */
-  public void setPlus(int plus)
+  public void setQues(int ques)
   {
-    this.plus = plus;
+    this.ques = ques;
   }
 
   /**
@@ -98,10 +98,10 @@ public final class FetchPage
       this.setPage(Integer.parseInt(page2.toString()));
     }
 
-    Object lnks2 = caze.getOption(Cnst.PM_KEY);
+    Object lnks2 = caze.getOption(Cnst.QN_KEY);
     if (lnks2 != null && lnks2.equals(""))
     {
-      this.setPlus(Integer.parseInt(lnks2.toString()));
+      this.setQues(Integer.parseInt(lnks2.toString()));
     }
 
     Object rows2 = caze.getOption(Cnst.RN_KEY);
@@ -175,7 +175,7 @@ public final class FetchPage
     throws CruxException
   {
     this.info.put(Cnst.PN_KEY, this.page);
-    this.info.put(Cnst.PM_KEY, this.plus);
+    this.info.put(Cnst.QN_KEY, this.ques);
     this.info.put(Cnst.RN_KEY, this.rows);
 
     // 列表为空则不用再计算了
@@ -188,10 +188,10 @@ public final class FetchPage
     // 有探查数则不用查全部了
     int start;
     int limit;
-    if (this.plus > 0)
+    if (this.ques > 0)
     {
       start = rows * (page - 1);
-      limit = rows *  plus + 1 ;
+      limit = rows *  ques + 1 ;
     }
     else
     {

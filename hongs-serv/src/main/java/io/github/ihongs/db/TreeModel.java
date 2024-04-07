@@ -214,7 +214,7 @@ public class TreeModel extends Model
     //** 查询列表 **/
 
     if (! rd.containsKey( Cnst.PN_KEY )
-    &&  ! rd.containsKey(Cnst.PM_KEY )
+    &&  ! rd.containsKey( Cnst.QN_KEY )
     &&  ! rd.containsKey( Cnst.RN_KEY ))
     {
       rd.put(Cnst.RN_KEY, 0); // 默认不分页

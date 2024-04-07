@@ -1187,6 +1187,8 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
             //** 条件关系 **/
 
+            /*
+            // 因可更改符号含义, 可能造成严重漏洞, 故废弃
             v = vd.get(Cnst.OR_REL);
             if (Cnst.OR_KEY.equals(v )
             ||  Cnst.NR_KEY.equals(v)) {
@@ -1203,6 +1205,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 }
                 continue;
             }
+            */
 
             //** 空值查询 **/
 

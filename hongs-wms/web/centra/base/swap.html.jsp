@@ -155,23 +155,26 @@
                 <p>列表搜索框内可以使用表达式进行复杂筛选, 格式为 <code>?字段=取值&字段=取值</code> 的形式, 前后没有空格, 空格用 + 号代替.</p >
                 <p>字段和选项取值可从此文档中获取. 字段还可以附加后缀, 如 字段.in=取值1,取值2 表示匹配取值1或取值2的任意一个, 更多后缀如下:</p >
                 <pre class="form-control-static">
-<b>.eq</b>  等于
-<b>.ne</b>  不等于
-<b>.sp</b>  匹配
-<b>.ns</b>  不匹配
-<b>.gt</b>  大于
-<b>.ge</b>  大于或等于
-<b>.lt</b>  小于
-<b>.le</b>  小于或等于
-<b>.rg</b>  区间
-<b>.in</b>  包含
-<b>.ni</b>  不包含
-<b>.mi</b>  全包含
-<b>.is</b>  空或非空
-<b>.or</b>  值关系为或
+<b>.<%=Cnst.IS_REL%></b>  空或非空
+<b>.<%=Cnst.EQ_REL%></b>  等于
+<b>.<%=Cnst.NE_REL%></b>  不等于
+<b>.<%=Cnst.SP_REL%></b>  匹配
+<b>.<%=Cnst.NS_REL%></b>  不匹配
+<b>.<%=Cnst.LT_REL%></b>  小于
+<b>.<%=Cnst.LE_REL%></b>  小于或等于
+<b>.<%=Cnst.GT_REL%></b>  大于
+<b>.<%=Cnst.GE_REL%></b>  大于或等于
+<b>.<%=Cnst.AT_REL%></b>  区间
+<b>.<%=Cnst.IN_REL%></b>  包含
+<b>.<%=Cnst.NO_REL%></b>  不包含
+<b>.<%=Cnst.ON_REL%></b>  全包含
                 </pre>
-                <p><code>.sp/.ns</code> 需要字段支持模糊查询; <code>.in/.ni/.mi</code> 可用半角逗号(,)分隔多个取值; <code>.gt/.ge/.lt/.le/.rg</code> 需要字段为数字或时间戳类型, <code>.rg</code> 为数学区间表达式: <code>[0,9]</code> 开区间, <code>(0,9)</code> 闭区间, 无括号默认开区间; <code>.is</code> 可为 <code>none</code>(无值或空串),<code>not-none</code>(有值且非空),<code>null</code>(无值),<code>not-null</code>(有值),<code>empty</code>(空串),<code>not-empty</code>(非空).</p >
-                <p>需要分组时可以在字段上加 <code>or.N./ar.N./nr.N</code> 前缀, 如 <code>?or.1.fn1=1&or.1.fn2=2&or.2.fn1=3&or.2.fn2=4</code> 表示 (字段fn1等于1 且 字段fn2等于2) 或 (字段fn1等于3 且 字段fn2等于4); <code>ar/nr</code> 类似, 表示多组与/非条件.</p >
+                <p><code>.<%=Cnst.SP_REL%>/.<%=Cnst.NS_REL%></code> 需要字段支持模糊查询,</p>
+                <p><code>.<%=Cnst.LT_REL%>/.<%=Cnst.LE_REL%></code> 等需字段为数字或时间,</p>
+                <p><code>.<%=Cnst.AT_REL%></code> 为数学区间表达式: <code>[0,9]</code> 开区间, <code>(0,9)</code> 闭区间, 无括号默认开区间.</p>
+                <p><code>.<%=Cnst.IN_REL%>/.<%=Cnst.NO_REL%>/.<%=Cnst.ON_REL%></code> 可用半角逗号(,)分隔多个取值, 或用 <code>fn.in.=1&fn.in.=2</code> 给出多个取值.</p>
+                <p><code>.<%=Cnst.IS_REL%></code> 可为 <code>none</code>(无值或空串),<code>not-none</code>(有值且非空),<code>null</code>(无值),<code>not-null</code>(有值),<code>empty</code>(空串),<code>not-empty</code>(非空).</p>
+                <p>需要分组时可以在字段上加 <code><%=Cnst.OR_KEY%>.N./<%=Cnst.AR_KEY%>.N./<%=Cnst.NR_KEY%>.N</code> 前缀, 如 <code>?or.1.fn1=1&or.1.fn2=2&or.2.fn1=3&or.2.fn2=4</code> 表示 (字段fn1等于1 且 字段fn2等于2) 或 (字段fn1等于3 且 字段fn2等于4); <code><%=Cnst.AR_KEY%>/<%=Cnst.NR_KEY%></code> 类似, 表示多组与/非条件.</p >
             </div>
         </fieldset>
         <fieldset>
@@ -581,7 +584,7 @@ id=ID 或 id.=ID1&id.=ID2...
             'node' : table
         });
     });
-    
+
     // 查看文件参数
     context.on("click", "a.show-file", function() {
         var type  = $(this).data('file-type');

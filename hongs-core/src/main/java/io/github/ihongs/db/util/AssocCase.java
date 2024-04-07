@@ -523,7 +523,9 @@ public class AssocCase {
                 continue;
             } // End vm
 
+            /*
             // 条件关系
+            // 因可更改符号含义, 可能造成严重漏洞, 故废弃
             vo = vm.get(Cnst.OR_REL);
             if (Cnst.OR_KEY.equals(vo )
             ||  Cnst.NR_KEY.equals(vo)) {
@@ -541,6 +543,7 @@ public class AssocCase {
                 }
                 continue;
             }
+            */
 
             // 一般条件
             fn = af.get( kn );

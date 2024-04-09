@@ -23,6 +23,21 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
 /**
  * 服务启动命令
+ * 
+ * <pre>
+ * defines.properties 启动配置:
+ *  jetty.pool.min.threads          线程池最少线程, 默认 8
+ *  jetty.pool.max.threads          线程池最多现场, 默认 254
+ *  jetty.pool.idle.timeout         线程池空闲时间, 默认 30000  (毫秒)
+ *  jetty.conn.idle.timeout         连接空闲时间,   默认 30000  (毫秒)
+ *  jetty.conn.accept.queue.size    连接队列大小,   默认 254
+ *  jetty.conn.accept.sndbuf.size   连接发送缓冲,   默认 -1 (系统默认)
+ *  jetty.conn.accept.rcvbuf.size   连接接收缓冲,   默认 -1 (系统默认)
+ *  jetty.serv.max.form.keys        请求字段限制,   默认 1000
+ *  jetty.serv.max.form.size        请求容量限制,   默认 200000 (字节)
+ * 亦可通过 envir.xxx.xxx 设置环境变量来配置, 具体参阅 Jetty 相关文档
+ * </pre>
+ *
  * @author Hongs
  */
 @Combat("server")
@@ -194,8 +209,8 @@ public class ServerCombat {
         webapp.setPersistTempDirectory ( true );
         webapp.setParentLoaderPriority ( true );
         webapp.setThrowUnavailableOnStartupException(true);
-        webapp.setMaxFormKeys(cc.getProperty("jetty.serv.max.form.keys", 10000));
-        webapp.setMaxFormContentSize(cc.getProperty("jetty.serv.max.form.size", 2000000));
+        webapp.setMaxFormKeys(cc.getProperty("jetty.serv.max.form.keys", 1000 ));
+        webapp.setMaxFormContentSize(cc.getProperty("jetty.serv.max.form.size", 200000 ));
         server.setHandler   (webapp);
 
         String x;

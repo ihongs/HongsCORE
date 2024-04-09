@@ -190,12 +190,12 @@ public class ServerCombat {
         webapp.setDescriptor( conf );
         webapp.setContextPath  (Core.SERV_PATH);
         webapp.setResourceBase (Core.BASE_PATH);
-        webapp.setTempDirectory( new File(Core.DATA_PATH + "/server/temp"));
+        webapp.setTempDirectory(new File(Core.DATA_PATH + "/server/temp"));
         webapp.setPersistTempDirectory ( true );
         webapp.setParentLoaderPriority ( true );
         webapp.setThrowUnavailableOnStartupException(true);
-    //  webapp.setMaxFormKeys(cc.getProperty("jetty.serv.max.form.keys", 10000));
-    //  webapp.setMaxFormContentSize(cc.getProperty("jetty.serv.max.form.size", 200000));
+        webapp.setMaxFormKeys(cc.getProperty("jetty.serv.max.form.keys", 10000));
+        webapp.setMaxFormContentSize(cc.getProperty("jetty.serv.max.form.size", 2000000));
         server.setHandler   (webapp);
 
         String x;

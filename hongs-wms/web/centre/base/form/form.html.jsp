@@ -30,9 +30,9 @@
                 continue ;
             }
 
-            String  type = (String) info.get("__type__");
-            String  text = (String) info.get("__text__");
-            String  hint = (String) info.get("__hint__");
+            String  type = Synt.asString(info.get("__type__"));
+            String  text = Synt.asString(info.get("__text__"));
+            String  hint = Synt.asString(info.get("__hint__"));
             boolean rqrd = Synt.declare(info.get("__required__"), false);
             boolean rptd = Synt.declare(info.get("__repeated__"), false);
             boolean roly = Synt.declare(info.get(  "readonly"  ), false);
@@ -43,7 +43,7 @@
              */
             if (roly) {
                 Object defo = info.get("deforce");
-                if (defo != null && ! defo.equals("blanks")) {
+                if (defo != null && ! defo.equals("")) {
                     continue;
                 }
                 roly = false;
@@ -71,26 +71,44 @@
             <figure data-name="<%=name%>"><%=text%></figure>
         <%} else {%>
             <%
-                String gfc = "";
+                String hold, hist, pfc, gfc;
+                text = Synt.defxult(Synt.asString(info.get("form-text")), text, "");
+                hint = Synt.defxult(Synt.asString(info.get("form-hint")), hint, "");
+                hold = Synt.defxult(Synt.asString(info.get("form-hold")), "" );
+                hist = Synt.defxult(Synt.asString(info.get("form-hist")), "" );
+                pfc  = Synt.defxult(Synt.asString(info.get("page-form-class")), "");
+                gfc  =  "" ;
+                if (rqrd) {
+                    if ("enum".equals(type) ||  "type".equals(type) || "check".equals(type) || "radio".equals(type) || "select".equals(type)
+                    ||  "file".equals(type) || "image".equals(type) || "video".equals(type) || "audio".equals(type)
+                    ||  "fork".equals(type) ||  "pick".equals(type)) {
+                        hist = "(必选)";
+                    } else {
+                        hist = "(必填)";
+                    }
+                } else
+                if (rptd) {
+                    if ("enum".equals(type) ||  "type".equals(type) || "check".equals(type) || "radio".equals(type) || "select".equals(type)
+                    ||  "file".equals(type) || "image".equals(type) || "video".equals(type) || "audio".equals(type)
+                    ||  "fork".equals(type) ||  "pick".equals(type)) {
+                        hist = "(多选)";
+                    }
+                }
                 if (rqrd) gfc += " is-required";
                 if (rptd) gfc += " is-repeated";
                 if (roly) gfc += " is-readonly";
                 if (gfc.length() > 0) gfc = gfc.substring(1);
-                String pfc = Synt.declare(info.get("page-form-class"), "");
-                text = Synt.defxult(Synt.asString(info.get("form-text")), text, "");
-                hint = Synt.defxult(Synt.asString(info.get("form-hint")), hint, "");
             %>
             <div class="form-grade <%=pfc%>">
             <div class="form-group <%=gfc%>" data-name="<%=name%>">
                 <label class="control-label">
-                    <span class="control-label-num"><%=++ii%></span>
-                    <span class="control-label-txt"><%=text%></span>
+                    <span class="control-label-text"><%=(text != null ? text : "")%></span>
+                    <span class="control-label-hist"><%=(hist != null ? hist : "")%></span>
                 </label>
                 <div class="control-input">
                 <%if ("textarea".equals(type) || "textview".equals(type)) {%>
                     <%
                         String extr = "";
-                        String hold = Synt.defxult(Synt.asString(info.get("form-hold")), "");
                         String typa = (String) info.get("type");
                         String mode = (String) info.get("mode");
                         if (rqrd) {
@@ -107,10 +125,9 @@
                         }
                     %>
                     <textarea id="<%=_pageId%>-<%=name%>" name="<%=name%>" placeholder="<%=hold%>"<%=extr%>></textarea>
-                <%} else if ("string".equals(type) || "text".equals(type) || "email".equals(type) || "url".equals(type) || "tel".equals(type) || "sms".equals(type)) {%>
+                <%} else if ("string".equals(type) || "stored".equals(type) || "search".equals(type) || "text".equals(type) || "email".equals(type) || "url".equals(type) || "tel".equals(type) || "sms".equals(type)) {%>
                     <%
                         String extr = "";
-                        String hold = Synt.defxult(Synt.asString(info.get("form-hold")), "");
                         if (rqrd) {
                             extr += " required=\"required\"";
                         }
@@ -125,10 +142,9 @@
                         }
                     %>
                     <input class="form-control" type="<%=type%>" name="<%=name%>" placeholder="<%=hold%>"<%=extr%>/>
-                <%} else if ("number".equals(type) || "range".equals(type) || "color".equals(type) || "sorted".equals(type)) {%>
+                <%} else if ("number".equals(type) || "sorted".equals(type) || "range".equals(type) || "color".equals(type)) {%>
                     <%
                         String extr = "";
-                        String hold = Synt.defxult(Synt.asString(info.get("form-hold")), "");
                         if (rqrd) {
                             extr += " required=\"required\"";
                         }
@@ -270,7 +286,7 @@
                     %>
                     <input type="hidden" name="<%=name%>" class="form-ignored"/>
                     <ul class="pickbox" data-fn="<%=name%>" data-ft="<%=kind%>"<%=extr%>></ul>
-                    <button type="button" class="btn btn-default form-control" data-toggle="<%=mode%>"><%=_locale.translate("fore.fork.select", text)%></button>
+                    <button type="button" class="btn btn-default form-control" data-toggle="<%=mode%>"><%=Synt.defxult(hold, _locale.translate("fore.fork.select", text))%></button>
                 <%} else if ("file".equals(type) || "image".equals(type) || "video".equals(type) || "audio".equals(type)) {%>
                     <%
                         String extr = "";
@@ -282,6 +298,7 @@
                         }
                         if (rptd) {
                             name  = name + "."; // 多选末尾加点
+                            typa += "\" multiple=\"multiple";
                             extr += " data-repeated=\"repeated\"";
                         }
                         if (rqrd) {
@@ -324,11 +341,10 @@
                     %>
                     <input type="file" name="<%=name%>" accept="<%=typa%>" class="form-ignored invisible"/>
                     <ul class="pickbox" data-fn="<%=name%>" data-ft="<%=kind%>"<%=extr%>></ul>
-                    <button type="button" class="btn btn-default form-control" data-toggle="<%=mode%>"><%=_locale.translate("fore.file.browse", text)%></button>
+                    <button type="button" class="btn btn-default form-control" data-toggle="<%=mode%>"><%=Synt.defxult(hold, _locale.translate("fore.file.browse", text))%></button>
                 <%} else {%>
                     <%
                         String extr = "";
-                        String hold = Synt.defxult(Synt.asString(info.get("form-hold")), "");
                         if (rptd) {
                             name += "." ;
                             extr += " multiple=\"multiple\"";
@@ -338,7 +354,6 @@
                         }
                     %>
                     <input class="form-control" type="<%=type%>" name="<%=name%>" placeholder="<%=hold%>"<%=extr%>/>
-                    <%hint = null;%>
                 <%} /*End If */%>
                     <div class="help-block text-error form-control-static"></div>
                     <div class="help-block text-muted form-control-static"><%=hint%></div>

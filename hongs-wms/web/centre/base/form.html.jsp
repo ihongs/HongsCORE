@@ -64,6 +64,8 @@
             <figure data-name="<%=name%>"><%=text%></figure>
         <%} else if ( roly ) { //** 此部分来自 info.jsp **/ %>
             <%
+                String kind;
+                kind = "_review";
                 text = Synt.defxult(Synt.asString(info.get("info-text")), text, "");
                 hint = Synt.defxult(Synt.asString(info.get("info-hint")), hint, "");
             %>
@@ -71,8 +73,6 @@
                 <label class="col-sm-3 col-md-2 text-right control-label form-control-static"><%=text%></label>
                 <div class="col-sm-9 col-md-8">
                 <%
-                    String kind = "_review";
-
                     if ("datetime".equals(type)
                     ||      "date".equals(type)
                     ||      "time".equals(type)) {
@@ -90,6 +90,7 @@
                         }
                     } else
                     if (  "number".equals(type)
+                    ||    "sorted".equals(type)
                     ||     "range".equals(type)
                     ||     "color".equals(type)) {
                         // 自定义格式化
@@ -97,6 +98,17 @@
                         if (frmt != null && frmt.length( ) != 0 ) {
                             kind += "\" data-format=\"" + frmt;
                         }
+                    } else
+                    if ("textarea".equals(type)
+                    ||  "textview".equals(type)
+                    ||    "string".equals(type)
+                    ||    "stored".equals(type)
+                    ||    "search".equals(type)
+                    ||     "email".equals(type)
+                    ||       "url".equals(type)
+                    ||       "tel".equals(type)
+                    ||       "sms".equals(type)) {
+                        // 多值时采用标签控件, 无需在名称后加点
                     } else
                     if (    "enum".equals(type)
                     ||      "type".equals(type)
@@ -108,13 +120,7 @@
                         if (rptd) {
                             name += ".";
                         }
-                    } else
-                    if (    "fork".equals(type)
-                    ||      "pick".equals(type)
-                    ||      "file".equals(type)
-                    ||     "image".equals(type)
-                    ||     "video".equals(type)
-                    ||     "audio".equals(type)) {
+                    } else {
                         // 为与表单一致而对多值字段的名称后加点
                         if (rptd) {
                             name += ".";
@@ -204,9 +210,7 @@
                     %>
                     <ul class="pickbox pickrol" data-fn="<%=name%>" data-ft="<%=kind%>"></ul>
                     <button type="button" data-toggle="hsFile" class="hide"></button>
-                <%} else if ("tel".equals(type) || "sms".equals(type) || "email".equals(type)) {%>
-                    <div class="form-control-static"><a data-fn="<%=name%>" data-ft="<%=kind%>" class="a-<%=type%>"></a></div>
-                <%} else if ("url".equals(type)) {%>
+                <%} else if ("email".equals(type) || "url".equals(type) || "tel".equals(type) || "sms".equals(type)) {%>
                     <div class="form-control-static"><a data-fn="<%=name%>" data-ft="<%=kind%>" class="a-<%=type%>" target="_blank"></a></div>
                 <%} else if ( rptd ) {%>
                     <div class="form-control-static"><p data-fn="<%=name%>" data-ft="<%=kind%>" class="repeated" data-item-class="label label-default"></p></div>
@@ -219,8 +223,8 @@
         <%} else {%>
             <%
                 String hold;
-                text = Synt.defxult(Synt.asString(info.get("form-text")), text);
-                hint = Synt.defxult(Synt.asString(info.get("form-hint")), hint);
+                text = Synt.defxult(Synt.asString(info.get("form-text")), text, "");
+                hint = Synt.defxult(Synt.asString(info.get("form-hint")), hint, "");
                 hold = Synt.defxult(Synt.asString(info.get("form-hold")), "");
             %>
             <div class="form-group row" data-name="<%=name%>">
@@ -247,7 +251,7 @@
                         }
                     %>
                     <textarea id="<%=_pageId%>-<%=name%>" name="<%=name%>" placeholder="<%=hold%>"<%=extr%>></textarea>
-                <%} else if ("string".equals(type) || "text".equals(type) || "email".equals(type) || "url".equals(type) || "tel".equals(type) || "sms".equals(type)) {%>
+                <%} else if ("string".equals(type) || "stored".equals(type) || "search".equals(type) || "text".equals(type) || "email".equals(type) || "url".equals(type) || "tel".equals(type) || "sms".equals(type)) {%>
                     <%
                         String extr = "";
                         if (rqrd) {
@@ -264,7 +268,7 @@
                         }
                     %>
                     <input class="form-control" type="<%=type%>" name="<%=name%>" placeholder="<%=hold%>"<%=extr%>/>
-                <%} else if ("number".equals(type) || "range".equals(type) || "color".equals(type) || "sorted".equals(type)) {%>
+                <%} else if ("number".equals(type) || "sorted".equals(type) || "range".equals(type) || "color".equals(type)) {%>
                     <%
                         String extr = "";
                         if (rqrd) {
@@ -408,7 +412,7 @@
                     %>
                     <input type="hidden" name="<%=name%>" class="form-ignored"/>
                     <ul class="pickbox" data-fn="<%=name%>" data-ft="<%=kind%>"<%=extr%>></ul>
-                    <button type="button" class="btn btn-default form-control" data-toggle="<%=mode%>"><%=_locale.translate("fore.fork.select", text)%></button>
+                    <button type="button" class="btn btn-default form-control" data-toggle="<%=mode%>"><%=Synt.defxult(hold, _locale.translate("fore.fork.select", text))%></button>
                 <%} else if ("file".equals(type) || "image".equals(type) || "video".equals(type) || "audio".equals(type)) {%>
                     <%
                         String extr = "";
@@ -463,7 +467,7 @@
                     %>
                     <input type="file" name="<%=name%>" accept="<%=typa%>" class="form-ignored invisible"/>
                     <ul class="pickbox" data-fn="<%=name%>" data-ft="<%=kind%>"<%=extr%>></ul>
-                    <button type="button" class="btn btn-default form-control" data-toggle="<%=mode%>"><%=_locale.translate("fore.file.browse", text)%></button>
+                    <button type="button" class="btn btn-default form-control" data-toggle="<%=mode%>"><%=Synt.defxult(hold, _locale.translate("fore.file.browse", text))%></button>
                 <%} else {%>
                     <%
                         String extr = "";
@@ -546,8 +550,7 @@
             if (/^form\./.test(n)) {
                 n = ".form-group[data-name='"+n.substring(5)+"']";
                 formbox.find(n).remove();
-            } else
-            {
+            } else {
                 context.find(n).remove();
             }
         });

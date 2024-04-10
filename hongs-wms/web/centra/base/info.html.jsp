@@ -62,6 +62,8 @@
             <figure data-name="<%=name%>"><%=text%></figure>
         <%} else {%>
             <%
+                String kind;
+                kind = "_review";
                 text = Synt.defxult(Synt.asString(info.get("info-text")), text, "");
                 hint = Synt.defxult(Synt.asString(info.get("info-hint")), hint, "");
             %>
@@ -69,8 +71,6 @@
                 <label class="col-xs-3 col-md-2 text-right control-label form-control-static"><%=text%></label>
                 <div class="col-xs-9 col-md-8">
                 <%
-                    String kind = "_review";
-
                     if ("datetime".equals(type)
                     ||      "date".equals(type)
                     ||      "time".equals(type)) {
@@ -88,6 +88,7 @@
                         }
                     } else
                     if (  "number".equals(type)
+                    ||    "sorted".equals(type)
                     ||     "range".equals(type)
                     ||     "color".equals(type)) {
                         // 自定义格式化
@@ -95,6 +96,17 @@
                         if (frmt != null && frmt.length( ) != 0 ) {
                             kind += "\" data-format=\"" + frmt;
                         }
+                    } else
+                    if ("textarea".equals(type)
+                    ||  "textview".equals(type)
+                    ||    "string".equals(type)
+                    ||    "stored".equals(type)
+                    ||    "search".equals(type)
+                    ||     "email".equals(type)
+                    ||       "url".equals(type)
+                    ||       "tel".equals(type)
+                    ||       "sms".equals(type)) {
+                        // 多值时采用标签控件, 无需在名称后加点
                     } else
                     if (    "enum".equals(type)
                     ||      "type".equals(type)
@@ -106,13 +118,7 @@
                         if (rptd) {
                             name += ".";
                         }
-                    } else
-                    if (    "fork".equals(type)
-                    ||      "pick".equals(type)
-                    ||      "file".equals(type)
-                    ||     "image".equals(type)
-                    ||     "video".equals(type)
-                    ||     "audio".equals(type)) {
+                    } else {
                         // 为与表单一致而对多值字段的名称后加点
                         if (rptd) {
                             name += ".";
@@ -202,11 +208,9 @@
                     %>
                     <ul class="pickbox pickrol" data-fn="<%=name%>" data-ft="<%=kind%>"></ul>
                     <button type="button" data-toggle="hsFile" class="hide"></button>
-                <%} else if ("tel".equals(type) || "sms".equals(type) || "email".equals(type)) {%>
-                    <div class="form-control-static"><a data-fn="<%=name%>" data-ft="<%=kind%>" class="a-<%=type%>"></a></div>
-                <%} else if ("url".equals(type)) {%>
+                <%} else if ("email".equals(type) || "url".equals(type) || "tel".equals(type) || "sms".equals(type)) {%>
                     <div class="form-control-static"><a data-fn="<%=name%>" data-ft="<%=kind%>" class="a-<%=type%>" target="_blank"></a></div>
-                <%} else if (name.endsWith(".")) {%>
+                <%} else if ( rptd ) {%>
                     <div class="form-control-static"><p data-fn="<%=name%>" data-ft="<%=kind%>" class="repeated" data-item-class="label label-default"></p></div>
                 <%} else {%>
                     <div class="form-control-static" data-fn="<%=name%>" data-ft="<%=kind%>"></div>

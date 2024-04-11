@@ -99,17 +99,6 @@
                             kind += "\" data-format=\"" + frmt;
                         }
                     } else
-                    if ("textarea".equals(type)
-                    ||  "textview".equals(type)
-                    ||    "string".equals(type)
-                    ||    "stored".equals(type)
-                    ||    "search".equals(type)
-                    ||     "email".equals(type)
-                    ||       "url".equals(type)
-                    ||       "tel".equals(type)
-                    ||       "sms".equals(type)) {
-                        // 多值时采用标签控件, 无需在名称后加点
-                    } else
                     if (    "enum".equals(type)
                     ||      "type".equals(type)
                     ||     "check".equals(type)
@@ -120,7 +109,13 @@
                         if (rptd) {
                             name += ".";
                         }
-                    } else {
+                    } else
+                    if (    "fork".equals(type)
+                    ||      "pick".equals(type)
+                    ||      "file".equals(type)
+                    ||     "image".equals(type)
+                    ||     "video".equals(type)
+                    ||     "audio".equals(type)) {
                         // 为与表单一致而对多值字段的名称后加点
                         if (rptd) {
                             name += ".";
@@ -345,6 +340,61 @@
                     <input type="hidden" name="<%=name%>" class="form-ignored"/>
                     <%} /* End if */ %>
                     <select class="form-control" name="<%=name%>"<%=extr%>></select>
+                <%} else if ("file".equals(type) || "image".equals(type) || "video".equals(type) || "audio".equals(type)) {%>
+                    <%
+                        String extr = "";
+                        String mode = "hsFile";
+                        String kind =  "_file";
+                        String typa = (String) info.get("accept");
+                        if (typa == null || typa.length() == 0) {
+                            typa  = ! "file".equals(type) ? type+"/*" : "*/*";
+                        }
+                        if (rptd) {
+                            name  = name + "."; // 多选末尾加点
+                            typa += "\" multiple=\"multiple";
+                            extr += " data-repeated=\"repeated\"";
+                        }
+                        if (rqrd) {
+                            extr += " data-required=\"required\"";
+                        }
+                        if ("image".equals(type)) {
+                            mode  = "hsView";
+                            kind  =  "_view";
+                            String moda = Synt.declare(info.get("thumb-mode"), "");
+                            String size = Synt.declare(info.get("thumb-size"), "");
+                            if (rptd
+                            &&  moda.length() == 0) {
+                                moda = "keep"; // 多选但未指定模式，采用保留以便对齐
+                            }
+                            if (size.length() != 0) {
+                                Matcher m = Pattern.compile("(\\d+)\\*(\\d+)").matcher(size);
+                                if ( m.find() ) {
+                                    // 限制最大尺寸, 避免撑开容器
+                                    int w  = 450 ;
+                                    int h  = 150 ;
+                                    int sw = Synt.declare(m.group(1), w);
+                                    int sh = Synt.declare(m.group(2), h);
+                                    if (sw > w) {
+                                        sh = w * sh / sw;
+                                        sw = w;
+                                    }
+                                    if (sh > h) {
+                                        sw = h * sw / sh;
+                                        sh = h;
+                                    }
+                                    size = sw+"*"+sh;
+                                } else {
+                                    size = "150*150";
+                                }
+                            } else {
+                                size = "150*150";
+                            }
+                            kind += "\" data-size=\""+size+"\" data-mode=\""+moda;
+                        }
+                    %>
+                    <input type="file" name="<%=name%>" accept="<%=typa%>" class="form-ignored invisible"/>
+                    <ul class="pickbox" data-fn="<%=name%>" data-ft="<%=kind%>"<%=extr%>></ul>
+                    <button type="button" class="btn btn-default form-control" data-toggle="<%=mode%>"><%=Synt.defxult(hold, _locale.translate("fore.file.browse", text))%></button>
                 <%} else if ("fork".equals(type) || "pick".equals(type)) {%>
                     <%
                         String extr = "";
@@ -413,66 +463,10 @@
                     <input type="hidden" name="<%=name%>" class="form-ignored"/>
                     <ul class="pickbox" data-fn="<%=name%>" data-ft="<%=kind%>"<%=extr%>></ul>
                     <button type="button" class="btn btn-default form-control" data-toggle="<%=mode%>"><%=Synt.defxult(hold, _locale.translate("fore.fork.select", text))%></button>
-                <%} else if ("file".equals(type) || "image".equals(type) || "video".equals(type) || "audio".equals(type)) {%>
-                    <%
-                        String extr = "";
-                        String mode = "hsFile";
-                        String kind =  "_file";
-                        String typa = (String) info.get("accept");
-                        if (typa == null || typa.length() == 0) {
-                            typa  = ! "file".equals(type) ? type+"/*" : "*/*";
-                        }
-                        if (rptd) {
-                            name  = name + "."; // 多选末尾加点
-                            typa += "\" multiple=\"multiple";
-                            extr += " data-repeated=\"repeated\"";
-                        }
-                        if (rqrd) {
-                            extr += " data-required=\"required\"";
-                        }
-                        if ("image".equals(type)) {
-                            mode  = "hsView";
-                            kind  =  "_view";
-                            String moda = Synt.declare(info.get("thumb-mode"), "");
-                            String size = Synt.declare(info.get("thumb-size"), "");
-                            if (rptd
-                            &&  moda.length() == 0) {
-                                moda = "keep"; // 多选但未指定模式，采用保留以便对齐
-                            }
-                            if (size.length() != 0) {
-                                Matcher m = Pattern.compile("(\\d+)\\*(\\d+)").matcher(size);
-                                if ( m.find() ) {
-                                    // 限制最大尺寸, 避免撑开容器
-                                    int w  = 450 ;
-                                    int h  = 150 ;
-                                    int sw = Synt.declare(m.group(1), w);
-                                    int sh = Synt.declare(m.group(2), h);
-                                    if (sw > w) {
-                                        sh = w * sh / sw;
-                                        sw = w;
-                                    }
-                                    if (sh > h) {
-                                        sw = h * sw / sh;
-                                        sh = h;
-                                    }
-                                    size = sw+"*"+sh;
-                                } else {
-                                    size = "150*150";
-                                }
-                            } else {
-                                size = "150*150";
-                            }
-                            kind += "\" data-size=\""+size+"\" data-mode=\""+moda;
-                        }
-                    %>
-                    <input type="file" name="<%=name%>" accept="<%=typa%>" class="form-ignored invisible"/>
-                    <ul class="pickbox" data-fn="<%=name%>" data-ft="<%=kind%>"<%=extr%>></ul>
-                    <button type="button" class="btn btn-default form-control" data-toggle="<%=mode%>"><%=Synt.defxult(hold, _locale.translate("fore.file.browse", text))%></button>
                 <%} else {%>
                     <%
                         String extr = "";
                         if (rptd) {
-                            name += "." ;
                             extr += " multiple=\"multiple\"";
                         }
                         if (rqrd) {

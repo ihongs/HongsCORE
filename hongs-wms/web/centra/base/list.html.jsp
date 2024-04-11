@@ -281,10 +281,6 @@
                         oc = "sortable";
                     }
 
-                    if ("textarea".equals(type)
-                    ||  "textview".equals(type)) {
-                        ob += " data-type=" + Synt.declare(info.get("type"), "text");
-                    } else
                     if ("datetime".equals(type)
                     ||      "date".equals(type)
                     ||      "time".equals(type)) {
@@ -308,6 +304,7 @@
                         }
                     } else
                     if (  "number".equals(type)
+                    ||    "sorted".equals(type)
                     ||     "range".equals(type)
                     ||     "color".equals(type)) {
                         // 自定义格式化
@@ -315,6 +312,10 @@
                         if (frmt != null && frmt.length( ) != 0 ) {
                             ob += " data-format=\"" + frmt + "\"";
                         }
+                    } else
+                    if ("textarea".equals(type)
+                    ||  "textview".equals(type)) {
+                        ob += " data-type=" + Synt.declare(info.get("type"), "text");
                     }
 
                     _rb.append(',').append(name);

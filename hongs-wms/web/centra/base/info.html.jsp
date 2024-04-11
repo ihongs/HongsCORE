@@ -97,17 +97,6 @@
                             kind += "\" data-format=\"" + frmt;
                         }
                     } else
-                    if ("textarea".equals(type)
-                    ||  "textview".equals(type)
-                    ||    "string".equals(type)
-                    ||    "stored".equals(type)
-                    ||    "search".equals(type)
-                    ||     "email".equals(type)
-                    ||       "url".equals(type)
-                    ||       "tel".equals(type)
-                    ||       "sms".equals(type)) {
-                        // 多值时采用标签控件, 无需在名称后加点
-                    } else
                     if (    "enum".equals(type)
                     ||      "type".equals(type)
                     ||     "check".equals(type)
@@ -118,7 +107,13 @@
                         if (rptd) {
                             name += ".";
                         }
-                    } else {
+                    } else
+                    if (    "fork".equals(type)
+                    ||      "pick".equals(type)
+                    ||      "file".equals(type)
+                    ||     "image".equals(type)
+                    ||     "video".equals(type)
+                    ||     "audio".equals(type)) {
                         // 为与表单一致而对多值字段的名称后加点
                         if (rptd) {
                             name += ".";

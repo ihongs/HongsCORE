@@ -624,9 +624,11 @@ function hsFormDollSubs(box, v, n) {
         btn.find("[data-toggle=hsFormSubAdd]").data("docket", box);
     }
 
-    box.data("html", htm);
-    box.data("name",  n );
-    box.data("enfo",  v );
+    if (htm.size()) {
+        box.data("html", htm);
+    }
+    box.data("name", n);
+    box.data("enfo", v);
 }
 
 /**

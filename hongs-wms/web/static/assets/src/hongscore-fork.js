@@ -736,7 +736,6 @@ function hsFormFillSubs(box, v, n) {
 //  box.data("info",  v );
 
     if (box.data("href")) {
-        box.removeData("html");
         jQuery.hsAjax({
             url  : box.data("href"),
             async: true ,
@@ -747,6 +746,7 @@ function hsFormFillSubs(box, v, n) {
                 // 特殊情况可完全由外部定制
                 htm = dom.find(".form-subs").first();
                 if (htm.size( )) {
+                    box.removeData( "html" );
                     box.before(dom);
                     box.remove();
                     btn.remove();

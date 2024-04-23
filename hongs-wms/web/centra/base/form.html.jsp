@@ -474,9 +474,9 @@
                             type  =  "text";
                         } else {
                             if ("sorted".equals(type)) type = "number";
-                            if (info.containsKey("min"      )) extr += " min=\""      +info.get("min"      ).toString()+"\"";
-                            if (info.containsKey("max"      )) extr += " max=\""      +info.get("max"      ).toString()+"\"";
-                            if (info.containsKey("step"     )) extr += " step=\""     +info.get("step"     ).toString()+"\"";
+                            if (info.containsKey("min" )) extr += " min=\"" +info.get("min" ).toString()+"\"";
+                            if (info.containsKey("max" )) extr += " max=\"" +info.get("max" ).toString()+"\"";
+                            if (info.containsKey("step")) extr += " step=\""+info.get("step").toString()+"\"";
                         }
                     %>
                     <input class="form-control" type="<%=type%>" name="<%=name%>" placeholder="<%=hold%>"<%=extr%>/>

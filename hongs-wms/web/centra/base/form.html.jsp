@@ -490,7 +490,7 @@
                             extr += " data-toggle=\"tagsinput\"";
                             type  =  "text";
                         } else {
-                            if ("string".equals(type)) type = "text";
+                            if ("string".equals(type) || "stored".equals(type) || "search".equals(type)) type = "text";
                             if (info.containsKey("minlength")) extr += " minlength=\""+info.get("minlength").toString()+"\"";
                             if (info.containsKey("maxlength")) extr += " maxlength=\""+info.get("maxlength").toString()+"\"";
                             if (info.containsKey("pattern"  )) extr += " pattern=\""  +info.get("pattern"  ).toString()+"\"";

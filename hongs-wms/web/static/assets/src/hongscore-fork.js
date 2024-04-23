@@ -748,8 +748,8 @@ function hsFormFillSubs(box, v, n) {
                 // 特殊情况可完全由外部定制
                 htm = dom.find(".form-subs").first();
                 if (htm.size( )) {
-                    box.removeClass("form-subs");
-                    box.   addClass( "loadbox" );
+                    box.removeClass ("form-subs");
+                    box.addClass ("loadbox");
                     box.append(dom);
                     btn.remove();
                     btr.remove();

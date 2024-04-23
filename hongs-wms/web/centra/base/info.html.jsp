@@ -48,7 +48,7 @@
                 }
             }
         %>
-        <%/****/ if ("hidden".equals(type)) {%>
+        <%if ("hidden".equals(type)) {%>
             <input type="hidden" name="<%=name%>" />
         <%} else if ("legend".equals(type)) {%>
             <%
@@ -62,87 +62,43 @@
             <figure data-name="<%=name%>"><%=text%></figure>
         <%} else {%>
             <%
-                String kind;
-                kind = "_review";
                 text = Synt.defxult(Synt.asString(info.get("info-text")), text, "");
                 hint = Synt.defxult(Synt.asString(info.get("info-hint")), hint, "");
             %>
+            <%if ("form".equals(type) || "part".equals("type")) {%>
+            <div class="form-group" data-name="<%=name%>">
+                <%
+                    String extr = "";
+                    String kind =  "_form";
+                    String href = Synt.defxult(Synt.asString(info.get("data-rl")), "");
+                    href = href.replace( "centre", "centra" );
+                    if (rptd) {
+                        name  = name + "."; // 多选末尾加点
+                        extr += " data-repeated=\"repeated\"";
+                    }
+                %>
+                <legend><%=text%></legend>
+                <div class="help-block text-muted form-control-static"><%=hint%></div>
+                <div class="form-subs" data-ft="<%=kind%>" data-fn="<%=name%>" data-href="<%=href%>"<%=extr%>></div>
+            </div>
+            <%continue; } /*End sub form*/%>
             <div class="form-group row" data-name="<%=name%>">
                 <label class="col-xs-3 col-md-2 text-right control-label form-control-static"><%=text%></label>
                 <div class="col-xs-9 col-md-8">
-                <%
-                    if ("datetime".equals(type)
-                    ||      "date".equals(type)
-                    ||      "time".equals(type)) {
-                        kind = "_" + type;
-                        // 日期类需注意 Unix 时间戳需要乘 1000
-                        Object typa = info.get("type");
-                        if ("timestamp".equals( typa )
-                        ||  "datestamp".equals( typa )) {
-                            kind += "\" data-fl=\"!v?v:v*1000";
-                        }
-                        // 自定义格式化
-                        String frmt = (String) info.get("format");
-                        if (frmt != null && frmt.length( ) != 0 ) {
-                            kind += "\" data-format=\"" + frmt;
-                        }
-                    } else
-                    if (  "number".equals(type)
-                    ||    "sorted".equals(type)
-                    ||     "range".equals(type)
-                    ||     "color".equals(type)) {
-                        // 自定义格式化
-                        String frmt = (String) info.get("format");
-                        if (frmt != null && frmt.length( ) != 0 ) {
-                            kind += "\" data-format=\"" + frmt;
-                        }
-                    } else
-                    if (    "enum".equals(type)
-                    ||      "type".equals(type)
-                    ||     "check".equals(type)
-                    ||     "radio".equals(type)
-                    ||    "select".equals(type)) {
-                        // 选项类字段在查看页仅需读取其文本即可
-                        name += "_text";
-                        if (rptd) {
-                            name += ".";
-                        }
-                    } else
-                    if (    "fork".equals(type)
-                    ||      "pick".equals(type)
-                    ||      "file".equals(type)
-                    ||     "image".equals(type)
-                    ||     "video".equals(type)
-                    ||     "audio".equals(type)) {
-                        // 为与表单一致而对多值字段的名称后加点
-                        if (rptd) {
-                            name += ".";
-                        }
-                    }
-                %>
-                <%if ("textarea".equals(type) || "textview".equals(type)) {%>
+                <%if ("fork".equals(type) || "pick".equals(type)) {%>
                     <%
-                        String typa = (String) info.get("type");
-                        String mode = (String) info.get("mode");
-                    %>
-                    <%  /**/ if ("code".equals(typa)) {%>
-                        <pre class="form-control-static _code" data-fn="<%=name%>" data-ft="_text" data-type="<%=typa%>" data-mode="<%=mode%>"></pre>
-                    <%} else if ("html".equals(typa)) {%>
-                        <div class="form-control-static _html" data-fn="<%=name%>" data-ft="_html"></div>
-                    <%} else {%>
-                        <div class="form-control-static _text" data-fn="<%=name%>" data-ft="_text"></div>
-                    <%}%>
-                <%} else if ("fork".equals(type) || "pick".equals(type)) {%>
-                    <%
-                        kind =  "_fork" ;
-                        String fn = name;
-                        if (fn.endsWith( "." )) {
-                            fn = fn.substring(0, fn.length() - 1);
+                        String extr = "";
+                        String mode = "hsFork";
+                        String kind =  "_fork";
+                        String kn   =    name ;
+                        if (kn.endsWith("_id")) {
+                            kn = kn.substring(0, kn.length() - 3);
+                        } else {
+                            kn = kn +  "_fork"; // 增加特定后缀
                         }
-                        String kn = fn +"_fork";
-                        if (fn.endsWith("_id")) {
-                            fn = fn.substring(0, fn.length() - 3);
-                            kn = fn;
+                        if (rptd) {
+                            name  = name + "."; // 多选末尾加点
+                            extr += " data-repeated=\"repeated\"";
                         }
                         String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
                         String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") : "id";
@@ -162,22 +118,29 @@
                         kind += "\" data-ak=\""+ak+"\" data-tk=\""+tk+"\" data-vk=\""+vk
                              +  "\" data-href=\""+rl+"\" data-target=\"@";
                     %>
-                    <ul class="pickbox pickrol" data-fn="<%=name%>" data-ft="<%=kind%>"></ul>
-                    <button type="button" data-toggle="hsFork" class="hide"></button>
+                    <ul class="pickbox pickrol" data-fn="<%=name%>" data-ft="<%=kind%>"<%=extr%>></ul>
+                    <button type="button" class="hide" data-toggle="<%=mode%>"></button>
                 <%} else if ("file".equals(type) || "image".equals(type) || "video".equals(type) || "audio".equals(type)) {%>
                     <%
-                        kind = "_file";
+                        String extr = "";
+                        String mode = "hsFile";
+                        String kind =  "_file";
+                        if (rptd) {
+                            name  = name + "."; // 多选末尾加点
+                            extr += " data-repeated=\"repeated\"";
+                        }
                         if ("image".equals(type)) {
-                            kind = "_view";
+                            mode = "hsView";
+                            kind = "_view" ;
                             String size = Synt.declare(info.get("thumb-size"), "");
                             String moda = Synt.declare(info.get("thumb-mode"), "");
-                            if (name.endsWith ( "." )
-                            &&  moda.length( ) == 0 ) {
-                                moda = "keep";
+                            if (rptd
+                            &&  moda.length() == 0) {
+                                moda = "keep"; // 多选但未指定模式，采用保留以便对齐
                             }
-                            if (size.length( ) != 0 ) {
+                            if (size.length() != 0) {
                                 Matcher m = Pattern.compile("(\\d+)\\*(\\d+)").matcher(size);
-                                if ( m.find( ) ) {
+                                if ( m.find() ) {
                                     // 限制最大尺寸, 避免撑开容器
                                     int w  = 450 ;
                                     int h  = 150 ;
@@ -201,14 +164,58 @@
                             kind += "\" data-size=\""+size+"\" data-mode=\""+moda;
                         }
                     %>
-                    <ul class="pickbox pickrol" data-fn="<%=name%>" data-ft="<%=kind%>"></ul>
-                    <button type="button" data-toggle="hsFile" class="hide"></button>
-                <%} else if ("email".equals(type) || "url".equals(type) || "tel".equals(type) || "sms".equals(type)) {%>
-                    <div class="form-control-static"><a data-fn="<%=name%>" data-ft="<%=kind%>" class="a-<%=type%>" target="_blank"></a></div>
-                <%} else if ( rptd ) {%>
-                    <div class="form-control-static"><p data-fn="<%=name%>" data-ft="<%=kind%>" class="repeated" data-item-class="label label-default"></p></div>
-                <%} else {%>
+                    <ul class="pickbox pickrol" data-fn="<%=name%>" data-ft="<%=kind%>"<%=extr%>></ul>
+                    <button type="button" class="hide" data-toggle="<%=mode%>"></button>
+                <%} else if ("textarea".equals(type) || "textview".equals(type)) {%>
+                    <%
+                        String typa = (String) info.get("type");
+                        String mode = (String) info.get("mode");
+                    %>
+                    <%  /**/ if ("code".equals(typa)) {%>
+                        <pre class="form-control-static _code" data-fn="<%=name%>" data-ft="_text" data-type="<%=typa%>" data-mode="<%=mode%>"></pre>
+                    <%} else if ("html".equals(typa)) {%>
+                        <div class="form-control-static _html" data-fn="<%=name%>" data-ft="_html"></div>
+                    <%} else {%>
+                        <div class="form-control-static _text" data-fn="<%=name%>" data-ft="_text"></div>
+                    <%}%>
+                <%} else if ("date".equals(type) || "time".equals(type) || "datetime".equals(type)) {%>
+                    <%
+                        String kind = "_"+ type;
+                        // 日期类需注意 Unix 时间戳需要乘 1000
+                        Object typa = info.get("type");
+                        if ("timestamp".equals( typa )
+                        ||  "datestamp".equals( typa )) {
+                            kind += "\" data-fl=\"!v?v:v*1000";
+                        }
+                        // 自定义格式化
+                        String frmt = (String) info.get("format");
+                        if (frmt != null && frmt.length( ) != 0 ) {
+                            kind += "\" data-format=\"" + frmt;
+                        }
+                    %>
                     <div class="form-control-static" data-fn="<%=name%>" data-ft="<%=kind%>"></div>
+                <%} else if ("number".equals(type) || "sorted".equals(type) || "range".equals(type) || "color".equals(type)) {%>
+                    <%
+                        String kind = "_review";
+                        // 自定义格式化
+                        String frmt = (String) info.get("format");
+                        if (frmt != null && frmt.length( ) != 0 ) {
+                            kind += "\" data-format=\"" + frmt;
+                        }
+                    %>
+                    <div class="form-control-static" data-fn="<%=name%>" data-ft="<%=kind%>"></div>
+                <%} else if ("enum".equals(type) || "type".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
+                    <%
+                        name += "_text";
+                        if (rptd) {
+                            name += ".";
+                        }
+                    %>
+                    <div class="form-control-static"><p data-fn="<%=name%>" data-ft="_review" class="repeated" data-item-class="label label-default"></p></div>
+                <%} else if ( rptd ) {%>
+                    <div class="form-control-static"><p data-fn="<%=name%>" data-ft="_review" class="repeated" data-item-class="label label-default"></p></div>
+                <%} else {%>
+                    <div class="form-control-static" data-fn="<%=name%>" data-ft="_review"></div>
                 <%} /*End If */%>
                     <div class="help-block text-muted form-control-static"><%=hint%></div>
                 </div>

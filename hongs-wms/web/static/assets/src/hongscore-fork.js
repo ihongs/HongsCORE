@@ -596,6 +596,177 @@ function hsListPickMore(listObj, bn, qn, rn, pf) {
     sel(bn > 0 ? bn : 1);
 }
 
+/**
+ * 子表单登记选项
+ * @param {Element} box
+ * @param {Object} v
+ * @param {String} n
+ */
+function hsFormDollSubs(box, v, n) {
+    if (! n ) n = box.data( "fn" );
+    var rol = box.data("readonly");
+    var mul = box.data("repeated")
+        || !! box.data("multiple")
+        || /(\[\]|\.\.|\.$)/.test(n);
+    n = n.replace(/(\[\]|\.)$/ , "");
+
+    var htm = box.siblings(".form-sub");
+    var btr = box.siblings(".form-sub-del");
+    var btn = box.siblings(".form-sub-add");
+        htm . detach();
+    if (rol || ! mul ) {
+        btn . remove();
+        btr . remove();
+        btn = jQuery();
+        btr = jQuery();
+    } else {
+        btn.show( ).removeClass("hide");
+        btn.find("[data-toggle=hsFormSubAdd]").data("docket", box);
+    }
+
+    box.data("html", htm);
+    box.data("name",  n );
+    box.data("enfo",  v );
+}
+
+/**
+ * 子表单填充数据
+ * @param {Element} box
+ * @param {Object} v
+ * @param {String} n
+ */
+function hsFormFillSubs(box, v, n) {
+    if (! n ) n = box.data( "fn" );
+    var rol = box.data("readonly");
+    var mul = box.data("repeated")
+        || !! box.data("multiple")
+        || /(\[\]|\.\.|\.$)/.test(n);
+    n = n.replace(/(\[\]|\.)$/ , "");
+
+    var htm = box.siblings(".form-sub");
+    var btr = box.siblings(".form-sub-del");
+    var btn = box.siblings(".form-sub-add");
+        htm . detach();
+    if (rol || ! mul ) {
+        btn . remove();
+        btr . remove();
+        btn = jQuery();
+        btr = jQuery();
+    } else {
+        btn.show( ).removeClass("hide");
+        btn.find("[data-toggle=hsFormSubAdd]").data("docket", box);
+    }
+
+    var ths = this;
+    var enf = box.data("enfo");
+    var idx = box.data("idx") || 0;
+    var add = box.data("add") || function(k, w) {
+        var mod = jQuery.extend({},ths);
+        var htx =  htm  . clone( true );
+        var btx =  btr  . clone( true );
+        htx.show( ).removeClass("hide");
+        btx.show( ).removeClass("hide");
+
+        // 填充数据
+        mod.context= htx ;
+        mod.formBox= htx ;
+        btx.appendTo(htx);
+        htx.appendTo(box);
+        mod.fillEnfo(enf);
+        mod.fillInfo( w );
+
+        // 增加前缀
+        htx.find("[data-fn],input[name],select[name],textarea[name],.form-group[data-name]")
+           .each(function() {
+            var l, inp = jQuery(this);
+            l = inp.attr("name");
+            if (l) {
+                l = k + "." + l ;
+                inp.attr("name", l);
+            }
+            l = inp.data("name");
+            if (l) {
+                l = k + "." + l ;
+                inp.data("name", l);
+                inp.attr("data-name", l);
+            }
+            l = inp.data( "fn" );
+            if (l) {
+                l = k + "." + l ;
+                inp.data( "fn" , l);
+                inp.attr( "data-fn" , l);
+            }
+        });
+    };
+    var pad = box.data("pad") || function(n, v) {
+        if (! mul) {
+            v = v || {};
+            add(n , v );
+            box.data("idx", idx);
+        } else {
+            v = v || [];
+            for(var j = 0 ; j < v.length ; j ++, idx ++) {
+                add(n +"."+ j , v[j]);
+                box.data("idx", idx );
+            }
+        }
+    };
+    var fil = function (n, v) {
+        var btx = htm.find("[data-toggle=hsFormSubDel]");
+        // 模板为松散多块的需要进行包裹
+        if (htm.size() !== 1) {
+            htm = jQuery('<div></div>').append(htm);
+        }
+        // 模板内部存在删除按钮则不再加
+        if (btx.size() !== 0) {
+            btr . remove();
+            btr = jQuery();
+        }
+
+        box.  data  ("html", htm);
+        box.addClass("form-subs");
+        htm.addClass("form-sub" );
+        pad(n, v);
+    };
+
+    box.data("idx" , idx);
+    box.data("add" , add);
+    box.data("pad" , pad);
+    box.data("name",  n );
+//  box.data("info",  v );
+
+    if (box.data("href")) {
+        jQuery.hsAjax({
+            url  : box.data("href"),
+            async: true ,
+            cache: true ,
+            type : "get",
+            dataType: "html",
+            success : function(dom) {
+                // 特殊情况可完全由外部定制
+                htm = dom.find(".form-subs").first();
+                if (htm.size() > 0) {
+                    box.before(dom);
+                    box.remove(   );
+                    return;
+                }
+
+                htm = dom.find(".form-body").first();
+                htm = htm.size() ? htm : dom;
+                htm.removeClass("form-body");
+                fil(n, v);
+            }
+        });
+    } else
+    if (box.data("html")) {
+        htm = box.data("html");
+        htm = jQuery  ( htm  );
+        fil(n, v);
+    } else {
+        fil(n, v);
+    }
+}
+
 (function($) {
     $(document)
     .on("click", "[data-toggle=hsPick],[data-toggle=hsFork]",
@@ -603,15 +774,14 @@ function hsListPickMore(listObj, bn, qn, rn, pf) {
         var url = $(this).data( "href" )
                || $(this).attr( "href" );
         var bin = $(this).data("target"); // 选择区域
-        var box = $(this).data("result"); // 填充区域
+        var box = $(this).data("docket"); // 填充区域
 
         if (bin) {
             bin = $(this).hsFind(bin);
         }
         if (box) {
             box = $(this).hsFind(box);
-        } else
-        {
+        } else {
             box = $(this).siblings("[name],[data-fn],[data-ft]")
                .not(".form-ignored" );
         if (! box.size()) {
@@ -620,6 +790,32 @@ function hsListPickMore(listObj, bn, qn, rn, pf) {
 
         $(this).hsPick(url, bin, box);
         return false;
+    })
+    .on("click", "[data-toggle=hsFormSubAdd]",
+    function() {
+        var box = $(this).data("docket"); // 填充区域
+        if (box) {
+            box = $(this).hsFind(box);
+        } else {
+            box = $(this).siblings("[name],[data-fn],[data-ft]")
+               .not(".form-ignored" );
+        if (! box.size()) {
+            box = $(this). parent ( );
+        }}
+
+        var  n  = box.data("fn" ) || "";
+        var  i  = box.data("idx") || 00;
+        var add = box.data("add");
+        if (add) {
+            add( n +"."+ i, { } );
+            box.data("idx", i+1 );
+        } else {
+            throw new Error ("hsFormSub add function required!");
+        }
+    })
+    .on("click", "[data-toggle=hsFormSubDel]",
+    function() {
+        $(this).closest(".form-sub").remove();
     });
 })(jQuery);
 

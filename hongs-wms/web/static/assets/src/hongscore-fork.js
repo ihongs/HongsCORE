@@ -736,6 +736,7 @@ function hsFormFillSubs(box, v, n) {
 //  box.data("info",  v );
 
     if (box.data("href")) {
+        box.removeData("html");
         jQuery.hsAjax({
             url  : box.data("href"),
             async: true ,

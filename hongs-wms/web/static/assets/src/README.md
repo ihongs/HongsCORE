@@ -10,20 +10,20 @@
 ## 属性缩写:
 
     List:
-        data-pn     Page num    页码序号
-        data-ob     Order by    排序字段
         data-fn     Field name  字段名称
         data-ft     Field type  字段类型
         data-fl     Fill lambda 填充取值
+        data-pn     Page num    页码序号
+        data-ob     Order by    排序字段
     Form:
         data-fn     Field name  字段名称
         data-ft     Field type  字段类型
         data-fl     Fill lambda 填充取值
-        data-dl     Data lambda 预置选项
+        data-dl     Doll lambda 预置选项
     Fork:
-        data-ak     Assoc key   关联数据键
         data-vk     Value key   关联数据取值键
         data-tk     Title key   关联数据标题键
+        data-ak     Assoc key   关联数据键
         data-al     Assoc lnk   关联选取页
         data-rl     Refer lnk   关联查阅页
     Form checkbox:

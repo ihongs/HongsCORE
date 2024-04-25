@@ -61,7 +61,7 @@ function HsForm(context, opts) {
         this.initEnfo = hsSerialDic(initEnf);
     }
 
-    this.valiInit();
+    this.variInit();
     this.saveInit();
 
     /**
@@ -137,20 +137,22 @@ HsForm.prototype = {
         this.formBox.trigger("loadOver", [rst, this]);
     },
     fillEnfo : function(enfo) {
-        var fds, fns, fts, fls, i, n, t, v, f;
-        fds = this.formBox.find("[data-fn],input[name],select[name],textarea[name]")
-                          .not ('.form-ignored');
-        fns = { }; fts = { }; fls = { };
-        for(i = 0; i < fds.length; i ++) {
-            v = jQuery(fds[i]);
-            n = v.data( "fn" ) || v.attr("name");
-            t = v.data( "ft" );
-            f = v.data( "dl" );
-            if (! n || fns[n]) {
-                continue;
+        var   that = this;
+        this._enfo = enfo;
+        this.formBox.find("[data-fn],[data-ft],[data-dl],.form-field").each(function() {
+            var x  = jQuery(this);
+            var n  = x.data("fn") || x.attr("name") || "";
+            var t  = x.data("ft");
+            var f  = x.data("dl");
+            var k  = n.replace (/(\[\]|\.)$/, ''); // 规避数组键影响
+            var v  = hsGetValue(enfo, k);
+
+            if (t === undefined) {
+                t  = "_review";
             }
-            fns[n] = n;
-            fts[n] = t;
+            if (v === undefined) {
+                v  =  enfo[k] ;
+            }
 
             // 解析填充方法
             if (f && typeof f != "function") {
@@ -159,46 +161,23 @@ HsForm.prototype = {
                 } catch (e) {
                     throw new Error("Parse form data-dl error: "+e);
                 }
-                v.data("dl",f);
-            }
-            if (f) {
-                fls [ n ] = f ;
-            }
-        }
-
-        this._enfo =  enfo;
-        for(n in fns) {
-            t  = fts[n];
-            f  = fls[n];
-            v  = hsGetValue(enfo, n.replace(/(\[\]|\.)$/, '')); // 规避数组键影响
-            if (v === undefined) {
-                v  =  enfo [ n ];
-            }
-
-            // 获取当前待填充的节点
-            // 非表单项可能仅需显示
-                i = this.formBox.find('[data-fn="'+n+'"]').not(".form-ignored");
-            if (i.length === 0 ) {
-                i = this.formBox.find('[name="'   +n+'"]').not(".form-ignored");
-            } else
-            if (t === undefined) {
-                t  =  "_review";
+                x.data("dl",f);
             }
 
             // 调节
             if (f) {
-                v  = f.call(i[0], this, v, n);
+                v  = f.call(this, that, v, n);
             }
             // 填充
-            if (n && this["_doll_"+n] !== undefined) {
-                v  = this["_doll_"+n].call(this, i, v, n);
+            if (n && that["_doll_"+n] !== undefined) {
+                v  = that["_doll_"+n].call(that, x, v, n);
             } else
-            if (t && this["_doll_"+t] !== undefined) {
-                v  = this["_doll_"+t].call(this, i, v, n);
+            if (t && that["_doll_"+t] !== undefined) {
+                v  = that["_doll_"+t].call(that, x, v, n);
             }
             // 无值不理会
             if (!v && v !== 0 && v !== "") {
-                continue;
+                return;
             }
 
             if (i.is("select")) {
@@ -206,93 +185,72 @@ HsForm.prototype = {
             } else {
                 this._doll__review(i, v, n);
             }
-        }
+        });
         delete this._enfo;
     },
     fillInfo : function(info) {
-        var fds, fns, fts, fls, i, n, t, v, f;
-        fds = this.formBox.find("[data-fn],input[name],select[name],textarea[name]")
-                          .not ('.form-ignored');
-        fns = { }; fts = { }; fls = { };
-        for(i = 0; i < fds.length; i ++) {
-            v = jQuery(fds[i]);
-            n = v.data( "fn" ) || v.attr("name");
-            t = v.data( "ft" );
-            f = v.data( "fl" );
-            if (! n || fns[n]) {
-                continue;
+        var   that = this;
+        this._info = info;
+        this.formBox.find("[data-fn],[data-ft],[data-fl],.form-field").each(function() {
+            var x  = jQuery(this);
+            var n  = x.data("fn") || x.attr("name") || "";
+            var t  = x.data("ft");
+            var f  = x.data("fl");
+            var k  = n.replace (/(\[\]|\.)$/, ''); // 规避数组键影响
+            var v  = hsGetValue(info, k);
+
+            if (t === undefined) {
+                t  = "_review";
             }
-            fns[n] = n;
-            fts[n] = t;
+            if (v === undefined) {
+                v  =  enfo[k] ;
+            }
 
             // 解析填充方法
             if (f && typeof f != "function") {
                 try {
                     f = eval('(null||function(form,v,n){return '+f+';})');
                 } catch (e) {
-                    throw new Error("Parse form data-fl error: "+e);
+                    throw new Error("Parse form data-dl error: "+e);
                 }
-                v.data("fl",f);
-            }
-            if (f) {
-                fls [ n ] = f ;
-            }
-        }
-
-        this._info =  info;
-        for(n in fns) {
-            t  = fts[n];
-            f  = fls[n];
-            v  = hsGetValue(info, n.replace(/(\[\]|\.)$/, '')); // 规避数组键影响
-            if (v === undefined) {
-                v  =  info [ n ];
-            }
-
-            // 获取当前待填充的节点
-            // 非表单项可能仅需显示
-                i = this.formBox.find('[data-fn="'+n+'"]').not(".form-ignored");
-            if (i.length === 0 ) {
-                i = this.formBox.find('[name="'   +n+'"]').not(".form-ignored");
-            } else
-            if (t === undefined) {
-                t  =  "_review";
+                x.data("fl",f);
             }
 
             // 调节
             if (f) {
-                v  = f.call(i[0], this, v, n);
+                v  = f.call(this, that, v, n);
             }
             // 填充
-            if (n && this["_fill_"+n] !== undefined) {
-                v  = this["_fill_"+n].call(this, i, v, n);
+            if (n && that["_fill_"+n] !== undefined) {
+                v  = that["_fill_"+n].call(that, x, v, n);
             } else
-            if (t && this["_fill_"+t] !== undefined) {
-                v  = this["_fill_"+t].call(this, i, v, n);
+            if (t && that["_fill_"+t] !== undefined) {
+                v  = that["_fill_"+t].call(that, x, v, n);
             }
-
             // 无值不理会
-            if (! v && v !== 0 && v !== "") {
-                continue;
+            if (!v && v !== 0 && v !== "") {
+                return;
             }
 
-            if (i.is(":file")) {
-                if ( jQuery.isArray( v )) {
-                    v = v.join(',');
-                }
-                i.attr("data-value", v ).change();
-            } else
-            if (i.is(":radio,:checkbox")) {
-                if (!jQuery.isArray( v )) {
+            if (x.is(".radio..checkbox")) {
+                if (! jQuery.isArray(v) ) {
                     v = [v];
                 }
-                i.val (v).first ().change();
+                x.find(":radio,:checkbox" )
+                 .val (v).first ().change();
             } else
-            if (i.is("input,select,textarea")) {
-                i.val (v).change();
+            if (x.is(":radio,:checkbox")) {
+                if (! jQuery.isArray(v) ) {
+                    v = [v];
+                }
+                x.val (v).first ().change();
+            } else
+            if (x.is("input,select,textarea")) {
+                x.val (v).change();
             } else {
-                i.text(v);
+                x.text(v);
             }
-        }
+        });
         delete this._info;
     },
     fillPage : function(page) {
@@ -414,15 +372,22 @@ HsForm.prototype = {
             this.formBox.trigger(evt, [rst, this]);
             if (evt.isDefaultPrevented( )) return ;
 
-            // 字段校验
-            this.seterror(rst.errs || { });
-
             // 错误提示
             if ( rst.msg ) {
                 this.warn(rst.msg, "warning" );
             } else
             if (!rst.errs) {
                 this.warn(hsGetLang('error.undef'));
+            }
+
+            // 错误详情
+            if ( rst.errs) {
+                for(var n in rst.errs) {
+                    var e  = rst.errs[n];
+                    var x  = this.getinput(n);
+                //  var v  = this.getvalue(x);
+                    this.seterror(x , e);
+                }
             }
         }
     },
@@ -583,11 +548,12 @@ HsForm.prototype = {
         if (v === undefined) return ;
         var vk = inp.attr("data-vk"); if(!vk) vk = 0;
         var tk = inp.attr("data-tk"); if(!tk) tk = 1;
+        var gs = inp.attr("data-group-start") || this._opt_group_start;
         for(var i = 0; i < v.length; i ++) {
             var k = hsGetValue(v[i], vk);
             var t = hsGetValue(v[i], tk);
             // 选项分组
-            if (k && this._opt_group_start && k[0] == this._opt_group_start) {
+            if (k && gs && gs === k[0]) {
                 if (inp.is("optgroup")) {
                     inp = inp.parent();
                     if (! t) continue ;
@@ -790,7 +756,7 @@ HsForm.prototype = {
         jQuery(td).text( v );
     },
 
-    valiInit : function() {
+    variInit : function() {
         var that = this;
         this.formBox.attr("novalidate", "novalidate");
 //      this.formBox.prop("novalidate", true); // 无效
@@ -824,76 +790,147 @@ HsForm.prototype = {
     },
     verifies : function() {
         this.verified();
+        var that = this;
         var vali = true;
-        var inps = {  };
-        this.formBox.find("input,select,textarea,[data-fn]")
-                    .not (".form-ignored")
-                    .each( function( ) {
+        this.formBox.find("[data-fn],[data-ft],[data-hl],.form-field").each(function() {
             var inp = jQuery(this);
-            var nam = inp.attr("name")||inp.attr("data-fn");
-            if (!nam) return true ;
-            if (inps[nam] === undefined) {
-                inps[nam] = inp;
-            } else {
-                inps[nam] = inps[nam].add(inp);
-            }
-        });
-        for(var nam in inps ) {
-            var val = this.validate(inps[nam]);
+            var val = that.validate(inp);
             if (val == false) {
                 vali = false;
             }
-        }
-        if ( !  vali ) {
+        });
+        if ( ! vali) {
            this.warn(hsGetLang('form.invalid'), "warning");
         }
-        return  vali;
+        return vali;
     },
     validate : function(inp) {
-        if (inp === undefined) {
-            return this.verifies();
-        }
-
         var val;
         inp = this.getinput( inp );
         val = this.getvalue( inp );
 
+        // 外部校验方法
+        var n  = inp.data("fn") || inp.attr("name") || "";
+        var t  = inp.data("ft");
+        if (n && this["_veri_"+n] !== undefined) {
+            v  = this["_veri_"+n].call(this, inp, val, n);
+        } else
+        if (t && this["_veri_"+t] !== undefined) {
+            v  = this["_veri_"+t].call(this, inp, val, n);
+        }
+        if (v !== undefined && v !== true) {
+            v  = v || hsGetLang("form.haserror");
+            this.seterror(inp, v);
+            return false;
+        }
+
+        // 内部校验规则
         for(var key in this.rules) {
-            if (!inp.is(key)) {
+            if ( ! inp.is( key ) ) {
                 continue;
             }
-            var err  =  this.rules[key].call(this, val, inp);
-            if (err !== true) {
+            var err  =  this.rules[key].call(this, inp, val);
+            if (err !== undefined && err !== true) {
                 err  =  err || hsGetLang ( "form.haserror" );
                 this.seterror(inp, err);
                 return false;
-            } else {
-                this.seterror(inp);
             }
         }
-        return  true;
+
+        this.seterror(inp);
+        return true;
+    },
+    getinput : function(inp) {
+        if (typeof inp != "string") {
+            return jQuery(inp);
+        }
+
+        do {
+            var sel = inp;
+
+            inp = this.formBox.find('[data-fn="'+sel+'"],.form-field[name="'+sel+'"]');
+            if (inp.size()) {
+                break;
+            }
+
+            /**
+             * 从字段名里提取数组下标
+             * 并使用下标来查找表单项
+             * 还找不到则尝试按集合名
+             * 如: name. 和 name[]
+             * 此查找方法主要为解决显示服务端多值字段校验的错误消息
+             */
+
+            var grp = /^(.*)\[(\d+)\]$/.exec(sel);
+            if (grp == null) {
+                break;
+            }
+            var idx = grp[2];
+                sel = grp[1];
+
+            inp = this.formBox.find('[data-fn="'+sel+'"],.form-field[name="'+sel+'"]');
+            if (inp.size()) {
+                return inp.eq(parseInt(idx)); // 精确位置, 直接返回
+            }
+
+            inp = this.formBox.find('[data-fn="'+sel+'."],.form-field[name="'+sel+'."]');
+            if (inp.size()) {
+                break;
+            }
+
+            inp = this.formBox.find('[data-fn="'+sel+'[]"],.form-field[name="'+sel+'[]"]');
+            if (inp.size()) {
+                break;
+            }
+        }
+        while (false);
+
+        return inp;
+    },
+    getvalue : function(inp) {
+        if (inp.is("input,select,textarea") === false) {
+            inp = inp.find("input");
+        }
+
+        if (inp.is(":checkbox")) {
+            var val = [];
+            inp.filter(":checked")
+               .each(function( ) {
+                val.push($(this).val( ) );
+            });
+            return val;
+        }
+        if (inp.is(":radio")) {
+            return inp.filter(":checked")
+                      .last()
+                      .val ();
+        }
+
+        // 以 . 结尾, 含有 .. 或 [] 均表示为多个值
+        if (/(\[\]|\.\.|\.$)/.test(inp.attr("name"))) {
+            var val = [];
+            inp.each(function( ) {
+                val.push($(this).val( ) );
+            });
+            return val;
+        } else {
+            return inp.last()
+                      .val ();
+        }
     },
     seterror : function(inp, err) {
-        if (err === undefined && jQuery.isPlainObject(inp)) {
-            this.verified();
-            for (var n in inp) {
-                 var e  = inp[n];
-                this.seterror(n, e);
-            }
-            return;
-        }
-
-        inp = this.getinput(inp);
-
         var grp = inp.closest(".form-group");
         var blk = grp.find(   ".text-error");
         var leb = grp.find(".control-label");
+
+        // 补充消息区域
         if (blk.size() == 0) {
             blk = jQuery('<p class="text-error help-block"></p>').appendTo(grp);
             if (leb.hasClass(".form-control-static")) {
                 blk.addClass( "form-control-static" );
             }
         }
+
         if (err===undefined) {
             grp.removeClass("has-error");
             blk.   addClass("invisible");
@@ -938,88 +975,8 @@ HsForm.prototype = {
 
         return hsGetLang(err, rep);
     },
-    getinput : function(inp) {
-        if (typeof inp != "string") {
-            return jQuery(inp);
-        }
-
-        do {
-            var sel = inp;
-
-            inp = this.formBox.find('[name="'+sel+'"],[data-fn="'+sel+'"]');
-            if (inp.size()) {
-                break;
-            }
-
-            /**
-             * 从字段名里提取数组下标
-             * 并使用下标来查找表单项
-             * 还找不到则尝试按集合名
-             * 如: name. 和 name[]
-             * 此查找方法主要为解决显示服务端多值字段校验的错误消息
-             */
-
-            var grp = /^(.*)\[(\d+)\]$/.exec(sel);
-            if (grp == null) {
-                break;
-            }
-            var idx = grp[2];
-                sel = grp[1];
-
-            inp = this.formBox.find('[name="'+sel+'"],[data-fn="'+sel+'"]');
-            if (inp.size()) {
-                return inp.eq(parseInt(idx)); // 精确位置, 直接返回
-            }
-
-            inp = this.formBox.find('[name="'+sel+'."],[data-fn="'+sel+'."]');
-            if (inp.size()) {
-                break;
-            }
-
-            inp = this.formBox.find('[name="'+sel+'[]"],[data-fn="'+sel+'[]"]');
-            if (inp.size()) {
-                break;
-            }
-        }
-        while ( false );
-
-        return inp.not(".form-ignored");
-    },
-    getvalue : function(inp) {
-        if (inp.is("input,select,textarea") === false) {
-            inp = inp.find("input");
-        }
-
-        if (inp.is(":checkbox")) {
-            var val = [];
-            inp.filter(":checked")
-               .each(function( ) {
-                val.push($(this).val( ) );
-            });
-            return val;
-        }
-        if (inp.is(":radio"   )) {
-            return inp.filter(":checked")
-                      .last()
-                      .val ();
-        }
-
-        // 以 . 结尾, 含有 .. 或 [] 均表示为多个值
-        if (/(\[\]|\.\.|\.$)/.test(inp.attr("name"))) {
-            var val = [];
-            inp.each(function( ) {
-                val.push($(this).val( ) );
-            });
-            return val;
-        } else {
-            return inp.last()
-                      .val ();
-        }
-    },
-    rmsgs : {
-    },
     rules : {
-        "[required],[data-required]" : function(val, inp) {
+        "[required],[data-required]" : function(inp, val) {
             if (inp.is(":radio,:checkbox")) {
                 if (!inp.filter(":checked").length) {
                     return this.geterror(inp, "form.requires");
@@ -1053,7 +1010,7 @@ HsForm.prototype = {
             }
             return true;
         },
-        "[pattern],[data-pattern]" : function(val, inp) {
+        "[pattern],[data-pattern]" : function(inp, val) {
             var pn = inp.attr("pattern") || inp.attr("data-pattern");
             var pm = /^\/(.*)\/([gim])?$/.exec(pn);
             if (pm) {
@@ -1066,36 +1023,36 @@ HsForm.prototype = {
             }
             return true;
         },
-        "[maxlength],[data-maxlength]" : function(val, inp) {
+        "[maxlength],[data-maxlength]" : function(inp, val) {
             var max = inp.attr("maxlength") || inp.attr("data-maxlength");
             if (max < val.length) {
                 return this.geterror(inp, "form.gt.maxlength", [max]);
             }
             return true;
         },
-        "[minlength],[data-minlength]" : function(val, inp) {
+        "[minlength],[data-minlength]" : function(inp, val) {
             var min = inp.attr("minlength") || inp.attr("data-minlength");
             if (min > val.length) {
                 return this.geterror(inp, "form.lt.minlength", [min]);
             }
             return true;
         },
-        "[maxrepeat],[data-maxrepeat]" : function(val, inp) {
+        "[maxrepeat],[data-maxrepeat]" : function(inp, val) {
             var max = inp.attr("maxrepeat") || inp.attr("data-maxrepeat");
             if (max < inp.find("[type=hidden],:checked,:selected,:file,:text").size()) {
                 return this.geterror(inp, "form.gt.maxrepeat", [max]);
             }
             return true;
         },
-        "[minrepeat],[data-minrepeat]" : function(val, inp) {
+        "[minrepeat],[data-minrepeat]" : function(inp, val) {
             var min = inp.attr("minrepeat") || inp.attr("data-minrepeat");
             if (min > inp.find("[type=hidden],:checked,:selected,:file,:text").size()) {
                 return this.geterror(inp, "form.lt.minrepeat", [min]);
             }
             return true;
         },
-        "[max],[data-max]" : function(val, inp) {
-            var err =  this.rules["[type=number],.input-number"].call(this, val, inp);
+        "[max],[data-max]" : function(inp, val) {
+            var err =  this.rules["[type=number],.input-number"].call(this, inp, val);
             if (err!== true) {
                 return err ;
             }
@@ -1105,8 +1062,8 @@ HsForm.prototype = {
             }
             return true;
         },
-        "[min],[data-min]" : function(val, inp) {
-            var err =  this.rules["[type=number],.input-number"].call(this, val, inp);
+        "[min],[data-min]" : function(inp, val) {
+            var err =  this.rules["[type=number],.input-number"].call(this, inp, val);
             if (err!== true) {
                 return err ;
             }
@@ -1116,7 +1073,7 @@ HsForm.prototype = {
             }
             return true;
         },
-        "[type=number],.input-number" : function(val, inp) {
+        "[type=number],.input-number" : function(inp, val) {
             // 修复 webkit 下 number 中输入非数字时
             // 由于获取不到值从而导致无法校验的问题
             if (!val && inp[0] && inp[0].validity && inp[0].validity.badInput) {
@@ -1127,67 +1084,56 @@ HsForm.prototype = {
             }
             return true;
         },
-        "[type=color],.input-color" : function(val, inp) {
+        "[type=color],.input-color" : function(inp, val) {
             if (!val) return true; // 规避非 required 的情况
             if (!/^#[0-9A-Fa-f]{6}$/.test(val)) {
                 return this.geterror(inp, "form.is.not.color");
             }
             return true;
         },
-        "[type=email],.input-email" : function(val, inp) {
+        "[type=email],.input-email" : function(inp, val) {
             if (!val) return true; // 规避非 required 的情况
             if (!/^\w+([-.]\w+)*@\w+([-.]\w+)*$/.test(val)) {
                 return this.geterror(inp, "form.is.not.email");
             }
             return true;
         },
-        "[type=url],.input-url" : function(val, inp) {
+        "[type=url],.input-url" : function(inp, val) {
             if (!val) return true; // 规避非 required 的情况
             if (!/^([a-z]+:)?\/\/[^\s]+$/.test(val)) {
                 return this.geterror(inp, "form.is.not.url");
             }
             return true;
         },
-        "[type=tel],.input-tel" : function(val, inp) {
+        "[type=tel],.input-tel" : function(inp, val) {
             if (!val) return true; // 规避非 required 的情况
             if (!/^\+?[0-9][\d\-]+[0-9]$/.test(val)) {
                 return this.geterror(inp, "form.is.not.tel");
             }
             return true;
         },
-        "[data-validate]" : function(val, inp) {
-            var fn = inp.attr("data-validate");
-            try {
-                if (inp.data(fn)) {
-                    return inp.data(fn).call(this, val, inp);
-                } else
-                if ( window [fn]) {
-                    return  window [fn].call(this, val, inp);
-                } else
-                if ( window.console ) {
-                    if (window.console.error) {
-                        window.console.error(fn+" not found!");
-                    } else {
-                        window.console.log  (fn+" not found!");
-                    }
+        "[data-validate]" : function(inp, val) {
+            var f = inp.attr("data-validate");
+
+            // 解析填充方法
+            if (typeof f != "function") {
+                try {
+                    f = eval('(null||function(form,v,n){return '+f+';})');
+                } catch (e) {
+                    throw new Error("Parse form data-validate error: "+e);
                 }
-                return false;
-            } catch (ex) {
-                if ( window.console ) {
-                    if (window.console.error) {
-                        window.console.error(fn+" run error: "+ex, val, inp);
-                    } else {
-                        window.console.log  (fn+" run error: "+ex, val, inp);
-                    }
-                }
-                return false;
+                inp.data("validate", f);
             }
+
+            v = f.call (inp, this, val);
+            return v;
         },
-        "[data-verify]" : function(val, inp, url) {
+        "[data-verify]" : function(inp, val, url) {
             if (! val) return true ;
             var ret  = true;
-            var obj  = this.formBox;
-            var key  = inp.attr("name") || inp.attr("data-fn");
+            var mod  = this;
+            var box  = this.formBox;
+            var key  = inp.attr("name") || inp.data("fn");
 
             // 清理多值名称
             key = key.replace(".." , ".")
@@ -1197,10 +1143,11 @@ HsForm.prototype = {
             // 补齐请求参数
             if (! url) url = inp.attr("data-verify");
             url = url.replace(/\$\{(.*?)\}/g, function( x, n ) {
-                return encodeURIComponent(
-                       obj.find("[name='"+n+"']")
-                          .not (".form-ignored" )
-                          .val () || "" );
+                x = mod.getvalue(mod.getinput(n));
+                if (jQuery.isArray(x)) {
+                    x = "," . join(x);
+                }
+                return encodeURIComponent (x||"");
             });
 
             this.ajax({
@@ -1240,8 +1187,8 @@ HsForm.prototype = {
             });
             return  ret;
         },
-        "[data-unique]" : function(val, inp) {
-            var ret = this.rules["[data-verify]"].call(this, val, inp, inp.attr("data-unique"));
+        "[data-unique]" : function(inp, val) {
+            var ret = this.rules["[data-verify]"].call(this, inp, val, inp.attr("data-unique"));
             if (typeof ret === "string") {
                 return ret;
             } else if (! ret) {
@@ -1249,8 +1196,8 @@ HsForm.prototype = {
             }
             return true;
         },
-        "[data-exists]" : function(val, inp) {
-            var ret = this.rules["[data-verify]"].call(this, val, inp, inp.attr("data-exists"));
+        "[data-exists]" : function(inp, val) {
+            var ret = this.rules["[data-verify]"].call(this, inp, val, inp.attr("data-exists"));
             if (typeof ret === "string") {
                 return ret;
             } else if (! ret) {
@@ -1258,20 +1205,22 @@ HsForm.prototype = {
             }
             return true;
         },
-        "[data-repeat]" : function(val, inp) {
+        "[data-repeat]" : function(inp, val) {
             var fn = inp.attr("data-repeat");
             if (val != this.getvalue(this.getinput(fn))) {
                 return this.geterror(inp, "form.is.not.repeat");
             }
             return true;
         },
-        "[data-relate]" : function(val, inp) {
+        "[data-relate]" : function(inp, val) {
             var fn = inp.attr("data-relate");
             if (this.getvalue(this.getinput(fn))) {
                 this.validate(fn);
             }
             return true;
         }
+    },
+    rmsgs : {
     }
 };
 

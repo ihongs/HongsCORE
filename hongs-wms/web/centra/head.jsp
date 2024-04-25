@@ -128,7 +128,7 @@
     String  head = (String) helper.getSessibute("uhead");
 
     if (head == null || head.isEmpty()) {
-        head = "static/assets/img/head_icon.jpg";
+        head = "static/assets/icons/head_icon.jpg";
     }
 %>
 

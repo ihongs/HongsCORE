@@ -42,8 +42,8 @@
             "sect_id": "a",
             "section": {"id": "a", "name": "分类1"},
             "file": [ "abc.png", "def.png" ],
-            "snap": ["../img/head_icon.jpg"],
-            "base_file": "../img/head_icon.jpg"
+            "snap": ["../icons/head_icon.jpg"],
+            "base_file": "../icons/head_icon.jpg"
         },
         {
             "id": "2",

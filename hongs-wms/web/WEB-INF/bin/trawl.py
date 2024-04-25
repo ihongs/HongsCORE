@@ -79,34 +79,27 @@ def hsTrawl(sh, url, cok, fil, prt=False):
 
 if __name__ == '__main__':
     def cmd_help():
-        print("Usage: trawl.py FILE.xlsx http://xx --cookie COOKIE --fields Fn1,Fn2 --labels Fn1,Fn2")
+        print("Usage: trawl.py --output FILE.xlsx --search http://xx --cookie COOKIE --fields Fn1,Fn2 --labels Fn1,Fn2")
         print("Options:")
+        print("  -o --output file      Output Xlsx")
+        print("  -s --search href      Search Href")
         print("  -c --cookie key=val   HTTP Cookie")
         print("  -f --fields fn1,fn2   List fields")
         print("  -l --labels fn1,fn2   List labels")
         print("  -h --help             Show this msg")
 
-    if  len(sys.argv) < 3:
-        cmd_help( )
-        sys.exit(0)
-
-    xls = sys.argv[1]
-    url = sys.argv[2]
+    xls = ''
+    url = ''
     cok = ''
     fns = []
     lns = []
 
-    if  not xls:
-        print("Argument 1 (file name) required!")
-        cmd_help( )
-        sys.exit(1)
-    if  not url:
-        print("Argument 2 (href link) required!")
-        cmd_help( )
-        sys.exit(1)
-
-    opts, args = getopt(sys.argv[3:], "c:f:l:h", ["cookie=", "fields=", "labels=", "help"])
+    opts, args = getopt(sys.argv[3:], "s:c:f:l:h", ["search=", "cookie=", "fields=", "labels=", "help"])
     for n,v in opts:
+        if  n in ("-o", "--output"):
+            xls = v
+        if  n in ("-s", "--search"):
+            url = v
         if  n in ("-c", "--cookie"):
             cok = v
         if  n in ("-f", "--fields"):
@@ -117,6 +110,14 @@ if __name__ == '__main__':
             cmd_help( )
             sys.exit(0)
     
+    if  len(opts) == 0:
+        cmd_help( )
+        sys.exit(0)
+    if  xls == '' or url == '':
+        print("Options `--output` and `--search` required")
+        cmd_help( )
+        sys.exit(1)
+
     xls = os.path.abspath(xls)
     fil = hsFills(fns)
 

@@ -11,6 +11,7 @@
         <arg>$SRC_DIR/hongscore-form.js</arg>
         <arg>$SRC_DIR/hongscore-list.js</arg>
         <arg>$SRC_DIR/hongscore-tree.js</arg>
+        <arg>$SRC_DIR/hongscore-sift.js</arg>
         <arg>$SRC_DIR/hongscore-fork.js</arg>
         <arg>$SRC_DIR/hongscore-file.js</arg>
         <arg>$SRC_DIR/hongscore-date.js</arg>

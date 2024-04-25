@@ -188,7 +188,7 @@ jQuery.fn.hsToggleInput = function(show) {
             if (sub === undefined) {
             var nam = $(this).data('hsVeilName');
                 // 默认为空值的 input hidden
-                sub = $('<input class="form-ignored" type="hidden"/>');
+                sub = $('<input class="form-frost form-ignored" type="hidden"/>');
                 sub.attr ("name", nam
                     || sup.attr( "data-fn" )
                     || sup.attr( "name"    )
@@ -217,7 +217,7 @@ jQuery.fn.hsHideInput = function() {
 };
 jQuery.fn.hsHideValue = function(data, a) {
     data = hsSerialArr(data);
-    var hide = $('<input type="hidden" class="form-ignored"/>');
+    var hide = $('<input type="hidden" class="form-frost form-ignored"/>');
     if (! a) this.empty ( );
     for(var i = 0; i < data.length; i ++) {
         var item = data [i];

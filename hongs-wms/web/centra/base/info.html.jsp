@@ -65,7 +65,7 @@
                 text = Synt.defxult(Synt.asString(info.get("info-text")), text, "");
                 hint = Synt.defxult(Synt.asString(info.get("info-hint")), hint, "");
             %>
-            <%if ("form".equals(type) || "part".equals("type")) {%>
+            <%if ("form".equals(type) || "part".equals(type)) {%>
             <div class="form-group" data-name="<%=name%>">
                 <%
                     String extr = "";

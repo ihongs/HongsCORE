@@ -30,10 +30,10 @@
                 <div class=" form-group" style="display:inline-block;margin:0px;">
                 <div class="input-group" style="display:inline-table;width:30em;">
                     <input type="datetime-local" data-type="timestamp" data-toggle="hsTime" class="form-control" style="padding-right:0;">
-                    <input type="hidden" class="form-ignored" name="ctime.<%=Cnst.GE_REL%>">
+                    <input type="hidden" class="form-frost form-ignored" name="ctime.<%=Cnst.GE_REL%>">
                     <span class="input-group-addon" style="padding-left:0.2em;padding-right:0.2em;">~</span>
                     <input type="datetime-local" data-type="timestamp" data-toggle="hsTime" class="form-control" style="padding-right:0;">
-                    <input type="hidden" class="form-ignored" name="ctime.<%=Cnst.LE_REL%>">
+                    <input type="hidden" class="form-frost form-ignored" name="ctime.<%=Cnst.LE_REL%>">
                     <span class="input-group-btn">
                         <button type="submit" class="btn btn-default"><span class="bi bi-hi-reload"></span></button>
                     </span>

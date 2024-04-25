@@ -602,7 +602,7 @@ function hsListPickMore(listObj, bn, qn, rn, pf) {
  * @param {Object} v
  * @param {String} n
  */
-function hsFormDollSubs(box, v, n) {
+function hsFormDollPart(box, v, n) {
     if (! n ) n = box.data( "fn" );
     var rol = box.data("readonly");
     var mul = box.data("repeated")
@@ -637,7 +637,7 @@ function hsFormDollSubs(box, v, n) {
  * @param {Object} v
  * @param {String} n
  */
-function hsFormFillSubs(box, v, n) {
+function hsFormFillPart(box, v, n) {
     if (! n ) n = box.data( "fn" );
     var rol = box.data("readonly");
     var mul = box.data("repeated")
@@ -659,26 +659,18 @@ function hsFormFillSubs(box, v, n) {
         btn.find("[data-toggle=hsFormSubAdd]").data("docket", box);
     }
 
-    var ths = this;
-    var enf = box.data("enfo");
-    var idx = box.data("idx") || 0;
+    var  m  = box.data("enfo")|| {  };
+    var  o  = box.data("form")|| this;
     var add = box.data("add") || function(k, w) {
-        var mod = jQuery.extend({},ths);
+        var mod = jQuery.extend( {},o );
         var htx =  htm  . clone( true );
         var btx =  btr  . clone( true );
         htx.show( ).removeClass("hide");
         btx.show( ).removeClass("hide");
 
-        // 填充数据
-        mod.context= htx ;
-        mod.formBox= htx ;
-        btx.appendTo(htx);
-        htx.appendTo(box);
-        mod.fillEnfo(enf);
-        mod.fillInfo( w );
-
-        // 增加前缀
-        htx.find("[data-fn],input[name],select[name],textarea[name],.form-group[data-name]")
+        // 字段增加前缀
+        htx.find(".part-field,.form-group,[data-fn],input[name],select[name],textarea[name]")
+           .not (".part-frost" ) // 此类型可跳过
            .each(function() {
             var l, inp = jQuery(this);
             l = inp.attr("name");
@@ -699,21 +691,40 @@ function hsFormFillSubs(box, v, n) {
                 inp.attr( "data-fn" , l);
             }
         });
+
+        // 数据增加前缀
+        var enf = {};
+        for(var l in m) {
+            enf[k +"."+ l] = m[l];
+        }
+        var inf = {};
+        for(var l in w) {
+            inf[k +"."+ l] = w[l];
+        }
+
+        // 填充数据
+        mod.context= htx ;
+        mod.formBox= htx ;
+        btx.appendTo(htx);
+        htx.appendTo(box);
+        mod.fillEnfo(enf);
+        mod.fillInfo(inf);
     };
-    var pad = box.data("pad") || function(n, v) {
+    var set = box.data("set") || function(n, v) {
+      var i = box.data("idx") || 0;
         if (! mul) {
             v = v || {};
             add(n , v );
-            box.data("idx", idx);
+            box.data("idx", i);
         } else {
             v = v || [];
-            for(var j = 0 ; j < v.length ; j ++, idx ++) {
+            for(var j = 0 ; j < v.length ; j ++) {
                 add(n +"."+ j , v[j]);
-                box.data("idx", idx );
+                box.data("idx", i ++);
             }
         }
     };
-    var fil = function (n, v) {
+    var put = function (n, v) {
         var btx = htm.find("[data-toggle=hsFormSubDel]");
         // 模板为松散多块的需要进行包裹
         if (htm.size() !== 1) {
@@ -728,12 +739,11 @@ function hsFormFillSubs(box, v, n) {
         box.  data  ("html", htm);
         box.addClass("form-subs");
         htm.addClass("form-sub" );
-        pad(n, v);
+        set(n, v);
     };
 
-    box.data("idx" , idx);
     box.data("add" , add);
-    box.data("pad" , pad);
+    box.data("set" , set);
     box.data("name",  n );
 //  box.data("info",  v );
 
@@ -759,16 +769,16 @@ function hsFormFillSubs(box, v, n) {
                 htm = dom.find(".form-body").first();
                 htm = htm.size() ? htm : dom;
                 htm.removeClass("form-body");
-                fil(n, v);
+                put(n, v);
             }
         });
     } else
     if (box.data("html")) {
         htm = box.data("html");
         htm = jQuery  ( htm  );
-        fil(n, v);
+        put(n, v);
     } else {
-        fil(n, v);
+        put(n, v);
     }
 }
 

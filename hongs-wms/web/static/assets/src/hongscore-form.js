@@ -576,11 +576,12 @@ HsForm.prototype = {
         if (v === undefined) return ;
         var vk = inp.attr("data-vk"); if(!vk) vk = 0;
         var tk = inp.attr("data-tk"); if(!tk) tk = 1;
+        var gs = inp.attr("data-group-start") || this._opt_group_start;
         for(var i = 0; i < v.length; i ++) {
             var k = hsGetValue(v[i], vk);
             var t = hsGetValue(v[i], tk);
             // 选项分组
-            if (k && this._opt_group_start && k[0] == this._opt_group_start) {
+            if (k && gs && gs === k[0]) {
                 if (inp.is("fieldset")) {
                     inp = inp.parent();
                     if (! t) continue ;
@@ -615,11 +616,12 @@ HsForm.prototype = {
         if (v === undefined) return ;
         var vk = inp.attr("data-vk"); if(!vk) vk = 0;
         var tk = inp.attr("data-tk"); if(!tk) tk = 1;
+        var gs = inp.attr("data-group-start") || this._opt_group_start;
         for(var i = 0; i < v.length; i ++) {
             var k = hsGetValue(v[i], vk);
             var t = hsGetValue(v[i], tk);
             // 选项分组
-            if (k && this._opt_group_start && k[0] == this._opt_group_start) {
+            if (k && gs && gs === k[0]) {
                 if (inp.is("fieldset")) {
                     inp = inp.parent();
                     if (! t) continue ;

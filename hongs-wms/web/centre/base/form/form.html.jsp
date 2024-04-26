@@ -8,15 +8,14 @@
 <%@include file="_boot_.jsp"%>
 <%
     String _action = "survey";
-    String _pageId = (_module + "-" + _entity + "-" + _action).replace('/', '-');
     String _funcId = "in_"+(_module + "_" + _entity + "_form").replace('/', '_');
+    String _pageId = (_module + "-" + _entity + "-" + _action).replace('/', '-');
 %>
 <div id="<%=_pageId%>" class="<%=_action%>-form">
     <form class="form-horizontal <%=Synt.declare(_params.get("page-form-class"), "")%>"
           method="POST" enctype="multipart/form-data">
         <div class="form-body">
         <%
-        int ii = 0;
         Iterator it = _fields.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry et = (Map.Entry) it.next();
@@ -203,7 +202,7 @@
                              +  "\" data-href=\""+rl+"\" data-target=\"";
                         mode += "\" data-href=\""+al+"\" data-target=\"";
                     %>
-                    <input type="hidden" name="<%=name%>" class="form-ignored"/>
+                    <input type="hidden" name="<%=name%>" class="form-frost form-ignored"/>
                     <ul class="pickbox" data-fn="<%=name%>" data-ft="<%=kind%>"<%=extr%>></ul>
                     <button type="button" class="btn btn-default form-control" data-toggle="<%=mode%>"><%=Synt.defxult(hold, _locale.translate("fore.fork.select", text))%></button>
                 <%} else if ("file".equals(type) || "image".equals(type) || "video".equals(type) || "audio".equals(type)) {%>
@@ -258,7 +257,7 @@
                             kind += "\" data-size=\""+size+"\" data-mode=\""+moda;
                         }
                     %>
-                    <input type="file" name="<%=name%>" accept="<%=typa%>" class="form-ignored invisible"/>
+                    <input type="file" name="<%=name%>" accept="<%=typa%>" class="form-frost form-ignored invisible"/>
                     <ul class="pickbox" data-fn="<%=name%>" data-ft="<%=kind%>"<%=extr%>></ul>
                     <button type="button" class="btn btn-default form-control" data-toggle="<%=mode%>"><%=Synt.defxult(hold, _locale.translate("fore.file.browse", text))%></button>
                 <%} else if ("enum".equals(type) || "type".equals(type) || "select".equals(type)) {%>
@@ -273,9 +272,9 @@
                         } else
                         if (rptd) {
                     %>
-                    <input type="hidden" name="<%=name%>" class="form-ignored"/>
+                    <input type="hidden" name="<%=name%>" class="form-frost form-ignored"/>
                     <%} /* End if */ %>
-                    <select class="form-control" name="<%=name%>"<%=extr%>></select>
+                    <select class="form-field form-control" name="<%=name%>"<%=extr%>></select>
                 <%} else if ("check".equals(type)) {%>
                     <%
                         String extr = "";
@@ -286,7 +285,7 @@
                             extr  = "data-required=\"required\"";
                         } else {
                     %>
-                    <input type="hidden" name="<%=name%>" class="form-ignored"/>
+                    <input type="hidden" name="<%=name%>" class="form-frost form-ignored"/>
                     <%} /* End if */ %>
                     <div class="checkbox" data-fn="<%=name%>" data-ft="_check" data-vk="<%=Synt.defoult(info.get("data-vk"), "0")%>" data-tk="<%=Synt.defoult(info.get("data-tk"), "1")%>"<%=extr%>></div>
                 <%} else if ("radio".equals(type)) {%>
@@ -299,28 +298,9 @@
                             extr += " data-required=\"required\"";
                         } else {
                     %>
-                    <input type="hidden" name="<%=name%>" class="form-ignored"/>
+                    <input type="hidden" name="<%=name%>" class="form-frost form-ignored"/>
                     <%} /* End if */ %>
                     <div class="radio"    data-fn="<%=name%>" data-ft="_radio" data-vk="<%=Synt.defoult(info.get("data-vk"), "0")%>" data-tk="<%=Synt.defoult(info.get("data-tk"), "1")%>"<%=extr%>></div>
-                <%} else if ("date".equals(type) || "time".equals(type) || "datetime".equals(type)) {%>
-                    <%
-                        String typa = Synt.declare(info.get( "type" ), "date");
-                        String fomt = Synt.declare(info.get("format"),  type );
-                        String fset = Synt.declare(info.get("offset"),   ""  );
-                        String extr = " data-type=\""+typa +"\" data-format=\""+fomt+"\" data-offset=\""+fset+"\" data-toggle=\"hsDate\"";
-                        if (rqrd) {
-                        if ("time".equals(typa)
-                        ||  "date".equals(typa)) {
-                            extr += " data-fl=\"v ? v : new Date().getTime()\""     ;
-                        } else {
-                            extr += " data-fl=\"v ? v : new Date().getTime()/1000\"";
-                        }
-                            extr += " required=\"required\"";
-                        }
-                        if (info.containsKey("min")) extr += " min=\""+info.get("min").toString()+"\"";
-                        if (info.containsKey("max")) extr += " max=\""+info.get("max").toString()+"\"";
-                    %>
-                    <input class="form-control" type="text" name="<%=name%>"<%=extr%>/>
                 <%} else if ("textarea".equals(type) || "textview".equals(type)) {%>
                     <%
                         String extr = "";
@@ -341,6 +321,25 @@
                         }
                     %>
                     <textarea class="form-field<%=clas%>" id="<%=_pageId%>-<%=name%>" name="<%=name%>" placeholder="<%=hold%>"<%=extr%>></textarea>
+                <%} else if ("date".equals(type) || "time".equals(type) || "datetime".equals(type)) {%>
+                    <%
+                        String typa = Synt.declare(info.get( "type" ), "date");
+                        String fomt = Synt.declare(info.get("format"),  type );
+                        String fset = Synt.declare(info.get("offset"),   ""  );
+                        String extr = " data-type=\""+typa +"\" data-format=\""+fomt+"\" data-offset=\""+fset+"\" data-toggle=\"hsDate\"";
+                        if (rqrd) {
+                        if ("time".equals(typa)
+                        ||  "date".equals(typa)) {
+                            extr += " data-fl=\"v ? v : new Date().getTime()\""     ;
+                        } else {
+                            extr += " data-fl=\"v ? v : new Date().getTime()/1000\"";
+                        }
+                            extr += " required=\"required\"";
+                        }
+                        if (info.containsKey("min")) extr += " min=\""+info.get("min").toString()+"\"";
+                        if (info.containsKey("max")) extr += " max=\""+info.get("max").toString()+"\"";
+                    %>
+                    <input class="form-field form-control" type="text" name="<%=name%>"<%=extr%>/>
                 <%} else if ("number".equals(type) || "sorted".equals(type) || "range".equals(type) || "color".equals(type)) {%>
                     <%
                         String extr = "";
@@ -348,16 +347,16 @@
                             extr += " required=\"required\"";
                         }
                         if (rptd) {
-                            extr += " data-toggle=\"tagsinput\"";
+                            extr += " data-toggle=\"hsBags\"";
                             type  =  "text";
                         } else {
                             if ("sorted".equals(type)) type = "number";
-                            if (info.containsKey("min"      )) extr += " min=\""      +info.get("min"      ).toString()+"\"";
-                            if (info.containsKey("max"      )) extr += " max=\""      +info.get("max"      ).toString()+"\"";
-                            if (info.containsKey("step"     )) extr += " step=\""     +info.get("step"     ).toString()+"\"";
+                            if (info.containsKey("min" )) extr += " min=\"" +info.get("min" ).toString()+"\"";
+                            if (info.containsKey("max" )) extr += " max=\"" +info.get("max" ).toString()+"\"";
+                            if (info.containsKey("step")) extr += " step=\""+info.get("step").toString()+"\"";
                         }
                     %>
-                    <input class="form-control" type="<%=type%>" name="<%=name%>" placeholder="<%=hold%>"<%=extr%>/>
+                    <input class="form-field form-control" type="<%=type%>" name="<%=name%>" placeholder="<%=hold%>"<%=extr%>/>
                 <%} else if ("string".equals(type) || "stored".equals(type) || "search".equals(type) || "text".equals(type) || "email".equals(type) || "url".equals(type) || "tel".equals(type) || "sms".equals(type)) {%>
                     <%
                         String extr = "";
@@ -365,16 +364,16 @@
                             extr += " required=\"required\"";
                         }
                         if (rptd) {
-                            extr += " data-toggle=\"tagsinput\"";
+                            extr += " data-toggle=\"hsBags\"";
                             type  =  "text";
                         } else {
-                            if ("string".equals(type)) type = "text";
+                            if ("string".equals(type) || "stored".equals(type) || "search".equals(type)) type = "text";
                             if (info.containsKey("minlength")) extr += " minlength=\""+info.get("minlength").toString()+"\"";
                             if (info.containsKey("maxlength")) extr += " maxlength=\""+info.get("maxlength").toString()+"\"";
                             if (info.containsKey("pattern"  )) extr += " pattern=\""  +info.get("pattern"  ).toString()+"\"";
                         }
                     %>
-                    <input class="form-control" type="<%=type%>" name="<%=name%>" placeholder="<%=hold%>"<%=extr%>/>
+                    <input class="form-field form-control" type="<%=type%>" name="<%=name%>" placeholder="<%=hold%>"<%=extr%>/>
                 <%} else {%>
                     <%
                         String extr = "";
@@ -385,7 +384,7 @@
                             extr += " required=\"required\"";
                         }
                     %>
-                    <input class="form-control" type="<%=type%>" name="<%=name%>" placeholder="<%=hold%>"<%=extr%>/>
+                    <input class="form-field form-control" type="<%=type%>" name="<%=name%>" placeholder="<%=hold%>"<%=extr%>/>
                 <%} /*End If */%>
                     <div class="help-block text-error form-control-static"></div>
                     <div class="help-block text-muted form-control-static"><%=hint%></div>

@@ -471,7 +471,7 @@
                             extr += " required=\"required\"";
                         }
                         if (rptd) {
-                            extr += " data-toggle=\"tagsinput\"";
+                            extr += " data-toggle=\"hsBags\"";
                             type  =  "text";
                         } else {
                             if ("sorted".equals(type)) type = "number";
@@ -488,7 +488,7 @@
                             extr += " required=\"required\"";
                         }
                         if (rptd) {
-                            extr += " data-toggle=\"tagsinput\"";
+                            extr += " data-toggle=\"hsBags\"";
                             type  =  "text";
                         } else {
                             if ("string".equals(type) || "stored".equals(type) || "search".equals(type)) type = "text";

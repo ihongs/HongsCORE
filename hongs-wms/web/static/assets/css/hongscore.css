@@ -1063,6 +1063,52 @@ ul.pickmul + * ,
     -webkit-appearance: none;
 }
 
+/** 标签 **/
+
+.bagsbox.form-control {
+    padding: 4px 0 0 4px;
+    min-height: 34px;
+    height: auto;
+    word-wrap: break-word;
+    word-break: break-all;
+}
+.bagsbox.form-control .bags-input {
+    width: 0;
+    border: 0;
+    margin: 0;
+    padding: 0;
+    outline: none;
+}
+.bagsbox.form-control .bags-input:focus {
+    margin: 0 4px 4px 0;
+    padding: 2px 8px 2px 8px;
+    min-width: calc(100% - 4px);
+}
+.bagsbox.form-control .bags-label {
+    margin: 0 4px 4px 0;
+    padding: 2px 8px 2px 8px;
+    max-width: calc(100% - 4px);
+    font-size: 100%;
+    line-height: inherit;
+    word-wrap: normal;
+    word-break: normal;
+    white-space: nowrap;
+    display: inline-block;
+}
+.bagsbox.form-control .bags-value {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.bagsbox.form-control .bags-erase {
+    margin-bottom: -1px;
+    margin-right: -4px;
+    margin-left: 4px;
+    padding-top: 1px;
+    float: right;
+    cursor: pointer;
+}
+
 /* 优化文件上传样式 */
 ::-ms-browse {
     background : inherit;

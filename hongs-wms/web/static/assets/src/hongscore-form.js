@@ -32,10 +32,6 @@ function HsForm(context, opts) {
         ||  this[k] !== undefined ) {
             this[k]  =  opts[k];
         } else
-        if ('@'===k.substring(0,1)) {
-            var n = k.substring(1);
-            this.rules["[name="+n+"]"] = opts[k];
-        } else
         if ('$'===k.substring(0,1)) {
             this.rules[k.substring(1)] = opts[k];
         } else
@@ -142,17 +138,10 @@ HsForm.prototype = {
         this.formBox.find("[data-fn],[data-ft],[data-dl],.form-field").each(function() {
             var x  = jQuery(this);
             var n  = x.data("fn") || x.attr("name") || "";
-            var t  = x.data("ft");
+            var t  = x.data("ft") || "_review";
             var f  = x.data("dl");
-            var k  = n.replace (/(\[\]|\.)$/, ''); // 规避数组键影响
-            var v  = hsGetValue(enfo, k);
-
-            if (t === undefined) {
-                t  = "_review";
-            }
-            if (v === undefined) {
-                v  =  enfo[k] ;
-            }
+            var k  = n.replace (/(\[\]|\.)$/ , '' ); // 规避数组键影响
+            var v  = hsGetValue(enfo, k) || enfo[k];
 
             // 解析填充方法
             if (f && typeof f != "function") {
@@ -194,24 +183,17 @@ HsForm.prototype = {
         this.formBox.find("[data-fn],[data-ft],[data-fl],.form-field").each(function() {
             var x  = jQuery(this);
             var n  = x.data("fn") || x.attr("name") || "";
-            var t  = x.data("ft");
+            var t  = x.data("ft") || "_review";
             var f  = x.data("fl");
-            var k  = n.replace (/(\[\]|\.)$/, ''); // 规避数组键影响
-            var v  = hsGetValue(info, k);
-
-            if (t === undefined) {
-                t  = "_review";
-            }
-            if (v === undefined) {
-                v  =  enfo[k] ;
-            }
+            var k  = n.replace (/(\[\]|\.)$/ , '' ); // 规避数组键影响
+            var v  = hsGetValue(info, k) || info[k];
 
             // 解析填充方法
             if (f && typeof f != "function") {
                 try {
                     f = eval('(null||function(form,v,n){return '+f+';})');
                 } catch (e) {
-                    throw new Error("Parse form data-dl error: "+e);
+                    throw new Error("Parse form data-fl error: "+e);
                 }
                 x.data("fl",f);
             }
@@ -232,7 +214,7 @@ HsForm.prototype = {
                 return;
             }
 
-            if (x.is(".radio..checkbox")) {
+            if (x.is(".radio,.checkbox")) {
                 if (! jQuery.isArray(v) ) {
                     v = [v];
                 }
@@ -525,10 +507,11 @@ HsForm.prototype = {
 
         // 多个值
         if (jQuery.isArray(v)) {
-            v = v .join(", ");
+            c = inp.data("join");
+            v = v.join(c || ',');
         }
 
-        return  v ;
+        return  v;
     },
     _fill__format : function(inp, v, n) {
         if (v === undefined) return v;
@@ -808,12 +791,13 @@ HsForm.prototype = {
     },
     validate : function(inp) {
         var val;
-        inp = this.getinput( inp );
-        val = this.getvalue( inp );
+        inp = this.getinput(inp);
+        val = this.getvalue(inp);
 
         // 外部校验方法
         var n  = inp.data("fn") || inp.attr("name") || "";
         var t  = inp.data("ft");
+        var v;
         if (n && this["_veri_"+n] !== undefined) {
             v  = this["_veri_"+n].call(this, inp, val, n);
         } else
@@ -827,13 +811,13 @@ HsForm.prototype = {
         }
 
         // 内部校验规则
-        for(var key in this.rules) {
-            if ( ! inp.is( key ) ) {
+        for(var s in this.rules) {
+            if (! inp.is(s)) {
                 continue;
             }
-            var err  =  this.rules[key].call(this, inp, val);
+            var err  =  this.rules[s].call(this, inp,val);
             if (err !== undefined && err !== true) {
-                err  =  err || hsGetLang ( "form.haserror" );
+                err  =  err || hsGetLang("form.haserror");
                 this.seterror(inp, err);
                 return false;
             }
@@ -890,8 +874,8 @@ HsForm.prototype = {
         return inp;
     },
     getvalue : function(inp) {
-        if (inp.is("input,select,textarea") === false) {
-            inp = inp.find("input");
+        if (/**/! inp. is ("input,select,textarea")) {
+            inp = inp.find("input,select,textarea");
         }
 
         if (inp.is(":checkbox")) {
@@ -979,19 +963,7 @@ HsForm.prototype = {
     },
     rules : {
         "[required],[data-required]" : function(inp, val) {
-            if (inp.is(":radio,:checkbox")) {
-                if (!inp.filter(":checked").length) {
-                    return this.geterror(inp, "form.requires");
-                }
-            } else if (inp.is(".checkbox")) {
-                if (!inp. find (":checked").length) {
-                    return this.geterror(inp, "form.requires");
-                }
-            } else if (inp.is("ul,div")) {
-                if (!inp. find ( "input" ) .length) {
-                    return this.geterror(inp, "form.requires");
-                }
-            } else if (inp.is(":file" )) {
+            if (inp.is(":file")) {
                 if (!val && !inp.data( "value" )) {
                     return this.geterror(inp, "form.requires");
                 }
@@ -1001,8 +973,8 @@ HsForm.prototype = {
                 if (!val && !ipx.size() && box.size()) {
                     return this.geterror(inp, "form.requires");
                 }
-            } else if (inp.is("select")) {
-                if (!val) {
+            } else if (jQuery.isArray(val)) {
+                if (!val.length) {
                     return this.geterror(inp, "form.requires");
                 }
             } else {
@@ -1115,7 +1087,7 @@ HsForm.prototype = {
             return true;
         },
         "[data-validate]" : function(inp, val) {
-            var f = inp.attr("data-validate");
+            var f = inp.data("validate");
 
             // 解析填充方法
             if (typeof f != "function") {
@@ -1232,26 +1204,6 @@ jQuery.fn.hsForm = function(opts) {
 
 (function($) {
     $(document)
-    .on("change", "fieldset .checkall",
-    function(evt) {
-        this.indeterminate = false;
-        var box = $(this).closest("fieldset");
-        var ckd = $(this).prop   ("checked" );
-        box.find(":checkbox"    )
-           .not (".checkall"    )
-           .prop( "checked", ckd)
-           .trigger(  "change"  );
-    })
-    .on("change", "fieldset :checkbox:not(.checkall)",
-    function(evt) {
-        var box = $(this).closest("fieldset");
-        var siz = box.find(":checkbox:not(.checkall)"        ).length;
-        var len = box.find(":checkbox:not(.checkall):checked").length;
-        var ckd = siz && siz === len ? true
-              : ( len && siz !== len ? null : false);
-        box.find(".checkall"    )
-           .prop( "choosed", ckd);
-    })
     .on("click", "[data-toggle=hsEdit]",
     function(evt) {
         var that = $(this).closest(".HsForm").data("HsForm");
@@ -1277,5 +1229,25 @@ jQuery.fn.hsForm = function(opts) {
               $.hsOpen(url, func);
         }
         evt.stopPropagation();
+    })
+    .on("change", "fieldset .checkall",
+    function(evt) {
+        this.indeterminate = false;
+        var box = $(this).closest("fieldset");
+        var ckd = $(this).prop   ("checked" );
+        box.find(":checkbox"    )
+           .not (".checkall"    )
+           .prop( "checked", ckd)
+           .trigger(  "change"  );
+    })
+    .on("change", "fieldset :checkbox:not(.checkall)",
+    function(evt) {
+        var box = $(this).closest("fieldset");
+        var siz = box.find(":checkbox:not(.checkall)"        ).length;
+        var len = box.find(":checkbox:not(.checkall):checked").length;
+        var ckd = siz && siz === len ? true
+              : ( len && siz !== len ? null : false);
+        box.find(".checkall"    )
+           .prop( "choosed", ckd);
     });
 })(jQuery);

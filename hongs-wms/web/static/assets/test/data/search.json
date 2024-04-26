@@ -41,6 +41,7 @@
             "type_text": ["类型1", "类型2"],
             "sect_id": "a",
             "section": {"id": "a", "name": "分类1"},
+            "tags": ["你好", "我好", "她也好"],
             "file": [ "abc.png", "def.png" ],
             "snap": ["../icons/head_icon.jpg"],
             "base_file": "../icons/head_icon.jpg"

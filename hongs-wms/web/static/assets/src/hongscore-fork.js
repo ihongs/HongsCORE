@@ -669,7 +669,7 @@ function hsFormFillPart(box, v, n) {
         btx.show( ).removeClass("hide");
 
         // 字段增加前缀
-        htx.find(".part-field,.form-group,[data-fn],input[name],select[name],textarea[name]")
+        htx.find(".part-field,.form-field,.form-group,[data-fn],input[name],select[name],textarea[name]")
            .not (".part-frost" ) // 此类型可跳过
            .each(function() {
             var l, inp = jQuery(this);
@@ -819,7 +819,7 @@ function hsFormFillPart(box, v, n) {
         }}
 
         var  n  = box.data("fn" ) || "";
-        var  i  = box.data("idx") || 00;
+        var  i  = box.data("idx") || 0 ;
         var add = box.data("add");
         if (add) {
             add( n +"."+ i, { } );

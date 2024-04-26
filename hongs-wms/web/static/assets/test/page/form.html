@@ -18,7 +18,7 @@
                 <div class="form-group row">
                     <label class="col-sm-3 col-md-2 control-label form-control-static text-right">名称</label>
                     <div class="col-sm-9 col-md-8">
-                        <input type="text" name="name" class="form-control" required="required">
+                        <input type="text" name="name" class="form-field form-control" required="required">
                     </div>
                     <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
                     <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static">这是一行说明文字</div>
@@ -26,7 +26,7 @@
                 <div class="form-group row">
                     <label class="col-sm-3 col-md-2 control-label form-control-static text-right">备注</label>
                     <div class="col-sm-9 col-md-8">
-                        <textarea name="note" class="form-control"/></textarea>
+                        <textarea name="note" class="form-field form-control"/></textarea>
                     </div>
                     <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
                     <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"></div>
@@ -35,7 +35,7 @@
                     <label class="col-sm-3 col-md-2 control-label form-control-static text-right">类型</label>
                     <div class="col-sm-9 col-md-8">
                         <input type="hidden" name="type." value="" class="form-ignored"/>
-                        <select name="type." class="form-control" required="required" multiple="multiple">
+                        <select name="type." class="form-field form-control" required="required" multiple="multiple">
                         </select>
                     </div>
                     <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
@@ -51,17 +51,25 @@
                     <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
                     <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"></div>
                 </div>
+                <div class="form-group row">
+                    <label class="col-sm-3 col-md-2 control-label form-control-static text-right">标签</label>
+                    <div class="col-sm-9 col-md-8">
+                        <input type="hidden" name="tags" class="form-field" data-toggle="hsBags">
+                    </div>
+                    <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
+                    <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"></div>
+                </div>
                 <div class="form-group row dont-close">
                     <label class="col-sm-3 col-md-2 control-label form-control-static text-right">日期</label>
                     <div class="col-sm-9 col-md-8">
                         <div class="input-group">
                             <span class="input-group-addon">从</span>
-                            <input type="text" name="mtime" class="form-control" data-toggle="hsDate" data-type="timestamp" data-fl="v || new Date().getTime() / 1000" placeholder="开始时间" readonly/>
+                            <input type="text" name="mtime" class="form-field invisible" data-toggle="hsDate" data-type="timestamp" data-fl="v || new Date().getTime() / 1000" placeholder="开始时间" readonly/>
                             <span class="input-group-addon">&nbsp;</span>
                         </div>
                         <div class="input-group">
                             <span class="input-group-addon">到</span>
-                            <input type="text" name="ctime" class="form-control" data-toggle="hsDate" data-type="timestamp" data-fl="v || new Date().getTime() / 1000" placeholder="结束时间" readonly/>
+                            <input type="text" name="ctime" class="form-field invisible" data-toggle="hsDate" data-type="timestamp" data-fl="v || new Date().getTime() / 1000" placeholder="结束时间" readonly/>
                             <span class="input-group-addon">&nbsp;</span>
                         </div>
                     </div>

@@ -602,7 +602,7 @@ function hsListPickMore(listObj, bn, qn, rn, pf) {
  * @param {Object} v
  * @param {String} n
  */
-function hsFormDollPart(box, v, n) {
+function hsFormFeedPart(box, v, n) {
     if (! n ) n = box.data( "fn" );
     var rol = box.data("readonly");
     var mul = box.data("repeated")

@@ -207,14 +207,14 @@ HsList.prototype = {
             th = jQuery(ths[i]);
 
             // 填充句柄
-            f = th.data( "fl" );
+            f = th.data("fill");
             if (f && typeof f != "function") {
                 try {
                     f = eval('(null||function(list,v,n){return '+f+';})');
                 } catch (e) {
-                    throw new Error("Parse list data-fl error: "+e);
+                    throw new Error("Parse list data-fill error: "+e);
                 }
-                th.data("fl",f);
+                th.data("fill", f);
             }
 
             // 排序处理
@@ -239,7 +239,7 @@ HsList.prototype = {
 
                 n  = th.data("fn");
                 t  = th.data("ft");
-                f  = th.data("fl");
+                f  = th.data("fill");
                 if (n !== undefined) {
                     v  =  hsGetValue ( list[i], n);
                 if (v === undefined) {
@@ -884,11 +884,11 @@ function hsListFillItem(list) {
     for (var i = 0 ; i < list.length ; i ++) {
         this._info = list[i];
         tr = tt.clone();
-        tr.find("[data-fn],[data-ft],[data-fl]").each(function() {
+        tr.find("[data-fn],[data-ft],[data-fill]").each(function() {
             td = jQuery (this);
             n  = td.data("fn");
             t  = td.data("ft");
-            f  = td.data("fl");
+            f  = td.data("fill");
             if (n !== undefined) {
             v  = hsGetValue(list[i], n);
             if (v === undefined) {
@@ -902,9 +902,9 @@ function hsListFillItem(list) {
                 try {
                     f = eval('(null||function(list,v,n){return '+f+';})');
                 } catch (e) {
-                    throw new Error("Parse list data-fl error: "+e);
+                    throw new Error("Parse list data-fill error: "+e);
                 }
-                td.data("fl", f);
+                td.data("fill", f);
             }
 
             // 调整

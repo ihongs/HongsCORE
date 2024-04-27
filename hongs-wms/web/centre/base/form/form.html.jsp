@@ -330,9 +330,9 @@
                         if (rqrd) {
                         if ("time".equals(typa)
                         ||  "date".equals(typa)) {
-                            extr += " data-fl=\"v ? v : new Date().getTime()\""     ;
+                            extr += " data-fill=\"v ? v : new Date().getTime()\"";
                         } else {
-                            extr += " data-fl=\"v ? v : new Date().getTime()/1000\"";
+                            extr += " data-fill=\"v ? v : new Date().getTime()/1000\"";
                         }
                             extr += " required=\"required\"";
                         }

@@ -70,9 +70,9 @@
                 &&  inp.attr("multiple"))) {
                     $('<input type="hidden" />')
                        .appendTo(box.find(".bags-label"))
-                       .attr("name"   , fn);
-                    box.attr("data-fn", fn);
-                    box.attr("data-fl", fl);
+                       .attr("name"     , fn);
+                    box.attr("data-fn"  , fn);
+                    box.attr("data-fill", fl);
                     box.data("unjoin" , true);
                     // 校验相关, input 无 form-field 将不填充不校验
                     inp.removeClass("form-field");

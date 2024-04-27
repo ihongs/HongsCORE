@@ -247,7 +247,7 @@
     </form>
     <!-- 列表 -->
     <div class="itembox col-md-4 col-sm-6 col-xs-12" style="display: none; padding: 0 7.5px 15px 7.5px;">
-        <input type="hidden" name="id" data-fn="id" data-fl="$(this).val(v) && undefined" />
+        <input type="hidden" name="id" data-fn="id" data-fill="$(this).val(v) && undefined" />
         <div class="panel panel-default" style="margin: 0; padding: 0; position: relative;">
             <div class="panel-body" style="display: table; width: 100%;">
                 <%if (_fields.containsKey(LOGO)) {%>
@@ -313,7 +313,7 @@
 
     var filtobj = filtbox.hsForm({
         _url: "<%=_module%>/<%=_entity%>/recipe.act?<%=Cnst.AB_KEY%>=.enfo",
-        _doll__enum : hsListDollFilt,
+        _feed__enum : hsListFeedFilt,
         _fill__enum : hsListFillFilt,
         _fill__sort : hsListInitSort,
         _fill__mine : hsListInitMine

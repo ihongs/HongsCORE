@@ -288,7 +288,7 @@
                         Object typa = info.get("type");
                         if ("timestamp".equals( typa )
                         ||  "datestamp".equals( typa )) {
-                            ob += " data-fl=\"!v?v:v*1000\"";
+                            ob += " data-fill=\"!v?v:v*1000\"";
                         }
                         // 自定义格式化
                         String frmt = (String) info.get("format");
@@ -445,7 +445,7 @@
 
     var filtobj = filtbox.hsForm({
         _url: "<%=_module%>/<%=_entity%>/recipe.act?<%=Cnst.AB_KEY%>=.enfo",
-        _doll__enum : hsListDollFilt,
+        _feed__enum : hsListFeedFilt,
         _fill__enum : hsListFillFilt
     });
 

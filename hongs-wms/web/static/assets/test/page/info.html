@@ -10,7 +10,7 @@
      data--3="_fill__form:(hsFormFillPart)">
     <form action="" method="POST" enctype="multipart/form-data" class="form-horizontal">
         <input type="hidden" name="id"/>
-        <input type="hidden" name="sections.0.sect_id" data-fl="H$('?sect_id',this)" data-vb="sect_id"/>
+        <input type="hidden" name="sections.0.sect_id" data-fill="H$('?sect_id',this)" data-vb="sect_id"/>
         <input type="hidden" name="type" value="default"/>
         <input type="hidden" name="temp" value="default"/>
         <input type="hidden" name="kind" value="html"/>
@@ -58,11 +58,11 @@
                     <div class="col-sm-9 col-md-8">
                         <div class="form-control-static">
                             <span>从</span>
-                            <span data-fn="mtime" data-ft="_datetime" data-fl="v ? v * 1000 : ''"></span>
+                            <span data-fn="mtime" data-ft="_datetime" data-fill="v ? v * 1000 : ''"></span>
                         </div>
                         <div class="form-control-static">
                             <span>到</span>
-                            <span data-fn="ctime" data-ft="_datetime" data-fl="v ? v * 1000 : ''"></span>
+                            <span data-fn="ctime" data-ft="_datetime" data-fill="v ? v * 1000 : ''"></span>
                         </div>
                     </div>
                 </div>

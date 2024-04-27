@@ -1,6 +1,6 @@
 /**
  * 日期选择组添加方法:
- * <input type="text" name="xtime" data-toggle="hsDate" data-type="timestamp" data-fl="v || new Date().getTime() / 1000"/>
+ * <input type="text" name="xtime" data-toggle="hsDate" data-type="timestamp" data-fill="v || new Date().getTime() / 1000"/>
  * 可包裹在输入框组内,
  * 此输入框将被替换掉.
  *

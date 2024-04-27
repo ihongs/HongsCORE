@@ -12,18 +12,16 @@
     List:
         data-fn     Field name  字段名称
         data-ft     Field type  字段类型
-        data-fl     Fill lambda 填充取值
         data-pn     Page num    页码序号
         data-ob     Order by    排序字段
     Form:
         data-fn     Field name  字段名称
         data-ft     Field type  字段类型
-        data-fl     Fill lambda 填充取值
-        data-dl     Doll lambda 预置选项
     Pick:
         data-dn     Dummy name  虚拟名称
         data-vk     Value key   关联数据取值键
         data-tk     Title key   关联数据标题键
+        data-at     Assoc act   查询接口
         data-al     Assoc lnk   关联选取页
         data-rl     Refer lnk   关联查阅页
     Part:
@@ -36,7 +34,7 @@
         data-vl     Value leg   子项数据取值键
         data-tl     Title leg   子项数据标题键
 
-data-fl,data-dl 的取值为表达式, 参数可使用 this,form|list,v,n; data-toggle,data-target 等的意义同 bootstrap 中相关功能.
+另外还有 data-fill/data-feed/data-test 用于填充/预设/检测, 值为表达式, 参数可使用 this,form|list,v,n; 其他 data-toggle,data-target 等的意义同 bootstrap 中相关功能.
 
 ## 环境加载
 

@@ -57,7 +57,7 @@
                     </th>
                     <th data-fn="name" data-ob="name" class="sortable name"><%=Dict.getDepth(_fields, "name" , "__text__")%></th>
                     <th data-fn="note" data-ob="note" class="noteable note"><%=Dict.getDepth(_fields, "note" , "__text__")%></th>
-                    <th data-fn="mtime" data-ob="mtime" data-ft="_htime" data-fl="v*1000" class="sortable" style="width: 5em;"><%=Dict.getDepth(_fields, "mtime", "__text__")%></th>
+                    <th data-fn="mtime" data-ob="mtime" data-ft="_htime" data-fill="v*1000" class="sortable" style="width: 5em;"><%=Dict.getDepth(_fields, "mtime", "__text__")%></th>
                 </tr>
             </thead>
             <tbody>

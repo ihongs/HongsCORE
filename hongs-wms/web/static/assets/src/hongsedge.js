@@ -255,7 +255,7 @@ function hsListFillFilt(x, v, n) {
 /**
  * 列表预置过滤选项
  */
-function hsListDollFilt(x, v, n) {
+function hsListFeedFilt(x, v, n) {
     n = n.replace(/^ar\.\d\./, "");
     n = n.replace(/\.(\w\w)$/, "");
     v = this._enfo[n];
@@ -282,7 +282,7 @@ function hsListDollFilt(x, v, n) {
         v.unshift(a);
     }
 
-    return HsForm.prototype._doll__select.call(this, x, v, n);
+    return HsForm.prototype._feed__select.call(this, x, v, n);
 }
 
 /**

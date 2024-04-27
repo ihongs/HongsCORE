@@ -186,7 +186,7 @@
                         Object typa = info.get("type");
                         if ("timestamp".equals( typa )
                         ||  "datestamp".equals( typa )) {
-                            kind += "\" data-fl=\"!v?v:v*1000";
+                            kind += "\" data-fill=\"!v?v:v*1000";
                         }
                         // 自定义格式化
                         String frmt = (String) info.get("format");
@@ -253,7 +253,7 @@
         _fill__fork: hsFormFillFork,
         _fill__file: hsFormFillFile,
         _fill__view: hsFormFillView,
-        _doll__form: hsFormDollPart,
+        _feed__form: hsFormFeedPart,
         _fill__form: hsFormFillPart
     });
 

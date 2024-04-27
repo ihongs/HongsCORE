@@ -135,11 +135,11 @@ HsForm.prototype = {
     fillEnfo : function(enfo) {
         var   that = this;
         this._enfo = enfo;
-        this.formBox.find("[data-fn],[data-ft],[data-dl],.form-field").each(function() {
+        this.formBox.find("[data-fn],[data-ft],[data-feed],.form-field").each(function() {
             var x  = jQuery(this);
             var n  = x.data("fn") || x.attr("name") || "";
             var t  = x.data("ft") || "_review";
-            var f  = x.data("dl");
+            var f  = x.data("feed");
             var k  = n.replace (/(\[\]|\.)$/ , '' ); // 规避数组键影响
             var v  = hsGetValue(enfo, k) || enfo[k];
 
@@ -148,9 +148,9 @@ HsForm.prototype = {
                 try {
                     f = eval('(null||function(form,v,n){return '+f+';})');
                 } catch (e) {
-                    throw new Error("Parse form data-dl error: "+e);
+                    throw new Error("Parse form data-feed error: "+e);
                 }
-                x.data("dl",f);
+                x.data("feed", f);
             }
 
             // 调节
@@ -158,11 +158,11 @@ HsForm.prototype = {
                 v  = f.call(this, that, v, n);
             }
             // 填充
-            if (n && that["_doll_"+n] !== undefined) {
-                v  = that["_doll_"+n].call(that, x, v, n);
+            if (n && that["_feed_"+n] !== undefined) {
+                v  = that["_feed_"+n].call(that, x, v, n);
             } else
-            if (t && that["_doll_"+t] !== undefined) {
-                v  = that["_doll_"+t].call(that, x, v, n);
+            if (t && that["_feed_"+t] !== undefined) {
+                v  = that["_feed_"+t].call(that, x, v, n);
             }
             // 无值不理会
             if (!v && v !== 0 && v !== "") {
@@ -176,11 +176,11 @@ HsForm.prototype = {
     fillInfo : function(info) {
         var   that = this;
         this._info = info;
-        this.formBox.find("[data-fn],[data-ft],[data-fl],.form-field").each(function() {
+        this.formBox.find("[data-fn],[data-ft],[data-fill],.form-field").each(function() {
             var x  = jQuery(this);
             var n  = x.data("fn") || x.attr("name") || "";
             var t  = x.data("ft") || "_review";
-            var f  = x.data("fl");
+            var f  = x.data("fill");
             var k  = n.replace (/(\[\]|\.)$/ , '' ); // 规避数组键影响
             var v  = hsGetValue(info, k) || info[k];
 
@@ -189,9 +189,9 @@ HsForm.prototype = {
                 try {
                     f = eval('(null||function(form,v,n){return '+f+';})');
                 } catch (e) {
-                    throw new Error("Parse form data-fl error: "+e);
+                    throw new Error("Parse form data-fill error: "+e);
                 }
-                x.data("fl",f);
+                x.data("fill", f);
             }
 
             // 调节
@@ -644,7 +644,7 @@ HsForm.prototype = {
 
     _group_start: "#", // 选项分组起始符
 
-    _doll__review : function(inp, v, n) {
+    _feed__review : function(inp, v, n) {
         if (v === undefined
         ||  v === null) {
             return;
@@ -654,10 +654,10 @@ HsForm.prototype = {
         // 其他类型仅将数据项进行暂存;
         // 以供下方填充内容时进行转换.
         if (inp.is("input[list]")) {
-            this._doll__datalist(inp, v, n);
+            this._feed__datalist(inp, v, n);
         }
         else if (inp.is("select")) {
-            this. _doll__select (inp, v, n);
+            this. _feed__select (inp, v, n);
         }
         else {
             inp.data("data", v);
@@ -760,7 +760,7 @@ HsForm.prototype = {
         return hsFormat.apply(window, a);
     },
 
-    _doll__datalist : function(inp, v, n) {
+    _feed__datalist : function(inp, v, n) {
         if (v === undefined) return ;
         var id = inp.attr("list");
         if (id && id != "-") {
@@ -773,7 +773,7 @@ HsForm.prototype = {
            inp = jQuery('<datalist></datalist>').insertAfter(inp);
            inp.attr( "id" , id);
         }
-        // 同 _doll__select
+        // 同 _feed__select
         var vk = inp.attr("data-vk"); if(!vk) vk = 0;
         var tk = inp.attr("data-tk"); if(!tk) tk = 1;
         var gs = inp.attr("data-group-start") || this._group_start;
@@ -797,7 +797,7 @@ HsForm.prototype = {
         }
     },
 
-    _doll__select : function(inp, v, n) {
+    _feed__select : function(inp, v, n) {
         if (v === undefined) return ;
         var vk = inp.attr("data-vk"); if(!vk) vk = 0;
         var tk = inp.attr("data-tk"); if(!tk) tk = 1;
@@ -825,7 +825,7 @@ HsForm.prototype = {
         }
     },
 
-    _doll__radio : function(inp, v, n) {
+    _feed__radio : function(inp, v, n) {
         if (v === undefined) return ;
         var vk = inp.attr("data-vk"); if(!vk) vk = 0;
         var tk = inp.attr("data-tk"); if(!tk) tk = 1;
@@ -865,7 +865,7 @@ HsForm.prototype = {
         inp.find(":radio"   ).val(v).first().change();
     },
 
-    _doll__check : function(inp, v, n) {
+    _feed__check : function(inp, v, n) {
         if (v === undefined) return ;
         var vk = inp.attr("data-vk"); if(!vk) vk = 0;
         var tk = inp.attr("data-tk"); if(!tk) tk = 1;
@@ -905,7 +905,7 @@ HsForm.prototype = {
         inp.find(":checkbox").val(v).first().change();
     },
 
-    _doll__checkset : function(inp, v, n) {
+    _feed__checkset : function(inp, v, n) {
         if (v === undefined) return ;
         var vk = inp.attr("data-vk"); if(!vk) vk = 0;
         var tk = inp.attr("data-tk"); if(!tk) tk = 1;

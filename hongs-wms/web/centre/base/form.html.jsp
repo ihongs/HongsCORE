@@ -68,7 +68,7 @@
                 hint = Synt.defxult(Synt.asString(info.get("info-hint")), hint, "");
             %>
             <%if ("form".equals(type) || "part".equals(type)) {%>
-            <div class="form-group" data-name="<%=name%>" style="margin-left:0;margin-right:0;">
+            <div class="form-group" data-name="<%=name%>" style="margin:0;">
                 <%
                     String extr = "";
                     String kind =  "_form";

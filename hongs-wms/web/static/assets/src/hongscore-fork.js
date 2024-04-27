@@ -645,7 +645,7 @@ function hsFormFillPart(box, v, n) {
         || /(\[\]|\.\.|\.$)/.test(n);
     n = n.replace(/(\[\]|\.)$/ , "");
 
-    var htm = box.siblings(".form-sub");
+    var htm = box.find(".form-sub.hide");
     var btr = box.siblings(".form-sub-del");
     var btn = box.siblings(".form-sub-add");
         htm . detach();

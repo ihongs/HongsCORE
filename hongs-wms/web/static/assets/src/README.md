@@ -7,7 +7,7 @@
 
 本工具集与 HongsCORE(Java) 配套使用, 使用 jQuery 作为核心辅助库, 使用 Bootstrap 作为 UI 库. 源码为 src 下以 hongs- 开头的文件, 以 hs 开头的为普通函数, 以 Hs 开头的为伪类函数, this 指向调用的容器对象.
 
-## 属性缩写:
+## 基础属性:
 
     List:
         data-fn     字段名称

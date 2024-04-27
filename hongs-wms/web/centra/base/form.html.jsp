@@ -103,7 +103,7 @@
                         }
                         String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
                         String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") : "id";
-                        String dn = info.containsKey("data-dn") ? (String) info.get("data-dn") :  kn ;
+                        String ln = info.containsKey("data-ln") ? (String) info.get("data-ln") :  kn ;
                         String rl = info.containsKey("data-rl") ? (String) info.get("data-rl") :  "" ;
                         rl = rl.replace("centre", "centra");
                         /**
@@ -116,7 +116,7 @@
                                 rl = rl + "&.deny=.expand";
                             }
                         }
-                        kind += "\" data-dn=\""+dn+"\" data-tk=\""+tk+"\" data-vk=\""+vk
+                        kind += "\" data-ln=\""+ln+"\" data-tk=\""+tk+"\" data-vk=\""+vk
                              +  "\" data-href=\""+rl+"\" data-target=\"@";
                     %>
                     <ul class="pickbox pickrol" data-fn="<%=name%>" data-ft="<%=kind%>"<%=extr%>></ul>
@@ -281,7 +281,7 @@
                         }
                         String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
                         String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") : "id";
-                        String dn = info.containsKey("data-dn") ? (String) info.get("data-dn") :  kn ;
+                        String ln = info.containsKey("data-ln") ? (String) info.get("data-ln") :  kn ;
                         String rl = info.containsKey("data-rl") ? (String) info.get("data-rl") :  "" ;
                         String al = info.containsKey("data-al") ? (String) info.get("data-al") :  "" ;
                         String at = info.containsKey("data-at") ? (String) info.get("data-at") :  "" ;
@@ -322,7 +322,7 @@
                                 at = at + Cnst.ACT_EXT;
                             }
                         }
-                        kind += "\" data-dn=\""+dn+"\" data-tk=\""+tk+"\" data-vk=\""+vk+"\" data-at=\""+at
+                        kind += "\" data-ln=\""+ln+"\" data-tk=\""+tk+"\" data-vk=\""+vk+"\" data-at=\""+at
                              +  "\" data-href=\""+rl+"\" data-target=\"@";
                         mode += "\" data-href=\""+al+"\" data-target=\"@";
                     %>

@@ -10,7 +10,7 @@
  * 在表单配置区域添加:
  * data--0="_fill__fork:(hsFormFillFork)"
  * 在表单选项区域添加:
- * <ul data-ft="_fork" data-fn="xx_id" data-dn="xx" data-vk="id" data-tk="name" class="pickbox"></ul>
+ * <ul data-ft="_fork" data-fn="xx_id" data-ln="xx" data-vk="id" data-tk="name" class="pickbox"></ul>
  * <button type="button" data-toggle="hsFork" data-target="@" data-href="xx/pick.html"> ... </button>
  *
  * 注: 2015/11/30 原 hsPick 更名为 hsFork (Hong's Foreign Key kit)
@@ -314,9 +314,9 @@ function hsFormFillPick(box, v, n) {
 
     // 表单初始化载入时需从关联数据提取选项对象
     if (this._info) {
-        var dn = box.attr("data-dn") || "data";
-        var av = this._info[dn] || hsGetValue(this._info, dn);
-        if (v == av && n == dn) { // 关联键同名
+        var ln = box.attr("data-ln") || "data";
+        var av = this._info[ln] || hsGetValue(this._info, ln);
+        if (v == av && n == ln) { // 关联键同名
             if (! v ) return ;
             if (!mul) v = [v];
         } else
@@ -669,7 +669,7 @@ function hsFormFillPart(box, v, n) {
         btx.show( ).removeClass("hide");
 
         // 字段增加前缀
-        htx.find(".form-field,.form-group,[data-fn],input[name],select[name],textarea[name]")
+        htx.find(".form-field,.form-group,[data-fn],[data-ln],input[name],select[name],textarea[name]")
            .each(function() {
             var l, inp = jQuery(this);
             l = inp.attr("name");
@@ -689,11 +689,11 @@ function hsFormFillPart(box, v, n) {
                 inp.data( "fn" , l);
                 inp.attr( "data-fn" , l);
             }
-            l = inp.data( "dn" );
+            l = inp.data( "ln" );
             if (l) {
                 l = k + "." + l ;
-                inp.data( "dn" , l);
-                inp.attr( "data-dn" , l);
+                inp.data( "ln" , l);
+                inp.attr( "data-ln" , l);
             }
         });
 

@@ -475,21 +475,20 @@ public class SelectHelper {
             String fn = (String) et.getKey();
 
             String fk = (String) mt.get("data-fk"); // 关联外键
-            String dn = (String) mt.get("data-dn"); // 数据名称
+            String ln = (String) mt.get("data-ln"); // 逻辑名称
 
-            if (dn == null || dn.isEmpty()) {
+            if (ln == null || ln.isEmpty()) {
             if (fk == null || fk.isEmpty()) {
                 if (fn.endsWith("_id")) {
-                    int  ln = fn.length()-3;
-                    dn = fn.substring(0,ln);
+                    ln = fn.substring(0, fn.length() - 3);
                 } else {
-                    dn = fn + "_fork";
+                    ln = fn + "_fork";
                 }
             } else {
-                    dn = fn ;
+                    ln = fn ;
             }}
 
-            ts.add (dn);
+            ts.add (ln);
         }
 
         // 子级 rb 参数
@@ -545,7 +544,7 @@ public class SelectHelper {
             }
 
             String at = (String) mt.get("data-at"); // 关联动作路径
-            String dn = (String) mt.get("data-dn"); // 数据放入此下
+            String ln = (String) mt.get("data-ln"); // 数据放入此下
             String vk = (String) mt.get("data-vk"); // 关联字段
             String tk = (String) mt.get("data-tk"); // 名称字段
 
@@ -554,16 +553,15 @@ public class SelectHelper {
                 String f = (String) mt.get("form");
                 at  =  c +"/"+ f +"/search";
             }
-            if (dn == null || dn.isEmpty()) {
+            if (ln == null || ln.isEmpty()) {
             if (fk == null || fk.isEmpty()) {
                 if (fn.endsWith("_id")) {
-                    int  ln = fn.length()-3;
-                    dn = fn.substring(0,ln);
+                    ln = fn.substring(0, fn.length() - 3);
                 } else {
-                    dn = fn + "_fork";
+                    ln = fn + "_fork";
                 }
             } else {
-                    dn = fn ;
+                    ln = fn ;
             }}
             if (vk == null || vk.isEmpty()) {
                 vk =  Cnst.ID_KEY;
@@ -614,7 +612,7 @@ public class SelectHelper {
             // 则取二者的交集作为查询的字段
             Set rp  = Synt.toSet(mt.get("data-rb"));
             if (rp != null && !rp.isEmpty()) {
-                Set nb  = sb.get(dn);
+                Set nb  = sb.get(ln);
                 if (nb != null) {
                     nb.retainAll(rp);
                     if ( ! nb.isEmpty ( ) )
@@ -627,7 +625,7 @@ public class SelectHelper {
             // 则取二者的交集作为排序的字段
             Set op  = Synt.toSet(mt.get("data-ob"));
             if (op != null && !op.isEmpty()) {
-                Set nb  = ob.get(dn);
+                Set nb  = ob.get(ln);
                 if (nb != null) {
                     nb.retainAll(op);
                     if ( ! nb.isEmpty ( ) )
@@ -660,22 +658,22 @@ public class SelectHelper {
                 for (Map.Entry<Object, List> lr : ms.entrySet()) {
                     List<Map> lst = lr. getValue ( );
                     for (Map  row : lst) {
-                        row.put(dn, new  HashMap ());
+                        row.put(ln, new  HashMap ());
                     }
                 }
 
-                mm.extend(ls, ms, vk, dn);
+                mm.extend(ls, ms, vk, ln);
             } else
             if (Synt.declare(mt.get("ordered"), false) == false) {
                 // 预置数据
                 for (Map.Entry<Object, List> lr : ms.entrySet()) {
                     List<Map> lst = lr. getValue ( );
                     for (Map  row : lst) {
-                        row.put(dn, new ArrayList());
+                        row.put(ln, new ArrayList());
                     }
                 }
 
-                mm.append(ls, ms, vk, dn);
+                mm.append(ls, ms, vk, ln);
             } else
             {
                 Set <Map>          ros = new  HashSet (list.size());
@@ -689,16 +687,16 @@ public class SelectHelper {
                             continue;
                         }
                         ros.add(row);
-                        row.put(dn, new ArrayList());
+                        row.put(ln, new ArrayList());
                         fas.add(new Collection[] {
                             Synt.asColl(row.get(fn)),
-                            Synt.asColl(row.get(dn))
+                            Synt.asColl(row.get(ln))
                         });
                     }
                 }
                 ros = null;
 
-                mm.append(ls, ms, vk, dn);
+                mm.append(ls, ms, vk, ln);
 
                 // 重新排序
                 for (Collection[] fa : fas) {

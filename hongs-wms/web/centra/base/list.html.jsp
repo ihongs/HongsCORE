@@ -118,7 +118,7 @@
                     }
                     String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
                     String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") : "id";
-                    String dn = info.containsKey("data-dn") ? (String) info.get("data-dn") :  kn ;
+                    String ln = info.containsKey("data-ln") ? (String) info.get("data-ln") :  kn ;
                     String al = info.containsKey("data-al") ? (String) info.get("data-al") :  "" ;
                     al = al.replace("centre", "centra");
                     // 选择时禁用创建
@@ -129,7 +129,7 @@
                         al = al + "&.deny=.create";
                     }}
                 %>
-                <ul class="pickbox pickmul" data-ft="_fork" data-fn="<%=name%>.<%=Cnst.IN_REL%>." data-dn="<%=dn%>" data-tk="<%=tk%>" data-vk="<%=vk%>" data-item-class="btn btn-sm btn-info" data-icon-class="-"></ul>
+                <ul class="pickbox pickmul" data-ft="_fork" data-fn="<%=name%>.<%=Cnst.IN_REL%>." data-ln="<%=ln%>" data-tk="<%=tk%>" data-vk="<%=vk%>" data-item-class="btn btn-sm btn-info" data-icon-class="-"></ul>
                 <button type="button" class="btn btn-sm btn-default form-control" data-toggle="hsFork" data-target="@" data-href="<%=al%>"><%=_locale.translate("fore.fork.select", text)%></button>
             <%} else if ("enum".equals(type) || "type".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
                 <select class="form-control" name="<%=name%>.<%=Cnst.EQ_REL%>" data-ft="_enum"></select>
@@ -369,8 +369,8 @@
                             name = name + "_fork";
                         }
                         String subn = "name";
-                        if (info.get("data-dn") != null) {
-                            name = (String) info.get("data-dn");
+                        if (info.get("data-ln") != null) {
+                            name = (String) info.get("data-ln");
                         }
                         if (info.get("data-tk") != null) {
                             subn = (String) info.get("data-tk");

@@ -18,7 +18,7 @@
         data-fn     字段名称
         data-ft     字段类型
     Pick:
-        data-dn     虚拟名称
+        data-ln     逻辑名称
         data-vk     关联数据取值键
         data-tk     关联数据标题键
         data-at     查询接口

@@ -1137,24 +1137,25 @@ HsForm.prototype = {
             return true;
         },
         "[data-test]" : function(inp, val) {
-            var f = inp.data("test");
-            if (typeof f !== "function") {
+            var fun  = inp.data("test");
+            var key  = inp.attr("name") || inp.data("fn");
+
+            // 解析校验函数
+            if (typeof fun !== "function") {
                 try {
-                    f = eval('(null||function(form,v,n){return '+f+';})');
-                } catch (e) {
-                    throw new Error("Parse form data-validate error: "+e);
+                    fun = eval('(null||function(form,v,n){return '+fun+';})');
+                } catch ( err ) {
+                    throw new Error("Parse form data-test error: "+err);
                 }
-                inp.data("test" , f);
+                inp.data( "test", fun );
             }
-            var n = inp.data( "fn" )
-                 || inp.attr("name");
-            return f.call(inp, this, val, n);
+
+            return fun.call (inp, this, val, key);
         },
         "[data-verify]" : function(inp, val, url) {
             if (! val) return true ;
             var ret  = true;
             var mod  = this;
-            var box  = this.formBox;
             var key  = inp.attr("name") || inp.data("fn");
 
             // 清理多值名称

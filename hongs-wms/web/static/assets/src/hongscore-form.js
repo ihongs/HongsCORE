@@ -1138,9 +1138,7 @@ HsForm.prototype = {
         },
         "[data-test]" : function(inp, val) {
             var f = inp.data("test");
-
-            // 解析检测方法
-            if (typeof f != "function") {
+            if (typeof f !== "function") {
                 try {
                     f = eval('(null||function(form,v,n){return '+f+';})');
                 } catch (e) {
@@ -1148,9 +1146,9 @@ HsForm.prototype = {
                 }
                 inp.data("test" , f);
             }
-
-            v = f.call (inp, this, val);
-            return v;
+            var n = inp.data( "fn" )
+                 || inp.attr("name");
+            return f.call(inp, this, val, n);
         },
         "[data-verify]" : function(inp, val, url) {
             if (! val) return true ;

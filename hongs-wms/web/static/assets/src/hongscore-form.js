@@ -57,7 +57,7 @@ function HsForm(context, opts) {
         this.initEnfo = hsSerialDic(initEnf);
     }
 
-    this.variInit();
+    this.testInit();
     this.saveInit();
 
     /**
@@ -252,6 +252,236 @@ HsForm.prototype = {
     },
     _ps_key  : "state" ,
     _rc_key  : "count" ,
+
+    testInit : function() {
+        var that = this;
+        this.formBox.attr("novalidate", "novalidate");
+//      this.formBox.prop("novalidate", true); // 无效
+        this.formBox.on("reset" , function(e) {
+            if (e.isDefaultPrevented()) {
+                return;
+            }
+            return that.verified( );
+        });
+        this.formBox.on("submit", function(e) {
+            if (e.isDefaultPrevented()) {
+                return;
+            }
+            return that.verifies( );
+        });
+        this.formBox.on("change","input,select,textarea,[data-fn]",
+        function() {
+            var item = jQuery(this);
+            var name = item.attr( "name") || item.attr( "data-fn");
+            if (name) {
+                that.validate(name);
+            }
+        });
+    },
+    verified : function() {
+        this.formBox.find(".form-group")
+              .removeClass( "has-error")
+                    .find(".text-error")
+                    .empty();
+        return true;
+    },
+    verifies : function() {
+        this.verified();
+        var that = this;
+        var vali = true;
+        this.formBox.find("[data-fn],.form-field[name]").each(function() {
+            var inp = jQuery(this);
+            var val = that.validate(inp);
+            if (val == false) {
+                vali = false;
+            }
+        });
+        if ( ! vali) {
+           this.warn(hsGetLang('form.invalid'), "warning");
+        }
+        return vali;
+    },
+    validate : function(inp) {
+        var val;
+        inp = this.getinput(inp);
+        val = this.getvalue(inp);
+
+        // 外部校验方法
+        var n  = inp.data("fn") || inp.attr("name") || "";
+        var t  = inp.data("ft");
+        var v;
+        if (n && this["_test_"+n] !== undefined) {
+            v  = this["_test_"+n].call(this, inp, val, n);
+        } else
+        if (t && this["_test_"+t] !== undefined) {
+            v  = this["_test_"+t].call(this, inp, val, n);
+        }
+        if (v !== undefined && v !== true) {
+            v  = v || hsGetLang("form.haserror");
+            this.seterror(inp, v);
+            return false;
+        }
+
+        // 内部校验规则
+        for(var s in this.rules) {
+            if (! inp.is(s)) {
+                continue;
+            }
+            var err  =  this.rules[s].call(this, inp,val);
+            if (err !== undefined && err !== true) {
+                err  =  err || hsGetLang("form.haserror");
+                this.seterror(inp, err);
+                return false;
+            }
+        }
+
+        this.seterror(inp);
+        return true;
+    },
+    getinput : function(inp) {
+        if (typeof inp != "string") {
+            return jQuery(inp);
+        }
+
+        do {
+            var sel = inp;
+
+            inp = this.formBox.find('[data-fn="'+sel+'"],.form-field[name="'+sel+'"]');
+            if (inp.size()) {
+                break;
+            }
+
+            /**
+             * 从字段名里提取数组下标
+             * 并使用下标来查找表单项
+             * 还找不到则尝试按集合名
+             * 如: name. 和 name[]
+             * 此查找方法主要为解决显示服务端多值字段校验的错误消息
+             */
+
+            var grp = /^(.*)\[(\d+)\]$/.exec(sel);
+            if (grp == null) {
+                break;
+            }
+            var idx = grp[2];
+                sel = grp[1];
+
+            inp = this.formBox.find('[data-fn="'+sel+'"],.form-field[name="'+sel+'"]');
+            if (inp.size()) {
+                return inp.eq(parseInt(idx)); // 精确位置, 直接返回
+            }
+
+            inp = this.formBox.find('[data-fn="'+sel+'."],.form-field[name="'+sel+'."]');
+            if (inp.size()) {
+                break;
+            }
+
+            inp = this.formBox.find('[data-fn="'+sel+'[]"],.form-field[name="'+sel+'[]"]');
+            if (inp.size()) {
+                break;
+            }
+        }
+        while (false);
+
+        return inp;
+    },
+    getvalue : function(inp) {
+        // 非表单项则需向下查找
+        if (! inp.is("input,select,textarea")) {
+        var fn  = inp.data( "fn" );
+            inp = inp
+               .find("input,select,textarea")
+               .filter(function( ) {
+                return $(this).attr( "name" ) === fn;
+            });
+        if (! inp.is("input,select.textarea")) {
+            return undefined;
+        }}
+
+        // 选项框需区分单选多选
+        if (inp.is(":checkbox")) {
+            var val = [];
+            inp.filter(":checked")
+               .each(function( ) {
+                val.push($(this).val( ) );
+            });
+            return val;
+        }
+        if (inp.is(":radio")) {
+            return inp.filter(":checked")
+                      .last()
+                      .val ();
+        }
+
+        // 以 . 结尾, 含有 .. 或 [] 均表示为多个值
+        if (/(\[\]|\.\.|\.$)/.test(inp.attr("name"))) {
+            var val = [];
+            inp.each(function( ) {
+                val.push($(this).val( ) );
+            });
+            return val;
+        } else {
+            return inp.last()
+                      .val ();
+        }
+    },
+    seterror : function(inp, err) {
+        var grp = inp.closest(".form-group");
+        var blk = grp.find(   ".text-error");
+        var leb = grp.find(".control-label");
+
+        // 补充消息区域
+        if (blk.size() == 0) {
+            blk = jQuery('<p class="text-error help-block"></p>').appendTo(grp);
+            if (leb.hasClass(".form-control-static")) {
+                blk.addClass( "form-control-static" );
+            }
+        }
+
+        if (err===undefined) {
+            grp.removeClass("has-error");
+            blk.   addClass("invisible");
+        } else {
+            grp.   addClass("has-error");
+            blk.removeClass("invisible");
+            blk.text(err);
+        }
+    },
+    geterror : function(inp, err, rep) {
+        var msg = err.replace(/^form\./, "")
+                     .replace( /\./g , "-" );
+            msg = inp.attr("data-" + msg + "-error")
+               || inp.attr("data-error");
+        if (msg) {
+            err = msg;
+        }
+        if (this.rmsgs[err]) {
+            err = this.rmsgs[err];
+        }
+
+        // 放入字段标签
+        var lab = inp.attr("data-label");
+        if (lab == null) {
+            lab = inp.closest(".form-group")
+                     .find(".control-label")
+                     .text();
+        }
+        if (lab) {
+            if(jQuery.isArray(rep)) {
+                var rap = {};
+                for(var i = 0; i < rep.length; i ++) {
+                    rap[i + "" ] = rep[i];
+                }
+                rep = rap;
+            } else
+            if (rep == null) {
+                rep = { };
+            }
+            rep._ = hsGetLang(lab);
+        }
+
+        return hsGetLang(err, rep);
+    },
 
     saveInit : function() {
         var that = this;
@@ -781,235 +1011,6 @@ HsForm.prototype = {
         jQuery(td).text( v );
     },
 
-    variInit : function() {
-        var that = this;
-        this.formBox.attr("novalidate", "novalidate");
-//      this.formBox.prop("novalidate", true); // 无效
-        this.formBox.on("reset" , function(e) {
-            if (e.isDefaultPrevented()) {
-                return;
-            }
-            return that.verified( );
-        });
-        this.formBox.on("submit", function(e) {
-            if (e.isDefaultPrevented()) {
-                return;
-            }
-            return that.verifies( );
-        });
-        this.formBox.on("change","input,select,textarea,[data-fn]",
-        function() {
-            var item = jQuery(this);
-            var name = item.attr( "name") || item.attr( "data-fn");
-            if (name) {
-                that.validate(name);
-            }
-        });
-    },
-    verified : function() {
-        this.formBox.find(".form-group")
-              .removeClass( "has-error")
-                    .find(".text-error")
-                    .empty();
-        return true;
-    },
-    verifies : function() {
-        this.verified();
-        var that = this;
-        var vali = true;
-        this.formBox.find("[data-fn],[data-ft],[data-hl],.form-field").each(function() {
-            var inp = jQuery(this);
-            var val = that.validate(inp);
-            if (val == false) {
-                vali = false;
-            }
-        });
-        if ( ! vali) {
-           this.warn(hsGetLang('form.invalid'), "warning");
-        }
-        return vali;
-    },
-    validate : function(inp) {
-        var val;
-        inp = this.getinput(inp);
-        val = this.getvalue(inp);
-
-        // 外部校验方法
-        var n  = inp.data("fn") || inp.attr("name") || "";
-        var t  = inp.data("ft");
-        var v;
-        if (n && this["_veri_"+n] !== undefined) {
-            v  = this["_veri_"+n].call(this, inp, val, n);
-        } else
-        if (t && this["_veri_"+t] !== undefined) {
-            v  = this["_veri_"+t].call(this, inp, val, n);
-        }
-        if (v !== undefined && v !== true) {
-            v  = v || hsGetLang("form.haserror");
-            this.seterror(inp, v);
-            return false;
-        }
-
-        // 内部校验规则
-        for(var s in this.rules) {
-            if (! inp.is(s)) {
-                continue;
-            }
-            var err  =  this.rules[s].call(this, inp,val);
-            if (err !== undefined && err !== true) {
-                err  =  err || hsGetLang("form.haserror");
-                this.seterror(inp, err);
-                return false;
-            }
-        }
-
-        this.seterror(inp);
-        return true;
-    },
-    getinput : function(inp) {
-        if (typeof inp != "string") {
-            return jQuery(inp);
-        }
-
-        do {
-            var sel = inp;
-
-            inp = this.formBox.find('[data-fn="'+sel+'"],.form-field[name="'+sel+'"]');
-            if (inp.size()) {
-                break;
-            }
-
-            /**
-             * 从字段名里提取数组下标
-             * 并使用下标来查找表单项
-             * 还找不到则尝试按集合名
-             * 如: name. 和 name[]
-             * 此查找方法主要为解决显示服务端多值字段校验的错误消息
-             */
-
-            var grp = /^(.*)\[(\d+)\]$/.exec(sel);
-            if (grp == null) {
-                break;
-            }
-            var idx = grp[2];
-                sel = grp[1];
-
-            inp = this.formBox.find('[data-fn="'+sel+'"],.form-field[name="'+sel+'"]');
-            if (inp.size()) {
-                return inp.eq(parseInt(idx)); // 精确位置, 直接返回
-            }
-
-            inp = this.formBox.find('[data-fn="'+sel+'."],.form-field[name="'+sel+'."]');
-            if (inp.size()) {
-                break;
-            }
-
-            inp = this.formBox.find('[data-fn="'+sel+'[]"],.form-field[name="'+sel+'[]"]');
-            if (inp.size()) {
-                break;
-            }
-        }
-        while (false);
-
-        return inp;
-    },
-    getvalue : function(inp) {
-        // 非表单项则需向下查找
-        if (! inp.is("input,select,textarea")) {
-        var fn  = inp.data( "fn" );
-            inp = inp
-               .find("input,select,textarea")
-               .filter(function( ) {
-                return $(this).attr( "name" ) === fn;
-            });
-        if (! inp.is("input,select.textarea")) {
-            return undefined;
-        }}
-
-        // 选项框需区分单选多选
-        if (inp.is(":checkbox")) {
-            var val = [];
-            inp.filter(":checked")
-               .each(function( ) {
-                val.push($(this).val( ) );
-            });
-            return val;
-        }
-        if (inp.is(":radio")) {
-            return inp.filter(":checked")
-                      .last()
-                      .val ();
-        }
-
-        // 以 . 结尾, 含有 .. 或 [] 均表示为多个值
-        if (/(\[\]|\.\.|\.$)/.test(inp.attr("name"))) {
-            var val = [];
-            inp.each(function( ) {
-                val.push($(this).val( ) );
-            });
-            return val;
-        } else {
-            return inp.last()
-                      .val ();
-        }
-    },
-    seterror : function(inp, err) {
-        var grp = inp.closest(".form-group");
-        var blk = grp.find(   ".text-error");
-        var leb = grp.find(".control-label");
-
-        // 补充消息区域
-        if (blk.size() == 0) {
-            blk = jQuery('<p class="text-error help-block"></p>').appendTo(grp);
-            if (leb.hasClass(".form-control-static")) {
-                blk.addClass( "form-control-static" );
-            }
-        }
-
-        if (err===undefined) {
-            grp.removeClass("has-error");
-            blk.   addClass("invisible");
-        } else {
-            grp.   addClass("has-error");
-            blk.removeClass("invisible");
-            blk.text(err);
-        }
-    },
-    geterror : function(inp, err, rep) {
-        var msg = err.replace(/^form\./, "")
-                     .replace( /\./g , "-" );
-            msg = inp.attr("data-" + msg + "-error")
-               || inp.attr("data-error");
-        if (msg) {
-            err = msg;
-        }
-        if (this.rmsgs[err]) {
-            err = this.rmsgs[err];
-        }
-
-        // 放入字段标签
-        var lab = inp.attr("data-label");
-        if (lab == null) {
-            lab = inp.closest(".form-group")
-                     .find(".control-label")
-                     .text();
-        }
-        if (lab) {
-            if(jQuery.isArray(rep)) {
-                var rap = {};
-                for(var i = 0; i < rep.length; i ++) {
-                    rap[i + "" ] = rep[i];
-                }
-                rep = rap;
-            } else
-            if (rep == null) {
-                rep = { };
-            }
-            rep._ = hsGetLang(lab);
-        }
-
-        return hsGetLang(err, rep);
-    },
     rules : {
         "[required],[data-required]" : function(inp, val) {
             if (inp.is(":file")) {
@@ -1135,17 +1136,17 @@ HsForm.prototype = {
             }
             return true;
         },
-        "[data-validate]" : function(inp, val) {
-            var f = inp.data("validate");
+        "[data-test]" : function(inp, val) {
+            var f = inp.data("test");
 
-            // 解析填充方法
+            // 解析检测方法
             if (typeof f != "function") {
                 try {
                     f = eval('(null||function(form,v,n){return '+f+';})');
                 } catch (e) {
                     throw new Error("Parse form data-validate error: "+e);
                 }
-                inp.data("validate", f);
+                inp.data("test" , f);
             }
 
             v = f.call (inp, this, val);

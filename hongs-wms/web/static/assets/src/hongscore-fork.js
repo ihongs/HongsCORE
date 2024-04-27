@@ -801,7 +801,7 @@ function hsFormFillPart(box, v, n) {
  * 子表单常规校验
  * @param {Element} box
  */
-function hsFormVeriPart(box) {
+function hsFormTestPart(box) {
     var m = 0;
     if (box.data("required")) {
         if (m === box.children().size()) {

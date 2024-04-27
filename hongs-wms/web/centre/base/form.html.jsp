@@ -254,7 +254,7 @@
                 </div>
                 <div class="row form-sub-del hide">
                     <div class="col-sm-9 col-md-8 col-sm-offset-3 col-md-offset-2">
-                        <button type="button" class="btn btn-default" data-toggle="hsFormSubDel"><%=Synt.defxult(hold, _locale.translate("fore.form.sub.del", text))%></button>
+                        <button type="button" class="btn btn-warning" data-toggle="hsFormSubDel"><%=Synt.defxult(hold, _locale.translate("fore.form.sub.del", text))%></button>
                     </div>
                 </div>
             </div>
@@ -566,7 +566,10 @@
          initInfo: initres,
         _fill__fork: hsFormFillFork,
         _fill__file: hsFormFillFile,
-        _fill__view: hsFormFillView
+        _fill__view: hsFormFillView,
+        _doll__form: hsFormDollPart,
+        _fill__form: hsFormFillPart,
+        _test__form: hsFormTestPart
     });
 
     hsRequires("<%=_module%>/<%=_entity%>/defines.js", function() {

@@ -252,7 +252,9 @@
         _data: loadres,
         _fill__fork: hsFormFillFork,
         _fill__file: hsFormFillFile,
-        _fill__view: hsFormFillView
+        _fill__view: hsFormFillView,
+        _doll__form: hsFormDollPart,
+        _fill__form: hsFormFillPart
     });
 
     hsRequires("<%=_module%>/<%=_entity%>/defines.js", function() {

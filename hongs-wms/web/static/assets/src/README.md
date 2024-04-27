@@ -21,9 +21,9 @@
         data-fl     Fill lambda 填充取值
         data-dl     Doll lambda 预置选项
     Pick:
+        data-dn     Dummy name  虚拟名称
         data-vk     Value key   关联数据取值键
         data-tk     Title key   关联数据标题键
-        data-ak     Assoc key   关联数据键
         data-al     Assoc lnk   关联选取页
         data-rl     Refer lnk   关联查阅页
     Part:

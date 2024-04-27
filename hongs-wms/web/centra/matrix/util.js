@@ -76,7 +76,7 @@ function strDataList(a) {
 }
 
 var COLS_PATT_BASE = /^[a-z0-9\-_.:]+$/;    // 当作为标签属性时可以使用, 没有引起问题的特殊字符
-var COLS_PATT_DATA = /^data-/;              // 以 data 开头不用再加前缀, 如 data-tk, data-ak 等
+var COLS_PATT_DATA = /^data-/;              // 以 data 开头不用再加前缀, 如 data-vk, data-tk 等
 var COLS_PATT_DATN = /^data-\d+$/;          // 数字结尾要从属性值里取键
 var COLS_PATT_DATL = /^data-(?=\W|...)/;    // 长属性在写回时要去掉前缀
 var COLS_PATT_DATS = /^data-(?!f[tn]$)/;    // fn和ft很特殊需要专门处理

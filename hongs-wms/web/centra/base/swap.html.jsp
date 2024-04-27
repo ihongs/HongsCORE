@@ -90,13 +90,13 @@
                             <a href="javascript:;" class="show-form" data-data="<%=escape(Dist.toString(fl, true))%>"><%=name%></a>
                         <%} else if ("fork".equals(type)) {%>
                             <%
-                                String ak = Synt.declare(info.get("data-ak"), "" );
+                                String dn = Synt.declare(info.get("data-dn"), "" );
                                 String at = Synt.declare(info.get("data-at"), "" );
                                 String sb = Synt.declare(info.get("data-rb"), "" );
                                 String rb ;
                                 // 关联名称
-                                if (ak.isEmpty()) {
-                                    ak = ! name.endsWith("_id") ? name + "_fork"
+                                if (dn.isEmpty()) {
+                                    dn = ! name.endsWith("_id") ? name + "_fork"
                                          : name.substring(0, -3 + name.length( ) );
                                 }
                                 // 内部字段
@@ -110,7 +110,7 @@
                                 else at = Synt.declare(info.get("conf"), _config )
                                     +"/"+ Synt.declare(info.get("form"),   name  );
                             %>
-                            <a href="javascript:;" class="show-fork" data-ak="<%=ak%>" data-at="<%=at%>" data-rb="<%=rb%>" data-sb="<%=sb%>"><%=name%></a>
+                            <a href="javascript:;" class="show-fork" data-dn="<%=dn%>" data-at="<%=at%>" data-rb="<%=rb%>" data-sb="<%=sb%>"><%=name%></a>
                         <%} else if ("file".equals(type)) {%>
                             <%
                                 String ft = Synt.declare(info.get("type"), "" );
@@ -558,7 +558,7 @@ id=ID 或 id.=ID1&id.=ID2...
     // 查看关联内容
     context.on("click", "a.show-fork", function() {
         var at = $(this).data("at");
-        var ak = $(this).data("ak");
+        var dn = $(this).data("dn");
         var rb = $(this).data("rb");
         var sb = $(this).data("sb");
         var table = $('<table class="table table-hover table-striped"></table>');
@@ -570,7 +570,7 @@ id=ID 或 id.=ID1&id.=ID2...
         $('<td></td>').appendTo(tr).text(at);
         tr = $('<tr></tr>').appendTo(tbody);
         $('<th></th>').appendTo(tr).text('关联名称');
-        $('<td></td>').appendTo(tr).text(ak);
+        $('<td></td>').appendTo(tr).text(dn);
         tr = $('<tr></tr>').appendTo(tbody);
         $('<th></th>').appendTo(tr).text('内部字段');
         $('<td></td>').appendTo(tr).text(rb);

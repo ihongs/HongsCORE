@@ -488,24 +488,26 @@
                             extr += " required=\"required\"";
                         }
                         if (rptd) {
+                            extr += " multiple=\"multiple\"";
                             extr += " data-toggle=\"hsBags\"";
+                            name += "." ;
                             type  =  "text";
                         } else {
-                            if ("string".equals(type) || "stored".equals(type) || "search".equals(type)) type = "text";
                             if (info.containsKey("minlength")) extr += " minlength=\""+info.get("minlength").toString()+"\"";
                             if (info.containsKey("maxlength")) extr += " maxlength=\""+info.get("maxlength").toString()+"\"";
                             if (info.containsKey("pattern"  )) extr += " pattern=\""  +info.get("pattern"  ).toString()+"\"";
                         }
+                            if ("string".equals(type) || "stored".equals(type) || "search".equals(type)) type = "text";
                     %>
                     <input class="form-field form-control" type="<%=type%>" name="<%=name%>" placeholder="<%=hold%>"<%=extr%>/>
                 <%} else {%>
                     <%
                         String extr = "";
-                        if (rptd) {
-                            extr += " multiple=\"multiple\"";
-                        }
                         if (rqrd) {
                             extr += " required=\"required\"";
+                        }
+                        if (rptd) {
+                            extr += " multiple=\"multiple\"";
                         }
                     %>
                     <input class="form-field form-control" type="<%=type%>" name="<%=name%>" placeholder="<%=hold%>"<%=extr%>/>

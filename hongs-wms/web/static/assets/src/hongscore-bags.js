@@ -33,34 +33,68 @@
         }
 
         var inp , box ;
-        if (! this.is("input")) {
+        if (! this.is("input,textarea")) {
             box = this;
-            inp = this.siblings( "input"  );
+            inp = this.siblings("input,textarea");
         } else {
             inp = this;
-            box = this.siblings(".bagsbox");
-        if (! box.size()) {
+            box = this.siblings(".bagsbox,div,ul,ol");
+
             // 创建操作控件
-            box = $(
-                '<div class="bagsbox form-control">'
-              +   '<div class="bags-label label label-info hide">'
-              +     '<i class="bags-erase bi-x" ></i>'
-              +     '<span class="bags-value"></span>'
-              +   '</div>'
-              +   '<input class="bags-input" type="text"/>'
-              + '</div>'
-            );
-            if (! inp.is(":hidden") )
-            inp.addClass("invisible");
-            box.insertAfter(inp);
-        }}
+            if (! box.size()) {
+                var fn = inp.attr("name");
+                var ft = inp.attr("type");
+                var fl = "hsFormFillBags.call(form, this, v, n)"; // 直接填充, 不从 input 读取
+                if (! ft || ft == "hidden") {
+                    ft = "text";
+                }
+
+                box = $(
+                    '<div class="bagsbox form-control">'
+                  +   '<div class="bags-label label label-info hide">'
+                  +     '<i class="bags-erase bi-x" ></i>'
+                  +     '<span class="bags-value"></span>'
+                  +   '</div>'
+                  +   '<input class="bags-input" type="'+ft+'"/>'
+                  + '</div>'
+                );
+                if (! inp.is(":hidden") )
+                inp.addClass("invisible");
+                box.insertAfter(inp);
+
+                // 添加隐藏字段
+                // 指明了不拼接, 或未设拼接符, 而又要求多值;
+                // 当通过自定义控件模式构建时, 则需自行处理.
+                if (inp.data("unjoin")
+                || (! inp.data("join")
+                &&  inp.attr("multiple"))) {
+                    $('<input type="hidden" />')
+                       .appendTo(box.find(".bags-label"))
+                       .attr("name"   , fn);
+                    box.attr("data-fn", fn);
+                    box.attr("data-fl", fl);
+                    box.data("unjoin" , true);
+                    // 校验相关, input 无 form-field 将不填充不校验
+                    inp.removeClass("form-field");
+                    if (inp.prop("required" )) {
+                        box.attr("data-required" , "required");
+                    }
+                    if (inp.data("minrepeat")) {
+                        box.attr("data-minrepeat", inp.data("minrepeat"));
+                    }
+                    if (inp.data("maxrepeat")) {
+                        box.attr("data-maxrepeat", inp.data("maxrepeat"));
+                    }
+                }
+            }
+        }
 
         var enp  = box.find(".bags-input");
         var tmp  = box.find(".bags-label.hide").detach();
         var fn   = box.data( "fn" ) || inp.attr("name"); // 字段名
         var ends = box.data("ends") || inp.data("ends"); // 切词键
-        var join = box.data("join") || inp.data("join")  || ',' ; // 拼接符
-        var unmerge = box.data("unmerge") || inp.data("unmerge"); // 不拼接
+        var join = box.data("join") || inp.data("join"); // 拼接符
+        var unjoin  = box.data("unjoin" ) || inp.data("unjoin" ); // 不拼接
         var unstrip = box.data("unstrip") || inp.data("unstrip"); // 不清理前后空格
         var unstint = box.data("unstint") || inp.data("unstint"); // 不进行排重处理
 
@@ -71,36 +105,18 @@
             throw new Error(".bags-input not exists");
         }
 
-        // 切词键, 默认: 回车, 半角逗号和分号, 全角顿号、逗号和分号
-        if (ends) {
+        // 拼接符, 默认为半角逗号
+        if (! join && ! unjoin) {
+            join = ',';
+        }
+
+        // 切词键, 默认为回车, 半角逗号和分号, 全角顿号和逗号和分号
+        if (! ends) {
+            ends = [13, 44, 59, 0x3001, 0xff0c, 0xff1b];
+        } else {
             ends = ends.split(',');
             for (var i = 0; i < ends.length; i ++) {
                 ends[i] = parseInt(ends[i]);
-            }
-        } else {
-            ends = [13, 44, 59, 0x3001, 0xff0c, 0xff1b];
-        }
-
-        // 不拼接则追加隐藏字段, 并设置名称等以便校验
-        if (unmerge) {
-            join = undefined;
-            var xnp = tmp.find("input");
-            if (! xnp.size()) {
-                xnp = $('<input type="hidden">').appendTo(tmp);
-                xnp.attr("name", fn );
-            }
-            if (! box.attr("data-ft")
-            &&  ! box.attr("data-fn") ) {
-                box.attr("data-fn", fn);
-            }
-            if (inp.prop("required")) {
-                box.attr("data-required", "required");
-            }
-            if (inp.attr("min-repeated")) {
-                box.attr("min-repeated", inp.attr("min-repeated"));
-            }
-            if (inp.attr("max-repeated")) {
-                box.attr("max-repeated", inp.attr("max-repeated"));
             }
         }
 
@@ -207,9 +223,20 @@
             var v = $(this).val();
             if (x || !v || !join) {
                 return;
+            }   v = v.split(join);
+            // 逐条加入
+            clear.call(box);
+            for (var i = 0; i < v.length; i ++) {
+                inlay.call(enp, v[i]);
             }
-            v = v.split(join);
-            clear.call (box );
+        });
+
+        // 方便外部操作
+        box.data("add", function(v) {
+            inlay.call(enp, v);
+        });
+        box.data("set", function(v) {
+            clear.call(box);
             for (var i = 0; i < v.length; i ++) {
                 inlay.call(enp, v[i]);
             }
@@ -228,3 +255,12 @@
     });
 
 })(jQuery);
+
+function hsFormFillBags(box , v) {
+    var set = $(box).data("set");
+    if (set) {
+        set(v || []);
+    } else {
+        throw new Error("hsBags not inited", box);
+    }
+}

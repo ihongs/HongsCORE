@@ -1073,13 +1073,8 @@ ul.pickmul + * ,
     word-break: break-all;
 }
 .bagsbox.form-control .bags-input {
-    width: 0;
-    border: 0;
-    margin: 0;
-    padding: 0;
     outline: none;
-}
-.bagsbox.form-control .bags-input:focus {
+    border: 0;
     margin: 0 4px 4px 0;
     padding: 2px 8px 2px 8px;
     min-width: calc(100% - 4px);
@@ -1107,6 +1102,18 @@ ul.pickmul + * ,
     padding-top: 1px;
     float: right;
     cursor: pointer;
+}
+.bags-fold.bagsbox.form-control .bags-input,
+.bags-fold .bagsbox.form-control .bags-input {
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+}
+.bags-fold.bagsbox.form-control .bags-input:focus,
+.bags-fold .bagsbox.form-control .bags-input:focus {
+    margin: 0 4px 4px 0;
+    padding: 2px 8px 2px 8px;
+    min-width: calc(100% - 4px);
 }
 
 /* 优化文件上传样式 */

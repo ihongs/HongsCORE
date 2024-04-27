@@ -169,11 +169,7 @@ HsForm.prototype = {
                 return;
             }
 
-            if (i.is("select")) {
-                this._doll__select(i, v, n);
-            } else {
-                this._doll__review(i, v, n);
-            }
+            x.data("data", v);
         });
         delete this._enfo;
     },
@@ -214,21 +210,12 @@ HsForm.prototype = {
                 return;
             }
 
-            if (x.is(".radio,.checkbox")) {
-                if (! jQuery.isArray(v) ) {
-                    v = [v];
-                }
-                x.find(":radio,:checkbox" )
-                 .val (v).first ().change();
-            } else
-            if (x.is(":radio,:checkbox")) {
-                if (! jQuery.isArray(v) ) {
-                    v = [v];
-                }
-                x.val (v).first ().change();
-            } else
             if (x.is("input,select,textarea")) {
-                x.val (v).change();
+                if (x.is( ":radio,:checkbox")) {
+                if (! jQuery.isArray( v )) {
+                    v = [v];
+                }}
+                x.val (v).first().change();
             } else {
                 x.text(v);
             }
@@ -425,8 +412,26 @@ HsForm.prototype = {
         return jQuery.hsWarn.apply(window, arguments);
     },
 
+    _group_start: "#", // 选项分组起始符
+
     _doll__review : function(inp, v, n) {
-        inp.data("data" , v);
+        if (v === undefined
+        ||  v === null) {
+            return;
+        }
+
+        // 可填充 datalist 和 select,
+        // 其他类型仅将数据项进行暂存;
+        // 以供下方填充内容时进行转换.
+        if (inp.is("input[list]")) {
+            this._doll__datalist(inp, v, n);
+        }
+        else if (inp.is("select")) {
+            this. _doll__select (inp, v, n);
+        }
+        else {
+            inp.data("data", v);
+        }
     },
     _fill__review : function(inp, v, n) {
         if (v === undefined
@@ -525,13 +530,48 @@ HsForm.prototype = {
         return hsFormat.apply(window, a);
     },
 
-    _opt_group_start: "#", // 选项分组起始符
+    _doll__datalist : function(inp, v, n) {
+        if (v === undefined) return ;
+        var id = inp.attr("list");
+        if (id && id != "-") {
+           inp = jQuery("#" + id);
+        } else {
+            id = "datalist-"
+               +(new Date().getTime().toString(16))+"-"
+               +(Math.random().toString(16).substr(2));
+           inp.attr("list", id);
+           inp = jQuery('<datalist></datalist>').insertAfter(inp);
+           inp.attr( "id" , id);
+        }
+        // 同 _doll__select
+        var vk = inp.attr("data-vk"); if(!vk) vk = 0;
+        var tk = inp.attr("data-tk"); if(!tk) tk = 1;
+        var gs = inp.attr("data-group-start") || this._group_start;
+        for(var i = 0; i < v.length; i ++) {
+            var k = hsGetValue(v[i], vk);
+            var t = hsGetValue(v[i], tk);
+            // 选项分组
+            if (k && gs && gs === k[0]) {
+                if (inp.is("optgroup")) {
+                    inp = inp.parent();
+                    if (! t) continue ;
+                }
+                inp = jQuery('<optgroup></optgroup>').appendTo(inp);
+                inp.attr(     "label", t)
+                   .attr("data-value", k);
+                continue;
+            }
+            var opt = jQuery('<option></option>');
+            opt.val(k).text(t).data("data", v[i]);
+            inp.append(opt);
+        }
+    },
 
     _doll__select : function(inp, v, n) {
         if (v === undefined) return ;
         var vk = inp.attr("data-vk"); if(!vk) vk = 0;
         var tk = inp.attr("data-tk"); if(!tk) tk = 1;
-        var gs = inp.attr("data-group-start") || this._opt_group_start;
+        var gs = inp.attr("data-group-start") || this._group_start;
         for(var i = 0; i < v.length; i ++) {
             var k = hsGetValue(v[i], vk);
             var t = hsGetValue(v[i], tk);
@@ -559,7 +599,7 @@ HsForm.prototype = {
         if (v === undefined) return ;
         var vk = inp.attr("data-vk"); if(!vk) vk = 0;
         var tk = inp.attr("data-tk"); if(!tk) tk = 1;
-        var gs = inp.attr("data-group-start") || this._opt_group_start;
+        var gs = inp.attr("data-group-start") || this._group_start;
         for(var i = 0; i < v.length; i ++) {
             var k = hsGetValue(v[i], vk);
             var t = hsGetValue(v[i], tk);
@@ -599,7 +639,7 @@ HsForm.prototype = {
         if (v === undefined) return ;
         var vk = inp.attr("data-vk"); if(!vk) vk = 0;
         var tk = inp.attr("data-tk"); if(!tk) tk = 1;
-        var gs = inp.attr("data-group-start") || this._opt_group_start;
+        var gs = inp.attr("data-group-start") || this._group_start;
         for(var i = 0; i < v.length; i ++) {
             var k = hsGetValue(v[i], vk);
             var t = hsGetValue(v[i], tk);

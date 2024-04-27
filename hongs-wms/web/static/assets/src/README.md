@@ -10,29 +10,29 @@
 ## 属性缩写:
 
     List:
-        data-fn     Field name  字段名称
-        data-ft     Field type  字段类型
-        data-pn     Page num    页码序号
-        data-ob     Order by    排序字段
+        data-fn     字段名称
+        data-ft     字段类型
+        data-pn     页码序号
+        data-ob     排序字段
     Form:
-        data-fn     Field name  字段名称
-        data-ft     Field type  字段类型
+        data-fn     字段名称
+        data-ft     字段类型
     Pick:
-        data-dn     Dummy name  虚拟名称
-        data-vk     Value key   关联数据取值键
-        data-tk     Title key   关联数据标题键
-        data-at     Assoc act   查询接口
-        data-al     Assoc lnk   关联选取页
-        data-rl     Refer lnk   关联查阅页
+        data-dn     虚拟名称
+        data-vk     关联数据取值键
+        data-tk     关联数据标题键
+        data-at     查询接口
+        data-al     关联选取页
+        data-rl     关联查看页
     Part:
-        data-al     Assoc lnk   关联表单页
-        data-rl     Refer lnk   关联详情页
+        data-al     子级表单页
+        data-rl     子级详情页
     Checkbox:
-        data-vk     Value key   选项数据取值键
-        data-tk     Title key   选项数据标签键
+        data-vk     选项数据取值键
+        data-tk     选项数据标签键
     Checkset:
-        data-vl     Value leg   子项数据取值键
-        data-tl     Title leg   子项数据标题键
+        data-vl     子项数据取值键
+        data-tl     子项数据标题键
 
 另外还有 data-fill/data-feed/data-test 用于填充/预设/检测, 值为表达式, 参数可使用 this,form|list,v,n; 其他 data-toggle,data-target 等的意义同 bootstrap 中相关功能.
 
@@ -40,12 +40,8 @@
 
 ```html
     <base href="../">
-    <link rel="stylesheet" type="text/css" href="static/assets/css/bootstrap.min.css"/>
-    <link rel="stylesheet" type="text/css" href="static/assets/css/hongscore.min.css"/>
-    <script type="text/javascript" src="static/assets/jquery.min.js"></script>
-    <script type="text/javascript" src="static/assets/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="static/assets/bootstrap.min.js"></script>
-    <script type="text/javascript" src="static/assets/hongscore.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="static/assets/css/common.min.css"/>
+    <script type="text/javascript" src="static/assets/common.min.js"></script>
     <script type="text/javascript" src="common/conf/default.js"></script>
     <script type="text/javascript" src="common/lang/default.js"></script>
     <script type="text/javascript" src="common/auth/default.js"></script>

@@ -47,6 +47,7 @@
             "sect_id": "a",
             "section": {"id": "a", "name": "分类1"},
             "tags": ["你好", "我好", "她也好"],
+            "subs": [{"name": "小标题", "sect_id": "b", "section": {"id": "b", "name": "分类2"}}],
             "file": [ "abc.png", "def.png" ],
             "snap": ["../icons/head_icon.jpg"],
             "base_file": "../icons/head_icon.jpg"

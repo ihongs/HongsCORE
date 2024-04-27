@@ -20,16 +20,19 @@
         data-ft     Field type  字段类型
         data-fl     Fill lambda 填充取值
         data-dl     Doll lambda 预置选项
-    Fork:
+    Pick:
         data-vk     Value key   关联数据取值键
         data-tk     Title key   关联数据标题键
         data-ak     Assoc key   关联数据键
         data-al     Assoc lnk   关联选取页
         data-rl     Refer lnk   关联查阅页
-    Form checkbox:
+    Part:
+        data-al     Assoc lnk   关联表单页
+        data-rl     Refer lnk   关联详情页
+    Checkbox:
         data-vk     Value key   选项数据取值键
         data-tk     Title key   选项数据标签键
-    Form checkset:
+    Checkset:
         data-vl     Value leg   子项数据取值键
         data-tl     Title leg   子项数据标题键
 

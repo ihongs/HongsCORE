@@ -725,20 +725,31 @@ function hsFormFillPart(box, v, n) {
         }
     };
     var put = function (n, v) {
-        var btx = htm.find("[data-toggle=hsFormSubDel]");
         // 模板为松散多块的需要进行包裹
         if (htm.size() !== 1) {
             htm = jQuery('<div></div>').append(htm);
         }
+
         // 模板内部存在删除按钮则不再加
+        var btx = htm.find("[data-toggle=hsFormSubDel]");
         if (btx.size() !== 0) {
             btr . remove();
             btr = jQuery();
         }
 
-        box.  data  ("html", htm);
-        box.addClass("form-subs");
+        // 外部有指定样式则进行替换绑定
+        var cls = box.data("subClass");
+        if (cls) {
+            htm.attr("class",cls);
+        }
+        var sty = box.data("subStyle");
+        if (sty) {
+            htm.attr("style",sty);
+        }
+
         htm.addClass("form-sub" );
+        box.addClass("form-subs");
+        box.data("html", htm);
         set(n, v);
     };
 
@@ -755,17 +766,21 @@ function hsFormFillPart(box, v, n) {
             type : "get",
             dataType: "html",
             success : function(dom) {
+                dom = jQuery  (dom);
+
                 // 特殊情况可完全由外部定制
                 htm = dom.find(".form-subs").first();
                 if (htm.size( )) {
                     box.removeClass ("form-subs");
                     box.addClass ("loadbox");
+                    box.data("info", v);
                     box.append(dom);
                     btn.remove();
                     btr.remove();
                     return;
                 }
 
+                // 一般情况仅取子表单一部分
                 htm = dom.find(".form-body").first();
                 htm = htm.size() ? htm : dom;
                 htm.removeClass("form-body");
@@ -780,6 +795,32 @@ function hsFormFillPart(box, v, n) {
     } else {
         put(n, v);
     }
+}
+
+/**
+ * 子表单常规校验
+ * @param {Element} box
+ */
+function hsFormVeriPart(box) {
+    var m = 0;
+    if (box.data("required")) {
+        if (m === box.children().size()) {
+            return this.geterror(box, "form.required");
+        }
+    }
+    m = parseInt(box.data("maxrepeat") || 0);
+    if (m > 0) {
+        if (m < box.children().size()) {
+            return this.geterror(box, "form.gt.maxrepeat", [m]);
+        }
+    }
+    m = parseInt(box.data("minrepeat") || 0);
+    if (m > 0) {
+        if (m > box.children().size()) {
+            return this.geterror(box, "form.gt.minrepeat", [m]);
+        }
+    }
+    return true;
 }
 
 (function($) {
@@ -821,6 +862,7 @@ function hsFormFillPart(box, v, n) {
         var  n  = box.data("fn" ) || "";
         var  i  = box.data("idx") || 0 ;
         var add = box.data("add");
+             n  = n.replace(/(\[\]|\.)$/, ""); // 去掉数组后缀
         if (add) {
             add( n +"."+ i, { } );
             box.data("idx", i+1 );

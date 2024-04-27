@@ -914,10 +914,19 @@ HsForm.prototype = {
         return inp;
     },
     getvalue : function(inp) {
-        if (/**/! inp. is ("input,select,textarea")) {
-            inp = inp.find("input,select,textarea");
-        }
+        // 非表单项则需向下查找
+        if (! inp.is("input,select,textarea")) {
+        var fn  = inp.data( "fn" );
+            inp = inp
+               .find("input,select,textarea")
+               .filter(function( ) {
+                return $(this).attr( "name" ) === fn;
+            });
+        if (! inp.is("input,select.textarea")) {
+            return undefined;
+        }}
 
+        // 选项框需区分单选多选
         if (inp.is(":checkbox")) {
             var val = [];
             inp.filter(":checked")

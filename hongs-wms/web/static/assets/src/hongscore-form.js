@@ -143,6 +143,7 @@ HsForm.prototype = {
             var k  = n.replace (/(\[\]|\.)$/ , '' ); // 规避数组键影响
             var v  = hsGetValue(enfo, k) || enfo[k];
 
+
             // 解析填充方法
             if (f && typeof f != "function") {
                 try {
@@ -151,6 +152,12 @@ HsForm.prototype = {
                     throw new Error("Parse form data-feed error: "+e);
                 }
                 x.data("feed", f);
+            }
+
+            // 别名
+            var l  = x.data("ln");
+            if (l && ! v) {
+                v  = hsGetValue(enfo, l) || enfo[l];
             }
 
             // 调节
@@ -482,7 +489,7 @@ HsForm.prototype = {
         }
 
         // 逐个进行校验
-        if (all instanceof jQuery 
+        if (all instanceof jQuery
         ||  all instanceof  Array  ) {
             var u = true ;
             for(var i = 0; i < all.length; i ++) {

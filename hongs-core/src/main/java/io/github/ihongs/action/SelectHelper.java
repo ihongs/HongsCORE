@@ -42,7 +42,9 @@ public class SelectHelper {
 
     private final Map<String, Object> infos;
     private final Map<String, Map> enums;
+    private final Map<String, String> enumAlias;
     private final Map<String, Map> forms;
+    private final Map<String, String> formAlias;
     private final Map<String, Map> forks;
     private final Set<String     > files;
     private final Set<String     > dates;
@@ -55,7 +57,9 @@ public class SelectHelper {
     public SelectHelper() {
         infos = new LinkedHashMap();
         enums = new LinkedHashMap();
+        enumAlias =  new  HashMap();
         forms = new LinkedHashMap();
+        formAlias =  new  HashMap();
         forks = new LinkedHashMap();
         files = new LinkedHashSet();
         dates = new LinkedHashSet();
@@ -84,6 +88,17 @@ public class SelectHelper {
     }
 
     /**
+     * 添加枚举别名
+     * @param name
+     * @param lead 目标字段
+     * @return
+     */
+    public SelectHelper addEnum(String name, String lead) {
+        enumAlias.put(name, lead);
+        return this;
+    }
+
+    /**
      * 添加子表字段
      * @param name
      * @param fies {field_name: param}
@@ -91,6 +106,17 @@ public class SelectHelper {
      */
     public SelectHelper addForm(String name, Map fies) {
         forms.put(name, fies);
+        return this;
+    }
+
+    /**
+     * 添加子表别名
+     * @param name
+     * @param lead 目标字段
+     * @return
+     */
+    public SelectHelper addForm(String name, String lead) {
+        formAlias.put(name, lead);
         return this;
     }
 
@@ -221,18 +247,32 @@ public class SelectHelper {
                 case "enum" : {
                     String xonf = (String) mt.get("conf");
                     String xame = (String) mt.get("enum");
+                    String lead = (String) mt.get("data-ln");
                     if (null == xonf || "".equals( xonf )) xonf = conf;
                     if (null == xame || "".equals( xame )) xame = name;
-                    Map xnum = FormSet.getInstance(xonf).getEnum(xame); // getEnumTranslated
-                    enums.put(name , xnum);
+                    if (null == lead || "".equals( lead )) lead = name;
+                    if (! enums.containsKey(lead)) {
+                        Map xnum = FormSet.getInstance(xonf).getEnum(xame); // 无需 getEnumTranslated, 输出时会自动转译
+                        enums.put(lead , xnum);
+                    }
+                    if (! name . equals (lead)) {
+                        enumAlias.put(name, lead);
+                    }
                 } break;
                 case "form" : {
                     String xonf = (String) mt.get("conf");
                     String xame = (String) mt.get("form");
+                    String lead = (String) mt.get("data-ln");
                     if (null == xonf || "".equals( xonf )) xonf = conf;
                     if (null == xame || "".equals( xame )) xame = name;
-                    Map xnum = FormSet.getInstance(xonf).getForm(xame); // getFormTranslated
-                    forms.put(name , xnum);
+                    if (null == lead || "".equals( lead )) lead = name;
+                    if (! forms.containsKey(lead)) {
+                        Map xnum = FormSet.getInstance(xonf).getForm(xame); // 无需 getEnumTranslated, 输出时会自动转译
+                        forms.put(lead , xnum);
+                    }
+                    if (! name . equals (lead)) {
+                        formAlias.put(name, lead);
+                    }
                 } break;
                 case "fork" : {
                     Map xnum = new HashMap(mt);
@@ -309,13 +349,13 @@ public class SelectHelper {
             List<Map> list = (List) values.get("list");
             if (info != null) {
                 if (withInfo) injectDefs(info , infos);
-                if (withText) injectText(info , enums);
+                if (withText) injectText(info , enums, enumAlias);
                 if (withTime) injectTime(info , dates);
                 if (withLink) injectLink(info , files);
             }
             if (list != null) for ( Map  item : list ) {
                 if (withInfo) injectDefs(item , infos);
-                if (withText) injectText(item , enums);
+                if (withText) injectText(item , enums, enumAlias);
                 if (withTime) injectTime(item , dates);
                 if (withLink) injectLink(item , files);
             }
@@ -365,49 +405,58 @@ public class SelectHelper {
 
         // 数据映射整理
         Map<String, List> maps = new HashMap();
-        for(String fn : forms.keySet()) {
-            maps.put( fn, new LinkedList(  ) );
+        Alias a0 = new Alias(forms, formAlias);
+        while(a0.hasNext( )) {
+            String fn = a0.next().getKey();
+            maps.put(fn, new LinkedList());
         }
-        for( Map info : list ) {
-        for(String fn : forms.keySet()) {
-            Object fv = info.get( fn );
+        for(Map info : list) {
+        for(Map.Entry<String, List> et : maps.entrySet()) {
+            List ls = et.getValue( );
+            String fn = et.getKey( );
+            Object fv = info.get(fn);
             if (fv != null && ! "".equals(fv)) { // 需规避误把空值存成了空串
-            if (fv instanceof Object [] ) {
-                maps.get(fn).addAll(Arrays.asList((Object[]) fv));
-            } else
-            if (fv instanceof Collection) {
-                maps.get(fn).addAll((Collection) fv);
-            } else
-            {
-                maps.get(fn).add(fv);
-            }}
+                if (fv instanceof Object [ ] ) {
+                    ls.addAll(Arrays.asList((Object[]) fv));
+                } else
+                if (fv instanceof Collection ) {
+                    ls.addAll((Collection) fv);
+                } else
+                {
+                    ls.add(fv);
+                }
+            }
         }}
 
         // 向下递归补充
-        for(Map.Entry<String, Map> et : forms.entrySet()) {
+        Alias a1 = new Alias(forms, formAlias);
+        while(a1.hasNext()) {
+            Map.Entry<String , Map> et = a1.next();
             String  fn = et.getKey(  );
             Map fields = et.getValue();
+            if (fields == null) continue;
             Map valuez = new HashMap();
-            Map anum   = new HashMap();
+            Map  anum  = new HashMap();
+
+            // 处理下级数据
             valuez.put( "enfo", anum );
             valuez.put( "list", maps.get(fn) );
-
             try {
                 new SelectHelper()
                     . addItemsByForm( fields )
                     . select( valuez, action );
-            } catch (CruxException e) {
+            } catch (CruxException e ) {
                 throw e.toExemption( );
             }
 
             // 将枚举向上并
-            if (xnum != null && !anum.isEmpty())
-            for(Object ot2 : anum.entrySet( )) {
-                Map.Entry et2 = (Map.Entry) ot2;
+            if (xnum != null && ! anum.isEmpty()) {
+            for(Object ot : anum.entrySet( )) {
+                Map.Entry et2 = (Map.Entry) ot;
                 Object fn2 = et2.getKey(  );
                 Object fv2 = et2.getValue();
-                Dict.put( xnum, fv2, fn , fn2 );
-            }
+                Dict.put( xnum, fv2, fn, fn2 );
+            }}
         }
     }
 
@@ -424,7 +473,7 @@ public class SelectHelper {
     }
 
     public void injectText(Map info) {
-        injectText(info, enums);
+        injectText(info, enums, enumAlias);
     }
 
     public void injectTime(Map info) {
@@ -773,14 +822,17 @@ public class SelectHelper {
         }
     }
 
-    private void injectText(Map info, Map maps) {
-        Iterator it = maps.entrySet().iterator();
+    private void injectText(Map info, Map maps, Map alis) {
+        Iterator it = new Alias(maps, alis);
         while (it.hasNext()) {
             Map.Entry et = (Map.Entry) it.next();
             String   key = (String)  et.getKey();
             Map      map = (Map)   et.getValue();
             Object   val = Dict.get(info, Synt.LOOP.NEXT, key);
 
+            if (map == null) {
+                continue;
+            }
             if (val == Synt.LOOP.NEXT) {
                 continue;
             }
@@ -950,6 +1002,73 @@ public class SelectHelper {
         {
             return val ;
         }
+    }
+
+    /**
+     * 数据别名迭代
+     * 注意: next().getValue() 可能 null
+     */
+    private static class Alias
+    implements Iterable<Map.Entry<String, Map>> ,
+               Iterator<Map.Entry<String, Map>> {
+
+        private boolean swap = false;
+        private final Map<String,Map> fact;
+        private final Iterator<Map.Entry<String, Map   >> facts;
+        private final Iterator<Map.Entry<String, String>> alias;
+
+        public Alias (Map<String, Map   > facts,
+                      Map<String, String> alias) {
+            this.fact  = facts;
+            this.facts = facts.entrySet().iterator();
+            this.alias = alias.entrySet().iterator();
+        }
+
+        @Override
+        public Iterator<Map.Entry<String, Map>> iterator() {
+            return this;
+        }
+
+        @Override
+        public boolean hasNext() {
+            if (!swap) {
+                if (facts.hasNext()) {
+                    return true ;
+                } else {
+                    swap = true ;
+                }
+            }   if (alias.hasNext()) {
+                    return true ;
+                } else {
+                    return false;
+                }
+        }
+
+        @Override
+        public Map.Entry<String, Map> next() {
+            if (!swap) {
+                return facts.next();
+            } else {
+                Map.Entry<String, String> e = alias.next();
+                final String k = e.getKey  ();
+                final String v = e.getValue();
+                return new Map.Entry<String,Map>() {
+                    @Override
+                    public String getKey() {
+                        return k;
+                    }
+                    @Override
+                    public Map getValue( ) {
+                        return fact.get(v);
+                    }
+                    @Override
+                    public Map setValue(Map value) {
+                        throw new UnsupportedOperationException("Not supported yet.");
+                    }
+                };
+            }
+        }
+
     }
 
 }

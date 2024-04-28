@@ -388,6 +388,9 @@
                 <%} else if ("enum".equals(type) || "type".equals(type) || "select".equals(type)) {%>
                     <%
                         String extr = "";
+                        if (info.containsKey("data-ln")) {
+                            extr += " data-ln=\""+info.get("data-ln")+"\"";
+                        }
                         if (rptd) {
                             name += "." ;
                             extr += " multiple=\"multiple\"";
@@ -403,6 +406,9 @@
                 <%} else if ("check".equals(type)) {%>
                     <%
                         String extr = "";
+                        if (info.containsKey("data-ln")) {
+                            extr += " data-ln=\""+info.get("data-ln")+"\"";
+                        }
                         if (rptd) {
                             name += "." ;
                         }
@@ -416,6 +422,9 @@
                 <%} else if ("radio".equals(type)) {%>
                     <%
                         String extr = "";
+                        if (info.containsKey("data-ln")) {
+                            extr += " data-ln=\""+info.get("data-ln")+"\"";
+                        }
                         if (rptd) {
                             name += "." ;
                         }

@@ -480,14 +480,14 @@
                             extr += " required=\"required\"";
                         }
                         if (rptd) {
+                            extr += " multiple=\"multiple\"";
                             extr += " data-toggle=\"hsBags\"";
-                            type  =  "text";
-                        } else {
-                            if ("sorted".equals(type)) type = "number";
-                            if (info.containsKey("min" )) extr += " min=\"" +info.get("min" ).toString()+"\"";
-                            if (info.containsKey("max" )) extr += " max=\"" +info.get("max" ).toString()+"\"";
-                            if (info.containsKey("step")) extr += " step=\""+info.get("step").toString()+"\"";
+                            name += "." ;
                         }
+                        if (info.containsKey("min" )) extr += " min=\"" +info.get("min" ).toString()+"\"";
+                        if (info.containsKey("max" )) extr += " max=\"" +info.get("max" ).toString()+"\"";
+                        if (info.containsKey("step")) extr += " step=\""+info.get("step").toString()+"\"";
+                        if ("sorted".equals(type)) type = "number";
                     %>
                     <input class="form-field form-control" type="<%=type%>" name="<%=name%>" placeholder="<%=hold%>"<%=extr%>/>
                 <%} else if ("string".equals(type) || "stored".equals(type) || "search".equals(type) || "text".equals(type) || "email".equals(type) || "url".equals(type) || "tel".equals(type) || "sms".equals(type)) {%>
@@ -500,13 +500,11 @@
                             extr += " multiple=\"multiple\"";
                             extr += " data-toggle=\"hsBags\"";
                             name += "." ;
-                            type  =  "text";
-                        } else {
-                            if (info.containsKey("minlength")) extr += " minlength=\""+info.get("minlength").toString()+"\"";
-                            if (info.containsKey("maxlength")) extr += " maxlength=\""+info.get("maxlength").toString()+"\"";
-                            if (info.containsKey("pattern"  )) extr += " pattern=\""  +info.get("pattern"  ).toString()+"\"";
                         }
-                            if ("string".equals(type) || "stored".equals(type) || "search".equals(type)) type = "text";
+                        if (info.containsKey("minlength")) extr += " minlength=\""+info.get("minlength").toString()+"\"";
+                        if (info.containsKey("maxlength")) extr += " maxlength=\""+info.get("maxlength").toString()+"\"";
+                        if (info.containsKey("pattern"  )) extr += " pattern=\""  +info.get("pattern"  ).toString()+"\"";
+                        if ("string".equals(type) || "stored".equals(type) || "search".equals(type)) type = "text";
                     %>
                     <input class="form-field form-control" type="<%=type%>" name="<%=name%>" placeholder="<%=hold%>"<%=extr%>/>
                 <%} else {%>

@@ -184,7 +184,7 @@ function setMapsInput(opts, func) {
                 sea.setLocation(rst.addressComponents.city);
                 mapsBox.trigger("mapsBack", [rst]);
                 if (formobj && !readonly) {
-                    formobj . seterror ( mapsBox );
+                    formobj . setError ( mapsBox );
                 }
             });
         }

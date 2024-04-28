@@ -806,19 +806,19 @@ function hsFormTestPart(box) {
     var m = 0;
     if (box.data("required")) {
         if (m === box.children().size()) {
-            return this.geterror(box, "form.required");
+            return this.getError(box, "form.required");
         }
     }
     m = parseInt(box.data("maxrepeat") || 0);
     if (m > 0) {
         if (m < box.children().size()) {
-            return this.geterror(box, "form.gt.maxrepeat", [m]);
+            return this.getError(box, "form.gt.maxrepeat", [m]);
         }
     }
     m = parseInt(box.data("minrepeat") || 0);
     if (m > 0) {
         if (m > box.children().size()) {
-            return this.geterror(box, "form.gt.minrepeat", [m]);
+            return this.getError(box, "form.gt.minrepeat", [m]);
         }
     }
     return true;

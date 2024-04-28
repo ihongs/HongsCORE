@@ -261,50 +261,22 @@ HsForm.prototype = {
             if (e.isDefaultPrevented()) {
                 return;
             }
-            return that.verified( );
+            return that.validate({}); // 清除错误
         });
         this.formBox.on("submit", function(e) {
             if (e.isDefaultPrevented()) {
                 return;
             }
-            return that.verifies( );
+            return that.validate(  ); // 整体校验
         });
-        this.formBox.on("change","input,select,textarea,[data-fn]",
-        function() {
-            var item = jQuery(this);
-            var name = item.attr( "name") || item.attr( "data-fn");
-            if (name) {
-                that.validate(name);
-            }
+        this.formBox.on("change", "[data-fn].form-field[name]", function() {
+            that.test(this); // 单个校验
         });
     },
-    verified : function() {
-        this.formBox.find(".form-group")
-              .removeClass( "has-error")
-                    .find(".text-error")
-                    .empty();
-        return true;
-    },
-    verifies : function() {
-        this.verified();
-        var that = this;
-        var vali = true;
-        this.formBox.find("[data-fn],.form-field[name]").each(function() {
-            var inp = jQuery(this);
-            var val = that.validate(inp);
-            if (val == false) {
-                vali = false;
-            }
-        });
-        if ( ! vali) {
-           this.warn(hsGetLang('form.invalid'), "warning");
-        }
-        return vali;
-    },
-    validate : function(inp) {
+    test : function(inp) {
         var val;
-        inp = this.getinput(inp);
-        val = this.getvalue(inp);
+        inp = this.getInput(inp);
+        val = this.getValue(inp);
 
         // 外部校验方法
         var n  = inp.data("fn") || inp.attr("name") || "";
@@ -318,7 +290,7 @@ HsForm.prototype = {
         }
         if (v !== undefined && v !== true) {
             v  = v || hsGetLang("form.haserror");
-            this.seterror(inp, v);
+            this.setError(inp, v);
             return false;
         }
 
@@ -330,16 +302,17 @@ HsForm.prototype = {
             var err  =  this.rules[s].call(this, inp,val);
             if (err !== undefined && err !== true) {
                 err  =  err || hsGetLang("form.haserror");
-                this.seterror(inp, err);
+                this.setError(inp, err);
                 return false;
             }
         }
 
-        this.seterror(inp);
+        this.setError(inp);
         return true;
     },
-    getinput : function(inp) {
-        if (typeof inp != "string") {
+    getInput : function(inp) {
+        if (typeof inp != "string"
+        &&  typeof inp != "number") {
             return jQuery(inp);
         }
 
@@ -385,7 +358,7 @@ HsForm.prototype = {
 
         return inp;
     },
-    getvalue : function(inp) {
+    getValue : function(inp) {
         // 非表单项则需向下查找
         if (! inp.is("input,select,textarea")) {
         var fn  = inp.data( "fn" );
@@ -425,7 +398,7 @@ HsForm.prototype = {
                       .val ();
         }
     },
-    seterror : function(inp, err) {
+    setError : function(inp, err) {
         var grp = inp.closest(".form-group");
         var blk = grp.find(   ".text-error");
         var leb = grp.find(".control-label");
@@ -447,7 +420,7 @@ HsForm.prototype = {
             blk.text(err);
         }
     },
-    geterror : function(inp, err, rep) {
+    getError : function(inp, err, rep) {
         var msg = err.replace(/^form\./, "")
                      .replace( /\./g , "-" );
             msg = inp.attr("data-" + msg + "-error")
@@ -481,6 +454,58 @@ HsForm.prototype = {
         }
 
         return hsGetLang(err, rep);
+    },
+    /**
+     * 校验方法
+     * @param all 错误信息集合, 或待验字段列表, 未指定则校验全部
+     * @param sav 为 true 则会保留旧的错误信息, 默认清除后再处理
+     * @returns {Boolean} true 即存在错误
+     */
+    validate : function(all, sav) {
+        // 清除错误状态
+        if (sav === undefined || sav !== true) {
+            this.formBox
+                .find(".form-group")
+                .removeClass("has-error")
+                .find(".text-error")
+                .empty( );
+        }
+
+        // 查找待验字段
+        if (all === undefined || all === null) {
+            all = this.formBox.find("[data-fn],.form-field[name]");
+        } else
+        if (typeof all === "string"
+        ||  typeof all === "number"
+        ||  all instanceof Element ) {
+            all = this.getInput(all);
+        }
+
+        // 逐个进行校验
+        if (all instanceof jQuery 
+        ||  all instanceof  Array  ) {
+            var u = true ;
+            for(var i = 0; i < all.length; i ++) {
+                if (!this.test(all[i])) {
+                    u = false;
+                }
+            }
+            return  u;
+        }
+
+        // 设置错误消息
+        if (jQuery.isPlainObject(all)) {
+            var u = true ;
+            for(var n in all) {
+                var m  = all [n];
+                n = this.getInput(n);
+                this.setError(n , m);
+                u = false;
+            }
+            return  u;
+        }
+
+        throw new Error("Wrong validate argument type", all);
     },
 
     saveInit : function() {
@@ -579,14 +604,9 @@ HsForm.prototype = {
                 this.warn(hsGetLang('error.undef'));
             }
 
-            // 错误详情
+            // 错误信息
             if ( rst.errs) {
-                for(var n in rst.errs) {
-                    var e  = rst.errs[n];
-                    var x  = this.getinput(n);
-                //  var v  = this.getvalue(x);
-                    this.seterror(x , e);
-                }
+                this.validate(rst.errs);
             }
         }
     },
@@ -1015,21 +1035,21 @@ HsForm.prototype = {
         "[required],[data-required]" : function(inp, val) {
             if (inp.is(":file")) {
                 if (!val && !inp.data( "value" )) {
-                    return this.geterror(inp, "form.requires");
+                    return this.getError(inp, "form.requires");
                 }
                 // 选择区没有
                 var  ipx = inp.filter(":hidden");
                 var  box = inp.parent().closest(".file-input");
                 if (!val && !ipx.size() && box.size()) {
-                    return this.geterror(inp, "form.requires");
+                    return this.getError(inp, "form.requires");
                 }
             } else if (jQuery.isArray(val)) {
                 if (!val.length) {
-                    return this.geterror(inp, "form.requires");
+                    return this.getError(inp, "form.requires");
                 }
             } else {
                 if (!val) {
-                    return this.geterror(inp, "form.required");
+                    return this.getError(inp, "form.required");
                 }
             }
             return true;
@@ -1043,35 +1063,35 @@ HsForm.prototype = {
                 pn = new RegExp(pn);
             }
             if (! pn.test(val)) {
-                return this.geterror(inp, "form.is.not.match");
+                return this.getError(inp, "form.is.not.match");
             }
             return true;
         },
         "[maxlength],[data-maxlength]" : function(inp, val) {
             var max = inp.attr("maxlength") || inp.attr("data-maxlength");
             if (max < val.length) {
-                return this.geterror(inp, "form.gt.maxlength", [max]);
+                return this.getError(inp, "form.gt.maxlength", [max]);
             }
             return true;
         },
         "[minlength],[data-minlength]" : function(inp, val) {
             var min = inp.attr("minlength") || inp.attr("data-minlength");
             if (min > val.length) {
-                return this.geterror(inp, "form.lt.minlength", [min]);
+                return this.getError(inp, "form.lt.minlength", [min]);
             }
             return true;
         },
         "[maxrepeat],[data-maxrepeat]" : function(inp, val) {
             var max = inp.attr("maxrepeat") || inp.attr("data-maxrepeat");
             if (max < inp.find("[type=hidden],:checked,:selected,:file,:text").size()) {
-                return this.geterror(inp, "form.gt.maxrepeat", [max]);
+                return this.getError(inp, "form.gt.maxrepeat", [max]);
             }
             return true;
         },
         "[minrepeat],[data-minrepeat]" : function(inp, val) {
             var min = inp.attr("minrepeat") || inp.attr("data-minrepeat");
             if (min > inp.find("[type=hidden],:checked,:selected,:file,:text").size()) {
-                return this.geterror(inp, "form.lt.minrepeat", [min]);
+                return this.getError(inp, "form.lt.minrepeat", [min]);
             }
             return true;
         },
@@ -1082,7 +1102,7 @@ HsForm.prototype = {
             }
             var max = inp.attr( "max" ) || inp.attr("data-max");
             if (parseFloat(val) > parseFloat(max)) {
-                return this.geterror(inp, "form.gt.max", [max]);
+                return this.getError(inp, "form.gt.max", [max]);
             }
             return true;
         },
@@ -1093,7 +1113,7 @@ HsForm.prototype = {
             }
             var min = inp.attr( "min" ) || inp.attr("data-min");
             if (parseFloat(val) < parseFloat(min)) {
-                return this.geterror(inp, "form.lt.min", [min]);
+                return this.getError(inp, "form.lt.min", [min]);
             }
             return true;
         },
@@ -1101,38 +1121,38 @@ HsForm.prototype = {
             // 修复 webkit 下 number 中输入非数字时
             // 由于获取不到值从而导致无法校验的问题
             if (!val && inp[0] && inp[0].validity && inp[0].validity.badInput) {
-                return this.geterror(inp, "form.is.not.number");
+                return this.getError(inp, "form.is.not.number");
             }
             if (!/^-?[0-9]*(\.[0-9]+)?$/.test(val)) {
-                return this.geterror(inp, "form.is.not.number");
+                return this.getError(inp, "form.is.not.number");
             }
             return true;
         },
         "[type=color],.input-color" : function(inp, val) {
             if (!val) return true; // 规避非 required 的情况
             if (!/^#[0-9A-Fa-f]{6}$/.test(val)) {
-                return this.geterror(inp, "form.is.not.color");
+                return this.getError(inp, "form.is.not.color");
             }
             return true;
         },
         "[type=email],.input-email" : function(inp, val) {
             if (!val) return true; // 规避非 required 的情况
             if (!/^\w+([-.]\w+)*@\w+([-.]\w+)*$/.test(val)) {
-                return this.geterror(inp, "form.is.not.email");
+                return this.getError(inp, "form.is.not.email");
             }
             return true;
         },
         "[type=url],.input-url" : function(inp, val) {
             if (!val) return true; // 规避非 required 的情况
             if (!/^([a-z]+:)?\/\/[^\s]+$/.test(val)) {
-                return this.geterror(inp, "form.is.not.url");
+                return this.getError(inp, "form.is.not.url");
             }
             return true;
         },
         "[type=tel],.input-tel" : function(inp, val) {
             if (!val) return true; // 规避非 required 的情况
             if (!/^\+?[0-9][\d\-]+[0-9]$/.test(val)) {
-                return this.geterror(inp, "form.is.not.tel");
+                return this.getError(inp, "form.is.not.tel");
             }
             return true;
         },
@@ -1166,7 +1186,7 @@ HsForm.prototype = {
             // 补齐请求参数
             if (! url) url = inp.attr("data-verify");
             url = url.replace(/\$\{(.*?)\}/g, function( x, n ) {
-                x = mod.getvalue(mod.getinput(n));
+                x = mod.getValue(mod.getInput(n));
                 if (jQuery.isArray(x)) {
                     x = "," . join(x);
                 }
@@ -1215,7 +1235,7 @@ HsForm.prototype = {
             if (typeof ret === "string") {
                 return ret;
             } else if (! ret) {
-                return this.geterror(inp, "form.is.not.unique");
+                return this.getError(inp, "form.is.not.unique");
             }
             return true;
         },
@@ -1224,20 +1244,20 @@ HsForm.prototype = {
             if (typeof ret === "string") {
                 return ret;
             } else if (! ret) {
-                return this.geterror(inp, "form.is.not.exists");
+                return this.getError(inp, "form.is.not.exists");
             }
             return true;
         },
         "[data-repeat]" : function(inp, val) {
             var fn = inp.attr("data-repeat");
-            if (val != this.getvalue(this.getinput(fn))) {
-                return this.geterror(inp, "form.is.not.repeat");
+            if (fn && val != this.getValue(this.getInput(fn)) ) {
+                return this.getError(inp, "form.is.not.repeat");
             }
             return true;
         },
         "[data-relate]" : function(inp, val) {
             var fn = inp.attr("data-relate");
-            if (this.getvalue(this.getinput(fn))) {
+            if (fn && this.getValue(this.getInput(fn))) {
                 this.validate(fn);
             }
             return true;

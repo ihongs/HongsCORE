@@ -498,6 +498,7 @@
                             extr += " required=\"required\"";
                         }
                         if (rptd) {
+                            extr += " multiple=\"multiple\"";
                             extr += " data-toggle=\"hsBags\"";
                             type  =  "text";
                         } else {

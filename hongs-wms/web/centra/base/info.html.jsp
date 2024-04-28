@@ -77,7 +77,7 @@
                         extr += " data-repeated=\"repeated\"";
                     }
                 %>
-                <legend style="margin-bottom:0;"><%=text%></legend>
+                <legend class="group"><%=text%></legend>
                 <div class="help-block text-muted form-control-static"><%=hint%></div>
                 <div class="form-subs" data-ft="<%=kind%>" data-fn="<%=name%>" data-href="<%=href%>"<%=extr%> data-sub-class="group panel panel-body panel-default" data-sub-style="padding-left:0;padding-right:0;"></div>
             </div>

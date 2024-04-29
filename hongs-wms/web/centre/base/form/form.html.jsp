@@ -57,7 +57,7 @@
             }
         %>
         <%/****/ if ("hidden".equals(type)) {%>
-            <input type="hidden" name="<%=name%>" />
+            <input type="hidden" name="<%=name%>" data-fn/>
         <%} else if ("legend".equals(type)) {%>
             <%
                 text = Synt.defxult(Synt.asString(info.get("form-text")), text, "");
@@ -202,8 +202,8 @@
                              +  "\" data-href=\""+rl+"\" data-target=\"";
                         mode += "\" data-href=\""+al+"\" data-target=\"";
                     %>
-                    <input type="hidden" name="<%=name%>" class="form-frost form-ignored"/>
-                    <ul class="pickbox" data-fn="<%=name%>" data-ft="<%=kind%>"<%=extr%>></ul>
+                    <input name="<%=name%>" type="hidden" class="form-final"/>
+                    <ul data-fn="<%=name%>" data-ft="<%=kind%>"<%=extr%> class="pickbox"></ul>
                     <button type="button" class="btn btn-default form-control" data-toggle="<%=mode%>"><%=Synt.defxult(hold, _locale.translate("fore.fork.select", text))%></button>
                 <%} else if ("file".equals(type) || "image".equals(type) || "video".equals(type) || "audio".equals(type)) {%>
                     <%
@@ -257,8 +257,8 @@
                             kind += "\" data-size=\""+size+"\" data-mode=\""+moda;
                         }
                     %>
-                    <input type="file" name="<%=name%>" accept="<%=typa%>" class="form-frost form-ignored invisible"/>
-                    <ul class="pickbox" data-fn="<%=name%>" data-ft="<%=kind%>"<%=extr%>></ul>
+                    <input type="file" name="<%=name%>" accept="<%=typa%>" class="invisible"/>
+                    <ul data-fn="<%=name%>" data-ft="<%=kind%>"<%=extr%> class="pickbox"></ul>
                     <button type="button" class="btn btn-default form-control" data-toggle="<%=mode%>"><%=Synt.defxult(hold, _locale.translate("fore.file.browse", text))%></button>
                 <%} else if ("enum".equals(type) || "type".equals(type) || "select".equals(type)) {%>
                     <%
@@ -275,7 +275,7 @@
                         } else
                         if (rptd) {
                     %>
-                    <input type="hidden" name="<%=name%>" class="form-frost form-ignored"/>
+                    <input type="hidden" name="<%=name%>" class="form-final"/>
                     <%} /* End if */ %>
                     <select class="form-field form-control" name="<%=name%>"<%=extr%>></select>
                 <%} else if ("check".equals(type)) {%>
@@ -291,7 +291,7 @@
                             extr  = "data-required=\"required\"";
                         } else {
                     %>
-                    <input type="hidden" name="<%=name%>" class="form-frost form-ignored"/>
+                    <input type="hidden" name="<%=name%>" class="form-final"/>
                     <%} /* End if */ %>
                     <div class="checkbox" data-fn="<%=name%>" data-ft="_check" data-vk="<%=Synt.defoult(info.get("data-vk"), "0")%>" data-tk="<%=Synt.defoult(info.get("data-tk"), "1")%>"<%=extr%>></div>
                 <%} else if ("radio".equals(type)) {%>
@@ -307,7 +307,7 @@
                             extr += " data-required=\"required\"";
                         } else {
                     %>
-                    <input type="hidden" name="<%=name%>" class="form-frost form-ignored"/>
+                    <input type="hidden" name="<%=name%>" class="form-final"/>
                     <%} /* End if */ %>
                     <div class="radio"    data-fn="<%=name%>" data-ft="_radio" data-vk="<%=Synt.defoult(info.get("data-vk"), "0")%>" data-tk="<%=Synt.defoult(info.get("data-tk"), "1")%>"<%=extr%>></div>
                 <%} else if ("textarea".equals(type) || "textview".equals(type)) {%>

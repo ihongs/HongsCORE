@@ -3,9 +3,9 @@
  * 在表单配置区域添加:
  * data--0="_fill__file:(hsFormFillFile)"
  * 在表单选项区域添加:
- * <input type="text" name="x_url" class="form-ignored invisible"/>
- * <input type="file" name="x_url" class="form-ignored invisible"/>
- * <ul data-ft="_file" data-fn="x_url" class="pickbox"></ul>
+ * <input name="x_url" type="hidden" />
+ * <input name="x_url" type="file" class="invisible" />
+ * <ul data-fn="x_url" data-ft="_file" class="pickbox"></ul>
  * <button type="button" data-toggle="hsFile">Browse...</button>
  * 图片预览相应的改为 hsFormFillView, hsView
  *

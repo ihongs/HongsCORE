@@ -5,19 +5,19 @@
      data-load-url="centre/mine/info.act?ab=*&amp;rb=*"
      data--0="_fill_head:(hsFormFillView)">
     <form action="" method="POST" enctype="multipart/form-data" autocomplete="off">
-        <input type="hidden" name="id"/>
+        <input type="hidden" name="id" data-fn/>
         <div style="height: 0; overflow: hidden;">
             <input type="text"     name="_u"/>
             <input type="password" name="_s"/>
         </div>
         <div class="form-group">
             <label class="control-label">昵称</label>
-            <input type="text" name="name" class="form-control" required="required"/>
+            <input type="text" name="name" class="form-field form-control" required="required"/>
         </div>
         <div class="form-group">
             <label class="control-label">头像</label>
-            <input type="text" name="head" class="form-ignored invisible"/>
-            <input type="file" name="head" class="form-ignored invisible" accept="image/*"/>
+            <input name="head" type="hidden" class="form-final"/>
+            <input name="head" type="file" class="invisible" accept="image/*"/>
             <ul class="pickbox" data-fn="head" data-size="150*150" data-mode="pick"></ul>
             <button type="button" class="form-control btn btn-default" data-toggle="hsView">请选择头像</button>
             <p class="help-block text-error"></p>
@@ -25,19 +25,19 @@
         </div>
         <div class="form-group">
             <label class="control-label">头衔</label>
-            <input type="text"  name="title" class="form-control"/>
+            <input type="text"  name="title" class="form-field form-control"/>
         </div>
         <div class="form-group">
             <label class="control-label">邮箱</label>
-            <input type="email" name="email" class="form-control"/>
+            <input type="email" name="email" class="form-field form-control"/>
         </div>
         <div class="form-group">
             <label class="control-label">电话</label>
-            <input type="tel"   name="phone" class="form-control"/>
+            <input type="tel"   name="phone" class="form-field form-control"/>
         </div>
         <div class="form-group">
             <label class="control-label">简介</label>
-            <textarea name="note" class="form-control"></textarea>
+            <textarea name="note" class="form-field form-control"></textarea>
         </div>
         <div>
             <button type="submit" class="commit btn btn-primary">提交</button>

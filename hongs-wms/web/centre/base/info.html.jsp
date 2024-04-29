@@ -50,7 +50,7 @@
             }
         %>
         <%if ("hidden".equals(type)) {%>
-            <input type="hidden" name="<%=name%>" />
+            <input type="hidden" name="<%=name%>" data-fn/>
         <%} else if ("legend".equals(type)) {%>
             <%
                 text = Synt.defxult(Synt.asString(info.get("info-text")), text, "");

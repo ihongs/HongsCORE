@@ -10,14 +10,14 @@
                  data-save-url="centra/matrix/form/save.act?id=${id}"
                  data--0="initInfo:($(this).hsFind('%'))">
                 <form class="record-form">
-                    <input type="hidden" name="id"/>
-                    <input type="hidden" name="furl_id"/>
-                    <input type="hidden" name="conf"   />
+                    <input type="hidden" name="id"      data-fn/>
+                    <input type="hidden" name="furl_id" data-fn/>
+                    <input type="hidden" name="conf"    data-fn/>
                     <div class="form-group" data-type="text">
                         <label class="control-label clearfix" style="display: block;">
                             <span>名称</span>
                         </label>
-                        <input class="form-control" name="name" type="text" required="required"
+                        <input class="form-field form-control" name="name" type="text" required="required"
                                data-unique="centra/matrix/form/unique.act?rb=id&id=${id}&furl_id=${furl_id}"
                                placeholder="输入名字用以识别这个表单"/>
                     </div>
@@ -25,13 +25,13 @@
                         <label class="control-label clearfix" style="display: block">
                             <span>权重</span>
                         </label>
-                        <input class="form-control" name="boost" type="number" required="required" value="0"/>
+                        <input class="form-field form-control" name="boost" type="number" required="required" value="0"/>
                     </div>
                     <div class="form-group">
                         <label class="control-label clearfix" style="display: block">
                             <span>状态</span>
                         </label>
-                        <select class="form-control" name="state">
+                        <select class="form-field form-control" name="state">
                             <option value="1">内部</option>
                             <option value="2">开放</option>
                             <option value="4">开放(仅表单)</option>
@@ -42,7 +42,7 @@
                         <label class="control-label clearfix" style="display: block">
                             <span>备注</span>
                         </label>
-                        <textarea class="form-control" name="note"></textarea>
+                        <textarea class="form-field form-control" name="note"></textarea>
                     </div>
                     <div class="invisible">
                         <button type="submit"/>
@@ -59,7 +59,7 @@
                     <div class="target-area"></div>
                     <div class="invisible">
                         <div class="form-group">
-                            <input type="hidden" name="validate" data-validate="validate"/>
+                            <input type="hidden" name="test" data-test="false"/>
                         </div>
                     </div>
                 </form>
@@ -195,7 +195,7 @@
                             <span class="bi bi-hi-create pull-right"></span>
                         </label>
                         <ul class="pickbox" data-fn="-" data-ft="_view" data-__type__="image" data-__rule__="Thumb" data-thumb-mode="" data-thumb-size=""></ul>
-                        <input type="file" name="-" class="form-ignored invisible" accept="image/*"/>
+                        <input type="file" name="-" class="invisible" accept="image/*"/>
                         <button class="btn btn-default form-control" type="button" data-toggle="hsView">浏览...</button>
                     </div>
                     <div class="form-group" data-type="file">
@@ -206,7 +206,7 @@
                             <span class="bi bi-hi-create pull-right"></span>
                         </label>
                         <ul class="pickbox" data-fn="-" data-ft="_file"></ul>
-                        <input type="file" name="-" class="form-ignored invisible"/>
+                        <input type="file" name="-" class="invisible"/>
                         <button class="btn btn-default form-control" type="button" data-toggle="hsFile">浏览...</button>
                     </div>
                     <div class="form-group" data-type="fork">
@@ -217,7 +217,7 @@
                             <span class="bi bi-hi-create pull-right"></span>
                         </label>
                         <ul class="pickbox" data-fn="-" data-ft="_fork"></ul>
-                        <input type="text" name="-" class="form-ignored invisible"/>
+                        <input type="text" name="-" class="invisible"/>
                         <button class="btn btn-default form-control" type="button" data-toggle="hsPick" data-target="@" data-href="centra/matrix/form/pick.html" data-vk="id" data-tk="name">选择...</button>
                     </div>
                     <div class="form-group" data-type="figure">
@@ -282,7 +282,7 @@
                             <span class="bi bi-hi-create pull-right"></span>
                         </label>
                         <ul class="pickbox" data-fn="logo" data-ft="_view" data-listable="true" data-__type__="image" data-__rule__="Thumb" data-thumb-mode="pick" data-thumb-size="300*300"></ul>
-                        <input type="file" name="logo" class="form-ignored invisible" accept="image/*"/>
+                        <input type="file" name="logo" class="invisible" accept="image/*"/>
                         <button class="btn btn-default form-control" type="button" data-toggle="hsView"><i class="bi bi-hi-file"></i>浏览...</button>
                     </div>
                     <div class="form-group base-field" data-type="boost">

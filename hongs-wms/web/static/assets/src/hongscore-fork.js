@@ -839,8 +839,7 @@ function hsFormTestPart(box) {
         if (box) {
             box = $(this).hsFind(box);
         } else {
-            box = $(this).siblings("[name],[data-fn],[data-ft]")
-               .not(".form-ignored" );
+            box = $(this).siblings("[data-fn],[data-ft]");
         if (! box.size()) {
             box = $(this). parent ( );
         }}
@@ -854,8 +853,7 @@ function hsFormTestPart(box) {
         if (box) {
             box = $(this).hsFind(box);
         } else {
-            box = $(this).siblings("[name],[data-fn],[data-ft]")
-               .not(".form-ignored" );
+            box = $(this).siblings("[data-fn],[data-ft]");
         if (! box.size()) {
             box = $(this). parent ( );
         }}

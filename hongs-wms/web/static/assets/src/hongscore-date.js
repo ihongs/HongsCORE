@@ -371,7 +371,7 @@
             hide = this.prev("input:hidden");
         }
         if (! hide.size() ) {
-            hide = $ ('<input type="hidden" class="form-ignored"/>');
+            hide = $ ('<input type="hidden" />');
             hide.attr("name", this.attr("name"));
             this.attr("name", "");
             // 避免在 input-group 中影响圆边角

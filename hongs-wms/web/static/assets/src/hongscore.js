@@ -705,7 +705,7 @@ function hsAsFormData (data) {
 function hsBeFormData (elem) {
     // 清除可能前次添加的, 不重复绑定兼容函数
     elem = jQuery(elem);
-    elem.find(".form-deposit").remove();
+    elem.find(".form-data").remove();
     var data = elem.data ("beFormData");
     if (data ) {
         return data;
@@ -715,7 +715,7 @@ function hsBeFormData (elem) {
     }
 
     data["append"] = function(name, value) {
-        var inp = jQuery('<input type="hidden" class="form-deposit"/>');
+        var inp = jQuery('<input type="hidden" class="form-data"/>');
         inp.val ("value", value);
         inp.attr("name" , name );
         elem.append(inp);

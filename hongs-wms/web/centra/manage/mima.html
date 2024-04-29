@@ -3,21 +3,21 @@
      data-topple="hsForm"
      data-save-url="centra/mine/save.act">
     <form action="" method="POST" autocomplete="off">
-        <input type="hidden" name="id"/>
+        <input type="hidden" name="id" data-fn/>
         <div style="height: 0; overflow: hidden;">
             <input type="text"     name="_u"/>
             <input type="password" name="_s"/>
         </div>
         <div class="form-group">
             <label class="control-label">原口令</label>
-            <input type="password" name="passolde" class="form-control" required="required"/>
+            <input type="password" name="passolde" class="form-field form-control" required="required"/>
         </div>
         <div class="form-group">
             <label class="control-label">新口令</label>
-            <input type="password" name="password" class="form-control" required="required" data-relate="passcode"/>
+            <input type="password" name="password" class="form-field form-control" required="required" data-relate="passcode"/>
         </div>
         <div class="form-group">
-            <input type="password" name="passcode" class="form-control" required="required" data-repeat="password" data-error="请重复输入口令" placeholder="请重复输入口令"/>
+            <input type="password" name="passcode" class="form-field form-control" required="required" data-repeat="password" data-error="请重复输入口令" placeholder="请重复输入口令"/>
         </div>
         <div class="form-group form-control-static" style="padding-top: 0;">
             <a href="javascript:;" class="new-password">生成密码</a>

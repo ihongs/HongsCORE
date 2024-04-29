@@ -276,7 +276,7 @@ HsForm.prototype = {
             }
             return that.validate(  ); // 整体校验
         });
-        this.formBox.on("change", "[data-fn].form-field[name]", function() {
+        this.formBox.on("change", "[data-fn],[data-ft],[data-test],.form-field", function() {
             that.test(this); // 单个校验
         });
     },
@@ -317,53 +317,74 @@ HsForm.prototype = {
         this.setError(inp);
         return true;
     },
+    /**
+     * 批量校验和错误设置
+     * @param all 错误信息集合, 或待验字段列表, 未指定则校验全部
+     * @param sav 为 true 则会保留旧的错误信息, 默认清除后再处理
+     * @returns {Boolean} true 即存在错误
+     */
+    validate : function(all, sav) {
+        // 查找待验字段
+        if (!all || all === true) {
+            all = this.formBox.find("[data-fn],[data-ft],[data-test],.form-field");
+        }
+
+        // 清除错误状态
+        if (!sav || sav !== true) {
+            this.formBox
+                .find(".form-group")
+                .removeClass("has-error")
+                .find(".text-error")
+                .empty( );
+        }
+
+        // 设置错误消息
+        if (jQuery.isPlainObject(all)) {
+            var u = true ;
+            for(var n in all) {
+                var m  = all [n];
+                n = this.getInput(n);
+                this.setError(n , m);
+                u = false;
+            }
+            return  u;
+        }
+
+        // 逐个进行校验
+        if (all instanceof jQuery
+        ||  all instanceof Array) {
+            var u = true ;
+            for(var i = 0; i < all.length; i ++) {
+                if (!this.test(all[i])) {
+                    u = false;
+                }
+            }
+            return  u;
+        }
+
+        throw new Error("Wrong validate argument type", all);
+    },
     getInput : function(inp) {
-        if (typeof inp != "string"
-        &&  typeof inp != "number") {
+        if (! inp) {
+            return jQuery( );
+        }
+        if (inp instanceof Element
+        ||  inp instanceof jQuery) {
             return jQuery(inp);
         }
 
-        do {
-            var sel = inp;
-
-            inp = this.formBox.find('[data-fn="'+sel+'"],.form-field[name="'+sel+'"]');
-            if (inp.size()) {
-                break;
+        var fn = inp+"";
+        inp = jQuery( );
+        return this.formBox
+            .find("[data-fn],[data-ft],[data-test],.form-field")
+            .each(function() {
+            if (fn == $(this).data( "fn" )
+            ||  fn == $(this).attr("name")) {
+                inp = $(this);
+                return  false;
             }
-
-            /**
-             * 从字段名里提取数组下标
-             * 并使用下标来查找表单项
-             * 还找不到则尝试按集合名
-             * 如: name. 和 name[]
-             * 此查找方法主要为解决显示服务端多值字段校验的错误消息
-             */
-
-            var grp = /^(.*)\[(\d+)\]$/.exec(sel);
-            if (grp == null) {
-                break;
-            }
-            var idx = grp[2];
-                sel = grp[1];
-
-            inp = this.formBox.find('[data-fn="'+sel+'"],.form-field[name="'+sel+'"]');
-            if (inp.size()) {
-                return inp.eq(parseInt(idx)); // 精确位置, 直接返回
-            }
-
-            inp = this.formBox.find('[data-fn="'+sel+'."],.form-field[name="'+sel+'."]');
-            if (inp.size()) {
-                break;
-            }
-
-            inp = this.formBox.find('[data-fn="'+sel+'[]"],.form-field[name="'+sel+'[]"]');
-            if (inp.size()) {
-                break;
-            }
-        }
-        while (false);
-
-        return inp;
+        });
+        return  inp;
     },
     getValue : function(inp) {
         // 非表单项则需向下查找
@@ -461,58 +482,6 @@ HsForm.prototype = {
         }
 
         return hsGetLang(err, rep);
-    },
-    /**
-     * 校验方法
-     * @param all 错误信息集合, 或待验字段列表, 未指定则校验全部
-     * @param sav 为 true 则会保留旧的错误信息, 默认清除后再处理
-     * @returns {Boolean} true 即存在错误
-     */
-    validate : function(all, sav) {
-        // 清除错误状态
-        if (sav === undefined || sav !== true) {
-            this.formBox
-                .find(".form-group")
-                .removeClass("has-error")
-                .find(".text-error")
-                .empty( );
-        }
-
-        // 查找待验字段
-        if (all === undefined || all === null) {
-            all = this.formBox.find("[data-fn],.form-field[name]");
-        } else
-        if (typeof all === "string"
-        ||  typeof all === "number"
-        ||  all instanceof Element ) {
-            all = this.getInput(all);
-        }
-
-        // 逐个进行校验
-        if (all instanceof jQuery
-        ||  all instanceof  Array  ) {
-            var u = true ;
-            for(var i = 0; i < all.length; i ++) {
-                if (!this.test(all[i])) {
-                    u = false;
-                }
-            }
-            return  u;
-        }
-
-        // 设置错误消息
-        if (jQuery.isPlainObject(all)) {
-            var u = true ;
-            for(var n in all) {
-                var m  = all [n];
-                n = this.getInput(n);
-                this.setError(n , m);
-                u = false;
-            }
-            return  u;
-        }
-
-        throw new Error("Wrong validate argument type", all);
     },
 
     saveInit : function() {

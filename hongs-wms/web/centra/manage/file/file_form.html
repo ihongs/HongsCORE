@@ -3,16 +3,16 @@
      data-topple="hsForm"
      data-save-url="centra/file/create.act">
     <form action="" method="POST">
-        <input type="hidden" name="path">
+        <input type="hidden" name="path" data-fn/>
         <input type="hidden" name="type" value="file"/>
         <div class="form-group row" style="padding: 0 15px;">
             <div class="col-md-10 col-lg-8 center-block" style="padding: 0;">
-                <input type="text" name="name" class="form-control" required="required" placeholder="文件名"/>
+                <input type="text" name="name" class="form-field form-control" required="required" placeholder="文件名"/>
             </div>
         </div>
         <div class="form-group row" style="padding: 0 15px;">
             <div class="col-md-10 col-lg-8 center-block" style="padding: 0; border: 1px solid #ccc; border-radius: 4px;">
-                <textarea name="text" rows="20" class="form-control invisible"></textarea>
+                <textarea name="text" rows="20" class="form-field form-control invisible"></textarea>
             </div>
         </div>
         <hr/>

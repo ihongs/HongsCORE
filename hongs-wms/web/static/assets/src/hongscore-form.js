@@ -319,8 +319,8 @@ HsForm.prototype = {
     },
     /**
      * 批量校验和错误设置
-     * @param all 错误信息集合, 或待验字段列表, 未指定则校验全部
-     * @param sav 为 true 则会保留旧的错误信息, 默认清除后再处理
+     * @param all 为 true 或不设则校验全部, 或待验列表, 或消息集合
+     * @param sav 为 true 则会保留旧的错误, 默认不设将清除后再处理
      * @returns {Boolean} true 即存在错误
      */
     validate : function(all, sav) {
@@ -355,6 +355,11 @@ HsForm.prototype = {
         ||  all instanceof Array) {
             var u = true ;
             for(var i = 0; i < all.length; i ++) {
+                var n = jQuery(all[i]);
+                if (! n. data ( "fn" )
+                &&  ! n. attr ("name")) {
+                    continue ; // 无名不校验
+                }
                 if (!this.test(all[i])) {
                     u = false;
                 }

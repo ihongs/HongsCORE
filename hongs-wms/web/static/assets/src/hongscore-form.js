@@ -310,6 +310,10 @@ HsForm.prototype = {
             if (err !== undefined && err !== true) {
                 err  =  err || hsGetLang("form.haserror");
                 this.setError(inp, err);
+                if (window.console
+                &&  window.console.log) {
+                    window.console.log("HsForm.test("+n+"): "+err, inp)
+                }
                 return false;
             }
         }

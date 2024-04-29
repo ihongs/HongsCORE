@@ -268,16 +268,24 @@ HsForm.prototype = {
             if (e.isDefaultPrevented()) {
                 return;
             }
-            return that.validate({}); // 清除错误
+            var v = that.validate({}); // 清除错误
+            if (! v) {
+                this.warn(hsGetLang('form.invalid'), "warning");
+            }
+            return v;
         });
         this.formBox.on("submit", function(e) {
             if (e.isDefaultPrevented()) {
                 return;
             }
-            return that.validate(  ); // 整体校验
+            var v = that.validate(  ); // 整体校验
+            if (! v) {
+                this.warn(hsGetLang('form.invalid'), "warning");
+            }
+            return v;
         });
         this.formBox.on("change", "[data-fn],[data-ft],[data-test],.form-field", function() {
-            that.test(this); // 单个校验
+            that.validate( [ this ] ); // 单体校验, 不直接用 test 是为跳过无名字段
         });
     },
     test : function(inp) {
@@ -298,6 +306,7 @@ HsForm.prototype = {
         if (v !== undefined && v !== true) {
             v  = v || hsGetLang("form.haserror");
             this.setError(inp, v);
+            console.log("HsForm.test("+n+"): "+v, inp);
             return false;
         }
 
@@ -306,72 +315,17 @@ HsForm.prototype = {
             if (! inp.is(s)) {
                 continue;
             }
-            var err  =  this.rules[s].call(this, inp,val);
-            if (err !== undefined && err !== true) {
-                err  =  err || hsGetLang("form.haserror");
-                this.setError(inp, err);
-                if (window.console
-                &&  window.console.log) {
-                    window.console.log("HsForm.test("+n+"): "+err, inp)
-                }
+            v  =  this.rules[s].call(this, inp, val);
+            if (v !== undefined && v !== true) {
+                v  = v || hsGetLang("form.haserror");
+                this.setError(inp, v);
+                console.log("HsForm.test("+n+"): "+v, inp);
                 return false;
             }
         }
 
         this.setError(inp);
         return true;
-    },
-    /**
-     * 批量校验和错误设置
-     * @param all 为 true 或不设则校验全部, 或待验列表, 或消息集合
-     * @param sav 为 true 则会保留旧的错误, 默认不设将清除后再处理
-     * @returns {Boolean} true 即存在错误
-     */
-    validate : function(all, sav) {
-        // 查找待验字段
-        if (!all || all === true) {
-            all = this.formBox.find("[data-fn],[data-ft],[data-test],.form-field");
-        }
-
-        // 清除错误状态
-        if (!sav || sav !== true) {
-            this.formBox
-                .find(".form-group")
-                .removeClass("has-error")
-                .find(".text-error")
-                .empty( );
-        }
-
-        // 设置错误消息
-        if (jQuery.isPlainObject(all)) {
-            var u = true ;
-            for(var n in all) {
-                var m  = all [n];
-                n = this.getInput(n);
-                this.setError(n , m);
-                u = false;
-            }
-            return  u;
-        }
-
-        // 逐个进行校验
-        if (all instanceof jQuery
-        ||  all instanceof Array) {
-            var u = true ;
-            for(var i = 0; i < all.length; i ++) {
-                var n = jQuery(all[i]);
-                if (! n. data ( "fn" )
-                &&  ! n. attr ("name")) {
-                    continue ; // 无名不校验
-                }
-                if (!this.test(all[i])) {
-                    u = false;
-                }
-            }
-            return  u;
-        }
-
-        throw new Error("Wrong validate argument type", all);
     },
     getInput : function(inp) {
         if (! inp) {
@@ -491,6 +445,58 @@ HsForm.prototype = {
         }
 
         return hsGetLang(err, rep);
+    },
+    /**
+     * 批量校验和错误设置
+     * @param all 为 true 或不设则校验全部, 或待验列表, 或消息集合
+     * @param sav 为 true 则会保留旧的错误, 默认不设将清除后再处理
+     * @returns {Boolean} true 即存在错误
+     */
+    validate : function(all, sav) {
+        // 查找待验字段
+        if (!all || all === true) {
+            all = this.formBox.find("[data-fn],[data-ft],[data-test],.form-field");
+        }
+
+        // 清除错误状态
+        if (!sav || sav !== true) {
+            this.formBox
+                .find(".form-group")
+                .removeClass("has-error")
+                .find(".text-error")
+                .empty( );
+        }
+
+        // 设置错误消息
+        if (jQuery.isPlainObject(all)) {
+            var u = true ;
+            for(var n in all) {
+                var m  = all [n];
+                n = this.getInput(n);
+                this.setError(n , m);
+                u = false;
+            }
+            return  u;
+        }
+
+        // 逐个进行校验
+        if (all instanceof jQuery
+        ||  all instanceof Array) {
+            var u = true ;
+            for(var i = 0; i < all.length; i ++) {
+                var n = jQuery(all[i]);
+                if (! n. data ( "fn" )
+                &&  ! n. attr ("name")) {
+                    continue ; // 无名不校验
+                }
+                if (!this.test(all[i])) {
+                    u = false;
+                }
+            }
+            return  u;
+        }
+
+        throw new Error("Wrong validate argument type", all);
     },
 
     saveInit : function() {

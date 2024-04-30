@@ -260,6 +260,160 @@ HsForm.prototype = {
     _ps_key  : "state" ,
     _rc_key  : "count" ,
 
+    saveInit : function() {
+        var that = this;
+        this.formBox.submit(function(evt) {
+            if (evt.isDefaultPrevented()) {
+                return ;
+            }
+
+            // 防止重复提交, 在 save/swap 的回调中移除
+            if (that._waiting) {
+                that.note (hsGetLang("form.waiting"));
+                evt.preventDefault();
+                return ;
+            }   that._waiting = true;
+
+            var data = that.formBox ;
+            var url  = data.attr("action" ) ;
+            var type = data.attr("method" ) || "POST";
+            var enct = data.attr("enctype") || "None";
+
+            if (/^.*\/json($|;| )/i.test( enct ) ) {
+                evt.preventDefault();
+
+                var dat = hsAsFormData( data [0] );
+                var ext = jQuery.Event("willSave");
+                data.trigger(ext, [ dat , that ] );
+                if (ext.isDefaultPrevented()) {
+                    delete that._waiting;
+                    return;
+                }
+
+                that.save(url, dat, type, "json" );
+            } else
+            if (! /^multipart\/.*/i.test( enct ) ) {
+                evt.preventDefault();
+
+                var dat = hsAsFormData( data [0] );
+                var ext = jQuery.Event("willSave");
+                data.trigger(ext, [ dat , that ] );
+                if (ext.isDefaultPrevented()) {
+                    delete that._waiting;
+                    return;
+                }
+
+                that.save(url, dat, type, "form" );
+            } else
+            if (window.FormData ) {
+                evt.preventDefault();
+
+                var dat = hsToFormData( data [0] );
+                var ext = jQuery.Event("willSave");
+                data.trigger(ext, [ dat , that ] );
+                if (ext.isDefaultPrevented()) {
+                    delete that._waiting;
+                    return;
+                }
+
+                that.save(url, dat, type, "part" );
+            } else
+            {
+                var dat = hsBeFormData( data [0] );
+                var ext = jQuery.Event("willSave");
+                data.trigger(ext, [ dat , that ] );
+                if (ext.isDefaultPrevented()) {
+                    evt.preventDefault();
+                    delete that._waiting;
+                    return;
+                }
+
+                that.swap(url, data);
+            }
+        });
+    },
+    saveBack : function(rst) {
+        rst = hsResponse(rst, 1);
+        if (rst.ok) {
+            var evt = jQuery.Event("saveBack");
+            this.formBox.trigger(evt, [rst, this]);
+            if (evt.isDefaultPrevented( )) return ;
+
+            // 完成提示
+            if ( rst.msg ) {
+                this.note(rst.msg, "success" );
+            }
+        } else {
+            var evt = jQuery.Event("saveFail");
+            this.formBox.trigger(evt, [rst, this]);
+            if (evt.isDefaultPrevented( )) return ;
+
+            // 错误提示
+            if ( rst.msg ) {
+                this.warn(rst.msg, "warning" );
+            } else
+            if (!rst.errs) {
+                this.warn(hsGetLang('error.undef'));
+            }
+
+            // 错误信息
+            if ( rst.errs) {
+                this.validate(rst.errs);
+            }
+        }
+    },
+
+    swap : function(url, data) {
+        if (! data.attr("target")) {
+            var that  = this;
+            var href  = hsSetParam (url, "cb", "~"); // 显式申明 AJAX 方式
+            var name  = "_" + ( (new Date()).getTime() % 86400000 ) + "_" + Math.floor( Math.random( ) * 1000 );
+            var style = "width:0; height:0; border:0; margin:0; padding:0; overflow:hidden; visibility:hidden;";
+            var frame = jQuery('<iframe src="about:blank" name="' + name + '" style="' + style + '"></iframe>');
+
+            frame.insertBefore( data );
+            data.attr("target", name );
+            data.attr("action", href );
+
+            frame.on ( "load" , function() {
+                var doc = frame[0].contentDocument || frame[0].contentWindow.document;
+                if (doc.location.href==="about:blank") return ;
+                var rst = doc.body.innerHTML.replace( /(^<PRE.*?>|<\/PRE>$)/igm, "" );
+                delete that._waiting;
+                that.saveBack( rst );
+            } );
+        }
+    },
+    save : function(url, data, type, kind) {
+        this.ajax( {
+            "url"       : url ,
+            "data"      : data,
+            "type"      : type,
+            "dataKind"  : kind,
+            "dataType"  : "json",
+            "funcName"  : "save",
+            "async"     : false,
+            "cache"     : false,
+            "global"    : false,
+            "context"   : this,
+            "trigger"   : this.formBox,
+            "complete"  : function(rst) {
+                delete this._waiting;
+                this.saveBack( rst );
+            }
+        } );
+    },
+
+    ajax : function() {
+        return jQuery.hsAjax.apply(window, arguments);
+    },
+    note : function() {
+        return jQuery.hsNote.apply(window, arguments);
+    },
+    warn : function() {
+        return jQuery.hsWarn.apply(window, arguments);
+    },
+
     testInit : function() {
         var that = this;
         this.formBox.attr("novalidate", "novalidate");
@@ -497,160 +651,6 @@ HsForm.prototype = {
         }
 
         throw new Error("Wrong validate argument type", all);
-    },
-
-    saveInit : function() {
-        var that = this;
-        this.formBox.submit(function(evt) {
-            if (evt.isDefaultPrevented()) {
-                return ;
-            }
-
-            // 防止重复提交, 在 save/swap 的回调中移除
-            if (that._waiting) {
-                that.note (hsGetLang("form.waiting"));
-                evt.preventDefault();
-                return ;
-            }   that._waiting = true;
-
-            var data = that.formBox ;
-            var url  = data.attr("action" ) ;
-            var type = data.attr("method" ) || "POST";
-            var enct = data.attr("enctype") || "None";
-
-            if (/^.*\/json($|;| )/i.test( enct ) ) {
-                evt.preventDefault();
-
-                var dat = hsAsFormData( data [0] );
-                var ext = jQuery.Event("willSave");
-                data.trigger(ext, [ dat , that ] );
-                if (ext.isDefaultPrevented()) {
-                    delete that._waiting;
-                    return;
-                }
-
-                that.save(url, dat, type, "json" );
-            } else
-            if (! /^multipart\/.*/i.test( enct ) ) {
-                evt.preventDefault();
-
-                var dat = hsAsFormData( data [0] );
-                var ext = jQuery.Event("willSave");
-                data.trigger(ext, [ dat , that ] );
-                if (ext.isDefaultPrevented()) {
-                    delete that._waiting;
-                    return;
-                }
-
-                that.save(url, dat, type, "form" );
-            } else
-            if (window.FormData ) {
-                evt.preventDefault();
-
-                var dat = hsToFormData( data [0] );
-                var ext = jQuery.Event("willSave");
-                data.trigger(ext, [ dat , that ] );
-                if (ext.isDefaultPrevented()) {
-                    delete that._waiting;
-                    return;
-                }
-
-                that.save(url, dat, type, "part" );
-            } else
-            {
-                var dat = hsBeFormData( data [0] );
-                var ext = jQuery.Event("willSave");
-                data.trigger(ext, [ dat , that ] );
-                if (ext.isDefaultPrevented()) {
-                    evt.preventDefault();
-                    delete that._waiting;
-                    return;
-                }
-
-                that.swap(url, data);
-            }
-        });
-    },
-    saveBack : function(rst) {
-        rst = hsResponse(rst, 1);
-        if (rst.ok) {
-            var evt = jQuery.Event("saveBack");
-            this.formBox.trigger(evt, [rst, this]);
-            if (evt.isDefaultPrevented( )) return ;
-
-            // 完成提示
-            if ( rst.msg ) {
-                this.note(rst.msg, "success" );
-            }
-        } else {
-            var evt = jQuery.Event("saveFail");
-            this.formBox.trigger(evt, [rst, this]);
-            if (evt.isDefaultPrevented( )) return ;
-
-            // 错误提示
-            if ( rst.msg ) {
-                this.warn(rst.msg, "warning" );
-            } else
-            if (!rst.errs) {
-                this.warn(hsGetLang('error.undef'));
-            }
-
-            // 错误信息
-            if ( rst.errs) {
-                this.validate(rst.errs);
-            }
-        }
-    },
-
-    swap : function(url, data) {
-        if (! data.attr("target")) {
-            var that  = this;
-            var href  = hsSetParam (url, "cb", "~"); // 显式申明 AJAX 方式
-            var name  = "_" + ( (new Date()).getTime() % 86400000 ) + "_" + Math.floor( Math.random( ) * 1000 );
-            var style = "width:0; height:0; border:0; margin:0; padding:0; overflow:hidden; visibility:hidden;";
-            var frame = jQuery('<iframe src="about:blank" name="' + name + '" style="' + style + '"></iframe>');
-
-            frame.insertBefore( data );
-            data.attr("target", name );
-            data.attr("action", href );
-
-            frame.on ( "load" , function() {
-                var doc = frame[0].contentDocument || frame[0].contentWindow.document;
-                if (doc.location.href==="about:blank") return ;
-                var rst = doc.body.innerHTML.replace( /(^<PRE.*?>|<\/PRE>$)/igm, "" );
-                delete that._waiting;
-                that.saveBack( rst );
-            } );
-        }
-    },
-    save : function(url, data, type, kind) {
-        this.ajax( {
-            "url"       : url ,
-            "data"      : data,
-            "type"      : type,
-            "dataKind"  : kind,
-            "dataType"  : "json",
-            "funcName"  : "save",
-            "async"     : false,
-            "cache"     : false,
-            "global"    : false,
-            "context"   : this,
-            "trigger"   : this.formBox,
-            "complete"  : function(rst) {
-                delete this._waiting;
-                this.saveBack( rst );
-            }
-        } );
-    },
-
-    ajax : function() {
-        return jQuery.hsAjax.apply(window, arguments);
-    },
-    note : function() {
-        return jQuery.hsNote.apply(window, arguments);
-    },
-    warn : function() {
-        return jQuery.hsWarn.apply(window, arguments);
     },
 
     _group_start: "#", // 选项分组起始符

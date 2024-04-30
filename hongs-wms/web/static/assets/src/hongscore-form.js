@@ -176,7 +176,18 @@ HsForm.prototype = {
                 return;
             }
 
-            x.data("data", v);
+            // 可填充 datalist 和 select,
+            // 其他类型仅将数据项进行暂存;
+            // 以供在填充内容时提取并处理.
+            if (x.is("input[list]")) {
+                this._feed__datalist(x, v, n);
+            }
+            else if (x.is("select")) {
+                this. _feed__select (x, v, n);
+            }
+            else {
+                x.data("data", v);
+            }
         });
         delete this._enfo;
     },
@@ -655,25 +666,6 @@ HsForm.prototype = {
 
     _group_start: "#", // 选项分组起始符
 
-    _feed__review : function(inp, v, n) {
-        if (v === undefined
-        ||  v === null) {
-            return;
-        }
-
-        // 可填充 datalist 和 select,
-        // 其他类型仅将数据项进行暂存;
-        // 以供下方填充内容时进行转换.
-        if (inp.is("input[list]")) {
-            this._feed__datalist(inp, v, n);
-        }
-        else if (inp.is("select")) {
-            this. _feed__select (inp, v, n);
-        }
-        else {
-            inp.data("data", v);
-        }
-    },
     _fill__review : function(inp, v, n) {
         if (v === undefined
         ||  v === null) {

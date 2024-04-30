@@ -608,13 +608,13 @@ HsForm.prototype = {
     setError : function(inp, err) {
         var grp = inp.closest (".form-group");
         var blk = grp.children(".text-error");
-        var lab = grp.children(".form-label,label");
+        var lab = grp.children(".form-label, label");
 
         // 补充消息区域
         if (blk.size() == 0) {
             blk = jQuery('<p class="help-block text-error"></p>').appendTo(grp);
             if (lab.hasClass(".form-control-static")) {
-                blk.addClass( "form-control-static" );
+                blk.addClass( "form-control-static");
             }
         }
 

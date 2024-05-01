@@ -98,6 +98,7 @@
         ent.find(".icon" ).addClass(ico);
         ent.find(".title").text(txt);
         ent.attr( "title", txt );
+    //  ent.data( "value", src );
         box.append(ent);
         if (! box.is("[data-readonly]")) {
             ent.append(inp);
@@ -126,6 +127,7 @@
         ent.find(".icon" ).addClass(ico);
         ent.find(".title").text(txt);
         ent.attr( "title", txt );
+        ent.data( "value", src );
         box.append(ent);
         if (! box.is("[data-readonly]")) {
             box.append(inp);
@@ -158,7 +160,7 @@
             if (this[0].filez && this[0].filez.length) txt = this[0].filez[0].name;
             if (this[0].files && this[0].files.length) txt = this[0].files[0].name;
         }
-        var enp = _viewTemp(box).clone().css({width: w+'px', height: h+'px'});
+        var ent = _viewTemp(box).clone().css({width: w+'px', height: h+'px'});
 
         // 非保留和截取时为图片自身尺寸
         var cal = undefined;
@@ -168,7 +170,7 @@
                 var h = this.height;
                 var img = $( this );
                 img.css({top  :  "0px", left  :  "0px"});
-                enp.css({width: w+'px', height: h+'px'});
+                ent.css({width: w+'px', height: h+'px'});
             };
         }
 
@@ -176,13 +178,15 @@
                 ? $.hsPickSnap(src, w, h, cal)
                 : $.hsKeepSnap(src, w, h, cal);
 
-        box.append(enp);
-        enp.append(img);
+    //  ent.data("value", src);
+        ent.attr("title", txt);
+        box.append(ent);
+        ent.append(img);
         if (! box.is("[data-readonly]")) {
-            enp.append(inp);
+            ent.append(inp);
         }
 
-        return enp;
+        return ent;
     };
 
     /**
@@ -202,7 +206,7 @@
         var inp = $('<input type="hidden"/>').attr( 'name', nam ).val( src );
         var txt = /^data:/.test( src ) ? ''
                 : decodeURIComponent(src.replace(/^.*[\/\\]/, ''));
-        var enp = _viewTemp(box).clone().css({width: w+'px', height: h+'px'});
+        var ent = _viewTemp(box).clone().css({width: w+'px', height: h+'px'});
 
         // 非保留和截取时为图片自身尺寸
         var cal = undefined;
@@ -212,7 +216,7 @@
                 var h = this.height;
                 var img = $( this );
                 img.css({top  :  "0px", left  :  "0px"});
-                enp.css({width: w+'px', height: h+'px'});
+                ent.css({width: w+'px', height: h+'px'});
             };
         }
 
@@ -220,13 +224,15 @@
                 ? $.hsPickSnap(src, w, h, cal)
                 : $.hsKeepSnap(src, w, h, cal);
 
-        box.append(enp);
-        enp.append(img);
+        ent.data("value", src);
+        ent.attr("title", txt);
+        box.append(ent);
+        ent.append(img);
         if (! box.is("[data-readonly]")) {
-            enp.append(inp);
+            ent.append(inp);
         }
 
-        return enp;
+        return ent;
     };
 
     //** 预览辅助 **/
@@ -520,11 +526,15 @@
          * 故干脆放弃待上传新窗口打开预览
          * 预览待上传图片用 hsView 等方法
          */
+        var url = $(this).data("value");
+        if (url) {
+            window.open(hsFixUri(url), "_blank");
+        }
         var inp = $(this).find("input");
         if (inp.attr("type") != "file") {
-        var url = hsFixUri( inp.val() );
+            url = inp.val( );
         if (url) {
-            window.open(url , "_blank");
+            window.open(hsFixUri(url), "_blank");
         }}
     });
 

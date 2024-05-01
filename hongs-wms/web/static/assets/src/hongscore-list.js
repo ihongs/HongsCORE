@@ -869,15 +869,18 @@ function hsListFillItem(list) {
 
     // 条目模板
     if (! this.itemBox ) {
-          this.itemBox = this.context.find(".itembox:hidden:first");
+          this.itemBox = this.listBox
+              .children().first( ).detach( )
+              .removeClass("hide invisible");
     }
     tt  = this.itemBox ;
 
     // _keep_prev 无论何种情况都不清空之前的列表
-    // _keep_void 当前数据为空时不清空之前的列表
+    // _keep_last 加载不到数据时不清空之前的列表
     if (! this._keep_prev
-    ||  !(this._keep_void && list.length == 0 )) {
-        this.listBox.children().not(tt).remove();
+    && (! this._keep_last
+    ||  0 <  list.length  )) {
+        this.listBox.empty();
     }
 
     this._list = list;
@@ -889,12 +892,16 @@ function hsListFillItem(list) {
             n  = td.data("fn");
             t  = td.data("ft");
             f  = td.data("fill");
+
             if (n !== undefined) {
             v  = hsGetValue(list[i], n);
             if (v === undefined) {
                 v  =  list[i][n];
             }} else {
                 v  =  undefined ;
+            }
+            if (t === undefined) {
+                t  =  "_review" ;
             }
 
             // 解析填充方法

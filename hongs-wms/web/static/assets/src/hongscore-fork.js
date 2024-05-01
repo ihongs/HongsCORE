@@ -50,10 +50,10 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
     var vk   = box.attr("data-vk" ) || "id"  ;
     var tk   = box.attr("data-tk" ) || "name";
     var at   = box.attr("data-at" );
-    var mul  = box.is  (".pickmul")
-         || !! box.data("repeated")
-         || !! box.data("multiple")
-         || /(\[\]|\.\.|\.$)/.test(n);
+    var mul  = box.is( ".pickmul" )
+            || box.is("[data-multiple]")
+            || box.is("[data-repeated]")
+            || /(\[\]|\.\.|\.$)/.test(n);
     var foo  = box.closest(".HsForm").data("HsForm") || {};
     var btn  = jQuery(this);
 
@@ -317,8 +317,11 @@ function hsFormForkData(box, v) {
  */
 function hsFormFillPick(box, v, n) {
     if (! n ) n = box.data( "fn" );
-    var rol = box.is("[data-readonly]");
-    var mul = box.is("[data-multiple]")
+    var rol = box.is( ".pickrol" )
+           || box.is("[data-readonly]");
+    var mul = box.is( ".pickmul" )
+           || box.is("[data-multiple]")
+           || box.is("[data-repeated]")
            || /(\[\]|\.\.|\.$)/.test(n);
 
     var tmp = box.data("template");
@@ -839,6 +842,7 @@ function hsFormTestPart(box) {
                 lis.attr("data-ln"    , inp.attr("data-ln") || "");
                 lis.attr("data-vk"    , inp.attr("data-vk") || "");
                 lis.attr("data-tk"    , inp.attr("data-tk") || "");
+                lis.attr("data-at"    , inp.attr("data-at") || "");
                 lis.attr("data-ft"    , inp.attr("data-form-ft"    ) || "_fork");
                 lis.attr("data-href"  , inp.attr("data-link-href"  ) || "");
                 lis.attr("data-target", inp.attr("data-link-target") || "");

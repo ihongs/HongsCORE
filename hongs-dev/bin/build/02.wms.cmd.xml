@@ -14,6 +14,7 @@
         <arg>$SRC_DIR/hongscore-sift.js</arg>
         <arg>$SRC_DIR/hongscore-fork.js</arg>
         <arg>$SRC_DIR/hongscore-file.js</arg>
+        <arg>$SRC_DIR/hongscore-dits.js</arg>
         <arg>$SRC_DIR/hongscore-date.js</arg>
     </combat>
     <combat system="no">

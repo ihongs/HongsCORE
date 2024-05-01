@@ -544,18 +544,11 @@
 })(jQuery);
 
 function _hsSoloFile(box, show) {
-    var fn = box.data("fn");
-    if (! fn || box.hasClass("pickmul2")) {
-        return;
-    }
-    if (! box.data("repeated")
-    &&  ! box.data("multiple")
+    var fn = box.data( "fn" ) || "" ;
+    if (! box.is( "[data-repeated]" )
+    &&  ! box.is( "[data-multiple]" )
     &&  ! /(\[\]|\.\.|\.$)/.test(fn)) {
-        box.siblings("[data-toggle=hsFile],[data-toggle=hsView]")
-           .toggle( show );
-        box.removeClass("pickmul2");
-    } else {
-        box.   addClass("pickmul2");
+        box.siblings("[data-toggle=hsFile],[data-toggle=hsView]").toggle(show);
     }
 }
 

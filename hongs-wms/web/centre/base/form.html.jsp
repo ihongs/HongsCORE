@@ -120,8 +120,7 @@
                         kind += "\" data-ln=\""+ln+"\" data-tk=\""+tk+"\" data-vk=\""+vk
                              +  "\" data-href=\""+rl+"\" data-target=\"";
                     %>
-                    <ul class="pickbox pickrol" data-fn="<%=name%>" data-ft="<%=kind%>"<%=extr%>></ul>
-                    <button type="button" class="hide" data-toggle="<%=mode%>"></button>
+                    <ul class="repeated forkbox" data-fn="<%=name%>" data-ft="<%=kind%>"<%=extr%> data-readonly="readonly"></ul>
                 <%} else if ("file".equals(type) || "image".equals(type) || "video".equals(type) || "audio".equals(type)) {%>
                     <%
                         String extr = "";
@@ -166,7 +165,7 @@
                             kind += "\" data-size=\""+size+"\" data-mode=\""+moda;
                         }
                     %>
-                    <ul class="pickbox pickrol" data-fn="<%=name%>" data-ft="<%=kind%>"<%=extr%>></ul>
+                    <ul class="repeated filebox" data-fn="<%=name%>" data-ft="<%=kind%>"<%=extr%> data-readonly="readonly"></ul>
                     <button type="button" class="hide" data-toggle="<%=mode%>"></button>
                 <%} else if ("textarea".equals(type) || "textview".equals(type)) {%>
                     <%
@@ -215,6 +214,9 @@
                     %>
                     <div class="form-control-static"><p data-fn="<%=name%>" data-ft="_review" class="repeated" data-item-class="label label-default"></p></div>
                 <%} else if ( rptd ) {%>
+                    <%
+                            name += ".";
+                    %>
                     <div class="form-control-static"><p data-fn="<%=name%>" data-ft="_review" class="repeated" data-item-class="label label-default"></p></div>
                 <%} else {%>
                     <div class="form-control-static" data-fn="<%=name%>" data-ft="_review"></div>
@@ -265,8 +267,7 @@
                 <%if ("fork".equals(type) || "pick".equals(type)) {%>
                     <%
                         String extr = "";
-                        String mode = "hsFork";
-                        String kind =  "_fork";
+                        String mode = "hsForkInit";
                         String kn   =    name ;
                         if (kn.endsWith("_id")) {
                             kn = kn.substring(0, kn.length() - 3);
@@ -275,10 +276,10 @@
                         }
                         if (rptd) {
                             name  = name + "."; // 多选末尾加点
-                            extr += " data-repeated=\"repeated\"";
+                            extr += " multiple=\"multiple\"";
                         }
                         if (rqrd) {
-                            extr += " data-required=\"required\"";
+                            extr += " required=\"required\"";
                         }
                         String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
                         String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") : "id";
@@ -323,33 +324,28 @@
                                 at = at + Cnst.ACT_EXT;
                             }
                         }
-                        kind += "\" data-ln=\""+ln+"\" data-tk=\""+tk+"\" data-vk=\""+vk+"\" data-at=\""+at
-                             +  "\" data-href=\""+rl+"\" data-target=\"";
-                        mode += "\" data-href=\""+al+"\" data-target=\"";
+                        extr += " data-ln=\""+ln+"\" data-tk=\""+tk+"\" data-vk=\""+vk+"\" data-at=\""+at+"\""
+                             +  " data-link-href=\""+rl+"\" data-link-target=\"\""
+                             +  " data-pick-href=\""+al+"\" data-pick-target=\"\"";
                     %>
-                    <input name="<%=name%>" type="hidden" class="form-final"/>
-                    <ul data-fn="<%=name%>" data-ft="<%=kind%>"<%=extr%> class="pickbox"></ul>
-                    <button type="button" class="btn btn-default form-control" data-toggle="<%=mode%>"><%=Synt.defxult(hold, _locale.translate("fore.fork.select", text))%></button>
+                    <input type="hidden" name="<%=name%>" data-toggle="<%=mode%>"<%=extr%> class="form-final"/>
                 <%} else if ("file".equals(type) || "image".equals(type) || "video".equals(type) || "audio".equals(type)) {%>
                     <%
                         String extr = "";
-                        String mode = "hsFile";
-                        String kind =  "_file";
+                        String mode = "hsFileInit";
                         String typa = (String) info.get("accept");
                         if (typa == null || typa.length() == 0) {
                             typa  = ! "file".equals(type) ? type+"/*" : "*/*";
                         }
                         if (rptd) {
                             name  = name + "."; // 多选末尾加点
-                            typa += "\" multiple=\"multiple";
-                            extr += " data-repeated=\"repeated\"";
+                            extr += " multiple=\"multiple\"";
                         }
                         if (rqrd) {
-                            extr += " data-required=\"required\"";
+                            extr += " required=\"required\"";
                         }
                         if ("image".equals(type)) {
-                            mode  = "hsView";
-                            kind  =  "_view";
+                            mode  = "hsViewInit";
                             String moda = Synt.declare(info.get("thumb-mode"), "");
                             String size = Synt.declare(info.get("thumb-size"), "");
                             if (rptd
@@ -379,12 +375,10 @@
                             } else {
                                 size = "150*150";
                             }
-                            kind += "\" data-size=\""+size+"\" data-mode=\""+moda;
+                            extr += " data-size=\""+size+"\" data-mode=\""+moda+"\"";
                         }
                     %>
-                    <input type="file" name="<%=name%>" accept="<%=typa%>" class="invisible"/>
-                    <ul data-fn="<%=name%>" data-ft="<%=kind%>"<%=extr%> class="pickbox"></ul>
-                    <button type="button" class="btn btn-default form-control" data-toggle="<%=mode%>"><%=Synt.defxult(hold, _locale.translate("fore.file.browse", text))%></button>
+                    <input type="file" name="<%=name%>" accept="<%=typa%>" data-toggle="<%=mode%>"<%=extr%> class="invisible"/>
                 <%} else if ("enum".equals(type) || "type".equals(type) || "select".equals(type)) {%>
                     <%
                         String extr = "";
@@ -462,11 +456,11 @@
                         String fset = Synt.declare(info.get("offset"),   ""  );
                         String extr = " data-type=\""+typa +"\" data-format=\""+fomt+"\" data-offset=\""+fset+"\" data-toggle=\"hsDate\"";
                         if (rqrd) {
-                        if ("time".equals(typa)
-                        ||  "date".equals(typa)) {
-                            extr += " data-fill=\"v ? v : new Date().getTime()\"";
-                        } else {
+                        if ("timestamp".equals(typa)
+                        ||  "datestamp".equals(typa)) {
                             extr += " data-fill=\"v ? v : new Date().getTime()/1000\"";
+                        } else {
+                            extr += " data-fill=\"v ? v : new Date().getTime()\"";
                         }
                             extr += " required=\"required\"";
                         }
@@ -480,43 +474,27 @@
                         if (rqrd) {
                             extr += " required=\"required\"";
                         }
-                        if (rptd) {
-                            extr += " multiple=\"multiple\"";
-                            extr += " data-toggle=\"hsBags\"";
-                            name += "." ;
-                        }
                         if (info.containsKey("min" )) extr += " min=\"" +info.get("min" ).toString()+"\"";
                         if (info.containsKey("max" )) extr += " max=\"" +info.get("max" ).toString()+"\"";
                         if (info.containsKey("step")) extr += " step=\""+info.get("step").toString()+"\"";
-                        if ("sorted".equals(type)) type = "number";
-                    %>
-                    <input class="form-field form-control" type="<%=type%>" name="<%=name%>" placeholder="<%=hold%>"<%=extr%>/>
-                <%} else if ("string".equals(type) || "stored".equals(type) || "search".equals(type) || "text".equals(type) || "email".equals(type) || "url".equals(type) || "tel".equals(type) || "sms".equals(type)) {%>
-                    <%
-                        String extr = "";
-                        if (rqrd) {
-                            extr += " required=\"required\"";
-                        }
-                        if (rptd) {
-                            extr += " multiple=\"multiple\"";
-                            extr += " data-toggle=\"hsBags\"";
-                            name += "." ;
-                        }
-                        if (info.containsKey("minlength")) extr += " minlength=\""+info.get("minlength").toString()+"\"";
-                        if (info.containsKey("maxlength")) extr += " maxlength=\""+info.get("maxlength").toString()+"\"";
-                        if (info.containsKey("pattern"  )) extr += " pattern=\""  +info.get("pattern"  ).toString()+"\"";
-                        if ("string".equals(type) || "stored".equals(type) || "search".equals(type)) type = "text";
+                        if (! type.matches("range|color")) type = "number";
                     %>
                     <input class="form-field form-control" type="<%=type%>" name="<%=name%>" placeholder="<%=hold%>"<%=extr%>/>
                 <%} else {%>
                     <%
                         String extr = "";
-                        if (rptd) {
-                            extr += " multiple=\"multiple\"";
-                        }
                         if (rqrd) {
                             extr += " required=\"required\"";
                         }
+                        if (rptd) {
+                            extr += " multiple=\"multiple\"";
+                            extr += " data-toggle=\"hsDits\"";
+                            name += "." ;
+                        }
+                        if (info.containsKey("minlength")) extr += " minlength=\""+info.get("minlength").toString()+"\"";
+                        if (info.containsKey("maxlength")) extr += " maxlength=\""+info.get("maxlength").toString()+"\"";
+                        if (info.containsKey("pattern"  )) extr += " pattern=\""  +info.get("pattern"  ).toString()+"\"";
+                        if (! type.matches("email|url|tel|sms")) type = "text";
                     %>
                     <input class="form-field form-control" type="<%=type%>" name="<%=name%>" placeholder="<%=hold%>"<%=extr%>/>
                 <%} /*End If */%>

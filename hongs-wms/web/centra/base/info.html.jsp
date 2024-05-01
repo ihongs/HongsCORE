@@ -118,8 +118,7 @@
                         kind += "\" data-ln=\""+ln+"\" data-tk=\""+tk+"\" data-vk=\""+vk
                              +  "\" data-href=\""+rl+"\" data-target=\"@";
                     %>
-                    <ul class="pickbox pickrol" data-fn="<%=name%>" data-ft="<%=kind%>"<%=extr%>></ul>
-                    <button type="button" class="hide" data-toggle="<%=mode%>"></button>
+                    <ul class="repeated forkbox" data-fn="<%=name%>" data-ft="<%=kind%>"<%=extr%> data-readonly="readonly"></ul>
                 <%} else if ("file".equals(type) || "image".equals(type) || "video".equals(type) || "audio".equals(type)) {%>
                     <%
                         String extr = "";
@@ -164,7 +163,7 @@
                             kind += "\" data-size=\""+size+"\" data-mode=\""+moda;
                         }
                     %>
-                    <ul class="pickbox pickrol" data-fn="<%=name%>" data-ft="<%=kind%>"<%=extr%>></ul>
+                    <ul class="repeated filebox" data-fn="<%=name%>" data-ft="<%=kind%>"<%=extr%> data-readonly="readonly"></ul>
                     <button type="button" class="hide" data-toggle="<%=mode%>"></button>
                 <%} else if ("textarea".equals(type) || "textview".equals(type)) {%>
                     <%
@@ -213,6 +212,9 @@
                     %>
                     <div class="form-control-static"><p data-fn="<%=name%>" data-ft="_review" class="repeated" data-item-class="label label-default"></p></div>
                 <%} else if ( rptd ) {%>
+                    <%
+                            name += ".";
+                    %>
                     <div class="form-control-static"><p data-fn="<%=name%>" data-ft="_review" class="repeated" data-item-class="label label-default"></p></div>
                 <%} else {%>
                     <div class="form-control-static" data-fn="<%=name%>" data-ft="_review"></div>

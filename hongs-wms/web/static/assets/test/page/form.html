@@ -60,14 +60,6 @@
                     <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
                     <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"></div>
                 </div>
-                <div class="form-group row">
-                    <label class="col-sm-3 col-md-2 control-label form-control-static text-right">标签</label>
-                    <div class="col-sm-9 col-md-8">
-                        <input type="hidden" name="tags." class="form-field" data-toggle="hsBags" multiple="multiple">
-                    </div>
-                    <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
-                    <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"></div>
-                </div>
                 <div class="form-group row dont-close">
                     <label class="col-sm-3 col-md-2 control-label form-control-static text-right">日期</label>
                     <div class="col-sm-9 col-md-8">
@@ -86,11 +78,21 @@
                     <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"></div>
                 </div>
                 <div class="form-group row">
+                    <label class="col-sm-3 col-md-2 control-label form-control-static text-right">标签</label>
+                    <div class="col-sm-9 col-md-8">
+                        <input type="hidden" name="tags." class="form-field" data-toggle="hsDits" multiple="multiple" placeholder="输入标签...">
+                    </div>
+                    <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
+                    <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"></div>
+                </div>
+                <div class="form-group row">
                     <label class="col-sm-3 col-md-2 control-label form-control-static text-right">关联</label>
                     <div class="col-sm-9 col-md-8">
-                        <input name="sect_id" type="hidden" class="form-final"/>
-                        <ul data-fn="sect_id" data-ft="_fork" data-ln="section" data-tk="name" data-vk="id" class="pickbox" data-required="required" data-unpicked-error="尚未选择分类"></ul>
-                        <button type="button" class="btn btn-default form-control" data-toggle="hsFork" data-target="@" data-href="page/pick.html">选择分类</button>
+                        <input name="sect_id" type="hidden" class="form-final"
+                               data-toggle="hsPickInit" data-ln="section" data-tk="name" data-vk="id"
+                               data-pick-target="@" data-pick-href="page/pick.html"
+                               data-link-target="@" data-link-href="page/info.html"
+                               required="required" placeholder="选择关联..."/>
                     </div>
                     <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
                     <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"></div>
@@ -99,9 +101,9 @@
                     <label class="col-sm-3 col-md-2 control-label form-control-static text-right">文件</label>
                     <div class="col-sm-9 col-md-8">
                         <input name="file." type="hidden" class="form-final"/>
-                        <input name="file." type="file" class="invisible"/>
-                        <ul data-fn="file." data-ft="_file" class="pickbox" data-required="required" data-unpicked-error="尚未选择附件"></ul>
-                        <button type="button" class="btn btn-default form-control" data-toggle="hsFile">选择附件</button>
+                        <input name="file." type="file" class="invisible"
+                               data-toggle="hsFileInit"
+                               required="required" placeholder="选择附件..."/>
                     </div>
                     <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
                     <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"></div>
@@ -110,9 +112,9 @@
                     <label class="col-sm-3 col-md-2 control-label form-control-static text-right">图片</label>
                     <div class="col-sm-9 col-md-8">
                         <input name="snap." type="hidden" class="form-final"/>
-                        <input name="snap." type="file" class="invisible" accept="image/*"/>
-                        <ul data-fn="snap." data-ft="_view" data-size="100*100" class="pickbox" data-required="required" data-unpicked-error="尚未选择图片"></ul>
-                        <button type="button" class="btn btn-default form-control" data-toggle="hsView">选择图片</button>
+                        <input name="snap." type="file" class="invisible" accept="image/*"
+                               data-toggle="hsViewInit" data-size="100*100" data-mode="pick"
+                               required="required" placeholder="选择图片..."/>
                     </div>
                     <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
                     <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"></div>

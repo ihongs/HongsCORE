@@ -739,6 +739,7 @@ function hsFormFillPart(box, v, n) {
                     box.addClass ("loadbox");
                     box.data("info", v);
                     box.append(dom);
+                    dom.hsReady ( );
                     btn.remove();
                     btr.remove();
                     return;

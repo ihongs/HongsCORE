@@ -343,7 +343,7 @@
                   +   '<a href="javascript:;"></a>'
                   + '</div>'
                 );
-                box.insertBefore(inp).append(inp);
+                box.insertBefore(inp).prepend(inp);
                 if (! inp.is(":hidden") )
                 inp.addClass("invisible");
 
@@ -351,8 +351,8 @@
                 var lnk = box.children("a" );
 
                 // 选取
-                lnk.attr("data-toggle", "hsFile");
-                lnk.text(inp.attr("placeholder") || hsGetLang("pick.select"));
+                lnk.attr("data-toggle","hsFile");
+                lnk.text(inp.attr("placeholder") || hsGetLang("file.browse"));
 
                 // 填充和校验
                 lis.attr("data-fn"    , inp.attr("name") || "" );
@@ -392,14 +392,14 @@
                   +   '<a href="javascript:;"></a>'
                   + '</div>'
                 );
-                box.insertBefore(inp).append(inp);
+                box.insertBefore(inp).prepend(inp);
 
                 var lis = box.children("ul");
                 var lnk = box.children("a" );
 
                 // 选取
-                lnk.attr("data-toggle", "hsView");
-                lnk.text(inp.attr("placeholder") || hsGetLang("pick.select"));
+                lnk.attr("data-toggle","hsView");
+                lnk.text(inp.attr("placeholder") || hsGetLang("file.browse"));
 
                 // 填充和校验
                 lis.attr("data-fn"    , inp.attr("name") || "" );

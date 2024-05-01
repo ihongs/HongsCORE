@@ -824,7 +824,7 @@ function hsFormTestPart(box) {
                   +   '<a href="javascript:;"></a>'
                   + '</div>'
                 );
-                box.insertBefore(inp).append(inp);
+                box.insertBefore(inp).prepend(inp);
                 if (! inp.is(":hidden") )
                 inp.addClass("invisible");
 
@@ -835,7 +835,7 @@ function hsFormTestPart(box) {
                 lnk.attr("data-toggle", "hsFork");
                 lnk.attr("data-href"  , inp.attr("data-pick-href"  ) || "");
                 lnk.attr("data-target", inp.attr("data-pick-target") || "");
-                lnk.text( inp.attr("placeholder") || hsGetLang ("pick.select") );
+                lnk.text( inp.attr("placeholder") || hsGetLang ("fork.select") );
 
                 // 填充和校验
                 lis.attr("data-fn"    , inp.attr("name"   ) || "");

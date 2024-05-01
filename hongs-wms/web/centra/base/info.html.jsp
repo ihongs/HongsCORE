@@ -118,7 +118,9 @@
                         kind += "\" data-ln=\""+ln+"\" data-tk=\""+tk+"\" data-vk=\""+vk
                              +  "\" data-href=\""+rl+"\" data-target=\"@";
                     %>
-                    <ul class="repeated forkbox" data-fn="<%=name%>" data-ft="<%=kind%>"<%=extr%> data-readonly="readonly"></ul>
+                    <div class="form-control-static">
+                        <ul class="repeated forkbox" data-fn="<%=name%>" data-ft="<%=kind%>"<%=extr%> data-readonly="readonly"></ul>
+                    </div>
                 <%} else if ("file".equals(type) || "image".equals(type) || "video".equals(type) || "audio".equals(type)) {%>
                     <%
                         String extr = "";
@@ -163,8 +165,9 @@
                             kind += "\" data-size=\""+size+"\" data-mode=\""+moda;
                         }
                     %>
-                    <ul class="repeated filebox" data-fn="<%=name%>" data-ft="<%=kind%>"<%=extr%> data-readonly="readonly"></ul>
-                    <button type="button" class="hide" data-toggle="<%=mode%>"></button>
+                    <div class="form-control-static">
+                        <ul class="repeated filebox" data-fn="<%=name%>" data-ft="<%=kind%>"<%=extr%> data-readonly="readonly"></ul>
+                    </div>
                 <%} else if ("textarea".equals(type) || "textview".equals(type)) {%>
                     <%
                         String typa = (String) info.get("type");

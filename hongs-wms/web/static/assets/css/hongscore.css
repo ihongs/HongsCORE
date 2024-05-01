@@ -940,6 +940,9 @@ ol.repeated ,
     margin : 0 4px 4px 0;
     padding: 2px 8px 2px 8px;
 }
+.form-control .preview {
+    margin : 0 4px 4px 0;
+}
 .form-control .label .pull-left  {
     margin : 1px 4px 0 -4px;
 }
@@ -950,7 +953,7 @@ ol.repeated ,
     margin : 2px 4px -2px 0;
 }
 .repeated.filebox .label span ,
-.repeated[data-href] .label span {
+.repeated.forkbox .label span {
     cursor : pointer;
 }
 

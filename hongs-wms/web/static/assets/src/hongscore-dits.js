@@ -40,7 +40,7 @@
                   +   '<input class="input" type="'+ft+'"/>'
                   + '</div>'
                 );
-                box.insertBefore(inp).append(inp);
+                box.insertBefore(inp).prepend(inp);
                 if (! inp.is(":hidden") )
                 inp.addClass("invisible");
 
@@ -56,10 +56,11 @@
                 } else
                 // 添加隐藏字段
                 if (inp.is("[multiple]")) {
-                    lsp.attr("data-fn",  fn   );
-                    lsp.attr("data-ft","_dits");
+                    lsp.find(".value")
+                       .attr("name"   , fn);
+                    lsp.attr("data-fn", fn);
                     // 直接填充, 不从 input 读取
-                    lsp.data("fill", function(x, v) { hsDitsFill(this, v) });
+                    lsp.data("fill", function(x,v) {hsDitsFill(this,v);});
                     // 校验相关, 无需 input 校验和填充
                     if (inp.prop("required" )) {
                         lsp.attr("data-required" , "required");

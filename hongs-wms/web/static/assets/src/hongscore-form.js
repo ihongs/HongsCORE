@@ -606,9 +606,9 @@ HsForm.prototype = {
         }
     },
     setError : function(inp, err) {
-        var grp = inp.closest (".form-group");
-        var blk = grp.children(".text-error");
-        var lab = grp.children(".form-label, label");
+        var grp = inp.closest(".form-group");
+        var blk = grp.hsFind (grp.data("formError") || ".form-erorr,"+".text-error");
+        var lab = grp.hsFind (grp.data("formLabel") || ".form-label,.control-label");
 
         // 补充消息区域
         if (blk.size() == 0) {
@@ -696,8 +696,8 @@ HsForm.prototype = {
             // 写入列表选项
             for(i = 0; i < v.length; i ++) {
                 c = v[i];
-                if (jQuery.isPlainObject (c)
-                ||  jQuery.isArray (c) ) {
+                if (jQuery.isPlainObject( c )
+                ||  jQuery.isArray( c )) {
                     e = c[t];
                     c = c[k];
                 } else {
@@ -707,10 +707,10 @@ HsForm.prototype = {
                     }
                 }
 
-                x.text(/* label */  e);
-                x.attr(  "title"  , e);
-                x.attr("data-code", c);
-                inp.append(x.clone( ));
+                x.text( e );
+                x.attr("title", e );
+                x.attr("data-value", c );
+                inp.append( x.clone( ) );
             }
 
             return;

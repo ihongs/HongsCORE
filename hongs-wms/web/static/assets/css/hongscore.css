@@ -944,17 +944,20 @@ ol.repeated ,
     margin : 0 4px 4px 0;
 }
 .form-control .label .pull-left  {
-    margin : 1px 4px 0 -4px;
+    margin : 0 4px 0 -4px;
 }
 .form-control .label .pull-right {
-    margin : 1px -4px 0 4px;
+    margin : 0 -4px 0 4px;
 }
 .form-control .repeated {
     margin : 2px 4px -2px 0;
 }
-.repeated.filebox .label span ,
-.repeated.forkbox .label span {
+.repeated.forkbox .label span ,
+.repeated.filebox .label span {
     cursor : pointer;
+}
+.repeated.filebox .label input {
+    float  : left; /* 规避同时存在 file 和 hidden 会偏移的问题 */
 }
 
 /** 选择 **/
@@ -1050,6 +1053,9 @@ ul.pickmul + * ,
 .preview .close:hover ,
 .preview .close:focus {
     box-shadow: 0 0 0.5em #000;
+}
+.repeated .preview {
+    display: inline-block;
 }
 
 /** 时间 **/

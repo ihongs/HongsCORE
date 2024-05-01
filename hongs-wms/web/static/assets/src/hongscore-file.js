@@ -93,7 +93,7 @@
             if (this[0].filez && this[0].filez.length) txt = this[0].filez[0].name;
             if (this[0].files && this[0].files.length) txt = this[0].files[0].name;
         }
-        var ico = box.data("fileIcon") || "bi bi-hi-file";
+        var ico = box.data("upIcon") || "bi bi-arrow-up-circle";
         var ent = _fileTemp(box).clone();
 
         ent.find(".icon" ).addClass(ico);
@@ -122,7 +122,7 @@
         var inp = $('<input type="hidden"/>').attr( 'name', nam ).val( src );
         var txt = /^data:/.test( src ) ? ''
                 : decodeURIComponent(src.replace(/^.*[\/\\]/, ''));
-        var ico = box.data("linkIcon") || "bi bi-hi-link";
+        var ico = box.data("dnIcon") || "" ;
         var ent = _fileTemp(box).clone();
 
         ent.find(".icon" ).addClass(ico);
@@ -131,7 +131,7 @@
         ent.data( "value", src );
         box.append(ent);
         if (! box.is("[data-readonly]")) {
-            box.append(inp);
+            ent.append(inp);
         }
 
         return ent;

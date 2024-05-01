@@ -299,18 +299,41 @@ function hsFormForkData(box, v) {
  */
 function hsFormFillPick(box, v, n) {
     if (! n ) n = box.data( "fn" );
-    var rol = box.is  (".pickrol")
-        || !! box.data("readonly");
-    var mul = box.is  (".pickmul")
-        || !! box.data("repeated")
-        || !! box.data("multiple")
-        || /(\[\]|\.\.|\.$)/.test(n);
-    var btn = box.siblings("[data-toggle=hsPick],[data-toggle=hsFork]");
-    if (btn.size() === 0) {
-        btn = box.children("[data-toggle=hsPick],[data-toggle=hsFork]");
-    }
+    var rol = box.is("[data-readonly]");
+    var mul = box.is("[data-multiple]")
+           || /(\[\]|\.\.|\.$)/.test(n);
 
-    box.toggleClass ("pickmul", mul);
+    var tmp = box.data("template");
+    if (! tmp) {
+        tmp = box.children(".template")
+              .detach ( )
+              .removeClass( "template");
+        if (! tmp.size()) {
+            //throw new Error("hsFormFillPick: template not found");
+            tmp = jQuery(
+                '<li class="label">'
+              +   '<i class="erase pull-right bi bi-x"></i>'
+              +   '<span  class="title"></span>'
+              +   '<input class="value" type="hidden"/>'
+              + '</li>'
+            );
+            if (! rol) {
+                var nam = box.data( "fn" );
+                tmp.addClass("label-info")
+                   .find(".value").attr("name", nam);
+            } else {
+                tmp.addClass("label-default")
+                   .find(".value, .erase").remove( );
+            }
+        }
+        box.data("template",tmp);
+    }
+    box.children().not("[data-toggle]").remove();
+
+    var btn = box.children("[data-toggle=hsPick],[data-toggle=hsFork]");
+    if (btn.size() === 0) {
+        btn = box.siblings("[data-toggle=hsPick],[data-toggle=hsFork]");
+    }
 
     // 表单初始化载入时需从关联数据提取选项对象
     if (this._info) {
@@ -351,123 +374,62 @@ function hsFormFillPick(box, v, n) {
         v = {};
     }
 
-    function reset(btn, box) {
-        var txt = btn.data("txt");
-        var cls = btn.data("cls");
-        btn.text(txt);
-        box.val ( "");
-        box.attr( "title" , ""  );
-        btn.attr( "class" , cls );
-    }
-    function inset(btn, box, val, txt) {
-        btn.text(txt);
-        box.val (val);
-        box.attr( "title" , txt );
-        btn.addClass("btn-info" );
-        btn.append('<span class="close pull-right">&times;</span>');
-    }
-    function doset(box, val, txt, cls) {
-        var tms = "&times;";
-        jQuery('<li class="' + cls[0] + '"></li>')
-           .append(jQuery('<span class="' + cls[1] + '"></span>' ))
-           .append(jQuery('<span class="close"></span>').html(tms))
-           .append(jQuery('<span class="title"></span>').text(txt))
-           .append(jQuery('<input type="hidden">').attr("name", n).val(val))
-           .attr  ("title" , txt)
-           .appendTo(box);
-    }
-
-    if (box.is("input") ) {
-        if (! btn.data("pickInited")) {
-            btn.data("pickInited", 1);
-            btn.data("txt", btn.text( /***/ ));
-            btn.data("cls", btn.attr("class"));
-            btn.on("click", ".close", [btn, box], function(evt) {
-                var btn = evt.data[0];
-                var box = evt.data[1];
-                var val = box.val ( );
-                delete  v [val];
-                reset(box, btn);
-                box.trigger("change");
-                return false;
-            });
-        }
-
-        if (! jQuery.isEmptyObject(v) ) {
-            for(var val in v) {
-                var arr  = v[val];
-                var txt  = arr[0];
-                inset(btn, box, val, txt);
-            }
-        } else {
-                reset(btn, box /*reset*/);
-        }
+    if (! jQuery.isEmptyObject(v) ) {
+        if (! mul) btn.hide();
     } else {
-        if (! box.data("pickInited")) {
-            box.data("pickInited", 1);
-            box.on("click", ".close", [btn, box], function(evt) {
-                var btn = evt.data[0];
-                var box = evt.data[1];
-                var opt = jQuery( this ).closest( "li" );
-                var val = opt.find("input:hidden").val();
-                delete  v [val];
-                opt.remove();
-                btn. show ();
-                box.trigger("change");
-                return false;
-            });
-            box.on("click", "li:not([data-toggle])", [btn, box], function(evt) {
-                var btn = evt.data[0];
-                var box = evt.data[1];
-                var opt = jQuery( this ).closest( "li" );
-                var val = opt.find("input:hidden").val();
-                var key = box.attr("data-vk" )||( "id" );
-                var url = box.attr("data-href"  );
-                var rel = box.attr("data-target");
-                if (url === "-" || rel === "-"
-                ||  evt.isDefaultPrevented() ) {
-                    return; // 可阻止默认行为
-                }
-                if (url) {
-                    url = hsSetParam ( url , key , val );
-                    if (! rel) {
-                     jQuery.hsOpen(url);
-                    } else {
-                        box.hsFind(rel)
-                           .hsOpen(url);
-                    }
+        if (! rol) btn.show();
+    }
+
+    // 逐条写入已选项, .erase,.title,.value 用于标识删除,名称,取值
+    for(var val in v) {
+        var arr  = v[val];
+        var txt  = arr[0];
+        var ent  = tmp.clone().appendTo(box);
+        ent.find(".title").text(txt);
+        ent.find(".value").val (val);
+        ent.attr( "title", txt );
+    }
+
+    // 初始化绑定事件, 处理删除和查看
+    if (! box.data("pickInited")) {
+        box.data("pickInited", 1);
+        box.on("click", ".erase,.close", [btn, box], function(evt) {
+            var btn = evt.data[0];
+            var box = evt.data[1];
+            var opt = jQuery( this ).closest( "li" );
+            var val = opt.find("input:hidden").val();
+            delete  v [val];
+            opt.remove();
+            btn. show ();
+            box.trigger("change");
+            return false;
+        });
+        box.on("click", "li:not([data-toggle])", [btn, box], function(evt) {
+            var btn = evt.data[0];
+            var box = evt.data[1];
+            var opt = jQuery( this ).closest( "li" );
+            var val = opt.find("input:hidden").val();
+            var key = box.attr("data-vk" )||( "id" );
+            var url = box.attr("data-href"  );
+            var rel = box.attr("data-target");
+            if (url === "-" || rel === "-"
+            ||  evt.isDefaultPrevented() ) {
+                return; // 可阻止默认行为
+            }
+            if (url) {
+                url = hsSetParam ( url , key , val );
+                if (! rel) {
+                 jQuery.hsOpen(url);
                 } else {
-                    if (! rol && ! mul) {
-                        btn.click (   );
-                    }
+                    box.hsFind(rel)
+                       .hsOpen(url);
                 }
-            });
-        }
-
-        if (! jQuery.isEmptyObject(v) ) {
-            if (! mul) btn.hide();
-        } else {
-            if (! rol) btn.show();
-        }
-
-        // 按钮及图标样式
-        var cls = [];
-        if (box.attr('data-href')) {
-            cls[0] = rol ? "btn btn-link"  : "btn btn-info from-control";
-            cls[1] = rol ? "bi bi-hi-fork" : "bi bi-hi-fork";
-        } else {
-            cls[0] = rol ? "btn btn-text"  : "btn btn-info form-control";
-            cls[1] = rol ? "bi bi-hi-fork" : "bi bi-hi-fork";
-        }
-        cls[0] = box.attr("data-item-class") || cls[0];
-        cls[1] = box.attr("data-icon-class") || cls[1];
-
-        box.children().not("[data-toggle]" ).remove( );
-        for(var val in v) {
-            var arr  = v[val];
-            var txt  = arr[0];
-            doset(box, val, txt, cls);
-        }
+            } else {
+                if (! rol && ! mul) {
+                    btn.click (   );
+                }
+            }
+        });
     }
 }
 
@@ -708,6 +670,7 @@ function hsFormFillPart(box, v, n) {
         mod.formBox= htx ;
         btx.appendTo(htx);
         htx.appendTo(box);
+        htx.hsReady (   );
         mod.fillEnfo(enf);
         mod.fillInfo(inf);
     };
@@ -826,6 +789,63 @@ function hsFormTestPart(box) {
 
 (function($) {
     $(document)
+    .on("hsReady", function(e) {
+        $(e.target)
+        .find("[data-toggle=hsPickInit],[data-toggle=hsForkInit]")
+        .each(function() {
+            var inp = $(this);
+            var box = inp.siblings("ul");
+            if (! box.size()) {
+                box = $(
+                    '<div class="labeled form-control">'
+                  +   '<ul></ul>'
+                  +   '<a href="javascript:;"></a>'
+                  + '</div>'
+                );
+                box.insertAfter(inp).append(inp);
+
+                var lis = box.children("ul");
+                var lnk = box.children("a" );
+
+                // 选取
+                lnk.attr("data-toggle", "hsFork");
+                lnk.attr("data-href"  , inp.attr("data-pick-href"  ) || "");
+                lnk.attr("data-target", inp.attr("data-pick-target") || "");
+                lnk.text( inp.attr("placeholder") || hsGetLang ("pick.select") );
+
+                // 填充和校验
+                lis.attr("data-fn"    , inp.attr("name"   ) || "");
+                lis.attr("data-ln"    , inp.attr("data-ln") || "");
+                lis.attr("data-vk"    , inp.attr("data-vk") || "");
+                lis.attr("data-tk"    , inp.attr("data-tk") || "");
+                lis.attr("data-ft"    , inp.attr("data-form-ft"    ) || "_fork");
+                lis.attr("data-href"  , inp.attr("data-link-href"  ) || "");
+                lis.attr("data-target", inp.attr("data-link-target") || "");
+                if (inp.attr("data-minrepeat")) {
+                    lis.attr("data-minrepeat" , inp.attr("data-maxrepeat"));
+                }
+                if (inp.attr("data-maxrepeat")) {
+                    lis.attr("data-maxrepeat" , inp.attr("data-maxrepeat"));
+                }
+
+                // 必选多选和只读等
+                if (inp.is("[required]")) {
+                    lis.attr("data-required", "required");
+                }
+                if (inp.is("[multiple]")) {
+                    lis.attr("data-multiple", "multiple");
+                }
+                if (inp.is("[readonly]")) {
+                    lis.attr("data-readonly", "readonly");
+                    box.find("a").remove( );
+                }
+
+                inp.removeAttr("required" );
+                inp.removeAttr("placeholder");
+                inp.removeAttr("data-toggle");
+            }
+        });
+    })
     .on("click", "[data-toggle=hsPick],[data-toggle=hsFork]",
     function() {
         var url = $(this).data( "href" )

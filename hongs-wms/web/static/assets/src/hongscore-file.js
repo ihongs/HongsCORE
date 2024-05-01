@@ -14,6 +14,65 @@
 
 (function($) {
 
+    function _fileTemp(box) {
+        var tmp = box.data("template");
+        if (tmp) {
+            return tmp;
+        }
+
+        tmp = box.children(".template")
+              .detach()
+              .removeClass( "template");
+        if (tmp.size()) {
+            box.data( "template", tmp );
+            return tmp;
+        }
+
+        tmp = $(
+            '<li  class="label">'
+          +   '<i class="erase pull-right bi bi-x"></i>'
+          +   '<i class="icon  pull-left "></i>'
+          +   '<span  class="title"></span>'
+          + '</li>'
+        );
+        if (box.is("[data-readonly]")) {
+            tmp.addClass("label-default")
+               .find(".value, .erase").remove( );
+        } else {
+            var nam = box.data( "fn" );
+            tmp.addClass("label-info")
+               .find(".value").attr("name", nam);
+        }
+        box.data("template", tmp);
+        return tmp;
+    }
+
+    function _viewTemp(box) {
+        var tmp = box.data("template");
+        if (tmp) {
+            return tmp;
+        }
+
+        tmp = box.children(".template")
+              .detach()
+              .removeClass( "template");
+        if (tmp.size()) {
+            box.data( "template", tmp );
+            return tmp;
+        }
+
+        tmp = $(
+            '<li class="preview" style="overflow: hidden;">'
+          +   '<a class="close" style="z-index: 1;" href="javascript:;">&times;</i>'
+          + '</li>'
+        );
+        if (box.is("[data-readonly]")) {
+            tmp.find(".close").remove( );
+        }
+        box.data("template", tmp);
+        return tmp;
+    }
+
     /**
      * 选取文件
      * @param {Element} box 文件列表区域
@@ -25,25 +84,26 @@
             return;
         }
             box = $(box );
-        var txt = /^data:/.test (src) ? ''
+        var inp = $(this);
+        inp.after(inp.clone().val('')) ;
+        var txt = /^data:/.test( src ) ? ''
                 : decodeURIComponent(src.replace(/^.*[\/\\]/, ''));
         if (txt === '') { // 通过文件对象获取文件名称
             if (this[0].filez && this[0].filez.length) txt = this[0].filez[0].name;
             if (this[0].files && this[0].files.length) txt = this[0].files[0].name;
         }
-        var clz = box.is(".pickrol" ) ? '' : "bi bi-hi-file";
-        var cls = box.is(".pickrol" ) ? "btn btn-link" : "btn btn-info";
-        var inp = $(this).after(
-                  $(this).clone(    ).val (''));
-        var lab = $('<span></span>' ).text(txt);
-        var div = $( '<li class="' + cls + ' form-control"></li>' )
-                  .attr("title", txt)
-           .append('<span class="close pull-right">&times;</span>')
-           .append('<span class="' + clz + '"></span>')
-           .append(lab)
-           .append(inp);
-        box.append(div);
-        return div;
+        var ico = box.data("fileIcon") || "bi bi-hi-file";
+        var ent = _fileTemp(box).clone();
+
+        ent.find(".icon" ).addClass(ico);
+        ent.find(".title").text(txt);
+        ent.attr( "title", txt );
+        box.append(ent);
+        if (! box.is("[data-readonly]")) {
+            ent.append(inp);
+        }
+
+        return ent;
     };
 
     /**
@@ -57,21 +117,21 @@
             return;
         }
         var box = $(this);
-        var txt = /^data:/.test (src) ? ''
+        var inp = $('<input type="hidden"/>').attr( 'name', nam ).val( src );
+        var txt = /^data:/.test( src ) ? ''
                 : decodeURIComponent(src.replace(/^.*[\/\\]/, ''));
-        var clz = box.is(".pickrol" ) ? '' : "bi bi-hi-file";
-        var cls = box.is(".pickrol" ) ? "btn btn-link" : "btn btn-info";
-        var inp = $('<input  type="hidden" />')
-                  .attr('name' , nam). val(src);
-        var lab = $('<span></span>' ).text(txt);
-        var div = $( '<li class="' + cls + ' form-control"></li>' )
-                  .attr("title", txt)
-           .append('<span class="close pull-right">&times;</span>')
-           .append('<span class="' + clz + '"></span>')
-           .append(lab)
-           .append(inp);
-        box.append(div);
-        return div;
+        var ico = box.data("linkIcon") || "bi bi-hi-link";
+        var ent = _fileTemp(box).clone();
+
+        ent.find(".icon" ).addClass(ico);
+        ent.find(".title").text(txt);
+        ent.attr( "title", txt );
+        box.append(ent);
+        if (! box.is("[data-readonly]")) {
+            box.append(inp);
+        }
+
+        return ent;
     };
 
     //** 预览图片 **/
@@ -89,27 +149,26 @@
         if (! src ) {
             return;
         }
-        $(this).before($(this).clone().val(''));
             box = $(box );
         var inp = $(this);
+        inp.after(inp.clone().val('')) ;
         var txt = /^data:/.test( src ) ? ''
-                  : decodeURIComponent(src.replace(/^.*[\/\\]/, ''));
+                : decodeURIComponent(src.replace(/^.*[\/\\]/, ''));
         if (txt === '') { // 通过文件对象获取文件名称
             if (this[0].filez && this[0].filez.length) txt = this[0].filez[0].name;
             if (this[0].files && this[0].files.length) txt = this[0].files[0].name;
         }
-        var div = $('<li class="preview"></li>').attr("title" , txt)
-           .css({width: w+'px', height: h+'px', overflow: 'hidden'});
+        var enp = _viewTemp(box).clone().css({width: w+'px', height: h+'px'});
 
         // 非保留和截取时为图片自身尺寸
-        var cal ;
+        var cal = undefined;
         if (!k) {
             cal = function() {
                 var w = this.width ;
                 var h = this.height;
                 var img = $( this );
                 img.css({top  :  "0px", left  :  "0px"});
-                div.css({width: w+'px', height: h+'px'});
+                enp.css({width: w+'px', height: h+'px'});
             };
         }
 
@@ -117,11 +176,13 @@
                 ? $.hsPickSnap(src, w, h, cal)
                 : $.hsKeepSnap(src, w, h, cal);
 
-        div.append(inp)
-           .append(img)
-           .append('<a href="javascript:;" class="close">&times;</a>');
-        box.append(div);
-        return div;
+        box.append(enp);
+        enp.append(img);
+        if (! box.is("[data-readonly]")) {
+            enp.append(inp);
+        }
+
+        return enp;
     };
 
     /**
@@ -138,22 +199,20 @@
             return;
         }
         var box = $(this);
-        var inp = $('<input  type="hidden" />')
-                   .attr('name', nam ).val(src);
+        var inp = $('<input type="hidden"/>').attr( 'name', nam ).val( src );
         var txt = /^data:/.test( src ) ? ''
-                  : decodeURIComponent(src.replace(/^.*[\/\\]/, ''));
-        var div = $('<li class="preview"></li>').attr("title" , txt)
-           .css({width: w+'px', height: h+'px', overflow: 'hidden'});
+                : decodeURIComponent(src.replace(/^.*[\/\\]/, ''));
+        var enp = _viewTemp(box).clone().css({width: w+'px', height: h+'px'});
 
         // 非保留和截取时为图片自身尺寸
-        var cal ;
+        var cal = undefined;
         if (!k) {
             cal = function() {
                 var w = this.width ;
                 var h = this.height;
                 var img = $( this );
                 img.css({top  :  "0px", left  :  "0px"});
-                div.css({width: w+'px', height: h+'px'});
+                enp.css({width: w+'px', height: h+'px'});
             };
         }
 
@@ -161,11 +220,13 @@
                 ? $.hsPickSnap(src, w, h, cal)
                 : $.hsKeepSnap(src, w, h, cal);
 
-        div.append(inp)
-           .append(img)
-           .append('<a href="javascript:;" class="close">&times;</a>');
-        box.append(div);
-        return div;
+        box.append(enp);
+        enp.append(img);
+        if (! box.is("[data-readonly]")) {
+            enp.append(inp);
+        }
+
+        return enp;
     };
 
     //** 预览辅助 **/
@@ -262,14 +323,115 @@
     };
 
     /**
+     * 控件构建及初始化
+     */
+    $(document).on("hsReady", function(e) {
+        $(e.target).find("[data-toggle=hsFileInit]").each(function() {
+            var inp = $(this);
+            var box = inp.siblings("ul");
+            if (! box.size()) {
+                box = $(
+                    '<div class="filebox labeled form-control">'
+                  +   '<ul></ul>'
+                  +   '<a href="javascript:;"></a>'
+                  + '</div>'
+                );
+                box.insertAfter(inp).append(inp);
+
+                var lis = box.children("ul");
+                var lnk = box.children("a" );
+
+                // 选取
+                lnk.attr("data-toggle", "hsFile");
+                lnk.text(inp.attr("placeholder") || hsGetLang("pick.select"));
+
+                // 填充和校验
+                lis.attr("data-fn"    , inp.attr("name") || "" );
+                lis.attr("data-ft"    , inp.attr("data-form-ft") || "_file" );
+                if (inp.attr("data-minrepeat")) {
+                    lis.attr("data-minrepeat" , inp.attr("data-maxrepeat"));
+                }
+                if (inp.attr("data-maxrepeat")) {
+                    lis.attr("data-maxrepeat" , inp.attr("data-maxrepeat"));
+                }
+
+                // 必选多选和只读等
+                if (inp.is("[required]")) {
+                    lis.attr("data-required", "required");
+                }
+                if (inp.is("[multiple]")) {
+                    lis.attr("data-multiple", "multiple");
+                }
+                if (inp.is("[readonly]")) {
+                    lis.attr("data-readonly", "readonly");
+                    box.find("a").remove( );
+                }
+
+                inp.removeAttr("required" );
+                inp.removeAttr("placeholder");
+                inp.removeAttr("data-toggle");
+            }
+        });
+
+        $(e.target).find("[data-toggle=hsViewInit]").each(function() {
+            var inp = $(this);
+            var box = inp.siblings("ul");
+            if (! box.size()) {
+                box = $(
+                    '<div class="filebox labeled form-control">'
+                  +   '<ul></ul>'
+                  +   '<a href="javascript:;"></a>'
+                  + '</div>'
+                );
+                box.insertAfter(inp).append(inp);
+
+                var lis = box.children("ul");
+                var lnk = box.children("a" );
+
+                // 选取
+                lnk.attr("data-toggle", "hsView");
+                lnk.text(inp.attr("placeholder") || hsGetLang("pick.select"));
+
+                // 填充和校验
+                lis.attr("data-fn"    , inp.attr("name") || "" );
+                lis.attr("data-ft"    , inp.attr("data-form-ft") || "_view" );
+                lis.attr("data-mode"  , inp.attr("data-mode") || "");
+                lis.attr("data-size"  , inp.attr("data-size") || "");
+                if (inp.attr("data-minrepeat")) {
+                    lis.attr("data-minrepeat" , inp.attr("data-maxrepeat"));
+                }
+                if (inp.attr("data-maxrepeat")) {
+                    lis.attr("data-maxrepeat" , inp.attr("data-maxrepeat"));
+                }
+
+                // 必选多选和只读等
+                if (inp.is("[required]")) {
+                    lis.attr("data-required", "required");
+                }
+                if (inp.is("[multiple]")) {
+                    lis.attr("data-multiple", "multiple");
+                }
+                if (inp.is("[readonly]")) {
+                    lis.attr("data-readonly", "readonly");
+                    box.find("a").remove( );
+                }
+
+                inp.removeAttr("required" );
+                inp.removeAttr("placeholder");
+                inp.removeAttr("data-toggle");
+            }
+        });
+    });
+
+    /**
      * 选择文件事件处理
      */
     $(document).on("click", "[data-toggle=hsFile]",
     function( ) {
-        var inp = $(this).siblings(":file"   );
+        var inp = $(this).siblings(":file");
         if (! inp.data("picked")) {
             inp.data("picked", 1);
-            var box = inp.siblings(".pickbox");
+            var box = inp.siblings("ul,ol");
             var mul = inp.prop("multiple");
             inp.on ( "change", function( ) {
                 inp.hsReadFile(function(val, src) {
@@ -301,10 +463,10 @@
      */
     $(document).on("click", "[data-toggle=hsView]",
     function( ) {
-        var inp = $(this).siblings(":file"   );
+        var inp = $(this).siblings(":file");
         if (! inp.data("picked")) {
             inp.data("picked", 1);
-            var box = inp.siblings(".pickbox");
+            var box = inp.siblings("ul,ol");
             var mul = inp.prop("multiple");
             var  k  = box.data("mode");
             var  w  = box.data("size");
@@ -338,20 +500,16 @@
     /**
      * 文件的打开和移除
      */
-    $(document).on("click", "ul.pickbox li",
+    $(document).on("click", ".filebox li",
     function(x) {
-        var box = $(this).closest(".pickbox");
-        if (box.siblings("[data-toggle=hsFile],[data-toggle=hsView]").size() == 0) {
-            return;
-        }
-
         /**
          * 点击关闭按钮则删除当前文件节点
          */
-        if ($(x.target).is( ".close" )) {
-            $(this).remove();
-            box.trigger( "change" );
-            _hsSoloFile(box , true);
+        var box = $(this).closest ("ul,ol");
+        if ($(x.target).is(".erase,.close")) {
+            $(this).remove(/***/);
+            box.trigger("change");
+            _hsSoloFile(box,true);
             return;
         }
 
@@ -374,7 +532,7 @@
 
 function _hsSoloFile(box, show) {
     var fn = box.data("fn");
-    if (! fn || box.hasClass("pickmul")) {
+    if (! fn || box.hasClass("pickmul2")) {
         return;
     }
     if (! box.data("repeated")
@@ -382,9 +540,9 @@ function _hsSoloFile(box, show) {
     &&  ! /(\[\]|\.\.|\.$)/.test(fn)) {
         box.siblings("[data-toggle=hsFile],[data-toggle=hsView]")
            .toggle( show );
-        box.removeClass("pickmul");
+        box.removeClass("pickmul2");
     } else {
-        box.   addClass("pickmul");
+        box.   addClass("pickmul2");
     }
 }
 

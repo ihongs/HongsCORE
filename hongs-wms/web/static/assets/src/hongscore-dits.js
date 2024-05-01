@@ -1,6 +1,6 @@
 /**
  * 标签输入组添加方法:
- *  <input type="hidden" name="tags" data-toggle="hsDits"/>
+ * <input type="hidden" name="tags" data-toggle="hsDits"/>
  * 将自动创建操作控件,
  * 亦可自定义操作控件.
  */
@@ -29,12 +29,12 @@
                 }
 
                 box = $(
-                    '<div class="labeled form-control">'
-                  +   '<ul>'
-                  +     '<li class="label label-info template">'
-                  +       '<i class="erase bi bi-x pull-right"></i>'
+                    '<div  class="form-control labelbox">'
+                  +   '<ul class="repeated ditsbox">'
+                  +     '<li  class="label label-info template">'
+                  +       '<a class="erase bi bi-x pull-right" href="javascript:;"></a>'
                   +       '<span  class="title"></span>'
-                  +       '<input class="value" type="hidden"/>'
+                  +       '<input class="value" type="hidden" />'
                   +     '</li>'
                   +   '</ul>'
                   +   '<input class="input" type="'+ft+'"/>'

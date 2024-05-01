@@ -10,10 +10,28 @@
  * 在表单配置区域添加:
  * data--0="_fill__fork:(hsFormFillFork)"
  * 在表单选项区域添加:
- * <ul data-ft="_fork" data-fn="xx_id" data-ln="xx" data-vk="id" data-tk="name" class="pickbox"></ul>
- * <button type="button" data-toggle="hsFork" data-target="@" data-href="xx/pick.html"> ... </button>
+ * <input name="xx_id" type="hidden" data-toggle="hsForkInit" data-ln="xx" data-vk="id" data-tk="name" data-pick-href="xx/pick.html" data-pick-target="@" data-link-href="xx/info.html" data-link-target="@"/>
  *
- * 注: 2015/11/30 原 hsPick 更名为 hsFork (Hong's Foreign Key kit)
+ * 子表单加载构建用法:
+ * 在表单配置区域添加:
+ * data--1="_feed__form:(hsFormFeedFart)"
+ * data--2="_fill__form:(hsFormFillFart)"
+ * 在表单分组区域添加:
+ * <div class="form-subs" data-ft="_form" data-fn="xxxx" data-href="xxxx/form.html"></div>
+ * <div class="row form-sub-add hide">
+ *   <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2">
+ *     <button type="button" class="btn btn-default" data-toggle="hsFormSubAdd">添加XXX</button>
+ *   </div>
+ * </div>
+ * <div class="row form-sub-del hide">
+ *   <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2">
+ *     <button type="button" class="btn btn-default" data-toggle="hsFormSubDel">删除</button>
+ *   </div>
+ * </div>
+ *
+ * 2015/11/30 原 hsPick 更名为 hsFork (Hong's Foreign Key kit)
+ * 2024/04/20 增加子表单加载绑定设置方法
+ * 2024/05/01 增加控件自动构建和设置方法
  **/
 
 /**
@@ -311,8 +329,8 @@ function hsFormFillPick(box, v, n) {
         if (! tmp.size()) {
             //throw new Error("hsFormFillPick: template not found");
             tmp = jQuery(
-                '<li class="label">'
-              +   '<i class="erase pull-right bi bi-x"></i>'
+                '<li  class="label">'
+              +   '<a class="erase pull-right bi bi-x" href="javascript:;"></a>'
               +   '<span  class="title"></span>'
               +   '<input class="value" type="hidden"/>'
               + '</li>'
@@ -798,8 +816,8 @@ function hsFormTestPart(box) {
             var box = inp.siblings("ul");
             if (! box.size()) {
                 box = $(
-                    '<div class="labeled form-control">'
-                  +   '<ul></ul>'
+                    '<div  class="form-control labelbox">'
+                  +   '<ul class="repeated forkbox"></ul>'
                   +   '<a href="javascript:;"></a>'
                   + '</div>'
                 );

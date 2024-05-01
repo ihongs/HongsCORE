@@ -901,6 +901,7 @@ ol.repeated ,
 
 .form-control.labelbox {
     height : auto;
+    min-height: 34px;
     padding: 2px 4px;
 }
 .form-group-sm .form-control.labelbox {
@@ -908,6 +909,49 @@ ol.repeated ,
 }
 .form-group-lg .form-control.labelbox {
     padding: 4px 6px;
+}
+
+.form-control a,
+.form-control a:hover ,
+.form-control a:focus {
+    text-decoration: none;
+}
+.form-control ul.repeated ,
+.form-control ol.repeated {
+    line-height: inherit;
+}
+.form-control ul.repeated li.label ,
+.form-control ol.repeated li.label {
+    line-height: inherit;
+    display: inline-block;
+}
+.form-control > a ,
+.form-control > input:not(.invisible) {
+    border : 0;
+    height : 24px;
+    margin : 2px 0 2px 0;
+    padding: 2px 8px 2px 8px;
+    width  : 100%;
+    outline: none;
+    display: block;
+}
+.form-control .label {
+    height : 24px;
+    margin : 0 4px 4px 0;
+    padding: 2px 8px 2px 8px;
+}
+.form-control .label .pull-left  {
+    margin : 1px 4px 0 -4px;
+}
+.form-control .label .pull-right {
+    margin : 1px -4px 0 4px;
+}
+.form-control .repeated {
+    margin : 2px 4px -2px 0;
+}
+.repeated.filebox .label span ,
+.repeated[data-href] .label span {
+    cursor : pointer;
 }
 
 /** 选择 **/
@@ -1061,59 +1105,6 @@ ul.pickmul + * ,
     width: 0px;
     color: transparent;
     -webkit-appearance: none;
-}
-
-/** 标签 **/
-
-.bagsbox.form-control {
-    padding: 4px 0 0 4px;
-    min-height: 34px;
-    height: auto;
-    word-wrap: break-word;
-    word-break: break-all;
-}
-.bagsbox.form-control .bags-input {
-    outline: none;
-    border: 0;
-    margin: 0 4px 4px 0;
-    padding: 2px 8px 2px 8px;
-    min-width: calc(100% - 4px);
-}
-.bagsbox.form-control .bags-label {
-    margin: 0 4px 4px 0;
-    padding: 2px 8px 2px 8px;
-    max-width: calc(100% - 4px);
-    font-size: 100%;
-    line-height: inherit;
-    word-wrap: normal;
-    word-break: normal;
-    white-space: nowrap;
-    display: inline-block;
-}
-.bagsbox.form-control .bags-value {
-    display: block;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-.bagsbox.form-control .bags-erase {
-    margin-bottom: -1px;
-    margin-right: -4px;
-    margin-left: 4px;
-    padding-top: 1px;
-    float: right;
-    cursor: pointer;
-}
-.bags-fold.bagsbox.form-control .bags-input,
-.bags-fold .bagsbox.form-control .bags-input {
-    margin: 0;
-    padding: 0;
-    min-width: 0;
-}
-.bags-fold.bagsbox.form-control .bags-input:focus,
-.bags-fold .bagsbox.form-control .bags-input:focus {
-    margin: 0 4px 4px 0;
-    padding: 2px 8px 2px 8px;
-    min-width: calc(100% - 4px);
 }
 
 /* 优化文件上传样式 */

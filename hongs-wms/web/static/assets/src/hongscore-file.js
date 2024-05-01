@@ -3,13 +3,14 @@
  * 在表单配置区域添加:
  * data--0="_fill__file:(hsFormFillFile)"
  * 在表单选项区域添加:
- * <input name="x_url" type="hidden" />
- * <input name="x_url" type="file" class="invisible" />
- * <ul data-fn="x_url" data-ft="_file" class="pickbox"></ul>
- * <button type="button" data-toggle="hsFile">Browse...</button>
- * 图片预览相应的改为 hsFormFillView, hsView
+ * <input name="x_url" type="hidden"/>
+ * <input name="x_url" type="file" data-toggle="hsFileInit"/>
+ * 图片选取预览可添加:
+ * <input name="x_url" type="hidden"/>
+ * <input name="x_url" type="file" data-toggle="hsViewInit" data-size="300&times;300" data-mod="keep"/>
  *
- * 注: 2016/06/10 增加文件上传及图片预览工具
+ * 2016/06/10 增加文件上传及图片预览工具
+ * 2024/05/01 增加控件自动构建和设置方法
  */
 
 (function($) {
@@ -30,14 +31,14 @@
 
         tmp = $(
             '<li  class="label">'
-          +   '<i class="erase pull-right bi bi-x"></i>'
+          +   '<a class="erase pull-right bi bi-x" href="javascript:;"></a>'
           +   '<i class="icon  pull-left "></i>'
           +   '<span  class="title"></span>'
           + '</li>'
         );
         if (box.is("[data-readonly]")) {
             tmp.addClass("label-default")
-               .find(".value, .erase").remove( );
+               .find(".erase, .icon" ).remove( );
         } else {
             var nam = box.data( "fn" );
             tmp.addClass("label-info")
@@ -337,8 +338,8 @@
             var box = inp.siblings("ul");
             if (! box.size()) {
                 box = $(
-                    '<div  class="labeled form-control">'
-                  +   '<ul class="filebox"></ul>'
+                    '<div  class="form-control labelbox">'
+                  +   '<ul class="repeated filebox"></ul>'
                   +   '<a href="javascript:;"></a>'
                   + '</div>'
                 );
@@ -386,8 +387,8 @@
             var box = inp.siblings("ul");
             if (! box.size()) {
                 box = $(
-                    '<div  class="labeled form-control">'
-                  +   '<ul class="filebox"></ul>'
+                    '<div  class="form-control labelbox">'
+                  +   '<ul class="repeated filebox"></ul>'
                   +   '<a href="javascript:;"></a>'
                   + '</div>'
                 );

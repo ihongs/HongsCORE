@@ -803,7 +803,9 @@ function hsFormTestPart(box) {
                   +   '<a href="javascript:;"></a>'
                   + '</div>'
                 );
-                box.insertAfter(inp).append(inp);
+                box.insertBefore(inp).append(inp);
+                if (! inp.is(":hidden") )
+                inp.addClass("invisible");
 
                 var lis = box.children("ul");
                 var lnk = box.children("a" );

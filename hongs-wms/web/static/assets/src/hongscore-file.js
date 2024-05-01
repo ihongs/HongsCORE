@@ -337,12 +337,14 @@
             var box = inp.siblings("ul");
             if (! box.size()) {
                 box = $(
-                    '<div class="filebox labeled form-control">'
-                  +   '<ul></ul>'
+                    '<div  class="labeled form-control">'
+                  +   '<ul class="filebox"></ul>'
                   +   '<a href="javascript:;"></a>'
                   + '</div>'
                 );
-                box.insertAfter(inp).append(inp);
+                box.insertBefore(inp).append(inp);
+                if (! inp.is(":hidden") )
+                inp.addClass("invisible");
 
                 var lis = box.children("ul");
                 var lnk = box.children("a" );
@@ -384,12 +386,12 @@
             var box = inp.siblings("ul");
             if (! box.size()) {
                 box = $(
-                    '<div class="filebox labeled form-control">'
-                  +   '<ul></ul>'
+                    '<div  class="labeled form-control">'
+                  +   '<ul class="filebox"></ul>'
                   +   '<a href="javascript:;"></a>'
                   + '</div>'
                 );
-                box.insertAfter(inp).append(inp);
+                box.insertBefore(inp).append(inp);
 
                 var lis = box.children("ul");
                 var lnk = box.children("a" );

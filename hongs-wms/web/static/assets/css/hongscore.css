@@ -1034,8 +1034,8 @@ ul.pickmul + * ,
 }
 .preview .close {
     position: absolute;
-    top   :  7px;
-    right :  7px;
+    top   :  2px;
+    right :  2px;
     width : 20px;
     height: 20px;
     font-size  : 20px;
@@ -1043,7 +1043,6 @@ ul.pickmul + * ,
     border-radius: 50%;
     text-align: center;
     background: silver;
-    box-shadow: 0 0 0.2em #000;
 }
 .preview .close:hover ,
 .preview .close:focus {

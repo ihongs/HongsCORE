@@ -518,11 +518,18 @@ HsForm.prototype = {
         if (t && this["_test_"+t] !== undefined) {
             v  = this["_test_"+t].call(this, inp, val, n);
         }
-        if (v !== undefined && v !== true) {
-            v  = v || hsGetLang("form.haserror");
-            this.setError(inp, v);
-            console.log("HsForm.test("+n+"): "+v, inp);
-            return false;
+        // 外部无返回视为放弃校验
+        // 将继续执行内部校验规则
+        if (v !== undefined) {
+            if (v !== true ) {
+                v  =  v || hsGetLang("form.haserror");
+                this.setError(inp, v);
+                console.warn ("HsForm.test("+n+"): "+v, inp);
+                return false;
+            } else {
+                this.setError(inp);
+                return true ;
+            }
         }
 
         // 内部校验规则
@@ -530,11 +537,11 @@ HsForm.prototype = {
             if (! inp.is(s)) {
                 continue;
             }
-            v  =  this.rules[s].call(this, inp, val);
+            v  =  this.rules[s].call(this, inp, val );
             if (v !== undefined && v !== true) {
-                v  = v || hsGetLang("form.haserror");
+                v  =  v || hsGetLang("form.haserror");
                 this.setError(inp, v);
-                console.log("HsForm.test("+n+"): "+v, inp);
+                console.warn ("HsForm.test("+n+"): "+v, inp);
                 return false;
             }
         }
@@ -646,11 +653,13 @@ HsForm.prototype = {
 
         // 补充消息区域
         if (blk.size() == 0) {
+            blk = grp.find(">.help-block.text-error");
+        if (blk.size() == 0) {
             blk = jQuery('<p class="help-block text-error"></p>').appendTo(grp);
             if (lab.hasClass(".form-control-static")) {
                 blk.addClass( "form-control-static" );
             }
-        }
+        }}
 
         if (err===undefined) {
             blk.empty ( );

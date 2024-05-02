@@ -66,7 +66,7 @@
                 hint = Synt.defxult(Synt.asString(info.get("info-hint")), hint, "");
             %>
             <%if ("form".equals(type) || "part".equals(type)) {%>
-            <div class="form-group" data-name="<%=name%>" style="margin:0;">
+            <div class="form-group" data-name="<%=name%>">
                 <%
                     String extr = "";
                     String kind =  "_form";
@@ -77,9 +77,11 @@
                         extr += " data-repeated=\"repeated\"";
                     }
                 %>
-                <legend class="group"><%=text%></legend>
-                <div class="help-block text-muted form-control-static"><%=hint%></div>
-                <div class="form-subs" data-ft="<%=kind%>" data-fn="<%=name%>" data-href="<%=href%>"<%=extr%> data-sub-class="group panel panel-body panel-default" data-sub-style="padding-left:0;padding-right:0;"></div>
+                <div class="col-xs-12">
+                    <legend class="group"><%=text%></legend>
+                    <div class="help-block text-muted form-control-static"><%=hint%></div>
+                    <div class="form-subs" data-ft="<%=kind%>" data-fn="<%=name%>" data-href="<%=href%>"<%=extr%> data-sub-class="group panel panel-body panel-default"></div>
+                </div>
             </div>
             <%continue; } /*End sub form*/%>
             <div class="form-group row" data-name="<%=name%>">

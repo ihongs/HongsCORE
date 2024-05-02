@@ -6,8 +6,8 @@
      data--0="_fill__file:(hsFormFillFile)"
      data--1="_fill__pict:(hsFormFillPict)"
      data--2="_fill__fork:(hsFormFillFork)"
-     data--3="_feed__form:(hsFormFeedPart)"
-     data--4="_fill__form:(hsFormFillPart)">
+     data--3="_fill__form:(hsFormFillPart)"
+     data--4="_feed__form:(hsFormFeedPart)">
     <form action="" method="POST" enctype="multipart/form-data" class="form-horizontal">
         <input type="hidden" name="id" data-fn/>
         <input type="hidden" name="sections.0.sect_id" data-fill="H$('?sect_id',this)"/>
@@ -98,10 +98,12 @@
                         </div>
                     </div>
                 </div>
-                <div class="form-group" style="margin:0;">
-                    <legend style="margin-bottom:0;">子表单</legend>
-                    <div class="help-block text-muted form-control-static">内嵌子表单演示</div>
-                    <div data-fn="subs." data-ft="_form" data-href="page/info_sub.html" data-repeated="repeated" data-sub-class="group panel panel-body panel-default" data-sub-style="padding-left:0;padding-right:0;"></div>
+                <div class="form-group row">
+                    <div class="col-xs-12">
+                        <legend class="group">子表单</legend>
+                        <div class="help-block text-muted form-control-static">内嵌子表单演示</div>
+                        <div data-fn="subs." data-ft="_form" data-href="page/info_sub.html" data-repeated="repeated" data-sub-class="group panel panel-body panel-default"></div>
+                    </div>
                 </div>
             </div><!-- End form-body -->
             <div class="form-foot">

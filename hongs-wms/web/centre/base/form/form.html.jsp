@@ -100,7 +100,7 @@
             %>
             <%if ("form".equals(type) || "part".equals(type)) {%>
             <div class="form-grade <%=pfc%>">
-            <div class="form-group" data-name="<%=name%>" style="margin-left:0;margin-right:0;">
+            <div class="form-group" data-name="<%=name%>" data-form-error="&gt;*&gt;.text-error">
                 <%
                     String extr = "";
                     String kind =  "_form";
@@ -114,17 +114,20 @@
                         extr += " data-required=\"required\"";
                     }
                 %>
-                <legend class="group"><%=text%></legend>
-                <div class="help-block text-muted form-control-static"><%=hint%></div>
-                <div class="form-subs" data-ft="<%=kind%>" data-fn="<%=name%>" data-href="<%=href%>"<%=extr%> data-sub-class="group panel panel-body panel-default" data-sub-style="padding-left:0;padding-right:0;"></div>
-                <div class="row form-sub-add hide">
-                    <div class="col-sm-9 col-md-8 col-sm-offset-3 col-md-offset-2">
-                        <button type="button" class="btn btn-default" data-toggle="hsFormSubAdd"><%=Synt.defxult(hold, _locale.translate("fore.form.sub.add", text))%></button>
+                <div class="col-xs-12">
+                    <legend class="group"><%=text%></legend>
+                    <div class="help-block text-muted form-control-static"><%=hint%></div>
+                    <div class="form-subs" data-ft="<%=kind%>" data-fn="<%=name%>" data-href="<%=href%>"<%=extr%> data-sub-class="group panel panel-body panel-default"></div>
+                    <div class="help-block text-error form-control-static"></div>
+                    <div class="row form-sub-add hide">
+                        <div class="col-sm-9 col-md-8 col-sm-offset-3 col-md-offset-2">
+                            <button type="button" class="btn btn-default" data-toggle="hsFormSubAdd"><%=Synt.defxult(hold, _locale.translate("fore.form.sub.add", text))%></button>
+                        </div>
                     </div>
-                </div>
-                <div class="row form-sub-del hide">
-                    <div class="col-sm-9 col-md-8 col-sm-offset-3 col-md-offset-2">
-                        <button type="button" class="btn btn-warning" data-toggle="hsFormSubDel"><%=Synt.defxult(hold, _locale.translate("fore.form.sub.del", text))%></button>
+                    <div class="row form-sub-del hide">
+                        <div class="col-sm-9 col-md-8 col-sm-offset-3 col-md-offset-2">
+                            <button type="button" class="btn btn-warning" data-toggle="hsFormSubDel"><%=Synt.defxult(hold, _locale.translate("fore.form.sub.del", text))%></button>
+                        </div>
                     </div>
                 </div>
             </div>

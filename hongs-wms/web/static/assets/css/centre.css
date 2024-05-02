@@ -93,14 +93,14 @@ body {
 }
 
 /* 标准表单分块布局 */
-.panel>.form-body {
+.panel>.form-body ,
+.panel>.form-foot {
     padding: 15px 15px 0 15px;
 }
 .panel+.form-foot {
     padding:  0 15px 5px 15px;
 }
 .form-body+.form-foot {
-    padding: 15px 0 0 0;
     border-top: solid 1px #ddd;
 }
 .form-body:after ,
@@ -112,6 +112,10 @@ body {
 .form-body>:last-child:is(hr) ,
 .form-foot>:last-child:is(br) {
     display: none ; /* 兼容占位 */
+}
+.form-subs>.form-sub.panel-body {
+    padding-left : 0;
+    padding-right: 0;
 }
 
 /* 筛选表单紧凑布局 */

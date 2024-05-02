@@ -915,13 +915,17 @@ function hsFormTestPart(box) {
         if (add) {
             add( n +"."+ i, { } );
             box.data("idx", i+1 );
+            box.trigger("change");
         } else {
             throw new Error ("hsFormSub add function required!");
         }
     })
     .on("click", "[data-toggle=hsFormSubDel]",
     function() {
-        $(this).closest(".form-sub").remove();
+        var subs = $(this).closest(".form-subs");
+        var sub  = $(this).closest(".form-sub" );
+        sub .remove ( /****/ );
+        subs.trigger("change");
     });
 })(jQuery);
 

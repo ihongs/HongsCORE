@@ -7,7 +7,7 @@
  * <input name="x_url" type="file" data-toggle="hsFileInit"/>
  * 图片选取预览可添加:
  * <input name="x_url" type="hidden"/>
- * <input name="x_url" type="file" data-toggle="hsViewInit" data-size="300&times;300" data-mod="keep"/>
+ * <input name="x_url" type="file" data-toggle="hsPictInit" data-size="300&times;300" data-mod="keep"/>
  *
  * 2016/06/10 增加文件上传及图片预览工具
  * 2024/05/01 增加控件自动构建和设置方法
@@ -48,7 +48,7 @@
         return tmp;
     }
 
-    function _viewTemp(box) {
+    function _pictTemp(box) {
         var tmp = box.data("template");
         if (tmp) {
             return tmp;
@@ -148,7 +148,7 @@
      * @param {boolean} k   为 true 保留, 否则截取
      * @returns {undefined|Element} 节点
      */
-    $.fn.hsPickView = function(box, src, w, h, k) {
+    $.fn.hsPickPict = function(box, src, w, h, k) {
         if (! src ) {
             return;
         }
@@ -161,7 +161,7 @@
             if (this[0].filez && this[0].filez.length) txt = this[0].filez[0].name;
             if (this[0].files && this[0].files.length) txt = this[0].files[0].name;
         }
-        var ent = _viewTemp(box).clone().css({width: w+'px', height: h+'px'});
+        var ent = _pictTemp(box).clone().css({width: w+'px', height: h+'px'});
 
         // 非保留和截取时为图片自身尺寸
         var cal = undefined;
@@ -199,7 +199,7 @@
      * @param {boolean} k   为 keep 保留, 为 pick 截取
      * @returns {undefined|Element} 节点
      */
-    $.fn.hsFillView = function(nam, src, w, h, k) {
+    $.fn.hsFillPict = function(nam, src, w, h, k) {
         if (! src ) {
             return;
         }
@@ -207,7 +207,7 @@
         var inp = $('<input type="hidden"/>').attr( 'name', nam ).val( src );
         var txt = /^data:/.test( src ) ? ''
                 : decodeURIComponent(src.replace(/^.*[\/\\]/, ''));
-        var ent = _viewTemp(box).clone().css({width: w+'px', height: h+'px'});
+        var ent = _pictTemp(box).clone().css({width: w+'px', height: h+'px'});
 
         // 非保留和截取时为图片自身尺寸
         var cal = undefined;
@@ -382,13 +382,13 @@
             }
         });
 
-        $(e.target).find("[data-toggle=hsViewInit]").each(function() {
+        $(e.target).find("[data-toggle=hsPictInit]").each(function() {
             var inp = $(this);
             var box = inp.siblings("ul");
             if (! box.size()) {
                 box = $(
                     '<div  class="form-control labelbox">'
-                  +   '<ul class="repeated filebox"></ul>'
+                  +   '<ul class="repeated pictbox"></ul>'
                   +   '<a href="javascript:;"></a>'
                   + '</div>'
                 );
@@ -398,12 +398,12 @@
                 var lnk = box.children("a" );
 
                 // 选取
-                lnk.attr("data-toggle","hsView");
+                lnk.attr("data-toggle","hsPict");
                 lnk.text(inp.attr("placeholder") || hsGetLang("file.browse"));
 
                 // 填充和校验
                 lis.attr("data-fn"    , inp.attr("name") || "" );
-                lis.attr("data-ft"    , inp.attr("data-form-ft") || "_view" );
+                lis.attr("data-ft"    , inp.attr("data-form-ft") || "_pict" );
                 lis.attr("data-mode"  , inp.attr("data-mode") || "");
                 lis.attr("data-size"  , inp.attr("data-size") || "");
                 if (inp.attr("data-minrepeat")) {
@@ -444,7 +444,7 @@
             var mul = inp.prop("multiple");
             inp.on ( "change", function( ) {
                 inp.hsReadFile(function(val, src) {
-                   _hsSoloFile(box, false);
+                // _hsSoloFile(box, false);
                     /**
                      * 多选模式下尝试自定义传递,
                      * 将文件对象绑定到扩展属性,
@@ -470,7 +470,7 @@
     /**
      * 选择图片事件处理
      */
-    $(document).on("click", "[data-toggle=hsView]",
+    $(document).on("click", "[data-toggle=hsPict]",
     function( ) {
         var inp = $(this).siblings(":file");
         if (! inp.data("picked")) {
@@ -483,7 +483,7 @@
                  w  = h [0]; h = h [1];
             inp.on ( "change", function( ) {
                 inp.hsReadFile(function(val, src) {
-                   _hsSoloFile(box, false);
+                // _hsSoloFile(box, false);
                     /**
                      * 多选模式下尝试自定义传递,
                      * 将文件对象绑定到扩展属性,
@@ -494,9 +494,9 @@
                         iup[0].filez = [ val ];
                         iup.val( "" );
                         inp.val( "" );
-                        iup.hsPickView (box, src, w, h, k);
+                        iup.hsPickPict (box, src, w, h, k);
                     } else {
-                        inp.hsPickView (box, src, w, h, k);
+                        inp.hsPickPict (box, src, w, h, k);
                     }
                     box.trigger("change"); // 转文件容器触发
                 } );
@@ -509,7 +509,7 @@
     /**
      * 文件的打开和移除
      */
-    $(document).on("click", ".filebox li",
+    $(document).on("click", ".filebox li,.pictbox li",
     function(x) {
         /**
          * 点击关闭按钮则删除当前文件节点
@@ -518,7 +518,7 @@
         if ($(x.target).is(".erase,.close")) {
             $(this).remove(/***/);
             box.trigger("change");
-            _hsSoloFile(box,true);
+        //  _hsSoloFile(box,true);
             return;
         }
 
@@ -527,7 +527,7 @@
          * 倒是可以通过 hsReadFile 来获取 base64 编码进而在新窗口打开
          * 但如果是较大的文件可能不太合适
          * 故干脆放弃待上传新窗口打开预览
-         * 预览待上传图片用 hsView 等方法
+         * 预览待上传图片用 hsPict 等方法
          */
         var url = $(this).data("value");
         if (url) {
@@ -543,36 +543,42 @@
 
 })(jQuery);
 
+/*
+// 改用样式解决
 function _hsSoloFile(box, show) {
     var fn = box.data( "fn" ) || "" ;
     if (! box.is( "[data-repeated]" )
     &&  ! box.is( "[data-multiple]" )
     &&  ! /(\[\]|\.\.|\.$)/.test(fn)) {
-        box.siblings("[data-toggle=hsFile],[data-toggle=hsView]").toggle(show);
+        box.siblings("[data-toggle=hsFile],[data-toggle=hsPict]").toggle(show);
     }
 }
+*/
 
 function hsFormFillFile(box, v, n) {
     if (! v) return;
     if (! jQuery.isArray(v)) {
         v = [ v ];
-    }
+    }/*
     if (v.length) {
         _hsSoloFile ( box, false );
-    }
+    }*/
+
     jQuery.each(v , function(i, x) {
         box.hsFillFile(n, x);
     });
+
+    box.trigger("change");
 }
 
-function hsFormFillView(box, v, n) {
+function hsFormFillPict(box, v, n) {
     if (! v) return;
     if (! jQuery.isArray(v)) {
         v = [ v ];
-    }
+    }/*
     if (v.length) {
         _hsSoloFile ( box, false );
-    }
+    }*/
 
     var k = box.data("mode");
     var w = box.data("size");
@@ -580,6 +586,8 @@ function hsFormFillView(box, v, n) {
         w = h [0]; h = h [1];
 
     jQuery.each(v , function(i, x) {
-        box.hsFillView(n, x, w, h, k);
+        box.hsFillPict(n, x, w, h, k);
     });
+
+    box.trigger("change");
 }

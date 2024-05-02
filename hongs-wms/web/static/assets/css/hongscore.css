@@ -874,11 +874,11 @@ div.bootstrap-tagsinput .tag [data-role="remove"]:after {
     font-size   : inherit;
     font-weight : inherit;
     line-height : 2em;
-    margin-right: 8px;
+    margin-right: 4px;
 }
 .repeated .label .remove ,
 .labelbox .label .remove {
-    margin-left : 8px;
+    margin-left : 4px;
 }
 
 ul.repeated ,
@@ -888,6 +888,8 @@ ol.repeated ,
     margin: -0.3em 0;
     line-height: 2em;
     list-style: none;
+    word-break: normal;
+    word-wrap : break-word;
 }
 .repeated:empty {
     display: none;
@@ -940,9 +942,6 @@ ol.repeated ,
     margin : 0 4px 4px 0;
     padding: 2px 8px 2px 8px;
 }
-.form-control .preview {
-    margin : 0 4px 4px 0;
-}
 .form-control .label .pull-left  {
     margin : 0 4px 0 -4px;
 }
@@ -952,8 +951,12 @@ ol.repeated ,
 .form-control .repeated {
     margin : 2px 4px -2px 0;
 }
+.form-control .repeated.pictbox {
+    margin : 2px 4px -6px 0;
+}
 .repeated.forkbox .label span ,
-.repeated.filebox .label span {
+.repeated.filebox .label span ,
+.repeated.pictbox .preview {
     cursor : pointer;
 }
 .repeated.filebox .label input {
@@ -1031,7 +1034,6 @@ ul.pickmul + * ,
 
 .preview {
     position: relative;
-    cursor  : pointer ;
     border  : 1px solid #ccc;
     border-radius: 4px;
 }
@@ -1055,6 +1057,7 @@ ul.pickmul + * ,
     box-shadow: 0 0 0.5em #000;
 }
 .repeated .preview {
+    margin : 0 4px 4px 0 ;
     display: inline-block;
 }
 

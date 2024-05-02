@@ -218,7 +218,7 @@
                             extr += " required=\"required\"";
                         }
                         if ("image".equals(type)) {
-                            mode  = "hsViewInit";
+                            mode  = "hsPictInit";
                             String moda = Synt.declare(info.get("thumb-mode"), "");
                             String size = Synt.declare(info.get("thumb-size"), "");
                             if (rptd
@@ -395,9 +395,12 @@
     var formbox = context.find("form");
 
     var formobj = context.hsForm({
-        _fill__fork: hsFormFillFork,
         _fill__file: hsFormFillFile,
-        _fill__view: hsFormFillView
+        _fill__pict: hsFormFillPict,
+        _fill__fork: hsFormFillFork,
+        _fill__form: hsFormFillPart,
+        _feed__form: hsFormFeedPart,
+        _test__form: hsFormTestPart
     });
     if (H$("?id")) {
         formobj.formBox.attr("action", "<%=_module%>/<%=_entity%>/update.act");

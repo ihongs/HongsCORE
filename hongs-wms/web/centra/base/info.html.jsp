@@ -126,13 +126,15 @@
                         String extr = "";
                         String mode = "hsFile";
                         String kind =  "_file";
+                        String klas =   "file";
                         if (rptd) {
                             name  = name + "."; // 多选末尾加点
                             extr += " data-repeated=\"repeated\"";
                         }
                         if ("image".equals(type)) {
-                            mode = "hsView";
-                            kind = "_view" ;
+                            mode = "hsPict";
+                            kind =  "_pict";
+                            klas =   "pict";
                             String size = Synt.declare(info.get("thumb-size"), "");
                             String moda = Synt.declare(info.get("thumb-mode"), "");
                             if (rptd
@@ -166,7 +168,7 @@
                         }
                     %>
                     <div class="form-control-static">
-                        <ul class="repeated filebox" data-fn="<%=name%>" data-ft="<%=kind%>"<%=extr%> data-readonly="readonly"></ul>
+                        <ul class="repeated <%=klas%>box" data-fn="<%=name%>" data-ft="<%=kind%>"<%=extr%> data-readonly="readonly"></ul>
                     </div>
                 <%} else if ("textarea".equals(type) || "textview".equals(type)) {%>
                     <%
@@ -276,11 +278,11 @@
         _delete_msg: "<%=_locale.translate("fore.delete.confirm", _title)%>",
         <%} /* End if */%>
         _data: loadres,
-        _fill__fork: hsFormFillFork,
         _fill__file: hsFormFillFile,
-        _fill__view: hsFormFillView,
-        _feed__form: hsFormFeedPart,
-        _fill__form: hsFormFillPart
+        _fill__pict: hsFormFillPict,
+        _fill__fork: hsFormFillFork,
+        _fill__form: hsFormFillPart,
+        _feed__form: hsFormFeedPart
     });
 
     <%if ("reveal".equals(_action)) {%>

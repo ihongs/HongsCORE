@@ -4,10 +4,10 @@
  * data--0="_fill__file:(hsFormFillFile)"
  * 在表单选项区域添加:
  * <input name="x_url" type="hidden"/>
- * <input name="x_url" type="file" data-toggle="hsFileInit"/>
+ * <input name="x_url" type="file" data-topple="hsFileInit"/>
  * 图片选取预览可添加:
  * <input name="x_url" type="hidden"/>
- * <input name="x_url" type="file" data-toggle="hsPictInit" data-size="300&times;300" data-mod="keep"/>
+ * <input name="x_url" type="file" data-topple="hsPictInit" data-size="300&times;300" data-mod="keep"/>
  *
  * 2016/06/10 增加文件上传及图片预览工具
  * 2024/05/01 增加控件自动构建和设置方法
@@ -329,106 +329,114 @@
         return  $(img);
     };
 
+    $.fn.hsFileInit = function() {
+        var inp = $(this);
+        var box = inp.siblings("ul");
+        if (! box.size()) {
+            box = $(
+                '<div  class="form-control labelbox">'
+              +   '<ul class="repeated filebox"></ul>'
+              +   '<a href="javascript:;"></a>'
+              + '</div>'
+            );
+            box.insertBefore(inp).prepend(inp);
+            if (! inp.is(":hidden") )
+            inp.addClass("invisible");
+
+            var lis = box.children("ul");
+            var lnk = box.children("a" );
+
+            // 选取
+            lnk.attr("data-toggle","hsFile");
+            lnk.text(inp.attr("placeholder") || hsGetLang("file.browse"));
+
+            // 填充和校验
+            lis.attr("data-fn"    , inp.attr("name") || "" );
+            lis.attr("data-ft"    , inp.attr("data-form-ft") || "_file" );
+            if (inp.attr("data-minrepeat")) {
+                lis.attr("data-minrepeat" , inp.attr("data-maxrepeat"));
+            }
+            if (inp.attr("data-maxrepeat")) {
+                lis.attr("data-maxrepeat" , inp.attr("data-maxrepeat"));
+            }
+
+            // 必选多选和只读等
+            if (inp.is("[required]")) {
+                lis.attr("data-required", "required");
+            }
+            if (inp.is("[multiple]")) {
+                lis.attr("data-multiple", "multiple");
+            }
+            if (inp.is("[readonly]")) {
+                lis.attr("data-readonly", "readonly");
+                box.find("a").remove( );
+            }
+
+            inp.removeAttr("required" );
+            inp.removeAttr("placeholder");
+            inp.removeAttr("data-toggle");
+        }
+    };
+
+    $.fn.hsPictInit = function() {
+        var inp = $(this);
+        var box = inp.siblings("ul");
+        if (! box.size()) {
+            box = $(
+                '<div  class="form-control labelbox">'
+              +   '<ul class="repeated pictbox"></ul>'
+              +   '<a href="javascript:;"></a>'
+              + '</div>'
+            );
+            box.insertBefore(inp).prepend(inp);
+
+            var lis = box.children("ul");
+            var lnk = box.children("a" );
+
+            // 选取
+            lnk.attr("data-toggle","hsPict");
+            lnk.text(inp.attr("placeholder") || hsGetLang("file.browse"));
+
+            // 填充和校验
+            lis.attr("data-fn"    , inp.attr("name") || "" );
+            lis.attr("data-ft"    , inp.attr("data-form-ft") || "_pict" );
+            lis.attr("data-mode"  , inp.attr("data-mode") || "");
+            lis.attr("data-size"  , inp.attr("data-size") || "");
+            if (inp.attr("data-minrepeat")) {
+                lis.attr("data-minrepeat" , inp.attr("data-maxrepeat"));
+            }
+            if (inp.attr("data-maxrepeat")) {
+                lis.attr("data-maxrepeat" , inp.attr("data-maxrepeat"));
+            }
+
+            // 必选多选和只读等
+            if (inp.is("[required]")) {
+                lis.attr("data-required", "required");
+            }
+            if (inp.is("[multiple]")) {
+                lis.attr("data-multiple", "multiple");
+            }
+            if (inp.is("[readonly]")) {
+                lis.attr("data-readonly", "readonly");
+                box.find("a").remove( );
+            }
+
+            inp.removeAttr("required" );
+            inp.removeAttr("placeholder");
+            inp.removeAttr("data-toggle");
+        }
+    };
+
     /**
      * 控件构建及初始化
      */
     $(document).on("hsReady", function(e) {
         $(e.target).find("[data-toggle=hsFileInit]").each(function() {
-            var inp = $(this);
-            var box = inp.siblings("ul");
-            if (! box.size()) {
-                box = $(
-                    '<div  class="form-control labelbox">'
-                  +   '<ul class="repeated filebox"></ul>'
-                  +   '<a href="javascript:;"></a>'
-                  + '</div>'
-                );
-                box.insertBefore(inp).prepend(inp);
-                if (! inp.is(":hidden") )
-                inp.addClass("invisible");
-
-                var lis = box.children("ul");
-                var lnk = box.children("a" );
-
-                // 选取
-                lnk.attr("data-toggle","hsFile");
-                lnk.text(inp.attr("placeholder") || hsGetLang("file.browse"));
-
-                // 填充和校验
-                lis.attr("data-fn"    , inp.attr("name") || "" );
-                lis.attr("data-ft"    , inp.attr("data-form-ft") || "_file" );
-                if (inp.attr("data-minrepeat")) {
-                    lis.attr("data-minrepeat" , inp.attr("data-maxrepeat"));
-                }
-                if (inp.attr("data-maxrepeat")) {
-                    lis.attr("data-maxrepeat" , inp.attr("data-maxrepeat"));
-                }
-
-                // 必选多选和只读等
-                if (inp.is("[required]")) {
-                    lis.attr("data-required", "required");
-                }
-                if (inp.is("[multiple]")) {
-                    lis.attr("data-multiple", "multiple");
-                }
-                if (inp.is("[readonly]")) {
-                    lis.attr("data-readonly", "readonly");
-                    box.find("a").remove( );
-                }
-
-                inp.removeAttr("required" );
-                inp.removeAttr("placeholder");
-                inp.removeAttr("data-toggle");
-            }
+            $(this).hsFileInit();
         });
 
         $(e.target).find("[data-toggle=hsPictInit]").each(function() {
-            var inp = $(this);
-            var box = inp.siblings("ul");
-            if (! box.size()) {
-                box = $(
-                    '<div  class="form-control labelbox">'
-                  +   '<ul class="repeated pictbox"></ul>'
-                  +   '<a href="javascript:;"></a>'
-                  + '</div>'
-                );
-                box.insertBefore(inp).prepend(inp);
-
-                var lis = box.children("ul");
-                var lnk = box.children("a" );
-
-                // 选取
-                lnk.attr("data-toggle","hsPict");
-                lnk.text(inp.attr("placeholder") || hsGetLang("file.browse"));
-
-                // 填充和校验
-                lis.attr("data-fn"    , inp.attr("name") || "" );
-                lis.attr("data-ft"    , inp.attr("data-form-ft") || "_pict" );
-                lis.attr("data-mode"  , inp.attr("data-mode") || "");
-                lis.attr("data-size"  , inp.attr("data-size") || "");
-                if (inp.attr("data-minrepeat")) {
-                    lis.attr("data-minrepeat" , inp.attr("data-maxrepeat"));
-                }
-                if (inp.attr("data-maxrepeat")) {
-                    lis.attr("data-maxrepeat" , inp.attr("data-maxrepeat"));
-                }
-
-                // 必选多选和只读等
-                if (inp.is("[required]")) {
-                    lis.attr("data-required", "required");
-                }
-                if (inp.is("[multiple]")) {
-                    lis.attr("data-multiple", "multiple");
-                }
-                if (inp.is("[readonly]")) {
-                    lis.attr("data-readonly", "readonly");
-                    box.find("a").remove( );
-                }
-
-                inp.removeAttr("required" );
-                inp.removeAttr("placeholder");
-                inp.removeAttr("data-toggle");
-            }
+            $(this).hsPictInit();
         });
     });
 

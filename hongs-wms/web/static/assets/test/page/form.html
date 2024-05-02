@@ -66,12 +66,12 @@
                     <div class="col-sm-9 col-md-8">
                         <div class="input-group">
                             <span class="input-group-addon">从</span>
-                            <input type="text" name="mtime" class="form-field invisible" data-toggle="hsDate" data-type="timestamp" data-fill="v || new Date().getTime() / 1000" placeholder="开始时间" readonly/>
+                            <input type="text" name="mtime" class="form-field invisible" data-topple="hsDate" data-type="timestamp" data-fill="v || new Date().getTime() / 1000" placeholder="开始时间" readonly/>
                             <span class="input-group-addon">&nbsp;</span>
                         </div>
                         <div class="input-group">
                             <span class="input-group-addon">到</span>
-                            <input type="text" name="ctime" class="form-field invisible" data-toggle="hsDate" data-type="timestamp" data-fill="v || new Date().getTime() / 1000" placeholder="结束时间" readonly/>
+                            <input type="text" name="ctime" class="form-field invisible" data-topple="hsDate" data-type="timestamp" data-fill="v || new Date().getTime() / 1000" placeholder="结束时间" readonly/>
                             <span class="input-group-addon">&nbsp;</span>
                         </div>
                     </div>
@@ -81,7 +81,7 @@
                 <div class="form-group row">
                     <label class="col-sm-3 col-md-2 control-label form-control-static text-right">标签</label>
                     <div class="col-sm-9 col-md-8">
-                        <input type="hidden" name="tags." class="form-field" data-toggle="hsDits" multiple="multiple" placeholder="输入标签...">
+                        <input type="hidden" name="tags." class="form-field" data-topple="hsDits" multiple="multiple" placeholder="输入标签...">
                     </div>
                     <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
                     <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"></div>
@@ -90,7 +90,7 @@
                     <label class="col-sm-3 col-md-2 control-label form-control-static text-right">关联</label>
                     <div class="col-sm-9 col-md-8">
                         <input name="sect_id" type="hidden" class="form-final"
-                               data-toggle="hsPickInit" data-ln="section" data-tk="name" data-vk="id"
+                               data-topple="hsPickInit" data-ln="section" data-tk="name" data-vk="id"
                                data-pick-target="@" data-pick-href="page/pick.html"
                                data-link-target="@" data-link-href="page/info.html"
                                required="required" placeholder="选择关联..."/>
@@ -103,7 +103,7 @@
                     <div class="col-sm-9 col-md-8">
                         <input name="file." type="hidden" class="form-final"/>
                         <input name="file." type="file" class="invisible"
-                               data-toggle="hsFileInit"
+                               data-topple="hsFileInit"
                                required="required" placeholder="选择附件..."/>
                     </div>
                     <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
@@ -114,7 +114,7 @@
                     <div class="col-sm-9 col-md-8">
                         <input name="snap." type="hidden" class="form-final"/>
                         <input name="snap." type="file" class="invisible" accept="image/*"
-                               data-toggle="hsPictInit" data-size="100*100" data-mode="pick"
+                               data-topple="hsPictInit" data-size="100*100" data-mode="pick"
                                required="required" placeholder="选择图片..."/>
                     </div>
                     <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>

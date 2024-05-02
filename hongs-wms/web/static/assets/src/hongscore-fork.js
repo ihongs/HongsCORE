@@ -10,7 +10,7 @@
  * 在表单配置区域添加:
  * data--0="_fill__fork:(hsFormFillFork)"
  * 在表单选项区域添加:
- * <input name="xx_id" type="hidden" data-toggle="hsForkInit" data-ln="xx" data-vk="id" data-tk="name" data-pick-href="xx/pick.html" data-pick-target="@" data-link-href="xx/info.html" data-link-target="@"/>
+ * <input name="xx_id" type="hidden" data-topple="hsForkInit" data-ln="xx" data-vk="id" data-tk="name" data-pick-href="xx/pick.html" data-pick-target="@" data-link-href="xx/info.html" data-link-target="@"/>
  *
  * 子表单加载构建用法:
  * 在表单配置区域添加:
@@ -253,6 +253,64 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
     bin.data( "rel" , btn.closest( ".openbox" )[0] );
 
     return bin;
+};
+
+jQuery.fn.hsPickInit = function() {
+    var  $  = jQuery ;
+    var inp = $(this);
+    var box = inp.siblings("ul");
+    if (! box.size()) {
+        box = $(
+            '<div  class="form-control labelbox">'
+          +   '<ul class="repeated forkbox"></ul>'
+          +   '<a href="javascript:;"></a>'
+          + '</div>'
+        );
+        box.insertBefore(inp).prepend(inp);
+        if (! inp.is(":hidden") )
+        inp.addClass("invisible");
+
+        var lis = box.children("ul");
+        var lnk = box.children("a" );
+
+        // 选取
+        lnk.attr("data-toggle", "hsFork");
+        lnk.attr("data-href"  , inp.attr("data-pick-href"  ) || "");
+        lnk.attr("data-target", inp.attr("data-pick-target") || "");
+        lnk.text( inp.attr("placeholder") || hsGetLang ("fork.select") );
+
+        // 填充和校验
+        lis.attr("data-fn"    , inp.attr("name"   ) || "");
+        lis.attr("data-ln"    , inp.attr("data-ln") || "");
+        lis.attr("data-vk"    , inp.attr("data-vk") || "");
+        lis.attr("data-tk"    , inp.attr("data-tk") || "");
+        lis.attr("data-at"    , inp.attr("data-at") || "");
+        lis.attr("data-ft"    , inp.attr("data-form-ft"    ) || "_fork");
+        lis.attr("data-href"  , inp.attr("data-link-href"  ) || "");
+        lis.attr("data-target", inp.attr("data-link-target") || "");
+        if (inp.attr("data-minrepeat")) {
+            lis.attr("data-minrepeat" , inp.attr("data-maxrepeat"));
+        }
+        if (inp.attr("data-maxrepeat")) {
+            lis.attr("data-maxrepeat" , inp.attr("data-maxrepeat"));
+        }
+
+        // 必选多选和只读等
+        if (inp.is("[required]")) {
+            lis.attr("data-required", "required");
+        }
+        if (inp.is("[multiple]")) {
+            lis.attr("data-multiple", "multiple");
+        }
+        if (inp.is("[readonly]")) {
+            lis.attr("data-readonly", "readonly");
+            box.find("a").remove( );
+        }
+
+        inp.removeAttr("required" );
+        inp.removeAttr("placeholder");
+        inp.removeAttr("data-toggle");
+    }
 };
 
 /**
@@ -815,60 +873,7 @@ function hsFormTestPart(box) {
         $(e.target)
         .find("[data-toggle=hsPickInit],[data-toggle=hsForkInit]")
         .each(function() {
-            var inp = $(this);
-            var box = inp.siblings("ul");
-            if (! box.size()) {
-                box = $(
-                    '<div  class="form-control labelbox">'
-                  +   '<ul class="repeated forkbox"></ul>'
-                  +   '<a href="javascript:;"></a>'
-                  + '</div>'
-                );
-                box.insertBefore(inp).prepend(inp);
-                if (! inp.is(":hidden") )
-                inp.addClass("invisible");
-
-                var lis = box.children("ul");
-                var lnk = box.children("a" );
-
-                // 选取
-                lnk.attr("data-toggle", "hsFork");
-                lnk.attr("data-href"  , inp.attr("data-pick-href"  ) || "");
-                lnk.attr("data-target", inp.attr("data-pick-target") || "");
-                lnk.text( inp.attr("placeholder") || hsGetLang ("fork.select") );
-
-                // 填充和校验
-                lis.attr("data-fn"    , inp.attr("name"   ) || "");
-                lis.attr("data-ln"    , inp.attr("data-ln") || "");
-                lis.attr("data-vk"    , inp.attr("data-vk") || "");
-                lis.attr("data-tk"    , inp.attr("data-tk") || "");
-                lis.attr("data-at"    , inp.attr("data-at") || "");
-                lis.attr("data-ft"    , inp.attr("data-form-ft"    ) || "_fork");
-                lis.attr("data-href"  , inp.attr("data-link-href"  ) || "");
-                lis.attr("data-target", inp.attr("data-link-target") || "");
-                if (inp.attr("data-minrepeat")) {
-                    lis.attr("data-minrepeat" , inp.attr("data-maxrepeat"));
-                }
-                if (inp.attr("data-maxrepeat")) {
-                    lis.attr("data-maxrepeat" , inp.attr("data-maxrepeat"));
-                }
-
-                // 必选多选和只读等
-                if (inp.is("[required]")) {
-                    lis.attr("data-required", "required");
-                }
-                if (inp.is("[multiple]")) {
-                    lis.attr("data-multiple", "multiple");
-                }
-                if (inp.is("[readonly]")) {
-                    lis.attr("data-readonly", "readonly");
-                    box.find("a").remove( );
-                }
-
-                inp.removeAttr("required" );
-                inp.removeAttr("placeholder");
-                inp.removeAttr("data-toggle");
-            }
+            $(this).hsPickInit();
         });
     })
     .on("click", "[data-toggle=hsPick],[data-toggle=hsFork]",
@@ -921,6 +926,7 @@ function hsFormTestPart(box) {
 })(jQuery);
 
 // 别名
-jQuery.fn.hsFork = jQuery.fn.hsPick;
 hsFormFillFork = hsFormFillPick;
 hsListFillFork = hsListFillPick;
+jQuery.fn.hsFork = jQuery.fn.hsPick;
+jQuery.fn.hsForkInit = jQuery.fn.hsPickInit;

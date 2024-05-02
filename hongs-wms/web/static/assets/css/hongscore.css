@@ -943,10 +943,10 @@ ol.repeated ,
     padding: 2px 8px 2px 8px;
 }
 .form-control .label .pull-left  {
-    margin : 0 4px 0 -4px;
+    margin : 1px 4px 0 -4px;
 }
 .form-control .label .pull-right {
-    margin : 0 -4px 0 4px;
+    margin : 1px -4px 0 4px;
 }
 .form-control .repeated {
     margin : 2px 4px -2px 0;

@@ -466,11 +466,10 @@ HsForm.prototype = {
 
         // 清除错误状态
         if (!sav || sav !== true) {
-            this.formBox
-                .find(".form-group")
-                .removeClass("has-error")
-                .find(".text-error")
-                .empty( );
+            var that = this;
+            this.formBox.find(".form-group").each(function() {
+                that.setError($(this));
+            });
         }
 
         // 设置错误消息
@@ -605,27 +604,6 @@ HsForm.prototype = {
                       .val ();
         }
     },
-    setError : function(inp, err) {
-        var grp = inp.closest(".form-group");
-        var blk = grp.hsFind (grp.data("formError") || ".form-erorr,"+".text-error");
-        var lab = grp.hsFind (grp.data("formLabel") || ".form-label,.control-label");
-
-        // 补充消息区域
-        if (blk.size() == 0) {
-            blk = jQuery('<p class="help-block text-error"></p>').appendTo(grp);
-            if (lab.hasClass(".form-control-static")) {
-                blk.addClass( "form-control-static");
-            }
-        }
-
-        if (err===undefined) {
-            blk.empty ( );
-            grp.removeClass("has-error");
-        } else {
-            blk.text(err);
-            grp.   addClass("has-error");
-        }
-    },
     getError : function(inp, err, rep) {
         var msg = err.replace(/^form\./, "")
                      .replace( /\./g , "-" );
@@ -660,6 +638,27 @@ HsForm.prototype = {
         }
 
         return hsGetLang(err, rep);
+    },
+    setError : function (inp, err) {
+        var grp = inp.closest(".form-group");
+        var blk = grp.find(grp.data("formError")||".form-erorr,"+".text-error");
+        var lab = grp.find(grp.data("formLabel")||".form-label,.control-label");
+
+        // 补充消息区域
+        if (blk.size() == 0) {
+            blk = jQuery('<p class="help-block text-error"></p>').appendTo(grp);
+            if (lab.hasClass(".form-control-static")) {
+                blk.addClass( "form-control-static" );
+            }
+        }
+
+        if (err===undefined) {
+            blk.empty ( );
+            grp.removeClass("has-error");
+        } else {
+            blk.text(err);
+            grp.   addClass("has-error");
+        }
     },
 
     _group_start: "#", // 选项分组起始符

@@ -70,7 +70,10 @@
                     <tr>
                         <td>
                         <%if ("enum".equals(type)) {%>
-                            <a href="javascript:;" class="view-enum"><%=name%></a>
+                            <%
+                                String ln = Synt.declare(info.get("data-ln"), "" );
+                            %>
+                            <a href="javascript:;" class="view-enum" data-ln="<%=ln%>"><%=name%></a>
                         <%} else if ("form".equals(type)) {%>
                             <%
                                 String conf = Synt.declare(info.get("conf"), _config);
@@ -502,7 +505,7 @@ id=ID 或 id.=ID1&id.=ID2...
 
     // 查看选项数据
     context.on("click", "a.view-enum", function() {
-        var rb = $(this).text();
+        var rb = $(this).data("ln") || $(this).text();
         $.get(
             '<%=baseHref%>/<%=_module%>/<%=_entity%>/recipe<%=Cnst.ACT_EXT%>?<%=Cnst.AB_KEY%>=.enfo&<%=Cnst.RB_KEY%>='+rb,
             function(rd) {

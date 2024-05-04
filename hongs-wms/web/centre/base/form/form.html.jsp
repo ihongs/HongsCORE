@@ -70,29 +70,12 @@
             <figure data-name="<%=name%>"><%=text%></figure>
         <%} else {%>
             <%
-                String hold, hist, pfc, gfc;
+                String hold, pfc, gfc;
                 text = Synt.defxult(Synt.asString(info.get("form-text")), text, "");
                 hint = Synt.defxult(Synt.asString(info.get("form-hint")), hint, "");
                 hold = Synt.defxult(Synt.asString(info.get("form-hold")), "" );
-                hist = Synt.defxult(Synt.asString(info.get("form-hist")), "" );
                 pfc  = Synt.defxult(Synt.asString(info.get("page-form-class")), "");
                 gfc  =  "" ;
-                if (rqrd) {
-                    if ("enum".equals(type) ||  "type".equals(type) || "check".equals(type) || "radio".equals(type) || "select".equals(type)
-                    ||  "file".equals(type) || "image".equals(type) || "video".equals(type) || "audio".equals(type)
-                    ||  "fork".equals(type) ||  "pick".equals(type)) {
-                        hist = "(必选)";
-                    } else {
-                        hist = "(必填)";
-                    }
-                } else
-                if (rptd) {
-                    if ("enum".equals(type) ||  "type".equals(type) || "check".equals(type) || "radio".equals(type) || "select".equals(type)
-                    ||  "file".equals(type) || "image".equals(type) || "video".equals(type) || "audio".equals(type)
-                    ||  "fork".equals(type) ||  "pick".equals(type)) {
-                        hist = "(多选)";
-                    }
-                }
                 if (rqrd) gfc += " is-required";
                 if (rptd) gfc += " is-repeated";
                 if (roly) gfc += " is-readonly";
@@ -136,10 +119,9 @@
             <div class="form-grade <%=pfc%>">
             <div class="form-group <%=gfc%>" data-name="<%=name%>">
                 <label class="form-label control-label">
-                    <span class="control-label-text"><%=(text != null ? text : "")%></span>
-                    <span class="control-label-hist"><%=(hist != null ? hist : "")%></span>
+                    <span><%=(text != null ? text : "")%></span>
                 </label>
-                <div class="control-input">
+                <div class="form-input control-input">
                 <%if ("fork".equals(type) || "pick".equals(type)) {%>
                     <%
                         String extr = "";

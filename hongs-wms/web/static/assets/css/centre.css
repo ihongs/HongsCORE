@@ -186,24 +186,6 @@ body.plain-page footer {
     display: block;
 }
 
-/* 标签扩展 */
-.survey-form .form-group .control-label-hist {
-    margin-left: 0.5em;
-    color: #888;
-}
-.survey-form .form-group.is-repeated .control-label-hist {
-    color: #dd5;
-}
-.survey-form .form-group.is-required .control-label-hist {
-    color: #d55;
-}
-.survey-form .hist-clear .form-group .control-label-hist {
-    content: "";
-}
-.survey-form .hist-badge .form-group.is-required .control-label-hist {
-    content: "\2732";
-}
-
 /* 按钮固定 */
 .survey-form .foot-fixed .form-body {
     margin-bottom: 95px;

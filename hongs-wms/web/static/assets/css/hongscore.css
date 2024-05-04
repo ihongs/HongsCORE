@@ -896,7 +896,8 @@ ol.repeated ,
     text-overflow: ellipsis;
     display      : inline-block;
 }
-.repeated:empty {
+.repeated:empty ,
+   .label:empty {
     display: none;
 }
 

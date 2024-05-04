@@ -190,6 +190,7 @@ public final class Inst
   public static Instant parse(String time, String patt) {
     DateTimeFormatter dtf = getDateTimeFormatter(patt);
     TemporalAccessor  tar = dtf .parse(time);
+    System.err.println(tar);
     ZoneId            zid = Core.getZoneId();
     return fixZonedDateTime(tar , 1970, 1, 1, 0, 0, 0, 0, zid).toInstant();
   }
@@ -284,10 +285,18 @@ public final class Inst
    */
   private static ZonedDateTime fixZonedDateTime(TemporalAccessor ta, int y, int M, int d, int H, int m, int s, int n, ZoneId zi) {
     int[] ps = new int[] {y, M, d, H, m, s, n};
-    for (int i = 0 ; i < 7 ; i ++ ) {
+    for (int i = 1 ; i < 7 ; i ++ ) {
         if (ta.isSupported(TFS[i])) {
             ps[i] = ta.get(TFS[i]);
         }
+    }
+    // 解析年月无日时只有公元
+    // 为确保无误而做两种判断
+    if (ta.isSupported(ChronoField.YEAR)) {
+        ps[0] = ta.get(ChronoField.YEAR);
+    } else
+    if (ta.isSupported(ChronoField.YEAR_OF_ERA)) {
+        ps[0] = ta.get(ChronoField.YEAR_OF_ERA);
     }
     return ZonedDateTime.of(ps[0], ps[1], ps[2], ps[3], ps[4], ps[5], ps[6], zi);
   }

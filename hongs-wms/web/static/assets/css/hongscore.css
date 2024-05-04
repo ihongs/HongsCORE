@@ -875,7 +875,7 @@ ul.repeated ,
 ol.repeated ,
  p.repeated {
     padding: 0;
-    margin: -3px 0;
+    margin: -0.3em 0;
     list-style : none;
     line-height: inherit;
     font-weight: inherit;
@@ -897,7 +897,7 @@ ol.repeated ,
     display      : inline-block;
 }
 .repeated:empty ,
-   .label:empty {
+.repeated .label:empty {
     display: none;
 }
 

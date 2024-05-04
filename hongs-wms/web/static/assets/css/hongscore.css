@@ -866,40 +866,38 @@ div.bootstrap-tagsinput .tag [data-role="remove"]:after {
 
 /** 标签 **/
 
-.radio     label ,
-.checkbox  label {
+.radio    label ,
+.checkbox label {
     padding-right: 20px;
-}
-.repeated .label ,
-.labelbox .label {
-    margin-right : 4px;
-    line-height  : 2em;
-    max-width    : 100%;
-    font-size    : inherit;
-    font-weight  : inherit;
-    text-overflow: ellipsis;
-    overflow     : hidden;
-    display      : inline-block;
 }
 
 ul.repeated ,
 ol.repeated ,
  p.repeated {
     padding: 0;
-    margin: -0.3em 0;
-    line-height: 2em;
-    list-style: none;
-    word-break: normal;
-    word-wrap : break-word;
+    margin: -3px 0;
+    list-style : none;
+    line-height: inherit;
+    font-weight: inherit;
+    font-size  : inherit;
+}
+.repeated {
+    word-break : normal;
+    word-wrap  : break-word;
+}
+.repeated .label ,
+.labelbox .label {
+    margin-right : 4px;
+    line-height  : inherit;
+    font-weight  : inherit;
+    font-size    : inherit;
+    max-width    : 100%;
+    overflow     : hidden;
+    text-overflow: ellipsis;
+    display      : inline-block;
 }
 .repeated:empty {
     display: none;
-}
-.repeated.pickmul {
-    margin-bottom: 2px;
-}
-.repeated.pickrol {
-    margin-bottom: 0px;
 }
 
 .form-control.labelbox {

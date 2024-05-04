@@ -549,6 +549,19 @@
         }}
     });
 
+    /**
+     * 单选多选按钮切换
+     */
+    $(document).on("change", ".filebox,.pictbox", function() {
+        var box = $(this);
+        var fn  = box.data( "fn" ) || "";
+        if (! box.is( "[data-multiple]" )
+        &&  ! box.is( "[data-repeated]" )
+        &&  ! /(\[\]|\.\.|\.$)/.test(fn)) {
+            box.siblings("[data-toggle=hsFile],[data-toggle=hsPict]").toggle(box.is(":empty"));
+        }
+    });
+
 })(jQuery);
 
 /*

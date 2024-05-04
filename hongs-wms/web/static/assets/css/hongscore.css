@@ -22,6 +22,7 @@ code, pre, var, dfn, kbd {
 /** Bootstrap 调整 **/
 
 .invisible ,
+.template  ,
 :not(.dropup) > .dropdown-body ,
 :not(.dropup) > .dropdown-list {
     visibility: hidden;

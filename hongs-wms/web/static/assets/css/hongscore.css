@@ -872,14 +872,14 @@ div.bootstrap-tagsinput .tag [data-role="remove"]:after {
 }
 .repeated .label ,
 .labelbox .label {
-    font-size   : inherit;
-    font-weight : inherit;
-    line-height : 2em;
-    margin-right: 4px;
-}
-.repeated .label .remove ,
-.labelbox .label .remove {
-    margin-left : 4px;
+    margin-right : 4px;
+    line-height  : 2em;
+    max-width    : 100%;
+    font-size    : inherit;
+    font-weight  : inherit;
+    text-overflow: ellipsis;
+    overflow     : hidden;
+    display      : inline-block;
 }
 
 ul.repeated ,
@@ -926,7 +926,6 @@ ol.repeated ,
 .form-control ul.repeated li.label ,
 .form-control ol.repeated li.label {
     line-height: inherit;
-    display: inline-block;
 }
 .form-control > a ,
 .form-control > input:not(.invisible) {
@@ -955,6 +954,8 @@ ol.repeated ,
 .form-control .repeated.pictbox {
     margin : 2px 4px -6px 0;
 }
+
+
 .repeated.forkbox .label span ,
 .repeated.filebox .label span ,
 .repeated.pictbox .preview {

@@ -87,7 +87,7 @@
             </div>
             <%continue; } /*End sub form*/%>
             <div class="form-group row" data-name="<%=name%>">
-                <label class="col-sm-3 col-md-2 text-right control-label form-control-static"><%=text%></label>
+                <label class="col-sm-3 col-md-2 text-right form-label control-label form-control-static"><%=text%></label>
                 <div class="col-sm-9 col-md-8">
                 <%if ("fork".equals(type) || "pick".equals(type)) {%>
                     <%
@@ -272,7 +272,7 @@
             </div>
             <%continue; } /*End sub form*/%>
             <div class="form-group row" data-name="<%=name%>">
-                <label class="col-sm-3 col-md-2 text-right control-label form-control-static"><%=text%></label>
+                <label class="col-sm-3 col-md-2 text-right form-label control-label form-control-static"><%=text%></label>
                 <div class="col-sm-9 col-md-8">
                 <%if ("fork".equals(type) || "pick".equals(type)) {%>
                     <%

@@ -135,7 +135,7 @@
             <%continue; } /*End sub form*/%>
             <div class="form-grade <%=pfc%>">
             <div class="form-group <%=gfc%>" data-name="<%=name%>">
-                <label class="control-label">
+                <label class="form-label control-label">
                     <span class="control-label-text"><%=(text != null ? text : "")%></span>
                     <span class="control-label-hist"><%=(hist != null ? hist : "")%></span>
                 </label>

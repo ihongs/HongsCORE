@@ -63,15 +63,39 @@
         }
 
         tmp = $(
-            '<li class="preview" style="overflow: hidden;">'
-          +   '<a class="close" style="z-index: 1;" href="javascript:;">&times;</i>'
+            '<li  class="preview" >'
+          +   '<a class="erase bi bi-x-lg" href="javascript:;"></a>'
+          +   '<i class="icon"></i>'
           + '</li>'
         );
         if (box.is("[data-readonly]")) {
-            tmp.find(".close").remove( );
+            tmp.find(".erase, .icon" ).remove( );
         }
         box.data("template", tmp);
         return tmp;
+    }
+
+    function _fileName(src, inp) {
+        if (!/^data:/.test(src)) {
+            var mat = /[\?#&]n=(.*?)(?:[&].*)?$/.exec(src);
+            if (mat) {
+                return decodeURIComponent(mat[1]);
+            }
+            mat = /^(?:.*\/)?(.*?)(?:[\?#].*)?$/.exec(src);
+            if (mat) {
+                return decodeURIComponent(mat[1]);
+            }
+        }
+
+        // 通过文件对象获取文件名称
+        if (inp[0].filez && inp[0].filez.length) {
+            return inp[0].filez[0].name;
+        }
+        if (inp[0].files && inp[0].files.length) {
+            return inp[0].files[0].name;
+        }
+
+        return '';
     }
 
     /**
@@ -85,15 +109,9 @@
             return;
         }
             box = $(box );
-        var inp = $(this);
-        inp.after(inp.clone().val('')) ;
-        var txt = /^data:/.test( src ) ? ''
-                : decodeURIComponent(src.replace(/^.*[\/\\]/, ''));
-        if (txt === '') { // 通过文件对象获取文件名称
-            if (this[0].filez && this[0].filez.length) txt = this[0].filez[0].name;
-            if (this[0].files && this[0].files.length) txt = this[0].files[0].name;
-        }
-        var ico = box.data("upIcon") || "bi bi-arrow-up-circle";
+        var inp = $(this); inp.after(inp.clone().val(''));
+        var ico = box.data( "upIcon" ) || "bi bi-upload" ;
+        var txt = _fileName(src , this );
         var ent = _fileTemp(box).clone();
 
         ent.find(".icon" ).addClass(ico);
@@ -119,10 +137,9 @@
             return;
         }
         var box = $(this);
-        var inp = $('<input type="hidden"/>').attr( 'name', nam ).val( src );
-        var txt = /^data:/.test( src ) ? ''
-                : decodeURIComponent(src.replace(/^.*[\/\\]/, ''));
-        var ico = box.data("dnIcon") || "" ;
+        var inp = $('<input type="hidden"/>').attr('name', nam).val(src);
+        var ico = box.data( "dnIcon" ) || "" ;
+        var txt = _fileName(src , [{}] );
         var ent = _fileTemp(box).clone();
 
         ent.find(".icon" ).addClass(ico);
@@ -153,15 +170,11 @@
             return;
         }
             box = $(box );
-        var inp = $(this);
-        inp.after(inp.clone().val('')) ;
-        var txt = /^data:/.test( src ) ? ''
-                : decodeURIComponent(src.replace(/^.*[\/\\]/, ''));
-        if (txt === '') { // 通过文件对象获取文件名称
-            if (this[0].filez && this[0].filez.length) txt = this[0].filez[0].name;
-            if (this[0].files && this[0].files.length) txt = this[0].files[0].name;
-        }
-        var ent = _pictTemp(box).clone().css({width: w+'px', height: h+'px'});
+        var inp = $(this); inp.after(inp.clone().val(''));
+        var ico = box.data( "upIcon" ) || "bi bi-upload" ;
+        var txt = _fileName(src , this );
+        var ent = _pictTemp(box).clone()
+                   .css({width: w+'px' , height: h+'px'});
 
         // 非保留和截取时为图片自身尺寸
         var cal = undefined;
@@ -170,8 +183,8 @@
                 var w = this.width ;
                 var h = this.height;
                 var img = $( this );
-                img.css({top  :  "0px", left  :  "0px"});
-                ent.css({width: w+'px', height: h+'px'});
+                img.css({top  :  "0px" , left  :  "0px"});
+                ent.css({width: w+'px' , height: h+'px'});
             };
         }
 
@@ -179,13 +192,14 @@
                 ? $.hsPickSnap(src, w, h, cal)
                 : $.hsKeepSnap(src, w, h, cal);
 
-    //  ent.data("value", src);
-        ent.attr("title", txt);
         box.append(ent);
         ent.append(img);
         if (! box.is("[data-readonly]")) {
             ent.append(inp);
         }
+    //  ent.data("value", src);
+        ent.attr("title", txt);
+        ent.find(".icon").addClass(ico);
 
         return ent;
     };
@@ -204,10 +218,11 @@
             return;
         }
         var box = $(this);
-        var inp = $('<input type="hidden"/>').attr( 'name', nam ).val( src );
-        var txt = /^data:/.test( src ) ? ''
-                : decodeURIComponent(src.replace(/^.*[\/\\]/, ''));
-        var ent = _pictTemp(box).clone().css({width: w+'px', height: h+'px'});
+        var inp = $('<input type="hidden"/>').attr('name', nam).val(src);
+        var ico = box.data( "dnIcon" ) || "" ;
+        var txt = _fileName(src , [{}] );
+        var ent = _pictTemp(box).clone()
+                   .css({width: w+'px' , height: h+'px'});
 
         // 非保留和截取时为图片自身尺寸
         var cal = undefined;
@@ -216,8 +231,8 @@
                 var w = this.width ;
                 var h = this.height;
                 var img = $( this );
-                img.css({top  :  "0px", left  :  "0px"});
-                ent.css({width: w+'px', height: h+'px'});
+                img.css({top  :  "0px" , left  :  "0px"});
+                ent.css({width: w+'px' , height: h+'px'});
             };
         }
 
@@ -225,13 +240,14 @@
                 ? $.hsPickSnap(src, w, h, cal)
                 : $.hsKeepSnap(src, w, h, cal);
 
-        ent.data("value", src);
-        ent.attr("title", txt);
         box.append(ent);
         ent.append(img);
         if (! box.is("[data-readonly]")) {
             ent.append(inp);
         }
+        ent.data("value", src);
+        ent.attr("title", txt);
+        ent.find(".icon").addClass(ico);
 
         return ent;
     };

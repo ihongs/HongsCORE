@@ -64,7 +64,10 @@ fieldset>.dropdown-list {
 .label {
     font-family: Helvetica, Arial, sans-serif; /* Helvetica Neue 偏下 */
 }
-
+.radio    label ,
+.checkbox label {
+  margin-right : 20px;
+}
 .btn .close {
      box-shadow: none;
     text-shadow: none;
@@ -866,105 +869,135 @@ div.bootstrap-tagsinput .tag [data-role="remove"]:after {
 
 /** 标签 **/
 
-.radio    label ,
-.checkbox label {
-    padding-right: 20px;
-}
-
+.repeated ,
+p.repeated ,
 ul.repeated ,
-ol.repeated ,
- p.repeated {
+ol.repeated {
     padding: 0;
-    margin: -0.3em 0;
+    margin : 0 0 -4px 0;
     list-style : none;
     line-height: inherit;
     font-weight: inherit;
     font-size  : inherit;
-}
-.repeated {
     word-break : normal;
     word-wrap  : break-word;
 }
 .repeated .label ,
 .labelbox .label {
-    margin-right : 4px;
-    line-height  : inherit;
-    font-weight  : inherit;
-    font-size    : inherit;
-    max-width    : 100%;
-    overflow     : hidden;
+    padding: 0 6px;
+    margin : 0 4px 0 0;
+    line-height: inherit;
+    font-weight: inherit;
+    font-size  : inherit;
+    max-width  : 100%;
+    text-align : left;
+    overflow : hidden;
     text-overflow: ellipsis;
-    display      : inline-block;
+    display  : inline-block;
+}
+.labelist .label ,
+.labelist  label {
+    margin : 0;
+    width  : 100%;
 }
 .repeated:empty ,
-.repeated .label:empty {
+.repeated .label:empty ,
+.labelbox .label:empty {
+    margin : 0;
     display: none;
+}
+
+.label input.invisible {
+    float  : left; /* 规避同时存在 file 和 hidden 会偏移的问题 */
+}
+.label .bi.pull-right {
+    margin : 0 -2px 0 6px;
+}
+.label .bi.pull-left {
+    margin : 0 6px 0 -2px;
 }
 
 .form-control.labelbox {
     height : auto;
     min-height: 34px;
-    padding: 2px 4px;
+    padding: 6px 2px 1px 6px;
 }
-.form-group-sm .form-control.labelbox {
-    padding: 2px 4px;
+.form-control .repeated {
+    margin : 0;
 }
-.form-group-lg .form-control.labelbox {
-    padding: 4px 6px;
+.form-control .label {
+    margin : 0 4px 0 0;
+    padding: 0 6px;
+    max-width: calc(100% - 6px);
 }
-
+.form-control > a,
+.form-control > input:not(.invisible,[type=hidden]) {
+    border : 0;
+    margin : 0 0 4px 0;
+    padding: 0 6px;
+    min-width: calc(100% - 6px);
+    display: block;
+    outline: none ;
+}
 .form-control a,
 .form-control a:hover ,
 .form-control a:focus {
     text-decoration: none;
 }
-.form-control ul.repeated ,
-.form-control ol.repeated {
-    line-height: inherit;
-}
-.form-control ul.repeated li.label ,
-.form-control ol.repeated li.label {
-    line-height: inherit;
-}
-.form-control > a ,
-.form-control > input:not(.invisible) {
-    border : 0;
-    height : 24px;
-    margin : 2px 0 2px 0;
-    padding: 2px 8px 2px 8px;
-    width  : 100%;
-    outline: none;
-    display: block;
-}
-.form-control .label {
-    height : 24px;
-    margin : 0 4px 4px 0;
-    padding: 2px 8px 2px 8px;
-}
-.form-control .label .pull-left  {
-    margin : 1px 4px 0 -4px;
-}
-.form-control .label .pull-right {
-    margin : 1px -4px 0 4px;
-}
-.form-control .repeated {
-    margin : 2px 4px -2px 0;
-}
-.form-control .repeated.pictbox {
-    margin : 2px 4px -6px 0;
+
+.forkbox .label span ,
+.filebox .label span ,
+.pictbox .preview img {
+    cursor: pointer;
 }
 
+/** 预览 **/
 
-.repeated.forkbox .label span ,
-.repeated.filebox .label span ,
-.repeated.pictbox .preview {
-    cursor : pointer;
+.preview {
+    border : solid 1px #eee;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
 }
-.repeated.filebox .label input {
-    float  : left; /* 规避同时存在 file 和 hidden 会偏移的问题 */
+.preview img {
+    position: absolute;
+}
+.preview .icon  ,
+.preview .erase {
+    position: absolute;
+    width   : 20px;
+    height  : 20px;
+    line-height: 20px;
+    font-size  : 20px;
+    text-align : center;
+    vertical-align: middle;
+}
+.preview .erase {
+    top     : 0;
+    right   : 0;
+    z-index : 2;
+}
+.preview .icon  {
+    top     : 0;
+    left    : 0;
+    z-index : 1;
+    top     : calc(100% / 2 - 10px);
+    left    : calc(100% / 2 - 10px);
+}
+.preview:hover ,
+.preview:focus {
+     box-shadow: 1px 0 4px #000;
+}
+.preview .erase:hover ,
+.preview .erase:focus {
+    text-shadow: 1px 0 4px #fff;
+}
+.repeated .preview {
+    margin : 0 4px 0 0;
+    display: inline-block;
 }
 
-/** 选择 **/
+/** 选择(废弃) **/
 
 ul.pickbox {
     margin : 0;
@@ -1011,14 +1044,6 @@ ul.pickrol > li.btn-default.form-control {
     color   : #555;
 }
 
-.pickbox:empty  ,
-.pickrol  input ,
-.pickrol .close ,
-.picksel:not(.pickmul) .picksum ,
-.picksel:not(.pickmul) .picknum {
-    display : none;
-}
-
 ul.pickmul {
     font-size: 0 ; /* 消除 inline-block 空隙 */
     margin-bottom:-2px;
@@ -1033,33 +1058,12 @@ ul.pickmul + * ,
     margin-top   : 2px;
 }
 
-.preview {
-    position: relative;
-    border  : 1px solid #ccc;
-    border-radius: 4px;
-}
-.preview img {
-    position: absolute;
-}
-.preview .close {
-    position: absolute;
-    top   :  2px;
-    right :  2px;
-    width : 20px;
-    height: 20px;
-    font-size  : 20px;
-    line-height: 20px;
-    border-radius: 50%;
-    text-align: center;
-    background: silver;
-}
-.preview .close:hover ,
-.preview .close:focus {
-    box-shadow: 0 0 0.5em #000;
-}
-.repeated .preview {
-    margin : 0 4px 4px 0 ;
-    display: inline-block;
+.pickbox:empty  ,
+.pickrol  input ,
+.pickrol .close ,
+.picksel:not(.pickmul) .picksum ,
+.picksel:not(.pickmul) .picknum {
+    display : none;
 }
 
 /** 时间 **/

@@ -216,12 +216,16 @@
                             name += ".";
                         }
                     %>
-                    <div class="form-control-static"><p data-fn="<%=name%>" data-ft="_review" class="repeated" data-item-class="label label-default"></p></div>
+                    <div class="form-control-static">
+                        <ul data-fn="<%=name%>" data-ft="_review" class="repeated" data-item-class="label label-default"></ul>
+                    </div>
                 <%} else if ( rptd ) {%>
                     <%
                             name += ".";
                     %>
-                    <div class="form-control-static"><p data-fn="<%=name%>" data-ft="_review" class="repeated" data-item-class="label label-default"></p></div>
+                    <div class="form-control-static">
+                        <ul data-fn="<%=name%>" data-ft="_review" class="repeated" data-item-class="label label-default"></ul>
+                    </div>
                 <%} else {%>
                     <div class="form-control-static" data-fn="<%=name%>" data-ft="_review"></div>
                 <%} /*End If */%>

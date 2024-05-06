@@ -928,14 +928,14 @@ ol.repeated {
 .form-control .label {
     margin : 0 4px 0 0;
     padding: 0 6px;
-    max-width: calc(100% - 6px);
+    max-width: calc(100% - 4px);
 }
 .form-control > a,
 .form-control > input:not(.invisible,[type=hidden]) {
     border : 0;
     margin : 0 0 4px 0;
     padding: 0 6px;
-    min-width: calc(100% - 6px);
+    min-width: calc(100% - 4px);
     display: block;
     outline: none ;
 }

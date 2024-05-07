@@ -389,6 +389,19 @@ body {
     color: #55d;
 }
 
+/* 主导航条反色样式 */
+#menu-context .navbar-inverse .breadcrumb .close ,
+#menu-context .navbar-inverse .breadcrumb .active a {
+    color: #ccc;
+}
+#menu-context .navbar-inverse .breadcrumb .home-crumb .bi {
+    color: #aaa;
+}
+#menu-context .navbar-inverse .breadcrumb .host-crumb .bi ,
+#menu-context .navbar-inverse .breadcrumb .hold-crumb .bi {
+    color: #aae;
+}
+
 /* 二级导航附加样式 */
 /* 二级导航附加样式 */
 #main-context.labs>div {

@@ -142,7 +142,7 @@
     <a href="javascript:;"></a>
 </div>
 
-<nav class="navbar navbar-default navbar-fixed-top" role="navigation" id="headbar">
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation" id="headbar">
     <div>
         <div class="navbar-header">
             <a class="navbar-brand" href="<%=Core.SERV_PATH%>/centra/"

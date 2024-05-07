@@ -9,7 +9,7 @@ function setFormItems(formbox, loadbox) {
         // 选择器
         inp = formbox.find("[data-toggle=dateinput],[data-toggle=datetimepicker]");
         if (inp.size()) forDateInput(   );
-        inp = formbox.find("[data-toggle=suggest]");
+        inp = formbox.find("[data-toggle=sugginput]");
         if (inp.size()) forSuggInput(   );
         inp = formbox.find("[data-toggle=fileinput]");
         if (inp.size()) setFileInput(inp);

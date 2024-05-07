@@ -46,13 +46,13 @@ body {
     margin: 0;
     width : 240px;
     float : left ;
-    box-shadow:  1px 0 #e5e5e5;
+  /*box-shadow:  1px 0 #e5e5e5;*/
 }
 #headbar .navbar-right {
     margin: 0;
     width : 120px;
     float : right;
-    box-shadow: -1px 0 #e5e5e5;
+  /*box-shadow: -1px 0 #e5e5e5;*/
 }
 #headbar .navbar-left {
     width : calc(100% - 240px - 120px);

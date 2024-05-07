@@ -113,7 +113,10 @@ body {
 .form-foot>:last-child:is(br) {
     display: none ; /* 兼容占位 */
 }
-.form-subs>.form-sub.panel-body {
+.form-body legend {
+    font-size : 18px;
+}
+.form-sub.panel-body {
     padding-left : 0;
     padding-right: 0;
 }

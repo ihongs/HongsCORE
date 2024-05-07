@@ -107,34 +107,45 @@ function hsRequires(url, fun ) {
         url = [url];
     }
 
-    var i = 0;
-    var j = 0;
+    var urs;
+    var k = 0;
     var l = url.length;
     var h = document.head
          || jQuery ("head") [0]
          || document.documentElement;
 
-    while ( l >= ++ i ) {
-        var w = url[i - 1 ];
-        if ( HsREQS[w]) {
-            w = HsREQS  [w];
+    function toDepUrs(w) {
+        var m = HsCONF["deps."+w];
+        if (m) {
+            if (jQuery.isArray(m)) {
+                return m;
+            }
+            w = m ;
         }
-        var u = hsFixUri(w);
+        return [w];
+    }
 
-        if (!HsDEPS[u]) {
-             HsDEPS[u]  = 1;
-        } else {
-             HsDEPS[u] += 1;
-            if (fun && ++ j == l) {
+    for(var i = 0 ; i < url.length ; i ++) {
+        var w = url[i];
+          urs = toDepUrs(w);
+            l = l - 1 + urs.length ;
+    for(var j = 0 ; j < urs.length ; j ++) {
+        var v = urs[j];
+        var u = hsFixUri(v);
+
+        if (HsDEPS [u]) {
+            HsDEPS [u] += 1;
+            if (fun && ++ k == l) {
                 fun( );
             }
             continue  ;
         }
-        if (jQuery('link[href="'+w+'"],script[src="'+w+'"],'
+
+        if (jQuery('link[href="'+v+'"],script[src="'+v+'"],'
                   +'link[href="'+u+'"],script[src="'+u+'"]')
                   . size( )) {
-             HsDEPS[u] += 1;
-            if (fun && ++ j == l) {
+            HsDEPS [u] += 1;
+            if (fun && ++ k == l) {
                 fun( );
             }
             continue  ;
@@ -166,7 +177,8 @@ function hsRequires(url, fun ) {
             n.href  = u ;
         }
         h.appendChild(n);
-    }
+        HsDEPS [u]  = 1 ;
+    }}
 }
 
 /**

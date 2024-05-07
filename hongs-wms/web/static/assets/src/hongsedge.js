@@ -30,7 +30,7 @@ H$.load = function(req) {
     var mod = H$.mod();
     mod.load(undefined, hsSerialMix(mod._data, req));
 };
-H$.send = function(url, req) {
+H$.post = function(url, req) {
     var rzt;
     $.hsAjax({
         url     :  url,
@@ -48,19 +48,19 @@ H$.send = function(url, req) {
 };
 H$["search"] = function(req) {
     var url = H$.src() + "/search.act";
-    return H$.send(url, req);
+    return H$.post(url, req);
 };
 H$["create"] = function(req) {
     var url = H$.src() + "/create.act";
-    return H$.send(url, req);
+    return H$.post(url, req);
 };
 H$["update"] = function(req) {
     var url = H$.src() + "/update.act";
-    return H$.send(url, req);
+    return H$.post(url, req);
 };
 H$["delete"] = function(req) {
     var url = H$.src() + "/delete.act";
-    return H$.send(url, req);
+    return H$.post(url, req);
 };
 
 //** 组件扩展功能 */

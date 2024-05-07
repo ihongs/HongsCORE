@@ -12,9 +12,10 @@
         }
 
         var inp , box ;
-        if (! this.is("input,textarea")) {
+        if (! this.is("input")) {
             box = this;
-            inp = this.siblings("input,textarea");
+            inp = this.siblings("input")
+                      .not  (  ".input");
         } else {
             inp = this;
             box = this.siblings("ul,ol");
@@ -37,7 +38,7 @@
                   +       '<input class="value" type="hidden" />'
                   +     '</li>'
                   +   '</ul>'
-                  +   '<input class="input" type="'+ft+'"/>'
+                  +   '<input class="input" type="'+ft+'" />'
                   + '</div>'
                 );
                 box.insertBefore(inp).prepend(inp);
@@ -47,12 +48,17 @@
                 var lsp = box.children("ul");
                 var enp = box.find(".input");
 
-                enp.attr("placeholder", inp.attr("placeholder"));
-
                 // 只读无需输入
                 if (inp.is("[readonly]")) {
-                    box.find( "input").remove();
+                    lsp.attr("data-fn", fn);
+                    // 直接填充, 不从 input 读取
+                    lsp.data("fill", function(x,v) {hsDitsFill(this,v);});
+                    // 移除控件, 无需 input 相关的操作
+                    box.find(".input").remove();
+                    box.find(".value").remove();
                     box.find(".erase").remove();
+                    inp . remove();
+                    inp = jQuery();
                 } else
                 // 添加隐藏字段
                 if (inp.is("[multiple]")) {
@@ -75,6 +81,10 @@
                        .removeClass("form-field")
                           .addClass("form-final");
                 }
+                // 输入提示
+                if (inp.attr("placeholder")) {
+                    enp.attr("placeholder", inp.attr("placeholder"));
+                }
             }
         }
 
@@ -84,7 +94,7 @@
         var fn   = lsp.data( "fn" ) || inp.attr("name"); // 字段名
         var ends = lsp.data("ends") || inp.data("ends"); // 切词键
         var join = lsp.data("join") || inp.data("join"); // 拼接符
-        var unjoin  = lsp.is("[data-unjoin]" ) || inp.is("[multiple]");
+        var unjoin  = lsp.is("[data-unjoin]" ) || inp.is("[multiple]");     // 不拼接
         var unstrip = lsp.is("[data-unstrip]") || inp.is("[data-unstrip]"); // 不清理前后空格
         var unstint = lsp.is("[data-unstint]") || inp.is("[data-unstint]"); // 不进行排重处理
 

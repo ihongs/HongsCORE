@@ -342,8 +342,8 @@
 
     hsRequires("<%=_module%>/<%=_entity%>/defines.js", function() {
         // 外部定制
-        Promise.resolve(window["<%=_funcId%>"] && window["<%=_funcId%>"](context, formobj))
-               .then(function() {
+        $.when(window["<%=_funcId%>"] && window["<%=_funcId%>"](context, formobj))
+         .then(function() {
 
         // 权限控制
         $.each({"update":".update", "delete":".delete", "reveal":".reveal"}

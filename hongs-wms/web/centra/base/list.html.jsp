@@ -129,8 +129,10 @@
                         al = al + "&.deny=.create";
                     }}
                 %>
-                <ul class="pickbox pickmul" data-ft="_fork" data-fn="<%=name%>.<%=Cnst.IN_REL%>." data-ln="<%=ln%>" data-tk="<%=tk%>" data-vk="<%=vk%>" data-item-class="btn btn-sm btn-info" data-icon-class="-"></ul>
-                <button type="button" class="btn btn-sm btn-default form-control" data-toggle="hsFork" data-target="@" data-href="<%=al%>"><%=_locale.translate("fore.fork.select", text)%></button>
+                <div class="form-control labelbox labelist">
+                    <ul class="repeated forkbox" data-ft="_fork" data-fn="<%=name%>.<%=Cnst.IN_REL%>." data-ln="<%=ln%>" data-tk="<%=tk%>" data-vk="<%=vk%>"></ul>
+                    <a href="javascript:;" data-toggle="hsFork" data-target="@" data-href="<%=al%>"><%=_locale.translate("fore.fork.select", text)%></a>
+                </div>
             <%} else if ("enum".equals(type) || "type".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
                 <select class="form-control" name="<%=name%>.<%=Cnst.EQ_REL%>" data-ft="_enum"></select>
             <%} else if (!_sd.contains(name)) {%>
@@ -515,8 +517,8 @@
 
     hsRequires("<%=_module%>/<%=_entity%>/defines.js", function() {
         // 外部定制
-        Promise.resolve(window["<%=_funcId%>"] && window["<%=_funcId%>"](context, listobj, filtobj, statobj))
-               .then(function() {
+        $.when(window["<%=_funcId%>"] && window["<%=_funcId%>"](context, listobj, filtobj, statobj))
+         .then(function() {
 
         // 权限控制
         $.each({"recite":".recite", "create":".create", "update":".update", "delete":".delete", "reveal":".reveal"}

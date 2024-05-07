@@ -93,16 +93,15 @@
         _fill__check: hsListFillFork
     });
 
-    // 简单分页, 选择条目
-
     hsRequires("<%=_module%>/<%=_entity%>/defines.js", function() {
         // 外部定制
-        if (window["<%=_funcId%>"]) {
-            window["<%=_funcId%>"](context, listobj);
-        }
+        $.when(window["<%=_funcId%>"] && window["<%=_funcId%>"](context, listobj))
+         .then(function() {
 
         // 加载数据
         listobj.load(hsSetPms(listobj._url, loadbox), findbox);
+
+        }); // End Promise
     });
 })(jQuery);
 </script>

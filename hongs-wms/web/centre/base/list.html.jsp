@@ -364,8 +364,8 @@
 
     hsRequires("<%=_module%>/<%=_entity%>/defines.js", function() {
         // 外部定制
-        Promise.resolve(window["<%=_funcId%>"] && window["<%=_funcId%>"](context, listobj, filtobj, statobj))
-               .then(function() {
+        $.when(window["<%=_funcId%>"] && window["<%=_funcId%>"](context, listobj, filtobj, statobj))
+         .then(function() {
 
         // 权限控制
         $.each({"recite":".recite", "create":".create", "update":".update", "delete":".delete"}

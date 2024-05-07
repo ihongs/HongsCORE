@@ -578,8 +578,8 @@
 
     hsRequires("<%=_module%>/<%=_entity%>/defines.js", function() {
         // 外部定制
-        Promise.resolve(window["<%=_funcId%>"] && window["<%=_funcId%>"](context, formobj))
-               .then(function() {
+        $.when(window["<%=_funcId%>"] && window["<%=_funcId%>"](context, formobj))
+         .then(function() {
 
         // 外部限制
         $.each(denycss ? denycss.split(",") : []

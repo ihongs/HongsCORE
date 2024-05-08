@@ -28,7 +28,7 @@
                 <%if ("select".equals(_action)) {%>
                 <button type="button" class="commit btn btn-primary"><%=_locale.translate("fore.select", _title)%></button>
                 <button type="button" class="checks btn btn-warning"><%=_locale.translate("fore.selall", _title)%></button>
-                <%} // End If %>
+                <%} /*End If*/%>
                 <button type="button" class="create btn btn-default"><%=_locale.translate("fore.create", _title)%></button>
                 <%if ("search".equals(_action)) {%>
                 <button type="button" class="update for-choose btn btn-default"><%=_locale.translate("fore.update", _title)%></button>
@@ -36,12 +36,12 @@
                 <button type="button" class="reveal for-choose btn btn-default" title="<%=_locale.translate("fore.reveal", _title)%>"><span class="bi bi-hi-reveal"></span></button>
                 <button type="button" class="copies for-checks btn btn-default" title="<%=_locale.translate("fore.copies", _title)%>"><span class="bi bi-hi-export"></span></button>
                 <button type="button" class="delete for-checks btn btn-default" title="<%=_locale.translate("fore.delete", _title)%>"><span class="bi bi-hi-remove text-danger"></span></button>
-                <%} // End If %>
+                <%} /*End If*/%>
             </div>
             <%if ("select".equals(_action)) {%>
             <div class="btn btn-text text-muted picksum"><%=_locale.translate("fore.selected", _title)%> <b class="picknum"></b></div>
             <div class="for-checks for-choose invisible"></div>
-            <%} // End If %>
+            <%} /*End If*/%>
         </div>
         <div class="col-xs-5">
             <div class="input-group">

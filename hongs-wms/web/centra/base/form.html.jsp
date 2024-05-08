@@ -456,9 +456,9 @@
                         if (null != mode &&!"".equals(mode)) {
                             extr += " data-mode=\"" + mode + "\"";
                         }
-                            clas  = "\" style=\"width:100%; height:15em; border:0;\"";
+                            clas  = " form-editor" ;
                         } else {
-                            clas  = " form-control\" style=\"height:5em;\"";
+                            clas  = " form-control";
                         }
                     %>
                     <textarea class="form-field<%=clas%>" id="<%=_pageId%>-<%=name%>" name="<%=name%>" placeholder="<%=hold%>"<%=extr%>></textarea>

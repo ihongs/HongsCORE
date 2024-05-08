@@ -58,16 +58,12 @@ fieldset>.dropdown-list {
 .samp {
     font-family: monospace;
 }
-
 .close ,
 .badge ,
 .label {
     font-family: Helvetica, Arial, sans-serif; /* Helvetica Neue 偏下 */
 }
-.radio    label ,
-.checkbox label {
-  margin-right : 20px;
-}
+
 .btn .close {
      box-shadow: none;
     text-shadow: none;
@@ -110,6 +106,11 @@ fieldset>.dropdown-list {
     color: #999;
 }
 
+textarea.form-editor {
+        border:  0;
+        width : 100%;
+        height: 16.61538462em;
+}
 textarea.form-control,
 select.form-control[multiple] {
         height:  8.30769231em;
@@ -148,9 +149,13 @@ input[type="time"].form-control {
 
 .radio legend ,
 .checkbox legend {
-    font-size: inherit;
-    color : #777;
-    margin: 0;
+    margin-bottom: 0;
+    font-size : inherit;
+}
+.radio label  ,
+.checkbox label  {
+    margin-right : 20px;
+    font-size : inherit;
 }
 
 /* 修正选择框在特殊表单组下不变化的问题 */
@@ -580,6 +585,10 @@ div.bootstrap-tagsinput .tag [data-role="remove"]:after {
 .dark-mode .modal > .alert {
     filter: invert(100%) hue-rotate(180deg) !important;
 }
+.dark-mode .navbar-inverse  img ,
+.dark-mode .navbar-inverse .img {
+    filter: none !important;
+}
 .dark-mode .modal-backdrop {
     background-color: #fff;
 }
@@ -594,6 +603,10 @@ div.bootstrap-tagsinput .tag [data-role="remove"]:after {
 .dusk-mode .navbar-inverse ,
 .dusk-mode .modal > .alert {
     filter: invert(100%) hue-rotate(180deg) !important;
+}
+.dusk-mode .navbar-inverse  img ,
+.dusk-mode .navbar-inverse .img {
+    filter: none !important;
 }
 .dusk-mode .modal-backdrop {
     background-color: #fff;
@@ -923,7 +936,7 @@ ol.repeated {
 }
 .form-group-sm .form-control.labelbox {
     min-height: 30px;
-    padding: 5px 1px 1px 4px;
+    padding: 5px 1px 0px 4px;
 }
 .form-group-lg .form-control.labelbox {
     min-height: 46px;

@@ -80,16 +80,18 @@ body {
     margin-top: 20px;
     margin-bottom: 0;
 }
-#headbox .breadcrumb .active a {
+#headbox .breadcrumb .close {
+    font-weight : inherit;
+    color: inherit;
+}
+#headbox .breadcrumb a {
     text-decoration: none;
-    color: #333;
+    color: #777;
 }
-#headbox .breadcrumb .home-crumb .bi {
+#headbox .breadcrumb a:hover ,
+#headbox .breadcrumb a:focus ,
+#headbox .breadcrumb .active a {
     color: #555;
-}
-#headbox .breadcrumb .host-crumb .bi ,
-#headbox .breadcrumb .hold-crumb .bi {
-    color: #55d;
 }
 
 /* 标准表单分块布局 */
@@ -115,6 +117,12 @@ body {
 }
 .form-body legend {
     font-size : 18px;
+    margin-bottom: 15px;
+}
+.checkbox  legend ,
+.radio     legend {
+    font-size : inherit;
+    margin-bottom: 0;
 }
 .form-sub.panel-body {
     padding-left : 0;

@@ -375,31 +375,29 @@ body {
     max-height: 14px;
 }
 #menu-context .breadcrumb::-webkit-scrollbar-thumb {
-    background: rgba(200,200,200,0.8);
+    background: rgba(128,128,128,0.5);
 }
-#menu-context .breadcrumb .active a {
+#menu-context .breadcrumb .close {
+    font-weight : inherit;
+    color: inherit;
+}
+#menu-context .breadcrumb a {
     text-decoration: none;
-    color: #333;
+    color: #777;
 }
-#menu-context .breadcrumb .home-crumb .bi {
+#menu-context .breadcrumb a:hover ,
+#menu-context .breadcrumb a:focus ,
+#menu-context .breadcrumb .active a {
     color: #555;
 }
-#menu-context .breadcrumb .host-crumb .bi ,
-#menu-context .breadcrumb .hold-crumb .bi {
-    color: #55d;
+/* 反色 */
+#menu-context .navbar-inverse .breadcrumb a {
+    color: #999;
 }
-
-/* 主导航条反色样式 */
-#menu-context .navbar-inverse .breadcrumb .close ,
+#menu-context .navbar-inverse .breadcrumb a:hover ,
+#menu-context .navbar-inverse .breadcrumb a:focus ,
 #menu-context .navbar-inverse .breadcrumb .active a {
-    color: #ccc;
-}
-#menu-context .navbar-inverse .breadcrumb .home-crumb .bi {
-    color: #aaa;
-}
-#menu-context .navbar-inverse .breadcrumb .host-crumb .bi ,
-#menu-context .navbar-inverse .breadcrumb .hold-crumb .bi {
-    color: #aae;
+    color: #ddd;
 }
 
 /* 二级导航附加样式 */
@@ -462,6 +460,12 @@ body {
 }
 .form-body legend {
     font-size : 18px;
+    margin-bottom: 15px;
+}
+.checkbox  legend ,
+.radio     legend {
+    font-size : inherit;
+    margin-bottom: 0;
 }
 .form-sub.panel-body {
     padding-left : 0;

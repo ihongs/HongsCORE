@@ -153,14 +153,14 @@ function hsRequires(url, fun ) {
 
         // 在 head 加 link 或 script 标签
         // 监听其加载事件, 全部完成时回调
-        var n = document.createElement(/\.css$/.test (u) ? "link" : "script");
-        n.onload = n.onreadystatechange = ( function (n) {
+        var n = document.createElement(/\.css$/.test(u) ? "link" : "script");
+        n.onload = n.onreadystatechange = ( function(n) {
             return function( ) {
                 if ( ! n.readyState
                 ||  n.readyState == "loaded"
                 ||  n.readyState == "complete") {
                     n.onload = n.onreadystatechange = null;
-                    if (fun && l == ++ j) {
+                    if (fun && l == ++ k) {
                         fun( );
                     }
                 }

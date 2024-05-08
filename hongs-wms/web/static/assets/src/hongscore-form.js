@@ -560,7 +560,7 @@ HsForm.prototype = {
 
         var fn = inp+"";
         inp = jQuery( );
-        return this.formBox
+        this.formBox
             .find("[data-fn],[data-ft],[data-test],.form-field")
             .each(function() {
             if (fn == $(this).data( "fn" )
@@ -771,16 +771,18 @@ HsForm.prototype = {
 
     _feed__datalist : function(inp, v, n) {
         if (v === undefined) return ;
-        var id = inp.attr("list");
-        if (id && id != "-") {
-           inp = jQuery("#" + id);
-        } else {
-            id = "datalist-"
-               +(new Date().getTime().toString(16))+"-"
-               +(Math.random().toString(16).substr(2));
-           inp.attr("list", id);
-           inp = jQuery('<datalist></datalist>').insertAfter(inp);
-           inp.attr( "id" , id);
+        if (!inp.is("datalist")) {
+            var id = inp.attr("list");
+            if (id && id != "-") {
+               inp = jQuery("#" + id);
+            } else {
+                id = "datalist-"
+                   +(new Date().getTime().toString(16))+"-"
+                   +(Math.random().toString(16).substr(2));
+               inp.attr("list", id);
+               inp = jQuery('<datalist></datalist>').insertAfter(inp);
+               inp.attr( "id" , id);
+            }
         }
         // 同 _feed__select
         var vk = inp.attr("data-vk"); if(!vk) vk = 0;
@@ -1177,7 +1179,7 @@ HsForm.prototype = {
             url = url.replace(/\$\{(.*?)\}/g, function( x, n ) {
                 x = mod.getValue(mod.getInput(n));
                 if (jQuery.isArray(x)) {
-                    x = "," . join(x);
+                    x = x . join(',');
                 }
                 return encodeURIComponent (x||"");
             });

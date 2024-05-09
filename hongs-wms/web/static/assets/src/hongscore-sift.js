@@ -1,5 +1,351 @@
 /* global jQuery, Element, HsForm, HsList, echarts */
 
+function HsSift(context, opts) {
+    context = $(context);
+
+    var  siftBox = context.find(".siftbox");
+    var  findBox = context.find(".findbox");
+
+    this.context = context;
+    this.siftBox = siftBox;
+    this.findBox = findBox;
+    this._url  = opts._url || opts.loadUrl ;
+
+    var  that  = this;
+
+    if (opts) for ( var k in opts ) {
+        if ('_'===k.substring(0,1 )
+        ||  this[k] !== undefined ) {
+            this[k]  =  opts[k];
+        }
+    }
+
+    //** 事件处理 **/
+
+    siftBox.data("fetched", siftBox.is(".invisible"));
+
+    siftBox.on("change", "[data-sift=fn]", function() {
+        var fno  = $(this);
+        var fro  = siftBox.find("[data-sift=fr]");
+        var name = fno.data("name");
+        var kind = fno.data("kind");
+        if (that["_feed_"+name]) {
+            that["_feed_"+name].call(that, fno, fro);
+        } else
+        if (that["_feed_"+kind]) {
+            that["_feed_"+kind].call(that, fno, fro);
+        } else {
+            throw new Error("HsSift: Can not find feed function for "+name+"("+kind+")");
+        }
+    });
+    siftBox.on("click" , "[data-sift=fv]", function() {
+        var btn  = $(this);
+        var fno  = siftBox.find("[data-sift=fn]");
+        var fro  = siftBox.find("[data-sift=fr]");
+        if ("is" == fro.val()) { // 空值判断
+            that["_fill__is"].call(that, fno, fro, btn);
+            return;
+        }
+        var name = fno.data("name");
+        var kind = fno.data("kind");
+        if (that["_fill_"+name]) {
+            that["_fill_"+name].call(that, fno, fro, btn);
+        } else
+        if (that["_fill_"+kind]) {
+            that["_fill_"+kind].call(that, fno, fro, btn);
+        } else {
+            throw new Error("HsSift: Can not find fill function for "+name+"("+kind+")");
+        }
+    });
+    siftBox.on("click" , "[data-sift=fs]", function() {
+        that.addList(that.getList(), $(this).data("name"));
+    });
+}
+HsSift.prototype = {
+    load: function() {
+        var that = this;
+        $.hsAjax({
+            url : this._url,
+            type: "get",
+            dataType: "json",
+            cache   :  true ,
+            async   :  true ,
+            success : function(rst) {
+                rst = hsResponse(rst);
+                if (rst && rst.ok ) {
+                    that.feed(rst.enfo || {});
+                }
+            }
+        });
+    },
+    feed: function(enfo) {
+        var that = this;
+        this.siftBox.find("select[data-fn],datalist[data-fn]").each(function() {
+            var x = $(this);
+            var n = x.data("fn");
+            var v = hsGetValue(enfo, n);
+            if (v) {
+                that._feed__datalist(x, v, n);
+            }
+        });
+    },
+    _feed__datalist: HsForm.prototype._feed__datalist,
+
+    mask: function(title, input, back) {
+        var that = this;
+        var form = $(
+            '<form onsubmit="return false">'
+          +   '<div class="invisible"><button type="submit"></button></div>'
+          + '</form>'
+        );
+        var mask = $.hsMask({
+            title: title,
+            node : form
+        }, {
+            label: "确定",
+            glass: "btn-primary",
+            click: function() {
+                form.find(":submit").click();
+            }
+        }, {
+            label: "取消",
+            glass: "btn-link"
+        });
+        form.append(input);
+        form.submit(function() {
+            back.call(that, form);
+            mask.hsClose();
+            return false;
+        });
+    },
+
+    cntList: function(lst) {
+        var pre = lst.data("name") || "ar";
+        var lzt = lst.children();
+        var   i =  0 ;
+        var   j = -1 ;
+        for(; i < lzt.length(); i ++ ) {
+            var sup;
+            var sub  = $(lzt[i]);
+            if (sub.is(".sift-group")) {
+                sub  = sub.find(".sift-list").first();
+                sup  = sub.data("name") || "";
+            } else {
+                sub  = sub.fidn("input:hidden");
+                sup  = sub.attr("name") || "";
+            }
+            if (pre == sup.substr(0,pre.length)) {
+                sup  = sub.substr(0+pre.length);
+                var p  = sup.indexOf('.');
+                if (p !== -1) {
+                    p  = sup.substr (0,p);
+                    p  =  parseInt  (  p);
+                    if (j < p) {
+                        j = p;
+                    }
+                }
+            }
+        }
+        return j + 1;
+    },
+    getList: function() {
+        var lst = this.siftBox.find(".sift-group.active").find(".sift-list:first");
+        if (! lst.size() ) {
+            lst = this.siftBox.find(".sift-group:first" ).find(".sift-list:first");
+        }
+        return lst;
+    },
+    addList: function(lst, rel) {
+        var sub = this.listTmp.clone();
+        var pre = lst.data("name") || "ar";
+        var cnt = lst.data("size") ||  0  ;
+            cnt = parseInt( cnt  );
+        var key = pre +"."+ cnt +"."+ rel ;
+        sub.find(".sift-list").first()
+           .attr( "data-name" , key  );
+        lst.append(sub);
+        lst.data("size", cnt + 1 );
+        return sub;
+    },
+    addItem: function(lst, fno, fro, txt, val) {
+        var tag = this.itemTmp.clone();
+        var pre = lst.data("name") || "ar";
+        var cnt = lst.data("size") ||  0  ;
+            cnt = parseInt( cnt  );
+        var key = pre +"."+ cnt +"."+ fno.val() +"."+ fro.val();
+        var inp = $('<input type="hidden"/>');
+        tag.find(".sift-fn").text(fno.text());
+        tag.find(".sfit-fr").text(fro.text());
+        tag.find(".sift-fv").text(txt);
+        inp.attr("name",key).val (val);
+        lst.append(tag);
+        lst.data("size", cnt + 1 );
+        return tag;
+    },
+    setRels: function(fro, enf) {
+        this._feed__datalist(fro.empty(),enf);
+    },
+
+    _feed__is: function(fno, fro) {
+        this.setRels(fno, fro, [
+            ["is", "为"]
+        ]);
+    },
+    _feed__string: function(fno, fro) {
+        switch (fno.data("for")) {
+        case "serial": this.setRels(fro, [
+            ["is", "为"],
+            ["eq", "等于"],
+            ["ne", "不等于"],
+            ["sp", "匹配"],
+            ["ns", "不匹配"]
+        ]); break;
+        case "search": this.setRels(fro, [
+            ["is", "为"],
+            ["sp", "匹配"],
+            ["ns", "不匹配"]
+        ]); break;
+        default: this.setRels(fro, [
+            ["is", "为"],
+            ["eq", "等于"],
+            ["ne", "不等于"]
+        ]);
+        }
+    },
+    _feed__number: function(fno, fro) {
+        this.setRels(fro, [
+            ["is", "为"],
+            ["gt", "大于"],
+            ["ge", "大或等于"],
+            ["lt", "小于"],
+            ["le", "小或等于"]
+        ]);
+    },
+    _feed__date: function(fno, fro) {
+        this.setRels(fro, [
+            ["is", "为"],
+            ["gt", "大于"],
+            ["ge", "大或等于"],
+            ["lt", "小于"],
+            ["le", "小或等于"]
+        ]);
+    },
+    _feed__enum: function(fno, fro) {
+        this.setRels(fro, [
+            ["is", "为"],
+            ["eq", "等于"],
+            ["ne", "不等于"]
+        ]);
+    },
+    _feed__fork: function(fno, fro) {
+        this.setRels(fro, [
+            ["is", "为"],
+            ["eq", "等于"],
+            ["ne", "不等于"]
+        ]);
+    },
+
+    _fill__is: function(fno, fro) {
+        this.mask(
+            fno.text()+" "+fro.text(),
+          + '<select class="form-control">'
+          +   '<option value="none">空</option>'
+          +   '<option value="not-none">非空</option>'
+          + '</select>',
+            function(form) {
+                var sel = form.find("select");
+                var val =  sel. val();
+                var txt =  sel.find("option").filter(function( ) {
+                    return $(this).val() === val;
+                }).text() || val;
+                this.addItem(this.getList(), fno, fro, val, txt);
+            }
+        );
+    },
+    _fill__string: function(fno, fro) {
+        this.mask(
+            fno.text()+" "+fro.text(),
+            '<input type="search" class="form-control"/>',
+            function(form) {
+                var val = form.find("input").val();
+                this.addItem(this.getList(), fno, fro, val, val);
+            }
+        );
+    },
+    _fill__number: function(fno, fro) {
+        this.mask(
+            fno.text()+" "+fro.text(),
+            '<input type="number" class="form-control"/>',
+            function(form) {
+                var val = form.find("input").val();
+                this.addItem(this.getList(), fno, fro, val, val);
+            }
+        );
+    },
+    _fill__date: function(fno, fro) {
+        var inp = $('<input type="hidden" data-topple="hsDate"/>');
+        var fmt = fno.data("format");
+        var fst = fno.data("offset");
+        var typ = fno.data("type"  );
+
+        // 转换预置格式
+        switch (fmt) {
+            case "time":
+                fmt = hsGetLang("time.format");
+                break;
+            case "date":
+                fmt = hsGetLang("date.format");
+                break;
+            case "datetime" : case "" : case null :
+                fmt = hsGetLang("datetime.format");
+        }
+
+        inp.attr("data-format", fmt);
+        inp.attr("data-offset", fst);
+        inp.attr("data-type"  , typ);
+
+        this.mask(
+            fno.text()+" "+fro.text(),
+            inp,
+            function() {
+                var val =  inp.val ();
+                var txt = hsFmtDate(val, fmt);
+                this.addItem(this.getList(), fno, fro, val, txt);
+            }
+        ).hsReady();
+    },
+    _fill__enum: function(fno, fro) {
+        var nam = fno.data("ln") || fno.val();
+        var sel = this.formBox.find("select[data-name='"+nam+"']").clone();
+        this.mask(
+            fno.text()+" "+fro.text(),
+            sel,
+            function() {
+                var val =  sel.val ();
+                var txt =  sel.find("option[value='" + val + "']").text( );
+                this.addItem(this.getList(), fno, fro, val, txt);
+            }
+        ).hsReady();
+    },
+    _fill__fork: function(fno, fro, btn) {
+        var ln  = fno.data("ln") || "";
+        var vk  = fno.data("vk") || "id";
+        var tk  = fno.data("tk") || "name";
+        var url = fno.data( "href" ) || "";
+        var bin = fno.data("target") || "";
+        var box = jQuery('<div></div>').attr({"data-ln": ln, "data-vk": vk, "data-tk": tk});
+
+        var that = this;
+        btn.hsPick( url, bin, box, function (btn, v) {
+            for(var val in v) {
+                var arr  = v[val];
+                var txt  = arr[0];
+                that.addItem(this.getList(), fno, fro, val, txt);
+            }
+        });
+    }
+};
+
 /**
  * 列表统计筛选组件
  * @param {jQuery|Element} context

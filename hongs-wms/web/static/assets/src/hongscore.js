@@ -3255,8 +3255,8 @@ function(evt) {
 .on("cilck", "[data-toggle=hsExit]",
 function(evt) {
     var btn = $(this);
-    var box = btn.data("target");
-        box = btn.find(box||"@");
+    var box = btn.hsData("target");
+        box = btn.hsFind(box||"@");
         box.hsClose();
 });
 

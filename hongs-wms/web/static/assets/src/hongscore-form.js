@@ -771,7 +771,8 @@ HsForm.prototype = {
 
     _feed__datalist : function(inp, v, n) {
         if (v === undefined) return ;
-        if (!inp.is("datalist")) {
+        if (!inp.is( "select" )
+        &&  !inp.is("datalist")) {
             var id = inp.attr("list");
             if (id && id != "-") {
                inp = jQuery("#" + id);

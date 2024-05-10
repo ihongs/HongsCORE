@@ -260,7 +260,7 @@
             <span>请选择字段、条件、取值，这将添加一条筛查参数；点击“&times;”删除条目或分组。</span>
             <span>“与”、“或”、“非”表示分组内各条间的关系；点击分组可激活，新的将加入其下。</span>
             <span>如希望将筛查条目或分组换到其他组下，使用鼠标按住条目或分组标题拖拽即可。</span>
-            <span><a href="javascript:;" onclick="$.hsWarn('?'+$.param($(this).closest('form').find('input:hidden')))">检查参数</a></span>
+            <span><a href="javascript:;" onclick="alert('?'+$.param($(this).closest('form').find('input:hidden')))">检查参数</a></span>
         </div>
     </form>
     <!-- 统计 -->

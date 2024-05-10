@@ -2046,14 +2046,14 @@ $.hsMask = function(opt) {
     // 设置参数
     ini.backdrop = opt.backdrop;
     ini.keyboard = opt.keyboard;
+    if (opt["close"]) {
+        end = opt["close"];
+    }
     if (opt["count"] !== undefined) {
-        dow = opt["count"]*1000;
+        dow = opt["count"];
     }
     if (opt["focus"] !== undefined) {
         foc = opt["focus"];
-    }
-    if (opt["close"] !== undefined) {
-        end = opt["close"];
     }
     if (opt["title"] !== undefined) {
         btt.text (opt["title"]);
@@ -2084,9 +2084,9 @@ $.hsMask = function(opt) {
     for(var i = 1; i < arguments.length; i ++) {
         var cnf = arguments[i];
         var btm = $('<button type="button" class="btn"></button>');
-        btn.append( btm );
-        if (opt["focus"]) {
-            foc = (i - 1);
+        btn.append (btm);
+        if (cnf["focus"]) {
+            foc = i;
         }
         if (cnf["label"]) {
             btm.text (cnf["label"]);
@@ -2106,21 +2106,24 @@ $.hsMask = function(opt) {
     }
 
     // 按钮聚焦
-    $(":focus").blur();
+    if (foc !== 0 )
     setTimeout( function( ) {
-        var fox = btn.find("button").eq(foc);
+        $(":focus").blur( );
+        var fox = foc  < 0
+          ? btt.siblings(".close").eq(0)
+          : btn.find("button").eq(foc-1);
         if (fox.size() > 0) {
             fox[0].focus( );
         } else {
             div[0].focus( );
         }
-    } , 500);
+    } , 100);
 
     // 延时关闭
-    if (dow !== 0)
+    if (dow !== 0 )
     setTimeout( function( ) {
         mod.modal( "hide" );
-    } , dow);
+    } , dow * 1000);
 
     // 附加开关
     if (opt.closable ===  false  ) {
@@ -2144,7 +2147,7 @@ $.hsMask = function(opt) {
         mod.addClass("modal-middle");
     } else
     if (opt.position === "bottom") {
-        mod.addClass("modal-middle");
+        mod.addClass("modal-bottom");
     }
 
     // 规避再打开不触发显示事件
@@ -2186,8 +2189,14 @@ $.hsNote = function(msg, typ, end, sec) {
         text : txt ,
         title: msg ,
         close: end ,
-        count: sec || 2
+        count: sec ,
+        focus: -1
     };
+
+    // 默认计时
+    if (sec === undefined) {
+        opt.count = 2 ;
+    }
 
     // 样式
     if (typ) switch (typ) {
@@ -2227,9 +2236,18 @@ $.hsWarn = function(msg, typ, yes, not) {
     var opt  = {
         mode : "warn" ,
         text : txt ,
-        title: msg
+        title: msg ,
+        focus: -1
     };
     var arr  = [ opt ];
+
+    // 聚焦
+    if (yes !== undefined) {
+        opt.focus = 1 ;
+    } else
+    if (not !== undefined) {
+        opt.focus = 2 ;
+    }
 
     // 样式
     if (typ) switch (typ) {

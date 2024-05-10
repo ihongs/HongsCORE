@@ -1018,14 +1018,11 @@ $(document).on("click", ".cancel,.recant" , function() {
  */
 $(document).on("reset", ".HsList .findbox", function() {
     var findbox = $(this);
-    findbox.find("[data-ft=_fork]"). each ( function() {
-        hsFormFillFork($(this), {});
-    });
-    findbox.find("[data-fn].repeated.labelbox   .label").remove();
-    findbox.find("[data-fn].bootstrap-tagsinput .label").remove();
+    findbox.find("[data-fn].repeated" ).empty();
+    findbox.find(".sift-list.repeated").empty();
     setTimeout(function() {
         findbox.find(":submit").first().click();
-    } , 500);
+    } , 100);
 });
 
 })(jQuery);

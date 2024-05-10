@@ -557,6 +557,7 @@ div.bootstrap-tagsinput .tag [data-role="remove"]:after {
         margin:  30px auto;
         border-radius: 6px;
     }
+    /* Windows 警告框也没再用横幅的形式
     .alert.warnbox ,
     .alert.waitbox {
         width : 100% ;
@@ -570,6 +571,7 @@ div.bootstrap-tagsinput .tag [data-role="remove"]:after {
         width : 600px;
         margin:   0px auto;
     }
+    */
     /* 规避警告框右侧的滚动条间隙 */
     .alert-modal {
         padding-right: 0 !important;

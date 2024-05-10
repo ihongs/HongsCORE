@@ -2,6 +2,7 @@
 <%@page import="io.github.ihongs.action.NaviMap"%>
 <%@page import="io.github.ihongs.util.Dict"%>
 <%@page import="io.github.ihongs.util.Synt"%>
+<%@page import="java.util.HashSet" %>
 <%@page import="java.util.Iterator"%>
 <%@page extends="io.github.ihongs.jsp.Pagelet"%>
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
@@ -67,9 +68,11 @@
         </div>
     </form>
     <!-- 筛选 -->
-    <form class="findbox filtbox openbox invisible well form-horizontal">
-        <div class="form-body">
+    <form class="findbox siftbox openbox invisible well">
         <%
+        Set dataAdds = new HashSet();
+        StringBuilder dataList = new StringBuilder();
+        StringBuilder siftList = new StringBuilder();
         Iterator it2 = _fields.entrySet().iterator();
         while (it2.hasNext()) {
             Map.Entry et = (Map.Entry) it2.next();
@@ -78,98 +81,186 @@
             String  type = (String) info.get("__type__");
             String  text = (String) info.get("__text__");
 
-            if ("@".equals(name) || "id".equals(name)
-            || !Synt.declare(info.get("filtable"), false)) {
+            if ("@".equals(name) || "id".equals(name)) {
                 continue;
             }
-        %>
-        <div class="filt-group form-group form-group-sm row" data-name="<%=name%>">
-            <label class="col-xs-3 text-right control-label form-control-static">
-                <%=text != null ? text : ""%>
-            </label>
-            <div class="col-xs-9">
-            <%if ("number".equals(type) || "range".equals(type) || "color".equals(type) || "sorted".equals(type)) {%>
-                <div class="input-group">
-                    <input type="<%=type%>" class="form-control" name="<%=name%>.<%=Cnst.GE_REL%>" />
-                    <span class="input-group-addon input-sm">~</span>
-                    <input type="<%=type%>" class="form-control" name="<%=name%>.<%=Cnst.LE_REL%>" />
-                </div>
-            <%} else if ("date".equals(type) || "time" .equals(type) || "datetime" .equals(type)) {%>
-                <%
-                    if ("datetime".equals(type)) {
-                        type = "datetime-local";
-                    }
-                %>
-                <div class="input-group">
-                    <input type="<%=type%>" class="form-control" name="<%=name%>.<%=Cnst.GE_REL%>" data-toggle="hsTime" data-type="<%=info.get("type")%>" />
-                    <span class="input-group-addon input-sm">~</span>
-                    <input type="<%=type%>" class="form-control" name="<%=name%>.<%=Cnst.LE_REL%>" data-toggle="hsTime" data-type="<%=info.get("type")%>" />
-                </div>
-            <%} else if ("fork".equals(type) || "pick".equals(type)) {%>
-                <%
-                    String fn = name;
-                    if (fn.endsWith( "." )) {
-                        fn = fn.substring(0, fn.length() - 1);
-                    }
-                    String kn = fn +"_fork";
-                    if (fn.endsWith("_id")) {
-                        fn = fn.substring(0, fn.length() - 3);
-                        kn = fn;
-                    }
-                    String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
-                    String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") : "id";
-                    String ln = info.containsKey("data-ln") ? (String) info.get("data-ln") :  kn ;
-                    String al = info.containsKey("data-al") ? (String) info.get("data-al") :  "" ;
-                    al = al.replace("centre", "centra");
-                    // 选择时禁用创建
-                    if ( ! al.isEmpty (   )) {
-                    if ( ! al.contains("#")) {
-                        al = al + "#.deny=.create";
+            if (!Synt.declare(info.get("siftable"), false)
+            &&  !Synt.declare(info.get("filtable"), false)) {
+                continue;
+            }
+
+            String  kind = "";
+            String  extr = "";
+
+            if ("fork".equals(type) || "pick".equals(type)) {
+                String fn = name;
+                if (fn.endsWith( "." )) {
+                    fn = fn.substring(0, fn.length() - 1);
+                }
+                String kn = fn +"_fork";
+                if (fn.endsWith("_id")) {
+                    fn = fn.substring(0, fn.length() - 3);
+                    kn = fn;
+                }
+                String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
+                String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") : "id";
+                String ln = info.containsKey("data-ln") ? (String) info.get("data-ln") :  kn ;
+                String al = info.containsKey("data-al") ? (String) info.get("data-al") :  "" ;
+                String at = info.containsKey("data-at") ? (String) info.get("data-at") :  "" ;
+                al = al.replace("centre", "centra");
+                at = at.replace("centre", "centra");
+                // 选择时禁用创建
+                if ( ! al.isEmpty (   )) {
+                if ( ! al.contains("#")) {
+                    al = al + "#.deny=.create";
+                } else {
+                    al = al + "&.deny=.create";
+                }}
+                /**
+                 * 关联路径: base/search|data/xxxx/search?rb=a,b,c
+                 * 需转换为: data/xxxx/search.act?rb=a,b,c
+                 */
+                if (!at.isEmpty()) {
+                    int p  = at.indexOf  ('|');
+                    if (p != -1) {
+                        at = at.substring(1+p);
+                    }   p  = at.indexOf  ('?');
+                    if (p != -1) {
+                        at = at.substring(0,p)
+                           +      Cnst.ACT_EXT
+                           + at.substring(0+p);
                     } else {
-                        al = al + "&.deny=.create";
-                    }}
-                %>
-                <div class="form-control labelbox labelist">
-                    <ul class="repeated forkbox" data-ft="_fork" data-fn="<%=name%>.<%=Cnst.IN_REL%>." data-ln="<%=ln%>" data-tk="<%=tk%>" data-vk="<%=vk%>"></ul>
-                    <a href="javascript:;" data-toggle="hsFork" data-target="@" data-href="<%=al%>"><%=_locale.translate("fore.fork.select", text)%></a>
-                </div>
-            <%} else if ("enum".equals(type) || "type".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
-                <select class="form-control" name="<%=name%>.<%=Cnst.EQ_REL%>" data-ft="_enum"></select>
-            <%} else if (!_sd.contains(name)) {%>
-                <input class="form-control" type="text" name="<%=name%>.<%=Cnst.EQ_REL%>" placeholder="精确匹配" />
-            <%} else if ("search".equals(type) || "textarea".equals(type) || "textview".equals(type)) {%>
-                <input class="form-control" type="text" name="<%=name%>.<%=Cnst.SP_REL%>" placeholder="模糊匹配" />
-            <%} else {%>
-                <div class="input-group input-group-sm">
-                    <input class="form-control" type="text" name="<%=name%>.<%=Cnst.SP_REL%>" placeholder="模糊匹配" />
-                    <div class="input-group-btn input-group-sel">
-                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-right">
-                            <li class="active">
-                                <a href="javascript:;" data-name="<%=name%>.<%=Cnst.SP_REL%>" data-placeholder="模糊匹配">模糊匹配</a>
-                            </li>
-                            <li>
-                                <a href="javascript:;" data-name="<%=name%>.<%=Cnst.EQ_REL%>" data-placeholder="精确匹配">精确匹配</a>
+                        at = at + Cnst.ACT_EXT;
+                    }
+                }
+                extr = " data-ln=\""+ln+"\" data-vk=\""+vk+"\" data-tk=\""+tk+"\" data-href=\""+al+"\" data-target=\"@\"";
+                kind = "_fork";
+            } else
+            if ("enum".equals(type) || "type".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {
+                String ln = info.containsKey("data-ln") ? (String) info.get("data-ln") : name;
+                // 顺便整理枚举列表
+                if (dataAdds.contains(ln) == false) {
+                    String sl = "<select data-fn=\""+ln+"\" class=\"form-control\"></select>";
+                    dataList. append (sl);
+                    dataAdds.   add  (ln);
+                }
+                extr = " data-ln=\""+ln+"\"";
+                kind = "_enum";
+            } else
+            if ("date".equals(type) || "time".equals(type) || "datetime".equals(type)) {
+                Object fomt = Synt.defoult(info.get("format"),type);
+                Object fset = Synt.defoult(info.get("offset"), "" );
+                type = Synt.declare(info.get("type"), "time");
+                extr = " data-format=\""+fomt+"\" data-offset=\""+fset+"\"";
+                kind = "_date";
+            } else
+            if ("number".equals(type) || "range".equals(type) || "color".equals(type)) {
+                Object typa = info.get("type");
+                if ("int".equals(typa) || "long".equals(typa) || "color".equals(type)) {
+                    extr = " data-for=\"int\"";
+                }
+                kind = "_number";
+            } else
+            if ("search".equals(type) || "textarea".equals(type) || "textview".equals(type)) {
+                if (_sd.contains(name)) {
+                    extr = " data-for=\"search\"";
+                }
+                kind = "_string";
+            } else
+            if ("string".equals(type) || "text".equals(type) || "email".equals(type) || "url".equals(type) || "tel".equals(type) || "sms".equals(type)) {
+                if (_sd.contains(name)) {
+                    extr = " data-for=\"serial\"";
+                }
+                kind = "_string";
+            } else
+            {
+                kind = "_is";
+            }
+
+            siftList.append("<option value=\""+name+"\" data-kind=\""+kind+"\" data-type=\""+type+"\""+extr+">"+text+"</option>");
+        } /*End While*/
+        %>
+        <div class="invisible">
+            <%=dataList%>
+        </div>
+        <div class="form-body">
+            <ul class="sift-root repeated">
+                <li class="sift-unit active">
+                    <div>
+                        <legend class="sift-hand">
+                            <a href="javascript:;" class="erase bi bi-x pull-right"></a>
+                            <span class="sift-lr">与</span>
+                        </legend>
+                        <ul class="sift-list repeated" data-name="ar">
+                            <li class="sift-item label label-info template">
+                                <a href="javascript:;" class="erase bi bi-x pull-right"></a>
+                                <span class="sift-hand">
+                                    <span class="sift-fn"></span>
+                                    <span class="sift-fr"></span>
+                                    <span class="sift-fv"></span>
+                                </span>
                             </li>
                         </ul>
                     </div>
-                </div>
-            <%} /*End If */%>
-            </div>
-        </div>
-        <%} /*End For*/%>
-        <hr/>
+                </li>
+                <li class="sift-unit">
+                    <div>
+                        <legend>
+                            <span class="sift-lr">或</span>
+                        </legend>
+                        <ul class="sift-list repeated" data-name="or">
+                        </ul>
+                    </div>
+                </li>
+                <li class="sift-unit">
+                    <div>
+                        <legend>
+                            <span class="sift-lr">非</span>
+                        </legend>
+                        <ul class="sift-list repeated" data-name="nr">
+                        </ul>
+                    </div>
+                </li>
+            </ul>
         </div>
         <div class="form-foot">
-        <div class="btns-group form-group form-group-sm row">
-            <div class="col-xs-12 text-center">
-                <button type="submit" class="btn btn-primary">过滤</button>
-                <span style="padding: 0.5em;"></span>
-                <button type="reset"  class="btn btn-default">重置</button>
+            <div class="form-inline form-group row">
+                <div class="col-xs-12">
+                <div class="pull-left">
+                    <div class="input-group" style="width: auto;">
+                        <select data-sift="fn" class="form-control" style="width: 20em;">
+                            <option value="" style="color: gray;">字段</option>
+                            <%=siftList%>
+                        </select>
+                        <select data-sift="fr" class="form-control" style="width: 10em;">
+                            <option value="" style="color: gray;">条件</option>
+                        </select>
+                        <div class="input-group-btn">
+                            <button type="button" class="btn btn-default" data-sift="fv" data-target="@">取值</button>
+                        </div>
+                    </div>
+                    <span style="padding: 0.5em;"></span>
+                    <div class="btn-group" style="width: auto;">
+                        <button type="button" class="btn btn-default" data-sift="lr" data-name="ar">+ 与</button>
+                        <button type="button" class="btn btn-default" data-sift="lr" data-name="or">+ 或</button>
+                        <button type="button" class="btn btn-default" data-sift="lr" data-name="nr">+ 非</button>
+                    </div>
+                </div>
+                <div class="pull-right">
+                    <button type="submit" class="btn btn-primary">过滤</button>
+                    <span style="padding: 0.5em;"></span>
+                    <button type="reset"  class="btn btn-default">重置</button>
+                </div>
+                </div>
             </div>
         </div>
+        <div class="alert alert-warning alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <strong>注意！</strong>
+            <span>请选择字段、条件、取值，这将添加一条筛查参数；点击“&times;”删除条目或分组。</span>
+            <span>“与”、“或”、“非”表示分组内各条间的关系；点击分组可激活，新的将加入其下。</span>
+            <span>如希望将筛查条目或分组换到其他组下，使用鼠标按住条目或分组标题拖拽即可。</span>
+            <span><a href="javascript:;" onclick="$.hsWarn('?'+$.param($(this).closest('form').find('input:hidden')))">检查参数</a></span>
         </div>
     </form>
     <!-- 统计 -->
@@ -403,7 +494,7 @@
     var loadbox = context.closest(".loadbox");
     var listbox = context.find(".listbox");
     var findbox = context.find(".findbox");
-    var filtbox = context.find(".filtbox");
+    var siftbox = context.find(".siftbox");
     var statbox = context.find(".statbox");
 
     var loadres = hsSerialDic(loadbox);
@@ -445,10 +536,8 @@
         _fill__audio: hsListWrapOpen("audio")
     });
 
-    var filtobj = filtbox.hsForm({
-        _url: "<%=_module%>/<%=_entity%>/recipe.act?<%=Cnst.AB_KEY%>=.enfo",
-        _feed__enum : hsListFeedFilt,
-        _fill__enum : hsListFillFilt
+    var siftobj = context.hsSift({
+        _url: "<%=_module%>/<%=_entity%>/recipe.act?<%=Cnst.AB_KEY%>=.enfo"
     });
 
     var statobj = context.hsStat({
@@ -460,10 +549,10 @@
     statobj._url = hsSetPms(statobj._url, loadres);
 
     // 延迟加载
-    context.on("opened",".filtbox", function() {
-        if (filtbox.data("fetched") != true) {
-            filtbox.data("fetched"  ,  true);
-            filtobj.load();
+    context.on("opened",".siftbox", function() {
+        if (siftbox.data("fetched") != true) {
+            siftbox.data("fetched"  ,  true);
+            siftobj.load();
         }
     });
     context.on("opened",".statbox", function() {
@@ -475,9 +564,9 @@
 
     // 管理动作
     context.on("click", ".toolbox .filter", function() {
-        filtbox.toggleClass("invisible");
-        if (! filtbox.is("invisible")) {
-            filtbox.trigger("opened");
+        siftbox.toggleClass("invisible");
+        if (! siftbox.is("invisible")) {
+            siftbox.trigger("opened");
         }
         statbox.addClass("invisible");
     });
@@ -486,16 +575,13 @@
         if (! statbox.is("invisible")) {
             statbox.trigger("opened");
         }
-        filtbox.addClass("invisible");
+        siftbox.addClass("invisible");
     });
     context.on("click", ".toolbox :submit", function() {
-        filtbox.addClass("invisible");
+        siftbox.addClass("invisible");
     });
-    context.on("click", ".filtbox :submit", function() {
-        filtbox.addClass("invisible");
-    });
-    context.on("click", ".toolbox .column", function() {
-        hsHideListCols(listbox);
+    context.on("click", ".siftbox :submit", function() {
+        siftbox.addClass("invisible");
     });
     context.on("click", ".toolbox .copies", function() {
         hsCopyListData(listbox);
@@ -503,21 +589,14 @@
     context.on("click", ".toolbox .checks", function() {
         hsPickListMore(listbox);
     });
-    hsSaveListCols(listbox, "<%=_pageId%>");
-
-    // 切换匹配模式
-    context.on("click", ".filtbox .input-group-sel li a", function() {
-        var opt = $(this);
-        var dat = $(this).data();
-        var inp = $(this).closest(".input-group-sel").siblings("input");
-        for(var n in dat) inp.attr(n,dat[n]);
-        opt.closest("li").addClass("active")
-           .siblings().removeClass("active");
+    context.on("click", ".toolbox .column", function() {
+        hsHideListCols(listbox);
     });
+    hsSaveListCols(listbox, "<%=_pageId%>");
 
     hsRequires("<%=_module%>/<%=_entity%>/defines.js", function() {
         // 外部定制
-        $.when(window["<%=_funcId%>"] && window["<%=_funcId%>"](context, listobj, filtobj, statobj))
+        $.when(window["<%=_funcId%>"] && window["<%=_funcId%>"](context, listobj, siftobj, statobj))
          .then(function() {
 
         // 权限控制
@@ -530,20 +609,15 @@
         // 外部限制
         $.each(denycss ? denycss . split (",") : [ ]
         , function(i, n) {
-            if (/^stat\./.test(n)) {
-                n = ".form-group[data-name='"+n.substring(5)+"']";
-                statbox.find(n).remove();
-            } else
-            if (/^filt\./.test(n)) {
-                n = ".form-group[data-name='"+n.substring(5)+"']";
-                filtbox.find(n).remove();
-            } else
             if (/^find\./.test(n)) {
-                n = ".form-group[data-name='"+n.substring(5)+"']";
+                n = n.substring(5);
+                n = ".form-group[data-name='"+n+"']"
+                  +",[data-sift=fn]>[value='"+n+"']";
                 findbox.find(n).remove();
             } else
             if (/^list\./.test(n)) {
-                n = "th[data-fn='"+n.substring(5)+"']";
+                n = n.substring(5);
+                n = "th[data-fn='"+n+"']";
                 listbox.find(n).remove();
             } else
             {
@@ -560,11 +634,11 @@
             listbox.find("thead ._check").addClass( "hidden" );
         }
         // 无过滤或统计则隐藏之
-        if (filtbox.find(".filt-group").size() == 0) {
-            findbox.find(".filter").remove();
-        }
         if (statbox.find(".stat-group").size() == 0) {
             findbox.find(".statis").remove();
+        }
+        if (siftbox.find("[data-sift=fn]>*").size() == 1) {
+            findbox.find(".filter").remove();
         }
 
         <%if ("select".equals(_action)) {%>
@@ -577,8 +651,8 @@
         // 自适滚动
         var h = hsFlexRoll(listbox.filter(".rollbox"), $("#main-context"));
         if (h > 0) {
-            filtbox.css("max-height", h+"px");
-            filtbox.css("overflow-y", "auto");
+            siftbox.css("max-height", h+"px");
+            siftbox.css("overflow-y", "auto");
             statbox.css("max-height", h+"px");
             statbox.css("overflow-y", "auto");
         }

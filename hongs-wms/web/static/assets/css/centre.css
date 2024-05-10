@@ -102,7 +102,7 @@ body {
 .panel+.form-foot {
     padding:  0 15px 5px 15px;
 }
-.form-body+.form-foot {
+.panel>.form-body+.form-foot {
     border-top: solid 1px #ddd;
 }
 .form-body:after ,

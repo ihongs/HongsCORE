@@ -3,6 +3,24 @@
 function HsSift(context, opts) {
     context = $(context);
 
+    /**
+     * 类:
+     * sift-unit    分组单元
+     * sift-list    组内列表
+     * sift-item    筛查条目
+     * sift-hand    拖拽把手
+     * sift-fn      字段名
+     * sift-fr      条件名
+     * sift-fv      取值名
+     * erase        删除
+     *
+     * 属性
+     * data-sift=fn 字段选择
+     * data-sift=fr 条件选择
+     * data-sift=fv 取值
+     * data-sift=lr 列表关系
+     */
+
     var  that    = this ;
     var  siftBox = context.find(".siftbox");
     var  findBox = context.find(".findbox");
@@ -103,12 +121,15 @@ function HsSift(context, opts) {
             var sub = $(ui.draggable);
             var unt = $(ev.target);
             var lst = unt.find(".sift-list:first");
-            var ls2 = lst.find(".sift-unit:first");
+            var un2 = lst.find(".sift-unit:first");
+            if (lst[0] === sub.parent()[0]) {
+                return; // 位置没变
+            }
             if (sub. is(".sift-unit")
-            ||  ls2.size() === 0 ) {
+            ||  un2.size() === 0 ) {
                 lst.append(sub);
             } else {
-                ls2.before(sub);
+                un2.before(sub);
             }
             that. fixItem (sub); // 修正字段名前缀
         };
@@ -126,12 +147,10 @@ function HsSift(context, opts) {
                 drop   :   dropEvent
             });
         });
-        if (rootUnits.size() > 1) {
-            rootUnits.droppable({
+        rootUnits.droppable({
                 accept : ".sift-unit,.sift-item",
                 drop   :   dropEvent
             });
-        }
     });
 }
 HsSift.prototype = {

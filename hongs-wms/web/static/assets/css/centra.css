@@ -560,7 +560,8 @@ li.sift-unit.active li.sift-unit>div {
     cursor : pointer;
 }
 .sift-unit legend {
-    padding: 5px 15px 0 15px;
-    font-size: inherit;
+    padding: 6px 15px 6px 15px;
+    margin : 0 0 15px 0;
+    font-size: inherit ;
 }
 

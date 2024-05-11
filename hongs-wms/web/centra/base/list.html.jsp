@@ -186,90 +186,100 @@
         <div class="form-body">
         </div>
         <div class="sift-body">
-            <ul class="row list-unstyled">
-                <li class="sift-unit template">
-                    <div>
-                        <legend class="sift-hand">
-                            <a href="javascript:;" class="erase bi bi-x pull-right"></a>
-                            <span class="sift-lr"></span>
-                        </legend>
-                        <ul class="sift-list repeated" data-name="ar">
-                            <li class="sift-item template label label-info">
-                                <a href="javascript:;" class="erase bi bi-x pull-right"></a>
-                                <span class="sift-hand">
-                                    <span class="sift-fn"></span>
-                                    <span class="sift-fr"></span>
-                                    <span class="sift-fv"></span>
-                                </span>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="sift-unit sift-root col-xs-6 active">
-                    <div>
-                        <legend class="sift-hand">
-                            <span class="sift-lr">与</span>
-                        </legend>
-                        <ul class="sift-list repeated" data-name="ar">
-                        </ul>
-                    </div>
-                </li>
-                <li class="sift-unit sift-root col-xs-6">
-                    <div>
-                        <legend class="sift-hand">
-                            <span class="sift-lr">或</span>
-                        </legend>
-                        <ul class="sift-list repeated" data-name="or">
-                        </ul>
-                    </div>
-                </li>
-                <li class="sift-unit sift-root col-xs-6">
-                    <div>
-                        <legend class="sift-hand">
-                            <span class="sift-lr">非</span>
-                        </legend>
-                        <ul class="sift-list repeated" data-name="nr">
-                        </ul>
-                    </div>
-                </li>
-            </ul>
-        </div>
-        <div class="form-foot">
-            <div class="form-group row">
+            <div class="row">
                 <div class="col-xs-6">
-                    <div class="input-group">
-                        <select data-sift="fn" class="form-control" style="width: 75%;">
+                    <ul class="list-unstyled clearfix group">
+                        <li class="sift-unit template">
+                            <div>
+                                <legend class="sift-hand">
+                                    <a href="javascript:;" class="erase bi bi-x pull-right"></a>
+                                    <span class="sift-lr"></span>
+                                </legend>
+                                <ul class="sift-list repeated" data-name="ar">
+                                    <li class="sift-item template label label-info">
+                                        <a href="javascript:;" class="erase bi bi-x pull-right"></a>
+                                        <span class="sift-hand">
+                                            <span class="sift-fn"></span>
+                                            <span class="sift-fr"></span>
+                                            <span class="sift-fv"></span>
+                                        </span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="sift-unit sift-root active">
+                            <div>
+                                <legend class="sift-hand">
+                                    <span class="sift-lr">与</span>
+                                </legend>
+                                <ul class="sift-list repeated" data-name="ar">
+                                </ul>
+                            </div>
+                        </li>
+                        <!-- 未免让人觉得复杂, 仅保留一个顶级组
+                        <li class="sift-unit sift-root">
+                            <div>
+                                <legend class="sift-hand">
+                                    <span class="sift-lr">或</span>
+                                </legend>
+                                <ul class="sift-list repeated" data-name="or">
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="sift-unit sift-root">
+                            <div>
+                                <legend class="sift-hand">
+                                    <span class="sift-lr">非</span>
+                                </legend>
+                                <ul class="sift-list repeated" data-name="nr">
+                                </ul>
+                            </div>
+                        </li>
+                        //-->
+                    </ul>
+                    <div class="alert alert-warning alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <strong>使用说明：</strong>
+                        <span>请选择字段、条件、取值，这将添加一条筛查参数；点击“&times;”删除条目或分组。</span>
+                        <span>“与”、“或”、“非”表示分组内各条间的关系；点击分组可激活，新的将加入其下。</span>
+                        <span>如希望将筛查条目或分组换到其他组下，使用鼠标按住条目或分组标题拖拽即可。</span>
+                        <span><a href="javascript:;" onclick="alert('?'+$.param($(this).closest('form').find('input:hidden')))">检查参数</a></span>
+                    </div>
+                </div>
+                <div class="col-xs-6">
+                    <div class="form-group">
+                        <select data-sift="fn" class="form-control">
                             <option value="" style="color: gray;">字段</option>
                             <%=siftList%>
                         </select>
-                        <select data-sift="fr" class="form-control" style="width: 25%;">
+                    </div>
+                    <div class="form-group">
+                        <select data-sift="fr" class="form-control">
                             <option value="" style="color: gray;">条件</option>
                         </select>
-                        <div class="input-group-btn">
+                    </div>
+                    <div class="form-group">
+                        <div class="btn-toolbar">
                             <button type="button" class="btn btn-default" data-sift="fv" data-target="@">取值</button>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-default" data-sift="lr" data-name="ar" data-text="与">+ 与</button>
+                                <button type="button" class="btn btn-default" data-sift="lr" data-name="or" data-text="或">+ 或</button>
+                                <button type="button" class="btn btn-default" data-sift="lr" data-name="nr" data-text="非">+ 非</button>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-xs-6">
-                    <div class="btn-toolbar">
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-default" data-sift="lr" data-name="ar" data-text="与">+ 与</button>
-                            <button type="button" class="btn btn-default" data-sift="lr" data-name="or" data-text="或">+ 或</button>
-                            <button type="button" class="btn btn-default" data-sift="lr" data-name="nr" data-text="非">+ 非</button>
+                    <hr style="border-color: #ccc;"/>
+                    <div class="form-group board">
+                        <div class="btn-toolbar">
+                            <button type="submit" class="btn btn-primary">过滤</button>
+                            <button type="reset"  class="btn btn-default">重置</button>
+                            <label class="btn-group pull-right form-control-static" style="font-weight: inherit;">
+                                <input type="checkbox" name="ob" value="-" /> 按匹配度排序
+                            </label>
                         </div>
-                        <button type="reset"  class="btn btn-default pull-right">重置</button>
-                        <button type="submit" class="btn btn-primary pull-right">过滤</button>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="alert alert-warning alert-dismissible" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <strong>使用说明：</strong>
-            <span>请选择字段、条件、取值，这将添加一条筛查参数；点击“&times;”删除条目或分组。</span>
-            <span>“与”、“或”、“非”表示分组内各条间的关系；点击分组可激活，新的将加入其下。</span>
-            <span>如希望将筛查条目或分组换到其他组下，使用鼠标按住条目或分组标题拖拽即可。</span>
-            <span><a href="javascript:;" onclick="alert('?'+$.param($(this).closest('form').find('input:hidden')))">检查参数</a></span>
         </div>
     </form>
     <!-- 统计 -->

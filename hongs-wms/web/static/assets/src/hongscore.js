@@ -2546,16 +2546,6 @@ $.fn.hsOpen = function(url, data, complete) {
 $.fn.hsReady = function() {
     var box = $(this);
 
-    // 为避免 chrome 等浏览器中显示空白间隔, 清除全部独立的空白文本节点
-    box.find("*").contents().filter(function() {
-        return this.nodeType === 3 && /^[ \r\n\v\t\f]+$/.test(this.nodeValue);
-    }).remove();
-
-    // 输入类
-    box.find("input").each(function() {
-        $(this).addClass("input-"+$(this).attr("type"));
-    });
-
     // 国际化, 取标题
     box.find("[data-i18n]").each(function() {
         $(this).hsI18n();
@@ -2816,6 +2806,18 @@ $.fn.hsI18n = function(rep) {
     }
 
     return box;
+};
+
+/**
+ * 清理空白
+ * 规避出现空白间隔, 清除独立空白节点
+ * @returns {jQuery}
+ */
+$.fn.hsTidy = function() {
+    this.find("*").contents().filter(function() {
+        return this.nodeType === 3 && /^[ \r\n\v\t\f]+$/.test(this.nodeValue);
+    }).remove();
+    return this;
 };
 
 /**

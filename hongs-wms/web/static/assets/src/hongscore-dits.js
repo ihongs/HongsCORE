@@ -275,6 +275,6 @@ function hsDitsFill(box , v) {
     if (set) {
         set(v || []);
     } else {
-        throw new Error("hsBags not inited", box);
+        throw new Error("hsDits not inited", box);
     }
 }

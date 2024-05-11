@@ -140,13 +140,16 @@ body {
 }
 
 /* 隐藏受限的搜索框 */
-.input-group .input-search:disabled {
+.input-group .input-search:disabled ,
+.input-group .input[type=search]:disabled {
     visibility: hidden;
 }
-.input-group .input-search:disabled+.input-group-btn>.btn:first-child {
+.input-group .input-search:disabled+.input-group-btn>.btn:first-child ,
+.input-group .input[type=search]:disabled+.input-group-btn>.btn:first-child {
     border-radius: 4px 0 0 4px;
 }
-.input-group .input-search:disabled+.input-group-btn>.btn>.bi-hi-search:before {
+.input-group .input-search:disabled+.input-group-btn>.btn>.bi-hi-search:before ,
+.input-group .input[type=search]:disabled+.input-group-btn>.btn>.bi-hi-search:before {
     content: "\f130";
 }
 

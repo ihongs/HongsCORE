@@ -503,6 +503,14 @@ HsForm.prototype = {
 
         throw new Error("Wrong validate argument type", all);
     },
+    verified : function() {
+        // 旧版兼容
+        return this.validate({});
+    },
+    verifies : function() {
+        // 旧版兼容
+        return this.validate(  );
+    },
     test : function(inp) {
         var val;
         inp = this.getInput(inp);

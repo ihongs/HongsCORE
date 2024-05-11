@@ -61,7 +61,7 @@
                 <span class="input-group-btn">
                     <button type="submit" class="search btn btn-default" title="<%=_locale.translate("fore.search", _title)%>"><span class="bi bi-hi-search"></span></button>
                     <button type="button" class="filter btn btn-default" title="<%=_locale.translate("fore.filter", _title)%>"><span class="bi bi-hi-filter"></span></button>
-                    <button type="button" class="statis btn btn-default" title="<%=_locale.translate("fore.statis", _title)%>"><span class="bi bi-hi-statis "></span></button>
+                    <button type="button" class="statis btn btn-default" title="<%=_locale.translate("fore.statis", _title)%>"><span class="bi bi-hi-statis"></span></button>
                     <button type="button" class="column btn btn-default" title="<%=_locale.translate("fore.column", _title)%>"><span class="bi bi-hi-column"></span></button>
                 </span>
             </div>
@@ -184,15 +184,17 @@
             <%=dataList%>
         </div>
         <div class="form-body">
-            <ul class="sift-root repeated">
-                <li class="sift-unit active">
+        </div>
+        <div class="sift-body">
+            <ul class="row list-unstyled">
+                <li class="sift-unit template">
                     <div>
                         <legend class="sift-hand">
                             <a href="javascript:;" class="erase bi bi-x pull-right"></a>
-                            <span class="sift-lr">与</span>
+                            <span class="sift-lr"></span>
                         </legend>
                         <ul class="sift-list repeated" data-name="ar">
-                            <li class="sift-item label label-info template">
+                            <li class="sift-item template label label-info">
                                 <a href="javascript:;" class="erase bi bi-x pull-right"></a>
                                 <span class="sift-hand">
                                     <span class="sift-fn"></span>
@@ -203,18 +205,27 @@
                         </ul>
                     </div>
                 </li>
-                <li class="sift-unit">
+                <li class="sift-unit sift-root col-xs-6 active">
                     <div>
-                        <legend>
+                        <legend class="sift-hand">
+                            <span class="sift-lr">与</span>
+                        </legend>
+                        <ul class="sift-list repeated" data-name="ar">
+                        </ul>
+                    </div>
+                </li>
+                <li class="sift-unit sift-root col-xs-6">
+                    <div>
+                        <legend class="sift-hand">
                             <span class="sift-lr">或</span>
                         </legend>
                         <ul class="sift-list repeated" data-name="or">
                         </ul>
                     </div>
                 </li>
-                <li class="sift-unit">
+                <li class="sift-unit sift-root col-xs-6">
                     <div>
-                        <legend>
+                        <legend class="sift-hand">
                             <span class="sift-lr">非</span>
                         </legend>
                         <ul class="sift-list repeated" data-name="nr">
@@ -224,33 +235,31 @@
             </ul>
         </div>
         <div class="form-foot">
-            <div class="form-inline form-group row">
-                <div class="col-xs-12">
-                <div class="pull-left">
-                    <div class="input-group" style="width: auto;">
-                        <select data-sift="fn" class="form-control" style="width: 20em;">
+            <div class="form-group row">
+                <div class="col-xs-6">
+                    <div class="input-group">
+                        <select data-sift="fn" class="form-control" style="width: 75%;">
                             <option value="" style="color: gray;">字段</option>
                             <%=siftList%>
                         </select>
-                        <select data-sift="fr" class="form-control" style="width: 10em;">
+                        <select data-sift="fr" class="form-control" style="width: 25%;">
                             <option value="" style="color: gray;">条件</option>
                         </select>
                         <div class="input-group-btn">
                             <button type="button" class="btn btn-default" data-sift="fv" data-target="@">取值</button>
                         </div>
                     </div>
-                    <span style="padding: 0.5em;"></span>
-                    <div class="btn-group" style="width: auto;">
-                        <button type="button" class="btn btn-default" data-sift="lr" data-name="ar">+ 与</button>
-                        <button type="button" class="btn btn-default" data-sift="lr" data-name="or">+ 或</button>
-                        <button type="button" class="btn btn-default" data-sift="lr" data-name="nr">+ 非</button>
+                </div>
+                <div class="col-xs-6">
+                    <div class="btn-toolbar">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default" data-sift="lr" data-name="ar" data-text="与">+ 与</button>
+                            <button type="button" class="btn btn-default" data-sift="lr" data-name="or" data-text="或">+ 或</button>
+                            <button type="button" class="btn btn-default" data-sift="lr" data-name="nr" data-text="非">+ 非</button>
+                        </div>
+                        <button type="reset"  class="btn btn-default pull-right">重置</button>
+                        <button type="submit" class="btn btn-primary pull-right">过滤</button>
                     </div>
-                </div>
-                <div class="pull-right">
-                    <button type="submit" class="btn btn-primary">过滤</button>
-                    <span style="padding: 0.5em;"></span>
-                    <button type="reset"  class="btn btn-default">重置</button>
-                </div>
                 </div>
             </div>
         </div>
@@ -611,8 +620,9 @@
         , function(i, n) {
             if (/^find\./.test(n)) {
                 n = n.substring(5);
-                n = ".form-group[data-name='"+n+"']"
-                  +",[data-sift=fn]>[value='"+n+"']";
+                n = "[data-sift=fn]>[value='"+n+"'],"
+                  + ".sift-group[data-name='"+n+"'],"
+                  + ".stat-group[data-name='"+n+"']";
                 findbox.find(n).remove();
             } else
             if (/^list\./.test(n)) {
@@ -634,11 +644,12 @@
             listbox.find("thead ._check").addClass( "hidden" );
         }
         // 无过滤或统计则隐藏之
+        if (siftbox.find("[data-sift=fn]>*").size() == 1
+        &&  siftbox.find(".sift-group").size() == 0) {
+            findbox.find(".filter").remove();
+        }
         if (statbox.find(".stat-group").size() == 0) {
             findbox.find(".statis").remove();
-        }
-        if (siftbox.find("[data-sift=fn]>*").size() == 1) {
-            findbox.find(".filter").remove();
         }
 
         <%if ("select".equals(_action)) {%>

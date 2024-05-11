@@ -1,4 +1,3 @@
-
 /* global HsList */
 
 /**
@@ -58,7 +57,8 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
             || box.is("[data-multiple]")
             || box.is("[data-repeated]")
             || /(\[\]|\.\.|\.$)/.test(n);
-    var foo  = box.closest(".HsForm").data("HsForm") || {};
+    var rel  = btn.closest(".openbox") [ 0 ];
+    var foo  = box.closest(".HsForm" ).data("HsForm") || {};
 
     if (! fil) {
         do {
@@ -136,20 +136,13 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
         evt.target = bin;
         box.trigger( evt, [v, n, t] );
 
-        bin.addClass("picksel")
-        .toggleClass("pickmul", mul )
-        .on("change"  , ".checkone", select)
-        .on("click"   , ".commit"  , commit)
-        .on("saveBack", ".create"  , create);
-
-        var ids = Object.keys( v );
+        var ids = Object.keys(v);
         var num = ids.length ;
-        bin.data( "pickData" , v );
-        bin.find(".checkone").val ( ids );
-        bin.find(".picknum" ).text( num );
+        bin.find(".checkone").val (ids);
+        bin.find( ".picknum").text(num);
     };
 
-    function select () {
+    function select() {
         var chk = jQuery(this);
         if (chk.closest(".HsList" ).data("HsList")._info) {
             return;
@@ -189,7 +182,7 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
         }
     }
 
-    function create () {
+    function create() {
         var btn = jQuery(this);
         if (btn.closest(".HsList" ).data("HsList")._info) {
             return;
@@ -235,7 +228,7 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
         }
     }
 
-    function commit () {
+    function commit() {
         var btn = jQuery(this);
         if (btn.closest(".HsList" ).data("HsList")._info) {
             return;
@@ -248,12 +241,27 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
         return false;
     }
 
+    function cancel() {
+        bin.hsClose();
+    }
+
     if (bin) {
         bin =  bin  .hsOpen(url, pickOpen);
     } else {
         bin = jQuery.hsOpen(url, pickOpen);
     }
-    bin.data( "rel" , btn.closest( ".openbox" )[0] );
+        bin.addClass("picksel");
+    if (mul) {
+        bin.addClass("pickmul");
+    }
+
+    // 绑定数据, 监听事件
+    bin.data("rel"  ,  rel);
+    bin.data("pickData", v)
+       . on ("saveBack", ".create"  , create)
+       . on ( "click"  , ".commit"  , commit)
+       . on ( "click"  , ".cancel"  , cancel)
+       . on ( "change" , ".checkone", select);
 
     return bin;
 };

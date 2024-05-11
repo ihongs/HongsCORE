@@ -60,10 +60,10 @@
             if (attr) {
                 opts.format = _hs2bsDF(attr);
             } else
-            if (that.is(".input-date")) {
+            if (that.is("[type=date],.input-date")) {
                 opts.format = _hs2bsDF(hsGetLang("date.format"));
             } else
-            if (that.is(".input-time")) {
+            if (that.is("[type=time],.input-time")) {
                 opts.format = _hs2bsDF(hsGetLang("time.format"));
             } else
             {

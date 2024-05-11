@@ -443,13 +443,15 @@ function hsPickListMore(box, obj) {
                         bar.prog(pn / tn, tn <= 0 ? "已选 "+pn+"页" : "已选 "+pn+"页, 共 "+tn+"页");
                     } else {
                         bar.hide();
+                        obj.load();
+                        /*
                         var dat = hsSerialMix({}, obj._url, obj._data);
                             pn  = parseInt ( dat[ obj.pageKey ] || 1 );
                         if (bn <= qn && bn <= pn && pn <= qn) {
-                            obj.load();
-                        //  box.find(":checkbox.checkone").prop("checked", true);
-                        //  box.find(":checkbox.checkall").prop("checked", true);
+                            box.find(":checkbox.checkone").prop("checked", true);
+                            box.find(":checkbox.checkall").prop("checked", true);
                         }
+                        */
                     }
                 });
             } , 0);

@@ -18,21 +18,17 @@ function HsSift(context, opts) {
     this.formBox = formBox;
     this._url  = opts._url || opts.loadUrl ;
 
+    this.itemTmp = siftBox.find(".sift-item.template").detach();
+    this.listTmp = siftBox.find(".sift-unit.template").detach();
+    this.itemTmp.removeClass("template");
+    this.listTmp.removeClass("template");
+
     if ( opts ) for (var k in opts) {
         if ('_'===k.substring(0,1 )
         ||  this[k] !== undefined ) {
             this[k]  =  opts[k];
         }
     }
-
-    //** 模板处理 **/
-
-    this.itemTmp = siftBox.find(".template").first().clone();
-    this.itemTmp . removeClass ( "template");
-    siftBox.find(".template").remove(); // 模板无需留在外部
-    this.listTmp = siftBox.find( ".active" ).first().clone();
-    this.listTmp . removeClass (  "active" );
-    siftBox.find( ".erase"  ).remove(); // 顶层单元不可删除
 
     //** 事件处理 **/
 
@@ -79,8 +75,9 @@ function HsSift(context, opts) {
     });
     // 添加下级列表
     siftBox.on("click" , "[data-sift=lr]", function() {
-        var rel  = $(this).data( "name" );
-        that.addList(that.getList(), rel);
+        var rel  = $(this).data("name");
+        var txt  = $(this).data("text");
+        that.addList(that.getList(), rel, txt);
     });
     // 选中列表
     siftBox.on("click" , ".sift-unit" , function(ev) {
@@ -101,16 +98,17 @@ function HsSift(context, opts) {
     });
     // 拖拽
     hsRequires("static/assets/jquery-ui.min.js", function() {
-        var rootUnits = siftBox.find(".sift-root>.sift-unit");
+        var rootUnits = siftBox.find(".sift-root");
         var dropEvent = function(ev, ui) {
-            console.log(ev, ui);
             var sub = $(ui.draggable);
-            var lst = $(ev.target).find(".sift-list:first");
-            var ls2 = lst.find(".sift-unit");
-            if (ls2.size()) {
-                ls2.before(sub);
-            } else {
+            var unt = $(ev.target);
+            var lst = unt.find(".sift-list:first");
+            var ls2 = lst.find(".sift-unit:first");
+            if (sub. is(".sift-unit")
+            ||  ls2.size() === 0 ) {
                 lst.append(sub);
+            } else {
+                ls2.before(sub);
             }
             that. fixItem (sub); // 修正字段名前缀
         };
@@ -119,7 +117,8 @@ function HsSift(context, opts) {
             sub.draggable({
                 zIndex : 100 ,
                 revert : true,
-                handle : ".sift-hand"
+                revertDuration: 0,
+                handle : sub.find(".sift-hand")
             });
             if (! sub.is(".sift-unit") ) return ;
             sub.droppable({
@@ -127,10 +126,12 @@ function HsSift(context, opts) {
                 drop   :   dropEvent
             });
         });
-        rootUnits.droppable({
+        if (rootUnits.size() > 1) {
+            rootUnits.droppable({
                 accept : ".sift-unit,.sift-item",
                 drop   :   dropEvent
             });
+        }
     });
 }
 HsSift.prototype = {
@@ -240,7 +241,11 @@ HsSift.prototype = {
      * 获取活动列表
      * @returns {jQuery}
      */
-    getList: function() {
+    getList: function(nam) {
+        if (nam) {
+          return  this.siftBox.find(".sift-list[data-name='"+nam+"'");
+        }
+
         var lst = this.siftBox.find(".sift-unit.active").find(".sift-list:first");
         if ( ! lst.size() ) {
             lst = this.siftBox.find(".sift-unit:first" ).find(".sift-list:first");
@@ -286,7 +291,7 @@ HsSift.prototype = {
             } else {
                 inp.attr("data-name", nam);
                 inp.removeData("name");
-                that . srtList( inp  ); // 递归
+                that . fixList( inp  ); // 递归
             }
 
             cnt ++;
@@ -328,7 +333,7 @@ HsSift.prototype = {
         } else {
             inp.attr("data-name", nam);
             inp.removeData("name");
-            this . srtList( inp  ); // 递归
+            this . fixList( inp  ); // 递归
         }
 
             cnt ++;
@@ -340,15 +345,17 @@ HsSift.prototype = {
      * 添加列表
      * @param {jQuery} lst 活动列表
      * @param {string} rel 关系标识: ar/or/nr
+     * @param {string} txt 分组标题
      * @returns {jQuery} 新的列表
      */
-    addList: function(lst, rel) {
+    addList: function(lst, rel, txt) {
         var sub = this.listTmp.clone();
         var pre = lst.data("name") || "ar";
         var cnt = lst.data("cnt" ) ||  0  ;
             cnt = parseInt( cnt  );
         var nam = pre +"."+ cnt +"."+ rel ;
 
+        sub.find(".sift-lr").text(txt);
         sub.find(".sift-list").first()
            .attr( "data-name" , nam  );
         lst.data( "cnt", cnt + 1 );
@@ -363,22 +370,35 @@ HsSift.prototype = {
     /**
      * 添加条目
      * @param {jQuery} lst 活动列表
-     * @param {jQuery} fno 字段选项
-     * @param {jQuery} fro 条件选项
+     * @param {jQuery|array} fno 字段选项,或[代号,文本]
+     * @param {jQuery|array} fro 条件选项,或[符号,文本]
      * @param {string} val 取值
      * @param {string} txt 标签
      * @returns {jQuery} 新的条目
      */
     addItem: function(lst, fno, fro, val, txt) {
+        if (! $.isArray(fno)) {
+            fno = [
+                fno.data("name") || fno.val (),
+                fno.data("text") || fno.text()
+            ];
+        }
+        if (! $.isArray(fro)) {
+            fro = [
+                fro.data("name") || fro.val (),
+                fro.data("text") || fro.text()
+            ];
+        }
+
         var sub = this.itemTmp.clone();
         var pre = lst.data("name") || "ar";
         var cnt = lst.data("cnt" ) ||  0  ;
             cnt = parseInt( cnt  );
-        var nam = pre +"."+ cnt +"."+ fno.val() +"."+ fro.val();
+        var nam = pre +"."+ cnt +"."+ fno[0] +"."+ fro[0];
         var inp = $('<input type="hidden"/>');
 
-        sub.find(".sift-fn").text(fno.text());
-        sub.find(".sift-fr").text(fro.text());
+        sub.find(".sift-fn").text(fno[1]);
+        sub.find(".sift-fr").text(fro[1]);
         sub.find(".sift-fv").text(txt);
         inp.attr("name", nam).val(val);
         lst.data( "cnt", cnt + 1 );
@@ -396,6 +416,49 @@ HsSift.prototype = {
         console.log(lst, sub);
 
         return sub;
+    },
+
+    /**
+     * 添加条目
+     * @param {string} key 参数名称
+     * @param {string} val 参数取值
+     * @param {string|array} txt 值对应的显示文本, 或 [字段文本,条件文本,取值文本]
+     * @returns {HsSift.prototype@call;addItem}
+     */
+    addTerm: function(key, val, txt) {
+        var mat = /^(?:(.*)\.[^\.]*\.)?([^\.]+)\.([^\.]{2})\.?$/.exec(key);
+        if (! mat) {
+            throw new Error("HsSift.addTerm: Can not parse key '"+key+"', must like 'xxx.eq' or 'xx.0.xxx.eq'");
+        }
+        var pn  = mat[1] || "ar";
+        var fn  = mat[2];
+        var fr  = mat[3];
+
+        var lst = this.getList(pn);
+        if (! lst.size()) {
+            throw new Error("HsSift.addTerm: Can not find list for '"+pre+"'");
+        }
+
+        var fno, fro;
+        if (! $.isArray(txt)) {
+            var fx = this.siftBox.find("[data-sfit=fr]").val() || "" ;
+            fno = this.siftBox.find("[data-sfit=fn][value='"+fn+"']");
+            if (! fno.size()) {
+                throw new Error("HsSift.addTerm: Can not find FN opt for '"+fn+"'");
+            }
+            this.siftBox.find("[data-sfit=fn]").val([fn]).first().trigger("change"); // 切到对应字段, 以便下方读取
+            fro = this.siftBox.find("[data-sfit=fr][value='"+fr+"']");
+            if (! fno.size()) {
+                throw new Error("HsSift.addTerm: Can not find FR opt for '"+fn+"'");
+            }
+            this.siftBox.find("[data-sfit=fn]").val([fx]).first().trigger("change"); // 切回初始状态, 避免干扰操作
+        } else {
+            fno = [fn, txt[0]];
+            fro = [fr, txt[1]];
+            txt =      txt[2] ;
+        }
+
+        return this.addItem(lst, fno, fro, val, txt);
     },
 
     /**

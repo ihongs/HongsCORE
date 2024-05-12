@@ -28,21 +28,21 @@
             box.data( "template", tmp );
             return tmp;
         }
-
+        
+        var cls = box.data("itemClass");
         tmp = $(
-            '<li  class="label">'
+            '<li  class="">'
           +   '<a class="erase pull-right bi bi-x" href="javascript:;"></a>'
           +   '<i class="icon  pull-left "></i>'
           +   '<span  class="title"></span>'
           + '</li>'
         );
+        tmp.addClass(cls || "label label-info" );
         if (box.is("[data-readonly]")) {
-            tmp.addClass("label-default")
-               .find(".erase, .icon" ).remove( );
+            tmp.find(".erase, .icon" ).remove( );
         } else {
             var nam = box.data( "fn" );
-            tmp.addClass("label-info")
-               .find(".value").attr("name", nam);
+            tmp.find(".value").attr("name", nam);
         }
         box.data("template", tmp);
         return tmp;
@@ -62,12 +62,14 @@
             return tmp;
         }
 
+        var cls = box.data("itemClass");
         tmp = $(
-            '<li  class="preview" >'
+            '<li  class="">'
           +   '<a class="erase bi bi-x-lg" href="javascript:;"></a>'
           +   '<i class="icon"></i>'
           + '</li>'
         );
+        tmp.addClass(cls || "preview");
         if (box.is("[data-readonly]")) {
             tmp.find(".erase, .icon" ).remove( );
         }
@@ -350,8 +352,8 @@
         var box = inp.siblings("ul");
         if (! box.size()) {
             box = $(
-                '<div  class="form-control labelbox">'
-              +   '<ul class="repeated filebox"></ul>'
+                '<div  class="multiple form-control">'
+              +   '<ul class="repeated labelbox filebox"></ul>'
               +   '<a href="javascript:;"></a>'
               + '</div>'
             );
@@ -399,8 +401,8 @@
         var box = inp.siblings("ul");
         if (! box.size()) {
             box = $(
-                '<div  class="form-control labelbox">'
-              +   '<ul class="repeated pictbox"></ul>'
+                '<div  class="multiple form-control">'
+              +   '<ul class="repeated labelbox pictbox"></ul>'
               +   '<a href="javascript:;"></a>'
               + '</div>'
             );

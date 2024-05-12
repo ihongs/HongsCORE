@@ -122,7 +122,7 @@
                              +  "\" data-href=\""+rl+"\" data-target=\"@";
                     %>
                     <div class="form-control-static">
-                        <ul class="repeated forkbox" data-fn="<%=name%>" data-ft="<%=kind%>"<%=extr%> data-readonly="readonly"></ul>
+                        <ul class="repeated labelbox forkbox" data-fn="<%=name%>" data-ft="<%=kind%>"<%=extr%> data-readonly="readonly"></ul>
                     </div>
                 <%} else if ("file".equals(type) || "image".equals(type) || "video".equals(type) || "audio".equals(type)) {%>
                     <%
@@ -171,7 +171,7 @@
                         }
                     %>
                     <div class="form-control-static">
-                        <ul class="repeated <%=klas%>box" data-fn="<%=name%>" data-ft="<%=kind%>"<%=extr%> data-readonly="readonly"></ul>
+                        <ul class="repeated labelbox <%=klas%>box" data-fn="<%=name%>" data-ft="<%=kind%>"<%=extr%> data-readonly="readonly"></ul>
                     </div>
                 <%} else if ("textarea".equals(type) || "textview".equals(type)) {%>
                     <%
@@ -219,14 +219,14 @@
                         }
                     %>
                     <div class="form-control-static">
-                        <ul data-fn="<%=name%>" data-ft="_review" class="repeated" data-item-class="label label-default"></ul>
+                        <ul data-fn="<%=name%>" data-ft="_review" class="repeated labelbox" data-item-class="label label-default"></ul>
                     </div>
                 <%} else if ( rptd ) {%>
                     <%
                             name += ".";
                     %>
                     <div class="form-control-static">
-                        <ul data-fn="<%=name%>" data-ft="_review" class="repeated" data-item-class="label label-default"></ul>
+                        <ul data-fn="<%=name%>" data-ft="_review" class="repeated labelbox" data-item-class="label label-default"></ul>
                     </div>
                 <%} else {%>
                     <div class="form-control-static" data-fn="<%=name%>" data-ft="_review"></div>

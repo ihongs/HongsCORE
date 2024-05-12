@@ -272,8 +272,8 @@ jQuery.fn.hsPickInit = function() {
     var box = inp.siblings("ul");
     if (! box.size()) {
         box = $(
-            '<div  class="form-control labelbox">'
-          +   '<ul class="repeated forkbox"></ul>'
+            '<div  class="multiple form-control">'
+          +   '<ul class="repeated labelbox forkbox"></ul>'
           +   '<a href="javascript:;"></a>'
           + '</div>'
         );
@@ -400,20 +400,20 @@ function hsFormFillPick(box, v, n) {
               .removeClass( "template");
         if (! tmp.size()) {
             //throw new Error("hsFormFillPick: template not found");
+            var cls = box.data("itemClass");
             tmp = jQuery(
-                '<li  class="label">'
+                '<li  class="">'
               +   '<a class="erase pull-right bi bi-x" href="javascript:;"></a>'
               +   '<span  class="title"></span>'
               +   '<input class="value" type="hidden"/>'
               + '</li>'
             );
-            if (! rol) {
-                var nam = box.data( "fn" );
-                tmp.addClass("label-info")
-                   .find(".value").attr("name", nam);
+            tmp.addClass(cls || "label label-info" );
+            if (rol) {
+                tmp.find(".value, .erase").remove( );
             } else {
-                tmp.addClass("label-default")
-                   .find(".value, .erase").remove( );
+                var nam = box.data( "fn" );
+                tmp.find(".value").attr("name", nam);
             }
         }
         box.data("template",tmp);

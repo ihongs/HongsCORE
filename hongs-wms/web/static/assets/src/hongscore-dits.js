@@ -30,8 +30,8 @@
                 }
 
                 box = $(
-                    '<div  class="form-control labelbox">'
-                  +   '<ul class="repeated ditsbox">'
+                    '<div  class="multiple form-control">'
+                  +   '<ul class="repeated labelbox ditsbox">'
                   +     '<li  class="label label-info template">'
                   +       '<a class="erase bi bi-x pull-right" href="javascript:;"></a>'
                   +       '<span  class="title"></span>'

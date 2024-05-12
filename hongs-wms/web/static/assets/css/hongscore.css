@@ -884,11 +884,11 @@ div.bootstrap-tagsinput .tag [data-role="remove"]:after {
 
 /** 标签 **/
 
-.repeated ,
-ul.repeated ,
-ol.repeated {
+.labelbox ,
+ul.labelbox ,
+ol.labelbox {
     padding: 0;
-    margin : 0 0 -4px 0;
+    margin : 0 -5px -5px 0;
     list-style : none;
     line-height: inherit;
     font-weight: inherit;
@@ -896,26 +896,24 @@ ol.repeated {
     word-break : normal;
     word-wrap  : break-word;
 }
-.repeated .label ,
 .labelbox .label {
     padding: 0 6px;
-    margin : 0 4px 0 0;
+    margin : 0 5px 5px 0;
     line-height: inherit;
     font-weight: inherit;
     font-size  : inherit;
     max-width  : 100%;
     text-align : left;
+    display  : inline-block;
     overflow : hidden;
     text-overflow: ellipsis;
-    display  : inline-block;
+    vertical-align : middle;
 }
-.labelist .label ,
-.labelist  label {
+.labelist .label {
     margin : 0;
     width  : 100%;
 }
-.repeated:empty ,
-.repeated .label:empty ,
+.labelbox:empty ,
 .labelbox .label:empty {
     margin : 0;
     display: none;
@@ -925,46 +923,39 @@ ol.repeated {
     float  : left; /* 规避同时存在 file 和 hidden 会偏移的问题 */
 }
 .label .bi.pull-right {
-    margin : 0 -2px 0 6px;
+    margin-left :  6px;
+    margin-right: -3px;
 }
 .label .bi.pull-left {
-    margin : 0 6px 0 -2px;
+    margin-left : -3px;
+    margin-right:  6px;
 }
 
-.form-control.labelbox {
+.form-control.multiple {
     height : auto;
     min-height: 34px;
-    padding: 6px 2px 1px 6px;
+    padding: 6px ;
 }
-.form-group-sm .form-control.labelbox {
-    min-height: 30px;
-    padding: 5px 1px 0px 4px;
-}
-.form-group-lg .form-control.labelbox {
-    min-height: 46px;
-    padding: 9px 6px 6px 9px;
-}
-.form-control .repeated {
-    margin : 0;
-}
-.form-control .label {
-    margin : 0 4px 0 0;
-    padding: 0 6px;
-    max-width: calc(100% - 4px);
-}
-.form-control > a,
-.form-control > input:not(.invisible,[type=hidden]) {
-    border : 0;
-    margin : 0 0 4px 0;
-    padding: 0 6px;
-    min-width: calc(100% - 4px);
-    display: block;
-    outline: none ;
+.form-control .labelbox .label {
+    max-width: calc(100% - 5px);
 }
 .form-control a,
 .form-control a:hover ,
 .form-control a:focus {
     text-decoration: none;
+}
+.form-control > a,
+.form-control > input.input {
+    outline: none;
+    display: block;
+    min-width: 100%;
+    padding: 0 6px;
+    border : 0;
+    margin : 0;
+}
+.form-control .labelbox:not(:empty)+a,
+.form-control .labelbox:not(:empty)+input.input {
+    margin : 5px 0 0 0;
 }
 
 .forkbox .label span ,
@@ -1015,9 +1006,12 @@ ol.repeated {
 .preview .erase:focus {
     text-shadow: 0 0 4px #eee;
 }
-.repeated .preview {
-    margin : 0 4px 0 0;
+.labelbox .preview {
+    margin : 0 5px 5px 0 ;
     display: inline-block;
+}
+.labelist .preview {
+    display: block;
 }
 
 /** 选择(废弃) **/

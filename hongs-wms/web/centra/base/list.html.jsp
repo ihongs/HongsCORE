@@ -195,7 +195,7 @@
                                     <a href="javascript:;" class="erase bi bi-x pull-right"></a>
                                     <span class="sift-lr"></span>
                                 </legend>
-                                <ul class="sift-list repeated" data-name="ar">
+                                <ul class="sift-list repeated labelbox" data-name="ar">
                                     <li class="sift-item template label label-info">
                                         <a href="javascript:;" class="erase bi bi-x pull-right"></a>
                                         <span class="sift-hand">
@@ -210,9 +210,9 @@
                         <li class="sift-unit sift-root active">
                             <div>
                                 <legend class="sift-hand">
-                                    <span class="sift-lr">与</span>
+                                    <span class="sift-lr">筛查条件 (与)</span>
                                 </legend>
-                                <ul class="sift-list repeated" data-name="ar">
+                                <ul class="sift-list repeated labelbox" data-name="ar">
                                 </ul>
                             </div>
                         </li>
@@ -222,7 +222,7 @@
                                 <legend class="sift-hand">
                                     <span class="sift-lr">或</span>
                                 </legend>
-                                <ul class="sift-list repeated" data-name="or">
+                                <ul class="sift-list repeated labelbox" data-name="or">
                                 </ul>
                             </div>
                         </li>
@@ -231,7 +231,7 @@
                                 <legend class="sift-hand">
                                     <span class="sift-lr">非</span>
                                 </legend>
-                                <ul class="sift-list repeated" data-name="nr">
+                                <ul class="sift-list repeated labelbox" data-name="nr">
                                 </ul>
                             </div>
                         </li>
@@ -241,7 +241,7 @@
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                         <strong>使用说明：</strong>
                         <span>请选择字段、条件、取值，这将添加一条筛查参数；点击“&times;”删除条目或分组。</span>
-                        <span>“与”、“或”、“非”表示分组内各条间的关系；点击分组可激活，新增的将放入其下。</span>
+                        <span>“与”、“或”、“非”表示分组内各条间的关系；点击分组可激活，新的将放入其下。</span>
                         <span>如需将筛查条目或分组换到其他组，按住条目或分组标题拖拽过去即可。</span>
                         <span><a href="javascript:;" onclick="alert('?'+$.param($(this).closest('form').find('input:hidden')))">检查参数</a></span>
                     </div>
@@ -262,9 +262,9 @@
                         <div class="btn-toolbar">
                             <button type="button" class="btn btn-default" data-sift="fv" data-target="@">取值</button>
                             <div class="btn-group">
-                                <button type="button" class="btn btn-default" data-sift="lr" data-name="ar" data-text="与">+ 与</button>
                                 <button type="button" class="btn btn-default" data-sift="lr" data-name="or" data-text="或">+ 或</button>
                                 <button type="button" class="btn btn-default" data-sift="lr" data-name="nr" data-text="非">+ 非</button>
+                                <button type="button" class="btn btn-default" data-sift="lr" data-name="ar" data-text="与">+ 与</button>
                             </div>
                         </div>
                     </div>
@@ -273,9 +273,9 @@
                         <div class="btn-toolbar">
                             <button type="submit" class="btn btn-primary">过滤</button>
                             <button type="reset"  class="btn btn-default">重置</button>
-                            <label class="btn-group pull-right form-control-static" style="font-weight: inherit;">
-                                <input type="checkbox" name="ob" value="-" /> 按匹配度排序
-                            </label>
+                            <div class="btn-group form-control-static checkbox" style="margin: 0 0 0 1em;">
+                                <label><input type="checkbox" name="ob" value="-"> 按匹配度排序</label>
+                            </div>
                         </div>
                     </div>
                 </div>

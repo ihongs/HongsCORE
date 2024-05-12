@@ -565,4 +565,10 @@ li.sift-unit.active li.sift-unit>div {
     color  : #888;
     font-size: inherit ;
 }
+[data-sift=fv]>* {
+    display: none ;
+}
+[data-sift=fv]>.active {
+    display: block;
+}
 

@@ -70,8 +70,7 @@
     <!-- 筛选 -->
     <form class="findbox siftbox openbox invisible well">
         <%
-        Set dataAdds = new HashSet();
-        StringBuilder dataList = new StringBuilder();
+        Set  <String> siftEnum = new HashSet();
         StringBuilder siftList = new StringBuilder();
         Iterator it2 = _fields.entrySet().iterator();
         while (it2.hasNext()) {
@@ -90,6 +89,7 @@
             }
 
             String  kind = "";
+            String  rels = "";
             String  extr = "";
 
             if ("fork".equals(type) || "pick".equals(type)) {
@@ -134,55 +134,57 @@
                     }
                 }
                 extr = " data-ln=\""+ln+"\" data-vk=\""+vk+"\" data-tk=\""+tk+"\" data-href=\""+al+"\" data-target=\"@\"";
-                kind = "_fork";
+                rels =  "is,eq,ne";
+                kind =  "fork";
             } else
             if ("enum".equals(type) || "type".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {
                 String ln = info.containsKey("data-ln") ? (String) info.get("data-ln") : name;
-                // 顺便整理枚举列表
-                if (dataAdds.contains(ln) == false) {
-                    String sl = "<select data-fn=\""+ln+"\" class=\"form-control\"></select>";
-                    dataList. append (sl);
-                    dataAdds.   add  (ln);
-                }
+                siftEnum.add(ln); // 需从后端获取数据
                 extr = " data-ln=\""+ln+"\"";
-                kind = "_enum";
+                rels =  "is,eq,ne";
+                kind =  "enum";
             } else
             if ("date".equals(type) || "time".equals(type) || "datetime".equals(type)) {
                 Object fomt = Synt.defoult(info.get("format"),type);
                 Object fset = Synt.defoult(info.get("offset"), "" );
                 type = Synt.declare(info.get("type"), "time");
                 extr = " data-format=\""+fomt+"\" data-offset=\""+fset+"\"";
-                kind = "_date";
+                rels =  "is,eq,ne,gt,ge,lt,le";
+                kind =  "date";
             } else
             if ("number".equals(type) || "range".equals(type) || "color".equals(type)) {
                 Object typa = info.get("type");
                 if ("int".equals(typa) || "long".equals(typa) || "color".equals(type)) {
                     extr = " data-for=\"int\"";
                 }
-                kind = "_number";
+                rels =  "is,eq,ne,gt,ge,lt,le";
+                kind =  "number";
+            } else
+            if ("string".equals(type) || "email".equals(type) || "url".equals(type) || "tel".equals(type) || "sms".equals(type) || "text".equals(type)) {
+                if (_sd.contains(name)) {
+                    rels = "is,eq,ne,sp,ns";
+                } else {
+                    rels = "is,eq,ne";
+                }
+                kind =  "string";
             } else
             if ("search".equals(type) || "textarea".equals(type) || "textview".equals(type)) {
                 if (_sd.contains(name)) {
-                    extr = " data-for=\"search\"";
+                    rels =  "is,sp,ns";
+                } else {
+                    rels =  "is,eq,ne";
                 }
-                kind = "_string";
-            } else
-            if ("string".equals(type) || "text".equals(type) || "email".equals(type) || "url".equals(type) || "tel".equals(type) || "sms".equals(type)) {
-                if (_sd.contains(name)) {
-                    extr = " data-for=\"serial\"";
-                }
-                kind = "_string";
+                kind =  "string";
             } else
             {
-                kind = "_is";
+                rels =  "is";
+                kind =  "no";
             }
 
-            siftList.append("<option value=\""+name+"\" data-kind=\""+kind+"\" data-type=\""+type+"\""+extr+">"+text+"</option>");
+            // 筛查字段
+            siftList.append("<option value=\""+name+"\" data-kind=\""+kind+"\" data-type=\""+type+"\" data-rels=\""+rels+"\""+extr+">"+text+"</option>");
         } /*End While*/
         %>
-        <div class="invisible">
-            <%=dataList%>
-        </div>
         <div class="form-body">
         </div>
         <div class="sift-body">
@@ -249,18 +251,68 @@
                 <div class="col-xs-6">
                     <div class="form-group">
                         <select data-sift="fn" class="form-control">
-                            <option value="" style="color: gray;">字段</option>
                             <%=siftList%>
                         </select>
                     </div>
                     <div class="form-group">
                         <select data-sift="fr" class="form-control">
-                            <option value="" style="color: gray;">条件</option>
+                            <option value="is">为</option>
+                            <option value="eq">等于</option>
+                            <option value="ne">不等于</option>
+                            <option value="sp">匹配</option>
+                            <option value="ns">不匹配</option>
+                            <option value="gt">大于</option>
+                            <option value="ge">大于或等于</option>
+                            <option value="lt">小于</option>
+                            <option value="le">小于或等于</option>
                         </select>
                     </div>
                     <div class="form-group">
+                        <div data-sift="fv">
+                            <div data-kind="no">
+                                <div class="form-control-static text-warning">请选择要筛查的字段</div>
+                            </div>
+                            <div data-kind="is" class="sift-select">
+                                <select class="value form-control">
+                                    <option value=""></option>
+                                    <option value="none">空</option>
+                                    <option value="not-none">非空</option>
+                                </select>
+                            </div>
+                            <div data-kind="string" class="sift-input">
+                                <div class="input-group">
+                                    <input class="value form-control" type="text"/>
+                                    <div class="input-group-btn">
+                                        <button type="button" class="ensue btn btn-info"><span class="bi bi-plus-lg"></span></button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div data-kind="number" class="sift-input">
+                                <div class="input-group">
+                                    <input class="value form-control" type="number"/>
+                                    <div class="input-group-btn">
+                                        <button type="button" class="ensue btn btn-info"><span class="bi bi-plus-lg"></span></button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div data-kind="date">
+                                <button type="button" class="btn btn-default btn-block text-left">选择...</button>
+                            </div>
+                            <div data-kind="fork">
+                                <button type="button" class="btn btn-default btn-block text-left">选择...</button>
+                            </div>
+                            <div data-kind="sift">
+                                <button type="button" class="btn btn-default btn-block text-left">取值...</button>
+                            </div>
+                            <%for (String ln : siftEnum) {%>
+                            <div data-kind="enum" data-name="<%=ln%>" class="sift-select">
+                                <select data-fn="<%=ln%>" class="value form-control" data-feed="hsSiftFeedEnum(v,1)"></select>
+                            </div>
+                            <%} /*End for*/%>
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <div class="btn-toolbar">
-                            <button type="button" class="btn btn-default" data-sift="fv" data-target="@">取值</button>
                             <div class="btn-group">
                                 <button type="button" class="btn btn-default" data-sift="lr" data-name="or" data-text="或">+ 或</button>
                                 <button type="button" class="btn btn-default" data-sift="lr" data-name="nr" data-text="非">+ 非</button>
@@ -273,7 +325,7 @@
                         <div class="btn-toolbar">
                             <button type="submit" class="btn btn-primary">过滤</button>
                             <button type="reset"  class="btn btn-default">重置</button>
-                            <div class="btn-group form-control-static checkbox" style="margin: 0 0 0 1em;">
+                            <div class="btn-group form-control-static checkbox" style="margin: 0 1em;">
                                 <label><input type="checkbox" name="ob" value="-"> 按匹配度排序</label>
                             </div>
                         </div>

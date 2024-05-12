@@ -5,6 +5,7 @@ function HsSift(context, opts) {
 
     /**
      * 类:
+     * sift-root    顶级分组
      * sift-unit    分组单元
      * sift-list    组内列表
      * sift-item    筛查条目
@@ -62,6 +63,7 @@ HsSift.prototype = {
         var fns = siftBox.find("[data-sift=fn]");
         var frs = siftBox.find("[data-sift=fr]");
         var fvx = siftBox.find("[data-sift=fv]");
+        var lrs = siftBox.find("[data-sift=lr]");
 
         // 选中
         siftBox.on("click", ".sift-unit" , function(ev) {
@@ -121,6 +123,13 @@ HsSift.prototype = {
                 });
         });
 
+        // 添加分组
+        lrs.on("click" , function() {
+            var rel = $(this).data("name");
+            var txt = $(this).data("text");
+            that.addList(that.getList(), rel, txt);
+        });
+
         // 选择字段
         fns.on("change", function() {
             var fno = that.getOpt(fns);
@@ -151,7 +160,6 @@ HsSift.prototype = {
                 }
                 $(this).prop("hidden", !x);
             });
-            console.log(rls, vls)
 
             frs.val(vls);
             frs.change();
@@ -216,8 +224,8 @@ HsSift.prototype = {
                 that.note(that._empty_value_error,"warning");
                 return;
             }
-            fvi .val ( "" );
             that.addItem(that.getList(), fno, fro, val, val);
+            fvi .val ( "" );
         };
         var ent = function(e) {
             // 回车即确认
@@ -242,8 +250,8 @@ HsSift.prototype = {
                 that.note(that._empty_value_error,"warning");
                 return;
             }
-            fvs .val ([""]);
             that.addItem(that.getList(), fno, fro, val, txt);
+            fvs .val ([""]);
         };
         fvx.on("click" , ">.sift-select .ensue", sel);
         fvx.on("change", ">.sift-select"       , sel);

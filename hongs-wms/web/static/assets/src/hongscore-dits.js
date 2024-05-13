@@ -51,8 +51,7 @@
                 box.insertBefore(inp).append(inp);
                 lsp = this.siblings(".ditsbox");
                 jnp = this.siblings(".value");
-
-                var fn = inp.attr("name");
+                var fn = inp. attr ("name");
 
                 // 只读无需输入
                 if (inp.is("[readonly], [data-readonly]")) {
@@ -103,7 +102,7 @@
         var fn   = lsp.data( "fn" ) || inp.attr("name"); // 字段名
         var ends = lsp.data("ends") || inp.data("ends"); // 切词键
         var join = lsp.data("join") || inp.data("join"); // 拼接符
-        var unjoin  = lsp.is("[data-unjoin]" ) || inp.is("[multiple],[data-multiple]"); // 不拼接
+        var unjoin  = lsp.is("[data-unjoin]" ) || inp.is("[data-multiple],[multiple]"); // 不拼接
         var unstrip = lsp.is("[data-unstrip]") || inp.is("[data-unstrip]"); // 不清理前后空格
         var unstint = lsp.is("[data-unstint]") || inp.is("[data-unstint]"); // 不进行排重处理
 
@@ -144,36 +143,36 @@
             });
             return !n;
         }
-        function patch(v) {
-            if (! $.isArray( v )) {
-                v = v.split(join);
+        function inlet(a) {
+            if (! $.isArray( a )) {
+                a = a.split(join);
             }
-            for(var i = 0; i < v.length; i ++) {
-                inlay(v[i]);
-            }
-        }
-        function inlay(v) {
-            do {
+
+            var c = false;
+            for(var i = 0; i < a.length; i ++) {
+                var v = a [i];
                 if (!unstrip) {
                     v = $.trim(v || "");
                 }
                 if (!unstint) {
                 if (exist(v)) {
-                    break;
+                    continue;
                 }}
                 if (!v) {
-                    break;
+                    continue;
                 }
 
                 // 添加标签
                 var tag = tmp.clone();
-                    tag.attr("title", v);
-                    tag.find("input")
-                       .val (v);
-                    tag.find("span" )
-                       .text(v);
-                    lsp.append( tag );
+                tag.attr( "title", v);
+                tag.find(".title").text(v);
+                tag.find(".value").val (v);
+                lsp.append ( tag );
 
+                c = true;
+            }
+
+            if (c) {
                 // 触发事件, 合并取值
                 if (join) {
                     jnp.val(merge(join));
@@ -181,9 +180,34 @@
                 } else {
                     lsp.trigger("change", false);
                 }
-            } while (false);
+            }
+        }
+        function inlay(v) {
+            if (!unstrip) {
+                v = $.trim(v || "");
+            }
+            if (!unstint) {
+            if (exist(v)) {
+                return;
+            }}
+            if (!v) {
+                return;
+            }
 
-            inp.val ( ""  );
+            // 添加标签
+            var tag = tmp.clone();
+            tag.attr( "title", v);
+            tag.find(".title").text(v);
+            tag.find(".value").val (v);
+            lsp.append ( tag );
+
+            // 触发事件, 合并取值
+            if (join) {
+                jnp.val(merge(join));
+                jnp.trigger("change", true );
+            } else {
+                lsp.trigger("change", false);
+            }
         }
         function input(e) {
             var cod = e.keyCode;
@@ -207,37 +231,61 @@
                     }
                     return ;
                 }
-            } while (false);
+            }
+            while (false);
 
-            e.stopPropagation ();
-            inlay( val );
-            return false;
+            inp.val( "" );
+            inlay ( val );
+
+            // 阻止事件往外扩散触发提交
+            e.stopPropagation();
+            return false ;
         }
+
+        // 方便外部操作
+        lsp.data("set", function(v) {
+            lsp.empty( );
+            if (v) {
+                inlet(v);
+            }
+        });
+        lsp.data("add", function(v) {
+            if (v) {
+                inlay(v);
+            }
+        });
 
         lsp.on("click", ".erase", function(e) {
             $(this).closest( "li" ).remove( );
         });
 
-        if (inp.is("select")) {
-            inp.on("change" , function( ) {
-                var v = $(this).val( );
-                if (v) {
-                    inlay(v);
-                }
-            });
-        } else {
-            inp.on( "keyup" , function(e) {
-                return input(e);
-            });
+        // 只读模式时输入框可能缺失
+        // 此时并不需要绑定事件监听
+        if (inp.size()) {
+
+        if (! inp.is("select")) {
             // 规避回车被表单截获而触发提交
-            if ($.inArray(13, ends) >= 0) {
+            if ($.inArray(13, ends) >= 0)
             inp.on("keydown", function(e) {
                 if (13 === e.keyCode) {
                     return input(e);
                 }
             });
-            }
+            // 监听按键检查是否有输入切词符
+            inp.on( "keyup" , function(e) {
+                    return input(e);
+            });
         }
+
+        // 改变即确认, 直接设置所选的值
+        inp.on("change", function() {
+            var v;
+            v = $(this).val(  );
+            if (v) {
+                $(this).val("");
+                inlay(v);
+            }
+        });
 
         // 点击控件空白处将聚焦到输入框
         box.on("click focus", function(e) {
@@ -246,36 +294,20 @@
                 return inp.focus();
             }
         });
-        // 失焦即确认, 防止填完不回车的
-        inp.on("blur", function( ) {
-            var v = $(this).val( );
-            if (v) {
-                inlay(v);
-            }
-        });
 
-        // 方便外部操作
-        lsp.data("add", function(v) {
-            if (v) {
-                inlay(v);
-            }
-        });
-        lsp.data("set", function(v) {
-            lsp.empty( );
-            if (v) {
-                patch(v);
-            }
-        });
-
-        // 初始值
-        if (v === undefined) {
-            v = inp.val( );
-        }
-        inp.val (   ""   );
-        lsp.data("set")(v);
+        } // End if has inp
 
         lsp.data("linked", inp);
         inp.data("linked", lsp);
+
+        // 初始值
+        if (v === undefined) {
+            v = inp.val();
+            inp.val( "" );
+        }
+        if (v) {
+            inlet(v);
+        }
     };
 
     // 加载就绪后自动初始化

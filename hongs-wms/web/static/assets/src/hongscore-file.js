@@ -583,7 +583,7 @@
 })(jQuery);
 
 /*
-// 改用样式解决
+// 改为通过事件监听切换
 function _hsSoloFile(box, show) {
     var fn = box.data( "fn" ) || "" ;
     if (! box.is( "[data-repeated]" )

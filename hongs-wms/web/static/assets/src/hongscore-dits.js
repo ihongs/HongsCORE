@@ -102,9 +102,9 @@
         var fn   = lsp.data( "fn" ) || inp.attr("name"); // 字段名
         var ends = lsp.data("ends") || inp.data("ends"); // 切词键
         var join = lsp.data("join") || inp.data("join"); // 拼接符
-        var unjoin  = lsp.is("[data-unjoin]" ) || inp.is("[data-multiple],[multiple]"); // 不拼接
         var unstrip = lsp.is("[data-unstrip]") || inp.is("[data-unstrip]"); // 不清理前后空格
         var unstint = lsp.is("[data-unstint]") || inp.is("[data-unstint]"); // 不进行排重处理
+        var unjoin  = lsp.is("[data-unjoin]" ) || inp.is("[multiple],[data-multiple],[data-repeated]") || /(\[\]|\.\.|\.$)/.test(fn); // 多值字段不拼接
 
         if (! tmp.size()) {
             throw new Error("hsDits temp not exists");

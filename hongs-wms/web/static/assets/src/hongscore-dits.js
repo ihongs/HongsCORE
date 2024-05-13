@@ -6,31 +6,39 @@
  */
 
 (function($) {
-    $.fn.hsDits = function() {
+    $.fn.hsDits = function(v) {
         if (this.data("linked")) {
+            if (v !== undefined) {
+                if (this.is(".ditsbox")) {
+                    this.data("set")(v);
+                } else {
+                    this.data("linked")
+                        .data("set")(v);
+                }
+            }
             return; // 跳过已初始化
         }
 
-        var inp , box ;
-        if (! this.is("input")) {
-            box = this;
-            inp = this.siblings("input")
-                      .not  (  ".input");
+        var box; // 外框
+        var lsp; // 标签容器, .ditsbox
+        var inp; // 输入控件, .input
+        var jnp; // 取值占位, .value
+
+        if (this.is(".ditsbox")) {
+            lsp = this;
+            box = this.parent();
+            inp = this.siblings(".input");
+            jnp = this.siblings(".value");
         } else {
             inp = this;
-            box = this.siblings("ul,ol");
+            box = this.parent();
+            jnp = this.siblings(".value");
+            lsp = this.siblings(".ditsbox");
 
-            if (box.size()) {
-                box = box.parent ( );
-            } else {
-                var fn = inp.attr( "name" );
-                var ft = inp.attr( "type" );
-                if (! ft || ft == "hidden") {
-                    ft = "text";
-                }
-
+            if (! lsp.size()) {
                 box = $(
                     '<div  class="multiple form-control">'
+                  +   '<input class="value" type="hidden"  />'
                   +   '<ul class="repeated labelbox ditsbox">'
                   +     '<li  class="label label-info template">'
                   +       '<a class="erase bi bi-x pull-right" href="javascript:;"></a>'
@@ -38,18 +46,16 @@
                   +       '<input class="value" type="hidden" />'
                   +     '</li>'
                   +   '</ul>'
-                  +   '<input class="input" type="'+ft+'" />'
                   + '</div>'
                 );
-                box.insertBefore(inp).prepend(inp);
-                if (! inp.is(":hidden") )
-                inp.addClass("invisible");
+                box.insertBefore(inp).append(inp);
+                lsp = this.siblings(".ditsbox");
+                jnp = this.siblings(".value");
 
-                var lsp = box.children("ul");
-                var enp = box.find(".input");
+                var fn = inp.attr("name");
 
                 // 只读无需输入
-                if (inp.is("[readonly]")) {
+                if (inp.is("[readonly], [data-readonly]")) {
                     lsp.attr("data-fn", fn);
                     // 直接填充, 不从 input 读取
                     lsp.data("fill", function(x,v) {hsDitsFill(this,v);});
@@ -57,19 +63,21 @@
                     box.find(".input").remove();
                     box.find(".value").remove();
                     box.find(".erase").remove();
-                    inp . remove();
                     inp = jQuery();
+                    jnp = jQuery();
                 } else
                 // 添加隐藏字段
-                if (inp.is("[multiple]")) {
+                if (inp.is("[multiple], [data-multiple]")) {
                     lsp.find(".value")
-                       .attr("name"   , fn);
+                       .attr("name", fn);
+                    jnp.attr("name", fn);
                     lsp.attr("data-fn", fn);
                     // 直接填充, 不从 input 读取
                     lsp.data("fill", function(x,v) {hsDitsFill(this,v);});
                     // 校验相关, 无需 input 校验和填充
+                    lsp.attr("data-unjoin" , "unjoin" );
                     if (inp.prop("required" )) {
-                        lsp.attr("data-required" , "required");
+                        lsp.attr("data-required" , "required" );
                     }
                     if (inp.data("minrepeat")) {
                         lsp.attr("data-minrepeat", inp.data("minrepeat"));
@@ -77,34 +85,31 @@
                     if (inp.data("maxrepeat")) {
                         lsp.attr("data-maxrepeat", inp.data("maxrepeat"));
                     }
-                    inp.removeAttr ( "required" )
-                       .removeClass("form-field")
-                          .addClass("form-final");
+                } else
+                {
+                    jnp.attr("name", fn);
+                    jnp.prop("required" , inp.prop("required"));
                 }
-                // 输入提示
-                if (inp.attr("placeholder")) {
-                    enp.attr("placeholder", inp.attr("placeholder"));
-                }
+
+                inp.removeAttr (  "name"  );
+                inp.removeAttr ("required");
+                inp.removeAttr ("multiple");
+                inp.   addClass(  "input" );
+                inp.removeClass("form-field form-control");
             }
         }
 
-        var enp  = box.children(".input");
-        var lsp  = box.children( "ul,ol");
-        var tmp  = lsp.children(".template").detach(); // 模板, 移出
+        var tmp  = lsp.children( ".template" ).detach(); // 模板, 移出
         var fn   = lsp.data( "fn" ) || inp.attr("name"); // 字段名
         var ends = lsp.data("ends") || inp.data("ends"); // 切词键
         var join = lsp.data("join") || inp.data("join"); // 拼接符
-        var unjoin  = lsp.is("[data-unjoin]" ) || inp.is("[multiple]");     // 不拼接
+        var unjoin  = lsp.is("[data-unjoin]" ) || inp.is("[multiple],[data-multiple]"); // 不拼接
         var unstrip = lsp.is("[data-unstrip]") || inp.is("[data-unstrip]"); // 不清理前后空格
         var unstint = lsp.is("[data-unstint]") || inp.is("[data-unstint]"); // 不进行排重处理
 
         if (! tmp.size()) {
             throw new Error("hsDits temp not exists");
         }
-        if (! enp.size()) {
-            throw new Error("hsDits text not exists");
-        }
-
         tmp.removeClass ( "template invisible hide" );
 
         // 拼接符, 默认为半角逗号
@@ -139,6 +144,14 @@
             });
             return !n;
         }
+        function patch(v) {
+            if (! $.isArray( v )) {
+                v = v.split(join);
+            }
+            for(var i = 0; i < v.length; i ++) {
+                inlay(v[i]);
+            }
+        }
         function inlay(v) {
             do {
                 if (!unstrip) {
@@ -163,18 +176,18 @@
 
                 // 触发事件, 合并取值
                 if (join) {
-                    inp.val(merge(join));
-                    inp.trigger("change", true );
+                    jnp.val(merge(join));
+                    jnp.trigger("change", true );
                 } else {
                     lsp.trigger("change", false);
                 }
             } while (false);
 
-            enp.val ( ""  );
+            inp.val ( ""  );
         }
         function input(e) {
             var cod = e.keyCode;
-            var val = enp.val();
+            var val = inp.val();
 
             do {
                 if ($.inArray(cod, ends) !== -1) { // 针对回车和半角字符等
@@ -204,39 +217,40 @@
         lsp.on("click", ".erase", function(e) {
             $(this).closest( "li" ).remove( );
         });
-        enp.on("keyup"  , function(e) {
-            return input(e);
-        });
-        // 规避回车被表单截获而触发提交
-        if ($.inArray(13, ends) >= 0) {
-        enp.on("keydown", function(e) {
-            if (13 === e.keyCode) {
+
+        if (inp.is("select")) {
+            inp.on("change" , function( ) {
+                var v = $(this).val( );
+                if (v) {
+                    inlay(v);
+                }
+            });
+        } else {
+            inp.on( "keyup" , function(e) {
                 return input(e);
+            });
+            // 规避回车被表单截获而触发提交
+            if ($.inArray(13, ends) >= 0) {
+            inp.on("keydown", function(e) {
+                if (13 === e.keyCode) {
+                    return input(e);
+                }
+            });
             }
-        });
         }
+
         // 点击控件空白处将聚焦到输入框
         box.on("click focus", function(e) {
             if (box.is (e.target)
             ||  lsp.is (e.target)) {
-                return enp.focus();
+                return inp.focus();
             }
         });
         // 失焦即确认, 防止填完不回车的
-        enp.on( "blur" , function(e, x) {
+        inp.on("blur", function( ) {
             var v = $(this).val( );
             if (v) {
                 inlay(v);
-            }
-        });
-        // 联动输入框, 跳过内调和不拼接
-        inp.on("change", function(e, x) {
-            if (x || !join)return;
-            var v = $(this).val();
-                v = v.split(join);
-            lsp.empty();
-            for (var i = 0; i < v.length; i ++) {
-                inlay(v[i]);
             }
         });
 
@@ -247,19 +261,21 @@
             }
         });
         lsp.data("set", function(v) {
-            lsp.empty();
-            if (! v) return;
-            if (! $.isArray( v )) {
-                v = v.split(join);
-            }
-            for (var i = 0; i < v.length; i ++) {
-                inlay(v[i]);
+            lsp.empty( );
+            if (v) {
+                patch(v);
             }
         });
 
+        // 初始值
+        if (v === undefined) {
+            v = inp.val( );
+        }
+        inp.val (   ""   );
+        lsp.data("set")(v);
+
         lsp.data("linked", inp);
         inp.data("linked", lsp);
-        inp.trigger( "change" );
     };
 
     // 加载就绪后自动初始化
@@ -271,10 +287,5 @@
 })(jQuery);
 
 function hsDitsFill(box , v) {
-    var set = $(box).data("set");
-    if (set) {
-        set(v || []);
-    } else {
-        throw new Error("hsDits not inited", box);
-    }
+    $(box).hsDits(v);
 }

@@ -263,22 +263,8 @@
         // 此时并不需要绑定事件监听
         if (inp.size()) {
 
-        if (! inp.is("select")) {
-            // 规避回车被表单截获而触发提交
-            if ($.inArray(13, ends) >= 0)
-            inp.on("keydown", function(e) {
-                if (13 === e.keyCode) {
-                    return input(e);
-                }
-            });
-            // 监听按键检查是否有输入切词符
-            inp.on( "keyup" , function(e) {
-                    return input(e);
-            });
-        }
-
         // 改变即确认, 直接设置所选的值
-        inp.on("change", function() {
+        inp.on("change" , function( ) {
             var v;
             v = $(this).val(  );
             if (v) {
@@ -287,8 +273,20 @@
             }
         });
 
+        // 规避回车被表单截获而触发提交
+        if ($.inArray(13, ends) >= 0)
+        inp.on("keydown", function(e) {
+            if (13 === e.keyCode) {
+                return input(e);
+            }
+        });
+        // 监听按键检查是否有输入切词符
+        inp.on( "keyup" , function(e) {
+                return input(e);
+        });
+
         // 点击控件空白处将聚焦到输入框
-        box.on("click focus", function(e) {
+        box.on( "click focus", function(e) {
             if (box.is (e.target)
             ||  lsp.is (e.target)) {
                 return inp.focus();

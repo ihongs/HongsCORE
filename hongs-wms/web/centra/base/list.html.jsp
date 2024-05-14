@@ -60,7 +60,7 @@
                 <input type="search" class="form-control" name="<%=Cnst.WD_KEY%>" placeholder="<%=sp%>" /><!--<%=_wd%>-->
                 <span class="input-group-btn">
                     <button type="submit" class="search btn btn-default" title="<%=_locale.translate("fore.search", _title)%>"><span class="bi bi-hi-search"></span></button>
-                    <button type="button" class="filter btn btn-default" title="<%=_locale.translate("fore.filter", _title)%>"><span class="bi bi-hi-filter"></span></button>
+                    <button type="button" class="sifter btn btn-default" title="<%=_locale.translate("fore.sifter", _title)%>"><span class="bi bi-hi-sifter"></span></button>
                     <button type="button" class="statis btn btn-default" title="<%=_locale.translate("fore.statis", _title)%>"><span class="bi bi-hi-statis"></span></button>
                     <button type="button" class="column btn btn-default" title="<%=_locale.translate("fore.column", _title)%>"><span class="bi bi-hi-column"></span></button>
                 </span>
@@ -634,7 +634,7 @@
     });
 
     // 管理动作
-    context.on("click", ".toolbox .filter", function() {
+    context.on("click", ".toolbox .sifter", function() {
         siftbox.toggleClass("invisible");
         if (! siftbox.is("invisible")) {
             siftbox.trigger("opened");
@@ -706,9 +706,9 @@
             listbox.find("thead ._check").addClass( "hidden" );
         }
         // 无过滤或统计则隐藏之
-        if (siftbox.find("[data-sift=fn]>*").size() == 1
+        if (siftbox.find("[data-sift=fn]>*").size() <= 1
         &&  siftbox.find(".sift-group").size() == 0) {
-            findbox.find(".filter").remove();
+            findbox.find(".sifter").remove();
         }
         if (statbox.find(".stat-group").size() == 0) {
             findbox.find(".statis").remove();

@@ -1191,6 +1191,7 @@ input[type=file].form-control {
 .bi-hi-search::before { content: "\f52a"; }
 .bi-hi-reload::before { content: "\f130"; }
 .bi-hi-filter::before { content: "\f3e1"; }
+.bi-hi-sifter::before { content: "\f18f"; }
 .bi-hi-statis::before { content: "\f17e"; }
 .bi-hi-column::before { content: "\f465"; }
 .bi-hi-manual::before { content: "\f2d1"; }

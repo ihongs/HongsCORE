@@ -152,12 +152,28 @@
             });
             return !n;
         }
+        function fetch( ) {
+            v  = [ ];
+            lsp.find(".value").each(function() {
+                v.push($(this).val());
+            });
+            if (join) {
+                v  =  v.join ( join );
+            }
+            return v;
+        }
         function inlet(a) {
             if (! $.isArray( a )) {
                 a = a.split(join);
             }
+            var c = 0;
+            var e = 0;
 
-            var c = false;
+            // 清空待写
+            if (lsp.is(":empty")) {
+                e = 1;
+            }   lsp.empty ( );
+
             for(var i = 0; i < a.length; i ++) {
                 var v = a [i];
                 if (!unstrip) {
@@ -178,10 +194,10 @@
                 tag.find(".value").val (v);
                 lsp.append ( tag );
 
-                c = true;
+                c ++;
             }
 
-            if (c) {
+            if (c > 0 || e > 0) {
                 // 触发事件, 合并取值
                 if (join) {
                     jnp.val(merge(join));
@@ -190,6 +206,8 @@
                     lsp.trigger("change", false);
                 }
             }
+
+            return c;
         }
         function inlay(v) {
             if (!unstrip) {
@@ -197,10 +215,10 @@
             }
             if (!unstint) {
             if (exist(v)) {
-                return;
+                return 0;
             }}
             if (!v) {
-                return;
+                return 0;
             }
 
             // 添加标签
@@ -217,6 +235,8 @@
             } else {
                 lsp.trigger("change", false);
             }
+
+            return 1;
         }
         function input(e) {
             var cod = e.keyCode;
@@ -247,21 +267,23 @@
             inlay ( val );
 
             // 阻止事件往外扩散触发提交
-            e.stopPropagation();
+            e.stopPropagation( );
             return false ;
         }
 
         // 方便外部操作
-        lsp.data("set", function(v) {
-            lsp.empty( );
-            if (v) {
+        lsp.data("val", function(v) {
+            if (v === undefined) {
+                return fetch ( );
+            } else {
                 inlet(v);
             }
         });
+        lsp.data("set", function(v) {
+            inlet(v);
+        });
         lsp.data("add", function(v) {
-            if (v) {
-                inlay(v);
-            }
+            inlay(v);
         });
 
         lsp.on("click", ".erase", function(e) {

@@ -64,7 +64,7 @@
                 } else
                 // 添加隐藏字段
                 if (inp.is("[multiple],[data-multiple]")) {
-                    // 分散取值, 不将 value 串联到一起
+                    // 分散取值, 各个 value 均会被提交
                     lsp.find(".value")
                        .attr("name", fn);
                     jnp.attr("name", fn);

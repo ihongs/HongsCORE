@@ -53,16 +53,14 @@
                 jnp = this.siblings(".value");
                 var fn = inp. attr ("name");
 
-                // 只读无需输入
                 if (inp.is("[readonly],[data-readonly]")) {
-                    // 移除控件, 无需 input 相关的操作
+                    // 只读清理, 无需 input 等相关控件
                     box.find(".input").remove();
                     box.find(".value").remove();
                     box.find(".erase").remove();
                     inp = jQuery();
                     jnp = jQuery();
                 } else
-                // 添加隐藏字段
                 if (inp.is("[multiple],[data-multiple]")) {
                     // 分散取值, 内部各个 value 均提交
                     lsp.find(".value")

@@ -202,7 +202,7 @@
     }
 
     function _makeChoose(flg, arr) {
-        var s = '<select class="form-control datebox-'+flg+'" data-date="'+flg+'">';
+        var s = '<select class="datebox-'+flg+'" data-date="'+flg+'">';
         for(var j = arr.length, i = 0; i < j; i ++) {
             var v = arr[i];
             s += '<option value="'+ i +'">'+ v +'</option>';
@@ -212,7 +212,7 @@
     }
 
     function _makeSelect(flg, min, max, len) {
-        var s = '<select class="form-control datebox-'+flg+'" data-date="'+flg+'">';
+        var s = '<select class="datebox-'+flg+'" data-date="'+flg+'">';
         for(  ; min <= max  ; min ++  ) {
             var v  = _addzero(min, len);
             s += '<option value="'+min+'">'+ v +'</option>';
@@ -223,7 +223,7 @@
 
     function _makeNumber(flg, min, max, len) {
         var i = 'datelist-'+flg+'-'+min+'-'+max;
-        var s = '<input class="form-control datebox-'+flg+'" data-date="'+flg+'" type="number" list="'+i+'">'
+        var s = '<input class="datebox-'+flg+'" data-date="'+flg+'" type="number" list="'+i+'">'
               + '<datalist id="'+i+'">';
         for(  ; min <= max  ; min ++  ) {
         //  var v  = _addzero(min, len);
@@ -234,13 +234,13 @@
     }
 
     function _makeAddons(txt) {
-        var spn = $('<span class="input-group-addon"></span>');
+        var spn = $('<span></span>');
         spn.text(txt.replace(/^'|'$/g , ""));
         return spn ;
     }
 
     function _makeInputs(fmt) {
-        var box = $('<div class="input-group datebox"></div>');
+        var box = $('<div class="form-control datebox"></div>');
         var pat = /([MdyHkKhmsSa]+|[^MdyHkKhmsSa']+|'.*?')/g;
         var wrd = /^[MdyHkKhmsSa]+$/;
         var grp ;
@@ -252,7 +252,7 @@
                 box.append(_makeAddons(grp));
             }
         }
-        box.append(_makeAddons("").css("width", "100%")); // 占位撑长
+        box.append(_makeAddons("")); // 占位撑长
         return box;
     }
 
@@ -303,21 +303,24 @@
             /**
              * 当前时间和取消设置等
              */
-            box.find('.input-group-addon').last()
-               .html('<a href="javascript:;" title="'+hsGetLang('time.today.title')+'" class="today bi bi-hi-time"></span>'
-                    +'<a href="javascript:;" title="'+hsGetLang('time.clear.title')+'" class="clear bi bi-hi-delete"></span>');
+            box. find ('span').last()
+               .append('<a href="javascript:;" title="'+hsGetLang('time.today.title')+'" class="today bi bi-hi-time"  ></a>')
+               .append('<a href="javascript:;" title="'+hsGetLang('time.clear.title')+'" class="clear bi bi-hi-delete"></a>');
 
             /**
              * 输入框组是不可嵌套的
              * 如果已经在输入框组里
              * 需要把选项向上提一层
+             * 2024/05/14 已改为用 form-control, 可以包上 input-group
              */
+            /*
             if (inp.parent().is(".input-group")) {
                 inp.before(box.contents());
                 box.remove();
                 box = inp.parent( );
                 box.addClass ( "datebox" );
             }
+            */
         }
         while (false);
 

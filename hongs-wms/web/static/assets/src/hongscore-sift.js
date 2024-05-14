@@ -24,7 +24,6 @@ function HsSift(context, opts) {
      * data-sift=lr 列表关系
      */
 
-    var  that    = this ;
     var  siftBox = context.find(".siftbox");
     var  findBox = context.find(".findbox");
     var  formBox = siftBox.find( "form"   );
@@ -701,45 +700,52 @@ function HsStat(context, opts) {
     this.findBox = findBox;
     this._url  = opts._url || opts.loadUrl ;
 
-    var  that  = this;
-
-    //** 条件改变时重载图表 **/
-
-    statBox.data("changed", statBox.is(".invisible"));
-
-    context.on("saveBack sendBack", function() {
-        if (statBox.is(".invisible")) {
-            statBox.data("changed", true );
-        } else {
-            statBox.data("changed", false);
-            setTimeout(function() {
-                that.load();
-            }, 1000);
-        }
-    });
-
-    findBox.on( "submit" , function() {
-        if (statBox.is(".invisible")) {
-            statBox.data("changed", true );
-        } else {
-            statBox.data("changed", false);
-            setTimeout(function() {
-                that.load();
-            }, 1000);
-        }
-    });
-
-    statBox.on( "change" , "input,select", function() {
-        if ($(this).is(".checkall2")) {
-            $(this).closest(".checkbox").find(".checkone2").prop("checked", false);
-        } else
-        if ($(this).is(".checkone2")) {
-            $(this).closest(".checkbox").find(".checkall2").prop("checked", false);
-        }
-        findBox.find(":submit").first().click();
-    });
+        this.init(  );
+    if (opts.loadUrl) {
+        this.load(  );
+    }
 }
 HsStat.prototype = {
+    init: function() {
+        var that = this;
+        var statBox = this.statBox;
+        var findBox = this.findBox;
+        var context = this.context;
+
+        statBox.data("changed", statBox.is(".invisible"));
+
+        context.on("saveBack sendBack", function() {
+            if (statBox.is(".invisible")) {
+                statBox.data("changed", true );
+            } else {
+                statBox.data("changed", false);
+                setTimeout(function() {
+                    that.load();
+                }, 1000);
+            }
+        });
+
+        findBox.on( "submit" , function() {
+            if (statBox.is(".invisible")) {
+                statBox.data("changed", true );
+            } else {
+                statBox.data("changed", false);
+                setTimeout(function() {
+                    that.load();
+                }, 1000);
+            }
+        });
+
+        statBox.on( "change" , "input,select", function() {
+            if ($(this).is(".checkall2")) {
+                $(this).closest(".checkbox").find(".checkone2").prop("checked", false);
+            } else
+            if ($(this).is(".checkone2")) {
+                $(this).closest(".checkbox").find(".checkall2").prop("checked", false);
+            }
+            findBox.find(":submit").first().click();
+        });
+    },
     load: function() {
         var that    = this;
         var statBox = this.statBox;
@@ -1017,8 +1023,7 @@ HsStat.prototype = {
 
         var label = $('<label></label>');
         var check = $('<input type="checkbox" class="checkall2"/>');
-        var title = $('<span></span>')
-                .text("全部" + text);
+        var title = $('<span></span>').text("全部");
             label.append(check).append(title).appendTo(box2);
 
         for(var i = 0; i < data.length; i ++) {
@@ -1043,8 +1048,7 @@ HsStat.prototype = {
 
         var label = $('<label></label>');
         var check = $('<input type="checkbox" class="checkall2"/>');
-        var title = $('<span></span>')
-                .text("全部" + text);
+        var title = $('<span></span>').text("全部");
             label.append(check).append(title).appendTo(box2);
 
         for(var i = 0; i < data.length; i ++) {
@@ -1095,7 +1099,7 @@ HsStat.prototype = {
             series: [{
                 data: bData,
                 type: "bar",
-                barMaxWidth: 13,
+                barMaxWidth: 12,
                 itemStyle: { normal: {
                     barBorderRadius: [4, 4, 0, 0]
                 } }
@@ -1103,24 +1107,33 @@ HsStat.prototype = {
             xAxis : [{
                 data: xData,
                 show: true,
-                type: "category"
+                type: "category",
+                inverse: true
             }],
             yAxis : [{
                 show: true,
-                type: "value"
+                type: "value",
+                axisLabel: {inside: true}
             }]
         };
         var opts = {
             grid : {
                 top: 30,
-                left: 15,
+                left: 5,
                 right: 15,
                 bottom: 0,
                 containLabel: true
             },
+            title: {
+                show: true,
+                text: box.data("text"),
+                textStyle: {fontSize: 14}
+            },
             tooltip: {},
             toolbox: {
                 show: true,
+                right: 10,
+                itemSize: 14,
                 feature: {
                     show: true,
                     myBar: {
@@ -1216,14 +1229,14 @@ HsStat.prototype = {
             series: [{
                 data: bData1,
                 type: "bar",
-                barMaxWidth: 13,
+                barMaxWidth: 12,
                 itemStyle: { normal: {
                     barBorderRadius: [4, 4, 0, 0]
                 } }
             }, {
                 data: bData2,
                 type: "bar",
-                barMaxWidth: 13,
+                barMaxWidth: 12,
                 itemStyle: { normal: {
                     barBorderRadius: [4, 4, 0, 0]
                 } }
@@ -1231,28 +1244,39 @@ HsStat.prototype = {
             xAxis : [{
                 data: xData,
                 show: true,
-                type: "category"
+                type: "category",
+                inverse: true
             }],
             yAxis : [{
                 show: true,
-                type: "value"
+                type: "value",
+                position: "left",
+                axisLabel: {inside: true}
             }, {
                 show: true,
                 type: "value",
-                position: "right"
+                position: "right",
+                axisLabel: {inside: true}
             }]
         };
         var opts = {
             grid : {
                 top: 30,
-                left: 15,
+                left: 5,
                 right: 15,
                 bottom: 0,
                 containLabel: true
             },
+            title: {
+                show: true,
+                text: box.data("text"),
+                textStyle: {fontSize: 14}
+            },
             tooltip: {},
             toolbox: {
                 show: true,
+                right: 10,
+                itemSize: 14,
                 feature: {
                     show: true,
                     myBar: {

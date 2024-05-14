@@ -899,10 +899,10 @@ ol.labelbox {
 .labelbox .label {
     padding: 0 6px;
     margin : 0 5px 5px 0;
+    max-width  : calc(100% - 5px);
     line-height: inherit;
     font-weight: inherit;
     font-size  : inherit;
-    max-width  : 100%;
     text-align : left;
     display  : inline-block;
     overflow : hidden;
@@ -936,16 +936,13 @@ ol.labelbox {
     min-height: 34px;
     padding: 6px ;
 }
-.form-control .labelbox .label {
-    max-width: calc(100% - 5px);
-}
 .form-control a,
 .form-control a:hover ,
 .form-control a:focus {
     text-decoration: none;
 }
 .form-control > a,
-.form-control > input.input {
+.form-control > .input {
     outline: none;
     display: block;
     min-width: 100%;
@@ -954,8 +951,27 @@ ol.labelbox {
     margin : 0;
 }
 .form-control .labelbox:not(:empty)+a,
-.form-control .labelbox:not(:empty)+input.input {
+.form-control .labelbox:not(:empty)+.input {
     margin : 5px 0 0 0;
+}
+
+.form-group-sm .form-control.multiple {
+    min-height: 30px;
+    padding: 5px;
+}
+.form-group-sm .form-control>a,
+.form-group-sm .form-control>.input ,
+.form-group-sm .form-control .label {
+    padding: 0 5px;
+}
+.form-group-lg .form-control.multiple {
+    min-height: 46px;
+    padding: 8px;
+}
+.form-group-lg .form-control>a,
+.form-group-lg .form-control>.input ,
+.form-group-lg .form-control .label {
+    padding: 0 8px;
 }
 
 .forkbox .label span ,
@@ -1085,55 +1101,56 @@ ul.pickmul + * ,
 
 /** 时间 **/
 
-.datebox.input-group a {
-    margin: auto 0.5em;
-    float: left;
-    color: #999;
+.datebox.form-control {
+    background: #f8f8f8;
+    padding: 2px 6px;
 }
-.datebox.input-group a:hover ,
-.datebox.input-group a:focus {
-    color: #666;
+.datebox.form-control a {
+    margin-left: 1em;
 }
-.datebox.input-group .form-control {
-    text-align: center;
-    width: 3em ;
+.datebox.form-control input,
+.datebox.form-control select {
+    text-align: center ;
+    border: 0;
+    margin: 0;
+    height: 100%;
+    width : 3em ;
 }
-.datebox.input-group .form-control.datebox-y  ,
-.datebox.input-group .form-control.datebox-S  {
-    width: 4em ;
+.datebox.form-control .datebox-y  ,
+.datebox.form-control .datebox-S  {
+    width : 4em ;
 }
-.datebox.input-group .form-control.datebox-La ,
-.datebox.input-group .form-control.datebox-Sa ,
-.datebox.input-group .form-control.datebox-LM ,
-.datebox.input-group .form-control.datebox-SM {
-    width: auto;
+.datebox.form-control .datebox-La ,
+.datebox.form-control .datebox-Sa ,
+.datebox.form-control .datebox-LM ,
+.datebox.form-control .datebox-SM {
+    width : auto;
 }
-.datebox.input-group .input-group-addon {
-    width: auto;
-}
-.datebox.input-group .input-group-addon ,
-.datebox.input-group .form-control {
-    padding-right: 8px;
-    padding-left : 8px;
+.datebox.form-control span  ,
+.datebox.form-control input ,
+.datebox.form-control select {
+    padding-right: 6px;
+    padding-left : 6px;
 }
 /* 修复 firefox 中 select 内总有 4px 的问题 */
-@-moz-document url-prefix() {
-.datebox.input-group .form-control {
+@-moz-document url-prefix()  {
+.datebox.form-control input ,
+.datebox.form-control select {
     padding-right: 0px;
     padding-left : 0px;
 }
 }
 /* 去除右侧指示图标 */
-.datebox.input-group select ,
-.datebox.input-group input  {
+.datebox.form-control input ,
+.datebox.form-control select {
     appearance: none;
     -moz-appearance: none;
     -webkit-appearance: none;
 }
-.datebox.input-group select::-webkit-calendar-picker-indicator ,
-.datebox.input-group input::-webkit-calendar-picker-indicator ,
-.datebox.input-group input::-webkit-outer-spin-button ,
-.datebox.input-group input::-webkit-inner-spin-button {
+.datebox.form-control input::-webkit-outer-spin-button ,
+.datebox.form-control input::-webkit-inner-spin-button ,
+.datebox.form-control input::-webkit-calendar-picker-indicator ,
+.datebox.form-control select::-webkit-calendar-picker-indicator {
     padding: 0;
     width: 0px;
     color: transparent;
@@ -1164,12 +1181,12 @@ ul.pickmul + * ,
     width  : 0;
 }
 input[type=file].form-control {
-    padding: 10px 13px;
+    padding: 6px 12px;
 }
 /* 修复 firefox 中 input 上传按钮不可调问题 */
 @-moz-document url-prefix() {
 input[type=file].form-control {
-    padding:  0px  0px;
+    padding: 0px  0px;
 }
 }
 

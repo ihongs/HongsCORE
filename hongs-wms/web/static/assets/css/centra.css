@@ -505,8 +505,6 @@ body {
 /* 统计图表附带选项 */
 .statbox .checkbox label {
     display: block;
-    font-size: 12px;
-    line-height: 21px;
     white-space: nowrap;
          overflow: hidden;
     text-overflow: ellipsis;

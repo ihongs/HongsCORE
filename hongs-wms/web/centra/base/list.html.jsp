@@ -391,8 +391,8 @@
         %>
         <div class="stat-group col-xs-6" data-name="<%=name%>" data-text="<%=text%>" data-type="<%=type%>">
             <div class="panel panel-body panel-default clearfix" style="height: 302px;">
-                <div class="checkbox col-xs-3" style="height: 100%; display:none"></div>
                 <div class="chartbox col-xs-9" style="height: 100%; display:none"></div>
+                <div class="checkbox col-xs-3" style="height: 100%; display:none"></div>
                 <div class="alertbox"><div><%=text%> <%=_locale.translate("fore.loading")%></div></div>
             </div>
         </div>

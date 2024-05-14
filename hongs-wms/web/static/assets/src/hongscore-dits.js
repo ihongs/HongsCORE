@@ -54,10 +54,7 @@
                 var fn = inp. attr ("name");
 
                 // 只读无需输入
-                if (inp.is("[readonly], [data-readonly]")) {
-                    lsp.attr("data-fn", fn);
-                    // 直接填充, 不从 input 读取
-                    lsp.data("fill", function(x,v) {hsDitsFill(this,v);});
+                if (inp.is("[readonly],[data-readonly]")) {
                     // 移除控件, 无需 input 相关的操作
                     box.find(".input").remove();
                     box.find(".value").remove();
@@ -66,17 +63,15 @@
                     jnp = jQuery();
                 } else
                 // 添加隐藏字段
-                if (inp.is("[multiple], [data-multiple]")) {
+                if (inp.is("[multiple],[data-multiple]")) {
+                    // 分散取值, 不将 value 串联到一起
                     lsp.find(".value")
                        .attr("name", fn);
                     jnp.attr("name", fn);
-                    lsp.attr("data-fn", fn);
-                    // 直接填充, 不从 input 读取
-                    lsp.data("fill", function(x,v) {hsDitsFill(this,v);});
+                    lsp.attr("data-unjoin" , "unjoin");
                     // 校验相关, 无需 input 校验和填充
-                    lsp.attr("data-unjoin" , "unjoin" );
                     if (inp.prop("required" )) {
-                        lsp.attr("data-required" , "required" );
+                        lsp.attr("data-required" , "required");
                     }
                     if (inp.data("minrepeat")) {
                         lsp.attr("data-minrepeat", inp.data("minrepeat"));
@@ -86,9 +81,23 @@
                     }
                 } else
                 {
+                    // 合并取值, 会将 value 串联到一起
                     jnp.attr("name", fn);
-                    jnp.prop("required" , inp.prop("required"));
+                    // 校验相关, 无需 input 校验和填充
+                    if (inp.prop("required" )) {
+                        lsp.attr("data-required" , "required" );
+                    }
+                    if (inp.data("minrepeat")) {
+                        lsp.attr("data-minrepeat", inp.data("minrepeat"));
+                    }
+                    if (inp.data("maxrepeat")) {
+                        lsp.attr("data-maxrepeat", inp.data("maxrepeat"));
+                    }
                 }
+
+                // 接收取值数据
+                lsp.attr("data-fn" , fn);
+                lsp.data("fill", function(x, v) { hsDitsFill(this, v); });
 
                 inp.removeAttr (  "name"  );
                 inp.removeAttr ("required");
@@ -104,7 +113,7 @@
         var join = lsp.data("join") || inp.data("join"); // 拼接符
         var unstrip = lsp.is("[data-unstrip]") || inp.is("[data-unstrip]"); // 不清理前后空格
         var unstint = lsp.is("[data-unstint]") || inp.is("[data-unstint]"); // 不进行排重处理
-        var unjoin  = lsp.is("[data-unjoin]" ) || inp.is("[multiple],[data-multiple],[data-repeated]") || /(\[\]|\.\.|\.$)/.test(fn); // 多值字段不拼接
+        var unjoin  = lsp.is("[data-unjoin]" ) || inp.is("[data-multiple],[multiple]"); // 多值字段不拼接
 
         if (! tmp.size()) {
             throw new Error("hsDits temp not exists");

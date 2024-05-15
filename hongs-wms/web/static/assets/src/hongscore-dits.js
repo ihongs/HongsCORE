@@ -1,11 +1,49 @@
 /**
  * 标签输入组添加方法:
- * <input type="hidden" name="tags" data-toggle="hsDits"/>
+ * <input type="text" name="tags" data-toggle="hsDits"/>
+ * 多项选择组添加方法:
+ * <select name="sels" data-toggle="hsSels">
+ *    <option value=""></option>
+ *    <option value="1">选项1</option>
+ *    <option value="2">选项2</option>
+ * </select>
  * 将自动创建操作控件,
  * 亦可自定义操作控件.
  */
 
 (function($) {
+
+    function _fetch(lsp, s) {
+        var a = [];
+        lsp.find(".value").each(function() {
+            a.push($(this).val());
+        });
+        if (s) {
+            a = a.join(s);
+        }
+        return  a;
+    }
+    function _exist(lsp, v) {
+        var n = true;
+        lsp.find(".value").each(function() {
+            if (v == $(this).val()) {
+                n  =   false;
+                return false;
+            }
+        });
+        return !n;
+    }
+    function _label(sel, v) {
+        var t = null;
+        sel.children().each(function() {
+            if (v == $(this).val()) {
+                t  = $(this).text();
+                return false;
+            }
+        });
+        return  t || v;
+    }
+
     $.fn.hsDits = function(v) {
         if (this.data("linked")) {
             if (v !== undefined) {
@@ -53,32 +91,15 @@
                 jnp = this.siblings(".value");
                 var fn = inp. attr ("name");
 
-                if (inp.is("[readonly],[data-readonly]")) {
-                    // 只读清理, 无需 input 等相关控件
-                    box.find(".input").remove();
-                    box.find(".value").remove();
-                    box.find(".erase").remove();
-                    inp = jQuery();
-                    jnp = jQuery();
-                } else
-                if (inp.is("[multiple],[data-multiple]")) {
-                    // 分散取值, 内部各个 value 均提交
-                    lsp.find(".value")
-                       .attr("name", fn);
-                    jnp.attr("name", fn);
-                    lsp.attr("data-unjoin" , "unjoin");
-                    // 校验相关, 无需 input 校验和填充
-                    if (inp.prop("required" )) {
-                        lsp.attr("data-required" , "required");
-                    }
-                    if (inp.data("minrepeat")) {
-                        lsp.attr("data-minrepeat", inp.data("minrepeat"));
-                    }
-                    if (inp.data("maxrepeat")) {
-                        lsp.attr("data-maxrepeat", inp.data("maxrepeat"));
-                    }
-                } else
-                {
+                // 如 input 有 datalist 也挪进来
+                var dl = inp. attr ("list");
+                if (dl) {
+                    dl = $("#" + dl);
+                if (box.siblings(dl).size()) {
+                    box. append (dl);
+                }}
+
+                if (inp.is("[data-join]")) {
                     // 合并取值, 只有一个 value 被提交
                     jnp.attr("name", fn);
                     // 校验相关, 无需 input 校验和填充
@@ -91,11 +112,27 @@
                     if (inp.data("maxrepeat")) {
                         lsp.attr("data-maxrepeat", inp.data("maxrepeat"));
                     }
+                } else {
+                    // 分散取值, 内部各个 value 均提交
+                    lsp.find(".value")
+                       .attr("name", fn);
+                    jnp.attr("name", fn);
+                    // 校验相关, 无需 input 校验和填充
+                    if (inp.prop("required" )) {
+                        lsp.attr("data-required" , "required");
+                    }
+                    if (inp.data("minrepeat")) {
+                        lsp.attr("data-minrepeat", inp.data("minrepeat"));
+                    }
+                    if (inp.data("maxrepeat")) {
+                        lsp.attr("data-maxrepeat", inp.data("maxrepeat"));
+                    }
                 }
 
                 // 接收取值数据
                 lsp.attr("data-fn" , fn);
                 lsp.data("fill", function(x, v) { hsDitsFill(this, v); });
+                lsp.data("feed", function(x, v) { hsDitsFeed(this, v); });
 
                 // 清理原有属性, 仅被用作输入
                 inp.removeAttr (  "name"  );
@@ -112,7 +149,6 @@
         var join = lsp.data("join") || inp.data("join"); // 拼接符
         var unstrip = lsp.is("[data-unstrip]") || inp.is("[data-unstrip]"); // 不清理前后空格
         var unstint = lsp.is("[data-unstint]") || inp.is("[data-unstint]"); // 不进行排重处理
-        var unjoin  = lsp.is("[data-unjoin]" ) || inp.is("[data-multiple],[multiple]"); // 多值字段不拼接
 
         if (! tmp.size()) {
             throw new Error("hsDits temp not exists");
@@ -120,8 +156,8 @@
         tmp.removeClass ( "template invisible hide" );
 
         // 拼接符, 默认为半角逗号
-        if (! join && ! unjoin) {
-            join = ',';
+        if (! join && (lsp.is("[data-join]") || inp.is("[data-join]"))) {
+            join = ",";
         }
 
         // 切词键, 默认为回车, 半角逗号和分号, 全角顿号和逗号和分号
@@ -134,34 +170,7 @@
             }
         }
 
-        function merge(s) {
-            var a = [];
-            lsp.find("input").each(function() {
-                a.push($(this).val());
-            });
-            return a.join(s);
-        }
-        function exist(v) {
-            var n = true;
-            lsp.find("input").each(function() {
-                if (v == $(this).val()) {
-                    n  =   false;
-                    return false;
-                }
-            });
-            return !n;
-        }
-        function fetch( ) {
-            v  = [ ];
-            lsp.find(".value").each(function() {
-                v.push($(this).val());
-            });
-            if (join) {
-                v  =  v.join ( join );
-            }
-            return v;
-        }
-        function inlet(a) {
+        function set(a) {
             if (! $.isArray( a )) {
                 a = a.split(join);
             }
@@ -171,7 +180,14 @@
             // 清空待写
             if (lsp.is(":empty")) {
                 e = 1;
-            }   lsp.empty ( );
+            }
+            lsp.empty();
+
+            // 整理取值
+            var w = { };
+            lsp.find(".value").each(function() {
+                w[$(this).val()] = true;
+            });
 
             for(var i = 0; i < a.length; i ++) {
                 var v = a [i];
@@ -179,7 +195,7 @@
                     v = $.trim(v || "");
                 }
                 if (!unstint) {
-                if (exist(v)) {
+                if ( w[ v ] ) {
                     continue;
                 }}
                 if (!v) {
@@ -193,27 +209,27 @@
                 tag.find(".value").val (v);
                 lsp.append ( tag );
 
+                w [v] = true;
                 c ++;
             }
 
             if (c > 0 || e > 0) {
-                // 触发事件, 合并取值
+                // 合并取值, 触发事件
                 if (join) {
-                    jnp.val(merge(join));
-                    jnp.trigger("change", true );
-                } else {
-                    lsp.trigger("change", false);
+                    jnp.val(_fetch(lsp, join));
                 }
+                lsp.trigger( "change" , true );
             }
 
             return c;
         }
-        function inlay(v) {
+
+        function add(v) {
             if (!unstrip) {
                 v = $.trim(v || "");
             }
             if (!unstint) {
-            if (exist(v)) {
+            if (_exist(lsp,v)) {
                 return 0;
             }}
             if (!v) {
@@ -227,16 +243,15 @@
             tag.find(".value").val (v);
             lsp.append ( tag );
 
-            // 触发事件, 合并取值
+            // 合并取值, 触发事件
             if (join) {
-                jnp.val(merge(join));
-                jnp.trigger("change", true );
-            } else {
-                lsp.trigger("change", false);
+                jnp.val(_fetch(lsp, join));
             }
+            lsp.trigger( "change" , true );
 
             return 1;
         }
+
         function input(e) {
             var cod = e.keyCode;
             var val = inp.val();
@@ -263,7 +278,7 @@
             while (false);
 
             inp.val( "" );
-            inlay ( val );
+            add(val);
 
             // 阻止事件往外扩散触发提交
             e.stopPropagation( );
@@ -271,22 +286,22 @@
         }
 
         // 方便外部操作
-        lsp.data("val", function(v) {
-            if (v === undefined) {
-                return fetch ( );
-            } else {
-                inlet(v);
-            }
+        lsp.data("get", function( ) {
+            return _fetch(lsp,join);
         });
         lsp.data("set", function(v) {
-            inlet(v);
+            set(v);
         });
         lsp.data("add", function(v) {
-            inlay(v);
+            add(v);
         });
 
-        lsp.on("click", ".erase", function(e) {
-            $(this).closest( "li" ).remove( );
+        lsp.on("click", ".erase", function() {
+            $(this).closest("li").remove();
+            if (join) {
+                jnp.val(_fetch(lsp, join));
+            }
+            lsp.trigger( "change" , true );
         });
 
         // 只读模式时输入框可能缺失
@@ -299,7 +314,7 @@
             v = $(this).val(  );
             if (v) {
                 $(this).val("");
-                inlay(v);
+                add(v);
             }
         });
 
@@ -334,7 +349,263 @@
             inp.val( "" );
         }
         if (v) {
-            inlet(v);
+            set(v);
+        }
+    };
+
+    $.fn.hsSels = function(v) {
+        if (this.data("linked")) {
+            if (v !== undefined) {
+                if (this.is(".ditsbox")) {
+                    this.data("set")(v);
+                } else {
+                    this.data("linked")
+                        .data("set")(v);
+                }
+            }
+            return; // 跳过已初始化
+        }
+
+        var box; // 外框
+        var lsp; // 标签容器, .ditsbox
+        var inp; // 输入控件, .input
+        var jnp; // 取值占位, .value
+
+        if (this.is(".ditsbox")) {
+            lsp = this;
+            box = this.parent();
+            inp = this.siblings(".input");
+            jnp = this.siblings(".value");
+        } else {
+            inp = this;
+            box = this.parent();
+            jnp = this.siblings(".value");
+            lsp = this.siblings(".ditsbox");
+
+            if (! lsp.size()) {
+                box = $(
+                    '<div  class="multiple form-control">'
+                  +   '<input class="value" type="hidden"  />'
+                  +   '<ul class="repeated labelbox ditsbox">'
+                  +     '<li  class="label label-info template">'
+                  +       '<a class="erase bi bi-x pull-right" href="javascript:;"></a>'
+                  +       '<span  class="title"></span>'
+                  +       '<input class="value" type="hidden" />'
+                  +     '</li>'
+                  +   '</ul>'
+                  + '</div>'
+                );
+                box.insertBefore(inp).append(inp);
+                lsp = this.siblings(".ditsbox");
+                jnp = this.siblings(".value");
+                var fn = inp. attr ("name");
+
+                if (inp.is("[data-join]")) {
+                    // 合并取值, 只有一个 value 被提交
+                    jnp.attr("name", fn);
+                    // 校验相关, 无需 input 校验和填充
+                    if (inp.prop("required" )) {
+                        lsp.attr("data-required" , "required" );
+                    }
+                    if (inp.data("minrepeat")) {
+                        lsp.attr("data-minrepeat", inp.data("minrepeat"));
+                    }
+                    if (inp.data("maxrepeat")) {
+                        lsp.attr("data-maxrepeat", inp.data("maxrepeat"));
+                    }
+                } else {
+                    // 分散取值, 内部各个 value 均提交
+                    lsp.find(".value")
+                       .attr("name", fn);
+                    jnp.attr("name", fn);
+                    // 校验相关, 无需 input 校验和填充
+                    if (inp.prop("required" )) {
+                        lsp.attr("data-required" , "required");
+                    }
+                    if (inp.data("minrepeat")) {
+                        lsp.attr("data-minrepeat", inp.data("minrepeat"));
+                    }
+                    if (inp.data("maxrepeat")) {
+                        lsp.attr("data-maxrepeat", inp.data("maxrepeat"));
+                    }
+                }
+
+                // 接收取值数据
+                lsp.attr("data-fn" , fn);
+                lsp.data("fill", function(x, v) { hsSelsFill(this, v); });
+                lsp.data("feed", function(x, v) { hsSelsFeed(this, v); });
+
+                // 清理原有属性, 仅被用作输入
+                inp.removeAttr (  "name"  );
+                inp.removeAttr ("required");
+                inp.removeAttr ("multiple");
+                inp.   addClass(  "input" );
+                inp.removeClass("form-field form-control");
+            }
+        }
+
+        var tmp  = lsp.children( ".template" ).detach(); // 模板, 移出
+        var fn   = lsp.data( "fn" ) || inp.attr("name"); // 字段名
+        var join = lsp.data("join") || inp.data("join"); // 拼接符
+        var unstrip = lsp.is("[data-unstrip]") || inp.is("[data-unstrip]"); // 不清理前后空格
+        var unstint = lsp.is("[data-unstint]") || inp.is("[data-unstint]"); // 不进行排重处理
+
+        if (! tmp.size()) {
+            throw new Error("hsSels temp not exists");
+        }
+        tmp.removeClass ( "template invisible hide" );
+
+        // 拼接符, 默认为半角逗号
+        if (! join && (lsp.is("[data-join]") || inp.is("[data-join]"))) {
+            join = ',';
+        }
+
+        function set(a) {
+            if (! $.isArray( a )) {
+                a = a.split(join);
+            }
+            var c = 0;
+            var e = 0;
+
+            // 清空待写
+            if (lsp.is(":empty")) {
+                e = 1;
+            }
+            lsp.empty();
+
+            // 整理取值
+            var w = { };
+            lsp.find(".value").each(function() {
+                w[$(this).val()] = true;
+            });
+
+            // 整理文本
+            var m = { };
+            inp.find("option").each(function() {
+                m[$(this).val()] = $(this).text();
+            });
+
+            for(var i = 0; i < a.length; i ++) {
+                var v = a [i];
+                if (!unstrip) {
+                    v = $.trim(v || "");
+                }
+                if (!unstint) {
+                if ( w[ v ] ) {
+                    continue;
+                }}
+                if (!v) {
+                    continue;
+                }
+
+                // 获取文本
+                var t = m[v] || v;
+
+                // 添加标签
+                var tag = tmp.clone();
+                tag.attr( "title", t);
+                tag.find(".title").text(t);
+                tag.find(".value").val (v);
+                lsp.append ( tag );
+
+                w [v] = true;
+                c ++;
+            }
+
+            if (c > 0 || e > 0) {
+                // 合并取值, 触发事件
+                if (join) {
+                    jnp.val(_merge(lsp, join));
+                }
+                lsp.trigger( "change" , true );
+            }
+
+            return c;
+        }
+        function add(v) {
+            if (!unstrip) {
+                v = $.trim(v || "");
+            }
+            if (!unstint) {
+            if (_exist(lsp,v)) {
+                return 0;
+            }}
+            if (!v) {
+                return 0;
+            }
+
+            // 获取文本
+            var t = _label(inp,v);
+
+            // 添加标签
+            var tag = tmp.clone();
+            tag.attr( "title", t);
+            tag.find(".title").text(t);
+            tag.find(".value").val (v);
+            lsp.append ( tag );
+
+            // 合并取值, 触发事件
+            if (join) {
+                jnp.val(_fetch(lsp, join));
+            }
+            lsp.trigger( "change" , true );
+
+            return 1;
+        }
+
+        // 方便外部操作
+        lsp.data("get", function( ) {
+            return _fetch(lsp,join);
+        });
+        lsp.data("set", function(v) {
+            set(v);
+        });
+        lsp.data("add", function(v) {
+            add(v);
+        });
+
+        lsp.on("click", ".erase", function(e) {
+            $(this).closest("li").remove();
+            if (join) {
+                jnp.val(_fetch(lsp, join));
+            }
+            lsp.trigger( "change" , true );
+        });
+
+        // 只读模式时输入框可能缺失
+        // 此时并不需要绑定事件监听
+        if (inp.size()) {
+
+        // 改变即确认, 直接设置所选的值
+        inp.on("change" , function( ) {
+            var v;
+            v = $(this).val(  );
+            if (v) {
+                $(this).val("");
+                add(v);
+            }
+        });
+
+        // 点击控件空白处将聚焦到输入框
+        box.on( "click focus", function(e) {
+            if (box.is (e.target)
+            ||  lsp.is (e.target)) {
+                return inp.focus();
+            }
+        });
+
+        } // End if has inp
+
+        lsp.data("linked", inp);
+        inp.data("linked", lsp);
+
+        // 初始值
+        if (v === undefined) {
+            v = inp.val();
+            inp.val( "" );
+        }
+        if (v) {
+            set(v);
         }
     };
 
@@ -343,9 +614,69 @@
         $(e.target).find("[data-toggle=hsDits]").each(function() {
             $(this).hsDits();
         });
+        $(e.target).find("[data-toggle=hsSels]").each(function() {
+            $(this).hsSels();
+        });
     });
 })(jQuery);
 
 function hsDitsFill(box , v) {
     $(box).hsDits(v);
+}
+
+function hsDitsFeed(box , v) {
+    $(box).hsDits( );
+
+    if (! v || v.length < 1) {
+        return v;
+    }
+    box = $(box);
+    if (! box.is(".input") ) {
+        box = box.siblings(".input");
+    }
+
+    // 清理空值
+    var w = [];
+    for(var i = 0; i < v.length; i ++) {
+        var u = v [i];
+        if (! u[0]) {
+            continue ;
+        }
+        w.push (u);
+    }
+
+    HsForm.prototype._feed__datalist(box , w);
+}
+
+function hsSelsFill(box , v) {
+    $(box).hsSels(v);
+}
+
+function hsSelsFeed(box , v) {
+    $(box).hsDits( );
+
+    if (! v || v.length < 1) {
+        return v;
+    }
+    box = $(box);
+    if (! box.is(".input") ) {
+        box = box.siblings(".input");
+    }
+
+    // 补充空值
+    var w = [];
+    if (! box.find("option[value='']").size()) {
+        w.push(["", ""]);
+    }
+
+    // 清理空值
+    for(var i = 0; i < v.length; i ++) {
+        var u = v [i];
+        if (! u[0]) {
+            continue ;
+        }
+        w.push (u);
+    }
+
+    HsForm.prototype._feed__datalist(box , w);
 }

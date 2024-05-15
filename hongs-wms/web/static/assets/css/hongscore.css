@@ -910,12 +910,12 @@ ol.labelbox {
     vertical-align : middle;
 }
 .labelist .label {
-    margin : 0;
     width  : 100%;
 }
 .labelbox:empty ,
 .labelbox .label:empty {
     margin : 0;
+    padding: 0;
     display: none;
 }
 
@@ -954,24 +954,37 @@ ol.labelbox {
 .form-control .labelbox:not(:empty)+.input {
     margin : 5px 0 0 0;
 }
+/* 修正内嵌 select 在 chrome 和 firefox 上不等高的问题 */
+.form-control > select.input {
+    background: inherit;
+    height : 20px;
+    color  : #888;
+}
+.form-control > select.input option {
+    color  : #555;
+}
 
 .form-group-sm .form-control.multiple {
-    min-height: 30px;
     padding: 5px;
+    min-height: 30px;
 }
 .form-group-sm .form-control>a,
 .form-group-sm .form-control>.input ,
 .form-group-sm .form-control .label {
     padding: 0 5px;
+    height :  18px;
+    line-height: 18px;
 }
 .form-group-lg .form-control.multiple {
-    min-height: 46px;
     padding: 8px;
+    min-height: 46px;
 }
 .form-group-lg .form-control>a,
 .form-group-lg .form-control>.input ,
 .form-group-lg .form-control .label {
     padding: 0 8px;
+    height :  26px;
+    line-height: 26px;
 }
 
 .forkbox .label span ,
@@ -1025,9 +1038,13 @@ ol.labelbox {
 .labelbox .preview {
     margin : 0 5px 5px 0 ;
     display: inline-block;
+    vertical-align:middle;
 }
 .labelist .preview {
     display: block;
+}
+.labelist .preview:last-child {
+    margin : 0 0  10px 0 ; /* 修正内部 block 导致外部 margin 双倍负值问题 */
 }
 
 /** 选择(废弃) **/
@@ -1111,46 +1128,29 @@ ul.pickmul + * ,
     margin: auto 6px;
 }
 .datebox.form-control span {
-    display: inline-block;
+    padding-left : 3px;
+    padding-right: 3px;
 }
 .datebox.form-control input,
 .datebox.form-control select {
-    text-align: center ;
+    text-align: center;
+    padding-left : 0px;
+    padding-right: 0px;
     border: 0;
     margin: 0;
     height: 30px;
-    width : 3em ;
+    width : 30px;
 }
 .datebox.form-control .datebox-y  ,
 .datebox.form-control .datebox-S  {
-    width : 4em ;
-}
-.datebox.form-control .datebox-La ,
-.datebox.form-control .datebox-Sa ,
-.datebox.form-control .datebox-LM ,
-.datebox.form-control .datebox-SM {
-    width : auto;
-}
-.datebox.form-control span  ,
-.datebox.form-control input ,
-.datebox.form-control select {
-    padding-right: 6px;
-    padding-left : 6px;
-}
-/* 修复 firefox 中 select 内总有 4px 的问题 */
-@-moz-document url-prefix()  {
-.datebox.form-control input ,
-.datebox.form-control select {
-    padding-right: 0px;
-    padding-left : 0px;
-}
+    width : 45px;
 }
 /* 去除右侧指示图标 */
 .datebox.form-control input ,
 .datebox.form-control select {
     appearance: none;
-    -moz-appearance: none;
     -webkit-appearance: none;
+    -moz-appearance: textfield;
 }
 .datebox.form-control input::-webkit-outer-spin-button ,
 .datebox.form-control input::-webkit-inner-spin-button ,
@@ -1191,7 +1191,7 @@ input[type=file].form-control {
 /* 修复 firefox 中 input 上传按钮不可调问题 */
 @-moz-document url-prefix() {
 input[type=file].form-control {
-    padding: 0px  0px;
+    padding: 3px  6px;
 }
 }
 

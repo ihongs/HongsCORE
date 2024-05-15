@@ -27,27 +27,9 @@
                     <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static">这是一行说明文字</div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-sm-3 col-md-2 control-label form-control-static text-right">提示</label>
-                    <div class="col-sm-9 col-md-8">
-                        <input type="search" name="sugg" class="form-field form-control" list="-">
-                    </div>
-                    <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
-                    <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"></div>
-                </div>
-                <div class="form-group row">
                     <label class="col-sm-3 col-md-2 control-label form-control-static text-right">备注</label>
                     <div class="col-sm-9 col-md-8">
                         <textarea name="note" class="form-field form-control"/></textarea>
-                    </div>
-                    <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
-                    <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"></div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-sm-3 col-md-2 control-label form-control-static text-right">类型</label>
-                    <div class="col-sm-9 col-md-8">
-                        <input type="hidden" name="type." value="" class="form-final"/>
-                        <select name="type." class="form-field form-control" required="required" multiple="multiple">
-                        </select>
                     </div>
                     <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
                     <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"></div>
@@ -58,6 +40,32 @@
                         <input type="hidden" name="auth." value="" class="form-final"/>
                         <div class="checkbox" data-fn="auth." data-ft="_check" data-required="required">
                         </div>
+                    </div>
+                    <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
+                    <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"></div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-3 col-md-2 control-label form-control-static text-right">提示</label>
+                    <div class="col-sm-9 col-md-8">
+                        <input type="search" name="sugg" class="form-field form-control" list="-">
+                    </div>
+                    <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
+                    <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"></div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-3 col-md-2 control-label form-control-static text-right">标签</label>
+                    <div class="col-sm-9 col-md-8">
+                        <input type="text" name="tags." data-topple="hsDits" placeholder="输入标签...">
+                    </div>
+                    <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
+                    <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"></div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-3 col-md-2 control-label form-control-static text-right">类型</label>
+                    <div class="col-sm-9 col-md-8">
+                        <select name="type." data-toggle="hsSels" required="required" multiple="multiple">
+                            <option value="">--请选择--</option>
+                        </select>
                     </div>
                     <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
                     <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"></div>
@@ -80,18 +88,22 @@
                     <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"></div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-sm-3 col-md-2 control-label form-control-static text-right">标签</label>
+                    <label class="col-sm-3 col-md-2 control-label form-control-static text-right">关联</label>
                     <div class="col-sm-9 col-md-8">
-                        <input type="text" name="tags." class="form-field" data-topple="hsDits" multiple="multiple" placeholder="输入标签...">
+                        <input name="sect_id." type="hidden" class="form-final"
+                               data-topple="hsPickInit" data-ln="section" data-tk="name" data-vk="id"
+                               data-pick-target="@" data-pick-href="page/pick.html"
+                               data-link-target="@" data-link-href="page/info.html"
+                               required="required" placeholder="选择关联..."/>
                     </div>
                     <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
                     <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"></div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-sm-3 col-md-2 control-label form-control-static text-right">关联</label>
+                    <label class="col-sm-3 col-md-2 control-label form-control-static text-right">关联单选</label>
                     <div class="col-sm-9 col-md-8">
-                        <input name="sect_id" type="hidden" class="form-final"
-                               data-topple="hsPickInit" data-ln="section" data-tk="name" data-vk="id"
+                        <input name="sect_one" type="hidden" class="form-final"
+                               data-topple="hsPickInit" data-tk="name" data-vk="id"
                                data-pick-target="@" data-pick-href="page/pick.html"
                                data-link-target="@" data-link-href="page/info.html"
                                required="required" placeholder="选择关联..."/>
@@ -111,10 +123,32 @@
                     <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"></div>
                 </div>
                 <div class="form-group row dont-close">
+                    <label class="col-sm-3 col-md-2 control-label form-control-static text-right">单个文件</label>
+                    <div class="col-sm-9 col-md-8">
+                        <input name="file2" type="hidden" class="form-final"/>
+                        <input name="file2" type="file" class="invisible"
+                               data-topple="hsFileInit"
+                               required="required" placeholder="选择附件..."/>
+                    </div>
+                    <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
+                    <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"></div>
+                </div>
+                <div class="form-group row dont-close">
                     <label class="col-sm-3 col-md-2 control-label form-control-static text-right">图片</label>
                     <div class="col-sm-9 col-md-8">
                         <input name="snap." type="hidden" class="form-final"/>
                         <input name="snap." type="file" class="invisible" accept="image/*"
+                               data-topple="hsPictInit" data-size="100*100" data-mode="pick"
+                               required="required" placeholder="选择图片..."/>
+                    </div>
+                    <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
+                    <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"></div>
+                </div>
+                <div class="form-group row dont-close">
+                    <label class="col-sm-3 col-md-2 control-label form-control-static text-right">单张图片</label>
+                    <div class="col-sm-9 col-md-8">
+                        <input name="snap2" type="hidden" class="form-final"/>
+                        <input name="snap2" type="file" class="invisible" accept="image/*"
                                data-topple="hsPictInit" data-size="100*100" data-mode="pick"
                                required="required" placeholder="选择图片..."/>
                     </div>

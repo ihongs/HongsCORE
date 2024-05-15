@@ -5,6 +5,8 @@ function HsSift(context, opts) {
 
     /**
      * 类:
+     * filt-body    过滤容器
+     * sift-body    筛查容器
      * sift-root    顶级分组
      * sift-unit    分组单元
      * sift-list    组内列表
@@ -24,18 +26,18 @@ function HsSift(context, opts) {
      * data-sift=lr 列表关系
      */
 
-    var  siftBox = context.find(".siftbox");
-    var  findBox = context.find(".findbox");
-    var  formBox = siftBox.find( "form"   );
+    var  formBox = context.find("form:first");
+    var  filtBox = context.find(".filt-body");
+    var  siftBox = context.find(".sift-body");
 
-    if (!formBox.size()) {
-         formBox = siftBox;
+    if ( formBox.size() == 0 ) {
+         formBox = context;
     }
 
     this.context = context;
-    this.siftBox = siftBox;
-    this.findBox = findBox;
     this.formBox = formBox;
+    this.filtBox = siftBox;
+    this.siftBox = siftBox;
     this._url  = opts._url || opts.loadUrl ;
 
     this.itemTmp = siftBox.find(".sift-item.template").detach();
@@ -50,15 +52,33 @@ function HsSift(context, opts) {
         }
     }
 
-        this.init(  );
+    this.initFilt(  );
+    this.initSift(  );
     if (opts.loadUrl) {
         this.load(  );
     }
 }
 HsSift.prototype = {
-    init: function() {
+    initFilt: function() {
+        var that = this;
+        var filtBox = this.filtBox;
+        if (filtBox.size() == 0) return;
+
+        // 切换匹配模式
+        filtBox.on("click", ".input-group-sel li a", function() {
+            var opt = $(this);
+            var dat = $(this).data();
+            var inp = $(this).closest(".input-group-sel").siblings("input");
+            for(var n in dat) inp.attr(n,dat[n]);
+            opt.closest("li").addClass("active")
+               .siblings().removeClass("active");
+        });
+    },
+    initSift: function() {
         var that = this;
         var siftBox = this.siftBox;
+        if (siftBox.size() == 0) return;
+
         var fns = siftBox.find("[data-sift=fn]");
         var frs = siftBox.find("[data-sift=fr]");
         var fvx = siftBox.find("[data-sift=fv]");
@@ -152,7 +172,7 @@ HsSift.prototype = {
             // 登记首个选项, 处理选项隐藏
             var vls = [ ] ;
             frs.children().each(function() {
-                var v = $(this).val();console.log(v)
+                var v = $(this).val();
                 var x = rls[v];
                 if (x && !vls.length) {
                     vls  = [v];
@@ -356,6 +376,31 @@ HsSift.prototype = {
     },
     fill: function(enfo) {
         HsForm.prototype.fillEnfo.call(this, enfo);
+    },
+    fillEnfo: function(enfo) {
+        this.fill (enfo);
+    },
+    _feed__enum: function(x, v) {
+        if (! v || ! v.length ) {
+            return v;
+        }
+
+        // 补充空值, 默认待选
+        var w = [];
+        if (! x.is( ":empty" )) {
+            w.push([ "" , "" ]);
+        }
+
+        // 清理空值, 杠为未知其他
+        for(var i = 0; i < v.length; i ++) {
+            var u = v [i];
+            if (! u[1] || ! u[0] || u[0] == "-") {
+                continue ;
+            }
+            w.push (u);
+        }
+
+        this._feed__datalist(x, w);
     },
     _feed__datalist: HsForm.prototype._feed__datalist,
     _feed__select  : HsForm.prototype._feed__select  ,
@@ -655,33 +700,6 @@ HsSift.prototype = {
 jQuery.fn.hsSift = function(opts) {
     return this.hsBind(HsSift, opts);
 };
-
-/**
- * 筛查枚举数据整理
- * 清理
- * @param   {Array} v 枚举数据
- * @param {boolean} a 是否加空
- * @returns {Array}   枚举数据
- */
-function hsSiftFeedEnum(v, a) {
-    if (!v || !v.length) {
-        return v;
-    }
-
-    // 补充空值, 供显式筛选用
-    var w = a ? [["", ""]] : [];
-
-    // 清理空值, 杠为未知其他
-    for(var i = 0; i < v.length; i ++) {
-        var u = v [i];
-        if (! u[1] || ! u[0] || u[0] == "-") {
-            continue;
-        }
-        w.push(u);
-    }
-
-    return w;
-}
 
 /**
  * 列表统计筛选组件

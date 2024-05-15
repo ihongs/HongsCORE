@@ -68,128 +68,128 @@
         </div>
     </form>
     <!-- 筛选 -->
-    <form class="findbox siftbox openbox invisible well">
-        <%
-        Set  <String> siftEnum = new HashSet();
-        StringBuilder siftList = new StringBuilder();
-        Iterator it2 = _fields.entrySet().iterator();
-        while (it2.hasNext()) {
-            Map.Entry et = (Map.Entry) it2.next();
-            Map     info = (Map ) et.getValue();
-            String  name = (String) et.getKey();
-            String  type = (String) info.get("__type__");
-            String  text = (String) info.get("__text__");
+    <form class="findbox filtbox siftbox openbox invisible well">
+        <div class="row">
+            <div class="col-xs-6">
+                <div class="filt-body">
+                    <%
+                    Iterator it1 = _fields.entrySet().iterator();
+                    while (it1.hasNext()) {
+                        Map.Entry et = (Map.Entry) it1.next();
+                        Map     info = (Map ) et.getValue();
+                        String  name = (String) et.getKey();
+                        String  type = (String) info.get("__type__");
+                        String  text = (String) info.get("__text__");
 
-            if ("@".equals(name) || "id".equals(name)) {
-                continue;
-            }
-            if (!Synt.declare(info.get("siftable"), false)
-            &&  !Synt.declare(info.get("filtable"), false)) {
-                continue;
-            }
-
-            String  kind = "";
-            String  rels = "";
-            String  extr = "";
-
-            if ("fork".equals(type) || "pick".equals(type)) {
-                String fn = name;
-                if (fn.endsWith( "." )) {
-                    fn = fn.substring(0, fn.length() - 1);
-                }
-                String kn = fn +"_fork";
-                if (fn.endsWith("_id")) {
-                    fn = fn.substring(0, fn.length() - 3);
-                    kn = fn;
-                }
-                String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
-                String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") : "id";
-                String ln = info.containsKey("data-ln") ? (String) info.get("data-ln") :  kn ;
-                String al = info.containsKey("data-al") ? (String) info.get("data-al") :  "" ;
-                String at = info.containsKey("data-at") ? (String) info.get("data-at") :  "" ;
-                al = al.replace("centre", "centra");
-                at = at.replace("centre", "centra");
-                // 选择时禁用创建
-                if ( ! al.isEmpty (   )) {
-                if ( ! al.contains("#")) {
-                    al = al + "#.deny=.create";
-                } else {
-                    al = al + "&.deny=.create";
-                }}
-                /**
-                 * 关联路径: base/search|data/xxxx/search?rb=a,b,c
-                 * 需转换为: data/xxxx/search.act?rb=a,b,c
-                 */
-                if (!at.isEmpty()) {
-                    int p  = at.indexOf  ('|');
-                    if (p != -1) {
-                        at = at.substring(1+p);
-                    }   p  = at.indexOf  ('?');
-                    if (p != -1) {
-                        at = at.substring(0,p)
-                           +      Cnst.ACT_EXT
-                           + at.substring(0+p);
-                    } else {
-                        at = at + Cnst.ACT_EXT;
-                    }
-                }
-                extr = " data-ln=\""+ln+"\" data-vk=\""+vk+"\" data-tk=\""+tk+"\" data-href=\""+al+"\" data-target=\"@\"";
-                rels =  "is,eq,ne";
-                kind =  "fork";
-            } else
-            if ("enum".equals(type) || "type".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {
-                String ln = info.containsKey("data-ln") ? (String) info.get("data-ln") : name;
-                siftEnum.add(ln); // 需从后端获取数据
-                extr = " data-ln=\""+ln+"\"";
-                rels =  "is,eq,ne";
-                kind =  "enum";
-            } else
-            if ("date".equals(type) || "time".equals(type) || "datetime".equals(type)) {
-                Object fomt = Synt.defoult(info.get("format"),type);
-                Object fset = Synt.defoult(info.get("offset"), "" );
-                type = Synt.declare(info.get("type"), "time");
-                extr = " data-format=\""+fomt+"\" data-offset=\""+fset+"\"";
-                rels =  "is,eq,ne,gt,ge,lt,le";
-                kind =  "date";
-            } else
-            if ("number".equals(type) || "range".equals(type) || "color".equals(type)) {
-                Object typa = info.get("type");
-                if ("int".equals(typa) || "long".equals(typa) || "color".equals(type)) {
-                    extr = " data-for=\"int\"";
-                }
-                rels =  "is,eq,ne,gt,ge,lt,le";
-                kind =  "number";
-            } else
-            if ("string".equals(type) || "email".equals(type) || "url".equals(type) || "tel".equals(type) || "sms".equals(type) || "text".equals(type)) {
-                if (_sd.contains(name)) {
-                    rels = "is,eq,ne,sp,ns";
-                } else {
-                    rels = "is,eq,ne";
-                }
-                kind =  "string";
-            } else
-            if ("search".equals(type) || "textarea".equals(type) || "textview".equals(type)) {
-                if (_sd.contains(name)) {
-                    rels =  "is,sp,ns";
-                } else {
-                    rels =  "is,eq,ne";
-                }
-                kind =  "string";
-            } else
-            {
-                rels =  "is";
-                kind =  "no";
-            }
-
-            // 筛查字段
-            siftList.append("<option value=\""+name+"\" data-kind=\""+kind+"\" data-type=\""+type+"\" data-rels=\""+rels+"\""+extr+">"+text+"</option>");
-        } /*End While*/
-        %>
-        <div class="form-body">
-        </div>
-        <div class="sift-body">
-            <div class="row">
-                <div class="col-xs-6">
+                        if ("@".equals(name) || "id".equals(name)) {
+                            continue;
+                        }
+                        // 明确不过滤或两种都不支持则跳过
+                        if (!Synt.declare(info.get("filtable"), true )) {
+                            continue;
+                        }
+                        if (!Synt.declare(info.get("filtable"), false)
+                        &&  !Synt.declare(info.get("siftable"), false)) {
+                            continue;
+                        }
+                    %>
+                    <div class="filt-group form-group" data-name="<%=name%>">
+                        <label class="control-label form-control-static">
+                            <%=text != null ? text : ""%>
+                        </label>
+                        <div>
+                        <%if ("fork".equals(type) || "pick".equals(type)) {%>
+                            <%
+                                String fn = name;
+                                if (fn.endsWith( "." )) {
+                                    fn = fn.substring(0, fn.length() - 1);
+                                }
+                                String kn = fn +"_fork";
+                                if (fn.endsWith("_id")) {
+                                    fn = fn.substring(0, fn.length() - 3);
+                                    kn = fn;
+                                }
+                                String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
+                                String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") : "id";
+                                String ln = info.containsKey("data-ln") ? (String) info.get("data-ln") :  kn ;
+                                String al = info.containsKey("data-al") ? (String) info.get("data-al") :  "" ;
+                                al = al.replace("centre", "centra");
+                                // 选择时禁用创建
+                                if ( ! al.isEmpty (   )) {
+                                if ( ! al.contains("#")) {
+                                    al = al + "#.deny=.create";
+                                } else {
+                                    al = al + "&.deny=.create";
+                                }}
+                            %>
+                            <div class="form-control">
+                                <ul class="repeated labelbox labelist forkbox" data-ft="_fork" data-fn="<%=name%>.<%=Cnst.EQ_REL%>" data-ln="<%=ln%>" data-tk="<%=tk%>" data-vk="<%=vk%>"></ul>
+                                <a href="javascript:;" data-toggle="hsFork" data-target="@" data-href="<%=al%>"><%=_locale.translate("fore.fork.select", text)%></a>
+                            </div>
+                        <%} else if ("enum".equals(type) || "type".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
+                            <%
+                                String ln = info.containsKey("data-ln") ? (String) info.get("data-ln") : name;
+                            %>
+                            <select class="form-control" name="<%=name%>.<%=Cnst.EQ_REL%>" data-ln="<%=ln%>" data-ft="_enum"></select>
+                        <%} else if ("date".equals(type) || "time" .equals(type) || "datetime" .equals(type)) {%>
+                            <%
+                                Object typa = Synt.declare(info.get("type"),"time");
+                                Object fomt = Synt.defoult(info.get("format"),type);
+                                Object fset = Synt.defoult(info.get("offset"), "" );
+                            %>
+                            <div class="input-group">
+                                <span class="input-group-addon">从</span>
+                                <input type="<%=type%>" class="form-control" name="<%=name%>.<%=Cnst.GE_REL%>" data-toggle="hsDate" data-type="<%=typa%>" data-format="<%=fomt%>" data-offset="<%=fset%>" />
+                                <span class="input-group-addon">&nbsp;</span>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-addon">到</span>
+                                <input type="<%=type%>" class="form-control" name="<%=name%>.<%=Cnst.LE_REL%>" data-toggle="hsDate" data-type="<%=typa%>" data-format="<%=fomt%>" data-offset="<%=fset%>" />
+                                <span class="input-group-addon">&nbsp;</span>
+                            </div>
+                        <%} else if ("number".equals(type) || "range".equals(type) || "color".equals(type) || "sorted".equals(type)) {%>
+                            <div class="input-group">
+                                <input type="<%=type%>" class="form-control" name="<%=name%>.<%=Cnst.GE_REL%>" />
+                                <span class="input-group-addon">~</span>
+                                <input type="<%=type%>" class="form-control" name="<%=name%>.<%=Cnst.LE_REL%>" />
+                            </div>
+                        <%} else if ("string".equals(type) || "email".equals(type) || "url".equals(type) || "tel".equals(type) || "sms".equals(type) || "text".equals(type)) {%>
+                            <%if (_sd.contains(name)) {%>
+                            <div class="input-group input-group">
+                                <input class="form-control" type="text" name="<%=name%>.<%=Cnst.SP_REL%>" placeholder="模糊匹配" />
+                                <div class="input-group-btn input-group-sel">
+                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-right">
+                                        <li class="active">
+                                            <a href="javascript:;" data-name="<%=name%>.<%=Cnst.SP_REL%>" data-placeholder="模糊匹配">模糊匹配</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:;" data-name="<%=name%>.<%=Cnst.EQ_REL%>" data-placeholder="精确查找">精确匹配</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <%} else {%>
+                            <input class="form-control" type="text" name="<%=name%>.<%=Cnst.EQ_REL%>" placeholder="精确查找" />
+                            <%}%>
+                        <%} else if ("search".equals(type) || "textarea".equals(type) || "textview".equals(type)) {%>
+                            <%if (!_sd.contains(name)) {%>
+                            <input class="form-control" type="text" name="<%=name%>.<%=Cnst.SP_REL%>" placeholder="模糊匹配" />
+                            <%} else {%>
+                            <input class="form-control" type="text" name="<%=name%>.<%=Cnst.EQ_REL%>" placeholder="精确查找" />
+                            <%}%>
+                        <%} else {%>
+                            <input class="form-control" type="text" name="<%=name%>.<%=Cnst.EQ_REL%>"/>
+                        <%} /*End If */%>
+                        </div>
+                    </div>
+                    <%} /*End For*/%>
+                </div>
+            </div>
+            <div class="col-xs-6">
+                <div class="sift-body">
                     <ul class="list-unstyled clearfix group">
                         <li class="sift-unit template">
                             <div>
@@ -218,7 +218,7 @@
                                 </ul>
                             </div>
                         </li>
-                        <!-- 未免让人觉得复杂, 仅保留一个顶级组
+                        <!--  为免让人觉得复杂, 仅保留一个顶级组
                         <li class="sift-unit sift-root">
                             <div>
                                 <legend class="sift-hand">
@@ -239,23 +239,132 @@
                         </li>
                         //-->
                     </ul>
-                    <div class="alert alert-warning alert-dismissible" role="alert">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <strong>使用说明：</strong>
-                        <span>请选择字段、条件、取值，这将添加一条筛查参数；点击“&times;”删除条目或分组。</span>
-                        <span>“与”、“或”、“非”表示分组内各条间的关系；点击分组可激活，新的将放入其下。</span>
-                        <span>如需将筛查条目或分组换到其他组，按住条目或分组标题拖拽过去即可。</span>
-                        <span><a href="javascript:;" onclick="alert('?'+$.param($(this).closest('form').find('.sift-root input:hidden')))">检查参数</a></span>
-                    </div>
-                </div>
-                <div class="col-xs-6">
                     <div class="form-group">
                         <select data-sift="fn" class="form-control">
-                            <%=siftList%>
+                            <option value="--" data-rels="--">--筛查字段--</option>
+                            <%
+                            Set  <String> siftEnum = new HashSet();
+                            StringBuilder siftList = new StringBuilder();
+                            Iterator it2 = _fields.entrySet().iterator();
+                            while (it2.hasNext()) {
+                                Map.Entry et = (Map.Entry) it2.next();
+                                Map     info = (Map ) et.getValue();
+                                String  name = (String) et.getKey();
+                                String  type = (String) info.get("__type__");
+                                String  text = (String) info.get("__text__");
+
+                                if ("@".equals(name) || "id".equals(name)) {
+                                    continue;
+                                }
+                                // 明确不过滤或两种都不支持则跳过
+                                if (!Synt.declare(info.get("siftable"), true )) {
+                                    continue;
+                                }
+                                if (!Synt.declare(info.get("siftable"), false)
+                                &&  !Synt.declare(info.get("filtable"), false)) {
+                                    continue;
+                                }
+
+                                String  kind = "";
+                                String  rels = "";
+                                String  extr = "";
+
+                                if ("fork".equals(type) || "pick".equals(type)) {
+                                    String fn = name;
+                                    if (fn.endsWith( "." )) {
+                                        fn = fn.substring(0, fn.length() - 1);
+                                    }
+                                    String kn = fn +"_fork";
+                                    if (fn.endsWith("_id")) {
+                                        fn = fn.substring(0, fn.length() - 3);
+                                        kn = fn;
+                                    }
+                                    String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
+                                    String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") : "id";
+                                    String ln = info.containsKey("data-ln") ? (String) info.get("data-ln") :  kn ;
+                                    String al = info.containsKey("data-al") ? (String) info.get("data-al") :  "" ;
+                                    String at = info.containsKey("data-at") ? (String) info.get("data-at") :  "" ;
+                                    al = al.replace("centre", "centra");
+                                    at = at.replace("centre", "centra");
+                                    // 选择时禁用创建
+                                    if ( ! al.isEmpty (   )) {
+                                    if ( ! al.contains("#")) {
+                                        al = al + "#.deny=.create";
+                                    } else {
+                                        al = al + "&.deny=.create";
+                                    }}
+                                    /**
+                                     * 关联路径: base/search|data/xxxx/search?rb=a,b,c
+                                     * 需转换为: data/xxxx/search.act?rb=a,b,c
+                                     */
+                                    if (!at.isEmpty()) {
+                                        int p  = at.indexOf  ('|');
+                                        if (p != -1) {
+                                            at = at.substring(1+p);
+                                        }   p  = at.indexOf  ('?');
+                                        if (p != -1) {
+                                            at = at.substring(0,p)
+                                               +      Cnst.ACT_EXT
+                                               + at.substring(0+p);
+                                        } else {
+                                            at = at + Cnst.ACT_EXT;
+                                        }
+                                    }
+                                    extr = " data-ln=\""+ln+"\" data-vk=\""+vk+"\" data-tk=\""+tk+"\" data-href=\""+al+"\" data-target=\"@\"";
+                                    rels =  "is,eq,ne";
+                                    kind =  "fork";
+                                } else
+                                if ("enum".equals(type) || "type".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {
+                                    String ln = info.containsKey("data-ln") ? (String) info.get("data-ln") : name;
+                                    siftEnum.add(ln); // 需从后端获取数据
+                                    extr = " data-ln=\""+ln+"\"";
+                                    rels =  "is,eq,ne";
+                                    kind =  "enum";
+                                } else
+                                if ("date".equals(type) || "time".equals(type) || "datetime".equals(type)) {
+                                    Object fomt = Synt.defoult(info.get("format"),type);
+                                    Object fset = Synt.defoult(info.get("offset"), "" );
+                                    type = Synt.declare(info.get("type"), "time");
+                                    extr = " data-format=\""+fomt+"\" data-offset=\""+fset+"\"";
+                                    rels =  "is,eq,ne,gt,ge,lt,le";
+                                    kind =  "date";
+                                } else
+                                if ("number".equals(type) || "range".equals(type) || "color".equals(type)) {
+                                    Object typa = info.get("type");
+                                    if ("int".equals(typa) || "long".equals(typa) || "color".equals(type)) {
+                                        extr = " data-for=\"int\"";
+                                    }
+                                    rels =  "is,eq,ne,gt,ge,lt,le";
+                                    kind =  "number";
+                                } else
+                                if ("string".equals(type) || "email".equals(type) || "url".equals(type) || "tel".equals(type) || "sms".equals(type) || "text".equals(type)) {
+                                    if (_sd.contains(name)) {
+                                        rels =  "is,eq,ne,sp,ns";
+                                    } else {
+                                        rels =  "is,eq,ne";
+                                    }
+                                    kind =  "string";
+                                } else
+                                if ("search".equals(type) || "textarea".equals(type) || "textview".equals(type)) {
+                                    if (_sd.contains(name)) {
+                                        rels =  "is,sp,ns";
+                                    } else {
+                                        rels =  "is,eq,ne";
+                                    }
+                                    kind =  "string";
+                                } else
+                                {
+                                    rels =  "is";
+                                    kind =  "no";
+                                }
+                            %>
+                            <option value="<%=name%>" data-type="<%=type%>" data-kind="<%=kind%>" data-rels="<%=rels%>"<%=extr%>><%=text%></option>
+                            <%} /*End For*/%>
                         </select>
                     </div>
                     <div class="form-group">
                         <select data-sift="fr" class="form-control">
+                            <option value="--">--条件关系--</option>
                             <option value="is">为</option>
                             <option value="eq">等于</option>
                             <option value="ne">不等于</option>
@@ -269,8 +378,8 @@
                     </div>
                     <div class="form-group">
                         <div data-sift="fv">
-                            <div data-kind="no">
-                                <div class="form-control-static text-warning">请选择要筛查的字段</div>
+                            <div data-kind="--">
+                                <div class="form-control-static text-warning">请依次选择筛查字段和条件关系</div>
                             </div>
                             <div data-kind="is" class="sift-select">
                                 <select class="value form-control">
@@ -306,7 +415,7 @@
                             </div>
                             <%for (String ln : siftEnum) {%>
                             <div data-kind="enum" data-name="<%=ln%>" class="sift-select">
-                                <select data-fn="<%=ln%>" class="value form-control" data-feed="hsSiftFeedEnum(v,1)"></select>
+                                <select data-fn="<%=ln%>" data-ft="_enum" class="value form-control"></select>
                             </div>
                             <%} /*End for*/%>
                         </div>
@@ -320,15 +429,25 @@
                             </div>
                         </div>
                     </div>
-                    <hr style="border-color: #ccc;"/>
-                    <div class="form-group board">
-                        <div class="btn-toolbar">
-                            <button type="submit" class="btn btn-primary">过滤</button>
-                            <button type="reset"  class="btn btn-default">重置</button>
-                            <div class="btn-group form-control-static checkbox" style="margin: 0 1em;">
-                                <label><input type="checkbox" name="ob" value="-"> 按匹配度排序</label>
-                            </div>
-                        </div>
+                    <div class="alert alert-warning alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <strong>使用说明：</strong>
+                        <span>请选择字段、条件、取值，这将添加一条筛查参数；点击“&times;”删除条目或分组。</span>
+                        <span>“与”、“或”、“非”表示分组内各条间的关系；点击分组可激活，新的将放入其下。</span>
+                        <span>如需将筛查条目或分组换到其他组，按住条目或分组标题拖拽过去即可。</span>
+                        <span><a href="javascript:;" onclick="alert('?'+$.param($(this).closest('form').find('.sift-root input:hidden')))">检查参数</a></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr style="margin-top: 0; border-color: #ccc;"/>
+        <div class="form-foot">
+            <div class="form-group board">
+                <div class="btn-toolbar text-center">
+                    <button type="submit" class="btn btn-primary">过滤</button>
+                    <button type="reset"  class="btn btn-default">重置</button>
+                    <div class="btn-group pull-right form-control-static checkbox" style="margin: 0;">
+                        <label><input type="checkbox" name="ob" value="-"> 按匹配度排序</label>
                     </div>
                 </div>
             </div>
@@ -607,7 +726,7 @@
         _fill__audio: hsListWrapOpen("audio")
     });
 
-    var siftobj = context.hsSift({
+    var siftobj = siftbox.hsSift({
         _url: "<%=_module%>/<%=_entity%>/recipe.act?<%=Cnst.AB_KEY%>=.enfo"
     });
 
@@ -724,11 +843,17 @@
         // 自适滚动
         var h = hsFlexRoll(listbox.filter(".rollbox"), $("#main-context"));
         if (h > 0) {
-            siftbox.css("max-height", h+"px");
-            siftbox.css("overflow-y", "auto");
-            statbox.css("max-height", h+"px");
-            statbox.css("overflow-y", "auto");
-        }
+            statbox.css ("max-height", h+"px")
+                   .css ("overflow-y", "auto");
+            h = h - 90; // 去掉边框和底部高度
+        if (h > 0) {
+            siftbox.find(".sift-body")
+                   .css ("max-height", h+"px")
+                   .css ("overflow-y", "auto");
+            siftbox.find(".filt-body")
+                   .css ("max-height", h+"px")
+                   .css ("overflow-y", "auto");
+        }}
 
         // 加载数据
         listobj.load(null, findbox);

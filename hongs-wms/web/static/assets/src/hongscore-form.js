@@ -86,7 +86,9 @@ HsForm.prototype = {
             "cache"    : false,
             "global"   : false,
             "context"  : this,
-            "complete" : this.loadBack
+            "complete" : function(rst) {
+                this.loadBack(rst);
+            }
         });
     },
     loadBack : function(rst) {

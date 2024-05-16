@@ -85,10 +85,9 @@ function HsTree(context, opts) {
 
     // 立即加载
     if (loadUrl) {
-        this._pid  = rootInfo.id;
         this._url  = hsFixPms(loadUrl, loadBox);
-        this._data = HsSerialDic(/***/ loadDat);
-        this.load();
+        this._data = hsSerialDic(/***/ loadDat);
+        this.load(rootInfo.id);
     }
 }
 HsTree.prototype = {

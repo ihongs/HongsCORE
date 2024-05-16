@@ -834,7 +834,7 @@
         if (h > 300) {
             statbox.css ("max-height", h+"px")
                    .css ("overflow-y", "auto");
-            h = h - 90; // 去掉边框和底部高度
+            h = h - 80; // 去掉边框和底部高度
         if (h > 300) {
             siftbox.find(".sift-body")
                    .css ("max-height", h+"px")

@@ -36,7 +36,7 @@ function HsSift(context, opts) {
 
     this.context = context;
     this.formBox = formBox;
-    this.filtBox = siftBox;
+    this.filtBox = filtBox;
     this.siftBox = siftBox;
     this._url  = opts._url || opts.loadUrl ;
 
@@ -52,29 +52,61 @@ function HsSift(context, opts) {
         }
     }
 
-    this.initFilt(  );
-    this.initSift(  );
+        this.init(  );
     if (opts.loadUrl) {
         this.load(  );
     }
 }
 HsSift.prototype = {
-    initFilt: function() {
-        var that = this;
-        var filtBox = this.filtBox;
-        if (filtBox.size() == 0) return;
-
-        // 切换匹配模式
-        filtBox.on("click", ".input-group-sel li a", function() {
-            var opt = $(this);
-            var dat = $(this).data();
-            var inp = $(this).closest(".input-group-sel").siblings("input");
-            for(var n in dat) inp.attr(n,dat[n]);
-            opt.closest("li").addClass("active")
-               .siblings().removeClass("active");
+    load: function() {
+        $.hsAjax({
+            "url"      : this._url,
+            "type"     : "GET",
+            "dataType" : "json",
+            "funcName" : "load",
+            "global"   : false,
+            "cache"    : true,
+            "async"    : true,
+            "context"  : this,
+            "complete" : function(rd) {
+              this.loadBack(rd);
+            }
         });
     },
-    initSift: function() {
+    loadBack: function(data) {
+        data = hsResponse(data);
+        if (data) {
+            this.fillEnfo(data.enfo || {}); // 填充选项数据
+        //  this.fillInfo(data.info || {}); // 无需填充信息
+        }
+    },
+    fillEnfo: function(enfo) {
+        HsForm.prototype.fillEnfo.call(this, enfo);
+    },
+    _feed__enum: function(x, v) {
+        if (! v || ! v.length ) {
+            return v;
+        }
+
+        // 清理空值, 杠为未知其他
+        var w = [];
+        for(var i = 0; i < v.length; i ++) {
+            var u = v [i];
+            if (! u[1] || ! u[0] || u[0] == "-") {
+                continue ;
+            }
+            w.push (u);
+        }
+
+        this._feed__datalist(x, w);
+    },
+    _feed__datalist: HsForm.prototype._feed__datalist,
+    _feed__select  : HsForm.prototype._feed__select  ,
+    _feed__radio   : HsForm.prototype._feed__radio   ,
+    _feed__check   : HsForm.prototype._feed__check   ,
+    _feed__checkset: HsForm.prototype._feed__checkset,
+
+    init: function() {
         var that = this;
         var siftBox = this.siftBox;
         if (siftBox.size() == 0) return;
@@ -197,12 +229,9 @@ HsSift.prototype = {
 
             // 按名称/别名/类别依次查找取值组件
             do {
-                if (fr ==  "" ) {
-                    fv  = fvx.children("[data-kind='no']");
-                }
-                if (fr == "is") {
-                    fv  = fvx.children("[data-kind='is']");
-                    break;
+                if (fr) {
+                    fv  = fvx.children("[data-kind='"+fr+"']");
+                    if (fv.size()) break;
                 }
                 if (fn) {
                     fv  = fvx.children("[data-name='"+fn+"']");
@@ -220,8 +249,8 @@ HsSift.prototype = {
                     fv  = fvx.children("[data-kind='"+fk+"']");
                     if (fv.size()) break;
                 }
-                    // 默认选项
-                    fv  = fvx.children("[data-kind='is']");
+                // 默认选项
+                fv  = fvx.children("[data-kind='is']");
             }
             while (false);
 
@@ -357,56 +386,6 @@ HsSift.prototype = {
             ).hsReady();
         });
     },
-
-    load: function() {
-        var that = this;
-        $.hsAjax({
-            url     : this._url,
-            cache   : true,
-            async   : true,
-            type    : "get" ,
-            dataType: "json",
-            success : function(rst) {
-                rst = hsResponse(rst);
-                if (rst && rst.ok ) {
-                    that.fill(rst.enfo || {});
-                }
-            }
-        });
-    },
-    fill: function(enfo) {
-        HsForm.prototype.fillEnfo.call(this, enfo);
-    },
-    fillEnfo: function(enfo) {
-        this.fill (enfo);
-    },
-    _feed__enum: function(x, v) {
-        if (! v || ! v.length ) {
-            return v;
-        }
-
-        // 补充空值, 默认待选
-        var w = [];
-        if (! x.is( ":empty" )) {
-            w.push([ "" , "" ]);
-        }
-
-        // 清理空值, 杠为未知其他
-        for(var i = 0; i < v.length; i ++) {
-            var u = v [i];
-            if (! u[1] || ! u[0] || u[0] == "-") {
-                continue ;
-            }
-            w.push (u);
-        }
-
-        this._feed__datalist(x, w);
-    },
-    _feed__datalist: HsForm.prototype._feed__datalist,
-    _feed__select  : HsForm.prototype._feed__select  ,
-    _feed__radio   : HsForm.prototype._feed__radio   ,
-    _feed__check   : HsForm.prototype._feed__check   ,
-    _feed__checkset: HsForm.prototype._feed__checkset,
 
     note: function(msg, typ) {
         // 拆分标题和说明

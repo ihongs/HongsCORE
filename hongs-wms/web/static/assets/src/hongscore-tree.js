@@ -9,12 +9,11 @@ function HsTree(context, opts) {
 
     var loadBox  = context.closest(".loadbox");
     var treeBox  = context.find   (".treebox");
-    var findBox  = context.find   (".findbox");
     var loadUrl  = hsGetValue(opts, "loadUrl");
+    var loadDat  = hsGetValue(opts, "loadData");
     var sendUrls = hsGetValue(opts, "sendUrls");
     var openUrls = hsGetValue(opts, "openUrls");
     var linkUrls = hsGetValue(opts, "linkUrls");
-    var loadDat  = hsGetValue(opts, "loadData");
 
     // 数据的节点属性的键
     this.idKey   = hsGetValue(opts, "idKey"  , "id"  );
@@ -47,117 +46,14 @@ function HsTree(context, opts) {
         }
     }
 
+    // 发送服务
+    this.sendBind(sendUrls);
+
+    // 打开服务
+    this.openBind(openUrls);
+
+    // 选中打开
     var that = this;
-    var m, n, u;
-
-    //** 发送服务 **/
-
-    function sendHand(evt) {
-        var n = jQuery(this);
-        var m = evt.data[1];
-        var u = evt.data[2];
-
-        var tip = n.closest(".tooltip");
-        if (tip.length) {
-            n   = tip.data ( "trigger");
-        }
-        if (typeof(u) === "function") {
-            u.call( that, n, m );
-            return;
-        }
-
-        var sid;
-        if (-1 != jQuery.inArray(treeBox[0], n.parents())) {
-            sid = that.getCid(n);
-        } else {
-            sid = that.getSid( );
-        }
-        if (sid == null) return ;
-
-        var dat = {};
-        dat[that.idKey] =  sid  ;
-        u = hsFixPms(u, loadBox);
-        that.send(n, m, u, dat );
-    }
-
-    if (sendUrls) jQuery.each(sendUrls, function(i, a) {
-        switch (a.length) {
-        case 3:
-            u = a[0];
-            n = a[1];
-            m = a[2];
-            break;
-        case 2:
-            u = a[0];
-            n = a[1];
-            m = undefined;
-            break;
-        default:
-            return;
-        }
-
-        if (typeof(n) !== "string" || /^[@%\^\-+~>*#]/.test(n)) {
-            context.hsFind(n).on("click", [n, m, u], sendHand);
-        } else {
-            context.on("click", n, [n, m, u], sendHand);
-        }
-    });
-
-    //** 打开服务 **/
-
-    function openHand(evt) {
-        var n = jQuery(this);
-        var m = evt.data[1];
-        var u = evt.data[2];
-
-        var tip = n.closest(".tooltip");
-        if (tip.length) {
-            n   = tip.data ( "trigger");
-        }
-        if (typeof(u) === "function") {
-            u.call( that, n, m );
-            return;
-        }
-
-        var sid;
-        if (-1 != jQuery.inArray(treeBox[0], n.parents())) {
-            sid = that.getCid(n);
-        } else {
-            sid = that.getSid( );
-        }
-        if (sid == null) return ;
-
-        var dat = {};
-        dat[that.idKey] =  sid  ;
-        u = hsFixPms(u, loadBox);
-        that.open(n, m, u, dat );
-    }
-
-    if (openUrls) jQuery.each(openUrls, function(i, a) {
-        switch (a.length) {
-        case 3:
-            u = a[0];
-            n = a[1];
-            m = a[2];
-            break;
-        case 2:
-            u = a[0];
-            n = a[1];
-            m = undefined;
-            break;
-        default:
-            return;
-        }
-
-        if (typeof(n) !== "string" || /^[@%\^\-+~>*#]/.test(n)) {
-            context.hsFind(n).on("click", [n, m, u], openHand);
-        } else {
-            context.on("click", n, [n, m, u], openHand);
-        }
-    });
-
-    //** 选中打开 **/
-
     treeBox.on("click", ".tree-node td.tree-name", function() {
         that.select(jQuery(this).closest(".tree-node"));
     });
@@ -167,21 +63,19 @@ function HsTree(context, opts) {
     treeBox.on("dblclick", ".tree-node td:not(.tree-hand)", function() {
         that.toggle(jQuery(this).closest(".tree-node"));
     });
+    this.linkUrls =  linkUrls || [ ] ;
+    treeBox.on("treeSelect", function(ev,id) {
+        var a = that.linkUrls;
+        for(var i = 0 ; i < a.length ; i ++) {
+            var u = a[i][0];
+            var m = a[i][1];
+            u = u.replace ('{ID}', encodeURIComponent(id));
+            u =  hsFixPms (u , that.loadBox);
+            that.treeBox.hsFind(m).hsLoad(u);
+        }
+    });
 
-    if (linkUrls) {
-        treeBox.on( "treeSelect" , function( ev , id ) {
-            for(var i = 0; i < linkUrls.length; i ++ ) {
-                var u = linkUrls[i][0];
-                var m = linkUrls[i][1];
-                u = u.replace ('{ID}', encodeURIComponent(id));
-                u =  hsFixPms (u , loadBox);
-                treeBox.hsFind(m).hsLoad(u);
-            }
-        });
-    }
-
-    //** 顶级节点 **/
-
+    // 顶级节点
     this.fillInfo(
          rootInfo,
          jQuery('<div/>').appendTo(treeBox)
@@ -189,14 +83,12 @@ function HsTree(context, opts) {
           .attr("class", "tree-node tree-root")
     );
 
-    //** 立即加载 **/
-
+    // 立即加载
     if (loadUrl) {
-        this.load(
-            rootInfo.id,
-            hsFixPms   (loadUrl, loadBox),
-            hsSerialMix(loadDat, findBox)
-        );
+        this._pid  = rootInfo.id;
+        this._url  = hsFixPms(loadUrl, loadBox);
+        this._data = HsSerialDic(/***/ loadDat);
+        this.load();
     }
 }
 HsTree.prototype = {
@@ -335,6 +227,64 @@ HsTree.prototype = {
         }
     },
 
+    sendBind : function(sendUrls) {
+        var that = this;
+        var context = this.context;
+        var treeBox = this.treeBox;
+        var loadBox = this.loadBox;
+
+        function sendHand(evt) {
+            var n = jQuery(this);
+            var m = evt.data[1];
+            var u = evt.data[2];
+
+            var tip = n.closest(".tooltip");
+            if (tip.length) {
+                n   = tip.data ( "trigger");
+            }
+            if (typeof(u) === "function") {
+                u.call( that, n, m );
+                return;
+            }
+
+            var sid;
+            if (-1 != jQuery.inArray(treeBox[0], n.parents())) {
+                sid = that.getCid(n);
+            } else {
+                sid = that.getSid( );
+            }
+            if (sid == null) return ;
+
+            var dat = {};
+            dat[that.idKey] =  sid  ;
+            u = hsFixPms(u, loadBox);
+            that.send(n, m, u, dat );
+        }
+
+        if (sendUrls) jQuery.each(sendUrls, function(i, a) {
+            var n, m, u ;
+            switch (a.length) {
+            case 3:
+                u = a[0];
+                n = a[1];
+                m = a[2];
+                break;
+            case 2:
+                u = a[0];
+                n = a[1];
+                m = undefined;
+                break;
+            default:
+                return;
+            }
+
+            if (typeof(n) !== "string" || /^[@%\^\-+~>*#]/.test(n)) {
+                context.hsFind(n).on("click", [n, m, u], sendHand);
+            } else {
+                context.on("click", n, [n, m, u], sendHand);
+            }
+        });
+    },
     send     : function(btn, msg, url, data) {
         btn = jQuery(btn);
         var that = this ;
@@ -389,6 +339,64 @@ HsTree.prototype = {
         }
     },
 
+    openBind : function(openUrls) {
+        var that = this;
+        var context = this.context;
+        var treeBox = this.treeBox;
+        var loadBox = this.loadBox;
+
+        function openHand(evt) {
+            var n = jQuery(this);
+            var m = evt.data[1];
+            var u = evt.data[2];
+
+            var tip = n.closest(".tooltip");
+            if (tip.length) {
+                n   = tip.data ( "trigger");
+            }
+            if (typeof(u) === "function") {
+                u.call( that, n, m );
+                return;
+            }
+
+            var sid;
+            if (-1 != jQuery.inArray(treeBox[0], n.parents())) {
+                sid = that.getCid(n);
+            } else {
+                sid = that.getSid( );
+            }
+            if (sid == null) return ;
+
+            var dat = {};
+            dat[that.idKey] =  sid  ;
+            u = hsFixPms(u, loadBox);
+            that.open(n, m, u, dat );
+        }
+
+        if (openUrls) jQuery.each(openUrls, function(i, a) {
+            var n, m, u ;
+            switch (a.length) {
+            case 3:
+                u = a[0];
+                n = a[1];
+                m = a[2];
+                break;
+            case 2:
+                u = a[0];
+                n = a[1];
+                m = undefined;
+                break;
+            default:
+                return;
+            }
+
+            if (typeof(n) !== "string" || /^[@%\^\-+~>*#]/.test(n)) {
+                context.hsFind(n).on("click", [n, m, u], openHand);
+            } else {
+                context.on("click", n, [n, m, u], openHand);
+            }
+        });
+    },
     open     : function(btn, box, url, data) {
         // 如果 URL 里有 {ID} 则替换之
         if ( -1 != url.indexOf("{ID}")) {
@@ -459,6 +467,13 @@ HsTree.prototype = {
         return jQuery.hsWarn.apply(window, arguments);
     },
 
+    linkBind : function(linkUrls) {
+        if (linkUrls) {
+            for(var i = 0; i < linkUrls.length; i ++) {
+                this.linkUrls.push ( linkUrls [ i ] );
+            }
+        }
+    },
     select   : function(id) {
         var nod = this.getNode(id);
             id  = this.getId (nod);

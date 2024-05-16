@@ -99,40 +99,24 @@
                     box. append (dl);
                 }}
 
-                if (inp.is("[data-join]")) {
-                    // 合并取值, 只有一个 value 被提交
-                    jnp.attr("name", fn);
-                    // 校验相关, 无需 input 校验和填充
-                    if (inp.prop("required" )) {
-                        lsp.attr("data-required" , "required" );
-                    }
-                    if (inp.data("minrepeat")) {
-                        lsp.attr("data-minrepeat", inp.data("minrepeat"));
-                    }
-                    if (inp.data("maxrepeat")) {
-                        lsp.attr("data-maxrepeat", inp.data("maxrepeat"));
-                    }
-                } else {
-                    // 分散取值, 内部各个 value 均提交
-                    lsp.find(".value")
-                       .attr("name", fn);
-                    jnp.attr("name", fn);
-                    // 校验相关, 无需 input 校验和填充
-                    if (inp.prop("required" )) {
-                        lsp.attr("data-required" , "required");
-                    }
-                    if (inp.data("minrepeat")) {
-                        lsp.attr("data-minrepeat", inp.data("minrepeat"));
-                    }
-                    if (inp.data("maxrepeat")) {
-                        lsp.attr("data-maxrepeat", inp.data("maxrepeat"));
-                    }
-                }
+                // 汇总或者占位
+                jnp.attr(  "name"  , fn);
 
                 // 接收取值数据
                 lsp.attr("data-fn" , fn);
                 lsp.data("fill", function(x, v) { hsDitsFill(this, v); });
                 lsp.data("feed", function(x, v) { hsDitsFeed(this, v); });
+
+                // 设置校验参数
+                if (inp.prop("required" )) {
+                    lsp.attr("data-required" , "required");
+                }
+                if (inp.data("minrepeat")) {
+                    lsp.attr("data-minrepeat", inp.data("minrepeat"));
+                }
+                if (inp.data("maxrepeat")) {
+                    lsp.attr("data-maxrepeat", inp.data("maxrepeat"));
+                }
 
                 // 清理原有属性, 仅被用作输入
                 inp.removeAttr (  "name"  );
@@ -150,16 +134,6 @@
         var unstrip = lsp.is("[data-unstrip]") || inp.is("[data-unstrip]"); // 不清理前后空格
         var unstint = lsp.is("[data-unstint]") || inp.is("[data-unstint]"); // 不进行排重处理
 
-        if (! tmp.size()) {
-            throw new Error("hsDits temp not exists");
-        }
-        tmp.removeClass ( "template invisible hide" );
-
-        // 拼接符, 默认为半角逗号
-        if (! join && (lsp.is("[data-join]") || inp.is("[data-join]"))) {
-            join = ",";
-        }
-
         // 切词键, 默认为回车, 半角逗号和分号, 全角顿号和逗号和分号
         if (! ends) {
             ends = [13, 44, 59, 0x3001, 0xff0c, 0xff1b];
@@ -167,6 +141,25 @@
             ends = ends.split(',');
             for (var i = 0; i < ends.length; i ++) {
                 ends[i] = parseInt(ends[i]);
+            }
+        }
+
+        // 拼接符, 默认为半角逗号
+        if (! join && (lsp.is("[data-join]") || inp.is("[data-join]"))) {
+            join = ",";
+        }
+
+        // 检查和补充默认条目模板
+        if (tmp.size()) {
+            tmp.removeClass("template");
+        } else {
+            tmp  = $('<li  class="label label-info">'
+                 +     '<a class="erase bi bi-x pull-right" href="javascript:;"></a>'
+                 +     '<span  class="title"></span>'
+                 +     '<input class="value" type="hidden"/>'
+                 +   '</li>');
+            if (! join) {
+                tmp.find(".value").attr("name", fn);
             }
         }
 
@@ -385,13 +378,8 @@
             if (! lsp.size()) {
                 box = $(
                     '<div  class="multiple form-control">'
-                  +   '<input class="value" type="hidden"  />'
+                  +   '<input class="value" type="hidden"/>'
                   +   '<ul class="repeated labelbox ditsbox">'
-                  +     '<li  class="label label-info template">'
-                  +       '<a class="erase bi bi-x pull-right" href="javascript:;"></a>'
-                  +       '<span  class="title"></span>'
-                  +       '<input class="value" type="hidden" />'
-                  +     '</li>'
                   +   '</ul>'
                   + '</div>'
                 );
@@ -400,40 +388,24 @@
                 jnp = this.siblings(".value");
                 var fn = inp. attr ("name");
 
-                if (inp.is("[data-join]")) {
-                    // 合并取值, 只有一个 value 被提交
-                    jnp.attr("name", fn);
-                    // 校验相关, 无需 input 校验和填充
-                    if (inp.prop("required" )) {
-                        lsp.attr("data-required" , "required" );
-                    }
-                    if (inp.data("minrepeat")) {
-                        lsp.attr("data-minrepeat", inp.data("minrepeat"));
-                    }
-                    if (inp.data("maxrepeat")) {
-                        lsp.attr("data-maxrepeat", inp.data("maxrepeat"));
-                    }
-                } else {
-                    // 分散取值, 内部各个 value 均提交
-                    lsp.find(".value")
-                       .attr("name", fn);
-                    jnp.attr("name", fn);
-                    // 校验相关, 无需 input 校验和填充
-                    if (inp.prop("required" )) {
-                        lsp.attr("data-required" , "required");
-                    }
-                    if (inp.data("minrepeat")) {
-                        lsp.attr("data-minrepeat", inp.data("minrepeat"));
-                    }
-                    if (inp.data("maxrepeat")) {
-                        lsp.attr("data-maxrepeat", inp.data("maxrepeat"));
-                    }
-                }
+                // 汇总或者占位
+                jnp.attr(  "name"  , fn);
 
                 // 接收取值数据
                 lsp.attr("data-fn" , fn);
                 lsp.data("fill", function(x, v) { hsSelsFill(this, v); });
                 lsp.data("feed", function(x, v) { hsSelsFeed(this, v); });
+
+                // 设置校验参数
+                if (inp.prop("required" )) {
+                    lsp.attr("data-required" , "required");
+                }
+                if (inp.data("minrepeat")) {
+                    lsp.attr("data-minrepeat", inp.data("minrepeat"));
+                }
+                if (inp.data("maxrepeat")) {
+                    lsp.attr("data-maxrepeat", inp.data("maxrepeat"));
+                }
 
                 // 清理原有属性, 仅被用作输入
                 inp.removeAttr (  "name"  );
@@ -450,14 +422,23 @@
         var unstrip = lsp.is("[data-unstrip]") || inp.is("[data-unstrip]"); // 不清理前后空格
         var unstint = lsp.is("[data-unstint]") || inp.is("[data-unstint]"); // 不进行排重处理
 
-        if (! tmp.size()) {
-            throw new Error("hsSels temp not exists");
-        }
-        tmp.removeClass ( "template invisible hide" );
-
         // 拼接符, 默认为半角逗号
         if (! join && (lsp.is("[data-join]") || inp.is("[data-join]"))) {
             join = ',';
+        }
+
+        // 检查和补充默认条目模板
+        if (tmp.size()) {
+            tmp.removeClass("template");
+        } else {
+            tmp  = $('<li  class="label label-info">'
+                 +     '<a class="erase bi bi-x pull-right" href="javascript:;"></a>'
+                 +     '<span  class="title"></span>'
+                 +     '<input class="value" type="hidden"/>'
+                 +   '</li>');
+            if (! join) {
+                tmp.find(".value").attr("name", fn);
+            }
         }
 
         function set(a) {

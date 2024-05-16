@@ -12,9 +12,9 @@ function HsList(context, opts) {
     var pageBox  = context.find   (".pagebox");
     var findBox  = context.find   (".findbox");
     var loadUrl  = hsGetValue(opts, "loadUrl");
+    var loadDat  = hsGetValue(opts, "loadData");
     var sendUrls = hsGetValue(opts, "sendUrls");
     var openUrls = hsGetValue(opts, "openUrls");
-    var loadDat  = hsGetValue(opts, "loadData");
 
     // 排序, 分页等参数
     this.sortKey = hsGetValue(opts, "sortKey", hsGetConf("ob.key", "ob"));
@@ -37,126 +37,31 @@ function HsList(context, opts) {
         }
     }
 
-    var that = this;
-    var m, n, u;
+    // 发送服务
+    this.sendBind(sendUrls);
 
-    //** 发送服务 **/
+    // 打开服务
+    this.openBind(openUrls);
 
-    function sendHand(evt) {
-        var n = jQuery(this);
-        var m = evt.data[1];
-        var u = evt.data[2];
-
-        var t = n.closest(".tooltip");
-        if (t.length) {
-            n = t.data   ( "trigger");
-        }
-        if (typeof(u) === "function") {
-            u.call(that, n, m);
-            return;
-        }
-
-        var c = that.getIds(n);
-        if (c == null) return ;
-
-        u = hsFixPms(u, loadBox);
-        that.send   (n, m, u, c);
-    }
-
-    if (sendUrls) jQuery.each(sendUrls, function(i, a) {
-        switch (a.length) {
-        case 3:
-            u = a[0];
-            n = a[1];
-            m = a[2];
-            break;
-        case 2:
-            u = a[0];
-            n = a[1];
-            m = undefined;
-            break;
-        default:
-            return;
-        }
-
-        if (typeof(n) !== "string" || /^[@%\^\-+~>*#]/.test(n)) {
-            context.hsFind(n).on("click", [n, m, u], sendHand);
-        } else {
-            context.on("click", n, [n, m, u], sendHand);
-        }
-    });
-
-    //** 打开服务 **/
-
-    function openHand(evt) {
-        var n = jQuery(this);
-        var m = evt.data[1];
-        var u = evt.data[2];
-
-        var t = n.closest(".tooltip");
-        if (t.length) {
-            n = t.data   ( "trigger");
-        }
-        if (typeof(u) === "function") {
-            u.call(that, n, m);
-            return;
-        }
-
-        var c = that.getIds(n);
-        if (c == null) return ;
-
-        u = hsFixPms(u, loadBox);
-        that.open   (n, m, u, c);
-    }
-
-    if (openUrls) jQuery.each(openUrls, function(i, a) {
-        switch (a.length) {
-        case 3:
-            u = a[0];
-            n = a[1];
-            m = a[2];
-            break;
-        case 2:
-            u = a[0];
-            n = a[1];
-            m = undefined;
-            break;
-        default:
-            return;
-        }
-
-        if (typeof(n) !== "string" || /^[@%\^\-+~>*#]/.test(n)) {
-            context.hsFind(n).on("click", [n, m, u], openHand);
-        } else {
-            context.on("click", n, [n, m, u], openHand);
-        }
-    });
-
-    //** 搜索服务 **/
-
-    if (findBox.length) {
-        findBox.on("submit", function() {
-            that.load(null ,
-            hsSerialMix(loadDat, findBox)
-            ); return false;
-        });
-    }
-
-    //** 立即加载 **/
-
+    // 立即加载
     if (loadUrl) {
-        this.load(
-            hsFixPms   (loadUrl, loadBox),
-            hsSerialMix(loadDat, findBox)
-        );
+        var url = hsFixPms(loadUrl, loadBox);
+        this.load(url , hsSerialMix(loadDat, findBox ));
     }
+
+    // 搜索事件
+    var that = this ;
+    if (findBox.size()) findBox.on("submit", function() {
+        that.load(null, hsSerialMix(loadDat, findBox ));
+        return false;
+    });
 }
 HsList.prototype = {
     load     : function(url, data) {
         data =  hsSerialObj (data) ;
         if (url ) this._url  = url ;
         if (data) this._data = data;
-        if (undefined === hsGetParam(this._url, this.rowsKey)) {
+        if (undefined === hsGetParam(this._url, this.rowsKey)) { // 每页条数
             this._url  =  hsSetParam(this._url, this.rowsKey, this.rowsNum);
         }
         this.ajax({
@@ -446,6 +351,56 @@ HsList.prototype = {
     _pc_key  : "total" ,
     _rc_key  : "count" ,
 
+    sendBind : function(sendUrls) {
+        var that = this;
+        var context = this.context;
+        var loadBox = this.loadBox;
+
+        function sendHand(evt) {
+            var n = jQuery(this);
+            var m = evt.data[1];
+            var u = evt.data[2];
+
+            var t = n.closest(".tooltip");
+            if (t.length) {
+                n = t.data   ( "trigger");
+            }
+            if (typeof(u) === "function") {
+                u.call(that, n, m);
+                return;
+            }
+
+            var c = that.getIds(n);
+            if (c == null) return ;
+
+            u = hsFixPms(u, loadBox);
+            that.send   (n, m, u, c);
+        }
+
+        if (sendUrls) jQuery.each(sendUrls, function(i, a) {
+            var n, m, u ;
+            switch (a.length) {
+            case 3:
+                u = a[0];
+                n = a[1];
+                m = a[2];
+                break;
+            case 2:
+                u = a[0];
+                n = a[1];
+                m = undefined;
+                break;
+            default:
+                return;
+            }
+
+            if (typeof(n) !== "string" || /^[@%\^\-+~>*#]/.test(n)) {
+                context.hsFind(n).on("click", [n, m, u], sendHand);
+            } else {
+                context.on("click", n, [n, m, u], sendHand);
+            }
+        });
+    },
     send     : function(btn, msg, url, data) {
         btn = jQuery(btn);
         var that = this ;
@@ -495,6 +450,56 @@ HsList.prototype = {
         this.load();
     },
 
+    openBind : function(openUrls) {
+        var that = this;
+        var context = this.context;
+        var loadBox = this.loadBox;
+
+        function openHand(evt) {
+            var n = jQuery(this);
+            var m = evt.data[1];
+            var u = evt.data[2];
+
+            var t = n.closest(".tooltip");
+            if (t.length) {
+                n = t.data   ( "trigger");
+            }
+            if (typeof(u) === "function") {
+                u.call(that, n, m);
+                return;
+            }
+
+            var c = that.getIds(n);
+            if (c == null) return ;
+
+            u = hsFixPms(u, loadBox);
+            that.open   (n, m, u, c);
+        }
+
+        if (openUrls) jQuery.each(openUrls, function(i, a) {
+            var n, m, u ;
+            switch (a.length) {
+            case 3:
+                u = a[0];
+                n = a[1];
+                m = a[2];
+                break;
+            case 2:
+                u = a[0];
+                n = a[1];
+                m = undefined;
+                break;
+            default:
+                return;
+            }
+
+            if (typeof(n) !== "string" || /^[@%\^\-+~>*#]/.test(n)) {
+                context.hsFind(n).on("click", [n, m, u], openHand);
+            } else {
+                context.on("click", n, [n, m, u], openHand);
+            }
+        });
+    },
     open     : function(btn, box, url, data) {
         // 如果 URL 里有 {ID} 则替换之
         if ( -1 != url.indexOf("{ID}")) {

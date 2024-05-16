@@ -533,35 +533,40 @@ body {
 
 /* 筛查 */
 
-ul.sift-list {
-    padding: 0 15px 15px 15px;
-    width: 100%;
-    clear: both;
+.sift-body>ul {
+    margin : 0;
 }
-li.sift-unit>div {
+.sift-root ul.sift-list ul.sift-list {
+    padding: 5px 6px;
+}
+.sift-root ul.sift-list li.sift-unit {
     margin-bottom: 5px;
     border-radius: 4px;
     border: 1px solid #ddd;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    width : calc(100% - 5px);
+}
+.sift-root .form-control {
     background: #eee;
 }
-li.sift-unit li.sift-unit>div {
-    box-shadow: none;
-}
-li.sift-unit.active>div {
+.sift-root.active .form-control {
     background: #fff;
 }
-li.sift-unit.active li.sift-unit>div {
+.sift-root ul.sift-list li.sift-unit {
+    background: #eee;
+}
+.sift-root ul.sift-list li.sift-unit.active {
+    background: #fff;
+}
+.sift-root ul.sift-list li.sift-unit.active li.sift-unit {
     background: #eee;
 }
 .sift-hand {
     cursor : pointer;
 }
 .sift-unit legend {
-    padding: 6px 15px 6px 15px;
-    margin : 0 0 15px 0;
-    color  : #888;
-    font-size: inherit ;
+    margin : 0px 0px;
+    padding: 5px 6px;
+    font-size: inherit;
 }
 [data-sift=fv]>* {
     display: none ;
@@ -569,4 +574,3 @@ li.sift-unit.active li.sift-unit>div {
 [data-sift=fv]>.active {
     display: block;
 }
-

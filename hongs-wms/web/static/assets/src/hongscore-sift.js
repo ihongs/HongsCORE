@@ -64,11 +64,10 @@ HsSift.prototype = {
             "type"     : "GET",
             "dataType" : "json",
             "funcName" : "load",
-            "global"   : false,
             "cache"    : true,
             "async"    : true,
             "context"  : this,
-            "complete" : function(rd) {
+            "success"  : function(rd) {
               this.loadBack(rd);
             }
         });

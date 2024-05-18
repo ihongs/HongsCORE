@@ -19,9 +19,14 @@ import java.util.regex.Pattern;
  * 规则参数:
  *  maxrepeat   最大数量
  *  minrepeat   最小数量
- *  defiant     需要忽略的取值列表
- *  diverse     为 true 则执行去重
- *  ordered     为 true 在 fork 中再排序
+ *  defiant     需要忽略的取值列表, 默认忽略空串
+ *  diverse     为 true 则执行去重, 用 LinkedHashSet
+ *              为 set,hashset,treeset,descset 作有序排重
+ *              set 为 LinkedHashSet
+ *              hashset 为无序 HashSet
+ *              treeset 为正序 TreeSet
+ *              descset 为逆序 TreeSet
+ *  ordered     为 true 在关联中另行排序
  *  spliced     为 true 在校验后并成字串
  *  split       按此给出的正则来拆分字串
  *  slice       按此给出的分隔来拆分字串, 或按此分隔符在最终做合并
@@ -176,12 +181,12 @@ public class Repeated extends Rule implements Rulx {
         // 默认对 null/空串 忽略
         Set ignores =  Synt.toSet(getParam("defiant"));
         if (ignores == null || ignores.isEmpty()) {
-            ignores =  new HashSet(  );
+            ignores =  new HashSet(01);
             ignores.add("");
         }
         return ignores;
     }
-    
+
     private static Comparator ASC = new Comparator() {
         @Override
         public int compare(Object obj1, Object obj2) {
@@ -203,7 +208,7 @@ public class Repeated extends Rule implements Rulx {
             return 0;
         }
     };
-    
+
     private static Comparator DSC = new Comparator() {
         @Override
         public int compare(Object obj1, Object obj2) {

@@ -4,6 +4,7 @@ import io.github.ihongs.CruxException;
 import io.github.ihongs.action.FormSet;
 import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -12,10 +13,12 @@ import java.util.regex.Pattern;
  * 文本校验
  * <pre>
  * 规则参数:
- *  maxlength   最大长度
+ *  strip       文本清理: trim 首尾, cros 脚本, tags 标签, ends 首尾(含全角), 可逗号分多个
+ *  substr      截取长度, 类似 Javascrpt 中的 substr(offset, length), offset 为负反向取位
+ *  pattern     校验正则, 可用 default.form.xml 里的 _typos_ 预定的正则, 如 email,url,tel
  *  minlength   最短长度
- *  pattern     校验正则, 可使用 default.form.xml 里的 _patt_ 下预定好的正则, 如 email,url
- *  strip       文本清理: trim 首尾, cros 脚本, tags 标签, ends 首尾(含全角), 可逗号隔多个
+ *  maxlength   最大长度
+ * 注意: 如有 substr, minlength/maxlength/pattern 在截取后才校验
  * </pre>
  * @author Hongs
  */
@@ -32,7 +35,10 @@ public class IsString extends Rule {
 
         // 文本清理
         Set<String> sa = Synt.toSet(getParam("strip"));
-        if (null != sa) {
+        if (  sa == null  ) {
+            sa = Synt.setOf("trim"); // 默认清除首尾空字符
+        }
+        if (! sa.isEmpty()) {
             if (sa.contains("cros") || sa.contains("html")) {
                 str = Syno.stripCros(str); // 清除脚本
             }
@@ -48,12 +54,21 @@ public class IsString extends Rule {
         }
 
         // 截取部分
-        int len = Synt.declare(getParam("limit"), 0);
-        if (len > 0 && len < str.length()) {
-            str = str.substring( 0, len );
+        List  sl  = Synt.toList(getParam ("substr"));
+        if (  sl != null  ) {
+            if (sl.size() > 1) {
+                int off = Synt.declare(sl.get(0), 0);
+                int len = Synt.declare(sl.get(1), 0);
+                str = Syno.substr(str, off, len);
+            } else
+            if (sl.size() > 0) {
+                int off = Synt.declare(sl.get(0), 0);
+                str = Syno.substr(str, off);
+            }
         }
 
         // 长度限制
+        int len;
         len = Synt.declare(getParam("minlength"), 0);
         if (len > 0 && len > str.length()) {
             throw new Wrong("@fore.form.lt.minlength", Integer.toString(len), Integer.toString(str.length()));

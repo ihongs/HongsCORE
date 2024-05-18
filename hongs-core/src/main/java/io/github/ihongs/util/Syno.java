@@ -468,6 +468,44 @@ public final class Syno
       return stb.toString();
   }
 
+  /**
+   * 截取字串
+   * 类似 Javascript 的 substr
+   * @param str
+   * @param off 起始, 为负则从后往前算
+   * @param len 长度, 非负总是返回空串
+   * @return 
+   */
+  public static String substr(String str, int off, int len) {
+      if (off < 0) {
+          off = off + str.length();
+      if (off < 0) {
+          off = 0;
+      }}
+      if (len > 0) {
+          len = len + off;
+      } else {
+          return "";
+      }
+      return str.substring(off, len);
+  }
+
+  /**
+   * 截取字串
+   * 类似 Javascript 的 substr
+   * @param str
+   * @param off 起始, 为负则从后往前算
+   * @return 
+   */
+  public static String substr(String str, int off) {
+      if (off < 0) {
+          off = off + str.length();
+      if (off < 0) {
+          off = 0;
+      }}
+      return str.substring(off);
+  }
+  
   //** 清理 **/
 
   /**

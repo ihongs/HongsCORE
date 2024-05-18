@@ -314,7 +314,6 @@
     var filtobj = filtbox.hsForm({
         _url: "<%=_module%>/<%=_entity%>/recipe.act?<%=Cnst.AB_KEY%>=.enfo",
         _feed__enum : hsListFeedFilt,
-        _fill__enum : hsListFillFilt,
         _fill__sort : hsListInitSort,
         _fill__mine : hsListInitMine
     });

@@ -1024,7 +1024,7 @@ $(document).on("click" , ".cancel,.recant", function() {
 $(document).on("click" , ".input-group-rel li a", function() {
     var opt = $(this);
     var sel = $(this).closest(".input-group-rel");
-    var inp = sel.siblings(".from-control");
+    var inp = sel.siblings(".form-control");
     var btn = sel.find(".btn>span");
     var dat = opt.data();
     for(var n in dat) {
@@ -1041,7 +1041,7 @@ $(document).on("click" , ".input-group-rel li a", function() {
 /**
  * 筛选复合字段切换
  */
-$(document).on("change", ".check-group-rel :checkbox", function(rec) {
+$(document).on("change", ".check-group-val :checkbox", function(rec) {
     var chk = $(this);
     var grp = $(this).closest(".check-group-rel");
     var box = chk.siblings( ".invisible" );

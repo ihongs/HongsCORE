@@ -546,15 +546,23 @@
     var formbox = context.find("form").first( );
 
     var loadres = hsSerialDic(loadbox);
-    var initres = hsSerialArr(loadres);
     var denycss = loadres['.deny'];
         delete    loadres['.deny'];
 
-    // 清理参数
-    for(var j = initres.length-1; j > -1; j --) {
-        var n = initres[j];
-        if (! n.name || ! n.value) {
-            initres.splice( j, 1 );
+    // 整理参数
+    var loaddat = new HsSerialDic();
+    var initinf = new HsSerialDic();
+    for(var k in loadres) {
+        var v  = loadres[k];
+        if ("id" == k) {
+            loaddat[k] = v ;
+            initinf[k] = v ;
+        } else
+        if (/^(ar|or|nr)\./.test(k)) { // 层级关系符可用于查询限定等
+            loaddat[k] = v ;
+        } else
+        if (v && ! /^[\._]/.test(k)) { // 点和下划线开头的是标记参数
+            initinf[k] = v ;
         }
     }
 
@@ -566,8 +574,8 @@
         <%if (! _fields.containsKey("memo")) {%>
          save: hsSaveWithMemo('<%=_locale.translate("fore.update.confirm", _title)%>'),
         <%}} /* End if */%>
-        _data: loadres,
-         initInfo: initres,
+         loadData: loaddat,
+         initInfo: initinf,
         _fill__file: hsFormFillFile,
         _fill__pict: hsFormFillPict,
         _fill__fork: hsFormFillFork,

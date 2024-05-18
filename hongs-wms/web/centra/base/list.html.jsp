@@ -122,32 +122,16 @@
                             }}
                         %>
                         <div class="form-control multiple">
-                            <ul class="repeated labelbox forkbox" data-fn="<%=Cnst.AR_KEY%>.o.<%=name%>.<%=Cnst.IN_REL%>." data-ln="<%=ln%>" data-tk="<%=tk%>" data-vk="<%=vk%>"></ul>
+                            <ul class="repeated labelbox labelist forkbox" data-ft="_fork" data-fn="<%=name%>.<%=Cnst.EQ_REL%>" data-ln="<%=ln%>" data-tk="<%=tk%>" data-vk="<%=vk%>"></ul>
                             <a href="javascript:;" data-toggle="hsFork" data-target="@" data-href="<%=al%>"><%=_locale.translate("fore.fork.select", text)%></a>
                         </div>
                     <%} else if ("enum".equals(type) || "type".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
                         <%
                             String ln = info.containsKey("data-ln") ? (String) info.get("data-ln") : name;
                         %>
-                        <div class="form-control multiple">
-                            <ul class="repeated labelbox ditsbox" data-fn="<%=Cnst.AR_KEY%>.o.<%=name%>.<%=Cnst.IN_REL%>." data-topple="hsSels"></ul>
-                            <select data-ln="<%=ln%>" data-ft="_enum" class="input"><option value="" disabled selected>选择...</option></select>
-                        </div>
-                    <%} else if ("string".equals(type) || "email".equals(type) || "url".equals(type) || "tel".equals(type) || "sms".equals(type) || "text".equals(type)) {%>
-                        <%
-                            String ln = info.containsKey("data-ln") ? (String) info.get("data-ln") : name;
-                        %>
-                        <div class="form-control multiple">
-                            <ul class="repeated labelbox ditsbox" data-fn="<%=Cnst.AR_KEY%>.o.<%=name%>.<%=Cnst.IN_REL%>." data-topple="hsDits"></ul>
-                            <input  data-ln="<%=ln%>" data-ft="_enum" class="input" type="text" placeholder="回车添加"/>
-                        </div>
-                    <%} else if ("number".equals(type) || "range".equals(type) || "color".equals(type) || "sorted".equals(type)) {%>
-                        <div class="input-group">
-                            <span class="input-group-addon">从</span>
-                            <input type="<%=type%>" class="form-control" name="<%=name%>.<%=Cnst.GE_REL%>" />
-                            <span class="input-group-addon">至</span>
-                            <input type="<%=type%>" class="form-control" name="<%=name%>.<%=Cnst.LE_REL%>" />
-                        </div>
+                        <select class="form-control" name="<%=name%>.<%=Cnst.EQ_REL%>" data-ln="<%=ln%>" data-ft="_enum">
+                            <option value="" style="color: gray;"><%=_locale.translate("fore.fork.select", text)%></option>
+                        </select>
                     <%} else if ("date".equals(type) || "time" .equals(type) || "datetime" .equals(type)) {%>
                         <%
                             Object typa = Synt.declare(info.get("type"),"time");
@@ -157,18 +141,52 @@
                         <div class="input-group">
                             <span class="input-group-addon">从</span>
                             <input type="<%=type%>" class="form-control" name="<%=name%>.<%=Cnst.GE_REL%>" data-toggle="hsDate" data-type="<%=typa%>" data-format="<%=fomt%>" data-offset="<%=fset%>" />
-                            <span class="input-group-addon">&nbsp;</span>
+                            <span class="input-group-addon"></span>
                         </div>
                         <div class="input-group">
-                            <span class="input-group-addon">至</span>
+                            <span class="input-group-addon">到</span>
                             <input type="<%=type%>" class="form-control" name="<%=name%>.<%=Cnst.LE_REL%>" data-toggle="hsDate" data-type="<%=typa%>" data-format="<%=fomt%>" data-offset="<%=fset%>" />
-                            <span class="input-group-addon">&nbsp;</span>
+                            <span class="input-group-addon"></span>
                         </div>
+                    <%} else if ("number".equals(type) || "range".equals(type) || "color".equals(type) || "sorted".equals(type)) {%>
+                        <div class="input-group">
+                            <span class="input-group-addon">从</span>
+                            <input type="<%=type%>" class="form-control" name="<%=name%>.<%=Cnst.GE_REL%>" />
+                            <span class="input-group-addon">到</span>
+                            <input type="<%=type%>" class="form-control" name="<%=name%>.<%=Cnst.LE_REL%>" />
+                        </div>
+                    <%} else if ("string".equals(type) || "email".equals(type) || "url".equals(type) || "tel".equals(type) || "sms".equals(type) || "text".equals(type)) {%>
+                        <%if (_sd.contains(name)) {%>
+                        <div class="input-group input-group">
+                            <input class="form-control" type="text" name="<%=name%>.<%=Cnst.EQ_REL%>" placeholder="精确查找" />
+                            <div class="input-group-btn input-group-rel">
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="caret"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-right">
+                                    <li class="active">
+                                        <a href="javascript:;" data-name="<%=name%>.<%=Cnst.EQ_REL%>" data-placeholder="精确查找">精确查找</a>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:;" data-name="<%=name%>.<%=Cnst.SP_REL%>" data-placeholder="模糊匹配">模糊匹配</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <%} else {%>
+                        <input class="form-control" type="text" name="<%=name%>.<%=Cnst.EQ_REL%>" placeholder="精确查找" />
+                        <%}%>
+                    <%} else if ("search".equals(type) || "textarea".equals(type) || "textview".equals(type)) {%>
+                        <%if (_sd.contains(name)) {%>
+                        <input class="form-control" type="text" name="<%=name%>.<%=Cnst.SP_REL%>" placeholder="模糊匹配" />
+                        <%} else {%>
+                        <input class="form-control" type="text" name="<%=name%>.<%=Cnst.EQ_REL%>" placeholder="精确查找" />
+                        <%}%>
                     <%} else {%>
                         <select class="form-control" name="<%=name%>.<%=Cnst.IS_REL%>">
-                            <option value=""></option>
-                            <option value="none">为空</option>
+                            <option value="" disabled selected>选择...</option>
                             <option value="not-none">不为空</option>
+                            <option value="none">为空</option>
                         </select>
                     <%} /*End If */%>
                     </div>
@@ -209,7 +227,7 @@
                 </ul>
                 <div class="form-group">
                     <select data-sift="fn" class="form-control">
-                        <option value="-" data-rels="-">--筛查字段--</option>
+                        <option style="color: gray;" value="-" data-rels="-">字段...</option>
                         <%
                         Set<String> siftEnum = new HashSet( );
                         it2 = _fields.entrySet( ).iterator( );
@@ -335,7 +353,7 @@
                 </div>
                 <div class="form-group">
                     <select data-sift="fr" class="form-control">
-                        <option value="-" >--条件关系--</option>
+                        <option value="-" style="color: gray;">关系...</option>
                         <option value="is">为</option>
                         <option value="eq">等于</option>
                         <option value="ne">不等于</option>
@@ -417,7 +435,7 @@
                     <p>
                         <i class="bi bi-arrow-left-circle-fill"></i>
                         <strong>快捷查询：</strong>
-                        <span>可对文本、标签、选项、关联进行多值查询，多个值间为或的关系；</span>
+                        <span>可对文本、标签、选项、关联进行简单查询，各项仅支持单个取值；</span>
                         <span>可对数值、日期、时间等进行区间范围查询，包含最大值和最小值。</span>
                         <span>当快捷查询无法满足需求时请使用高级查询。</span>
                     </p>
@@ -678,12 +696,11 @@
     //** 列表、搜索表单 **/
 
     var listobj = context.hsList({
-        _data : loadres,
         _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.AB_KEY%>=_text,_fork&<%=Cnst.OB_KEY%>=<%=_ob%>&<%=Cnst.RB_KEY%>=<%=_rb%>",
+        loadData: loadres,
         sendUrls: [
             [ '<%=_module%>/<%=_entity%>/delete.act',
-              '.delete',
-              '<%=_locale.translate("fore.delete.confirm", _title)%>' ]
+              '.delete', '<%=_locale.translate("fore.delete.confirm", _title)%>' ]
         ],
         openUrls: [
             [ '<%=_module%>/<%=_entity%>/form_init.html?'+$.param(hsSerialArr(loadres)),

@@ -219,7 +219,7 @@
                                 高级查询
                             </label>
                             <div class="form-control multiple">
-                                <ul class="sift-list repeated labelbox" data-name="ar">
+                                <ul class="sift-list repeated labelbox" data-name="ar" data-fn>
                                 </ul>
                             </div>
                         </div>

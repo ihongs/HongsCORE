@@ -244,6 +244,7 @@ function hsListFillSele(x, v, n) {
 
 /**
  * 列表填充过滤选项
+ * @deprecated 没用
  */
 function hsListFillFilt(x, v, n) {
     n = n.replace(/^ar\.\d\./, "");
@@ -254,10 +255,12 @@ function hsListFillFilt(x, v, n) {
 
 /**
  * 列表预置过滤选项
+ * @deprecated 改用 HsSift.prototype._fill__enum
  */
 function hsListFeedFilt(x, v, n) {
     n = n.replace(/^ar\.\d\./, "");
     n = n.replace(/\.(\w\w)$/, "");
+    n = x.data("ln") || n;
     v = this._enfo[n];
 
     /**
@@ -1006,7 +1009,7 @@ if (!$(document.documentElement).hasClass( "deny-dark" )) {
 /**
  * 关闭按钮事件处理
  */
-$(document).on("click", ".cancel,.recant" , function() {
+$(document).on("click" , ".cancel,.recant", function() {
     var b0  = $(this).closest(".dont-close")
                      .hsFind ("@");
     var b1  = $(this).hsFind ("@");
@@ -1016,15 +1019,53 @@ $(document).on("click", ".cancel,.recant" , function() {
 });
 
 /**
- * 筛选重置事件处理
+ * 筛选字段条件切换
  */
-$(document).on("reset", ".HsList .findbox", function() {
-    var findbox = $(this);
-    findbox.find("[data-fn].repeated" ).empty();
-    findbox.find(".sift-list.repeated").empty();
-    setTimeout(function() {
-        findbox.find(":submit").first().click();
-    } , 100);
+$(document).on("click" , ".input-group-rel li a", function() {
+    var opt = $(this);
+    var sel = $(this).closest(".input-group-rel");
+    var inp = sel.siblings(".from-control");
+    var btn = sel.find(".btn>span");
+    var dat = opt.data();
+    for(var n in dat) {
+        if (n == "text") {
+            btn.text(   dat[n]);
+        } else {
+            inp.attr(n, dat[n]);
+        }
+    }
+    opt.closest("li").addClass("active")
+       .siblings().removeClass("active");
+});
+
+/**
+ * 筛选复合字段切换
+ */
+$(document).on("change", ".check-group-rel :checkbox", function(rec) {
+    var chk = $(this);
+    var grp = $(this).closest(".check-group-rel");
+    var box = chk.siblings( ".invisible" );
+    var ckd = chk.prop( "checked" );
+    var dat = chk.data( "data" );
+    var nam = chk.data( "name" );
+    // 设置隐藏字段
+    if (ckd) {
+        box.hsHideValue(dat);
+    } else {
+        box.hsHideValue([ ]);
+    }
+    // 联动同名选项
+    if (nam && !rec) {
+        rec = [true];
+        grp.find(":checkbox").each(function() {
+            var ch2 = $(this);
+            if (nam === ch2.data("name")
+            && !ch2.is (chk)) {
+                ch2.prop("checked", ckd)
+                .trigger("change" , rec);
+            }
+        });
+    }
 });
 
 })(jQuery);

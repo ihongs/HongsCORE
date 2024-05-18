@@ -43,18 +43,17 @@ function HsList(context, opts) {
     // 打开服务
     this.openBind(openUrls);
 
-    // 立即加载
-    if (loadUrl) {
-        var url = hsFixPms(loadUrl, loadBox);
-        this.load(url , hsSerialMix(loadDat, findBox ));
-    }
-
     // 搜索事件
-    var that = this ;
-    if (findBox.size()) findBox.on("submit", function() {
-        that.load(null, hsSerialMix(loadDat, findBox ));
-        return false;
-    });
+    this.findInit(findBox, loadDat);
+
+    // 立即加载
+    if (loadDat) {
+        this._data = this.findData(findBox, loadDat);
+    }
+    if (loadUrl) {
+        this._url  = /**/ hsFixPms(loadUrl, loadBox);
+        this.load();
+    }
 }
 HsList.prototype = {
     load     : function(url, data) {
@@ -551,6 +550,34 @@ HsList.prototype = {
             box.hsClose(); // 关闭内页
             that . load(); // 重载列表
         });
+    },
+
+    findInit : function(findBox, loadDat) {
+        var that = this;
+        
+        if (loadDat) {
+            this._data = this.findData(findBox, loadDat);
+        }
+
+        if (findBox.size()) {
+            // 提交
+            findBox.on("submit", function() {
+                that.load(null , that.findData(findBox, loadDat));
+                return false;
+            });
+
+            // 重置
+            findBox.on("reset" , function() {
+                var form = jQuery (this);
+                    form.find("[data-fn].repeated").empty();
+                setTimeout(function () {
+                    form.find(":submit"). first ( ).click();
+                } , 100);
+            });
+        }
+    },
+    findData : function(findBox, loadDat) {
+        return hsSerialMix(findBox, loadDat); // 可覆盖调整优先级
     },
 
     ajax : function() {

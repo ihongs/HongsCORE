@@ -529,8 +529,8 @@ function hsSerialArr(obj) {
  * @returns {Object}
  */
 function hsSerialMix() {
-    if (arguments.length < 2) {
-        throw "hsSerialMix: No less than two arguments";
+    if (arguments.length < 1) {
+        throw "hsSerialMix: No less than one arguments";
     }
         var aro = hsSerialDic(arguments[0]);
     for(var x = 1; x < arguments.length; x ++) {

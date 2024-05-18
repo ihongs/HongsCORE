@@ -127,6 +127,22 @@ select.form-control[multiple] {
     cursor: default;
 }
 
+/* 统一 select 样式 */
+select.form-control ,
+.form-control select {
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance : none;
+    background-size    : 16px 8px ;
+    background-repeat  : no-repeat;
+    background-position: right .75rem center;
+    background-image   : url("../icons/caret-dn.svg");
+}
+.form-group-sm select.form-control ,
+.form-group-lg select.form-control {
+    line-height: inherit;
+}
+
 @media screen and (-webkit-min-device-pixel-ratio: 0) {
 input[type="datetime-local"].form-control,
 input[type="date"].form-control ,
@@ -1146,20 +1162,21 @@ ul.pickmul + * ,
     width : 45px;
 }
 /* 去除右侧指示图标 */
-.datebox.form-control input ,
-.datebox.form-control select {
+.datebox.form-control input {
     appearance: none;
+    -moz-appearance: none;
     -webkit-appearance: none;
-    -moz-appearance: textfield;
 }
 .datebox.form-control input::-webkit-outer-spin-button ,
 .datebox.form-control input::-webkit-inner-spin-button ,
-.datebox.form-control input::-webkit-calendar-picker-indicator ,
-.datebox.form-control select::-webkit-calendar-picker-indicator {
-    padding: 0;
-    width: 0px;
-    color: transparent;
+.datebox.form-control input::-webkit-calendar-picker-indicator {
+    appearance: none;
+    -moz-appearance: none;
     -webkit-appearance: none;
+    color  : transparent;
+    width  : 0;
+    margin : 0;
+    padding: 0;
 }
 
 /* 优化文件上传样式 */

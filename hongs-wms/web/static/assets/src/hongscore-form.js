@@ -40,6 +40,7 @@ function HsForm(context, opts) {
         }
     }
 
+    // 绑定参数
     var loadArr = hsSerialArr(loadBox);
     if (loadUrl) {
         loadUrl = hsFixPms(loadUrl, loadArr);
@@ -47,6 +48,9 @@ function HsForm(context, opts) {
     if (saveUrl) {
         saveUrl = hsFixPms(saveUrl, loadArr);
         this.formBox.attr("action", saveUrl);
+    }
+    if (loadDat) {
+        this.  _data  = hsSerialObj(loadDat);
     }
 
     // 预置数据
@@ -67,9 +71,9 @@ function HsForm(context, opts) {
     if (loadUrl
     && (hsGetParam(loadUrl, idKey)
     ||  hsGetParam(loadUrl, abKey))) {
-        this.load (loadUrl, loadDat);
+        this.load (loadUrl);
     } else if (! this._url) {
-        this.loadBack( {ok : true} );
+        this.loadBack( {} );
     }
 }
 HsForm.prototype = {

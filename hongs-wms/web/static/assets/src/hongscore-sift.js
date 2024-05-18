@@ -107,8 +107,10 @@ HsSift.prototype = {
 
     init: function() {
         var that = this;
+        var context = this.context;
         var siftBox = this.siftBox;
-        if (siftBox.size() == 0) return;
+
+        if (siftBox.size()) {
 
         var fns = siftBox.find("[data-sift=fn]");
         var frs = siftBox.find("[data-sift=fr]");
@@ -384,6 +386,8 @@ HsSift.prototype = {
                 }
             ).hsReady();
         });
+
+        } // End if siftBox exists
     },
 
     note: function(msg, typ) {

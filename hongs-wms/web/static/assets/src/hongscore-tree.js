@@ -35,7 +35,7 @@ function HsTree(context, opts) {
     this.context = context;
     this.loadBox = loadBox;
     this.treeBox = treeBox;
-    this._pid  = "";
+    this._pid  = rootInfo.id;
     this._url  = "";
     this._data = [];
 
@@ -53,27 +53,7 @@ function HsTree(context, opts) {
     this.openBind(openUrls);
 
     // 选中打开
-    var that = this;
-    treeBox.on("click", ".tree-node td.tree-name", function() {
-        that.select(jQuery(this).closest(".tree-node"));
-    });
-    treeBox.on("click", ".tree-node td.tree-hand", function() {
-        that.toggle(jQuery(this).closest(".tree-node"));
-    });
-    treeBox.on("dblclick", ".tree-node td:not(.tree-hand)", function() {
-        that.toggle(jQuery(this).closest(".tree-node"));
-    });
-    this.linkUrls =  linkUrls || [ ] ;
-    treeBox.on("treeSelect", function(ev,id) {
-        var a = that.linkUrls;
-        for(var i = 0 ; i < a.length ; i ++) {
-            var u = a[i][0];
-            var m = a[i][1];
-            u = u.replace ('{ID}', encodeURIComponent(id));
-            u =  hsFixPms (u , that.loadBox);
-            that.treeBox.hsFind(m).hsLoad(u);
-        }
-    });
+    this.linkInit(linkUrls);
 
     // 顶级节点
     this.fillInfo(
@@ -84,10 +64,12 @@ function HsTree(context, opts) {
     );
 
     // 立即加载
+    if (loadDat) {
+        this._data = hsSerialObj( /**/ loadDat);
+    }
     if (loadUrl) {
         this._url  = hsFixPms(loadUrl, loadBox);
-        this._data = hsSerialDic(/***/ loadDat);
-        this.load(rootInfo.id);
+        this.load();
     }
 }
 HsTree.prototype = {
@@ -466,6 +448,34 @@ HsTree.prototype = {
         return jQuery.hsWarn.apply(window, arguments);
     },
 
+    linkInit : function(linkUrls) {
+        var that = this;
+        var treeBox = this.treeBox;
+
+        // 选中和展开事件
+        treeBox.on("click", ".tree-node td.tree-name", function() {
+            that.select(jQuery(this).closest(".tree-node"));
+        });
+        treeBox.on("click", ".tree-node td.tree-hand", function() {
+            that.toggle(jQuery(this).closest(".tree-node"));
+        });
+        treeBox.on("dblclick", ".tree-node td:not(.tree-hand)", function() {
+            that.toggle(jQuery(this).closest(".tree-node"));
+        });
+
+        // 打开关联的页面
+        this.linkUrls =  linkUrls || [ ] ;
+        treeBox.on("treeSelect", function(ev,id) {
+            var a = that.linkUrls;
+            for(var i = 0 ; i < a.length ; i ++) {
+                var u = a[i][0];
+                var m = a[i][1];
+                u = u.replace ('{ID}', encodeURIComponent(id));
+                u =  hsFixPms (u , that.loadBox);
+                that.treeBox.hsFind(m).hsLoad(u);
+            }
+        });
+    },
     linkBind : function(linkUrls) {
         if (linkUrls) {
             for(var i = 0; i < linkUrls.length; i ++) {

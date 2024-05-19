@@ -243,17 +243,14 @@
                         if (info.containsKey("data-ln")) {
                             extr += " data-ln=\""+info.get("data-ln")+"\"";
                         }
-                        if (rptd) {
-                            name += "." ;
-                            extr += " multiple=\"multiple\"";
-                        }
                         if (rqrd) {
                             extr += " required=\"required\"";
-                        } else
+                        }
                         if (rptd) {
+                            extr += " multiple=\"multiple\" data-toggle=\"hsSels\"";
+                            name += "." ;
+                        }
                     %>
-                    <input type="hidden" name="<%=name%>" class="form-final"/>
-                    <%} /* End if */ %>
                     <select class="form-field form-control" name="<%=name%>"<%=extr%>></select>
                 <%} else if ("check".equals(type)) {%>
                     <%
@@ -345,8 +342,7 @@
                             extr += " required=\"required\"";
                         }
                         if (rptd) {
-                            extr += " multiple=\"multiple\"";
-                            extr += " data-toggle=\"hsDits\"";
+                            extr += " multiple=\"multiple\" data-toggle=\"hsDits\"";
                             name += "." ;
                         }
                         if (info.containsKey("minlength")) extr += " minlength=\""+info.get("minlength").toString()+"\"";

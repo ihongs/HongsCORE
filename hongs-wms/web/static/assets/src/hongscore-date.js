@@ -274,11 +274,11 @@
              * 说明用的是自定义选项
              * 就不需要再构建选项了
              */
-            box = inp.siblings().filter("[data-widget=hsDate]");
+            box = inp.siblings().filter("[data-toggle=hsDays]");
             if (box.size() != 0) {
                 break;
             }
-            box = inp.parent(  ).filter("[data-widget=hsDate]");
+            box = inp.parent(  ).filter("[data-toggle=hsDays]");
             if (box.size() != 0) {
                 break;
             }
@@ -325,7 +325,7 @@
         while (false);
 
         box.addClass("datebox");
-        box.attr("data-widget" , "hsDate");
+        box.attr("data-toggle" , "hsDays");
         box.data("linked", inp);
         inp.attr("data-toggle" , "hsDate");
         inp.data("linked", box);
@@ -469,8 +469,61 @@
         _fixdate( box, dat );
     });
 
+    // 表单项的值更改后联动日期控件
+    $(document).on("change", "[data-toggle=hsDate]", function(evt) {
+        if ($(evt.target).data("toggle")!='hsDate') {
+            return; // 跳过非表单项
+        }
+        if (! $(this).data("linked")) {
+            return; // 跳过未初始化
+        }
+        if (evt.Date) {
+            return; // 跳过自定事件
+        }
+
+        var inp = $(this);
+        var box = inp.data("linked");
+        var fmt = inp.data("format");
+        var typ = inp.data( "type" );
+        var val = inp.val (   );
+        var num = parseInt(val);
+
+        switch (fmt) {
+            case "time":
+                fmt = hsGetLang("time.format");
+                break;
+            case "date":
+                fmt = hsGetLang("date.format");
+                break;
+            case "datetime":
+                fmt = hsGetLang("datetime.format");
+            default : if (! fmt)
+                fmt = hsGetLang("datetime.format");
+        }
+
+        /**
+         * 根据 type 确定精度
+         * 缺失则将选项置为空
+         */
+        if (!isNaN(num)
+        && (typ == "timestamp"
+        ||  typ == "datestamp")) {
+            val =  num * 1000  ;
+        }
+        if (! val ) {
+            box.find( "select,input")
+               .val ( "" );
+            inp.val ( "" );
+            return;
+        }
+
+        var dat = hsPrsDate(val, fmt);
+        _setdate( box, dat );
+        _fixdate( box, dat );
+    });
+
     // 控件组的值更新后联动日期输入
-    $(document).on("change", "[data-widget=hsDate]", function(evt) {
+    $(document).on("change", "[data-toggle=hsDays]", function(evt) {
         if ($(evt.target).data("toggle")=='hsDate') {
             return; // 跳过表单输入
         }
@@ -532,61 +585,8 @@
         inp.trigger($.Event("change", {Date: dat}));
     });
 
-    // 表单项的值更改后联动日期控件
-    $(document).on("change", "[data-toggle=hsDate]", function(evt) {
-        if ($(evt.target).data("toggle")!='hsDate') {
-            return; // 跳过非表单项
-        }
-        if (! $(this).data("linked")) {
-            return; // 跳过未初始化
-        }
-        if (evt.Date) {
-            return; // 跳过自定事件
-        }
-
-        var inp = $(this);
-        var box = inp.data("linked");
-        var fmt = inp.data("format");
-        var typ = inp.data( "type" );
-        var val = inp.val (   );
-        var num = parseInt(val);
-
-        switch (fmt) {
-            case "time":
-                fmt = hsGetLang("time.format");
-                break;
-            case "date":
-                fmt = hsGetLang("date.format");
-                break;
-            case "datetime":
-                fmt = hsGetLang("datetime.format");
-            default : if (! fmt)
-                fmt = hsGetLang("datetime.format");
-        }
-
-        /**
-         * 根据 type 确定精度
-         * 缺失则将选项置为空
-         */
-        if (!isNaN(num)
-        && (typ == "timestamp"
-        ||  typ == "datestamp")) {
-            val =  num * 1000  ;
-        }
-        if (! val ) {
-            box.find( "select,input")
-               .val ( "" );
-            inp.val ( "" );
-            return;
-        }
-
-        var dat = hsPrsDate(val, fmt);
-        _setdate( box, dat );
-        _fixdate( box, dat );
-    });
-
     // 设为当前时间
-    $(document).on("click", ".datebox .today", function() {
+    $(document).on("click", "[data-toggle=hsDays] .today", function() {
         var box = $(this).closest(".datebox");
         var dat = new Date();
         _setdate( box, dat );
@@ -595,7 +595,7 @@
     });
 
     // 清除所有选项
-    $(document).on("click", ".datebox .clear", function() {
+    $(document).on("click", "[data-toggle=hsDays] .clear", function() {
         var sel = $(this).closest(".datebox").find("select,input");
         var inp = $(this).closest(".datebox").data("linked");
         sel.val ("");

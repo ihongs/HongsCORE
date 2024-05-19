@@ -116,7 +116,7 @@ HsList.prototype = {
             f = th.data("fill");
             if (f && typeof f != "function") {
                 try {
-                    f = eval('(null||function(list,v,n){return '+f+';})');
+                    f = eval('(null||function(that,v,n){return '+f+';})');
                 } catch (e) {
                     throw new Error("Parse list data-fill error: "+e);
                 }
@@ -902,12 +902,13 @@ function hsListFillItem(list) {
     var tt, tr, td, n, t, v, f;
 
     // 条目模板
-    if (! this.itemBox ) {
+    if (! this.itemBox) {
           this.itemBox = this.listBox
-              .children().first( ).detach( )
-              .removeClass("hide invisible");
+              .find (".template")
+              .first( ).detach( )
+        .removeClass( "template");
     }
-    tt  = this.itemBox ;
+    tt  = this.itemBox;
 
     // _keep_prev 无论何种情况都不清空之前的列表
     // _keep_last 加载不到数据时不清空之前的列表
@@ -941,7 +942,7 @@ function hsListFillItem(list) {
             // 解析填充方法
             if (f && typeof f != "function") {
                 try {
-                    f = eval('(null||function(list,v,n){return '+f+';})');
+                    f = eval('(null||function(that,v,n){return '+f+';})');
                 } catch (e) {
                     throw new Error("Parse list data-fill error: "+e);
                 }

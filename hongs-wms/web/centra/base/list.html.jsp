@@ -184,7 +184,7 @@
                         <%}%>
                     <%} else {%>
                         <select class="form-control" name="<%=name%>.<%=Cnst.IS_REL%>">
-                            <option value="" disabled selected>选择...</option>
+                            <option value="" style="color: gray;">选择...</option>
                             <option value="not-none">不为空</option>
                             <option value="none">为空</option>
                         </select>

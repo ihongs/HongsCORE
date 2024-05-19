@@ -119,24 +119,7 @@
         <div class="filt-group form-group form-group-sm row" data-name="<%=name%>">
             <label class="col-md-3 col-sm-2 control-label text-right"><%=text%></label>
             <div class="col-md-6 col-sm-8">
-            <%if ("number".equals(type) || "range".equals(type) || "color".equals(type) || "sorted".equals(type)) {%>
-                <div class="input-group">
-                    <input type="<%=type%>" class="form-control" name="<%=name%>.<%=Cnst.GE_REL%>" />
-                    <span class="input-group-addon input-sm">~</span>
-                    <input type="<%=type%>" class="form-control" name="<%=name%>.<%=Cnst.LE_REL%>" />
-                </div>
-            <%} else if ("date".equals(type) || "time" .equals(type) || "datetime" .equals(type)) {%>
-                <%
-                    if ("datetime".equals(type)) {
-                        type = "datetime-local";
-                    }
-                %>
-                <div class="input-group">
-                    <input type="<%=type%>" class="form-control" name="<%=name%>.<%=Cnst.GE_REL%>" data-toggle="hsTime" data-type="<%=info.get("type")%>" />
-                    <span class="input-group-addon input-sm">~</span>
-                    <input type="<%=type%>" class="form-control" name="<%=name%>.<%=Cnst.LE_REL%>" data-toggle="hsTime" data-type="<%=info.get("type")%>" />
-                </div>
-            <%} else if ("fork".equals(type) || "pick".equals(type)) {%>
+            <%if ("fork".equals(type) || "pick".equals(type)) {%>
                 <%
                     String fn = name;
                     if (fn.endsWith( "." )) {
@@ -163,28 +146,62 @@
                 <ul class="pickbox pickmul" data-ft="_fork" data-fn="<%=name%>.<%=Cnst.IN_REL%>." data-ln="<%=ln%>" data-tk="<%=tk%>" data-vk="<%=vk%>" data-item-class="btn btn-sm btn-info" data-icon-class="-"></ul>
                 <button type="button" class="btn btn-sm btn-default form-control" data-toggle="hsFork" data-target="@" data-href="<%=al%>"><%=_locale.translate("fore.fork.select", text)%></button>
             <%} else if ("enum".equals(type) || "type".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
-                <select class="form-control" name="<%=name%>.<%=Cnst.EQ_REL%>" data-ft="_enum"></select>
-            <%} else if (!_sd.contains(name)) {%>
-                <input class="form-control" type="text" name="<%=name%>.<%=Cnst.EQ_REL%>" placeholder="精确匹配" />
-            <%} else if ("search".equals(type) || "textarea".equals(type) || "textview".equals(type)) {%>
-                <input class="form-control" type="text" name="<%=name%>.<%=Cnst.SP_REL%>" placeholder="模糊匹配" />
-            <%} else {%>
-                <div class="input-group input-group-sm">
-                    <input class="form-control" type="text" name="<%=name%>.<%=Cnst.SP_REL%>" placeholder="模糊匹配" />
-                    <div class="input-group-btn input-group-sel">
+                <%
+                    String ln = info.containsKey("data-ln") ? (String) info.get("data-ln") : name;
+                %>
+                <select class="form-control" name="<%=name%>.<%=Cnst.EQ_REL%>" data-ln="<%=ln%>" data-ft="_enum">
+                    <option value="" style="color: gray;"><%=_locale.translate("fore.fork.select", text)%></option>
+                </select>
+            <%} else if ("date".equals(type) || "time" .equals(type) || "datetime" .equals(type)) {%>
+                <%
+                    if ("datetime".equals(type)) {
+                        type = "datetime-local";
+                    }
+                %>
+                <div class="input-group">
+                    <input type="<%=type%>" class="form-control" name="<%=name%>.<%=Cnst.GE_REL%>" data-toggle="hsTime" data-type="<%=info.get("type")%>" />
+                    <span class="input-group-addon input-sm">~</span>
+                    <input type="<%=type%>" class="form-control" name="<%=name%>.<%=Cnst.LE_REL%>" data-toggle="hsTime" data-type="<%=info.get("type")%>" />
+                </div>
+            <%} else if ("number".equals(type) || "range".equals(type) || "color".equals(type) || "sorted".equals(type)) {%>
+                <div class="input-group">
+                    <input type="<%=type%>" class="form-control" name="<%=name%>.<%=Cnst.GE_REL%>" />
+                    <span class="input-group-addon input-sm">~</span>
+                    <input type="<%=type%>" class="form-control" name="<%=name%>.<%=Cnst.LE_REL%>" />
+                </div>
+            <%} else if ("string".equals(type) || "email".equals(type) || "url".equals(type) || "tel".equals(type) || "sms".equals(type) || "text".equals(type)) {%>
+                <%if (_sd.contains(name)) {%>
+                <div class="input-group input-group">
+                    <input class="form-control" type="text" name="<%=name%>.<%=Cnst.EQ_REL%>" placeholder="精确查找" />
+                    <div class="input-group-btn input-group-rel">
                         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="caret"></span>
+                            <i class="caret"></i>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-right">
                             <li class="active">
-                                <a href="javascript:;" data-name="<%=name%>.<%=Cnst.SP_REL%>" data-placeholder="模糊匹配">模糊匹配</a>
+                                <a href="javascript:;" data-name="<%=name%>.<%=Cnst.EQ_REL%>" data-placeholder="精确查找">精确查找</a>
                             </li>
                             <li>
-                                <a href="javascript:;" data-name="<%=name%>.<%=Cnst.EQ_REL%>" data-placeholder="模糊匹配">精确匹配</a>
+                                <a href="javascript:;" data-name="<%=name%>.<%=Cnst.SP_REL%>" data-placeholder="模糊匹配">模糊匹配</a>
                             </li>
                         </ul>
                     </div>
                 </div>
+                <%} else {%>
+                <input class="form-control" type="text" name="<%=name%>.<%=Cnst.EQ_REL%>" placeholder="精确查找" />
+                <%}%>
+            <%} else if ("search".equals(type) || "textarea".equals(type) || "textview".equals(type)) {%>
+                <%if (_sd.contains(name)) {%>
+                <input class="form-control" type="text" name="<%=name%>.<%=Cnst.SP_REL%>" placeholder="模糊匹配" />
+                <%} else {%>
+                <input class="form-control" type="text" name="<%=name%>.<%=Cnst.EQ_REL%>" placeholder="精确查找" />
+                <%}%>
+            <%} else {%>
+                <select class="form-control" name="<%=name%>.<%=Cnst.IS_REL%>">
+                    <option value="" style="color: gray;">选择...</option>
+                    <option value="not-none">不为空</option>
+                    <option value="none">为空</option>
+                </select>
             <%} /*End If */%>
             </div>
         </div>
@@ -246,31 +263,31 @@
         </div>
     </form>
     <!-- 列表 -->
-    <div class="itembox col-md-4 col-sm-6 col-xs-12" style="display: none; padding: 0 7.5px 15px 7.5px;">
-        <input type="hidden" name="id" data-fn="id" data-fill="$(this).val(v) && undefined" />
-        <div class="panel panel-default" style="margin: 0; padding: 0; position: relative;">
-            <div class="panel-body" style="display: table; width: 100%;">
-                <%if (_fields.containsKey(LOGO)) {%>
-                <div style="display: table-cell; width: 10px; padding: 0px; vertical-align: top;">
-                    <div class="recite" style="height: 100px; overflow: hidden; cursor: pointer;">
-                        <div data-fn="<%=LOGO%>" data-ft="_logo" style="width: 100px; height: 100px; margin-right: 15px; border-radius: 4px;"></div>
+    <div class="listbox clearfix flex-center" style="margin: 0 -7.5px 5px -7.5px;">
+        <div class="itembox template col-md-4 col-sm-6 col-xs-12" style="padding: 0 7.5px 15px 7.5px;">
+            <input type="hidden" name="id" data-fn="id"/>
+            <div class="panel panel-default" style="margin: 0; padding: 0; position: relative;">
+                <div class="panel-body" style="display: table; width: 100%;">
+                    <%if (_fields.containsKey(LOGO)) {%>
+                    <div style="display: table-cell; width: 10px; padding: 0px; vertical-align: top;">
+                        <div class="recite" style="height: 100px; overflow: hidden; cursor: pointer;">
+                            <div data-fn="<%=LOGO%>" data-ft="_logo" style="width: 100px; height: 100px; margin-right: 15px; border-radius: 4px;"></div>
+                        </div>
                     </div>
-                </div>
-                <%} /*End If*/%>
-                <div style="display: table-cell; width: 100%; padding: 0px; vertical-align: top;">
-                    <div class="recite" style="height: 100px; overflow: hidden; cursor: pointer;">
-                        <div data-fn="<%=NAME%>" style="color: #444;"></div>
-                        <div data-fn="<%=NOTE%>" style="color: #888;"></div>
-                    </div>
-                    <div data-fn="<%=USER%>" data-ft="_edit" class="btn-group edit-group" style="position: absolute; right: 0; bottom: 0; opacity: 0.8; display: none;">
-                        <button type="button" class="btn btn-sm btn-default update"><span class="bi bi-hi-modify"></span></button>
-                        <button type="button" class="btn btn-sm btn-default delete"><span class="bi bi-hi-remove"></span></button>
+                    <%} /*End If*/%>
+                    <div style="display: table-cell; width: 100%; padding: 0px; vertical-align: top;">
+                        <div class="recite" style="height: 100px; overflow: hidden; cursor: pointer;">
+                            <div data-fn="<%=NAME%>" style="color: #444;"></div>
+                            <div data-fn="<%=NOTE%>" style="color: #888;"></div>
+                        </div>
+                        <div data-fn="<%=USER%>" data-ft="_edit" class="btn-group edit-group" style="position: absolute; right: 0; bottom: 0; opacity: 0.8; display: none;">
+                            <button type="button" class="btn btn-sm btn-default update"><span class="bi bi-hi-modify"></span></button>
+                            <button type="button" class="btn btn-sm btn-default delete"><span class="bi bi-hi-remove"></span></button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="listbox clearfix flex-center" style="margin: 0 -7.5px 5px -7.5px;">
     </div>
     <div class="pagebox clearfix text-center">
     </div>

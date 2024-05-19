@@ -569,9 +569,10 @@ HsList.prototype = {
             // 重置
             findBox.on("reset" , function() {
                 var form = jQuery (this);
-                    form.find("[data-fn].repeated").empty();
+                    form.find("[data-fn].repeated")
+                        .empty( ).trigger("change");
                 setTimeout(function () {
-                    form.find(":submit"). first ( ).click();
+                    form.find(":submit").first().click();
                 } , 100);
             });
         }

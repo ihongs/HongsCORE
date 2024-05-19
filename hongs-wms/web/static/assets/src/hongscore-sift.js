@@ -107,7 +107,6 @@ HsSift.prototype = {
 
     init: function() {
         var that = this;
-        var context = this.context;
         var siftBox = this.siftBox;
 
         if (siftBox.size()) {

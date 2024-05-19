@@ -420,11 +420,6 @@ function hsFormFillPick(box, v, n) {
     }
     box.children().not("[data-toggle]").remove();
 
-    var btn = box.children("[data-toggle=hsPick],[data-toggle=hsFork]");
-    if (btn.size() === 0) {
-        btn = box.siblings("[data-toggle=hsPick],[data-toggle=hsFork]");
-    }
-
     // 表单初始化载入时需从关联数据提取选项对象
     if (this._info) {
         var ln = box.attr("data-ln") || "data";
@@ -464,12 +459,6 @@ function hsFormFillPick(box, v, n) {
         v = {};
     }
 
-    if (! jQuery.isEmptyObject(v) ) {
-        if (! mul) btn.hide();
-    } else {
-        if (! rol) btn.show();
-    }
-
     // 逐条写入已选项, .erase,.title,.value 用于标识删除,名称,取值
     for(var val in v) {
         var arr  = v[val];
@@ -478,6 +467,17 @@ function hsFormFillPick(box, v, n) {
         ent.find(".title").text(txt);
         ent.find(".value").val (val);
         ent.attr( "title", txt );
+    }
+
+    // 根据多选或只读, 隐藏和显示按钮
+    var btn = box.children("[data-toggle=hsPick],[data-toggle=hsFork]");
+    if (btn.size() === 0) {
+        btn = box.siblings("[data-toggle=hsPick],[data-toggle=hsFork]");
+    }
+    if (!jQuery.isEmptyObject(v)) {
+        if (! mul) btn.hide();
+    } else {
+        if (! rol) btn.show();
     }
 
     // 初始化绑定事件, 处理删除和查看
@@ -937,6 +937,27 @@ function hsFormTestPart(box) {
         var sub  = $(this).closest(".form-sub" );
         sub .remove ( /****/ );
         subs.trigger("change");
+    })
+    .on("change", ".forkbox", function() {
+        var box = $(this);
+        var rol = box.is( ".pickrol" )
+               || box.is("[data-readonly]");
+        var mul = box.is( ".pickmul" )
+               || box.is("[data-multiple]")
+               || box.is("[data-repeated]")
+               || /(\[\]|\.\.|\.$)/.test(box.data("fn"));
+
+        var btn = box.children("[data-toggle=hsPick],[data-toggle=hsFork]");
+        if (btn.size() === 0) {
+            btn = box.siblings("[data-toggle=hsPick],[data-toggle=hsFork]");
+        }
+
+        // 外部添加或清空时隐藏或显示按钮
+        if (box.children().not(btn).size() != 0) {
+            if (! mul) btn.hide();
+        } else {
+            if (! rol) btn.show();
+        }
     });
 })(jQuery);
 

@@ -76,13 +76,8 @@
             if (! lsp.size()) {
                 box = $(
                     '<div  class="multiple form-control">'
-                  +   '<input class="value" type="hidden"  />'
+                  +   '<input class="value" type="hidden"/>'
                   +   '<ul class="repeated labelbox ditsbox">'
-                  +     '<li  class="label label-info template">'
-                  +       '<a class="erase bi bi-x pull-right" href="javascript:;"></a>'
-                  +       '<span  class="title"></span>'
-                  +       '<input class="value" type="hidden" />'
-                  +     '</li>'
                   +   '</ul>'
                   + '</div>'
                 );
@@ -150,17 +145,17 @@
         }
 
         // 检查和补充默认条目模板
-        if (tmp.size()) {
-            tmp.removeClass("template");
-        } else {
+        if (! tmp.size()) {
             tmp  = $('<li  class="label label-info">'
                  +     '<a class="erase bi bi-x pull-right" href="javascript:;"></a>'
                  +     '<span  class="title"></span>'
                  +     '<input class="value" type="hidden"/>'
-                 +   '</li>');
-            if (! join) {
-                tmp.find(".value").attr("name", fn);
-            }
+                 +   '</li>' );
+        if (! join) {
+            tmp.find(".value").attr("name", fn);
+        }
+        } else {
+            tmp.removeClass("template");
         }
 
         function set(a) {
@@ -428,17 +423,17 @@
         }
 
         // 检查和补充默认条目模板
-        if (tmp.size()) {
-            tmp.removeClass("template");
-        } else {
+        if (! tmp.size()) {
             tmp  = $('<li  class="label label-info">'
                  +     '<a class="erase bi bi-x pull-right" href="javascript:;"></a>'
                  +     '<span  class="title"></span>'
                  +     '<input class="value" type="hidden"/>'
-                 +   '</li>');
-            if (! join) {
-                tmp.find(".value").attr("name", fn);
-            }
+                 +   '</li>' );
+        if (! join) {
+            tmp.find(".value").attr("name", fn);
+        }
+        } else {
+            tmp.removeClass("template");
         }
 
         function set(a) {

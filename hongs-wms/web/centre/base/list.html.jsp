@@ -150,7 +150,7 @@
                     String ln = info.containsKey("data-ln") ? (String) info.get("data-ln") : name;
                 %>
                 <select class="form-control" name="<%=name%>.<%=Cnst.EQ_REL%>" data-ln="<%=ln%>" data-ft="_enum">
-                    <option value="" style="color: gray;"><%=_locale.translate("fore.fork.select", text)%></option>
+                    <option value=""><%=_locale.translate("fore.form.select", text)%></option>
                 </select>
             <%} else if ("date".equals(type) || "time" .equals(type) || "datetime" .equals(type)) {%>
                 <%
@@ -198,7 +198,7 @@
                 <%}%>
             <%} else {%>
                 <select class="form-control" name="<%=name%>.<%=Cnst.IS_REL%>">
-                    <option value="" style="color: gray;">选择...</option>
+                    <option value=""><%=_locale.translate("fore.form.select", "")%></option>
                     <option value="not-none">不为空</option>
                     <option value="none">为空</option>
                 </select>

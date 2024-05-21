@@ -251,7 +251,9 @@
                             name += "." ;
                         }
                     %>
-                    <select class="form-field form-control" name="<%=name%>"<%=extr%>></select>
+                    <select class="form-field form-control" name="<%=name%>"<%=extr%>>
+                        <option value=""><%=_locale.translate("fore.form.select", text)%></option>
+                    </select>
                 <%} else if ("check".equals(type)) {%>
                     <%
                         String extr = "";

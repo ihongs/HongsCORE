@@ -82,23 +82,7 @@ HsSift.prototype = {
     fillEnfo: function(enfo) {
         HsForm.prototype.fillEnfo.call(this, enfo);
     },
-    _feed__enum: function(x, v) {
-        if (! v || ! v.length ) {
-            return v;
-        }
-
-        // 清理空值, 杠为未知其他
-        var w = [];
-        for(var i = 0; i < v.length; i ++) {
-            var u = v [i];
-            if (! u[1] || ! u[0] || u[0] == "-") {
-                continue ;
-            }
-            w.push (u);
-        }
-
-        this._feed__datalist(x, w);
-    },
+    _feed__enum    : HsForm.prototype._feed__datalist,
     _feed__datalist: HsForm.prototype._feed__datalist,
     _feed__select  : HsForm.prototype._feed__select  ,
     _feed__radio   : HsForm.prototype._feed__radio   ,

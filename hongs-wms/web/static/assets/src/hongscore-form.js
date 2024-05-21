@@ -806,6 +806,10 @@ HsForm.prototype = {
         for(var i = 0; i < v.length; i ++) {
             var k = hsGetValue(v[i], vk);
             var t = hsGetValue(v[i], tk);
+            // 跳过空值
+            if (k === "") {
+                continue;
+            }
             // 选项分组
             if (k && gs && gs === k[0]) {
                 if (inp.is("optgroup")) {
@@ -831,6 +835,10 @@ HsForm.prototype = {
         for(var i = 0; i < v.length; i ++) {
             var k = hsGetValue(v[i], vk);
             var t = hsGetValue(v[i], tk);
+            // 清除空值
+            if (k === "") {
+                inp.find( '[value=""]' ).remove();
+            }
             // 选项分组
             if (k && gs && gs === k[0]) {
                 if (inp.is("optgroup")) {

@@ -142,6 +142,10 @@ select.form-control ,
 .form-group-lg select.form-control {
     line-height: inherit;
 }
+select.form-control  option[value=""] ,
+.form-control select option[value=""] {
+    color: #888;
+}
 
 @media screen and (-webkit-min-device-pixel-ratio: 0) {
 input[type="datetime-local"].form-control,

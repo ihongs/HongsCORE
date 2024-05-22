@@ -729,6 +729,7 @@ HsStat.prototype = {
             findBox.find(":submit").first().click();
         });
     },
+
     load: function() {
         var that    = this;
         var statBox = this.statBox;
@@ -1329,45 +1330,53 @@ function HsCate(context, opts) {
     this.findBox = findBox;
     this._url  = opts._url || opts.loadUrl ;
 
-    var  that  = this;
-
-    //** 条件改变时重载图表 **/
-
-    statBox.data("changed", statBox.is(".invisible"));
-
-    context.on("saveBack sendBack", function() {
-        if (statBox.is(".invisible")) {
-            statBox.data("changed", true );
-        } else {
-            statBox.data("changed", false);
-            setTimeout(function() {
-                that.load();
-            }, 1000);
-        }
-    });
-
-    findBox.on( "submit" , function() {
-        if (statBox.is(".invisible")) {
-            statBox.data("changed", true );
-        } else {
-            statBox.data("changed", false);
-            setTimeout(function() {
-                that.load();
-            }, 1000);
-        }
-    });
-
-    statBox.on( "change" , "input,select", function() {
-        if ($(this).is(".checkall2")) {
-            $(this).closest(".checkbox").find(".checkone2").prop("checked", false);
-        } else
-        if ($(this).is(".checkone2")) {
-            $(this).closest(".checkbox").find(".checkall2").prop("checked", false);
-        }
-        findBox.find(":submit").first().click();
-    });
+        this.init(  );
+    if (opts.loadUrl) {
+        this.load(  );
+    }
 }
 HsCate.prototype = {
+    init: function() {
+        var that = this;
+        var context = this.context;
+        var statBox = this.statBox;
+        var findBox = this.findBox;
+
+        statBox.data("changed", statBox.is(".invisible"));
+
+        context.on("saveBack sendBack", function() {
+            if (statBox.is(".invisible")) {
+                statBox.data("changed", true );
+            } else {
+                statBox.data("changed", false);
+                setTimeout(function() {
+                    that.load();
+                }, 1000);
+            }
+        });
+
+        findBox.on( "submit" , function() {
+            if (statBox.is(".invisible")) {
+                statBox.data("changed", true );
+            } else {
+                statBox.data("changed", false);
+                setTimeout(function() {
+                    that.load();
+                }, 1000);
+            }
+        });
+
+        statBox.on( "change" , "input,select", function() {
+            if ($(this).is(".checkall2")) {
+                $(this).closest(".checkbox").find(".checkone2").prop("checked", false);
+            } else
+            if ($(this).is(".checkone2")) {
+                $(this).closest(".checkbox").find(".checkall2").prop("checked", false);
+            }
+            findBox.find(":submit").first().click();
+        });
+    },
+
     load: function() {
         var that    = this;
         var statBox = this.statBox;

@@ -42,15 +42,17 @@ function HsForm(context, opts) {
 
     // 绑定参数
     var loadArr = hsSerialArr(loadBox);
+    if (loadDat) {
+        loadDat = hsSerialObj(loadDat);
+        this._data = loadDat;
+    }
     if (loadUrl) {
         loadUrl = hsFixPms(loadUrl, loadArr);
+        this._url  = loadUrl;
     }
     if (saveUrl) {
         saveUrl = hsFixPms(saveUrl, loadArr);
         this.formBox.attr("action", saveUrl);
-    }
-    if (loadDat) {
-        this.  _data  = hsSerialObj(loadDat);
     }
 
     // 预置数据

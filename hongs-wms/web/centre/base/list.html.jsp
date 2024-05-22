@@ -307,8 +307,8 @@
     //** 列表、搜索表单 **/
 
     var listobj = context.hsList({
-        _data : loadres,
         _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.AB_KEY%>=_text,_fork&<%=Cnst.OB_KEY%>=<%=_ob%>&<%=Cnst.RB_KEY%>=<%=_rb%>",
+        loadData: loadres,
         sendUrls: [
             [ '<%=_module%>/<%=_entity%>/delete.act',
               '.delete',
@@ -330,18 +330,14 @@
 
     var filtobj = filtbox.hsForm({
         _url: "<%=_module%>/<%=_entity%>/recipe.act?<%=Cnst.AB_KEY%>=.enfo",
-        _feed__enum : hsListFeedFilt,
-        _fill__sort : hsListInitSort,
-        _fill__mine : hsListInitMine
+        _feed__enum : HsSift.prototype._feed__enum,
+        _feed__sort : hsListInitSort,
+        _feed__mine : hsListInitMine
     });
 
     var statobj = context.hsCate({
         _url: "<%=_module%>/<%=_entity%>/acount.act?<%=Cnst.RN_KEY%>=<%=Cnst.RN_DEF%>&<%=Cnst.OB_KEY%>=-&<%=Cnst.AB_KEY%>=linked,_text,_fork"
     });
-
-    // 绑定参数
-    listobj._url = hsSetPms(listobj._url, loadres);
-    statobj._url = hsSetPms(statobj._url, loadres);
 
     // 延迟加载
     context.on("opened",".filtbox", function() {
@@ -420,7 +416,7 @@
         }
 
         // 加载数据
-        listobj.load(null, findbox);
+        listobj.load();
 
         }); // End Promise
     });

@@ -46,14 +46,15 @@ function HsTree(context, opts) {
         }
     }
 
-    // 发送服务
-    this.sendBind(sendUrls);
-
-    // 打开服务
-    this.openBind(openUrls);
-
-    // 选中打开
-    this.linkInit(linkUrls);
+    // 绑定参数
+    if (loadUrl) {
+        loadUrl = hsFixPms(loadUrl, loadBox);
+        this._url  = loadUrl;
+    }
+    if (loadDat) {
+        loadDat = hsSerialObj(loadDat);
+        this._data = loadDat;
+    }
 
     // 顶级节点
     this.fillInfo(
@@ -63,13 +64,18 @@ function HsTree(context, opts) {
           .attr("class", "tree-node tree-root")
     );
 
+    // 发送服务
+    this.sendBind(sendUrls);
+
+    // 打开服务
+    this.openBind(openUrls);
+
+    // 选中打开
+    this.linkInit(linkUrls);
+
     // 立即加载
-    if (loadDat) {
-        this._data = hsSerialObj( /**/ loadDat);
-    }
     if (loadUrl) {
-        this._url  = hsFixPms(loadUrl, loadBox);
-        this.load();
+        this.load(loadUrl );
     }
 }
 HsTree.prototype = {

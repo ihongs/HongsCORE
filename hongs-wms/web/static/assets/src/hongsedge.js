@@ -830,13 +830,14 @@ function hsOpenThenLoad(btn, box, url, data) {
  * 列表高级搜索支持
  */
 function hsLoadWithWord(url, data) {
-    var word = this.context.find(".findbox [name=wd]").val();
-    if (data && word && /^\?.+=/.test(word)) {
-        word = hsSerialDic(word);
+    if (data) {
         data = hsSerialDic(data);
-               delete data["wd"];
+    var word = data["wd"];
+    if (word && /^\?.+=/ . test (word)) {
+        delete data["wd"];
+        word = hsSerialDic(word);
         data = hsSerialMix(data, word);
-    }
+    }}
     HsList.prototype.load.call(this, url, data);
 }
 

@@ -89,6 +89,7 @@
 
     var listobj = context.hsList({
         _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.AB_KEY%>=_text,_fork,created&<%=Cnst.OB_KEY%>=<%=_ob%>&<%=Cnst.RB_KEY%>=<%=_rb%>",
+         loadData   : hsSerialDic(loadbox),
          fillPage   : hsListFillNext,
         _fill__check: hsListFillFork
     });
@@ -99,7 +100,7 @@
          .then(function() {
 
         // 加载数据
-        listobj.load(hsSetPms(listobj._url, loadbox), findbox);
+        listobj.load();
 
         }); // End Promise
     });

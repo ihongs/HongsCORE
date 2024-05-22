@@ -37,22 +37,28 @@ function HsList(context, opts) {
         }
     }
 
+    // 绑定参数
+    if (loadUrl) {
+        loadUrl = /**/ hsFixPms(loadUrl, loadBox);
+        this._url  = loadUrl;
+    }
+    if (loadDat || findBox.size()) {
+        loadDat = this.findData(findBox, loadDat);
+        this._data = loadDat;
+    }
+
+    // 搜索事件
+    this.findInit(findBox, loadDat);
+
     // 发送服务
     this.sendBind(sendUrls);
 
     // 打开服务
     this.openBind(openUrls);
 
-    // 搜索事件
-    this.findInit(findBox, loadDat);
-
     // 立即加载
-    if (loadDat) {
-        this._data = this.findData(findBox, loadDat);
-    }
     if (loadUrl) {
-        this._url  = /**/ hsFixPms(loadUrl, loadBox);
-        this.load();
+        this.load(loadUrl );
     }
 }
 HsList.prototype = {
@@ -554,7 +560,7 @@ HsList.prototype = {
 
     findInit : function(findBox, loadDat) {
         var that = this;
-        
+
         if (loadDat) {
             this._data = this.findData(findBox, loadDat);
         }

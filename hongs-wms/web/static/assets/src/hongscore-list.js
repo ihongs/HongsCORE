@@ -39,11 +39,11 @@ function HsList(context, opts) {
 
     // 绑定参数
     if (loadUrl) {
-        loadUrl = /**/ hsFixPms(loadUrl, loadBox);
+        loadUrl = hsFixPms(loadUrl, loadBox);
         this._url  = loadUrl;
     }
-    if (loadDat || findBox.size()) {
-        loadDat = this.findData(findBox, loadDat);
+    if (loadDat) {
+        loadDat = hsSerialObj(loadDat);
         this._data = loadDat;
     }
 

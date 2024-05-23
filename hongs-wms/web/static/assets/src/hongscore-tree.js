@@ -47,13 +47,13 @@ function HsTree(context, opts) {
     }
 
     // 绑定参数
-    if (loadUrl) {
-        loadUrl = hsFixPms(loadUrl, loadBox);
-        this._url  = loadUrl;
-    }
     if (loadDat) {
         loadDat = hsSerialObj(loadDat);
         this._data = loadDat;
+    }
+    if (loadUrl) {
+        loadUrl = hsFixPms(loadUrl,loadBox);
+        this._url  = loadUrl;
     }
 
     // 顶级节点

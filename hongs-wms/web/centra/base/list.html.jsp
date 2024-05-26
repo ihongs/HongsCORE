@@ -93,7 +93,7 @@
                     }
                 %>
                 <div class="filt-group form-group" data-name="<%=name%>">
-                    <label class="control-label form-control-static">
+                    <label class="form-label control-label">
                         <%=text != null ? text : ""%>
                     </label>
                     <div>
@@ -215,7 +215,7 @@
                     </li>
                     <li class="sift-unit sift-root">
                         <div class="form-group">
-                            <label  class="sift-hand control-label form-control-static">
+                            <label  class="sift-hand form-label control-label">
                                 高级查询
                             </label>
                             <div class="form-control multiple">

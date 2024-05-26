@@ -77,7 +77,7 @@
         %>
         <% /***/ if (Synt.declare(info.get("statable"), false)) {%>
         <div class="stat-group form-group form-group-sm row" data-name="<%=name%>">
-            <label class="col-md-3 col-sm-2 control-label text-right"><%=text%></label>
+            <label class="col-md-3 col-sm-2 control-label form-label text-right"><%=text%></label>
             <div class="col-md-6 col-sm-8">
                 <%
                     // 检查是否有枚举数据
@@ -117,7 +117,7 @@
         </div>
         <%} else if (Synt.declare(info.get("filtable"), false)) {%>
         <div class="filt-group form-group form-group-sm row" data-name="<%=name%>">
-            <label class="col-md-3 col-sm-2 control-label text-right"><%=text%></label>
+            <label class="col-md-3 col-sm-2 control-label form-label text-right"><%=text%></label>
             <div class="col-md-6 col-sm-8">
             <%if ("fork".equals(type) || "pick".equals(type)) {%>
                 <%
@@ -208,7 +208,7 @@
         <%} /*End If */%>
         <%} /*End For*/%>
         <div class="mine-group form-group form-group-sm row hide" data-name="cuser">
-            <label class="col-md-3 col-sm-2 control-label text-right">属主</label>
+            <label class="col-md-3 col-sm-2 control-label form-label text-right">属主</label>
             <div class="col-md-6 col-sm-8">
                 <input type="hidden" name="cuser" value="" data-ft="_mine"/>
                 <div class="radio">
@@ -228,7 +228,7 @@
             </div>
         </div>
         <div class="sort-group form-group form-group-sm row" data-name="ob">
-            <label class="col-md-3 col-sm-2 control-label text-right">排序</label>
+            <label class="col-md-3 col-sm-2 control-label form-label text-right">排序</label>
             <div class="col-md-6 col-sm-8">
                 <input type="hidden" name="ob" value="<%=_ob%>" data-ft="_sort"/>
                 <div>

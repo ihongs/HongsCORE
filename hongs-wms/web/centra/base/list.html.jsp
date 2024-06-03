@@ -404,7 +404,9 @@
                         </div>
                         <%for (String ln : siftEnum) {%>
                         <div data-kind="enum" data-name="<%=ln%>" class="sift-select">
-                            <select data-fn="<%=ln%>" data-ft="_enum" class="value form-control"></select>
+                            <select data-fn="<%=ln%>" data-ft="_enum" class="value form-control">
+                                <option value=""><%=_locale.translate("fore.form.select")%></option>
+                            </select>
                         </div>
                         <%} /*End for*/%>
                     </div>

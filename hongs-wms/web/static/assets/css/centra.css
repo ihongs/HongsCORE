@@ -365,10 +365,13 @@ body {
     padding: 15px;
     padding-bottom: 0;
     line-height: 20px;
+     max-height: 50px;
+    scrollbar-width: 14px;
+    scrollbar-color: rgba(128,128,128,0.5);
     overflow-x : auto;
     overflow-y : hidden;
     white-space: nowrap;
-    background-color: transparent;
+    background: transparent;
 }
 #menu-context .breadcrumb::-webkit-scrollbar {
     max-width : 14px;
@@ -376,6 +379,17 @@ body {
 }
 #menu-context .breadcrumb::-webkit-scrollbar-thumb {
     background: rgba(128,128,128,0.5);
+}
+#menu-context .breadcrumb::-webkit-scrollbar-track {
+    background: rgba(128,128,128,0.0);
+}
+#menu-context .breadcrumb::-webkit-scrollbar-button {
+    display: none;
+}
+#menu-context .breadcrumb li+li:before,
+#menu-context .breadcrumb li>a>* {
+    display: inline-block;
+    float: left;
 }
 #menu-context .breadcrumb .close {
     font-weight : inherit;

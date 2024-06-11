@@ -258,7 +258,7 @@ input[type="time"].form-control {
     position: sticky;
     left: 0;
     top : 0;
-    z-index: 3;
+    z-index: 1;
     background: #fff;
     box-shadow: 0 0 2px #ddd;
 }

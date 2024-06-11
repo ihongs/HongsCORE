@@ -244,20 +244,25 @@ input[type="time"].form-control {
 
 /** 响应式表格区 **/
 
-/* 修正响应式表格在移动端不出滚动条的问题 */
-/* 废弃, 只用 table-compressed */
-.table-responsive-revised {
-    width: 100%;
-    display: table;
-    table-layout: fixed;
+.table-responsive {
+    margin-bottom:20px;
 }
-.table-responsive-revised>* {
-    background-color: #ffffff;
-    border: 1px solid #e5e5e5;
-    border-radius : 4px;
+.table-responsive>.table {
+    margin-bottom: 0px;
 }
-.table-responsive-revised td ,
-.table-responsive-revised th ,
+
+.table-compressed {
+    position: relative;
+}
+.table-compressed> thead {
+    position: sticky;
+    left: 0;
+    top : 0;
+    z-index: 3;
+    background: #fff;
+    box-shadow: 0 0 2px #ddd;
+}
+
 .table-compressed td ,
 .table-compressed th {
     max-width: 20em;
@@ -267,19 +272,13 @@ input[type="time"].form-control {
     text-overflow: ellipsis;
 }
 
-.table-responsive {
-    margin-bottom: 20px;
-}
-.table-responsive>.table {
-    margin-bottom:  0px;
-}
-.table tbody tr.active td ,
-.table tbody tr.active th {
+.table>tbody tr.active>td ,
+.table>tbody tr.active>th {
     color: #444444;
     background: #e8e8e8;
 }
-.table tbody tr.active:hover td ,
-.table tbody tr.active:hover th {
+.table tbody tr.active:hover>td ,
+.table tbody tr.active:hover>th {
     color: #000000;
     background: #e0e0e0;
 }

@@ -251,9 +251,6 @@ input[type="time"].form-control {
     margin-bottom: 0px;
 }
 
-.table-compressed {
-    position: relative;
-}
 .table-compressed> thead {
     position: sticky;
     left: 0;

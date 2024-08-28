@@ -467,6 +467,7 @@ function hsFormFillPick(box, v, n) {
         ent.find(".title").text(txt);
         ent.find(".value").val (val);
         ent.attr( "title", txt );
+        ent.data( "value", val );
     }
 
     // 根据多选或只读, 隐藏和显示按钮
@@ -486,8 +487,9 @@ function hsFormFillPick(box, v, n) {
         box.on("click", ".erase,.close", [btn, box], function(evt) {
             var btn = evt.data[0];
             var box = evt.data[1];
-            var opt = jQuery( this ).closest( "li" );
-            var val = opt.find("input:hidden").val();
+            var opt = jQuery(this).closest("li");
+            var val = opt.find(".value" ).val( )
+                   || opt.data( "value" );
             delete  v [val];
             opt.remove();
             btn. show ();
@@ -497,9 +499,10 @@ function hsFormFillPick(box, v, n) {
         box.on("click", "li:not([data-toggle])", [btn, box], function(evt) {
             var btn = evt.data[0];
             var box = evt.data[1];
-            var opt = jQuery( this ).closest( "li" );
-            var val = opt.find("input:hidden").val();
-            var key = box.attr("data-vk" )||( "id" );
+            var opt = jQuery(this).closest("li");
+            var val = opt.find(".value" ).val( )
+                   || opt.data( "value" );
+            var key = box.attr("data-vk")||"id" ;
             var url = box.attr("data-href"  );
             var rel = box.attr("data-target");
             if (url === "-" || rel === "-"
@@ -507,7 +510,7 @@ function hsFormFillPick(box, v, n) {
                 return; // 可阻止默认行为
             }
             if (url) {
-                url = hsSetParam ( url , key , val );
+                url = hsSetParam (url, key, val);
                 if (! rel) {
                  jQuery.hsOpen(url);
                 } else {

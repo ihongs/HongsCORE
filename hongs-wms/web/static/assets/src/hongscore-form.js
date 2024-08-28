@@ -40,6 +40,9 @@ function HsForm(context, opts) {
         }
     }
 
+    // 预载指示
+    var loadBak = !this._url;
+
     // 绑定参数
     var loadArr = hsSerialArr(loadBox);
     if (loadDat) {
@@ -74,7 +77,8 @@ function HsForm(context, opts) {
     && (hsGetParam(loadUrl, idKey)
     ||  hsGetParam(loadUrl, abKey))) {
         this.load (loadUrl);
-    } else if (! this._url) {
+    } else
+    if (loadBak) {
         this.loadBack( {} );
     }
 }
@@ -509,7 +513,8 @@ HsForm.prototype = {
             return  u;
         }
 
-        throw new Error("Wrong validate argument type", all);
+        console.error("HsForm.validate: Wrong validate argument: "+all);
+        return false ;
     },
     verified : function() {
         // 旧版兼容
@@ -1274,7 +1279,7 @@ HsForm.prototype = {
         "[data-relate]" : function(inp, val) {
             var fn = inp.attr("data-relate");
             if (fn && this.getValue(this.getInput(fn))) {
-                this.validate(fn);
+                this.test(fn);
             }
             return true;
         }

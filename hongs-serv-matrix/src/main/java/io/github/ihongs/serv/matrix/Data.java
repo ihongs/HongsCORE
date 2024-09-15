@@ -686,6 +686,10 @@ public class Data extends SearchEntity {
             if (Synt.declare(od.get("ctime"), 0L ) >= ctime) {
                 throw new CruxException(400, "@matrix:matrix.wait.one.second", getFormId(), id);
             }
+        } else {
+            if (ctime == 0) {
+                ctime = System.currentTimeMillis() / 1000; // 无则创建
+            }
         }
 
         Map ud = new HashMap();
@@ -765,7 +769,11 @@ public class Data extends SearchEntity {
             }
             if (Synt.declare(od.get("ctime"), 0L ) >= ctime) {
             //  throw new CruxException(400, "@matrix:matrix.wait.one.second", getFormId(), id);
-                ctime = 0;
+                ctime =  0;
+            }
+        } else {
+            if (ctime == 0) {
+                ctime = System.currentTimeMillis() / 1000; // 无则创建
             }
         }
 

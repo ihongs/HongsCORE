@@ -32,33 +32,37 @@ public class PresetInvoker implements FilterInvoker {
         String[] deft = ann.deft();
         String[] defs = ann.defs();
 
-        // 默认参数可完全由外部指定
         if (deft == null || deft.length == 0) {
             Map req = helper.getRequestData();
-            Set<String> uzed = Synt.toTerms(req.get(Cnst.AB_KEY));
-            Set<String> used = new LinkedHashSet ();
-            if (null != uzed && ! uzed.isEmpty ( )) {
-                for(String item : uzed) {
-                    /*
-                    // 2021/04/17
-                    // 废弃返回数据模式
-                    // 规避内部不确定性
-                    // 总是返回原始对象
-                    if (item.equals("_obj_")) {
-                        Core.getInstance().put(Cnst.STRING_MODE, false);
-                    } else
-                    if (item.equals("_str_")) {
-                        Core.getInstance().put(Cnst.STRING_MODE, true );
-                    } else
-                    */
-                    if (item.length() > 1) {
-                    char c  = item.charAt(0);
-                    if ( c != '_' && c != '.' && c != ':' && c != '!' ) {
-                        used.add(form+".def."+item);
-                    }}
-                }
-                deft  = used.toArray(new String[0]);
+            Set<String> abz = Synt.toTerms(req.get(Cnst.AB_KEY));
+        if (abz != null &&  ! abz.isEmpty() ) {
+            Set<String> abs = new LinkedHashSet(1 + abz.size( ));
+            for(String  ab  : abz) {
+                /*
+                // 2021/04/17
+                // 废弃返回数据模式
+                // 规避内部不确定性
+                // 总是返回原始对象
+                if (ab.equals("_obj_")) {
+                    Core.getInstance().put(Cnst.STRING_MODE, false);
+                } else
+                if (ab.equals("_str_")) {
+                    Core.getInstance().put(Cnst.STRING_MODE, true );
+                } else
+                */
+                if (ab.length() > 1) {
+                char c  =  ab.charAt(0);
+                if ( c != '_' && c != '.' && c != ':' && c != '!' ) {
+                    abs .  add  (form+".def."+ab); // 外部默认
+                }}
             }
+                    abs .  add  (form+".default"); // 内部默认
+            deft =  abs .toArray(new String [0] );
+        } else {
+            deft =  new String[]{form+".default"}; // 内部默认
+        }}
+        if (defs == null || defs.length == 0) {
+            defs =  new String[]{form+".defense"}; // 内部防御
         }
 
         // 识别路径

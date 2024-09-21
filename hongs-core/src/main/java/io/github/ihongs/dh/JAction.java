@@ -83,7 +83,7 @@ abstract public class JAction implements IActing, IAction {
 
     @Override
     @Action("search")
-    @Preset(conf="", form="", defs={"defense"})
+    @Preset(conf="", form="")
     @Select(conf="", form="")
     public void search(ActionHelper helper) throws CruxException {
         IEntity sr = getEntity(helper);
@@ -96,7 +96,7 @@ abstract public class JAction implements IActing, IAction {
 
     @Override
     @Action("recite")
-    @Preset(conf="", form="", defs={"defense"})
+    @Preset(conf="", form="")
     @Select(conf="", form="")
     public void recite(ActionHelper helper) throws CruxException {
         IEntity sr = getEntity(helper);
@@ -109,7 +109,7 @@ abstract public class JAction implements IActing, IAction {
 
     @Override
     @Action("create")
-    @Preset(conf="", form="", deft={".default"})
+    @Preset(conf="", form="")
     @Verify(conf="", form="")
     @CommitSuccess
     public void create(ActionHelper helper) throws CruxException {
@@ -123,7 +123,7 @@ abstract public class JAction implements IActing, IAction {
 
     @Override
     @Action("update")
-    @Preset(conf="", form="", defs={".defence"})
+    @Preset(conf="", form="")
     @Verify(conf="", form="")
     @CommitSuccess
     public void update(ActionHelper helper) throws CruxException {
@@ -137,7 +137,7 @@ abstract public class JAction implements IActing, IAction {
 
     @Override
     @Action("delete")
-    @Preset(conf="", form="", defs={".defence"})
+    @Preset(conf="", form="")
     @CommitSuccess
     public void delete(ActionHelper helper) throws CruxException {
         IEntity sr = getEntity(helper);

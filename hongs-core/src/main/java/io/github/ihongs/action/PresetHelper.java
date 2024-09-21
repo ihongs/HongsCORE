@@ -80,6 +80,25 @@ public class PresetHelper {
     /**
      * 以表单配置追加预设值
      * 注意:
+     *  会添加默认 name+".default"
+     *  及添加防御 name+".defense"
+     * @param conf
+     * @param name
+     * @return
+     * @throws io.github.ihongs.CruxException
+     */
+    public PresetHelper addItemsByForm(String conf, String name)
+    throws CruxException {
+        return addItemsByForm(
+            conf, name,
+            new String[] {name+".default"},
+            new String[] {name+".defense"}
+        );
+    }
+
+    /**
+     * 以表单配置追加预设值
+     * 注意:
      *  deft,defs 中以 . 打头会把 name 作为前缀,
      *  name=abc, deft=.xyz 会取 abc.xyz 的枚举.
      * @param conf
@@ -91,15 +110,9 @@ public class PresetHelper {
      */
     public PresetHelper addItemsByForm(String conf, String name, String[] deft, String[] defs)
     throws CruxException {
-        FormSet form = FormSet.getInstance (conf);
+        FormSet form = FormSet.getInstance(conf);
 
-        // 缺省指定
-        if (defs.length == 0 && deft.length == 0) {
-            addDefenseData(form, name+".defense");
-            addDefaultData(form, name+".default");
-            return this;
-        }
-
+        if (defs != null)
         for (String usen : defs) {
             if (name != null
             &&  usen.startsWith(".") ) {
@@ -108,6 +121,7 @@ public class PresetHelper {
             addDefenseData(form, usen);
         }
 
+        if (deft != null)
         for (String usen : deft) {
             if (name != null
             &&  usen.startsWith(".") ) {

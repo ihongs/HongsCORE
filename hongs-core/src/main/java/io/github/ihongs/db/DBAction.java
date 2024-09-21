@@ -77,9 +77,16 @@ public class DBAction implements IAction, IActing {
         }
     }
 
+    @Action("recipe")
+    @Select(conf="", form="")
+    public void recipe(ActionHelper helper)
+    throws CruxException {
+        helper.reply("");
+    }
+
     @Override
     @Action("search")
-    @Preset(conf="", form="", defs={"defense"})
+    @Preset(conf="", form="")
     @Select(conf="", form="")
     public void search(ActionHelper helper)
     throws CruxException {
@@ -93,7 +100,7 @@ public class DBAction implements IAction, IActing {
 
     @Override
     @Action("recite")
-    @Preset(conf="", form="", defs={"defense"})
+    @Preset(conf="", form="")
     @Select(conf="", form="")
     public void recite(ActionHelper helper)
     throws CruxException {
@@ -107,7 +114,7 @@ public class DBAction implements IAction, IActing {
 
     @Override
     @Action("create")
-    @Preset(conf="", form="", deft={".default"})
+    @Preset(conf="", form="")
     @Verify(conf="", form="")
     @CommitSuccess
     public void create(ActionHelper helper)
@@ -122,7 +129,7 @@ public class DBAction implements IAction, IActing {
 
     @Override
     @Action("update")
-    @Preset(conf="", form="", defs={"defence"})
+    @Preset(conf="", form="")
     @Verify(conf="", form="")
     @CommitSuccess
     public void update(ActionHelper helper)
@@ -137,7 +144,7 @@ public class DBAction implements IAction, IActing {
 
     @Override
     @Action("delete")
-    @Preset(conf="", form="", defs={"defence"})
+    @Preset(conf="", form="")
     @CommitSuccess
     public void delete(ActionHelper helper)
     throws CruxException {

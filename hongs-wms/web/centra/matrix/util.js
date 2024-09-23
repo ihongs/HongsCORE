@@ -691,11 +691,11 @@ $.fn.hsCols = function() {
         if (type == '_') {
             tabs.find("li:eq(1) a").click();
             tabs.find("li:eq(0)"  ).hide( );
-        } else
+        } else /* // 分隔和附注允许其打开高级设置
         if (type == 'legend' ||  type == 'figure') {
             tabs.find("li:eq(0) a").click();
             tabs.find("li:eq(1)"  ).hide( );
-        } else
+        } else */
         {
             tabs.find("li:eq(0) a").click();
             tabs.find("li"        ).show( );

@@ -1063,9 +1063,22 @@ public class Data extends SearchEntity {
             throw new CruxException(400, "@matrix:matrix.node.is.current", getFormId(), id, ctime);
         }}
 
-        // 保存到文档库
+        // 处理不可逆值
+        Map xd , zd ;
         Map dd = getData((String) sd.get("data"));
-        Map xd = new HashMap(00);
+        Set ur = getCaseNames("unrevtable");
+        if (null != ur && ! ur.isEmpty( ) ) {
+            zd = getData((String) od.get("data"));
+            xd = new HashMap ( ur.size( ) );
+            for( Object n : ur /****/ ) {
+            if ( zd . containsKey (n) ) {
+                xd.put( n , zd.get(n) );
+            }}
+        } else {
+            xd = new HashMap(00);
+        }
+
+        // 保存到文档库
         dd.put(Cnst.ID_KEY , id);
         padInf(dd, xd);
         Document dc = padDoc(dd);

@@ -58,12 +58,16 @@
             <%
                 text = Synt.defxult(Synt.asString(info.get("form-text")), text, "");
             %>
-            <legend data-name="<%=name%>"><%=text%></legend>
+            <div class="form-group" data-name="<%=name%>">
+                <legend><%=text%></legend>
+            </div>
         <%} else if ("figure".equals(type)) {%>
             <%
                 text = Synt.defxult(Synt.asString(info.get("form-text")), text, "");
             %>
-            <figure data-name="<%=name%>"><%=text%></figure>
+            <div class="form-group" data-name="<%=name%>">
+                <figure><%=text%></figure>
+            </div>
         <%} else {%>
             <%
                 String hold, pfc, gfc;

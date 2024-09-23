@@ -54,12 +54,20 @@
             <%
                 text = Synt.defxult(Synt.asString(info.get("info-text")), text, "");
             %>
-            <legend data-name="<%=name%>"><%=text%></legend>
+            <div class="form-group row" data-name="<%=name%>">
+                <div class="col-xs-12">
+                    <legend><%=text%></legend>
+                </div>
+            </div>
         <%} else if ("figure".equals(type)) {%>
             <%
                 text = Synt.defxult(Synt.asString(info.get("info-text")), text, "");
             %>
-            <figure data-name="<%=name%>"><%=text%></figure>
+            <div class="form-group row" data-name="<%=name%>">
+                <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2">
+                    <figure><%=text%></figure>
+                </div>
+            </div>
         <%} else {%>
             <%
                 text = Synt.defxult(Synt.asString(info.get("info-text")), text, "");

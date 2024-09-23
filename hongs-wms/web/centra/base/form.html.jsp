@@ -38,15 +38,11 @@
             boolean roly = Synt.declare(info.get(  "readonly"  ), false);
 
             /**
-             * 新增时只读字段未强制默认,
-             * 转为非只读字段供首次输入.
+             * 只读字段创建时没值,
+             * 不必显示, 直接跳过.
              */
-            if (roly && _action.equals("create")) {
-                Object defo = info.get("deforce");
-                if (defo != null && ! defo.equals("")) {
-                    continue;
-                }
-                roly = false;
+            if (roly && "create".equals(_action)) {
+                continue ;
             }
         %>
         <%if ("hidden".equals(type)) {%>

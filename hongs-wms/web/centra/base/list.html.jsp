@@ -619,53 +619,44 @@
                     <th data-fn="<%=name%>" data-ft="_hdate" <%=ob%> class="<%=oc%> numerial _hdate"><%=text%></th>
                 <%} else if ("htime".equals(type)) {%>
                     <th data-fn="<%=name%>" data-ft="_htime" <%=ob%> class="<%=oc%> numerial _htime"><%=text%></th>
-                <%} else if (  "url".equals(type)) {%>
-                    <th data-fn="<%=name%>" data-ft="_ulink" <%=ob%> class="<%=oc%> text-center"><%=text%></th>
-                <%} else if ("email".equals(type)) {%>
-                    <th data-fn="<%=name%>" data-ft="_email" <%=ob%> class="<%=oc%> text-center"><%=text%></th>
                 <%} else if ("image".equals(type)) {%>
                     <th data-fn="<%=name%>" data-ft="_image" <%=ob%> class="<%=oc%> text-center"><%=text%></th>
                 <%} else if ("video".equals(type)) {%>
                     <th data-fn="<%=name%>" data-ft="_video" <%=ob%> class="<%=oc%> text-center"><%=text%></th>
                 <%} else if ("audio".equals(type)) {%>
                     <th data-fn="<%=name%>" data-ft="_audio" <%=ob%> class="<%=oc%> text-center"><%=text%></th>
-                <%} else if ("file".equals(type)) {%>
+                <%} else if ( "file".equals(type)) {%>
                     <th data-fn="<%=name%>" data-ft="_files" <%=ob%> class="<%=oc%> text-center"><%=text%></th>
+                <%} else if (  "url".equals(type)) {%>
+                    <th data-fn="<%=name%>" data-ft="_links" <%=ob%> class="<%=oc%> text-center"><%=text%></th>
+                <%} else if ("email".equals(type)) {%>
+                    <th data-fn="<%=name%>" data-ft="_email" <%=ob%> class="<%=oc%>"><%=text%></th>
                 <%} else if ("textarea".equals(type) || "textview".equals(type)) {%>
                     <th data-fn="<%=name%>" data-ft="_texts" <%=ob%> class="<%=oc%>"><%=text%></th>
-                <%} else if ("enum".equals(type) || "type".equals(type) || "check".equals(type) || "radio".equals(type) || "select".equals(type)) {%>
-                    <%
-                        if (name.endsWith( "." )) {
-                            name = name.substring(0, name.length() - 1);
-                        }
-                        if (name.endsWith("_id")) {
-                            name = name.substring(0, name.length() - 3);
-                        } else {
-                            name = name + "_text";
-                        }
-                    %>
-                    <th data-fn="<%=name%>" <%=ob%> class="<%=oc%>"><%=text%></th>
                 <%} else if ("pick".equals(type) || "fork".equals(type)) {%>
                     <%
-                        if (name.endsWith( "." )) {
-                            name = name.substring(0, name.length() - 1);
-                        }
-                        if (name.endsWith("_id")) {
-                            name = name.substring(0, name.length() - 3);
-                        } else {
-                            name = name + "_fork";
-                        }
-                        String subn = "name";
-                        if (info.get("data-ln") != null) {
-                            name = (String) info.get("data-ln");
-                        }
+                        String subn =  "name" ;
                         if (info.get("data-tk") != null) {
                             subn = (String) info.get("data-tk");
+                        }
+                        if (info.get("data-ln") != null) {
+                            name = (String) info.get("data-ln");
+                        } else
+                        if (name.endsWith("_id")) {
+                            name = name.substring(0 , name.length( ) - 3 );
+                        } else
+                        {
+                            name = name + "_fork";
                         }
                         if (Synt.declare(info.get("__repeated__"), false)) {
                             name = name + "." ;
                         }
                         name = name +"."+ subn;
+                    %>
+                    <th data-fn="<%=name%>" <%=ob%> class="<%=oc%>"><%=text%></th>
+                <%} else if ("enum".equals(type) || "type".equals(type) || "check".equals(type) || "radio".equals(type) || "select".equals(type)) {%>
+                    <%
+                        name = name + "_text" ;
                     %>
                     <th data-fn="<%=name%>" <%=ob%> class="<%=oc%>"><%=text%></th>
                 <%} else if (!"primary".equals(info.get("primary")) && !"foreign".equals(info.get("foreign"))) {%>
@@ -722,7 +713,7 @@
         // 多行文本, 富文本等
         _fill__texts: hsFillListMore,
         // 链接填充, 支持多值, 占格子窄
-        _fill__ulink: hsListWrapOpen("link" ),
+        _fill__links: hsListWrapOpen("link" ),
         _fill__files: hsListWrapOpen("file" ),
         _fill__image: hsListWrapOpen("image"),
         _fill__video: hsListWrapOpen("video"),

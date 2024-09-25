@@ -98,17 +98,17 @@ public class SessInDB  implements Initer {
             if (dp.containsKey("password")) {
                 sb.append("&password=").append(URLEncoder.encode((String) dp.get("password"), "UTF-8"));
             }
+            // Jetty 采用序列化存储, 无特别数据类型,
+            // 附加参数会反而被作为库名部分导致错误.
+            /*
+            if (dp.containsKey("connectionProperties")) {
+                sb.append("&").append(((String) dp.get("connectionProperties")).replace(';' , '&'));
+            }
+            */
         }
         catch (UnsupportedEncodingException e) {
             throw new CruxExemption (e);
         }
-        // Jetty 采用序列化存储, 无特别数据类型,
-        // 附加参数会反而被作为库名部分导致错误.
-        /*
-        if (dp.containsKey("connectionProperties")) {
-            sb.append("&").append(((String)dp.get("connectionProperties")).replace(';','&'));
-        }
-        */
         if (sb.length(   ) != 0 ) {
             sb.setCharAt (0, '?');
             return sb.toString( );

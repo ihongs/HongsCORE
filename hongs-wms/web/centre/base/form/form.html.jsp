@@ -24,6 +24,7 @@
 
             if ("@".equals(name)
             ||  Synt.declare(info.get( "disabled" ), false)
+            ||  Synt.declare(info.get( "readonly" ), false)
             ||  Synt.declare(info.get("unwritable"), false)
             ||  Synt.declare(info.get("unopenable"), false)) {
                 continue ;
@@ -34,15 +35,6 @@
             String  hint = Synt.asString(info.get("__hint__"));
             boolean rqrd = Synt.declare(info.get("__required__"), false);
             boolean rptd = Synt.declare(info.get("__repeated__"), false);
-            boolean roly = Synt.declare(info.get(  "readonly"  ), false);
-
-            /**
-             * 只读字段创建时没值,
-             * 不必显示, 直接跳过.
-             */
-            if (roly && "create".equals(_action)) {
-                continue ;
-            }
 
             // 可以自定义字段显示文本
             if (info.containsKey("text")) {
@@ -78,7 +70,6 @@
                 gfc  =  "" ;
                 if (rqrd) gfc += " is-required";
                 if (rptd) gfc += " is-repeated";
-                if (roly) gfc += " is-readonly";
                 if (gfc.length() > 0) gfc = gfc.substring(1);
             %>
             <%if ("form".equals(type) || "part".equals(type)) {%>

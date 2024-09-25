@@ -90,7 +90,7 @@ public class SessInDB  implements Initer {
         }
 
         // 拼接用户名密码
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder( );
         try {
             if (dp.containsKey("username")) {
                 sb.append("&user="/**/).append(URLEncoder.encode((String) dp.get("username"), "UTF-8"));
@@ -106,8 +106,8 @@ public class SessInDB  implements Initer {
             }
             */
         }
-        catch (UnsupportedEncodingException e) {
-            throw new CruxExemption (e);
+        catch (UnsupportedEncodingException ex) {
+            throw new CruxExemption(ex);
         }
 
         if (sb.length() == 0) {

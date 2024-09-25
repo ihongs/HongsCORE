@@ -109,12 +109,13 @@ public class SessInDB  implements Initer {
         catch (UnsupportedEncodingException e) {
             throw new CruxExemption (e);
         }
-        if (sb.length(   ) != 0 ) {
-            sb.setCharAt (0, '?');
-            return sb.toString( );
+
+        if (sb.length() == 0) {
+            return "";
         }
 
-        return "";
+        sb.setCharAt (0, '?');
+        return sb.toString( );
     }
 
 }

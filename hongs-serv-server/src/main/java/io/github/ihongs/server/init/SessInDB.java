@@ -5,6 +5,8 @@ import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CruxException;
 import io.github.ihongs.CruxExemption;
 import io.github.ihongs.db.DBConfig;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Map;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.session.DatabaseAdaptor;
@@ -89,11 +91,16 @@ public class SessInDB  implements Initer {
 
         // 拼接用户名密码
         StringBuilder sb = new StringBuilder();
-        if (dp.containsKey("username")) {
-            sb.append("&user="/**/).append(dp.get("username"));
+        try {
+            if (dp.containsKey("username")) {
+                sb.append("&user="/**/).append(URLEncoder.encode((String) dp.get("username"), "UTF-8"));
+            }
+            if (dp.containsKey("password")) {
+                sb.append("&password=").append(URLEncoder.encode((String) dp.get("password"), "UTF-8"));
+            }
         }
-        if (dp.containsKey("password")) {
-            sb.append("&password=").append(dp.get("password"));
+        catch (UnsupportedEncodingException e) {
+            throw new CruxExemption (e);
         }
         // Jetty 采用序列化存储, 无特别数据类型,
         // 附加参数会反而被作为库名部分导致错误.

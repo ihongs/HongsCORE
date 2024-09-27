@@ -1,6 +1,7 @@
 package io.github.ihongs.serv.oauth2;
 
 import io.github.ihongs.Cnst;
+import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.CruxException;
@@ -29,10 +30,10 @@ public class QQAction {
     @Action("web/create")
     @CommitSuccess
     public void inWeb(ActionHelper helper) throws CruxException {
-        CoreConfig cc = CoreConfig.getInstance("oauth2");
+        CoreConfig cc = CoreConfig.getInstance("auth");
         String  appId = cc.getProperty("oauth2.qq.web.app.id" );
         String  appSk = cc.getProperty("oauth2.qq.web.app.key");
-        String   rurl = cc.getProperty("oauth2.qq.wap.bak.url");
+        String   rurl = Core.SERVER_HREF.get()+"/"+Core.SERVER_PATH.get()+"/"+Core.ACTION_NAME.get();
         String   code = helper.getParameter ("code");
 
         if (appId == null || appSk == null) {
@@ -69,10 +70,10 @@ public class QQAction {
     @Action("wap/create")
     @CommitSuccess
     public void inWap(ActionHelper helper) throws CruxException {
-        CoreConfig cc = CoreConfig.getInstance("oauth2");
+        CoreConfig cc = CoreConfig.getInstance("auth");
         String  appId = cc.getProperty("oauth2.qq.wap.app.id" );
         String  appSk = cc.getProperty("oauth2.qq.wap.app.key");
-        String   rurl = cc.getProperty("oauth2.qq.wap.bak.url");
+        String   rurl = Core.SERVER_HREF.get()+"/"+Core.SERVER_PATH.get()+"/"+Core.ACTION_NAME.get();
         String   code = helper.getParameter ("code");
 
         if (appId == null || appSk == null) {

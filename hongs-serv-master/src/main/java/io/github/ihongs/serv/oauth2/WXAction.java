@@ -29,7 +29,7 @@ public class WXAction {
     @Action("web/create")
     @CommitSuccess
     public void inWeb(ActionHelper helper) throws CruxException {
-        CoreConfig cc = CoreConfig.getInstance("oauth2");
+        CoreConfig cc = CoreConfig.getInstance("auth");
         String  appId = cc.getProperty("oauth2.wx.web.app.id" );
         String  appSk = cc.getProperty("oauth2.wx.web.app.key");
         String   code = helper.getParameter ("code");
@@ -69,7 +69,7 @@ public class WXAction {
     @Action("wap/create")
     @CommitSuccess
     public void inWap(ActionHelper helper) throws CruxException {
-        CoreConfig cc = CoreConfig.getInstance("oauth2");
+        CoreConfig cc = CoreConfig.getInstance("auth");
         String  appId = cc.getProperty("oauth2.wx.wap.app.id" );
         String  appSk = cc.getProperty("oauth2.wx.wap.app.key");
         String   code = helper.getParameter ("code");

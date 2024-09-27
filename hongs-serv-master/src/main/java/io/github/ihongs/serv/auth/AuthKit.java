@@ -6,6 +6,7 @@ import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLocale;
 import io.github.ihongs.CruxCause;
 import io.github.ihongs.CruxException;
+import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.VerifyHelper;
 import io.github.ihongs.db.DB;
@@ -19,7 +20,6 @@ import io.github.ihongs.util.verify.Wrongs;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.TreeSet;
@@ -56,50 +56,36 @@ public class AuthKit {
      */
     public static void redirect(ActionHelper helper, Map rst)
     throws CruxException {
-        String k, v, r;
-        CoreConfig cc = CoreConfig.getInstance("oauth2");
+        CoreConfig cc = CoreConfig.getInstance("auth");
+        String v = cc.getProperty("auth.home.url", "");
+        String r = cc.getProperty("auth.back.key","r");
+               r = helper.getParameter(r);
 
-        do {
-            k = cc.getProperty("oauth2.bak.prm", "r");
-            r = v = helper.getParameter(k);
-            if (v != null && !v.isEmpty()) {
-                break;
+        if (r != null && ! r.isEmpty( )) {
+            if ("_mine_info_".equals(r)) {
+                Object id = helper.getSessibute(Cnst.UID_SES);
+                Map    rd = helper.getRequestData( );
+                       rd.put (Cnst.ID_KEY , id);
+                new UserAction().getInfo(helper);
+            } else
+            if ("_sign_info_".equals(r)) {
+                helper.reply(Synt.mapOf(
+                    "info", rst
+                ));
+            } else
+            if ("-".equals(r)) {
+                helper.reply("");
+            } else {
+                helper.ensue(r );
             }
-
-            k = cc.getProperty("oauth2.bak.cok");
-            if (k != null && !k.isEmpty()) {
-                v = (String) helper.getCookibute( k );
-                if (v != null && !v.isEmpty()) {
-                    helper.setCookibute(k, null); // 清除 Cookies
-                    break;
-                }
-            }
-
-            k = cc.getProperty("oauth2.bak.ses");
-            if (k != null && !k.isEmpty()) {
-                v = (String) helper.getSessibute( k );
-                if (v != null && !v.isEmpty()) {
-                    helper.setSessibute(k, null); // 清除 Session
-                    break;
-                }
-            }
-
-            v = cc.getProperty("oauth2.bak.url", Core.SERV_PATH + "/");
-        } while (false);
-
-        if ("_mine_info_".equals(r)) {
-            Object id = helper.getSessibute(Cnst.UID_SES);
-            Map    rd = helper.getRequestData();
-                   rd.put (Cnst.ID_KEY , id);
-            new UserAction().getInfo(helper);
-        } else
-        if ("_sign_info_".equals(r)) {
-            helper.reply(Synt.mapOf("info", rst));
-        } else
-        if ("-".equals(r)) {
-            helper.reply("");
         } else {
-            helper.ensue(v );
+            r= (String) helper.getSessibute("redirect");
+            if (r != null) {
+                helper.setAttribute( "redirect", null );
+                helper.ensue(r );
+            } else {
+                helper.ensue(v );
+            }
         }
     }
 
@@ -115,51 +101,45 @@ public class AuthKit {
      */
     public static void redirect(ActionHelper helper, CruxCause err)
     throws CruxException {
-        String k, v, r;
-        CoreConfig cc = CoreConfig.getInstance("oauth2");
+        CoreConfig cc = CoreConfig.getInstance("auth");
+        String v = cc.getProperty("auth.home.url", "");
+        String r = cc.getProperty("auth.back.key","r");
+               r = helper.getParameter(r);
 
-        do {
-            k = cc.getProperty("oauth2.bak.prm", "r");
-            r = v = helper.getParameter(k);
-            if (v != null && !v.isEmpty()) {
-                break;
+        if (r != null && ! r.isEmpty( )) {
+            if ("_mine_info_".equals(r)
+            ||  "_sign_info_".equals(r)
+            ||  "-".equals(r)) {
+                // 输出 JSON
+                helper.reply( Synt.mapOf (
+                    "ok" , false,
+                    "ern", err.getStage  (),
+                    "err", err.getMessage(),
+                    "msg", err.getLocalizedMessage()
+                ));
+            } else {
+                // 输出 HTML
+                String m = err.getLocalizedMessage();
+                       r = ActionDriver.fixUrl ( r );
+                helper.setAttribute( "redirect", r );
+                helper.error(401, m);
             }
-
-            k = cc.getProperty("oauth2.bak.cok");
-            if (k != null && !k.isEmpty()) {
-                v = (String) helper.getCookibute( k );
-                if (v != null && !v.isEmpty()) {
-                    helper.setCookibute(k, null); // 清除 Cookies
-                    break;
-                }
-            }
-
-            k = cc.getProperty("oauth2.bak.ses");
-            if (k != null && !k.isEmpty()) {
-                v = (String) helper.getSessibute( k );
-                if (v != null && !v.isEmpty()) {
-                    helper.setSessibute(k, null); // 清除 Session
-                    break;
-                }
-            }
-
-            v = cc.getProperty("oauth2.bak.url" , Core.SERV_PATH+"/");
-        } while (false);
-
-        if ("_mine_info_".equals(r)
-        ||  "_sign_info_".equals(r)
-        ||  "-".equals(r)) {
-            // 输出 JSON
-            helper.reply( Synt.mapOf (
-                "ok" , false,
-                "ern", err.getStage  (),
-                "err", err.getMessage(),
-                "msg", err.getLocalizedMessage()
-            ));
         } else {
-            // 输出 HTML
-            String m = err.getLocalizedMessage();
-            helper.ensue(401, v, m);
+            r= (String) helper.getSessibute("redirect");
+            if (r != null) {
+                helper.setAttribute( "redirect", null );
+                // 输出 HTML
+                String m = err.getLocalizedMessage();
+                       r = ActionDriver.fixUrl ( r );
+                helper.setAttribute( "redirect", r );
+                helper.error(401, m);
+            } else {
+                // 输出 HTML
+                String m = err.getLocalizedMessage();
+                       v = ActionDriver.fixUrl ( v );
+                helper.setAttribute( "redirect", v );
+                helper.error(401, m);
+            }
         }
     }
 
@@ -180,17 +160,20 @@ public class AuthKit {
 
         // 重建会话
         if (sd != null) {
-            Enumeration<String> ns = sd.getAttributeNames();
-            Map<String, Object> ss = new HashMap (/*Copy*/);
-            while ( ns.hasMoreElements() ) {
-                String nn = ns.nextElement (    );
-                ss.put(nn , sd.getAttribute(nn) );
+            Set<String> ns = Synt.toTerms(CoreConfig.getInstance("auth").get("auth.save.sess"));
+        if (ns != null) {
+            Map<String, Object> ss = new HashMap(ns.size());
+            for(String  nn : ns) {
+                ss.put( nn , sd.getAttribute(nn));
             }
             sd.invalidate();
             sd = ah.getRequest().getSession(true);
             for(Map.Entry<String,Object> et: ss.entrySet()) {
                 sd.setAttribute(et.getKey(), et.getValue());
             }
+        } else {
+            sd = ah.getRequest().getSession(true);
+        }
         } else {
             sd = ah.getRequest().getSession(true);
         }
@@ -356,7 +339,7 @@ public class AuthKit {
      * @param unit
      * @param code
      * @param uid
-     * @throws CruxException 
+     * @throws CruxException
      */
     public static void setUserSign(String unit, String code, String uid)
     throws CruxException {

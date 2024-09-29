@@ -496,13 +496,10 @@ public class ActionDriver implements Filter, Servlet {
                 }
 
                 StringBuilder sb = new StringBuilder("...");
-                sb.append("\r\n\tACTION_NAME : ").append(Core.ACTION_NAME.get())
-                  .append("\r\n\tACTION_TIME : ").append(Core.ACTION_TIME.get())
-                  .append("\r\n\tACTION_LANG : ").append(Core.ACTION_LANG.get())
-                  .append("\r\n\tACTION_ZONE : ").append(Core.ACTION_ZONE.get())
-                  .append("\r\n\tThread      : ").append(Thread.currentThread().getName())
-                  .append("\r\n\tMethod      : ").append(req.getMethod())
+                sb.append("\r\n\tMethod      : ").append(req.getMethod())
                   .append("\r\n\tMember      : ").append(mem)
+                  .append("\r\n\tUser lang   : ").append(Core.ACTION_LANG.get())
+                  .append("\r\n\tUser zone   : ").append(Core.ACTION_ZONE.get())
                   .append("\r\n\tExec time   : ").append(tim)
                   .append("\r\n\tInstances   : ").append(core.toString());
 

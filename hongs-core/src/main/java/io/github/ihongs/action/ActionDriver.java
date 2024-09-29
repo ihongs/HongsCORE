@@ -401,14 +401,16 @@ public class ActionDriver implements Filter, Servlet {
 
     private void doLaunch(Core core, ActionHelper hlpr, HttpServletRequest req)
     throws ServletException {
-        Core.ACTION_TIME.set(System.currentTimeMillis(/***/));
-        Core.ACTION_NAME.set(getOriginPath(req).substring(1));
+        long   now = System.currentTimeMillis();
+        String act = getOriginPath(req);
+               act = act.substring( 1 );
 
-        /*
-        // 无需指定, 在需要时提取
-        Core.CLIENT_ADDR.set(getClientAddr(req));
-        Core.SERVER_HREF.set(getServerHref(req));
-        */
+        Core.ACTION_TIME.set(now);
+        Core.ACTION_NAME.set(act);
+
+        // 清除以规避旧值污染
+        Core.CLIENT_ADDR.remove();
+        Core.SERVER_HREF.remove();
 
         // 外部没有指定网站域名则在首次请求时进行设置(非线程安全)
         if (Core.SERV_HREF == null

@@ -33,7 +33,7 @@ public class QQAction {
         CoreConfig cc = CoreConfig.getInstance("auth");
         String  appId = cc.getProperty("oauth2.qq.web.app.id" );
         String  appSk = cc.getProperty("oauth2.qq.web.app.key");
-        String   rurl = Core.SERVER_HREF.get()+"/"+Core.SERVER_PATH.get()+"/"+Core.ACTION_NAME.get();
+        String   rurl = Core.SERVER_HREF.get()+Core.SERVER_PATH.get()+"/"+Core.ACTION_NAME.get();
         String   code = helper.getParameter ("code");
 
         if (appId == null || appSk == null) {
@@ -73,7 +73,7 @@ public class QQAction {
         CoreConfig cc = CoreConfig.getInstance("auth");
         String  appId = cc.getProperty("oauth2.qq.wap.app.id" );
         String  appSk = cc.getProperty("oauth2.qq.wap.app.key");
-        String   rurl = Core.SERVER_HREF.get()+"/"+Core.SERVER_PATH.get()+"/"+Core.ACTION_NAME.get();
+        String   rurl = Core.SERVER_HREF.get()+Core.SERVER_PATH.get()+"/"+Core.ACTION_NAME.get();
         String   code = helper.getParameter ("code");
 
         if (appId == null || appSk == null) {

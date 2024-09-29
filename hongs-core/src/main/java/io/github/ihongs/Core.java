@@ -1,5 +1,7 @@
 package io.github.ihongs;
 
+import io.github.ihongs.action.ActionDriver;
+import io.github.ihongs.action.ActionHelper;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.InvocationTargetException;
@@ -80,12 +82,12 @@ public class Core
   public static String SERVER_ID = "0" ;
 
   /**
-   * WEB服务域名, 注意: 不以斜杠结尾, 协议域名端口
+   * WEB服务域名, 注意: 不以斜杠结尾, 协议域名端口, 如: http://www.sample.com:8080
    */
   public static String SERV_HREF = null;
 
   /**
-   * WEB服务路径, 注意: 不以斜杠结尾, 默认为空字串
+   * WEB服务路径, 注意: 不以斜杠结尾, 默认为空字串, 如: /sample
    */
   public static String SERV_PATH = null;
 
@@ -140,14 +142,17 @@ public class Core
   };
 
   /**
-   * 服务路径标识
-   * 同 SERV_PATH
+   * 客户地址标识
    */
-  public static final Supplier<String> SERVER_PATH
-                = new Supplier() {
+  public static final Variable<String> CLIENT_ADDR
+                = new Variable("!CLIENT_ADDR") {
       @Override
-      public String get() {
-          return SERV_PATH;
+      protected String initialValue() {
+        try {
+          return ActionDriver.getClientAddr(ActionHelper.getInstance().getRequest());
+        } catch (NullPointerException e) {
+          return null;
+        }
       }
   };
 
@@ -159,9 +164,7 @@ public class Core
       @Override
       protected String initialValue() {
         try {
-          return io.github.ihongs.action.ActionDriver.getServerHref (
-                 io.github.ihongs.action.ActionHelper.getInstance( )
-                                                     .getRequest ( ) );
+          return ActionDriver.getServerHref(ActionHelper.getInstance().getRequest());
         } catch (NullPointerException e) {
           return SERV_HREF;
         }
@@ -169,18 +172,17 @@ public class Core
   };
 
   /**
-   * 客户地址标识
+   * 服务路径标识
+   * 同 SERV_PATH
    */
-  public static final Variable<String> CLIENT_ADDR
-                = new Variable("!CLIENT_ADDR") {
+  public static final Supplier<String> SERVER_PATH
+                = new Supplier() {
       @Override
-      protected String initialValue() {
+      public String get() {
         try {
-          return io.github.ihongs.action.ActionDriver.getClientAddr (
-                 io.github.ihongs.action.ActionHelper.getInstance( )
-                                                     .getRequest ( ) );
+          return ActionHelper.getInstance().getRequest().getContextPath();
         } catch (NullPointerException e) {
-          return "";
+          return SERV_PATH;
         }
       }
   };

@@ -57,8 +57,8 @@ public class AuthKit {
     public static void redirect(ActionHelper helper, Map rst)
     throws CruxException {
         CoreConfig cc = CoreConfig.getInstance("auth");
-        String v = cc.getProperty("auth.home.url", "");
-        String r = cc.getProperty("auth.back.key","r");
+        String v = cc.getProperty("auth.redirect.url", "" );
+        String r = cc.getProperty("auth.redirect.key", "r");
                r = helper.getParameter(r);
 
         if (r != null && ! r.isEmpty( )) {
@@ -102,8 +102,8 @@ public class AuthKit {
     public static void redirect(ActionHelper helper, CruxCause err)
     throws CruxException {
         CoreConfig cc = CoreConfig.getInstance("auth");
-        String v = cc.getProperty("auth.home.url", "");
-        String r = cc.getProperty("auth.back.key","r");
+        String v = cc.getProperty("auth.redirect.url", "" );
+        String r = cc.getProperty("auth.redirect.key", "r");
                r = helper.getParameter(r);
 
         if (r != null && ! r.isEmpty( )) {
@@ -160,7 +160,7 @@ public class AuthKit {
 
         // 重建会话
         if (sd != null) {
-            Set<String> ns = Synt.toTerms(CoreConfig.getInstance("auth").get("auth.save.sess"));
+            Set<String> ns = Synt.toTerms(CoreConfig.getInstance("auth").get("auth.save.session"));
         if (ns != null) {
             Map<String, Object> ss = new HashMap(ns.size());
             for(String  nn : ns) {

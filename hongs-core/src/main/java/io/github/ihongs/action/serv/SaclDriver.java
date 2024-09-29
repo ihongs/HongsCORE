@@ -4,7 +4,6 @@ import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLocale;
 import io.github.ihongs.CoreSerial;
-import io.github.ihongs.CruxExemption;
 import io.github.ihongs.CruxException;
 import io.github.ihongs.CruxExemption;
 import io.github.ihongs.action.ActionDriver;
@@ -15,6 +14,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -321,7 +321,7 @@ public class SaclDriver
       this.name = name;
       this.conf = CoreConfig.getInstance(name);
 
-      // 未设置 core.fore.keys 不公开, 哪怕设置个空的都行
+      // 未设置 core.fore.keys 不公开
       if ( this.conf.getProperty("core.fore.keys", null) == null )
       {
         throw new CruxExemption (404, "Conf for "+name+" is non-public");
@@ -356,20 +356,16 @@ public class SaclDriver
           .append("\",\r\n");
       }
 
-      // 查找扩展配置信息
-      for (String nk : conf.stringPropertyNames())
-      {
-        if (nk.startsWith("fore."))
-        {
-            sb.append( make(nk.substring(5), nk) );
-        }
-      }
-
       // 查找共享配置信息
-      String x  = conf.getProperty("core.fore.keys");
+      boolean m = false;
+      String  x = conf.getProperty("core.fore.keys");
       if (null !=  x ) for (String k : x.split(";")) {
           k = k.trim();
           if (k.length()==0) {
+              continue;
+          }
+          if (k.equals("+")) {
+              m = true;
               continue;
           }
           String[] a = k.split("=", 2);
@@ -382,6 +378,18 @@ public class SaclDriver
               k  = a[0];
           }
           sb.append ( make(n , k) );
+      }
+
+      // 查找扩展配置信息
+      if (m)
+      {
+        for (String nk : conf.stringPropertyNames())
+        {
+          if (nk.startsWith("fore."))
+          {
+              sb.append( make(nk.substring(5), nk) );
+          }
+        }
       }
 
       sb.append("\t\"\":\"\"\r\n}");
@@ -451,7 +459,7 @@ public class SaclDriver
       this.name = name;
       this.lang = CoreLocale.getInstance(name);
 
-      // 未设置 core.fore.keys 不公开, 哪怕设置个空的都行
+      // 未设置 core.fore.keys 不公开
       if ( this.lang.getProperty("core.fore.keys", null) == null )
       {
         throw new CruxExemption (404, "Lang for "+name+" is non-public");
@@ -483,20 +491,16 @@ public class SaclDriver
           .append("\",\r\n");
       }
 
-      // 查找扩展语言信息
-      for (String nk : lang.stringPropertyNames())
-      {
-        if (nk.startsWith("fore."))
-        {
-            sb.append( make(nk.substring(5), nk) );
-        }
-      }
-
       // 查找共享语言信息
-      String x  = lang.getProperty("core.fore.keys");
+      boolean m = false;
+      String  x = lang.getProperty("core.fore.keys");
       if (null !=  x ) for (String k : x.split(";")) {
           k = k.trim();
           if (k.length()==0) {
+              continue;
+          }
+          if (k.equals("+")) {
+              m = true;
               continue;
           }
           String[] a = k.split("=", 2);
@@ -509,6 +513,27 @@ public class SaclDriver
               k  = a[0];
           }
           sb.append ( make(n , k) );
+      }
+
+      // 查找扩展语言信息
+      if (m)
+      {
+        for (String nk : lang.stringPropertyNames())
+        {
+          if (nk.startsWith("fore."))
+          {
+              sb.append( make(nk.substring(5), nk) );
+          }
+        }
+        // 后备语言
+        Properties that = lang.getLocalism( );
+        for (String nk : that.stringPropertyNames())
+        {
+          if (nk.startsWith("fore.") && !lang.containsKey(nk))
+          {
+              sb.append( make(nk.substring(5), nk) );
+          }
+        }
       }
 
       sb.append("\t\"\":\"\"\r\n}");

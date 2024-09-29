@@ -1,7 +1,7 @@
 package io.github.ihongs;
 
 import io.github.ihongs.util.Syno;
-import java.io.File;
+import io.github.ihongs.util.Synt;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Properties;
@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.time.ZoneId;
 import java.time.DateTimeException;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * 语言资源读取工具
@@ -39,8 +41,8 @@ public class CoreLocale
   implements CoreSerial.Mtimes
 {
 
-  protected final String lang;
-  protected volatile Properties localism;
+  protected final    String     lang;
+  protected volatile Properties that;
 
   protected CoreLocale(String lang)
   {
@@ -54,7 +56,7 @@ public class CoreLocale
   }
 
   /**
-   * 加载指定路径\语言和名称的配置
+   * 加载指定名称的语言配置
    * @param name
    * @param lang
    * @throws io.github.ihongs.CruxException
@@ -82,6 +84,7 @@ public class CoreLocale
    * 如果通过 getInstance 取对象且 core.load.locale.once=true (默认),
    * 务必要先 clone 然后再去 load,
    * 从而避免对全局配置对象的破坏.
+   * 此方法并不会自动加载后备语言.
    * @param name
    * @throws io.github.ihongs.CruxException
    * @deprecated 多重语言请使用 getMoreInst
@@ -91,13 +94,6 @@ public class CoreLocale
     throws CruxException
   {
     lead(name + "_" + lang);
-
-    // 加载打底语言资源
-    if (localism != null
-    &&  localism instanceof CoreConfig)
-    {
-      ((CoreConfig)localism).load(name);
-    }
   }
 
   /**
@@ -106,6 +102,7 @@ public class CoreLocale
    * 如果通过 getInstance 取对象且 core.load.locale.once=true (默认),
    * 务必要先 clone 然后再去 fill,
    * 从而避免对全局配置对象的破坏.
+   * 此方法并不会自动加载后备语言.
    * @param name
    * @return false 无加载
    * @deprecated 多重语言请使用 getMoreInst
@@ -134,9 +131,9 @@ public class CoreLocale
   public String getProperty(String key)
   {
     String str;
-        str =  super  .getProperty(key);
-    if (str == null && localism !=null) {
-        str = localism.getProperty(key);
+        str = super.getProperty(key);
+    if (str == null && that != null) {
+        str =  that.getProperty(key);
     }
     return str ;
   }
@@ -223,9 +220,22 @@ public class CoreLocale
     return Syno.inject(str, rep);
   }
 
-  protected void setLocalism(Properties inst)
+  /**
+   * 设置后备语言
+   * @param prop
+   */
+  public void setLocalism(Properties prop)
   {
-    localism = inst;
+    that = prop;
+  }
+
+  /**
+   * 获取后备语言
+   * @return
+   */
+  public Properties getLocalism()
+  {
+    return that;
   }
 
   //** 静态属性及方法 **/
@@ -276,14 +286,46 @@ public class CoreLocale
       return inst;
     }
 
+    CruxException ax;
+    CoreLocale  that;
+    CoreConfig  conf;
+    String      back;
+    ax   = null;
+    conf = CoreConfig.getInstance();
+    back = conf.getProperty("core.language.defense", "lang");
+
+    // 加载当前语言
+    inst = new CoreLocale(lang);
     try {
-      inst = new CoreLocale(name, lang);
-    } catch (CruxException ex) {
-      throw ex.toExemption ( );
+      inst.load(name);
+    } catch (CruxException ex ) {
+      if (826 != ex.getErrno()) {
+        throw ex.toExemption( );
+      } else {
+        ax =  ex;
+      }
     }
 
-    CoreConfig conf;
-    conf = CoreConfig.getInstance();
+    // 加载后备语言
+    if ( ! lang.equals (back) ) {
+    that = new CoreLocale(back);
+    inst . setLocalism (that);
+    try {
+      that.load(name);
+    } catch (CruxException ex ) {
+      if (826 != ex.getErrno()) {
+        throw ex.toExemption( );
+      } else
+      if (ax != null)
+      {
+        throw ax.toExemption( );
+      }
+    } } else {
+      if (ax != null) {
+        throw ax.toExemption( );
+      }
+    }
+
     if (conf.getProperty("core.load.locale.once", false))
     {
       gore.set(ck, inst);
@@ -293,164 +335,33 @@ public class CoreLocale
       core.set(ck, inst);
     }
 
-    // 默认语言实例
-    inst.setLocalism( getLocalism(name , lang) );
-
     return inst;
-  }
-
-  /**
-   * 获取类似语言实例
-   * 在配置中用 core.language.like.xx=xx_XX 这样定义
-   * @param name
-   * @param lang
-   * @return
-   */
-  private static CoreLocale getLocalism(String name, String lang)
-  {
-    CoreConfig conf = CoreConfig.getInstance();
-    CoreLocale that;
-
-    try {
-
-    that = getBackInst(name, lang, conf);
-    if (null!= that)
-    {
-        return that;
-    }
-
-    that = getBaseInst(name, lang, conf);
-    if (null!= that)
-    {
-        return that;
-    }
-
-    } catch ( CruxException e) {
-        throw e.toExemption( );
-    }
-
-    return null;
-  }
-
-  private static CoreLocale getBaseInst(String name, String lang, CoreConfig conf)
-    throws CruxException
-  {
-    String dlng;
-
-    dlng = conf.getProperty("core.langauge.default" , "zh");
-    if (dlng == null || dlng.equals(""))
-    {
-      return null;
-    }
-    if (!dlng.equals(lang) && hasLangFile(name, dlng))
-    {
-      return new CoreLocale(name, dlng);
-    }
-
-    int p  = dlng.indexOf('_');
-    if (p != -1) {
-
-    dlng = dlng.substring(0,p);
-    dlng = conf.getProperty("core.langauge.like."+dlng, "");
-    if (dlng == null || dlng.equals(""))
-    {
-      return null;
-    }
-    if (!dlng.equals(lang) && hasLangFile(name, dlng))
-    {
-      return new CoreLocale(name, dlng);
-    }
-
-    }
-
-    return null;
-  }
-
-  private static CoreLocale getBackInst(String name, String lang, CoreConfig conf)
-    throws CruxException
-  {
-    String dlng;
-    int    p;
-
-    dlng = conf.getProperty("core.langauge.like."+lang, "");
-    if (dlng == null || dlng.equals(""))
-    {
-      return null;
-    }
-    if (!dlng.equals(lang) && hasLangFile(name, dlng))
-    {
-      return new CoreLocale(name, dlng);
-    }
-
-    /**/p  = dlng.indexOf('_');
-    if (p != -1)
-    {
-    dlng = dlng.substring(0,p);
-
-    dlng = conf.getProperty("core.langauge.like."+dlng, "");
-    if (dlng == null || dlng.equals(""))
-    {
-      return null;
-    }
-    if (!dlng.equals(lang) && hasLangFile(name, dlng))
-    {
-      return new CoreLocale(name, dlng);
-    }
-    }
-
-    /**/p  = lang.indexOf('_');
-    if (p != -1)
-    {
-    dlng = lang.substring(0,p);
-
-    return getBackInst(name,dlng, conf);
-    }
-
-    return null;
-  }
-
-  private static boolean hasLangFile(String name, String lang)
-  {
-    String path;
-
-    path = Core.CONF_PATH+ "/" + name +"_"+ lang;
-    if ((new File(path +".prop.xml"  )).exists())
-    {
-      return true;
-    }
-    if ((new File(path +".properties")).exists())
-    {
-      return true;
-    }
-
-    path = Cnst.CONF_PACK+ "/" + name +"_"+ lang + ".properties";
-    return CoreConfig.class.getClassLoader().getResource(path) != null;
   }
 
   /**
    * 从HEAD串中获取支持的语言
    * @param lang
-   * @return 语言标识, 如zh,zh_CN, 不存在为null
+   * @return 语言标识, 如 zh,zh_CN, 不存在为 null
    */
   public static String getAcceptLanguage(String lang)
   {
-    CoreConfig conf = CoreConfig.getInstance();
-    String     sups = "," + conf.getProperty("core.language.support", Cnst.LANG_DEF) + ",";
-    String[]   arr1 = lang.replace('-','_')
-                          .split  (  ","  );
-    String[]   arr2 ;
+    CoreConfig  conf = CoreConfig.getInstance();
+    Set<String> sups = Synt.toTerms(conf.getProperty("core.language.support", Cnst.LANG_DEF));
+    String[]    arr1 = lang.replace( '-', '_' )
+                           . split ( "," );
+    String[]    arr2 ;
 
-    for (int i = 0; i < arr1.length; i ++ )
+    for (int i = 0; i < arr1.length; i ++)
     {
       arr2 = arr1[i].split(";" , 2);
-      lang = getNativeLanguage( arr2[0] ) ;
-      if (sups.contains("," + lang + ",") )
+      lang = getNormalLanguage( arr2[0] );
+      if (sups.contains(lang))
       {
         return lang;
       }
 
       lang = conf.getProperty("core.language.like." + lang);
-      if (sups.contains("," + lang + ",") )
+      if (sups.contains(lang))
       {
         return lang;
       }
@@ -459,17 +370,17 @@ public class CoreLocale
        * 如果语言字串中带有"_"符号, 则按"_"拆分去后面部分,
        * 检查其是否是允许的语种.
        */
-      if (arr2[0].contains("_")) continue ;
+      if (arr2[0].contains("_")) continue;
 
       arr2 = arr2[0].split("_" , 2);
-      lang = getNativeLanguage( arr2[0] ) ;
-      if (sups.contains("," + lang + ",") )
+      lang = getNormalLanguage( arr2[0] );
+      if (sups.contains(lang))
       {
         return lang;
       }
 
       lang = conf.getProperty("core.language.like." + lang);
-      if (sups.contains("," + lang + ",") )
+      if (sups.contains(lang))
       {
         return lang;
       }
@@ -478,21 +389,34 @@ public class CoreLocale
     return null;
   }
 
-  private static String getNativeLanguage(String lang)
+  /**
+   * 转为标准代码格式
+   * @param lang
+   * @return 语言标识, 如 zh,zh_CN, 不可处理 null
+   */
+  public static String getNormalLanguage(String lang)
   {
-    int p  = lang.indexOf( "_" );
+    int p ;
+
+    p = lang.indexOf("_");
     if (p != -1) {
       return lang.substring(0 , p).toLowerCase()
         +"_"+lang.substring(1 + p).toUpperCase();
-    } else {
-      return lang.toLowerCase( );
     }
+
+    p = lang.indexOf("-");
+    if (p != -1) {
+      return lang.substring(0 , p).toLowerCase()
+        +"_"+lang.substring(1 + p).toUpperCase();
+    }
+
+    return lang.toLowerCase( );
   }
 
   /**
    * 检查时区是否有效
    * @param zone
-   * @return 时区标识, 如UT+08:00, 错误则为null
+   * @return 时区标识, 如 UT+08:00, 错误则为 null
    */
   public static String getNormalTimeZone(String zone)
   {

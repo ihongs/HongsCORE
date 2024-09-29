@@ -62,11 +62,11 @@
     </attribute>
   </tag>
   <tag>
-    <name>lang</name>
+    <name>conf</name>
     <tag-class>io.github.ihongs.jsp.LangTag</tag-class>
     <body-content>empty</body-content>
     <attribute>
-      <name>lang</name>
+      <name>conf</name>
       <rtexprvalue>true</rtexprvalue>
       <type>java.lang.Object</type>
     </attribute>

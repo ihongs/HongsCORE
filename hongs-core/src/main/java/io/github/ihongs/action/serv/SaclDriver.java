@@ -1,5 +1,6 @@
 package io.github.ihongs.action.serv;
 
+import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLocale;
@@ -10,12 +11,15 @@ import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.NaviMap;
 import io.github.ihongs.util.Dist;
+import io.github.ihongs.util.Synt;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -60,14 +64,6 @@ public class SaclDriver
   public void authService(HttpServletRequest req, HttpServletResponse rsp)
     throws ServletException, IOException
   {
-    /*
-    // 2020/05/14  通过配置和用户的修改时间来判断是否能有变化
-    // 受是否登录、不同用户等影响, 权限经常变化, 必须禁止缓存
-    rsp.setHeader("Expires", "0");
-    rsp.addHeader("Pragma" , "no-cache");
-    rsp.setHeader("Cache-Control", "no-cache");
-    */
-
     Core core = ActionDriver.getActualCore(req);
     ActionHelper helper = core.got(ActionHelper.class);
 
@@ -103,19 +99,22 @@ public class SaclDriver
       // HTTP 304 缓存策略
       if (roleset instanceof CoreSerial.Mtimes) {
         CoreSerial.Mtimes rolemod = (CoreSerial.Mtimes) roleset;
-        long l  =  Math.max( sitemap.dataModified(), rolemod.dataModified() );
-        long m  =  helper.getRequest(  ).getDateHeader( "If-Modified-Since" );
-        if ( l !=  0 ) {
-            // HTTP 时间精确到秒
-             l  =  l / 1000;
-             m  =  m / 1000;
-        if ( m >=  l ) {
-          helper.getResponse().setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-          return;
+        long m = Math.max(sitemap.dataModified(), rolemod.dataModified());
+        if ( m > 0 ) {
+          String u = Synt.declare(helper.getSessibute(Cnst.UID_SES), "" ); // 用户ID
+          String t = etag(Core.ACTION_NAME.get() +":"+ u +":"+ m  );
+          String f = helper.getRequest().getHeader("If-None-Match");
+          if ( t.equals(f) ) {
+            helper.getResponse().setStatus(SC_NOT_MODIFIED);
+            return;
+          } else {
+            helper.getResponse().setHeader("ETag", t /**/ );
+          }
         } else {
-          helper.getResponse().setHeader( "Cache-Control", "no-cache" );
-          helper.getResponse().setDateHeader("Last-Modified", l * 1000);
-        }}
+            helper.getResponse().setHeader("Cache-Control" , "no-cache" );
+        }
+      } else {
+            helper.getResponse().setHeader("Cache-Control" , "no-cache" );
       }
 
       Map<String, Boolean> datamap = new HashMap();
@@ -190,17 +189,17 @@ public class SaclDriver
     if ( m < 1 ) {
       m  = Core.STARTS_TIME;
     }
-    m =  m / 1000L * 1000L ; // HTTP 时间精确到秒
 
     /**
      * 如果指定配置的数据并没有改变
      * 则直接返回 304 Not modified
      */
-    long n = helper.getRequest().getDateHeader("If-Modified-Since");
-    if ( n < m ) {
-      helper.getResponse().setDateHeader("Last-Modified",m);
+    String t = etag(Core.ACTION_NAME.get() + ":" + m);
+    String f = helper.getRequest().getHeader("If-None-Match");
+    if ( ! t.equals( f ) ) {
+      helper.getResponse().setHeader("ETag", t /**/ );
     } else {
-      helper.getResponse().  setStatus  ( SC_NOT_MODIFIED );
+      helper.getResponse().setStatus(SC_NOT_MODIFIED);
       return;
     }
 
@@ -266,17 +265,17 @@ public class SaclDriver
     if ( m < 1 ) {
       m  = Core.STARTS_TIME;
     }
-    m =  m / 1000L * 1000L ; // HTTP 时间精确到秒
 
     /**
      * 如果指定语言的数据并没有改变
      * 则直接返回 304 Not modified
      */
-    long n = helper.getRequest().getDateHeader("If-Modified-Since");
-    if ( n < m ) {
-      helper.getResponse().setDateHeader("Last-Modified",m);
+    String t = etag(Core.ACTION_NAME.get() + ":" + Core.ACTION_LANG.get() + ":" + m);
+    String f = helper.getRequest().getHeader("If-None-Match");
+    if ( ! t.equals( f ) ) {
+      helper.getResponse().setHeader("ETag", t /**/ );
     } else {
-      helper.getResponse().  setStatus  ( SC_NOT_MODIFIED );
+      helper.getResponse().setStatus(SC_NOT_MODIFIED);
       return;
     }
 
@@ -306,6 +305,18 @@ public class SaclDriver
     }
   }
 
+  private String etag(String n) {
+    try {
+      MessageDigest m = MessageDigest.getInstance("MD5");
+      byte[] a;
+      a = n.getBytes( );
+      a = m.digest( a );
+      return new BigInteger(1, a).toString(16);
+    } catch (NoSuchAlgorithmException ex) {
+      throw new CruxExemption(ex);
+    }
+  }
+
   //** 辅助工具类 **/
 
   /**
@@ -330,7 +341,9 @@ public class SaclDriver
 
     public long modified()
     {
-      return conf.fileModified();
+      return CoreConfig.getInstance().getProperty("core.load.config.once", false)
+           ? conf.dataModified()
+           : conf.fileModified();
     }
 
     @Override
@@ -468,7 +481,9 @@ public class SaclDriver
 
     public long modified()
     {
-      return lang.fileModified();
+      return CoreConfig.getInstance().getProperty("core.load.locale.once", false)
+           ? lang.dataModified()
+           : lang.fileModified();
     }
 
     @Override

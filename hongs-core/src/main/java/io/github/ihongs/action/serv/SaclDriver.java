@@ -102,9 +102,9 @@ public class SaclDriver
         long m = Math.max(sitemap.dataModified(), rolemod.dataModified());
         if ( m > 0 ) {
           String u = Synt.declare(helper.getSessibute(Cnst.UID_SES), "" ); // 用户ID
-          String t = etag(Core.ACTION_NAME.get() +":"+ u +":"+ m  );
+          String t = etag(name +":"+ u +":"+ m );
           String f = helper.getRequest().getHeader("If-None-Match");
-          if ( t.equals(f) ) {
+          if (t.equals(f)) {
             helper.getResponse().setStatus(SC_NOT_MODIFIED);
             return;
           } else {
@@ -194,13 +194,13 @@ public class SaclDriver
      * 如果指定配置的数据并没有改变
      * 则直接返回 304 Not modified
      */
-    String t = etag(Core.ACTION_NAME.get() + ":" + m);
+    String t = etag(name +":"+ m );
     String f = helper.getRequest().getHeader("If-None-Match");
-    if ( ! t.equals( f ) ) {
-      helper.getResponse().setHeader("ETag", t /**/ );
-    } else {
+    if (t.equals(f)) {
       helper.getResponse().setStatus(SC_NOT_MODIFIED);
       return;
+    } else {
+      helper.getResponse().setHeader("ETag", t /**/ );
     }
 
     // 输出配置信息
@@ -270,13 +270,14 @@ public class SaclDriver
      * 如果指定语言的数据并没有改变
      * 则直接返回 304 Not modified
      */
-    String t = etag(Core.ACTION_NAME.get() + ":" + Core.ACTION_LANG.get() + ":" + m);
+    String l = Core.ACTION_LANG.get();
+    String t = etag(name+":"+l+":"+m);
     String f = helper.getRequest().getHeader("If-None-Match");
-    if ( ! t.equals( f ) ) {
-      helper.getResponse().setHeader("ETag", t /**/ );
-    } else {
+    if (t.equals(f)) {
       helper.getResponse().setStatus(SC_NOT_MODIFIED);
       return;
+    } else {
+      helper.getResponse().setHeader("ETag", t /**/ );
     }
 
     // 输出语言信息

@@ -24,7 +24,6 @@
 
             if ("@".equals(name)
             ||  Synt.declare(info.get( "disabled" ), false)
-            ||  Synt.declare(info.get( "readonly" ), false)
             ||  Synt.declare(info.get("unwritable"), false)
             ||  Synt.declare(info.get("unopenable"), false)) {
                 continue ;
@@ -35,6 +34,13 @@
             String  hint = Synt.asString(info.get("__hint__"));
             boolean rqrd = Synt.declare(info.get("__required__"), false);
             boolean rptd = Synt.declare(info.get("__repeated__"), false);
+
+            // 跳过有默认值的只读字段
+            if (Synt.declare(info.get("readonly"), false)
+            &&  info.containsKey("default" )
+            &&  info.containsKey("deforce")) {
+                continue;
+            }
 
             // 可以自定义字段显示文本
             if (info.containsKey("text")) {

@@ -525,15 +525,6 @@ public class SaclDriver
               sb.append( make(nk.substring(5), nk) );
           }
         }
-        // 后备语言
-        Properties that = lang.getLocalism( );
-        for (String nk : that.stringPropertyNames())
-        {
-          if (nk.startsWith("fore.") && !lang.containsKey(nk))
-          {
-              sb.append( make(nk.substring(5), nk) );
-          }
-        }
       }
 
       sb.append("\t\"\":\"\"\r\n}");

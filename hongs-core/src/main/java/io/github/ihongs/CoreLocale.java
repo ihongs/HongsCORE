@@ -12,7 +12,6 @@ import java.util.Map;
 import java.time.ZoneId;
 import java.time.DateTimeException;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 /**
  * 语言资源读取工具
@@ -41,8 +40,7 @@ public class CoreLocale
   implements CoreSerial.Mtimes
 {
 
-  protected final    String     lang;
-  protected volatile Properties that;
+  protected final String lang;
 
   protected CoreLocale(String lang)
   {
@@ -84,7 +82,6 @@ public class CoreLocale
    * 如果通过 getInstance 取对象且 core.load.locale.once=true (默认),
    * 务必要先 clone 然后再去 load,
    * 从而避免对全局配置对象的破坏.
-   * 此方法并不会自动加载后备语言.
    * @param name
    * @throws io.github.ihongs.CruxException
    * @deprecated 多重语言请使用 getMoreInst
@@ -102,7 +99,6 @@ public class CoreLocale
    * 如果通过 getInstance 取对象且 core.load.locale.once=true (默认),
    * 务必要先 clone 然后再去 fill,
    * 从而避免对全局配置对象的破坏.
-   * 此方法并不会自动加载后备语言.
    * @param name
    * @return false 无加载
    * @deprecated 多重语言请使用 getMoreInst
@@ -120,22 +116,6 @@ public class CoreLocale
       return false;
     }
     return true;
-  }
-
-  /**
-   * 翻译指定键对应的语句
-   * @param key
-   * @return 翻译后的语句
-   */
-  @Override
-  public String getProperty(String key)
-  {
-    String str;
-        str = super.getProperty(key);
-    if (str == null && that != null) {
-        str =  that.getProperty(key);
-    }
-    return str ;
   }
 
   /**
@@ -220,24 +200,6 @@ public class CoreLocale
     return Syno.inject(str, rep);
   }
 
-  /**
-   * 设置后备语言
-   * @param prop
-   */
-  public void setLocalism(Properties prop)
-  {
-    that = prop;
-  }
-
-  /**
-   * 获取后备语言
-   * @return
-   */
-  public Properties getLocalism()
-  {
-    return that;
-  }
-
   //** 静态属性及方法 **/
 
   /**
@@ -287,15 +249,21 @@ public class CoreLocale
     }
 
     CruxException ax;
-    CoreLocale  that;
+    CoreLocale  ins2;
     CoreConfig  conf;
-    String      back;
+    String      land;
     ax   = null;
+    ins2 = null;
     conf = CoreConfig.getInstance();
-    back = conf.getProperty("core.language.defense", "lang");
+    land = conf.getProperty("core.language.defense", "lang");
+
+    inst = new CoreLocale(lang);
+    if ( ! lang.equals (land) ) {
+    ins2 = new CoreLocale(land);
+    inst.defaults = new Properties(ins2);
+    }
 
     // 加载当前语言
-    inst = new CoreLocale(lang);
     try {
       inst.load(name);
     } catch (CruxException ex ) {
@@ -307,11 +275,9 @@ public class CoreLocale
     }
 
     // 加载后备语言
-    if ( ! lang.equals (back) ) {
-    that = new CoreLocale(back);
-    inst . setLocalism (that);
+    if (ins2 != null) {
     try {
-      that.load(name);
+      ins2.load(name);
     } catch (CruxException ex ) {
       if (826 != ex.getErrno()) {
         throw ex.toExemption( );

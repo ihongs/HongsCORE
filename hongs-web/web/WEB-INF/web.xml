@@ -31,7 +31,7 @@
     <!-- REST Servlet -->
     <servlet>
         <servlet-name>Rest</servlet-name>
-        <servlet-class>io.github.ihongs.normal.serv.RestDriver</servlet-class>
+        <servlet-class>io.github.ihongs.action.serv.RestDriver</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Rest</servlet-name>

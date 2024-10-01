@@ -9,10 +9,9 @@ import java.util.Collection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.time.ZoneId;
 import java.time.DateTimeException;
-import java.util.Locale;
-import java.util.Set;
 
 /**
  * 语言资源读取工具
@@ -41,103 +40,27 @@ public class CoreLocale
   implements CoreSerial.Mtimes
 {
 
-  protected final String lang;
-
-  protected CoreLocale(String lang)
+  protected CoreLocale()
   {
     super();
-
-    this.lang = null != lang ? "_lang_" + lang : "_lang";
   }
 
-  protected CoreLocale(String lang, Properties defs)
+  protected CoreLocale(Properties defs)
   {
     super(defs);
-
-    this.lang = null != lang ? "_lang_" + lang : "_lang";
-  }
-
-  /**
-   * 加载指定名称的资源
-   * @param name
-   * @param lang
-   * @throws io.github.ihongs.CruxException
-   */
-  public CoreLocale(String name, String lang)
-    throws CruxException
-  {
-    this (lang);
-
-    if (null != name)
-    {
-      lead(name+this.lang);
-    }
-  }
-
-  /**
-   * 加载指定名称的资源并绑定默认资源
-   * @param name
-   * @param lang
-   * @param defs
-   * @throws io.github.ihongs.CruxException
-   */
-  public CoreLocale(String name, String lang, Properties defs)
-    throws CruxException
-  {
-    this (lang, defs);
-
-    if (null != name)
-    {
-      lead(name+this.lang);
-    }
   }
 
   @Override
-  public CoreLocale clone()
-  {
-    return (CoreLocale) super.clone();
-  }
-
-  /**
-   * 加载指定语言文件
-   * 注意:
-   * 如果通过 getInstance 取对象且 core.load.locale.once=true (默认),
-   * 务必要先 clone 然后再去 load,
-   * 从而避免对全局配置对象的破坏.
-   * @param name
-   * @throws io.github.ihongs.CruxException
-   * @deprecated 多重语言请使用 getMoreInst
-   */
-  @Override
-  public void load(String name)
+  protected void load(String name)
     throws CruxException
   {
-    lead(name + this.lang);
+    load(name , Core.ACTION_LANG.get());
   }
 
-  /**
-   * 加载指定语言文件(会忽略文件不存在)
-   * 注意:
-   * 如果通过 getInstance 取对象且 core.load.locale.once=true (默认),
-   * 务必要先 clone 然后再去 fill,
-   * 从而避免对全局配置对象的破坏.
-   * @param name
-   * @return false 无加载
-   * @deprecated 多重语言请使用 getMoreInst
-   */
-  @Override
-  public boolean fill(String name)
+  protected void load(String name, String lang)
+    throws CruxException
   {
-    try {
-      load(name);
-    } catch ( CruxException e) {
-      if (826 != e.getErrno()) {
-        throw e.toExemption( );
-      }
-      CoreLogger.debug("CoreLocale {} is not found", name);
-      return false;
-    }
-    return true;
+    lead(name + (null != lang ? "_lang_" + lang : "_lang"));
   }
 
   /**
@@ -222,15 +145,6 @@ public class CoreLocale
     return Syno.inject(str, rep);
   }
 
-  /**
-   * 获取语言标识, 如 zh_CN
-   * @return
-   */
-  public String getLang()
-  {
-    return lang.length() > 6 ? lang.substring(6) : null;
-  }
-
   //** 静态属性及方法 **/
 
   /**
@@ -279,12 +193,15 @@ public class CoreLocale
       return inst;
     }
 
-    CoreLocale  ins2 = null;
-    CruxException ax = null;
+    CoreLocale  ins2;
+    CruxException ax;
+    ax   = null;
+    ins2 = new CoreLocale(null);
+    inst = new CoreLocale(ins2);
 
-    // 加载后备语言资源
+    // 加载当前语言资源
     try {
-      ins2 = new CoreLocale(name, null, null);
+      inst.load(name, lang);
     } catch (CruxException ex ) {
       if (826 != ex.getErrno()) {
         throw ex.toExemption();
@@ -293,15 +210,15 @@ public class CoreLocale
       }
     }
 
-    // 加载当前语言资源
+    // 加载后备语言资源
     try {
-      inst = new CoreLocale(name, lang, ins2);
+      ins2.load(name, null);
     } catch (CruxException ex ) {
       if (826 != ex.getErrno()) {
         throw ex.toExemption();
       } else
       if ( ax != null ) {
-        throw ex.toExemption();
+        throw ax.toExemption();
       }
     }
 
@@ -343,7 +260,7 @@ public class CoreLocale
             throw e;
         }
         CoreLogger.debug("CoreLocale {} is not found", names.length > 0 ? names[0] : "default");
-        return new Multiple(Core.ACTION_LANG.get( ));
+        return new Multiple();
     }
 
     List<Properties> p = new ArrayList(names.length);
@@ -358,25 +275,7 @@ public class CoreLocale
         }
     }
 
-    return new Multiple(Core.ACTION_LANG.get(), p.toArray(new Properties[p.size()]));
-  }
-
-  /**
-   * 从语言标识构建Locale对象
-   * @param lang
-   * @return
-   */
-  public static Locale getLocaleFromLang(String lang)
-  {
-    String   dist;
-    int p  = lang. indexOf ('_');
-    if (p != -1) {
-      dist = lang.substring(1+p);
-      lang = lang.substring(0,p);
-    } else {
-      dist = "";
-    }
-    return new Locale(lang,dist);
+    return new Multiple(p.toArray(new Properties[p.size()]));
   }
 
   /**
@@ -482,8 +381,8 @@ public class CoreLocale
 
       private  final  Properties [] props;
 
-      public Multiple(String lang, Properties... props) {
-          super(lang);
+      public Multiple(Properties... props) {
+          super();
           this.props = props;
       }
 

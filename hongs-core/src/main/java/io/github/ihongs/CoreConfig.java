@@ -48,45 +48,6 @@ public class CoreConfig
     super(defs);
   }
 
-  /**
-   * 加载指定名称的配置
-   * @param name
-   * @throws io.github.ihongs.CruxException
-   */
-  public CoreConfig(String name)
-    throws CruxException
-  {
-    super();
-
-    if (null != name)
-    {
-      this.lead(name);
-    }
-  }
-
-  /**
-   * 加载指定名称的配置并绑定默认配置
-   * @param defs
-   * @param name
-   * @throws io.github.ihongs.CruxException
-   */
-  public CoreConfig(String name, Properties defs)
-    throws CruxException
-  {
-    super(defs);
-
-    if (null != name)
-    {
-      this.lead(name);
-    }
-  }
-
-  @Override
-  public CoreConfig clone()
-  {
-    return (CoreConfig) super.clone();
-  }
-
   @Override
   public long dataModified()
   {
@@ -97,6 +58,12 @@ public class CoreConfig
   public long fileModified()
   {
     return time > 0 ? file.lastModified() : 0;
+  }
+
+  protected void load(String name)
+    throws CruxException
+  {
+    this.lead(name);
   }
 
   protected final void lead(String name)
@@ -163,46 +130,6 @@ public class CoreConfig
     if (time == -1) {
         time  =  0;
     }
-  }
-
-  /**
-   * 加载指定配置文件
-   * 注意:
-   * 如果通过 getInstance 取对象且 core.load.config.once=true (默认),
-   * 务必要先 clone 然后再去 load,
-   * 从而避免对全局配置对象的破坏.
-   * @param name
-   * @throws io.github.ihongs.CruxException
-   * @deprecated 多重配置请使用 getMoreInst
-   */
-  public void load(String name)
-    throws CruxException
-  {
-    lead(name);
-  }
-
-  /**
-   * 加载指定配置文件(会忽略文件不存在)
-   * 注意:
-   * 如果通过 getInstance 取对象且 core.load.config.once=true (默认),
-   * 务必要先 clone 然后再去 fill,
-   * 从而避免对全局配置对象的破坏.
-   * @param name
-   * @return false 无加载
-   * @deprecated 多重配置请使用 getMoreInst
-   */
-  public boolean fill(String name)
-  {
-    try {
-      load(name);
-    } catch ( CruxException e) {
-      if (826 != e.getErrno()) {
-        throw e.toExemption( );
-      }
-      CoreLogger.debug("CoreConfig {} is not found", name);
-      return false;
-    }
-    return true;
   }
 
   /**
@@ -337,10 +264,11 @@ public class CoreConfig
       return inst;
     }
 
+    inst = new CoreConfig ( );
     try {
-      inst = new CoreConfig(name);
-    } catch (CruxException ex) {
-      throw ex.toExemption ( );
+      inst.load ( name );
+    } catch (CruxException e) {
+      throw  e.toExemption( );
     }
 
     CoreConfig conf;

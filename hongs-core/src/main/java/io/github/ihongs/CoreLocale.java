@@ -305,6 +305,50 @@ public class CoreLocale
   }
 
   /**
+   * 把多个配置合并到一起
+   *
+   * 从左往右的优先级递减.
+   * 给定参数为一个以上时,
+   * 总是创建新的视图对象.
+   * 配置文件缺失不报异常.
+   * 可用于替代旧 load/fill 加载子集方式
+   *
+   * @param names
+   * @return
+   */
+  public static CoreLocale getMultiple(String... names)
+  {
+    try {
+        if (names.length == 0) {
+            return getInstance();
+        }
+        if (names.length == 1) {
+            return getInstance(names[0]);
+        }
+    } catch (CruxExemption e ) {
+        if (e.getErrno() != 826) { // 826 文件不存在, 下同
+            throw e;
+        }
+        CoreLogger.debug("CoreLocale {} is not found", names.length > 0 ? names[0] : "default");
+        return new Multiple(Core.ACTION_LANG.get( ));
+    }
+
+    List<Properties> p = new ArrayList(names.length);
+    for (String name : names) {
+        try {
+            p.add(getInstance(name));
+        } catch (CruxExemption  e  ) {
+            if (e.getErrno() != 826) {
+                throw e;
+            }
+            CoreLogger.debug("CoreLocale {} is not found", name);
+        }
+    }
+
+    return new Multiple(Core.ACTION_LANG.get(), p.toArray(new Properties[p.size()]));
+  }
+
+  /**
    * 从HEAD串中获取支持的语言
    * @param lang
    * @return 语言标识, 如 zh,zh_CN, 不存在为 null
@@ -394,50 +438,6 @@ public class CoreLocale
     {
       return null;
     }
-  }
-
-  /**
-   * 把多个配置合并到一起
-   *
-   * 从左往右的优先级递减.
-   * 给定参数为一个以上时,
-   * 总是创建新的视图对象.
-   * 配置文件缺失不报异常.
-   * 可用于替代旧 load/fill 加载子集方式
-   *
-   * @param names
-   * @return
-   */
-  public static CoreLocale getMultiple(String... names)
-  {
-    try {
-        if (names.length == 0) {
-            return getInstance();
-        }
-        if (names.length == 1) {
-            return getInstance(names[0]);
-        }
-    } catch (CruxExemption e ) {
-        if (e.getErrno() != 826) { // 826 文件不存在, 下同
-            throw e;
-        }
-        CoreLogger.debug("CoreLocale {} is not found", names.length > 0 ? names[0] : "default");
-        return new Multiple(Core.ACTION_LANG.get( ));
-    }
-
-    List<Properties> p = new ArrayList(names.length);
-    for (String name : names) {
-        try {
-            p.add(getInstance(name));
-        } catch (CruxExemption  e  ) {
-            if (e.getErrno() != 826) {
-                throw e;
-            }
-            CoreLogger.debug("CoreLocale {} is not found", name);
-        }
-    }
-
-    return new Multiple(Core.ACTION_LANG.get(), p.toArray(new Properties[p.size()]));
   }
 
   /**

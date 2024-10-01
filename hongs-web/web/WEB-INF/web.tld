@@ -62,7 +62,7 @@
     </attribute>
   </tag>
   <tag>
-    <name>conf</name>
+    <name>lang</name>
     <tag-class>io.github.ihongs.jsp.LangTag</tag-class>
     <body-content>empty</body-content>
     <attribute>

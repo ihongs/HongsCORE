@@ -357,70 +357,74 @@ public class CoreLocale
   {
     CoreConfig  conf = CoreConfig.getInstance();
     Set<String> sups = Synt.toTerms(conf.getProperty("core.language.support", Cnst.LANG_DEF));
-    String[]    arr1 = lang.replace( '-', '_' )
-                           . split ( "," );
-    String[]    arr2 ;
 
-    for (int i = 0; i < arr1.length; i ++)
-    {
-      arr2 = arr1[i].split(";" , 2);
-      lang = getNormalLanguage( arr2[0] );
-      if (sups.contains(lang))
-      {
-        return lang;
-      }
+    /**
+     * 由原来的 split 改为字符查找, 更为简单快速
+     */
 
-      lang = conf.getProperty("core.language.like." + lang);
-      if (sups.contains(lang))
-      {
-        return lang;
-      }
+    String  ln, dn;
+    int p0, p1, p2;
 
-      /**
-       * 如果语言字串中带有"_"符号, 则按"_"拆分去后面部分,
-       * 检查其是否是允许的语种.
-       */
-      if (arr2[0].contains("_")) continue;
+    do {
+        // 按逗号拆出节段
+        ln = lang;
+        p0 = lang.indexOf(',');
+        if (p0 != -1) {
+          lang  = ln.substring(1+ p0);
+            ln  = ln.substring(0, p0);
+        }
 
-      arr2 = arr2[0].split("_" , 2);
-      lang = getNormalLanguage( arr2[0] );
-      if (sups.contains(lang))
-      {
-        return lang;
-      }
+        // 按分号拆除权重
+        p1   = ln.indexOf(';');
+        if (p1 != -1) {
+        //  dn  = ln.substring(1+ p1);
+            ln  = ln.substring(0, p1);
+        }
 
-      lang = conf.getProperty("core.language.like." + lang);
-      if (sups.contains(lang))
-      {
-        return lang;
-      }
+        // 按横杠拆分方言
+        p2   = ln.indexOf('-');
+        if (p2 == -1) {
+        // 兼容下划线格式
+        p2   = ln.indexOf('_');
+        }
+        if (p2 != -1) {
+            // 转标准格式 xx_XX
+            dn  = ln.substring(1+ p2);
+            ln  = ln.substring(0, p2);
+            dn  = dn.toUpperCase();
+            ln  = ln.toLowerCase();
+            dn  = ln +"_"+ dn ;
+
+            if (sups.contains(dn)) {
+                return  dn;
+            }
+            dn  = conf.getProperty("core.language.like."+dn);
+            if (null != dn) {
+                return  dn;
+            }
+
+            if (sups.contains(ln)) {
+                return  ln;
+            }
+            ln  = conf.getProperty("core.language.like."+ln);
+            if (null != ln) {
+                return  ln;
+            }
+        } else {
+            ln  = ln.toLowerCase();
+
+            if (sups.contains(ln)) {
+                return  ln;
+            }
+            ln  = conf.getProperty("core.language.like."+ln);
+            if (null != ln) {
+                return  ln;
+            }
+        }
     }
+    while (p0 != -1);
 
     return null;
-  }
-
-  /**
-   * 转为标准代码格式
-   * @param lang
-   * @return 语言标识, 如 zh,zh_CN, 不可处理 null
-   */
-  public static String getNormalLanguage(String lang)
-  {
-    int p ;
-
-    p = lang.indexOf("_");
-    if (p != -1) {
-      return lang.substring(0 , p).toLowerCase()
-        +"_"+lang.substring(1 + p).toUpperCase();
-    }
-
-    p = lang.indexOf("-");
-    if (p != -1) {
-      return lang.substring(0 , p).toLowerCase()
-        +"_"+lang.substring(1 + p).toUpperCase();
-    }
-
-    return lang.toLowerCase( );
   }
 
   /**

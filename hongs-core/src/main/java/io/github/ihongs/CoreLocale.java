@@ -311,12 +311,12 @@ public class CoreLocale
       return inst;
     }
 
-    Properties  ins2 = null;
+    CoreLocale  ins2 = null;
     CruxException ax = null;
 
     // 加载后备语言资源
     try {
-      ins2 = new CoreConfig(name + "_lang");
+      ins2 = new CoreLocale(name, null, null);
     } catch (CruxException ex ) {
       if (826 != ex.getErrno()) {
         throw ex.toExemption();

@@ -47,28 +47,14 @@ public class CoreLocale
   {
     super();
 
-    if (null == lang)
-    {
-      this.lang = "lang";
-    }
-    else
-    {
-      this.lang = "lang_"+ lang ;
-    }
+    this.lang = null != lang ? "_lang_" + lang : "_lang";
   }
 
   protected CoreLocale(String lang, Properties defs)
   {
     super(defs);
 
-    if (null == lang)
-    {
-      this.lang = "lang";
-    }
-    else
-    {
-      this.lang = "lang_"+ lang ;
-    }
+    this.lang = null != lang ? "_lang_" + lang : "_lang";
   }
 
   /**
@@ -80,20 +66,11 @@ public class CoreLocale
   public CoreLocale(String name, String lang)
     throws CruxException
   {
-    super();
-
-    if (null == lang)
-    {
-      this.lang = "lang";
-    }
-    else
-    {
-      this.lang = "lang_"+ lang ;
-    }
+    this (lang);
 
     if (null != name)
     {
-      this.lead(name +"_"+ lang);
+      lead(name+this.lang);
     }
   }
 
@@ -107,20 +84,11 @@ public class CoreLocale
   public CoreLocale(String name, String lang, Properties defs)
     throws CruxException
   {
-    super(defs);
-
-    if (null == lang)
-    {
-      this.lang = "lang";
-    }
-    else
-    {
-      this.lang = "lang_"+ lang ;
-    }
+    this (lang, defs);
 
     if (null != name)
     {
-      this.lead(name +"_"+ lang);
+      lead(name+this.lang);
     }
   }
 
@@ -144,7 +112,7 @@ public class CoreLocale
   public void load(String name)
     throws CruxException
   {
-    lead(name + "_" + lang);
+    lead(name + this.lang);
   }
 
   /**
@@ -260,7 +228,7 @@ public class CoreLocale
    */
   public String getLang()
   {
-    return lang.length() > 5 ? lang.substring(5) : null;
+    return lang.length() > 6 ? lang.substring(6) : null;
   }
 
   //** 静态属性及方法 **/

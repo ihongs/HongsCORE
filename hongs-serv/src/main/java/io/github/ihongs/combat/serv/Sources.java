@@ -19,15 +19,15 @@ import java.util.jar.JarFile;
  * 资源释放
  * @author Hongs
  */
-@Combat("resources")
-public class Resources {
+@Combat("sources")
+public class Sources {
 
     @Combat("save")
     public static void save(String[] args)
            throws IOException {
         if (args.length <= 1 || args[0].isEmpty()) {
             CombatHelper.println(
-                "Usage: resources.save save/path " +
+                "Usage: sources.save save/path " +
                 "resource/path1 resource/path2/* resource/path3/**");
             return;
         }
@@ -40,7 +40,7 @@ public class Resources {
            throws IOException {
         if (args.length <= 0) {
         CombatHelper.println(
-                "Usage: resources.list " +
+                "Usage: sources.list " +
                 "resource/path1 resource/path2/* resource/path3/**");
             return;
         }
@@ -53,7 +53,7 @@ public class Resources {
            throws IOException {
         if (args.length <= 0) {
         CombatHelper.println(
-                "Usage: resources.find " +
+                "Usage: sources.find " +
                 "resource/path1 resource/path2/* resource/path3/**");
             return;
         }

@@ -18,8 +18,8 @@ import java.util.Set;
  *
  * <p>
  * 为与配置保持一致, 故从CoreConfig继承.<br/>
- * 放弃使用"ResourceBundle"类加载语言资源.<br/>
- * 资源文件名为"xxx_语言[_地区].properties".<br/>
+ * 放弃使用"ResourceBundle"类来加载语言资源.<br/>
+ * 资源名为"xxxx_lang[_xx[_XX]].properties".<br/>
  * </p>
  *
  * <h3>配置选项:</h3>
@@ -46,10 +46,13 @@ public class CoreLocale
   {
     super();
 
-    this.lang = lang;
     if (null == lang)
     {
-      throw new NullPointerException("Language is not specified");
+      this.lang = "lang";
+    }
+    else
+    {
+      this.lang = "lang_"+ lang ;
     }
   }
 
@@ -62,11 +65,20 @@ public class CoreLocale
   public CoreLocale(String name, String lang)
     throws CruxException
   {
-    this(lang);
+    super();
+
+    if (null == lang)
+    {
+      this.lang = "lang";
+    }
+    else
+    {
+      this.lang = "lang_"+ lang ;
+    }
 
     if (null != name)
     {
-      this.lead(name + "_" + lang);
+      this.lead(name +"_"+ lang);
     }
   }
 
@@ -215,7 +227,7 @@ public class CoreLocale
   /**
    * 按配置名获取唯一语言对象
    * 如果配置core.load.locale.once为true则仅加载一次
-   * @param name 配置名
+   * @param name 配置名称
    * @return 唯一语言实例
    */
   public static CoreLocale getInstance(String name)
@@ -226,8 +238,8 @@ public class CoreLocale
   /**
    * 按配置名和语言名获取唯一语言对象
    * 如果配置core.load.locale.once为true则仅加载一次
-   * @param name 配置名
-   * @param lang
+   * @param name 配置名称
+   * @param lang 语言代码
    * @return 唯一语言实例
    */
   public static CoreLocale getInstance(String name, String lang)
@@ -248,20 +260,12 @@ public class CoreLocale
       return inst;
     }
 
-    CruxException ax;
     CoreLocale  ins2;
-    CoreConfig  conf;
-    String      land;
+    CruxException ax;
     ax   = null;
-    ins2 = null;
-    conf = CoreConfig.getInstance();
-    land = conf.getProperty("core.language.defense", "lang");
-
     inst = new CoreLocale(lang);
-    if ( ! lang.equals (land) ) {
-    ins2 = new CoreLocale(land);
+    ins2 = new CoreLocale(null);
     inst.defaults = new Properties(ins2);
-    }
 
     // 加载当前语言
     try {
@@ -275,7 +279,6 @@ public class CoreLocale
     }
 
     // 加载后备语言
-    if (ins2 != null) {
     try {
       ins2.load(name);
     } catch (CruxException ex ) {
@@ -286,13 +289,9 @@ public class CoreLocale
       {
         throw ax.toExemption( );
       }
-    } } else {
-      if (ax != null) {
-        throw ax.toExemption( );
-      }
     }
 
-    if (conf.getProperty("core.load.locale.once", false))
+    if (CoreConfig.getInstance().getProperty("core.load.locale.once", false))
     {
       gore.set(ck, inst);
     }

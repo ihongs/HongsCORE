@@ -48,24 +48,6 @@ public class CoreConfig
     super(defs);
   }
 
-  @Override
-  public long dataModified()
-  {
-    return time > 0 ? time : 0;
-  }
-
-  @Override
-  public long fileModified()
-  {
-    return time > 0 ? file.lastModified() : 0;
-  }
-
-  protected void load(String name)
-    throws CruxException
-  {
-    this.lead(name);
-  }
-
   protected final void lead(String name)
     throws CruxException
   {
@@ -130,6 +112,24 @@ public class CoreConfig
     if (time == -1) {
         time  =  0;
     }
+  }
+
+  protected void load(String name)
+    throws CruxException
+  {
+    this.lead(name);
+  }
+
+  @Override
+  public long dataModified()
+  {
+    return time > 0 ? time : 0;
+  }
+
+  @Override
+  public long fileModified()
+  {
+    return time > 0 ? file.lastModified() : 0;
   }
 
   /**

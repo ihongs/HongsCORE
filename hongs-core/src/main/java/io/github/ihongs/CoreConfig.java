@@ -40,7 +40,12 @@ public class CoreConfig
 
   protected CoreConfig()
   {
-    super(0);
+    super();
+  }
+
+  protected CoreConfig(Properties defs)
+  {
+    super(defs);
   }
 
   /**
@@ -51,7 +56,24 @@ public class CoreConfig
   public CoreConfig(String name)
     throws CruxException
   {
-    super(0);
+    super();
+
+    if (null != name)
+    {
+      this.lead(name);
+    }
+  }
+
+  /**
+   * 加载指定名称的配置并绑定默认配置
+   * @param defs
+   * @param name
+   * @throws io.github.ihongs.CruxException
+   */
+  public CoreConfig(String name, Properties defs)
+    throws CruxException
+  {
+    super(defs);
 
     if (null != name)
     {

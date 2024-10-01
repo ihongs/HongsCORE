@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.time.ZoneId;
 import java.time.DateTimeException;
+import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -56,8 +57,22 @@ public class CoreLocale
     }
   }
 
+  protected CoreLocale(String lang, Properties defs)
+  {
+    super(defs);
+
+    if (null == lang)
+    {
+      this.lang = "lang";
+    }
+    else
+    {
+      this.lang = "lang_"+ lang ;
+    }
+  }
+
   /**
-   * 加载指定名称的语言配置
+   * 加载指定名称的资源
    * @param name
    * @param lang
    * @throws io.github.ihongs.CruxException
@@ -66,6 +81,33 @@ public class CoreLocale
     throws CruxException
   {
     super();
+
+    if (null == lang)
+    {
+      this.lang = "lang";
+    }
+    else
+    {
+      this.lang = "lang_"+ lang ;
+    }
+
+    if (null != name)
+    {
+      this.lead(name +"_"+ lang);
+    }
+  }
+
+  /**
+   * 加载指定名称的资源并绑定默认资源
+   * @param name
+   * @param lang
+   * @param defs
+   * @throws io.github.ihongs.CruxException
+   */
+  public CoreLocale(String name, String lang, Properties defs)
+    throws CruxException
+  {
+    super(defs);
 
     if (null == lang)
     {
@@ -212,6 +254,15 @@ public class CoreLocale
     return Syno.inject(str, rep);
   }
 
+  /**
+   * 获取语言标识, 如 zh_CN
+   * @return
+   */
+  public String getLang()
+  {
+    return lang.length() > 5 ? lang.substring(5) : null;
+  }
+
   //** 静态属性及方法 **/
 
   /**
@@ -260,34 +311,29 @@ public class CoreLocale
       return inst;
     }
 
-    CoreLocale  ins2;
-    CruxException ax;
-    ax   = null;
-    inst = new CoreLocale(lang);
-    ins2 = new CoreLocale(null);
-    inst.defaults = new Properties(ins2);
+    Properties  ins2 = null;
+    CruxException ax = null;
 
-    // 加载当前语言
+    // 加载后备语言资源
     try {
-      inst.load(name);
+      ins2 = new CoreConfig(name + "_lang");
     } catch (CruxException ex ) {
       if (826 != ex.getErrno()) {
-        throw ex.toExemption( );
+        throw ex.toExemption();
       } else {
         ax =  ex;
       }
     }
 
-    // 加载后备语言
+    // 加载当前语言资源
     try {
-      ins2.load(name);
+      inst = new CoreLocale(name, lang, ins2);
     } catch (CruxException ex ) {
       if (826 != ex.getErrno()) {
-        throw ex.toExemption( );
+        throw ex.toExemption();
       } else
-      if (ax != null)
-      {
-        throw ax.toExemption( );
+      if ( ax != null ) {
+        throw ex.toExemption();
       }
     }
 
@@ -345,6 +391,24 @@ public class CoreLocale
     }
 
     return new Multiple(Core.ACTION_LANG.get(), p.toArray(new Properties[p.size()]));
+  }
+
+  /**
+   * 从语言标识构建Locale对象
+   * @param lang
+   * @return
+   */
+  public static Locale getLocaleFromLang(String lang)
+  {
+    String   dist;
+    int p  = lang. indexOf ('_');
+    if (p != -1) {
+      dist = lang.substring(1+p);
+      lang = lang.substring(0,p);
+    } else {
+      dist = "";
+    }
+    return new Locale(lang,dist);
   }
 
   /**

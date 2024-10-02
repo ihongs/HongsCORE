@@ -713,11 +713,11 @@ public class NaviMap
   //** 导航菜单 **/
 
   /**
-   * 获取全部菜单
+   * 获取菜单列表
    * @return
    */
   public List<Map> getMenus() {
-      return getMenus(1);
+      return getMenus(0);
   }
 
   public List<Map> getMenus(int d) {
@@ -725,7 +725,7 @@ public class NaviMap
   }
 
   public List<Map> getMenus(String name) {
-      return getMenus(name , 1);
+      return getMenus(name , 0);
   }
 
   public List<Map> getMenus(String name, int d) {
@@ -733,7 +733,13 @@ public class NaviMap
       if (menu == null) {
           throw new NullPointerException("Menu for href '"+name+"' is not in "+this.name);
       }
-      return getUsesMenus(menu , null, d, 0);
+      return getUsesMenus((Map) menu.get("menus"), null, d, 0);
+  }
+
+  public List<Map> getUsesMenus()
+  throws CruxException {
+      Set rolez =  getUserRoles();
+      return getUsesMenus(0, rolez);
   }
 
   /**
@@ -741,12 +747,6 @@ public class NaviMap
    * @return
    * @throws io.github.ihongs.CruxException
    */
-  public List<Map> getUsesMenus()
-  throws CruxException {
-      Set rolez =  getUserRoles();
-      return getUsesMenus(1, rolez);
-  }
-
   public List<Map> getUsesMenus(int d)
   throws CruxException {
       Set rolez =  getUserRoles();
@@ -763,7 +763,7 @@ public class NaviMap
   public List<Map> getUsesMenus(String name)
   throws CruxException {
       Set rolez =  getUserRoles();
-      return getUsesMenus(name, 1, rolez);
+      return getUsesMenus(name, 0, rolez);
   }
 
   public List<Map> getUsesMenus(String name, int d)
@@ -827,13 +827,13 @@ public class NaviMap
           String s = Synt.declare(v.get("text"), "");
           String z = Synt.declare(v.get("hint"), "");
 
-          Map menu = new HashMap();
+          Map menu = new HashMap(6);
           menu.put("href", h);
           menu.put("hrel", p);
           menu.put("icon", d);
           menu.put("text", s);
           menu.put("hint", z);
-          menu.put("menus", subz );
+          menu.put("menus" , subz );
           list.add( menu);
       }
 
@@ -843,7 +843,7 @@ public class NaviMap
   //** 权限表单 **/
 
   /**
-   * 获取全部角色
+   * 获取角色列表
    * @return
    */
   public List<Map> getRoles() {
@@ -863,7 +863,7 @@ public class NaviMap
       if (menu == null) {
           throw new NullPointerException("Menu for href '"+name+"' is not in "+this.name);
       }
-      return getUsesRoles(menu , null, d, 0);
+      return getUsesRoles((Map) menu.get("menus"), null, d, 0);
   }
 
   /**
@@ -953,7 +953,7 @@ public class NaviMap
                   continue; // 无名
               }
 
-              Map role = new HashMap();
+              Map role = new HashMap(4);
               role.put("name", n);
               role.put("text", l);
               role.put("hint", b);

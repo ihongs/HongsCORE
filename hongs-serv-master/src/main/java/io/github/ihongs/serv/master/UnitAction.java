@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 部门动作接口
@@ -90,12 +91,12 @@ public class UnitAction {
 
         // With all roles
         if (nc != null && nc.length() != 0) {
-            List rs = NaviMap.getInstance (nc)
-                .getRoleTranslated (0,
-                    ! Cnst.ADM_UID.equals (ud)
-                    ? AuthKit.getUserRoles(ud)
-                    : null
-                );
+            Set  rs = ! Cnst.ADM_UID.equals(ud)
+                    ? AuthKit.getUserRoles (ud)
+                    : null;
+            List rl = NaviMap.getInstance  (nc)
+                             .getUsesRoles (0 , rs);
+            Dict.put(rd, rl, "enfo", "roles..role");
             Dict.put(rd, rs, "enfo", "roles..role");
         }
 

@@ -227,7 +227,7 @@ public class AuthFilter
         }
 
         try {
-            authset = siteMap.getAuthSet();
+            authset = siteMap.getUserAuths();
         } catch ( CruxException e) {
             int c  = e.getState( );
             if (c >= 401 && c <= 403 ) {

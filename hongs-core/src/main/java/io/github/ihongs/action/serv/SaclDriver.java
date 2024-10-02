@@ -87,7 +87,7 @@ public class SaclDriver
     String s;
     try {
       NaviMap  sitemap = NaviMap.getInstance(name);
-      Set<String> roleset = sitemap.getRoleSet(  );
+      Set<String> roleset = sitemap.getUserRoles();
       Set<String> authset ;
 
       // 没有设置 rsname 的不公开

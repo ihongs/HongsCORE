@@ -106,7 +106,7 @@ public class Furl extends TreeModel {
         // 从导航表中取单元ID
         Set<String> us = new HashSet();
         NaviMap     nv = NaviMap.getInstance(centra);
-        getSubFurls(nv.menus, nv.getRoleSet ( ), us);
+        getSubFurls(nv.menus, nv.getUserRoles ( ) , us);
 
         // 限制为有权限的单元
         caze.filter("`"+table.name+"`.`id` IN (?)", us);

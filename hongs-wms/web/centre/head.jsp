@@ -118,11 +118,11 @@
     ActionHelper helper = ActionHelper.getInstance();
 
     NaviMap curr = NaviMap.getInstance("centre");
-    Set     role = curr.getRoleSet(   );
+    Set     role = curr.getUserRoles( );
     if (null == role) {
             role = Synt.setOf("public");
     }
-    List    menu = curr.getMenuTranslated("common/menu.act?m=centre", 2, role);
+    List    menu = curr.getUsesMenus("common/menu.act?m=centre", 2, role);
 
     String  acti = helper.getParameter("active");
     String  titl = helper.getParameter("title" );

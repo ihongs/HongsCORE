@@ -605,13 +605,13 @@ public class NaviMap
    * @return session 为空则返回 null
    * @throws io.github.ihongs.CruxException
    */
-  public Set<String> getRoleSet() throws CruxException {
+  public Set<String> getUserRoles() throws CruxException {
       if (session == null || session.length() == 0) {
           CoreLogger.warn("Can not get roles for menu " + name);
           return null;
       }
       if (session.startsWith("#")) {
-          return getInstance(session.substring(1)).getRoleSet();
+          return getInstance(session.substring(1)).getUserRoles();
       } else
       if (session.startsWith("@")) {
           return ( Set ) Core.getInstance(session.substring(1));
@@ -627,8 +627,8 @@ public class NaviMap
    * @return session 为空则返回 null
    * @throws io.github.ihongs.CruxException
    */
-  public Set<String> getAuthSet() throws CruxException {
-      Set<String> roleset = getRoleSet();
+  public Set<String> getUserAuths() throws CruxException {
+      Set<String> roleset = getUserRoles();
       if (null == roleset)  return null ;
       return getRoleAuths(roleset);
   }
@@ -641,9 +641,9 @@ public class NaviMap
    * @throws io.github.ihongs.CruxException
    */
   public boolean chkRole(String role) throws CruxException {
-      Set<String> roleset = getRoleSet( );
+      Set<String> roleset = getUserRoles();
       if (null == roleset) {
-          return !roles.containsKey(role);
+          return !roles.containsKey (role);
       }
       return roleset.contains(role) || !roles.containsKey(role);
   }
@@ -656,9 +656,9 @@ public class NaviMap
    * @throws io.github.ihongs.CruxException
    */
   public boolean chkAuth(String auth) throws CruxException {
-      Set<String> authset = getAuthSet( );
+      Set<String> authset = getUserAuths();
       if (null == authset) {
-          return !actions.contains (auth);
+          return !actions.contains( auth );
       }
       return authset.contains(auth) || !actions.contains (auth);
   }
@@ -675,7 +675,7 @@ public class NaviMap
           return false;
       }
 
-      Set<String> roleset = getRoleSet( );
+      Set<String> roleset = getUserRoles();
       if (null == roleset) {
           roleset = new HashSet (0);
       }
@@ -710,43 +710,26 @@ public class NaviMap
       return h;
   }
 
-  //** 导航菜单及权限表单 **/
-
-  /**
-   * 获取当前语言类
-   * @deprecated 输出时会翻译, 不必预先翻译
-   * @return
-   */
-  public CoreLocale getCurrTranslator() {
-    // 包含下级语言资源
-    String[ ] names = new String[imports.size() + 1];
-    int i = 0;
-        names[i ++] = name;
-    for(String nam2 : imports) {
-        names[i ++] = nam2;
-    }
-
-    return CoreLocale.getMultiple(names);
-  }
+  //** 导航菜单 **/
 
   /**
    * 获取全部菜单
    * @return
    */
-  public List<Map> getMenuTranslates() {
-      return getMenuTranslated(1, null );
+  public List<Map> getMenus() {
+      return getUsesMenus(1, null);
   }
 
-  public List<Map> getMenuTranslates(int d) {
-      return getMenuTranslated(d, null );
+  public List<Map> getMenus(int d) {
+      return getUsesMenus(d, null);
   }
 
-  public List<Map> getMenuTranslates(String name) {
-      return getMenuTranslated(name, 1, null);
+  public List<Map> getMenus(String name) {
+      return getUsesMenus(name, 1, null);
   }
 
-  public List<Map> getMenuTranslates(String name, int d) {
-      return getMenuTranslated(name, d, null);
+  public List<Map> getMenus(String name, int d) {
+      return getUsesMenus(name, d, null);
   }
 
   /**
@@ -754,55 +737,55 @@ public class NaviMap
    * @return
    * @throws io.github.ihongs.CruxException
    */
-  public List<Map> getMenuTranslated()
+  public List<Map> getUsesMenus()
   throws CruxException {
-      Set rolez =   getRoleSet();
+      Set rolez =  getUserRoles();
       if (rolez == null) {
-          rolez =  new HashSet();
+          rolez =  new HashSet ();
       }
-      return getMenuTranslated(1, rolez);
+      return getUsesMenus(1, rolez);
   }
 
-  public List<Map> getMenuTranslated(int d)
+  public List<Map> getUsesMenus(int d)
   throws CruxException {
-      Set rolez =   getRoleSet();
+      Set rolez =  getUserRoles();
       if (rolez == null) {
-          rolez =  new HashSet();
+          rolez =  new HashSet ();
       }
-      return getMenuTranslated(d, rolez);
+      return getUsesMenus(d, rolez);
   }
 
-  public List<Map> getMenuTranslated(int d, Set<String> rolez) {
-      return getMenuTranslated(menus, rolez, d, 0);
+  public List<Map> getUsesMenus(int d, Set<String> rolez) {
+      return getUsesMenus(menus, rolez, d, 0);
   }
 
-  public List<Map> getMenuTranslated(String name)
+  public List<Map> getUsesMenus(String name)
   throws CruxException {
-      Set rolez =   getRoleSet();
+      Set rolez =  getUserRoles();
       if (rolez == null) {
-          rolez =  new HashSet();
+          rolez =  new HashSet ();
       }
-      return getMenuTranslated(name, 1, rolez);
+      return getUsesMenus(name, 1, rolez);
   }
 
-  public List<Map> getMenuTranslated(String name, int d)
+  public List<Map> getUsesMenus(String name, int d)
   throws CruxException {
-      Set rolez =   getRoleSet();
+      Set rolez =  getUserRoles();
       if (rolez == null) {
-          rolez =  new HashSet();
+          rolez =  new HashSet ();
       }
-      return getMenuTranslated(name, d, rolez);
+      return getUsesMenus(name, d, rolez);
   }
 
-  public List<Map> getMenuTranslated(String name, int d, Set<String> rolez) {
+  public List<Map> getUsesMenus(String name, int d, Set<String> rolez) {
       Map menu = getMenu(name);
       if (menu == null) {
           throw new NullPointerException("Menu for href '"+name+"' is not in "+this.name);
       }
-      return getMenuTranslated((Map) menu.get("menus"), rolez, d, 0);
+      return getUsesMenus((Map) menu.get("menus"), rolez, d, 0);
   }
 
-  protected List<Map> getMenuTranslated(Map<String, Map> menus, Set<String> rolez, int j, int i) {
+  protected List<Map> getUsesMenus(Map<String, Map> menus, Set<String> rolez, int j, int i) {
       if (null == menus||(j != 0 && j <= i)) {
           return new ArrayList(0);
       }
@@ -815,7 +798,7 @@ public class NaviMap
           Map    m = (Map) v.get( "menus" );
           Set    r = (Set) v.get( "roles" );
 
-          List<Map> subz = getMenuTranslated(m, rolez, j, i + 1);
+          List<Map> subz = getUsesMenus(m, rolez, j, i + 1);
 
           /**
            * 当前菜单没有权限则跳过
@@ -859,24 +842,26 @@ public class NaviMap
       return list;
   }
 
+  //** 权限表单 **/
+
   /**
    * 获取全部角色
    * @return
    */
-  public List<Map> getRoleTranslates() {
-      return getRoleTranslated(0, null);
+  public List<Map> getRoles() {
+      return getUsesRoles(0, null);
   }
 
-  public List<Map> getRoleTranslates(int d) {
-      return getRoleTranslated(d, null);
+  public List<Map> getRoles(int d) {
+      return getUsesRoles(d, null);
   }
 
-  public List<Map> getRoleTranslates(String name) {
-      return getRoleTranslated(name, 0, null);
+  public List<Map> getRoles(String name) {
+      return getUsesRoles(name, 0, null);
   }
 
-  public List<Map> getRoleTranslates(String name, int d) {
-      return getRoleTranslated(name, d, null);
+  public List<Map> getRoles(String name, int d) {
+      return getUsesRoles(name, d, null);
   }
 
   /**
@@ -884,58 +869,58 @@ public class NaviMap
    * @return
    * @throws io.github.ihongs.CruxException
    */
-  public List<Map> getRoleTranslated()
+  public List<Map> getUsesRoles()
   throws CruxException {
-      Set rolez =   getRoleSet();
+      Set rolez =  getUserRoles();
       if (rolez == null) {
-          rolez =  new HashSet();
+          rolez =  new HashSet ();
       }
-      return getRoleTranslated(0, rolez);
+      return getUsesRoles(0, rolez);
   }
 
-  public List<Map> getRoleTranslated(int d)
+  public List<Map> getUsesRoles(int d)
   throws CruxException {
-      Set rolez =   getRoleSet();
+      Set rolez =  getUserRoles();
       if (rolez == null) {
-          rolez =  new HashSet();
+          rolez =  new HashSet ();
       }
-      return getRoleTranslated(d, rolez);
+      return getUsesRoles(d, rolez);
   }
 
-  public List<Map> getRoleTranslated(int d, Set<String> rolez) {
-      return getRoleTranslated(menus, rolez, d, 0);
+  public List<Map> getUsesRoles(int d, Set<String> rolez) {
+      return getUsesRoles(menus, rolez, d, 0);
   }
 
-  public List<Map> getRoleTranslated(String name)
+  public List<Map> getUsesRoles(String name)
   throws CruxException {
-      Set rolez =   getRoleSet();
+      Set rolez =  getUserRoles();
       if (rolez == null) {
-          rolez =  new HashSet();
+          rolez =  new HashSet ();
       }
-      return getRoleTranslated(name, 0, rolez);
+      return getUsesRoles(name, 0, rolez);
   }
 
-  public List<Map> getRoleTranslated(String name, int d)
+  public List<Map> getUsesRoles(String name, int d)
   throws CruxException {
-      Set rolez =   getRoleSet();
+      Set rolez =  getUserRoles();
       if (rolez == null) {
-          rolez =  new HashSet();
+          rolez =  new HashSet ();
       }
-      return getRoleTranslated(name, d, rolez);
+      return getUsesRoles(name, d, rolez);
   }
 
-  public List<Map> getRoleTranslated(String name, int d, Set<String> rolez) {
+  public List<Map> getUsesRoles(String name, int d, Set<String> rolez) {
       Map menu = getMenu(name);
       if (menu == null) {
           throw new NullPointerException("Menu for href '"+name+"' is not in "+this.name);
       }
-      return getRoleTranslated((Map) menu.get("menus"), rolez, d, 0);
+      return getUsesRoles((Map) menu.get("menus"), rolez, d, 0);
   }
 
-  protected List<Map> getRoleTranslated(Map<String, Map> menus, Set<String> rolez, int j, int i) {
-      return getRoleTranslated(menus, rolez, j, i, new HashSet(), new ArrayList(0));
+  protected List<Map> getUsesRoles(Map<String, Map> menus, Set<String> rolez, int j, int i) {
+      return getUsesRoles(menus, rolez, j, i, new HashSet(), new ArrayList(0));
   }
-  protected List<Map> getRoleTranslated(Map<String, Map> menus, Set<String> rolez, int j, int i, Set q, List p) {
+  protected List<Map> getUsesRoles(Map<String, Map> menus, Set<String> rolez, int j, int i, Set q, List p) {
       if (null == menus||(j != 0 && j <= i)) {
           return new ArrayList(0);
       }
@@ -1003,7 +988,7 @@ public class NaviMap
           List<String> g = new ArrayList(1 + p.size());
                        g.addAll(p);
                        g.add   (t);
-          List<Map> subz = getRoleTranslated(m, rolez, j, i + 1, q, g);
+          List<Map> subz = getUsesRoles(m, rolez, j, i + 1, q, g);
           if (! subz.isEmpty()) {
               list.addAll(subz);
           }
@@ -1011,6 +996,85 @@ public class NaviMap
 
       return list;
   }
+
+  //** 废弃方法 **/
+
+  /**
+   * @deprecated 改用 getUserRoles
+   * @throws io.github.ihongs.CruxException
+   * @return
+   */
+  public Set<String> getRoleSet() throws CruxException {
+      return getUserRoles();
+  }
+
+  /**
+   * @deprecated 改用 getUserAuths
+   * @throws io.github.ihongs.CruxException
+   * @return
+   */
+  public Set<String> getAuthSet() throws CruxException {
+      return getUserAuths();
+  }
+
+  /**
+   * 获取当前语言类
+   * @deprecated 输出时会翻译, 不必预先翻译
+   * @return
+   */
+  public CoreLocale getCurrTranslator() {
+    // 包含下级语言资源
+    String[ ] names = new String[imports.size() + 1];
+    int i = 0;
+        names[i ++] = name;
+    for(String nam2 : imports) {
+        names[i ++] = nam2;
+    }
+
+    return CoreLocale.getMultiple(names);
+  }
+
+  @Deprecated
+  public List<Map> getMenuTranslates(int d) {
+      return getMenus(d);
+  }
+
+  @Deprecated
+  public List<Map> getMenuTranslates(String name, int d) {
+      return getMenus(name, d);
+  }
+
+  @Deprecated
+  public List<Map> getMenuTranslated(int d, Set<String> rolez) {
+      return getUsesMenus(d, rolez);
+  }
+
+  @Deprecated
+  public List<Map> getMenuTranslated(String name, int d, Set<String> rolez) {
+      return getUsesMenus(name, d, rolez);
+  }
+
+  @Deprecated
+  public List<Map> getRoleTranslates(int d) {
+      return getRoles(d);
+  }
+
+  @Deprecated
+  public List<Map> getRoleTranslates(String name, int d) {
+      return getRoles(name, d);
+  }
+
+  @Deprecated
+  public List<Map> getRoleTranslated(int d, Set<String> rolez) {
+      return getUsesRoles(d, rolez);
+  }
+
+  @Deprecated
+  public List<Map> getRoleTranslated(String name, int d, Set<String> rolez) {
+      return getUsesRoles(name, d, rolez);
+  }
+
+  //** 语言属性 **/
 
   private Object getLanguage(String text) {
       if (text == null || text.isEmpty())

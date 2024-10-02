@@ -438,8 +438,8 @@ public class Form extends Model {
         // 从权限串中取表单ID
         NaviMap nm = NaviMap.getInstance(centra);
         String  pm = centra + "/";
-        Set<String> ra = nm.getRoleSet( );
-        Set<String> rs = new   HashSet( );
+        Set<String> ra = nm.getUserRoles( );
+        Set<String> rs = new   HashSet  ( );
         for (String rn : ra) {
             if (rn.startsWith(pm)
             &&  rn.  endsWith(mm)) {

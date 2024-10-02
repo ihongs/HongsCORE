@@ -31,7 +31,7 @@ public class PermitInvoker implements FilterInvoker {
         }
 
         NaviMap map = NaviMap.getInstance(conf);
-        Set     rol = map.getRoleSet();
+        Set     rol = map.getUserRoles( );
         boolean has = false;
 
         if (rol  == null) {

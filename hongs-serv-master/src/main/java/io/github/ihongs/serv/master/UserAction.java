@@ -152,13 +152,12 @@ public class UserAction {
 
         // With all roles
         if (nc != null && nc.length() != 0) {
-            List rs = NaviMap.getInstance (nc)
-                .getRoleTranslated (0,
-                    ! Cnst.ADM_UID.equals (ud)
-                    ? AuthKit.getUserRoles(ud)
-                    : null
-                );
-            Dict.put(rd, rs, "enfo", "roles..role");
+            Set  rs = ! Cnst.ADM_UID.equals(ud)
+                    ? AuthKit.getUserRoles (ud)
+                    : null;
+            List rl = NaviMap.getInstance  (nc)
+                             .getUsesRoles (0 , rs);
+            Dict.put(rd, rl, "enfo", "roles..role");
         }
 
         // Remove the password field, don't show password in page

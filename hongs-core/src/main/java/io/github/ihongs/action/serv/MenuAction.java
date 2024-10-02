@@ -3,7 +3,6 @@ package io.github.ihongs.action.serv;
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CruxException;
-import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.NaviMap;
 import io.github.ihongs.action.anno.Action;
@@ -104,9 +103,9 @@ public class MenuAction {
             b  = 1;
         }
         if (n != null && n.length() != 0) {
-            l  = NaviMap.getInstance(m).getMenuTranslated(n, b);
+            l  = NaviMap.getInstance(m).getUsesMenus(n, b);
         } else {
-            l  = NaviMap.getInstance(m).getMenuTranslated(   b);
+            l  = NaviMap.getInstance(m).getUsesMenus(   b);
         }
 
         Map data = new HashMap(1);

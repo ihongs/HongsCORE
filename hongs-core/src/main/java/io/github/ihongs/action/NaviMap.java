@@ -717,19 +717,23 @@ public class NaviMap
    * @return
    */
   public List<Map> getMenus() {
-      return getUsesMenus(1, null);
+      return getMenus(1);
   }
 
   public List<Map> getMenus(int d) {
-      return getUsesMenus(d, null);
+      return getUsesMenus(menus, null, d, 0);
   }
 
   public List<Map> getMenus(String name) {
-      return getUsesMenus(name, 1, null);
+      return getMenus(name , 1);
   }
 
   public List<Map> getMenus(String name, int d) {
-      return getUsesMenus(name, d, null);
+      Map menu  = getMenu(name);
+      if (menu == null) {
+          throw new NullPointerException("Menu for href '"+name+"' is not in "+this.name);
+      }
+      return getUsesMenus(menu , null, d, 0);
   }
 
   /**
@@ -740,46 +744,40 @@ public class NaviMap
   public List<Map> getUsesMenus()
   throws CruxException {
       Set rolez =  getUserRoles();
-      if (rolez == null) {
-          rolez =  new HashSet ();
-      }
       return getUsesMenus(1, rolez);
   }
 
   public List<Map> getUsesMenus(int d)
   throws CruxException {
       Set rolez =  getUserRoles();
-      if (rolez == null) {
-          rolez =  new HashSet ();
-      }
       return getUsesMenus(d, rolez);
   }
 
   public List<Map> getUsesMenus(int d, Set<String> rolez) {
+      if (rolez == null) {
+          rolez =  new HashSet ();
+      }
       return getUsesMenus(menus, rolez, d, 0);
   }
 
   public List<Map> getUsesMenus(String name)
   throws CruxException {
       Set rolez =  getUserRoles();
-      if (rolez == null) {
-          rolez =  new HashSet ();
-      }
       return getUsesMenus(name, 1, rolez);
   }
 
   public List<Map> getUsesMenus(String name, int d)
   throws CruxException {
       Set rolez =  getUserRoles();
-      if (rolez == null) {
-          rolez =  new HashSet ();
-      }
       return getUsesMenus(name, d, rolez);
   }
 
   public List<Map> getUsesMenus(String name, int d, Set<String> rolez) {
-      Map menu = getMenu(name);
-      if (menu == null) {
+      if (rolez == null) {
+          rolez =  new HashSet ();
+      }
+      Map menu  =  getMenu (name);
+      if (menu  == null) {
           throw new NullPointerException("Menu for href '"+name+"' is not in "+this.name);
       }
       return getUsesMenus((Map) menu.get("menus"), rolez, d, 0);
@@ -849,19 +847,23 @@ public class NaviMap
    * @return
    */
   public List<Map> getRoles() {
-      return getUsesRoles(0, null);
+      return getRoles(0);
   }
 
   public List<Map> getRoles(int d) {
-      return getUsesRoles(d, null);
+      return getUsesRoles(menus, null, d, 0);
   }
 
   public List<Map> getRoles(String name) {
-      return getUsesRoles(name, 0, null);
+      return getRoles(name , 0);
   }
 
   public List<Map> getRoles(String name, int d) {
-      return getUsesRoles(name, d, null);
+      Map menu  = getMenu(name);
+      if (menu == null) {
+          throw new NullPointerException("Menu for href '"+name+"' is not in "+this.name);
+      }
+      return getUsesRoles(menu , null, d, 0);
   }
 
   /**
@@ -872,46 +874,40 @@ public class NaviMap
   public List<Map> getUsesRoles()
   throws CruxException {
       Set rolez =  getUserRoles();
-      if (rolez == null) {
-          rolez =  new HashSet ();
-      }
       return getUsesRoles(0, rolez);
   }
 
   public List<Map> getUsesRoles(int d)
   throws CruxException {
       Set rolez =  getUserRoles();
-      if (rolez == null) {
-          rolez =  new HashSet ();
-      }
       return getUsesRoles(d, rolez);
   }
 
   public List<Map> getUsesRoles(int d, Set<String> rolez) {
+      if (rolez == null) {
+          rolez =  new HashSet ();
+      }
       return getUsesRoles(menus, rolez, d, 0);
   }
 
   public List<Map> getUsesRoles(String name)
   throws CruxException {
       Set rolez =  getUserRoles();
-      if (rolez == null) {
-          rolez =  new HashSet ();
-      }
       return getUsesRoles(name, 0, rolez);
   }
 
   public List<Map> getUsesRoles(String name, int d)
   throws CruxException {
       Set rolez =  getUserRoles();
-      if (rolez == null) {
-          rolez =  new HashSet ();
-      }
       return getUsesRoles(name, d, rolez);
   }
 
   public List<Map> getUsesRoles(String name, int d, Set<String> rolez) {
-      Map menu = getMenu(name);
-      if (menu == null) {
+      if (rolez == null) {
+          rolez =  new HashSet ();
+      }
+      Map menu  =  getMenu (name);
+      if (menu  == null) {
           throw new NullPointerException("Menu for href '"+name+"' is not in "+this.name);
       }
       return getUsesRoles((Map) menu.get("menus"), rolez, d, 0);

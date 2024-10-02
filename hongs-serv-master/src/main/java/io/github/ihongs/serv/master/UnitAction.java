@@ -91,12 +91,15 @@ public class UnitAction {
 
         // With all roles
         if (nc != null && nc.length() != 0) {
-            Set  rs = ! Cnst.ADM_UID.equals(ud)
-                    ? AuthKit.getUserRoles (ud)
-                    : null;
-            List rl = NaviMap.getInstance  (nc)
-                             .getUsesRoles (0 , rs);
-            Dict.put(rd, rl, "enfo", "roles..role");
+            List rs;
+            Set  rz;
+            if (Cnst.ADM_UID.equals(ud)) { // 超管取全部
+                rs = NaviMap.getInstance (nc).getRoles(0);
+            } else {
+                rz = AuthKit.getUnitRoles(ud);
+                rs = NaviMap.getInstance (nc)
+                            .getUsesRoles( 0 , rz );
+            }
             Dict.put(rd, rs, "enfo", "roles..role");
         }
 

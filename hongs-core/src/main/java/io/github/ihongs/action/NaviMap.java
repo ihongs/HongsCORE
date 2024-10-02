@@ -984,14 +984,14 @@ public class NaviMap
               String l = (String) v.get("hrel");
               String b = (String) v.get("icon");
 
-              Map menu = new HashMap();
+              Map menu = new HashMap(7);
               menu.put("href", h);
               menu.put("hrel", l);
               menu.put("icon", b);
               menu.put("text", t);
               menu.put("hint", d);
               menu.put("tabs", p);
-              menu.put("roles", rolz );
+              menu.put("roles" , rolz );
               list.add(menu);
           }
           }

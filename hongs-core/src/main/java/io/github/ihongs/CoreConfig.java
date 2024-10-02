@@ -48,7 +48,7 @@ public class CoreConfig
     super(defs);
   }
 
-  protected final void lead(String name)
+  protected final void read(String name)
     throws CruxException
   {
     String      fn;
@@ -117,7 +117,8 @@ public class CoreConfig
   protected void load(String name)
     throws CruxException
   {
-    this.lead(name);
+    assert name != null : "Config resource name can not be null";
+    read ( name );
   }
 
   @Override

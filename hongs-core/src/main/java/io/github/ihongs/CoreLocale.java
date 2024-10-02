@@ -50,17 +50,31 @@ public class CoreLocale
     super(defs);
   }
 
+  /**
+   * 加载打底语言资源, 文件名: xxxx_lang.properties
+   * @param name
+   * @throws CruxException
+   */
   @Override
   protected void load(String name)
     throws CruxException
   {
-    load(name , Core.ACTION_LANG.get());
+    assert name != null : "Locale resource name can not be null";
+    read ( name +"_lang" );
   }
 
+  /**
+   * 加载指定语言资源, 文件名: xxxx_lang_xx_XX.properties
+   * @param name
+   * @param lang
+   * @throws CruxException
+   */
   protected void load(String name, String lang)
     throws CruxException
   {
-    lead(name + (null != lang ? "_lang_" + lang : "_lang"));
+    assert name != null : "Locale resource name can not be null";
+    assert lang != null : "Locale resource lang can not be null";
+    read ( name +"_lang_"+ lang );
   }
 
   /**
@@ -194,31 +208,31 @@ public class CoreLocale
     }
 
     CoreLocale  ins2;
-    CruxException ax;
-    ax   = null;
-    ins2 = new CoreLocale(null);
+    CruxException x2;
+    x2   = null;
+    ins2 = new CoreLocale();
     inst = new CoreLocale(ins2);
 
-    // 加载当前语言资源
+    // 加载后备语言资源
     try {
-      inst.load(name, lang);
+      ins2.load( name );
     } catch (CruxException ex ) {
       if (826 != ex.getErrno()) {
         throw ex.toExemption();
       } else {
-        ax =  ex;
+        x2 =  ex;
       }
     }
 
-    // 加载后备语言资源
+    // 加载当前语言资源
     try {
-      ins2.load(name, null);
+      inst.load( name , lang );
     } catch (CruxException ex ) {
       if (826 != ex.getErrno()) {
         throw ex.toExemption();
       } else
-      if ( ax != null ) {
-        throw ax.toExemption();
+      if ( x2 != null ) {
+        throw ex.toExemption();
       }
     }
 

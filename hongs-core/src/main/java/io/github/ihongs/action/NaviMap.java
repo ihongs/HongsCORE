@@ -714,20 +714,19 @@ public class NaviMap
 
   /**
    * 获取菜单列表
+   * @param d 深度, 0 不限
    * @return
    */
-  public List<Map> getMenus() {
-      return getMenus(0);
-  }
-
   public List<Map> getMenus(int d) {
       return getUsesMenus(menus, null, d, 0);
   }
 
-  public List<Map> getMenus(String name) {
-      return getMenus(name , 0);
-  }
-
+  /**
+   * 获取菜单列表
+   * @param name
+   * @param d 深度, 0 不限
+   * @return
+   */
   public List<Map> getMenus(String name, int d) {
       Map menu  = getMenu(name);
       if (menu == null) {
@@ -736,14 +735,9 @@ public class NaviMap
       return getUsesMenus((Map) menu.get("menus"), null, d, 0);
   }
 
-  public List<Map> getUsesMenus()
-  throws CruxException {
-      Set rolez =  getUserRoles();
-      return getUsesMenus(0, rolez);
-  }
-
   /**
    * 获取当前用户有权的菜单
+   * @param d 深度, 0 不限
    * @return
    * @throws io.github.ihongs.CruxException
    */
@@ -753,6 +747,12 @@ public class NaviMap
       return getUsesMenus(d, rolez);
   }
 
+  /**
+   * 获取当前用户有权的菜单
+   * @param d 深度, 0 不限
+   * @param rolez 用户角色
+   * @return
+   */
   public List<Map> getUsesMenus(int d, Set<String> rolez) {
       if (rolez == null) {
           rolez =  new HashSet ();
@@ -760,18 +760,26 @@ public class NaviMap
       return getUsesMenus(menus, rolez, d, 0);
   }
 
-  public List<Map> getUsesMenus(String name)
-  throws CruxException {
-      Set rolez =  getUserRoles();
-      return getUsesMenus(name, 0, rolez);
-  }
-
+  /**
+   * 获取当前用户有权的菜单
+   * @param name
+   * @param d 深度, 0 不限
+   * @return
+   * @throws io.github.ihongs.CruxException
+   */
   public List<Map> getUsesMenus(String name, int d)
   throws CruxException {
       Set rolez =  getUserRoles();
       return getUsesMenus(name, d, rolez);
   }
 
+  /**
+   * 获取当前用户有权的菜单
+   * @param name
+   * @param d 深度, 0 不限
+   * @param rolez 用户角色
+   * @return
+   */
   public List<Map> getUsesMenus(String name, int d, Set<String> rolez) {
       if (rolez == null) {
           rolez =  new HashSet ();
@@ -844,20 +852,19 @@ public class NaviMap
 
   /**
    * 获取角色列表
+   * @param d 深度, 0 不限
    * @return
    */
-  public List<Map> getRoles() {
-      return getRoles(0);
-  }
-
   public List<Map> getRoles(int d) {
       return getUsesRoles(menus, null, d, 0);
   }
 
-  public List<Map> getRoles(String name) {
-      return getRoles(name , 0);
-  }
-
+  /**
+   * 获取角色列表
+   * @param name
+   * @param d 深度, 0 不限
+   * @return
+   */
   public List<Map> getRoles(String name, int d) {
       Map menu  = getMenu(name);
       if (menu == null) {
@@ -868,21 +875,22 @@ public class NaviMap
 
   /**
    * 获取当前用户有权的角色
+   * @param d 深度, 0 不限
    * @return
    * @throws io.github.ihongs.CruxException
    */
-  public List<Map> getUsesRoles()
-  throws CruxException {
-      Set rolez =  getUserRoles();
-      return getUsesRoles(0, rolez);
-  }
-
   public List<Map> getUsesRoles(int d)
   throws CruxException {
       Set rolez =  getUserRoles();
       return getUsesRoles(d, rolez);
   }
 
+  /**
+   * 获取当前用户有权的角色
+   * @param d 深度, 0 不限
+   * @param rolez 用户角色
+   * @return
+   */
   public List<Map> getUsesRoles(int d, Set<String> rolez) {
       if (rolez == null) {
           rolez =  new HashSet ();
@@ -890,18 +898,26 @@ public class NaviMap
       return getUsesRoles(menus, rolez, d, 0);
   }
 
-  public List<Map> getUsesRoles(String name)
-  throws CruxException {
-      Set rolez =  getUserRoles();
-      return getUsesRoles(name, 0, rolez);
-  }
-
+  /**
+   * 获取当前用户有权的角色
+   * @param name
+   * @param d 深度, 0 不限
+   * @return
+   * @throws io.github.ihongs.CruxException
+   */
   public List<Map> getUsesRoles(String name, int d)
   throws CruxException {
       Set rolez =  getUserRoles();
       return getUsesRoles(name, d, rolez);
   }
 
+  /**
+   * 获取当前用户有权的角色
+   * @param name
+   * @param d 深度, 0 不限
+   * @param rolez 用户角色
+   * @return
+   */
   public List<Map> getUsesRoles(String name, int d, Set<String> rolez) {
       if (rolez == null) {
           rolez =  new HashSet ();

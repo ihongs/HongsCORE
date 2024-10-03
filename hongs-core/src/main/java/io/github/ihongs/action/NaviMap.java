@@ -755,7 +755,7 @@ public class NaviMap
    */
   public List<Map> getUsesMenus(int d, Set<String> rolez) {
       if (rolez == null) {
-          rolez =  new HashSet ();
+          rolez =  new HashSet(0);
       }
       return getUsesMenus(menus, rolez, d, 0);
   }
@@ -782,7 +782,7 @@ public class NaviMap
    */
   public List<Map> getUsesMenus(String name, int d, Set<String> rolez) {
       if (rolez == null) {
-          rolez =  new HashSet ();
+          rolez =  new HashSet(0);
       }
       Map menu  =  getMenu (name);
       if (menu  == null) {
@@ -893,7 +893,7 @@ public class NaviMap
    */
   public List<Map> getUsesRoles(int d, Set<String> rolez) {
       if (rolez == null) {
-          rolez =  new HashSet ();
+          rolez =  new HashSet(0);
       }
       return getUsesRoles(menus, rolez, d, 0);
   }
@@ -920,7 +920,7 @@ public class NaviMap
    */
   public List<Map> getUsesRoles(String name, int d, Set<String> rolez) {
       if (rolez == null) {
-          rolez =  new HashSet ();
+          rolez =  new HashSet(0);
       }
       Map menu  =  getMenu (name);
       if (menu  == null) {

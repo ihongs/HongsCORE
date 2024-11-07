@@ -13,11 +13,15 @@ import io.github.ihongs.db.PrivTable;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.db.link.Loop;
 import io.github.ihongs.util.Dist;
+import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.HashMap;
@@ -36,6 +40,70 @@ import org.apache.lucene.index.Term;
  */
 @Combat("matrix.data")
 public class DataCombat {
+
+    @Combat("revert-all")
+    public static void revertAll(String[] args)
+    throws CruxException, InterruptedException {
+        Map opts = CombatHelper.getOpts(args, new String[] {
+            "user:s",
+            "memo:s",
+            "time:i",
+            "bufs:i",
+            "truncate:b",
+            "cascades:b",
+            "includes:b",
+            "incloses:b"
+        });
+        List<String> argz = new ArrayList(16);
+        argz.add("--conf"); argz.add("");
+        argz.add("--form"); argz.add("");
+        if (opts.containsKey("user")) {
+            argz.add("--user"); argz.add(Synt.asString(opts.get("user")));
+        }
+        if (opts.containsKey("memo")) {
+            argz.add("--memo"); argz.add(Synt.asString(opts.get("memo")));
+        }
+        if (opts.containsKey("time")) {
+            argz.add("--time"); argz.add(Synt.asString(opts.get("time")));
+        }
+        if (opts.containsKey("bufs")) {
+            argz.add("--bufs"); argz.add(Synt.asString(opts.get("bufs")));
+        }
+        if (Synt.declare(opts.containsKey("truncate"), false)) {
+            argz.add("--truncate");
+        }
+        if (Synt.declare(opts.containsKey("cascades"), false)) {
+            argz.add("--cascades");
+        }
+        if (Synt.declare(opts.containsKey("includes"), false)) {
+            argz.add("--includes");
+        }
+        if (Synt.declare(opts.containsKey("incloses"), false)) {
+            argz.add("--incloses");
+        }
+        args  = argz.toArray(new String[]{});
+
+        DB db = DB.getInstance("matrix");
+        String tn = db.getTableName ("form");
+        String sq = "SELECT `id` FROM `"+tn+"` WHERE `state` NOT IN (0, 3)"; // 0: 已删除, 3: 关联项
+        List<Map> ls = db.fetchAll(sq);
+        for (Map  lo : ls) {
+            args[3] = (String) lo.get ("id");
+            args[1] = "centra/data/"+args[3];
+            CombatHelper.println("revert "+Syno.concat(" ",(Object[])args));
+            try {
+                revert( args );
+            }
+            catch (CruxException|InterruptedException e) {
+                String s;
+                ByteArrayOutputStream b;
+                b = new ByteArrayOutputStream();
+                e.printStackTrace(new PrintStream ( b ));
+                s = b.toString().replaceAll("\r\n|\r|\n", "$0\t");
+                CombatHelper.println(s);
+            }
+        }
+    }
 
     @Combat("revert")
     public static void revert(String[] args)

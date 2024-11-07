@@ -933,7 +933,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 break;
             case "sorted":
                 if ("".equals(v)) continue;
-                f = new LongStock();
+                f = new DoubleStock();
                 s = true ;
                 g = false; // 排序类型无需存储
                 p = false; // 排序类型无法搜索

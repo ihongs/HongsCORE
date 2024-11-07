@@ -33,8 +33,9 @@ public final class StatisHandle {
         INTS, LONGS, FLOATS, DOUBLES, STRINGS  // 复数
     };
 
-    public static final int  NO_MORE_VALS = (int ) SortedSetDocValues.NO_MORE_ORDS;
-    public static final long NO_MORE_ORDS = (long) SortedSetDocValues.NO_MORE_ORDS;
+    public static final int  ON_MORE_VALS =  0;
+    public static final int  NO_MORE_VALS = -1; //(int ) SortedSetDocValues.NO_MORE_ORDS;
+    public static final long NO_MORE_ORDS = -1; //(long) SortedSetDocValues.NO_MORE_ORDS;
 
     private final IndexSearcher finder;
     private       Field[]       fields;
@@ -244,11 +245,11 @@ public final class StatisHandle {
 
         @Override
         public void collect(int i) throws IOException {
-            if (values == null
-            ||  values.advanceExact(i) == false) {
-                j = NO_MORE_VALS;
+            if (values != null
+            &&  values.advanceExact(i)) {
+                j = ON_MORE_VALS;
             } else {
-                j = 0;
+                j = NO_MORE_VALS;
             }
         }
 
@@ -303,17 +304,17 @@ public final class StatisHandle {
 
         @Override
         public void collect(int i) throws IOException {
-            if (values == null
-            ||  values.advanceExact(i) == false) {
-                j = NO_MORE_VALS;
+            if (values != null
+            &&  values.advanceExact(i)) {
+                j = ON_MORE_VALS;
             } else {
-                j = 0;
+                j = NO_MORE_VALS;
             }
         }
 
         @Override
         public boolean hasNext() {
-            return j != NO_MORE_VALS && j < values.docValueCount();
+            return j != NO_MORE_VALS;
         }
 
         @Override
@@ -360,11 +361,11 @@ public final class StatisHandle {
 
         @Override
         public void collect(int i) throws IOException {
-            if (values == null
-            ||  values.advanceExact(i) == false) {
-                j = NO_MORE_VALS;
+            if (values != null
+            &&  values.advanceExact(i)) {
+                j = values.ordValue( );
             } else {
-                j = 0;
+                j = NO_MORE_VALS;
             }
         }
 
@@ -375,8 +376,11 @@ public final class StatisHandle {
 
         @Override
         public  String next() {
-            try {  j  = NO_MORE_VALS;
-                return values.binaryValue().utf8ToString();
+            try {
+                String s;
+                s = values.lookupOrd(j).utf8ToString();
+                j = NO_MORE_VALS ;
+                return s;
             } catch (IOException e ) {
                 throw new CruxExemption(e);
             }
@@ -408,11 +412,11 @@ public final class StatisHandle {
 
         @Override
         public void collect(int i) throws IOException  {
-            if (values == null
-            ||  values.advanceExact(i) == false) {
-                j = NO_MORE_ORDS;
+            if (values != null
+            ||  values.advanceExact(i)) {
+                j = values.nextOrd ( );
             } else {
-                j = values.nextOrd();
+                j = NO_MORE_ORDS;
             }
         }
 

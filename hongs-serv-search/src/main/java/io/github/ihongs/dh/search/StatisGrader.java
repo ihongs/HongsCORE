@@ -19,7 +19,8 @@ import org.apache.lucene.search.LeafCollector;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Scorer;
+import org.apache.lucene.search.Scorable;
+import org.apache.lucene.search.ScoreMode;
 
 /**
  * 分类统计工具
@@ -246,13 +247,13 @@ public class StatisGrader {
         }
 
         @Override
-        public void setScorer(Scorer s) {
+        public void setScorer(Scorable s) {
             // 不需要打分
         }
 
         @Override
-        public boolean needsScores( ) {
-            return false;
+        public ScoreMode scoreMode() {
+            return ScoreMode.COMPLETE_NO_SCORES;
         }
 
         public int count() {

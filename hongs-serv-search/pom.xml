@@ -6,13 +6,13 @@
     <parent>
         <artifactId>hongs-base</artifactId>
         <groupId>io.github.ihongs</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.1-SNAPSHOT</version>
     </parent>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <lucene.version>7.7.3</lucene.version>
+        <lucene.version>9.12.0</lucene.version>
     </properties>
     <dependencies>
         <dependency>
@@ -41,7 +41,7 @@
             <version>${lucene.version}</version>
         </dependency>
         <dependency>
-            <artifactId>lucene-analyzers-common</artifactId>
+            <artifactId>lucene-analysis-common</artifactId>
             <groupId>org.apache.lucene</groupId>
             <version>${lucene.version}</version>
         </dependency>

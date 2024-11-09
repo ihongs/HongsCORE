@@ -6,6 +6,7 @@ import org.apache.lucene.index.LeafReader;
 import org.apache.lucene.index.NumericDocValues;
 import org.apache.lucene.search.FieldComparator;
 import org.apache.lucene.search.FieldComparatorSource;
+import org.apache.lucene.search.Pruning;
 
 /**
  * 平面距离排序
@@ -22,7 +23,7 @@ public class DurationSerie extends FieldComparatorSource {
     }
 
     @Override
-    public FieldComparator<?> newComparator(String fn, int nh, int sp, boolean rv) {
+    public FieldComparator<?> newComparator(String fn, int nh, Pruning sp, boolean rv) {
         return new Comparator(fn, nh, x, y);
     }
 

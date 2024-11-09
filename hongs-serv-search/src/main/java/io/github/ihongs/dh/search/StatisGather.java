@@ -18,7 +18,6 @@ import java.util.function.Supplier;
 import org.apache.lucene.index.LeafReader;
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.index.SortedDocValues;
 import org.apache.lucene.index.SortedSetDocValues;
 import org.apache.lucene.index.SortedNumericDocValues;
 import org.apache.lucene.search.Collector;
@@ -26,7 +25,8 @@ import org.apache.lucene.search.LeafCollector;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Scorer;
+import org.apache.lucene.search.Scorable;
+import org.apache.lucene.search.ScoreMode;
 import org.apache.lucene.util.NumericUtils;
 
 /**
@@ -181,16 +181,16 @@ public class StatisGather {
         }
 
         @Override
-        public void setScorer(Scorer s) {
+        public void setScorer(Scorable s) {
             // 不需要打分
         }
 
         @Override
-        public boolean needsScores( ) {
-            return false;
+        public ScoreMode scoreMode() {
+            return ScoreMode.COMPLETE_NO_SCORES;
         }
 
-        public List<Map> getResult( ) {
+        public List<Map> getResult() {
             return list ;
         }
 

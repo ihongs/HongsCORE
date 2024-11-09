@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
+import org.apache.lucene.document.Document;
 
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
@@ -54,6 +55,7 @@ public class DataCombat {
             "includes:b",
             "incloses:b"
         });
+
         List<String> argz = new ArrayList(16);
         argz.add("--conf"); argz.add("");
         argz.add("--form"); argz.add("");
@@ -83,13 +85,11 @@ public class DataCombat {
         }
         args  = argz.toArray(new String[]{});
 
-        DB db = DB.getInstance("matrix");
-        String tn = db.getTableName ("form");
-        String sq = "SELECT `id` FROM `"+tn+"` WHERE `state` NOT IN (0, 3)"; // 0: 已删除, 3: 关联项
-        List<Map> ls = db.fetchAll(sq);
-        for (Map  lo : ls) {
-            args[3] = (String) lo.get ("id");
-            args[1] = "centra/data/"+args[3];
+        Set<String> ls = getRevertNames();
+        for(String  ln : ls) {
+            int p = ln.indexOf(":");
+            args[1] = ln.substring(0,p);
+            args[3] = ln.substring(1+p);
             CombatHelper.println("revert "+Syno.concat(" ",(Object[])args));
             try {
                 revert( args );
@@ -108,10 +108,6 @@ public class DataCombat {
     @Combat("revert")
     public static void revert(String[] args)
     throws CruxException, InterruptedException {
-        revert(args, new Inst());
-    }
-    public static void revert(String[] args, Inst df)
-    throws CruxException, InterruptedException {
         Map opts = CombatHelper.getOpts(args, new String[] {
             "conf=s",
             "form=s",
@@ -129,16 +125,32 @@ public class DataCombat {
 
         String conf = (String) opts.get("conf");
         String form = (String) opts.get("form");
+        Data dr = Data.getInstance(conf, form );
+
+        /**
+         * 级联更新操作
+         * 默认不作级联
+         */
+        Casc da = new Casc(
+             dr ,
+             Synt.declare (opts.get("cascades"), false),
+             Synt.declare (opts.get("includes"), false),
+             Synt.declare (opts.get("incloses"), false)
+        );
+
+        revert(da, opts);
+    }
+    public static void revert(Casc da, Map opts)
+    throws CruxException, InterruptedException {
+        Data dr = da.getInstance();
+        String form = dr.getFormId();
         String user = (String) opts.get("user");
         String memo = (String) opts.get("memo");
         long ct = Synt.declare(opts.get("time"),  0L );
         int  bn = Synt.declare(opts.get("bufs"), 1000);
         Set<String> ds = Synt.asSet ( opts.get( "" ) );
 
-        Data dr = df.getInstance (conf, form);
         dr.setUserId(Synt.defoult(user, Cnst.ADM_UID));
-//      user = dr.getUserId( );
-        form = dr.getFormId( );
 
         Map sd = new HashMap();
         sd.put( "memo", memo );
@@ -206,7 +218,7 @@ public class DataCombat {
          * 清空全部数据
          * 以便更新结构
          */
-        if (Synt.declare(opts.get("drop"), false)) {
+        if (Synt.declare(opts.get("truncate"), false)) {
             IndexWriter iw = dr.getWriter();
             /**/ String pd = dr.getPartId();
             try {
@@ -221,17 +233,6 @@ public class DataCombat {
                 throw new CruxException(ex);
             }
         }
-
-        /**
-         * 级联更新操作
-         * 默认不作级联
-         */
-        Casc da = new Casc(
-             dr ,
-             Synt.declare (opts.get("cascades") , false) ,
-             Synt.declare (opts.get("includes") , false) ,
-             Synt.declare (opts.get("incloses") , false)
-        );
 
         boolean pr = Core.DEBUG == 0 && Core.ENVIR == 0;
         long tc = System.currentTimeMillis(/**/) / 1000;
@@ -316,10 +317,6 @@ public class DataCombat {
     @Combat("import")
     public static void impart(String[] args)
     throws CruxException, InterruptedException {
-        impart(args, new Inst());
-    }
-    public static void impart(String[] args, Inst df)
-    throws CruxException, InterruptedException {
         Map opts = CombatHelper.getOpts(args, new String[] {
             "conf=s",
             "form=s",
@@ -331,18 +328,22 @@ public class DataCombat {
 
         String conf = (String) opts.get("conf");
         String form = (String) opts.get("form");
+        Data dr = Data.getInstance(conf, form );
+
+        impart(dr, opts);
+    }
+    public static void impart(Data dr, Map opts)
+    throws CruxException, InterruptedException {
         String user = (String) opts.get("user");
         String memo = (String) opts.get("memo");
         String[] dats = (String[]) opts.get("");
 
-        Data dr = df.getInstance (conf, form);
         dr.setUserId(Synt.defoult(user, Cnst.ADM_UID));
-//      user = dr.getUserId( );
-//      form = dr.getFormId( );
 
         dr.begin();
 
-        int i = 0 ;
+        int  i = 0;
+        long t = System.currentTimeMillis( ) / 1000 ;
         for(String text : dats) {
             Map sd = data(text);
             String id = (String) sd.get(Cnst.ID_KEY);
@@ -350,7 +351,11 @@ public class DataCombat {
                 id = Core.newIdentity();
                 sd.put(Cnst.ID_KEY, id);
             }   sd.put( "memo" , memo );
-            i+= dr.put( id, sd );
+            try {
+                i += dr.put(id, sd, t );
+            } catch (Exception ex) {
+                throw new Exid(ex , id);
+            }
         }
 
         dr.commit( );
@@ -360,10 +365,6 @@ public class DataCombat {
 
     @Combat("update")
     public static void update(String[] args)
-    throws CruxException, InterruptedException {
-        update(args, new Inst());
-    }
-    public static void update(String[] args, Inst df)
     throws CruxException, InterruptedException {
         Map opts = CombatHelper.getOpts(args, new String[] {
             "conf=s",
@@ -376,6 +377,12 @@ public class DataCombat {
 
         String conf = (String) opts.get("conf");
         String form = (String) opts.get("form");
+        Data dr = Data.getInstance(conf, form );
+
+        update(dr, opts);
+    }
+    public static void update(Data dr, Map opts)
+    throws CruxException, InterruptedException {
         String user = (String) opts.get("user");
         String memo = (String) opts.get("memo");
         String[] dats = (String[]) opts.get("");
@@ -385,10 +392,7 @@ public class DataCombat {
             return;
         }
 
-        Data dr = df.getInstance (conf, form);
         dr.setUserId(Synt.defoult(user, Cnst.ADM_UID));
-//      user = dr.getUserId( );
-//      form = dr.getFormId( );
 
         Map rd = data(dats[0]);
         Map sd = data(dats[1]);
@@ -397,10 +401,15 @@ public class DataCombat {
 
         dr.begin();
 
-        int i = 0 ;
+        int  i = 0;
+        long t = System.currentTimeMillis( ) / 1000 ;
         for(Map od : dr.search(rd, 0, 0)) {
             String id = (String) od.get(Cnst.ID_KEY);
-            i+= dr.put( id, sd );
+            try {
+                i += dr.put(id, sd, t);
+            } catch (Exception ex) {
+                throw new Exid(ex, id);
+            }
         }
 
         dr.commit( );
@@ -410,10 +419,6 @@ public class DataCombat {
 
     @Combat("delete")
     public static void delete(String[] args)
-    throws CruxException, InterruptedException {
-        delete(args, new Inst());
-    }
-    public static void delete(String[] args, Inst df)
     throws CruxException, InterruptedException {
         Map opts = CombatHelper.getOpts(args, new String[] {
             "conf=s",
@@ -426,6 +431,12 @@ public class DataCombat {
 
         String conf = (String) opts.get("conf");
         String form = (String) opts.get("form");
+        Data dr = Data.getInstance(conf, form );
+
+        delete(dr, opts);
+    }
+    public static void delete(Data dr, Map opts)
+    throws CruxException, InterruptedException {
         String user = (String) opts.get("user");
         String memo = (String) opts.get("memo");
         String[] dats = (String[]) opts.get("");
@@ -435,10 +446,7 @@ public class DataCombat {
             return;
         }
 
-        Data dr = df.getInstance (conf, form);
         dr.setUserId(Synt.defoult(user, Cnst.ADM_UID));
-//      user = dr.getUserId( );
-//      form = dr.getFormId( );
 
         Map rd = data(dats[0]);
         Map sd = new HashMap();
@@ -451,7 +459,11 @@ public class DataCombat {
         long t = System.currentTimeMillis( ) / 1000 ;
         for(Map od : dr.search(rd, 0, 0)) {
             String id = (String) od.get(Cnst.ID_KEY);
-            i+= dr.del( id, sd, t );
+            try {
+                i += dr.del(id, sd, t);
+            } catch (Exception ex) {
+                throw new Exid(ex, id);
+            }
         }
 
         dr.commit( );
@@ -462,10 +474,6 @@ public class DataCombat {
     @Combat("search")
     public static void search(String[] args)
     throws CruxException {
-        search(args, new Inst());
-    }
-    public static void search(String[] args, Inst df)
-    throws CruxException {
         Map opts = CombatHelper.getOpts(args, new String[] {
             "conf=s",
             "form=s",
@@ -475,6 +483,12 @@ public class DataCombat {
 
         String conf = (String) opts.get("conf");
         String form = (String) opts.get("form");
+        Data dr = Data.getInstance(conf, form );
+
+        search(dr, opts);
+    }
+    public static void search(Data dr, Map opts)
+    throws CruxException {
         String[] dats = (String[]) opts.get("");
 
         if (dats.length < 1) {
@@ -482,11 +496,10 @@ public class DataCombat {
             return;
         }
 
-        Data dr = df.getInstance (conf, form);
-        Map  rd = data ( dats[0] );
+        Map rd = data(dats[0]);
 
         for(Map od : dr.search(rd, 0, 0)) {
-            CombatHelper.preview (  od  );
+            CombatHelper.preview(od);
         }
     }
 
@@ -497,10 +510,6 @@ public class DataCombat {
      */
     @Combat("uproot")
     public static void uproot(String[] args)
-    throws CruxException {
-        uproot(args, new Inst());
-    }
-    public static void uproot(String[] args, Inst df)
     throws CruxException {
         Map opts = CombatHelper.getOpts(
             args ,
@@ -516,17 +525,15 @@ public class DataCombat {
         String uid  = (String) opts.get("uid" );
         String uidz = (String) opts.get("uids");
 
-        Set<String> uids = Synt.toSet (uidz);
-        Set<String> ents ;
+        Set<String> uids = Synt.toSet( uidz );
 
         // 获取路径
-        if (conf == null || conf.isEmpty()
-        ||  form == null || form.isEmpty()) {
-            ents  = df.getAllPaths();
-        if (ents == null || ents.isEmpty()) {
-            return;
-        }}  else  {
-            ents  = Synt.setOf(conf + "." + form);
+        Set<String> ents ;
+        if (conf != null && ! conf.isEmpty( )
+        &&  form != null && ! form.isEmpty()) {
+            ents  = Synt.setOf(conf+":"+form);
+        }  else  {
+            ents  = getUprootNames();
         }
 
         // 批量更新
@@ -536,38 +543,16 @@ public class DataCombat {
                     int    p = n.lastIndexOf(".");
                     String c = n.substring(0 , p);
                     String f = n.substring(1 + p);
-                    uproot (df.getInstance(c , f), uid, uids);
+                    Data   d = Data.getInstance(c, f);
+                    uproot(d , uid , uids);
                 }
             } catch (CruxException ex) {
                 throw ex.toExemption();
             }
         });
     }
-
-    /**
-     * 归并账号(所有模型的数据)
-     * @param uid
-     * @param uids
-     * @throws CruxException
-     */
-    public static void uproot(String uid, Set<String> uids) throws CruxException {
-        Set<String> ents = new Inst( ).getAllPaths( );
-        for(String n : ents) {
-            int    p = n.lastIndexOf(".");
-            String c = n.substring (0, p);
-            String f = n.substring (1+ p);
-            uproot(Data.getInstance(c, f), uid, uids);
-        }
-    }
-
-    /**
-     * 归并账号(指定模型的数据)
-     * @param ent
-     * @param uid
-     * @param uids
-     * @throws CruxException
-     */
-    public static void uproot(Data ent, String uid, Set<String> uids) throws CruxException {
+    public static void uproot(Data ent, String uid, Set<String> uids)
+    throws CruxException {
         Map cols = ent .getFields();
         Set colz = new HashSet();
         Map relz = new HashMap();
@@ -652,58 +637,97 @@ public class DataCombat {
     }
 
     /**
-     * 数据实体工厂类,
-     * 供扩展实体时用.
+     * 获取全部可恢复模型名
+     * @return
      */
-    public static class Inst {
+    public static Set<String> getRevertNames() {
+        Set<String> ents = new LinkedHashSet();
 
-        public Data getInstance(String conf, String form) throws CruxException {
-            return  Data . getInstance(conf, form);
+        // 提取所有表单记录
+        try {
+            // furl_id 为 - 表示这是一个内置关联项, 这样的无需处理
+            Loop lo = DB
+                .getInstance("matrix")
+                .getTable   ( "form" )
+                .fetchCase  ( )
+                .filter("`state` > 0")
+                .filter("`furl_id` != '-'")
+                .select("`id`")
+                .select();
+            for(Map ro : lo ) {
+                String id = ro.get("id").toString();
+                ents.add("centra/data/" +id+":"+id);
+            }
+        } catch (CruxException ex) {
+            throw ex.toExemption( );
         }
 
-        public Set<String> getAllPaths() {
-            Set<String> ents = new LinkedHashSet();
-
-            // 提取所有表单记录
-            try {
-                // furl_id 为 - 表示这是一个内置关联项, 这样的无需处理
-                Loop lo = DB
-                    .getInstance("matrix")
-                    .getTable   ( "form" )
-                    .fetchCase  ( )
-                    .filter("`state` > 0")
-                    .filter("`furl_id` != '-'")
-                    .select("`id`")
-                    .select();
-                for(Map ro : lo ) {
-                    String id = ro.get("id").toString();
-                    ents.add("centra/data/" +id+"."+id);
-                }
-            } catch (CruxException ex) {
-                throw ex.toExemption( );
-            }
-
-            // 增加额外定制的表
-            Set<String> incl = Synt.toSet(
-                CoreConfig.getInstance("matrix")
-                          .getProperty("core.matrix.uproot.include")
-            );
-            if (incl != null && ! incl.isEmpty()) {
-                ents.   addAll(incl);
-            }
-
-            // 排除特殊处理的表
-            Set<String> excl = Synt.toSet(
-                CoreConfig.getInstance("matrix")
-                          .getProperty("core.matrix.uproot.exclude")
-            );
-            if (excl != null && ! excl.isEmpty()) {
-                ents.removeAll(excl);
-            }
-
-            return ents;
+        // 增加额外定制的表
+        Set<String> incl = Synt.toSet(
+            CoreConfig.getInstance("matrix")
+                      .getProperty("core.matrix.revert.include")
+        );
+        if (incl != null && ! incl.isEmpty()) {
+            ents.   addAll(incl);
         }
 
+        // 排除特殊处理的表
+        Set<String> excl = Synt.toSet(
+            CoreConfig.getInstance("matrix")
+                      .getProperty("core.matrix.revert.exclude")
+        );
+        if (excl != null && ! excl.isEmpty()) {
+            ents.removeAll(excl);
+        }
+
+        return ents;
+    }
+
+    /**
+     * 获取全部需归并模型名
+     * @return
+     */
+    public static Set<String> getUprootNames() {
+        Set<String> ents = new LinkedHashSet();
+
+        // 提取所有表单记录
+        try {
+            // furl_id 为 - 表示这是一个内置关联项, 这样的无需处理
+            Loop lo = DB
+                .getInstance("matrix")
+                .getTable   ( "form" )
+                .fetchCase  ( )
+                .filter("`state` > 0")
+                .filter("`furl_id` != '-'")
+                .select("`id`")
+                .select();
+            for(Map ro : lo ) {
+                String id = ro.get("id").toString();
+                ents.add("centra/data/" +id+":"+id);
+            }
+        } catch (CruxException ex) {
+            throw ex.toExemption( );
+        }
+
+        // 增加额外定制的表
+        Set<String> incl = Synt.toSet(
+            CoreConfig.getInstance("matrix")
+                      .getProperty("core.matrix.uproot.include")
+        );
+        if (incl != null && ! incl.isEmpty()) {
+            ents.   addAll(incl);
+        }
+
+        // 排除特殊处理的表
+        Set<String> excl = Synt.toSet(
+            CoreConfig.getInstance("matrix")
+                      .getProperty("core.matrix.uproot.exclude")
+        );
+        if (excl != null && ! excl.isEmpty()) {
+            ents.removeAll(excl);
+        }
+
+        return ents;
     }
 
     /**
@@ -712,11 +736,11 @@ public class DataCombat {
      */
     public static class Casc {
 
-        private final Data    that    ;
-        private final boolean cascades;
-        private final boolean includes;
-        private final boolean incloses;
-        private final Consumer<Map> dc;
+        protected final Data    that    ;
+        protected final boolean cascades;
+        protected final boolean includes;
+        protected final boolean incloses;
+        protected final Consumer<Map> dc;
 
         public Casc (Data data, boolean cascades, boolean includes, boolean incloses)
         throws CruxException {
@@ -734,15 +758,22 @@ public class DataCombat {
             }
         }
 
-        public void del(String id, Map sd, long ctime) throws CruxException {
-            that.del(id, sd, ctime);
+        public Data getInstance() {
+            return that;
         }
 
-        public void del(String id, Map sd) throws CruxException {
-            that.delDoc( id );
+        public void pad(String id, Map  od) throws CruxException {
+            if (includes) that.includes(od);
+            if (incloses) that.incloses(od);
+        }
+
+        public void set(String id, Document doc) throws CruxException {
+            that.setDoc(id, doc);
         }
 
         public void rev(String id, Map sd, long ctime) throws CruxException {
+            try {
+
             String   uid   = that.getUserId();
             String   fid   = that.getFormId();
             Object[] param = new String[] {id, fid, "0"};
@@ -751,11 +782,11 @@ public class DataCombat {
 
             // 解密并解析
             dc.accept(sd);
-            Map od = that.getData((String) sd. get( "data" ));
+            Map  od = that.getData((String) sd. get( "data" ));
 
-            if (includes) that.includes(od);
-            if (incloses) that.incloses(od);
-            that.setDoc(id, that.padDoc(od));
+            // 填充并写入
+            pad (id , od);
+            set (id , that.padDoc(od));
 
             Map ud = new HashMap();
             ud.put("etime", ctime);
@@ -783,21 +814,80 @@ public class DataCombat {
 
             that.getTable().update(ud, where, param);
             that.getTable().insert(nd);
+
+            } catch (Exception ex) {
+                throw new Exid(ex, id);
+            }
         }
 
         public void rev(String id, Map sd) throws CruxException {
+            try {
+
             // 解密并解析
             dc.accept(sd);
-            Map od = that.getData((String) sd. get( "data" ));
+            Map  od = that.getData((String) sd. get( "data" ));
 
-            if (includes) that.includes(od);
-            if (incloses) that.incloses(od);
-            that.setDoc(id, that.padDoc(od));
+            // 填充并写入
+            pad (id , od);
+            set (id , that.padDoc(od));
+
+            } catch (Exception ex) {
+                throw new Exid(ex, id);
+            }
+        }
+
+        public void del(String id, Map sd, long ctime) throws CruxException {
+            try {
+                that.del(id,sd, ctime);
+            } catch (Exception ex) {
+                throw new Exid(ex, id);
+            }
+        }
+
+        public void del(String id, Map sd) throws CruxException {
+            try {
+                that.delDoc   (id);
+            } catch (Exception ex) {
+                throw new Exid(ex, id);
+            }
         }
 
         public void commit( ) {
-            if (cascades) that.commit();
-            else          that.submit();
+            if (cascades) {
+                that.commit();
+            } else {
+                that.submit();
+            }
+        }
+
+    }
+
+    /**
+     * 异常携带ID
+     * 以便于定位
+     */
+    public static class Exid extends CruxException {
+
+        private final String id ;
+
+        public Exid(Throwable cause, String id) {
+            super(cause);
+            this.id = id;
+        }
+
+        @Override
+        public String toString() {
+            return getMessage ();
+        }
+
+        @Override
+        public String getMessage() {
+            return "ID: "+id+". "+getCause().getMessage();
+        }
+
+        @Override
+        public String getLocalizedMessage() {
+            return "ID: "+id+". "+getCause().getLocalizedMessage();
         }
 
     }

@@ -5,6 +5,8 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Weight;
+import org.apache.lucene.search.ScoreMode;
+import org.apache.lucene.search.QueryVisitor;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.AutomatonQuery;
 import org.apache.lucene.util.automaton.Automaton;
@@ -52,8 +54,13 @@ public class IsEmpty extends Query {
     }
 
     @Override
-    public Weight createWeight(IndexSearcher searcher, boolean score, float boost) throws IOException {
-        return query.createWeight(searcher, score, boost);
+    public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) throws IOException {
+        return query.createWeight(searcher, scoreMode, boost);
+    }
+
+    @Override
+    public void visit(QueryVisitor qv) {
+        query.visit(qv);
     }
 
     @Override

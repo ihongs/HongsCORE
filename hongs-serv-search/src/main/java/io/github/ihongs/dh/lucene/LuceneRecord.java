@@ -50,6 +50,7 @@ import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.TotalHits;
 import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
@@ -961,6 +962,13 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 q = false; // 对象类型无法筛选
                 s = false; // 对象类型无法排序
                 break;
+            case "vector":
+                if ("".equals(v)) continue;
+                f = new VectorStock();
+                q = true ; // 向量借用筛选
+                p = false; // 向量类型无法搜索
+                s = false; // 向量类型无法排序
+                break;
             default:
                 f = new StringStock();
             } else {
@@ -1130,6 +1138,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 // 可以查询有无
                 qa = new StringQuest();
                 break;
+            case "vector":
+                qa = new VectorQuest();
+                break;
             default:
                 // 区分能否搜索
                 if ( ! srchable(m)) {
@@ -1156,6 +1167,26 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                     qs.settings(m);
                     qa = qs;
                 }
+            }
+
+            //** 向量查询 **/
+
+            if (qa instanceof VectorQuest) {
+                VectorQuest qv = (VectorQuest) qa;
+                float[] f;
+                int d = Cnst.RN_DEF ;
+                if (v instanceof Map) {
+                    Map vd = (Map) v;
+                    d = Synt.declare( vd.get( Cnst.UP_REL ) , d );
+                    f = VectorQuest.toVector(vd.get(Cnst.ON_REL));
+                } else {
+                    f = VectorQuest.toVector(v);
+                }
+                if (0 < f.length ) {
+                    qr.add(qv.vtr(k, f, d), BooleanClause.Occur.MUST);
+                    i ++;
+                }
+                continue;
             }
 
             //** 常规查询 **/
@@ -2028,6 +2059,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             case "sorted":
             case "stored":
             case "object":
+            case "vector":
                 return t ;
         }
 
@@ -2166,13 +2198,15 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 if ( docs == null) {
                     int L  = l+b ;
                      TopDocs tops;
+                   TotalHits tots;
                     if (s != null) {
                         tops = finder.searchAfter(doc, q, L, s);
                     } else {
                         tops = finder.searchAfter(doc, q, L);
                     }
+                    tots = tops.totalHits;
+                    H    = tots.value ;
                     docs = tops.scoreDocs;
-                    H    = tops.totalHits;
                     h    = docs.length;
                     i    = b;
                 } else

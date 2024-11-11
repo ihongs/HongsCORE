@@ -315,7 +315,7 @@ public final class StatisHandle {
 
         @Override
         public boolean hasNext() {
-            return j != NO_MORE_VALS;
+            return j != NO_MORE_VALS && j < values.docValueCount();
         }
 
         @Override
@@ -414,7 +414,7 @@ public final class StatisHandle {
         @Override
         public void collect(int i) throws IOException  {
             if (values != null
-            ||  values.advanceExact(i)) {
+            &&  values.advanceExact(i)) {
                 j = values.nextOrd ( );
             } else {
                 j = NO_MORE_ORDS;

@@ -1,7 +1,8 @@
 package io.github.ihongs.dh.lucene.value;
 
+import java.util.List;
+import io.github.ihongs.util.Synt;
 import org.apache.lucene.index.IndexableField;
-import static io.github.ihongs.dh.lucene.quest.VectorQuest.toVector;
 
 /**
  * 向量取值
@@ -12,8 +13,12 @@ public class VectorValue implements IValue {
     public Object get(IndexableField f) {
         String v = f.stringValue( );
         try {
-            return toVector(v);
-        } catch ( Exception e) {
+            List w = Synt.toList(v);
+            for(int i = 0; i < w.size(); i ++) {
+                w.set(i, Synt.asFloat(w.get(i)));
+            }
+            return w;
+        } catch (Exception e) {
             return v;
         }
     }

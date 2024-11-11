@@ -15,7 +15,7 @@ import org.apache.lucene.util.BytesRef;
  */
 public class StringStock implements IStock {
     private Analyzer ana = null;
-    public void  analyser(Analyzer a) {
+    public void  analyzer(Analyzer a) {
         this.ana = a;
     }
     @Override

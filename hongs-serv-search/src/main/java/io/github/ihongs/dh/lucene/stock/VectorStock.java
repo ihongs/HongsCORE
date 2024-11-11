@@ -4,6 +4,7 @@ import io.github.ihongs.util.Synt;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.KnnFloatVectorField;
+import org.apache.lucene.index.VectorSimilarityFunction;
 import static io.github.ihongs.dh.lucene.quest.VectorQuest.toVector;
 
 /**
@@ -11,6 +12,10 @@ import static io.github.ihongs.dh.lucene.quest.VectorQuest.toVector;
  * @author Hongs
  */
 public class VectorStock implements IStock {
+    private VectorSimilarityFunction sim = null;
+    public void  similar(VectorSimilarityFunction f) {
+        this.sim = f;
+    }
     @Override
     public Field get(String k, Object v) {
         float[] f = toVector(v);
@@ -27,7 +32,9 @@ public class VectorStock implements IStock {
     @Override
     public Field whr(String k, Object v) {
         float[] f = toVector(v);
-        return new KnnFloatVectorField("@"+k, f);
+        return sim == null
+             ? new KnnFloatVectorField("@"+k, f)
+             : new KnnFloatVectorField("@"+k, f, sim);
     }
     @Override
     public Field wdr(String k, Object v) {

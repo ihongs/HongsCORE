@@ -55,6 +55,7 @@ import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.index.VectorSimilarityFunction;
 import org.apache.lucene.store.AlreadyClosedException;
 import io.github.ihongs.dh.lucene.quest.IQuest;
 import io.github.ihongs.dh.lucene.stock.IStock;
@@ -839,6 +840,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             case "object":
                 v = new ObjectValue();
                 break;
+            case "vector":
+                v = new VectorValue();
+                break;
             default:
                 v = new StringValue();
             } else {
@@ -983,10 +987,30 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
              */
             if (p && f instanceof StringStock) {
                 try {
-                    ((StringStock) f).analyser(getAnalyzer(m));
+                    ((StringStock) f).analyzer(getAnalyzer(m));
                 } catch ( CruxException x) {
                     throw x.toExemption( );
                 }
+            }
+
+            /**
+             * 2024/11/11
+             * 指定向量指定近似函数
+             * 同时检查数据存储维数
+             */
+            if (q && f instanceof VectorStock) {
+                try {
+                    ((VectorStock) f).similar (getSimilar (m));
+                } catch ( CruxException x) {
+                    throw x.toExemption( );
+                }
+
+                float[] w = VectorQuest.toVector(v);
+                int d  = Synt.declare(m.get("vector-dimension"), 0);
+                if (d != 0 && d != w.length) {
+                    throw new CruxExemption(400, "Vector dimension for field `$0` is $1, but $2", k, d, w.length);
+                }
+                v = w ;
             }
 
             if (r) {
@@ -1173,17 +1197,21 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
             if (qa instanceof VectorQuest) {
                 VectorQuest qv = (VectorQuest) qa;
-                float[] f;
-                int d = Cnst.RN_DEF ;
+                float[] w;
+                int l = 1;
                 if (v instanceof Map) {
                     Map vd = (Map) v;
-                    d = Synt.declare( vd.get( Cnst.UP_REL ) , d );
-                    f = VectorQuest.toVector(vd.get(Cnst.ON_REL));
+                    l = Synt.declare( vd.get( Cnst.UP_REL ) , l );
+                    w = VectorQuest.toVector(vd.get(Cnst.ON_REL));
                 } else {
-                    f = VectorQuest.toVector(v);
+                    w = VectorQuest.toVector(v);
                 }
-                if (0 < f.length ) {
-                    qr.add(qv.vtr(k, f, d), BooleanClause.Occur.MUST);
+                if (0 < w.length ) {
+                    try {
+                        qr.add(qv.vtr(k, w, l), BooleanClause.Occur.MUST);
+                    } catch (IllegalArgumentException ex) { // 维数不符合
+                        throw new CruxException(ex , 400);
+                    }
                     i ++;
                 }
                 continue;
@@ -1835,24 +1863,22 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
     //** 底层工具 **/
 
     /**
-     * 存储分析器
+     * 向量近似函数
+     * @param fc
      * @return
      * @throws CruxException
-     * @deprecated 不再需要提前预设, 改为写入值时构建 TokenStream
      */
-    protected Analyzer getAnalyzer() throws CruxException {
-        /*Default*/ Analyzer  ad = new StandardAnalyzer();
-        Map<String, Analyzer> az = new HashMap();
-        Map<String, Map     > fs = getFields(  );
-        for(Map.Entry<String, Map> et : fs.entrySet()) {
-            String fn = et.getKey(  );
-            Map    fc = et.getValue();
-            if (srchable(fc)) {
-                // 注意: 搜索对应的字段名开头为 $
-                az.put("$" + fn, getAnalyzer(fc) );
-            }
+    protected VectorSimilarityFunction getSimilar(Map fc) throws CruxException {
+        switch(Synt.declare(fc.get("vector-similar"), "")) {
+            case "MAXIMUM_INNER_PRODUCT":
+                return VectorSimilarityFunction.MAXIMUM_INNER_PRODUCT;
+            case "DOT_PRODUCT":
+                return VectorSimilarityFunction.DOT_PRODUCT;
+            case "COSINE":
+                return VectorSimilarityFunction.COSINE;
+            default:
+                return VectorSimilarityFunction.EUCLIDEAN;
         }
-        return new PerFieldAnalyzerWrapper(ad, az);
     }
 
     /**

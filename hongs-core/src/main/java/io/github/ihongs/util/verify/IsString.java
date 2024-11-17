@@ -45,11 +45,17 @@ public class IsString extends Rule {
             if (sa.contains("tags") || sa.contains("html")) {
                 str = Syno.stripTags(str); // 清除标签
             }
-            if (sa.contains("ends") || sa.contains("html") || sa.contains("text")) {
-                str = Syno.stripEnds(str); // 首尾清理
+            if (sa.contains("trim") || sa.contains("html")) {
+                str = Syno.strip    (str); // 清理首尾
             }
-            if (sa.contains("trim") || sa.contains("html") || sa.contains("text")) {
-                str = str.trim();
+            if (sa.contains("gaps")) {
+                str = Syno.stripEnds(str); // 清除空行
+            }
+            if (sa.contains("ends")) {
+                str = Syno.stripEnds(str); // 清除换行
+            }
+            if (sa.contains("unis")) {
+                str = Syno.unifyEnds(str); // 统一换行
             }
         }
 

@@ -474,7 +474,7 @@ public final class Syno
    * @param str
    * @param off 起始, 为负则从后往前算
    * @param len 长度, 非负总是返回空串
-   * @return 
+   * @return
    */
   public static String substr(String str, int off, int len) {
       if (off < 0) {
@@ -495,7 +495,7 @@ public final class Syno
    * 类似 Javascript 的 substr
    * @param str
    * @param off 起始, 为负则从后往前算
-   * @return 
+   * @return
    */
   public static String substr(String str, int off) {
       if (off < 0) {
@@ -505,21 +505,58 @@ public final class Syno
       }}
       return str.substring(off);
   }
-  
+
   //** 清理 **/
 
   /**
-   * 清理首尾空格
+   * 清理首尾空白(含全角)
+   * @param str
+   * @return
+   */
+  public static String strip(String str)
+  {
+    Pattern pat;
+    pat = Pattern.compile("(^[\\s\\h\\v]+|[\\s\\h\\v]+$)");
+    str = pat.matcher(str).replaceAll(  ""  );
+    return  str;
+  }
+
+  /**
+   * 统一全部换行(\r\n)
+   * @param str
+   * @return
+   */
+  public static String unifyEnds(String str)
+  {
+    Pattern pat;
+    pat = Pattern.compile("(\\r\\n|\\n|\\r)");
+    str = pat.matcher(str).replaceAll("\r\n");
+    return  str;
+  }
+
+  /**
+   * 清理全部换行
    * @param str
    * @return
    */
   public static String stripEnds(String str)
   {
     Pattern pat;
-    pat = Pattern.compile("^[\\h\\v]+" );
-    str = pat.matcher(str).replaceAll("" );
-    pat = Pattern.compile( "[\\h\\v]+$");
-    str = pat.matcher(str).replaceAll("" );
+    pat = Pattern.compile("(\\r\\n|\\n|\\r)");
+    str = pat.matcher(str).replaceAll(  ""  );
+    return  str;
+  }
+
+  /**
+   * 清理全部空行
+   * @param str
+   * @return
+   */
+  public static String stripGaps(String str)
+  {
+    Pattern pat;
+    pat = Pattern.compile("(\\r\\n|\\n|\\r)(\\s*(\\r\\n|\\n|\\r))+");
+    str = pat.matcher(str).replaceAll( "$1" );
     return  str;
   }
 

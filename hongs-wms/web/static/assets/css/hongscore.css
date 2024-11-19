@@ -296,7 +296,7 @@ input[type="time"].form-control {
 .tabs.hide-icon-after li:not(.active) .bi~.title ,
 .tabs.hide-icon-after li:not(.active) .bi~.close ,
 .tabs:not(.home-bread):not(.host-bread) .host-crumb {
-    display: none;
+    display: none !important;
 }
 
 .tabs.hold-live-close {

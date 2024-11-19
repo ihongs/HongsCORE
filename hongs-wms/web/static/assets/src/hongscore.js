@@ -2713,7 +2713,7 @@ $.fn.hsTdel = function(ref) {
 // 标题化
 $.fn.hsL10n = function(tit) {
     var box = $(this);
-    var prt = box.parent( );
+    var til = tit;
 
     // 从其下标题提取
     if (! tit) {
@@ -2725,7 +2725,7 @@ $.fn.hsL10n = function(tit) {
         if ( 1 <= hea.size()) {
             tit = hea.text();
         } else {
-            return;
+           return box;
         }}
     }
 
@@ -2737,13 +2737,13 @@ $.fn.hsL10n = function(tit) {
             : hsGetLang("create.title", [ tit ]);
     }
 
-    if (box.parent(".labs").size()
-    ||  prt.parent(".labs").size()) {
-        var tbs = box.closest(".labs").data("tabs") || $();
+    if (box.is(".labs>*,.labs>*>*")) {
         var idx = box.closest(".labs>*").index();
-        var tab = tbs.children().eq(idx);
-        tab.find(".title:empty,b:empty,a:empty")
-           .text( tit );
+        var tbs = box.closest(".labs"  ).data( "tabs") || $();
+        var tab = tbs.children().eq(idx).find(".title:first");
+        if (til || tab.is(":empty")) {
+            tab.text( tit );
+        }
     } else
     if (box.is(".modal-body")) {
         box.closest(".modal")

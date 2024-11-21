@@ -836,9 +836,6 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             case "object":
                 v = new ObjectValue();
                 break;
-            case "vector":
-                v = new VectorValue();
-                break;
             default:
                 v = new StringValue();
             } else {

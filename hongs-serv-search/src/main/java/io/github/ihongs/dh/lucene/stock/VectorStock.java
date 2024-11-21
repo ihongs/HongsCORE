@@ -20,12 +20,12 @@ public class VectorStock implements IStock {
     public Field get(String k, Object v) {
         float[] f = toVector(v);
         StringBuilder b = new StringBuilder();
-        for(float  x : f) {
+        for( float x : f) {
             String s = Synt.asString(x);
-            b.append( s ).append( "," );
+            b.append( s ).append( ", ");
         }
         if (f.length > 0) {
-            b.setLength(b.length() - 1);
+            b.setLength(b.length() - 2);
         }
         return new StoredField(k , b.toString());
     }

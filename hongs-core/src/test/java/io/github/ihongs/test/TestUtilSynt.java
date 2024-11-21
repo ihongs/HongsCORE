@@ -29,5 +29,21 @@ public class TestUtilSynt {
             Synt.toWords(Synt.setOf(1, "a", Synt.setOf("b"), Synt.mapOf("b", "c")))
         );
     }
+    
+    @Test
+    public void testAsString() {
+        assertEquals(
+            "1234567890123456",
+            Synt.asString(1234567890123456l)
+        );
+        assertEquals(
+            "12345678.90123456",
+            Synt.asString(12345678.90123456d)
+        );
+        assertEquals(
+            "0.1234567890123456",
+            Synt.asString(0.1234567890123456d)
+        );
+    }
 
 }

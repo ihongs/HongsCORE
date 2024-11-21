@@ -2,7 +2,6 @@ package io.github.ihongs.util;
 
 import static io.github.ihongs.Core.getZoneId;
 import java.math.BigDecimal;
-import java.text.NumberFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -100,19 +99,6 @@ public final class Synt {
      */
     private static final Pattern RNGQ = Pattern.compile("[\\[\\(,\\)\\]]");
     private static final Pattern RNGP = Pattern.compile("^([\\(\\[])?(.*?),(.*?)([\\]\\)])?$");
-
-    /**
-     * 数字转换工具
-     */
-    private static final ThreadLocal<NumberFormat> DIGI = new ThreadLocal() {
-        @Override
-        protected NumberFormat initialValue() {
-            NumberFormat nf;
-            nf  = NumberFormat.getInstance ();
-            nf  . setGroupingUsed (  false  );
-            return nf;
-        }
-    };
 
     /**
      * 快捷构建 Map
@@ -474,7 +460,24 @@ public final class Synt {
             return null;
         }
 
-        return DIGI.get( ).format(val);
+        /**
+         * 不用 NumberFormat 只因其会损失精度
+         * 不设 setMaximumFractionDigits 默认最多三位
+         * 设置 setMaximumFractionDigits 也会扩长失精
+         * 浮点数如无小数位应则去除结尾的 .0
+         */
+        String str;
+        if (val instanceof BigDecimal) {
+            str = ( ( BigDecimal) val).toPlainString();
+        } else {
+            str = val.toString( );
+            str = new BigDecimal( str).toPlainString();
+        }
+        if (str . endsWith(".0")) {
+            str = str.substring ( 0, str.length() - 2);
+        }
+
+        return str;
     }
 
     /**

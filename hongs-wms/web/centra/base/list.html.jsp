@@ -782,7 +782,7 @@
         // 权限控制
         $.each({"recite":".recite", "create":".create", "update":".update", "delete":".delete", "reveal":".reveal"}
         , function(k, v) {
-            if (! hsChkUri("<%=_module%>/<%=_entity%>/"+k+".act")) {
+            if (! hsGetAuth("<%=_module%>/<%=_entity%>/"+k+".act")) {
                 context.find(v).remove();
             }
         });

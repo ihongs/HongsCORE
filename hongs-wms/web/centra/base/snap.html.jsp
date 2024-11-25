@@ -122,7 +122,7 @@
     }
 
     // 权限检查
-    if (! hsChkUri("<%=_module%>/<%=_entity%>/revert.act")) {
+    if (! hsGetAuth("<%=_module%>/<%=_entity%>/revert.act")) {
         var btn = context.find(".revert");
         var spn = btn.siblings(  "span" );
         btn.remove();

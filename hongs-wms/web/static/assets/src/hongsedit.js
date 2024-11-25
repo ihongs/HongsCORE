@@ -444,7 +444,7 @@ function getModeByName(name) {
     }
 }
 
-var ADD_IMG_HREF = hsChkUri('centra') ?
+var ADD_IMG_HREF = hsGetAuth('centra') ?
     "centra/data/upload/image/create.act" :
     "centre/data/upload/image/create.act" ;
 

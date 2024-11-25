@@ -124,10 +124,10 @@
                 var context = $("#main-context>:last");
 
                 // 权限检查
-                if (! H$('!<%=$module%>/<%=$entity%>/recipe.act')) {
+                if (!hsGetAuth('<%=$module%>/<%=$entity%>/recipe.act')) {
                     context.find(">ul>li[data-tab=swap]").remove();
                 }
-                if (! H$('!<%=$module%>/<%=$entity%>/reveal.act')) {
+                if (!hsGetAuth('<%=$module%>/<%=$entity%>/reveal.act')) {
                     context.find(">ul>li[data-tab=snap]").remove();
                 }
                 context.find(">ul" ).trigger("hsStab");

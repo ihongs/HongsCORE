@@ -356,7 +356,7 @@
         // 权限控制
         $.each({"update":".update", "delete":".delete", "reveal":".reveal"}
         , function(k, v) {
-            if (! hsChkUri("<%=_module%>/<%=_entity%>/"+k+".act")) {
+            if (! hsGetAuth("<%=_module%>/<%=_entity%>/"+k+".act")) {
                 context.find(v).remove();
             }
         });

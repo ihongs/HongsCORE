@@ -28,8 +28,13 @@ function H$() {
     switch (b) {
     case '.': return hsGetConf.apply(this, arguments);
     case ':': return hsGetLang.apply(this, arguments);
-    case '!': return hsChkUri .apply(this, arguments);
-    case '/': return hsFixUri .apply(this, arguments);
+    case '!': return hsGetAuth.apply(this, arguments);
+    case '/':
+            arguments[0] = hsFixUri.apply(this, arguments);
+        if (arguments.length > 1) {
+            arguments[0] = hsSetPms.apply(this, arguments);
+        }
+        return arguments[0];
     case '@':
         if (arguments.length === 1) {
           return jQuery("." + arguments[0]).data(arguments[0]);
@@ -1290,6 +1295,7 @@ function hsGetAuth(act, def) {
  * 检查URI是否有权访问
  * @param {String} uri
  * @return {Boolean} 是否有权
+ * @deprecated 为免歧义, 建议使用 hsGetAuth, 不同在于 uri 未做权限控制或不存在时返回 true 而非 undefined
  */
 function hsChkUri(uri) {
     if ( ! uri )  uri = "";

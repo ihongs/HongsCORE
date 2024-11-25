@@ -13,8 +13,8 @@
 <%@page extends="io.github.ihongs.jsp.Proclet"%>
 <%@page contentType="application/json" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%!
-    private static final String THEME_ID_FN = "theme_id";
-    private static final String TOPIC_ID_FN = "topic_id";
+    private static final String PLAN_ID_FN = "plan_id";
+    private static final String TASK_ID_FN = "task_id";
 
     /**
      * 获取用户所属的全部部门ID
@@ -48,7 +48,7 @@
      * 限制用户可见的主题
      * 用户部门均无则开放
      */
-    if (! NaviMap.getInstance("centra").chkAuth("centra/data/upland/admin")) {
+    if (! NaviMap.getInstance("centra").chkAuth("centra/data/upland/lead")) {
         String tid = null;
         Object oid ;
         Map    row ;
@@ -62,24 +62,24 @@
                 }
 
                 row = Data
-                    .getInstance("centra/data/upland", "topic")
+                    .getInstance("centra/data/upland", "task")
                     .getOne(Synt.mapOf(
-                        Cnst.RB_KEY, Synt.setOf(THEME_ID_FN),
+                        Cnst.RB_KEY, Synt.setOf(PLAN_ID_FN),
                         Cnst.ID_KEY, oid
                     ));
                 if (row == null || row.isEmpty()) {
-                    throw  new  CruxException(404, "不存在对应的话题" );
+                    throw  new  CruxException(404, "不存在对应的任务" );
                 }
-                tid = Synt.asString(row.get(THEME_ID_FN));
+                tid = Synt.asString(row.get(PLAN_ID_FN));
 
                 break ID;
             }
 
-            oid = req.get(THEME_ID_FN);
+            oid = req.get(PLAN_ID_FN);
             if (oid != null && !"".equals(oid)) {
                 if (!(oid instanceof String)
                 ||  !(oid instanceof Number)) {
-                    throw new CruxException(400, "仅支持单个 "+THEME_ID_FN+", 不支持 eq,in 等方式");
+                    throw new CruxException(400, "仅支持单个 "+PLAN_ID_FN+", 不支持 eq,in 等方式");
                 }
 
                 tid = Synt.asString(oid);
@@ -87,17 +87,17 @@
                 break ID;
             }
 
-            throw new CruxException(400, "缺少必要的 "+Cnst.ID_KEY+" 或 "+THEME_ID_FN);
+            throw new CruxException(400, "缺少必要的 "+Cnst.ID_KEY+" 或 "+PLAN_ID_FN);
         }
 
         row = Data
-            .getInstance("centra/data/upland" , "theme")
+            .getInstance("centra/data/upland", "plan")
             .getOne(Synt.mapOf(
                 Cnst.RB_KEY, Synt.setOf("owner","users","units"),
                 Cnst.ID_KEY, tid
             ));
         if (row == null || row.isEmpty()) {
-            throw  new  CruxException(404, "不存在对应的主题" );
+            throw  new  CruxException(404, "不存在对应的计划" );
         }
 
         /**
@@ -132,7 +132,7 @@
                 break DO;
             }
 
-            throw  new  CruxException(403, "无权访问上级主题" );
+            throw  new  CruxException(403, "无权访问上级计划" );
         }
 
         if (! owned
@@ -140,13 +140,13 @@
         ||  "delete".equals(met))) {
             oid = req.get(Cnst.ID_KEY);
             row = Data
-                .getInstance("centra/data/upland", "topic")
+                .getInstance("centra/data/upland", "task")
                 .getOne(Synt.mapOf(
                     Cnst.ID_KEY, oid,
                     "owner"    , uid
                 ));
             if (row == null || row.isEmpty()) {
-                throw  new  CruxException(403, "话题没有指派给您" );
+                throw  new  CruxException(403, "任务没有指派给您" );
             }
         }
     }
@@ -163,7 +163,7 @@
         }
     }
 
-    ActionRunner.newInstance(helper, "centra/data/upland/topic/" + met).doAction();
+    ActionRunner.newInstance(helper, "centra/data/upland/task/" + met).doAction();
 
     if ("craete".equals(met)
     ||  "update".equals(met)) {
@@ -183,10 +183,10 @@
             &&  Synt.declare(rsp.get("rn"), 0) > 0) {
                 Object uid = helper.getSessibute(Cnst.UID_SES);
                 long   now = System.currentTimeMillis() / 1000;
-                Data   mod = Data.getInstance("centra/data/upland","tweet");
+                Data   mod = Data.getInstance("centra/data/upland", "tick");
                 for(Object oid : ids) {
                     mod.create(Synt.mapOf(
-                        TOPIC_ID_FN, oid,
+                        TASK_ID_FN, oid,
                          "note", memo,
                         "cuser", uid ,
                         "ctime", now ,

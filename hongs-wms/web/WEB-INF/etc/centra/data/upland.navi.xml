@@ -1,7 +1,12 @@
 <root>
     <rsname>#default</rsname>
-    <menu text="项目管理" href="centra/data/upland/">
-        <role text="参与项目" name="centra/data/upland/base">
+    <menu text="项目计划" href="centra/data/upland/plan/">
+        <menu href="!centra/data/upland/">
+            <menu text="计划" href="centra/data/upland/plan/"/>
+            <menu text="任务" href="centra/data/upland/task/"/>
+            <menu text="评论" href="centra/data/upland/tick/"/>
+        </menu>
+        <role text="参与计划" name="centra/data/upland/base">
             <depend>centra</depend>
             <action>centra/data/upland/base</action>
             <action>centra/data/upland/task/create.act</action>
@@ -12,7 +17,7 @@
             <action>centra/data/upland/tick/delete.act</action>
             <action>centra/data/upland/image/create.act</action>
         </role>
-        <role text="管理项目" name="centra/data/upland/lead">
+        <role text="管理计划" name="centra/data/upland/lead">
             <depend>centra</depend>
             <depend>centra/data/upland/base</depend>
             <action>centra/data/upland/lead</action>

@@ -1,12 +1,12 @@
 
-function in_centra_data_upland_topic(context) {
+function in_centra_data_upland_task(context) {
     // 去掉额外功能
     context.find(".bi-hi-manual").closest("li").hide();
     context.find(".bi-hi-reveal").closest("li").hide();
 }
 
-function in_centra_data_upland_topic_list(context, listobj) {
-    context.find(".toolbox .create").text("新建话题");
+function in_centra_data_upland_task_list(context, listobj) {
+    context.find(".toolbox .create").text("新建任务");
 
     // 去掉批量操作
     context.find(".toolbox .for-choose").remove();
@@ -25,10 +25,10 @@ function in_centra_data_upland_topic_list(context, listobj) {
     }
 }
 
-function in_centra_data_upland_topic_info(context, formobj) {
+function in_centra_data_upland_task_info(context, formobj) {
     if (context.is(".base-info,.review-info,.recite-info"))
     context.one("loadOver", function(evt, rst) {
-        var adm = H$("!centra/data/upland/admin") || window._THEME_ADMIN_;
+        var adm = H$("!centra/data/upland/lead") || window._THEME_ADMIN_;
         var uid = H$('%HsCUID' );
         var tid = rst.info.id   ;
         var pid = rst.info.theme_id;
@@ -54,8 +54,8 @@ function in_centra_data_upland_topic_info(context, formobj) {
         // 建立分栏页签
         var tabs = $(
             '<ul class="nav nav-tabs board">'
-          + '<li class="active"><a href="javascript:;">话题</a></li>'
-          + '<li><a href="javascript:;" data-href="centra/data/upland/tweet/list.html?topic_id='+tid+'">评论列表</a></li>'
+          + '<li class="active"><a href="javascript:;">任务</a></li>'
+          + '<li><a href="javascript:;" data-href="centra/data/upland/tick/list.html?topic_id='+tid+'">评论列表</a></li>'
           + '</ul>'
         );
         var labs = $(
@@ -74,12 +74,12 @@ function in_centra_data_upland_topic_info(context, formobj) {
         if (adm) {
             context.find(".form-foot .btn-toolbar")
                 .append('<div class="btn-group">'
-                    + '<button type="button" class="update2 btn btn-default">修改话题</button>'
+                    + '<button type="button" class="update2 btn btn-default">修改任务</button>'
                     + '<button type="button" class="reveal2 btn btn-default">历史记录</button>'
                     + '<button type="button" class="delete2 btn btn-default"><span class="text-danger">删除</span></button>'
                 + '</div>')
                 .on("click", ".update2", function() {
-                    context.hsFind("@").hsOpen("centra/data/upland/topic/form.html?id=" + tid,
+                    context.hsFind("@").hsOpen("centra/data/upland/task/form.html?id=" + tid,
                     function( ) {
                         $(this).on("saveBack", function(ev, sd) {
                             if (sd.ok) {
@@ -89,7 +89,7 @@ function in_centra_data_upland_topic_info(context, formobj) {
                     });
                 })
                 .on("click", ".reveal2", function() {
-                    context.hsFind("@").hsOpen("centra/data/upland/topic/snap.html?id=" + tid,
+                    context.hsFind("@").hsOpen("centra/data/upland/task/snap.html?id=" + tid,
                     function( ) {
                         $(this).on("sendBack", function(ev, sd) {
                             if (sd.ok) {
@@ -99,10 +99,10 @@ function in_centra_data_upland_topic_info(context, formobj) {
                     });
                 })
                 .on("click", ".delete2", function() {
-                    $.hsWarn("确定要删除这个话题吗?", "warning",
+                    $.hsWarn("确定要删除这个任务吗?", "warning",
                         function() {
                             $.hsAjax({
-                                url : "centra/data/upland/topic/delete.act?id=" + tid,
+                                url : "centra/data/upland/task/delete.act?id=" + tid,
                                 success: function (sd) {
                                     if (sd.ok) {
                                         context.trigger("saveBack")
@@ -119,6 +119,6 @@ function in_centra_data_upland_topic_info(context, formobj) {
     });
 }
 
-function in_centra_data_upland_topic_form(context, formobj) {
+function in_centra_data_upland_task_form(context, formobj) {
     context.find("textarea[name=body]").css({height: "30em", maxHeight: "90em"});
 }

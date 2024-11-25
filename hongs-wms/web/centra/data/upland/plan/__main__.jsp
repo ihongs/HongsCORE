@@ -47,7 +47,7 @@
          * 限制用户可见的主题
          * 用户部门均无则开放
          */
-        if (! NaviMap.getInstance("centra").chkAuth("centra/data/upland/admin")) {
+        if (! NaviMap.getInstance("centra").chkAuth("centra/data/upland/lead")) {
             Object uid = helper.getSessibute(Cnst.UID_SES);
             Dict.put(req , Synt.listOf(
                 Synt.mapOf("owner", uid),
@@ -63,7 +63,7 @@
         /**
          * 限制用户管理的主题
          */
-        if (! NaviMap.getInstance("centra").chkAuth("centra/data/upland/admin")) {
+        if (! NaviMap.getInstance("centra").chkAuth("centra/data/upland/lead")) {
             Object uid = helper.getSessibute(Cnst.UID_SES);
             Dict.put(req , Synt.listOf(
                 Synt.mapOf("owner", uid)
@@ -75,8 +75,8 @@
         /**
          * 限制用户发新的主题
          */
-        if (! NaviMap.getInstance("centra").chkAuth("centra/data/upland/admin")) {
-            throw new CruxException(403, "您无权新建/重建主题");
+        if (! NaviMap.getInstance("centra").chkAuth("centra/data/upland/lead")) {
+            throw new CruxException(403, "您无权新建/重建计划");
         }
     }
 
@@ -92,5 +92,5 @@
         }
     }
 
-    ActionRunner.newInstance(helper, "centra/data/upland/theme/" + met).doAction();
+    ActionRunner.newInstance(helper, "centra/data/upland/plan/" + met).doAction();
 %>

@@ -1,17 +1,17 @@
 
-function in_centra_data_upland_tweet(context) {
+function in_centra_data_upland_tick(context) {
     // 去掉额外功能
     context.find(".bi-hi-manual").closest("li").hide();
     context.find(".bi-hi-reveal").closest("li").hide();
 }
 
-function in_centra_data_upland_tweet_list(context, listobj) {
+function in_centra_data_upland_tick_list(context, listobj) {
     var req = listobj._data;
     context.find(".toolbox .create").text("发表评论")
         .removeClass("create")
         .addClass("create2")
         .click(function() {
-            listobj.open(this, null, "centra/data/upland/tweet/form_init.html", req);
+            listobj.open(this, null, "centra/data/upland/tick/form_init.html", req);
         });
 
     // 去掉批量操作

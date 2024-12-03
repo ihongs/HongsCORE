@@ -4,11 +4,13 @@ import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.verify.Wrong;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URI;
 import java.net.URLConnection;
+import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,25 +26,58 @@ public class DownPart implements Part {
     private final String href;
     private final String name;
 
-    public DownPart (String href, String name) throws Wrong {
+    /**
+     * 反向下载 Part
+     * @param href
+     * @param name
+     * @param httpOnly true 仅支持 http 和 https
+     * @throws io.github.ihongs.util.verify.Wrong
+     */
+    public DownPart (String href, String name, boolean httpOnly) throws Wrong {
         // 允许不加 http 或 https
-        if (href.startsWith("/")) {
+        if (href.startsWith("//")) {
             href = "http:"+ href;
+        } else
+        if (href.startsWith("/" )) {
+            href = "file:"+ href;
         }
 
         try {
+            URL url = new URI(href).toURL();
+            String pro =  url.getProtocol();
+            if (httpOnly
+            && !pro.equalsIgnoreCase("https")
+            && !pro.equalsIgnoreCase("http")) {
+                throw new Wrong("@core.file.url.not.allow", href);
+            }
+
             this. name = name;
             this. href = href;
-            this. conn = new URL(href).openConnection();
-        } catch (MalformedURLException ex) {
-            throw new Wrong( ex, "@core.file.url.has.error", href );
-        } catch (IOException ex) {
-            throw new Wrong( ex, "@core.file.url.get.error", href );
+            this. conn = url.openConnection();
+        } catch (URISyntaxException|MalformedURLException e) {
+            throw new Wrong( e, "@core.file.url.has.error", href);
+        } catch (IOException e) {
+            throw new Wrong( e, "@core.file.url.get.error", href);
         }
     }
 
+    /**
+     * 反向下载 Part, 仅支持 http 和 https
+     * @param href
+     * @param name
+     * @throws io.github.ihongs.util.verify.Wrong
+     */
+    public DownPart (String href, String name) throws Wrong {
+        this(href, name, true);
+    }
+
+    /**
+     * 反向下载 Part, 仅支持 http 和 https
+     * @param href
+     * @throws io.github.ihongs.util.verify.Wrong
+     */
     public DownPart (String href) throws Wrong {
-        this(href, null);
+        this(href, null, true);
     }
 
     public String getHref() {

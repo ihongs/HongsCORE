@@ -30,8 +30,8 @@ import javax.servlet.http.Part;
  *  keep-origin yes|no 返回原始路径, 不理会 checks 中新创建的
  *  keep-naming yes|no 保持原文件名, 会对网址末尾的文件名编码(将废弃,请改用 hash-status)
  *  hash-status yes|no 末尾附加信息, #n=文件名称&s=文件大小等
- *  name-digest 命名摘要算法, 如: MD5,SHA-1,SHA-256
  *  name-add-id 路径要增加ID, 将会从 cleans 提取 id
+ *  name-digest 命名摘要算法, 如: MD5,SHA-1,SHA-256
  *  temp 上传临时目录, 可用变量 $DATA_PATH, $BASE_PATH 等
  *  path 上传目标目录, 可用变量 $BASE_PATH, $DATA_PATH 等
  *  href 上传文件链接, 可用变量 $SERV_PATH, $SERV_HREF 等, 后者包含域名

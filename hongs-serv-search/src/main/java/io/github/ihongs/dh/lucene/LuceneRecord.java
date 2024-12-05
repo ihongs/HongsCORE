@@ -4,6 +4,7 @@ import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLogger;
+import io.github.ihongs.CruxCause;
 import io.github.ihongs.CruxException;
 import io.github.ihongs.CruxExemption;
 import io.github.ihongs.action.FormSet;
@@ -48,7 +49,6 @@ import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
-import org.apache.lucene.search.TotalHits;
 import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
@@ -59,6 +59,7 @@ import org.apache.lucene.store.AlreadyClosedException;
 /**
  * Lucene 记录模型
  *
+ * <pre>
  * 可选字段配置参数:
  *  lucene-tokenizer    Lucene 分词器类
  *  lucene-char-filter  存储时使用的 CharFilter  类
@@ -82,6 +83,7 @@ import org.apache.lucene.store.AlreadyClosedException;
  * 可以在默认配置 default.properties 中的 core.lucene.conn.getter.class 指定连接工厂类, 现有:
  *  io.github.ihongs.dh.lucene.conn.DirectConn$Getter 标准直连, 提交立即写入磁盘
  *  io.github.ihongs.dh.lucene.conn.FlashyConn$Getter 近实时连, 间隔时间写入磁盘
+ * </pre>
  *
  * @author Hongs
  */
@@ -89,10 +91,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
     protected boolean REFLUX_MODE = false;
 
-    private String    dbpath = null;
-    private String    dbname = null;
-    private Conn      dbconn = null;
-    private Document  cursor = null;
+    private String dbpath;
+    private String dbname;
+    private Conn   dbconn;
     private Map<String, Document> writes = new LinkedHashMap();
 
     /**
@@ -694,18 +695,14 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             return  writes.get(id);
         }
 
-        // 规避遍历更新时重复读取
-        if (null != cursor && id.equals(cursor.get(Cnst.ID_KEY))) {
-            return  cursor;
-        }
-
         IndexSearcher  ff = getFinder( );
         try {
-                Query  qq = new TermQuery(new Term("@"+Cnst.ID_KEY, id));
-              TopDocs  tt = ff.search(qq, 1);
-            ScoreDoc[] hh = tt.scoreDocs;
-            if  ( 0 != hh.length ) {
-                return ff.doc(hh[0].doc);
+                 Term  tr = new Term ("@" + Cnst.ID_KEY, id);
+                Query  qr = new TermQuery(tr);
+              TopDocs  td = ff.search(qr, 1 );
+            ScoreDoc[] sd = td.scoreDocs;
+            if  (sd.length > 0 ) {
+                return ff.storedFields().document(sd[0].doc);
             } else {
                 return null;
             }
@@ -716,16 +713,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         }
     }
 
-    /**
-     * 解析文档(Loop.next 专用)
-     * @param doc
-     * @param rep
-     * @return
-     */
-    protected Map padDat(Document doc, Set rep) {
-        cursor  = doc; // 暂存文档
+    public Map padDat(Document doc, Set rb) {
         Map map = new LinkedHashMap();
-        padDat(doc, map, rep );
+        padDat(doc, map, rb  );
         return map;
     }
 
@@ -1747,7 +1737,6 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             throw new CruxExemption(ex, 1055);
         } finally {
             writes.clear();
-            cursor = null ;
         }
     }
 
@@ -1766,7 +1755,6 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
     //      throw new CruxExemption(ex, 1055);
     //  } finally {
             writes.clear();
-            cursor = null ;
     //  }
     }
 
@@ -2157,53 +2145,36 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      * 查询迭代器
      */
     public static class Loop implements Iterable<Map>, Iterator<Map> {
-        private final IndexSearcher finder;
-        private final LuceneRecord  that;
-        private       ScoreDoc[]    docs;
-        private       ScoreDoc      doc ;
-        private final boolean t; // 有限查询
-        private final Query   q;
-        private final Sort    s;
-        private final Set     r;
-        private final int     b; // 起始位置
-        private final int     l; // 数量限制
-        private       int     i; // 提取游标
-        private       int     h; // 单次总数
-        private       long    H; // 全局总数
+        private final io.github.ihongs.dh.lucene.conn.Loop loop;
+        private final LuceneRecord that;
+        private final Set cols;
 
         /**
          * 查询迭代器
-         * @param that 记录实例
+         * @param d 记录实例
          * @param q 查询对象
          * @param s 排序对象
          * @param r 返回字段
          * @param b 起始偏移
          * @param l 查询限额
          */
-        public Loop(LuceneRecord that, Query q, Sort s, Set r, int b, int l) {
-            // 是否获取全部
-            if (l == 0 ) {
-                l = 65536;
-                t = false;
-            } else {
-                t = true ;
+        public Loop(LuceneRecord d, Query q, Sort s, Set r, int b, int l) {
+            // 空取全部字段
+            if (r!= null && r.isEmpty()) {
+                r = null ;
             }
 
-            this.that = that;
-            this.docs = null;
-            this.doc  = null;
-            this.q =  q;
-            this.s =  s;
-            this.r =  r;
-            this.b =  b;
-            this.l =  l;
-
-            // 获取查读对象
+            // 获取搜索对象
+            IndexSearcher p;
             try {
-                finder = that.getFinder();
-            } catch ( CruxException e) {
-                throw e.toExemption( );
+                p = d.getFinder( );
+            } catch ( CruxException e ) {
+                throw e.toExemption ( );
             }
+
+            loop = new io.github.ihongs.dh.lucene.conn.Loop(p, q, s, r, b, l);
+            that = d;
+            cols = r;
         }
 
         @Override
@@ -2212,57 +2183,25 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         }
 
         @Override
-        public boolean hasNext() {
+        public boolean  hasNext( ) {
             try {
-                if ( docs == null) {
-                    int L  = l+b ;
-                     TopDocs tops;
-                   TotalHits tots;
-                    if (s != null) {
-                        tops = finder.searchAfter(doc, q, L, s);
-                    } else {
-                        tops = finder.searchAfter(doc, q, L);
-                    }
-                    tots = tops.totalHits;
-                    H    = tots.value ;
-                    docs = tops.scoreDocs;
-                    h    = docs.length;
-                    i    = b;
-                } else
-                if (! t && i >= h) {
-                     TopDocs tops;
-                    if (s != null) {
-                        tops = finder.searchAfter(doc, q, l, s);
-                    } else {
-                        tops = finder.searchAfter(doc, q, l);
-                    }
-                    docs = tops.scoreDocs;
-                    h    = docs.length;
-                    i    = 0;
-                }
-                return i < h;
-            } catch (IOException e) {
-                throw new Lost ( e);
-            } catch (AlreadyClosedException e) {
-                throw new Lost ( e);
+                return loop.hasNext();
+            } catch (CruxExemption e) {
+                throw new Lost (e);
+            }
+        }
+
+        public Document nextDoc( ) {
+            try {
+                return loop.next();
+            } catch (CruxExemption e) {
+                throw new Lost (e);
             }
         }
 
         @Override
-        public Map next() {
-            if ( i >= h ) {
-                throw new NullPointerException("hasNext not run?");
-            }
-            try {
-                Document dox;
-                doc = docs[i ++];
-                dox = finder.doc( doc.doc );
-                return  that.padDat(dox, r);
-            } catch (IOException e) {
-                throw new Lost ( e);
-            } catch (AlreadyClosedException e) {
-                throw new Lost ( e);
-            }
+        public Map  next() {
+            return that.padDat(nextDoc(), cols);
         }
 
         /**
@@ -2270,16 +2209,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
          * @return
          */
         public int  size() {
-            if (docs == null) {
-                hasNext ();
-            }
-            int L;
-            if (t) {
-                L  = (int) (h - b);
-            } else {
-                L  = (int) (H - b);
-            }
-            return L > 0 ?  L : 0 ;
+            return loop.size();
         }
 
         /**
@@ -2287,12 +2217,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
          * @return
          */
         public int  hits() {
-            if (docs == null) {
-                hasNext ();
-            }
-            // 最多 2G
-            return H < Integer.MAX_VALUE
-            ?(int) H : Integer.MAX_VALUE;
+            return loop.hits();
         }
 
         /**
@@ -2300,10 +2225,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
          * @return
          */
         public long tots() {
-            if (docs == null) {
-                hasNext ();
-            }
-            return H ;
+            return loop.tots();
         }
 
         public List<Map> toList() {
@@ -2316,32 +2238,17 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
         @Override
         public String toString() {
-            StringBuilder sb = new StringBuilder(that.getDbName());
-            if ( q != null ) {
-                sb.append(" QUERY: ");
-                sb.append( q );
-            }
-            if ( s != null ) {
-                sb.append( " SORT: ");
-                sb.append( s );
-            }
-            if ( r != null && ! r.isEmpty() ) {
-                sb.append(" REPLY: ");
-                sb.append(Syno.concat(",",r ) );
-            }
-            if ( l != 0 || b != 0 ) {
-                sb.append(" LIMIT: ");
-                sb.append(Syno.concat(",",b,l));
-            }
-            return sb.toString();
+            return new StringBuilder()
+                 .append(that.getDbName())
+                 .append(" ")
+                 .append(loop. toString())
+                 .toString( );
         }
 
-        /**
-         * @deprecated
-         */
         @Override
+        @Deprecated
         public void remove() {
-            throw new UnsupportedOperationException("Not supported remove in lucene loop.");
+            throw new UnsupportedOperationException("Not supported remove in search loop.");
         }
     }
 
@@ -2350,12 +2257,16 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      */
     public static class Lost extends CruxExemption {
 
-        public Lost( AlreadyClosedException cause ) {
+        public Lost (AlreadyClosedException cause) {
             super(cause, "@fore.retries");
         }
 
-        public Lost( IOException cause ) {
+        public Lost ( IOException cause ) {
             super(cause, "@fore.retries");
+        }
+
+        public Lost ( CruxCause ex ) {
+            super(ex.getCause() , "@fore.retries");
         }
 
     }

@@ -191,10 +191,10 @@ public class StatisGrader {
                         if (ws == null) {
                             vs.put(wk, wz);
                         } else {
-                            if (ws.length > 2) ws[2] = Synt.declare(ws[2], 0  ) + Synt.declare(wz[2], 0  ); // 计数
-                            if (ws.length > 3) ws[3] = Synt.declare(ws[3], 0.0) + Synt.declare(wz[3], 0.0); // 求和
-                            if (ws.length > 4) ws[4] = Math.min(Synt.declare(ws[4], 0.0), Synt.declare(wz[4], 0.0)); // 最小
-                            if (ws.length > 5) ws[5] = Math.max(Synt.declare(ws[5], 0.0), Synt.declare(wz[5], 0.0)); // 最大
+                            if (ws.length > 2) ws[2] = Synt.asInt(ws[2]) + Synt.asInt(wz[2]); // 计数
+                            if (ws.length > 3) ws[3] = Double.sum(Synt.asDouble(ws[3]), Synt.asDouble(wz[3])); // 求和
+                            if (ws.length > 4) ws[4] = Double.min(Synt.asDouble(ws[4]), Synt.asDouble(wz[4])); // 最小
+                            if (ws.length > 5) ws[5] = Double.max(Synt.asDouble(ws[5]), Synt.asDouble(wz[5])); // 最大
                         }
                     }
                 }

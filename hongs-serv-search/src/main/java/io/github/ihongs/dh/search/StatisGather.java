@@ -7,11 +7,10 @@ import io.github.ihongs.dh.search.StatisHandle.Valuer;
 import io.github.ihongs.util.Synt;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -21,6 +20,7 @@ import org.apache.lucene.index.NumericDocValues;
 import org.apache.lucene.index.SortedSetDocValues;
 import org.apache.lucene.index.SortedNumericDocValues;
 import org.apache.lucene.search.Collector;
+import org.apache.lucene.search.CollectorManager;
 import org.apache.lucene.search.LeafCollector;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.MatchAllDocsQuery;
@@ -79,14 +79,19 @@ public class StatisGather {
      * @return
      * @throws IOException
      */
-    public List<Map> assort() throws IOException {
+    public Collection<Map> assort() throws IOException {
         if (query == null) {
             query =  new MatchAllDocsQuery();
         }
 
+        Filch  filch = new Filch(dimans, indics);
+        return finder.search(query, filch);
+
+        /* // Deprecated
         Fetch  fetch = new Fetch(dimans, indics);
-        finder.search(query, fetch);
-        return fetch . getResult( );
+               finder.search(query, fetch);
+        return fetch .result();
+        */
     }
 
     /**
@@ -116,6 +121,60 @@ public class StatisGather {
 
     }
 
+    public static class Filch implements CollectorManager<Fetch, Collection<Map>> {
+
+        private final Dimen[] dimans;
+        private final Index[] indics;
+
+        public Filch( Dimen[] dimans, Index[] indics ) {
+            if (dimans == null) dimans = new Dimen[]{};
+            if (indics == null) indics = new Index[]{};
+            if (dimans.length==0 && indics.length==0 ) {
+                throw new NullPointerException("Fields required");
+            }
+
+            this.dimans = dimans;
+            this.indics = indics;
+        }
+
+        @Override
+        public Fetch newCollector() throws IOException {
+            return new Fetch(dimans, indics);
+        }
+
+        @Override
+        public Collection<Map> reduce(Collection<Fetch> fetchs) throws IOException {
+            Map<Group, Map> dist = new HashMap ();
+            for(Fetch fetch : fetchs) {
+            Map<Group, Map> dict = fetch.groups();
+                for (Map.Entry<Group, Map> et : dict.entrySet()) {
+                    Group g = et.getKey ( );
+                    Map  vz = et.getValue();
+                    Map  vs = dist. get (g);
+                    if ( vs == null ) {
+                        dist.put(g, vz);
+                    } else {
+                        for(Index index : indics) {
+                            String f  = index.alias;
+                            Object v0 = vs.get(f);
+                            Object v1 = vz.get(f);
+                            if (v1 == null) {
+                                continue;
+                            }
+                            if (v0 == null) {
+                                vs.put(f, v1);
+                            } else {
+                                vs.put(f, index.combine(v0, v1));
+                            }
+                        }
+                    }
+                }
+            }
+            return dist.values();
+        }
+
+    }
+
     /**
      * 采集器
      */
@@ -123,8 +182,7 @@ public class StatisGather {
 
         private final Dimen[] dimans;
         private final Index[] indics;
-        private final Map <Group, Map> dict; // 分组字典
-        private final List<       Map> list; // 结果列表
+        private final Map<Group, Map> groups;
 
         public Fetch( Dimen[] dimans, Index[] indics ) {
             if (dimans == null) dimans = new Dimen[]{};
@@ -135,8 +193,7 @@ public class StatisGather {
 
             this.dimans = dimans;
             this.indics = indics;
-            this.dict = new HashMap();
-            this.list = new LinkedList();
+            this.groups = new HashMap();
         }
 
         @Override
@@ -161,11 +218,10 @@ public class StatisGather {
 
             // 获取分组条目
             Group group  = new Group(values);
-            Map   entry  = dict.get(group);
+            Map   entry  = groups.get(group);
             if (  entry == null  ) {
                   entry  = new HashMap();
-                  dict.put(group, entry);
-                  list.add(       entry);
+                  groups.put(group, entry);
             for(int i = 0; i < dimans.length; i ++) {
                 String n = dimans[i].alias;
                 Object v = values[i];
@@ -190,8 +246,12 @@ public class StatisGather {
             return ScoreMode.COMPLETE_NO_SCORES;
         }
 
-        public List<Map> getResult() {
-            return list ;
+        public Collection<Map> result() {
+            return groups.values();
+        }
+
+        public Map<Group, Map> groups() {
+            return groups;
         }
 
     }
@@ -317,6 +377,8 @@ public class StatisGather {
         }
 
         abstract public Object collect(int i , V v) throws IOException;
+
+        abstract public Object combine(Object v0, Object v1);
     }
 
     /**
@@ -334,6 +396,11 @@ public class StatisGather {
                 v  = getValues().next( );
             }
             return v;
+        }
+
+        @Override
+        public Object combine(Object v0, Object v1) {
+            return v0;
         }
 
     }
@@ -358,6 +425,14 @@ public class StatisGather {
             return v;
         }
 
+        @Override
+        public Object combine(Object v0, Object v1) {
+            Set w0 = (Set) v0;
+            Set w1 = (Set) v1;
+            w0.addAll(w1 );
+            return w0;
+        }
+
     }
 
     /**
@@ -378,6 +453,14 @@ public class StatisGather {
                 v.add( o );
             }
             return v;
+        }
+
+        @Override
+        public Object combine(Object v0, Object v1) {
+            Cnt w0 = (Cnt) v0;
+            Cnt w1 = (Cnt) v1;
+            w0.addAll(w1);
+            return w0;
         }
 
     }
@@ -432,19 +515,29 @@ public class StatisGather {
                 //  if (! strValues.advanceExact(i)) {
                 //      break;
                 //  }
-                    n += docValueCount( strValues );
+                //  n += docValueCount( strValues );
+                    n += strValues.docValueCount( );
                     break;
                 }
             }
             return  n ;
         }
 
+        /* // 不再需要
         private long docValueCount(SortedSetDocValues strValues) throws IOException {
             long n  = 1L;
             while (SortedSetDocValues.NO_MORE_ORDS != strValues.nextOrd()) {
                  n += 1L;
             }
             return  n ;
+        }
+        */
+
+        @Override
+        public Object combine(Object v0, Object v1) {
+            Long w0 = (Long) v0;
+            Long w1 = (Long) v1;
+            return w0 + w1;
         }
 
     }
@@ -628,6 +721,40 @@ public class StatisGather {
                 }
             }
             return  n ;
+        }
+
+        @Override
+        public Number[] combine(Object v0, Object v1) {
+            Number[] w0 = (Number[]) v0;
+            Number[] w1 = (Number[]) v1;
+            switch (type) {
+                case INT :
+                case INTS:
+                    w0[3] = Int.max(w0[3].intValue(), w1[3].intValue());
+                    w0[2] = Int.min(w0[2].intValue(), w1[2].intValue());
+                //  w0[1] = Long.sum(w0[1].longValue(), w1[1].longValue());
+                    break;
+                case LONG :
+                case LONGS:
+                    w0[3] = Long.max(w0[3].longValue(), w1[3].longValue());
+                    w0[2] = Long.min(w0[2].longValue(), w1[2].longValue());
+                //  w0[1] = Long.sum(w0[1].longValue(), w1[1].longValue());
+                    break;
+                case FLOAT :
+                case FLOATS:
+                    w0[3] = Float.max(w0[3].floatValue(), w1[3].floatValue());
+                    w0[2] = Float.min(w0[2].floatValue(), w1[2].floatValue());
+                //  w0[1] = Double.sum(w0[1].doubleValue(), w1[1].doubleValue());
+                    break;
+                case DOUBLE :
+                case DOUBLES:
+                    w0[3] = Double.max(w0[3].doubleValue(), w1[3].doubleValue());
+                    w0[2] = Double.min(w0[2].doubleValue(), w1[2].doubleValue());
+                //  w0[1] = Double.sum(w0[1].doubleValue(), w1[1].doubleValue());
+                    break;
+            }
+            w0[0] = Long.sum(w0[0].longValue(), w1[0].longValue());
+            return  w0;
         }
 
     }
@@ -821,6 +948,40 @@ public class StatisGather {
             return  n ;
         }
 
+        @Override
+        public Number[] combine(Object v0, Object v1) {
+            Number[] w0 = (Number[]) v0;
+            Number[] w1 = (Number[]) v1;
+            switch (type) {
+                case INT :
+                case INTS:
+                    w0[3] = Int.max(w0[3].intValue(), w1[3].intValue());
+                    w0[2] = Int.min(w0[2].intValue(), w1[2].intValue());
+                    w0[1] = Long.sum(w0[1].longValue(), w1[1].longValue());
+                    break;
+                case LONG :
+                case LONGS:
+                    w0[3] = Long.max(w0[3].longValue(), w1[3].longValue());
+                    w0[2] = Long.min(w0[2].longValue(), w1[2].longValue());
+                    w0[1] = Long.sum(w0[1].longValue(), w1[1].longValue());
+                    break;
+                case FLOAT :
+                case FLOATS:
+                    w0[3] = Float.max(w0[3].floatValue(), w1[3].floatValue());
+                    w0[2] = Float.min(w0[2].floatValue(), w1[2].floatValue());
+                    w0[1] = Double.sum(w0[1].doubleValue(), w1[1].doubleValue());
+                    break;
+                case DOUBLE :
+                case DOUBLES:
+                    w0[3] = Double.max(w0[3].doubleValue(), w1[3].doubleValue());
+                    w0[2] = Double.min(w0[2].doubleValue(), w1[2].doubleValue());
+                    w0[1] = Double.sum(w0[1].doubleValue(), w1[1].doubleValue());
+                    break;
+            }
+            w0[0] = Long.sum(w0[0].longValue(), w1[0].longValue());
+            return  w0;
+        }
+
     }
 
     /**
@@ -946,6 +1107,27 @@ public class StatisGather {
                 }
             }
             return  n ;
+        }
+
+        @Override
+        public Object combine(Object v0, Object v1) {
+            Number w0 = (Number) v0;
+            Number w1 = (Number) v1;
+            switch (type) {
+                case INT  :
+                case INTS :
+                case LONG :
+                case LONGS:
+                    w0 = Long.sum(w0.longValue(), w1.longValue());
+                    break;
+                case FLOAT  :
+                case FLOATS :
+                case DOUBLE :
+                case DOUBLES:
+                    w0 = Double.sum(w0.doubleValue(), w1.doubleValue());
+                    break;
+            }
+            return w0;
         }
 
     }
@@ -1075,6 +1257,31 @@ public class StatisGather {
             return  n ;
         }
 
+        @Override
+        public Object combine(Object v0, Object v1) {
+            Number w0 = (Number) v0;
+            Number w1 = (Number) v1;
+            switch (type) {
+                case INT :
+                case INTS:
+                    w0 = Int.max(w0.intValue(), w1.intValue());
+                    break;
+                case LONG :
+                case LONGS:
+                    w0 = Long.max(w0.longValue(), w1.longValue());
+                    break;
+                case FLOAT :
+                case FLOATS:
+                    w0 = Float.max(w0.floatValue(), w1.floatValue());
+                    break;
+                case DOUBLE :
+                case DOUBLES:
+                    w0 = Double.max(w0.doubleValue(), w1.doubleValue());
+                    break;
+            }
+            return w0;
+        }
+
     }
 
     /**
@@ -1202,18 +1409,31 @@ public class StatisGather {
             return  n ;
         }
 
-    }
+        @Override
+        public Object combine(Object v0, Object v1) {
+            Number w0 = (Number) v0;
+            Number w1 = (Number) v1;
+            switch (type) {
+                case INT :
+                case INTS:
+                    w0 = Int.min(w0.intValue(), w1.intValue());
+                    break;
+                case LONG :
+                case LONGS:
+                    w0 = Long.min(w0.longValue(), w1.longValue());
+                    break;
+                case FLOAT :
+                case FLOATS:
+                    w0 = Float.min(w0.floatValue(), w1.floatValue());
+                    break;
+                case DOUBLE :
+                case DOUBLES:
+                    w0 = Double.min(w0.doubleValue(), w1.doubleValue());
+                    break;
+            }
+            return w0;
+        }
 
-    /**
-     * 重度对齐强迫症专用
-     */
-    private static final class Int {
-        public static int  min(int a, int b) {
-            return Integer.min(a , b);
-        }
-        public static int  max(int a, int b) {
-            return Integer.max(a , b);
-        }
     }
 
     /**
@@ -1223,6 +1443,9 @@ public class StatisGather {
         public Set a = new HashSet();
         public void add(Object v) {
             a.add (v);
+        }
+        public void addAll(Cnt w) {
+            a.addAll ( w.a );
         }
         @Override
         public Integer get() {
@@ -1247,6 +1470,21 @@ public class StatisGather {
         @Override
         public String toString() {
             return Synt.asString(get());
+        }
+    }
+
+    /**
+     * 重度对齐强迫症专用
+     */
+    private static final class Int {
+        public static int  sum(int a, int b) {
+            return Integer.sum(a , b);
+        }
+        public static int  min(int a, int b) {
+            return Integer.min(a , b);
+        }
+        public static int  max(int a, int b) {
+            return Integer.max(a , b);
         }
     }
 

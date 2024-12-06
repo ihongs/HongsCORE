@@ -15,6 +15,7 @@ import java.util.Set;
 import org.apache.lucene.index.LeafReader;
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.Collector;
+import org.apache.lucene.search.CollectorManager;
 import org.apache.lucene.search.LeafCollector;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.MatchAllDocsQuery;
@@ -133,8 +134,74 @@ public class StatisGrader {
         if (query == null) {
             query =  new MatchAllDocsQuery();
         }
-        finder.search(query, new Fetch(fields, counts, countx, styles));
+        finder.search(query, new Filch(fields, counts, countx, styles));
+     // finder.search(query, new Fetch(fields, counts, countx, styles)); // Deprecated
         return counts;
+    }
+
+    /**
+     * 归并器
+     */
+    public static class Filch implements CollectorManager<Fetch, Integer> {
+
+        private final Field[] fields;
+        private final Map<String, Map> counts;
+        private final Map<String, Set> countx;
+        private final Map<String, Integer> styles;
+
+        public Filch (Field[] fields,
+                      Map<String, Map> counts,
+                      Map<String, Set> countx,
+                      Map<String, Integer> styles) {
+            if (fields == null || fields.length == 0) {
+                throw new NullPointerException("Fields required");
+            }
+
+            this.fields = fields;
+            this.counts = counts;
+            this.countx = countx;
+            this.styles = styles;
+        }
+
+        @Override
+        public Fetch newCollector() throws IOException {
+            Map countz = new HashMap(counts);
+            return new Fetch(fields, countz, countx, styles);
+        }
+
+        @Override
+        public Integer reduce(Collection<Fetch> fetchs) throws IOException {
+            int count  = 0;
+            for (Fetch fetch : fetchs ) {
+                Map<String, Map> countz;
+                countz = fetch.counts();
+                count += fetch.count ();
+
+                for (Field field : fields) {
+                    String k = field.alias;
+                    Map vs = counts.get(k);
+                    Map vz = countz.get(k);
+
+                    for(Object ot : vz.entrySet()) {
+                        Map.Entry et = (Map.Entry) ot;
+                        Object    wk = et.getKey();
+                        Object [] wz = (Object []) et.getValue();
+                        Object [] ws = (Object []) vs.get ( wk );
+
+                        if (ws == null) {
+                            vs.put(wk, wz);
+                        } else {
+                            if (ws.length > 2) ws[2] = Synt.declare(ws[2], 0  ) + Synt.declare(wz[2], 0  ); // 计数
+                            if (ws.length > 3) ws[3] = Synt.declare(ws[3], 0.0) + Synt.declare(wz[3], 0.0); // 求和
+                            if (ws.length > 4) ws[4] = Math.min(Synt.declare(ws[4], 0.0), Synt.declare(wz[4], 0.0)); // 最小
+                            if (ws.length > 5) ws[5] = Math.max(Synt.declare(ws[5], 0.0), Synt.declare(wz[5], 0.0)); // 最大
+                        }
+                    }
+                }
+            }
+            return count;
+        }
+
     }
 
     /**
@@ -254,6 +321,10 @@ public class StatisGrader {
         @Override
         public ScoreMode scoreMode() {
             return ScoreMode.COMPLETE_NO_SCORES;
+        }
+
+        public Map counts() {
+            return counts;
         }
 
         public int count() {
@@ -408,7 +479,7 @@ public class StatisGrader {
   final private Range  rng;
         private Object txt = null;
         private int    cnt = 0;
-  final private double sum = 0;
+        private double sum = 0;
         private double min = Double.NEGATIVE_INFINITY;
         private double max = Double.POSITIVE_INFINITY;
 

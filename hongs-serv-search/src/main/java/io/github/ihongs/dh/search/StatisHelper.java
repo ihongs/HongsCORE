@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
@@ -470,19 +469,25 @@ public class StatisHelper {
         }
 
         // 查询
-        List<Map> list;
+        List <Map> list;
+        Collection coll;
         try {
             Query q = that.padQry(rd);
+            IndexSearcher f = that.getFinder();
 
             if (4 == (4 & Core.DEBUG)) {
                 CoreLogger.debug("StatisHelper.assort: " + q.toString());
             }
 
-            IndexSearcher finder = that.getFinder();
+            /* // Deprecated
             StatisGather.Fetch c = new StatisGather.Fetch(fs.dimans, fs.indics);
+            f.search( q , c );
+            coll = c.result();
+            */
 
-            finder.search( q, c );
-            list = c.getResult( );
+            StatisGather.Filch c = new StatisGather.Filch(fs.dimans, fs.indics);
+            coll = f . search( q , c );
+            list = new ArrayList(coll);
         } catch ( IOException e ) {
             throw new CruxException(e);
         }
@@ -577,37 +582,6 @@ public class StatisHelper {
         }
 
         return  data ;
-    }
-
-    /**
-     * 统计查询
-     * @param rd
-     * @param fx
-     */
-    public void search(Map rd, final Consumer<Field[]> fx) throws CruxException {
-        Set<String> rb = Synt.toTerms(rd.get(Cnst.RB_KEY));
-        if (rb == null || rb.isEmpty()) {
-            throw new NullPointerException("Search fields required.");
-        }
-        Field[] fs = getGraderFields(rb, rd);
-        if (fs == null || fs.length==0) {
-            throw new NullPointerException("Search fields required!");
-        }
-
-        try {
-            Query q = that.padQry(rd);
-
-            if (4 == (4 & Core.DEBUG)) {
-                CoreLogger.debug("StatisHelper.search: " + q.toString());
-            }
-
-            IndexSearcher finder = that.getFinder();
-            StatisHandle.Fetch c = new StatisHandle.Fetch(fx, fs);
-
-            finder.search( q, c );
-        } catch ( IOException e ) {
-            throw new CruxException(e);
-        }
     }
 
     private Function getGraderFormat(String x) throws CruxException {

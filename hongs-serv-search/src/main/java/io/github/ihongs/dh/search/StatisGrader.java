@@ -165,40 +165,61 @@ public class StatisGrader {
 
         @Override
         public Fetch newCollector() throws IOException {
-            Map countz = new HashMap(counts);
+            // 两层拷贝 {字段: {取值: 计数}}, 计数对象为 Coach, 需 clone
+            Map countz = new HashMap(counts.size());
+            for(Map.Entry<String, Map> et : counts.entrySet()) {
+                String f = et.getKey();
+                Map vs = et.getValue();
+                if (vs  != null) {
+                    Map vz = new HashMap(vs.size());
+                    for(Object o2 : vz.entrySet ()) {
+                        Map.Entry e2  = (Map.Entry) o2;
+                        Coach  c2 = (Coach) e2.getValue();
+                        vz.put(e2.getKey( ) , c2.clone());
+                    }
+                }
+                countz.put(f, vs);
+            }
+
             return new Fetch(fields, countz, countx, styles);
         }
 
         @Override
         public Integer reduce(Collection<Fetch> fetchs) throws IOException {
             int count  = 0;
+
+            // 归并计数
             for (Fetch fetch : fetchs ) {
                 Map<String, Map> countz;
                 countz = fetch.counts();
                 count += fetch.count ();
 
-                for (Field field : fields) {
-                    String k = field.alias;
-                    Map vs = counts.get(k);
-                    Map vz = countz.get(k);
-
-                    for(Object ot : vz.entrySet()) {
-                        Map.Entry et = (Map.Entry) ot;
-                        Object    wk = et.getKey();
-                        Object [] wz = (Object []) et.getValue();
-                        Object [] ws = (Object []) vs.get ( wk );
+                for(Map.Entry<String, Map> et : countz.entrySet()) {
+                    String f = et.getKey();
+                    Map vz = et.getValue();
+                    Map vs = counts.get(f);
+                    
+                    if (vz == null) {
+                        continue;
+                    }
+                    if (vs == null) {
+                        counts.put(f , vz);
+                    } else
+                    for(Object o2 : vz.entrySet()) {
+                        Map.Entry   e2 = (Map.Entry) o2 ;
+                        Object k =  e2.getKey(  );
+                        Coach wz = (Coach) et.getValue();
+                        Coach ws = (Coach) vs.get  ( k );
 
                         if (ws == null) {
-                            vs.put(wk, wz);
+                            vs.put(k , wz);
                         } else {
-                            if (ws.length > 2) ws[2] = Synt.asInt(ws[2]) + Synt.asInt(wz[2]); // 计数
-                            if (ws.length > 3) ws[3] = Double.sum(Synt.asDouble(ws[3]), Synt.asDouble(wz[3])); // 求和
-                            if (ws.length > 4) ws[4] = Double.min(Synt.asDouble(ws[4]), Synt.asDouble(wz[4])); // 最小
-                            if (ws.length > 5) ws[5] = Double.max(Synt.asDouble(ws[5]), Synt.asDouble(wz[5])); // 最大
+                            ws.tap(    wz);
                         }
                     }
                 }
             }
+
             return count;
         }
 
@@ -344,8 +365,13 @@ public class StatisGrader {
         private double min = Double.NEGATIVE_INFINITY;
         private double max = Double.POSITIVE_INFINITY;
 
-        public Total(Range rng) {
+        public Total (Range  rng) {
             this.rng = rng;
+        }
+
+        @Override
+        public Coach clone() {
+            return new Total(rng);
         }
 
         @Override
@@ -373,6 +399,15 @@ public class StatisGrader {
             if (max < v || max == Double.POSITIVE_INFINITY) {
                 max = v;
             }
+        }
+
+        @Override
+        public void tap(Coach  c) {
+            Total  o = (Total) c;
+            cnt += o . cnt;
+            sum += o . sum;
+            min  = Double.min(min, o.min);
+            max  = Double.max(max, o.max);
         }
 
         @Override
@@ -483,8 +518,13 @@ public class StatisGrader {
         private double min = Double.NEGATIVE_INFINITY;
         private double max = Double.POSITIVE_INFINITY;
 
-        public Tally(Range rng) {
+        public Tally (Range  rng) {
             this.rng = rng;
+        }
+
+        @Override
+        public Coach clone() {
+            return new Tally(rng);
         }
 
         @Override
@@ -511,6 +551,14 @@ public class StatisGrader {
             if (max < v || max == Double.POSITIVE_INFINITY) {
                 max = v;
             }
+        }
+
+        @Override
+        public void tap(Coach  c) {
+            Tally  o = (Tally) c;
+            cnt += o . cnt;
+            min  = Double.min(min, o.min);
+            max  = Double.max(max, o.max);
         }
 
         @Override
@@ -608,8 +656,13 @@ public class StatisGrader {
         private Object txt = null;
         private int    cnt = 0;
 
-        public Count(Object val) {
+        public Count (Object val) {
             this.val = val;
+        }
+
+        @Override
+        public Coach clone() {
+            return new Count(val);
         }
 
         @Override
@@ -630,6 +683,12 @@ public class StatisGrader {
         @Override
         public void tap(double v) {
             tap();
+        }
+
+        @Override
+        public void tap(Coach  c) {
+            Count  o = (Count) c;
+            cnt += o . cnt;
         }
 
         @Override
@@ -708,12 +767,14 @@ public class StatisGrader {
      * 需要实现 tap,get,set.size 用于计数和读取,
      * 还需实现 equals,compareTo,hashCode,toString,toArray
      */
-    abstract public static class Coach implements Comparable, List {
+    abstract public static class Coach implements Comparable, Cloneable, List {
 
+        abstract public Coach clone();
         abstract public  int cnt();
         abstract public void tap();
         abstract public void tap(Number v);
         abstract public void tap(double v);
+        abstract public void tap(Coach  c);
 
         private int top ;
         public  int top() {

@@ -427,10 +427,14 @@ public class StatisHelper {
                 return finder.count(q);
             }
 
+            /* // Deprecated
             StatisGrader.Fetch c = new StatisGrader.Fetch(fields, counts, countx, styles);
-
             finder.search(q, c);
             return c . count( );
+            */
+
+            StatisGrader.Filch c = new StatisGrader.Filch(fields, counts, countx, styles);
+            return finder.search(q, c);
         } catch (IOException e) {
             throw new CruxException(e);
         }

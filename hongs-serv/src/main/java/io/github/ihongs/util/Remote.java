@@ -278,14 +278,10 @@ public final class Remote {
         }
 
         // 将 GET 参数拼到 URL 上
-        if (type == METHOD.GET) {
-            String qry = queryText(data);
-            if ( ! qry.isEmpty()) {
-                if (! url.contains("?")) {
-                    url += "?"+ qry;
-                } else {
-                    url += "&"+ qry;
-                }
+        if (METHOD.GET == type) {
+            String prm = queryText(data);
+            if ( ! prm.isEmpty()) {
+                url = url + (url.contains("?") ? "&" : "?") + prm;
             }
             data = null;
         }
@@ -350,20 +346,21 @@ public final class Remote {
                     .setDefaultRequestConfig(rb.build())
                     .build ();
             ) {
-                final StatusException[] se = new StatusException[ 1 ];
-                client.execute(req, rsp -> {
+                final String   rel = url ;
+                final StatusException[ ] se = new StatusException [1];
+                client.execute(req , rsp -> {
                     // 异常处理
-                    int sta = rsp.getCode();
+                    int sta  = rsp.getCode();
                     if (sta >= 300 && sta <= 399) {
                         Header hea = rsp.getFirstHeader( "Location" );
                         String loc = hea != null ? hea.getValue(): "";
-                        se[0]= new StatusException(url, loc, sta);
+                        se[0]= new StatusException(rel, loc, sta);
                         return null;
                     }
                     if (sta >= 400 || sta <= 199) {
                         HttpEntity t = rsp.getEntity();
                         String txt = EntityUtils.toString(t, "UTF-8");
-                        se[0]= new StatusException(url, txt, sta);
+                        se[0]= new StatusException(rel, txt, sta);
                         return null;
                     }
 

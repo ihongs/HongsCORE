@@ -15,6 +15,7 @@ import io.github.ihongs.dh.search.StatisGrader.Coach;
 import io.github.ihongs.dh.search.StatisGrader.Count;
 import io.github.ihongs.dh.search.StatisGrader.Tally;
 import io.github.ihongs.dh.search.StatisGrader.Total;
+import io.github.ihongs.dh.search.StatisGrader.STYLE;
 import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Synt;
 
@@ -79,18 +80,18 @@ public class StatisHelper {
         boolean ld  =  ab != null && ab.contains("linked");
         boolean rt  =  ab != null && ab.contains("resort");
         boolean ro  =  ab != null && ab.contains("rezero");
-        int     rl  =  rb != null  ? rb.size() : 0 ;
+        int     rl  =  rb != null  ? rb.size( ) : 0 ;
 
-        Map<String, Map    > counts  = new HashMap(rl);
-        Map<String, Set    > countz  = new HashMap(rl); // 特选
-        Map<String, Set    > countx  = new HashMap(rl); // 排除
-        Map<String, Integer> styles  = new HashMap(rl); // 模式
+        Map<String, Map  > counts  = new HashMap(rl);
+        Map<String, Set  > countz  = new HashMap(rl); // 特选
+        Map<String, Set  > countx  = new HashMap(rl); // 排除
+        Map<String, STYLE> styles  = new HashMap(rl); // 模式
 
-        Map<String, Map    > counts2 = new HashMap(rl);
-        Map<String, Set    > countx2 = new HashMap(rl);
+        Map<String, Map  > counts2 = new HashMap(rl);
+        Map<String, Set  > countx2 = new HashMap(rl);
 
-        Map<String, Map    > counts3 = new HashMap(rl);
-        Map<String, Set    > countx3 = new HashMap(rl);
+        Map<String, Map  > counts3 = new HashMap(rl);
+        Map<String, Set  > countx3 = new HashMap(rl);
 
         /**
          * 根据请求数据进行综合判断,
@@ -121,7 +122,7 @@ public class StatisHelper {
                 Map vm = (Map) vo ;
 
                 // 模式
-                int cm =  -1 ;
+                STYLE ct = null;
                 Function<Object, Object> vf;
                 Function<Object, Coach > cf;
                 String  CURR_IN_REL = Cnst.IN_REL;
@@ -130,34 +131,34 @@ public class StatisHelper {
                         CURR_IN_REL = Cnst.AT_REL;
                         vf = (v) -> new Range(v);
                         cf = (v) -> new Total((Range)v);
-                        cm = StatisGrader.TOTAL ;
-                        styles.put(k, cm);
+                        ct = STYLE.TOTAL ;
+                        styles.put(k, ct);
                         break;
                     case "tally":
                         CURR_IN_REL = Cnst.AT_REL;
                         vf = (v) -> new Range(v);
                         cf = (v) -> new Tally((Range)v);
-                        cm = StatisGrader.TALLY ;
-                        styles.put(k, cm);
+                        ct = STYLE.TALLY ;
+                        styles.put(k, ct);
                         break;
                     case "range":
                         CURR_IN_REL = Cnst.AT_REL;
                         vf = (v) -> new Range(v);
                         cf = (v) -> new Count(v);
-                        cm = StatisGrader.RANGE ;
-                        styles.put(k, cm);
+                        ct = STYLE.RANGE ;
+                        styles.put(k, ct);
                         break;
                     case "asset":
                         vf = (v) -> f . apply(v);
                         cf = (v) -> new Count(v);
-                        cm = StatisGrader.ASSET ;
-                        styles.put(k, cm);
+                        ct = STYLE.ASSET ;
+                        styles.put(k, ct);
                         break;
                     case "count":
                         vf = (v) -> f . apply(v);
                         cf = (v) -> new Count(v);
-                        cm = StatisGrader.COUNT ;
-                        styles.put(k, cm);
+                        ct = STYLE.COUNT ;
+                        styles.put(k, ct);
                         break;
                     default:
                         vf = (v) -> f . apply(v);
@@ -178,12 +179,12 @@ public class StatisHelper {
                     counts.put(k , vz);
 
                     // 未指定则设为仅限特定
-                    if (cm == -1 /**/) {
-                        styles.put(k, StatisGrader.ASSET);
+                    if (ct == null) {
+                        styles.put(k, STYLE.ASSET);
                     }
                 } else {
-                    if (cm == -1 /**/) {
-                        styles.put(k, StatisGrader.COUNT);
+                    if (ct == null) {
+                        styles.put(k, STYLE.COUNT);
                     }
                 }
 
@@ -412,7 +413,7 @@ public class StatisHelper {
             Map rd, IndexSearcher finder,
             Map<String , Map    > counts,
             Map<String , Set    > countx,
-            Map<String , Integer> styles
+            Map<String , STYLE  > styles
     ) throws CruxException {
         Field[] fields = getGraderFields(counts.keySet(), rd);
 

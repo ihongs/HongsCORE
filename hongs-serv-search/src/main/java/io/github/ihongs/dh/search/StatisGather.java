@@ -121,6 +121,9 @@ public class StatisGather {
 
     }
 
+    /**
+     * 归集器
+     */
     public static class Filch implements CollectorManager<Fetch, Collection<Map>> {
 
         private final Dimen[] dimans;
@@ -147,7 +150,7 @@ public class StatisGather {
             Map<Group, Map> dist = new HashMap ();
             for(Fetch fetch : fetchs) {
             Map<Group, Map> dict = fetch.groups();
-                for (Map.Entry<Group, Map> et : dict.entrySet()) {
+                for(Map.Entry<Group, Map> et : dict.entrySet()) {
                     Group g = et.getKey ( );
                     Map  vz = et.getValue();
                     Map  vs = dist. get (g);
@@ -182,7 +185,7 @@ public class StatisGather {
 
         private final Dimen[] dimans;
         private final Index[] indics;
-        private final Map<Group, Map> groups;
+        private final Map<Group, Map> groups; // {Group: {Dimen.alias|Index.alias: VALUE}}, VALUE is String,Number or String[],Number[]
 
         public Fetch( Dimen[] dimans, Index[] indics ) {
             if (dimans == null) dimans = new Dimen[]{};

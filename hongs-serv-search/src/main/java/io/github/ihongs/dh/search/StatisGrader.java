@@ -1,5 +1,6 @@
 package io.github.ihongs.dh.search;
 
+import io.github.ihongs.CruxExemption;
 import io.github.ihongs.dh.search.StatisHandle.Field;
 import io.github.ihongs.dh.search.StatisHandle.Range;
 import io.github.ihongs.util.Synt;
@@ -29,19 +30,24 @@ import org.apache.lucene.search.ScoreMode;
  */
 public class StatisGrader {
 
-    public static final int COUNT = 0;
-    public static final int ASSET = 1;
-    public static final int RANGE = 2; // Range Count
-    public static final int TALLY = 3;
-    public static final int TOTAL = 4;
-
     private final IndexSearcher finder;
     private       Field[]       fields;
     private       Query         query ;
 
     private final Map<String, Map> counts = new HashMap();
     private final Map<String, Set> countx = new HashMap();
-    private final Map<String, Integer> styles = new HashMap();
+    private final Map<String, STYLE> styles = new HashMap();
+
+    /**
+     * COUNT: 对应 Count
+     * ASSET: 对应 Count, 仅对给定的取值计数
+     * Range: 对应 Count, 针对给定的区间计数
+     * Tally: 对应 Tally, 针对给定的区间计数, 及取最小值和最大值
+     * Total: 对应 Total, 针对给定的区间计数, 求和, 及取最小值和最大值
+     */
+    public static enum STYLE {
+        COUNT, ASSET, RANGE, TALLY, TOTAL
+    }
 
     public StatisGrader (IndexSearcher finder) {
         this.finder = finder;
@@ -85,14 +91,13 @@ public class StatisGrader {
      * @return
      */
     public StatisGrader allow(String alias, Set values) {
-        int style = 0;
+        STYLE   style = STYLE.COUNT;
         for (Object value : values) {
             if (value instanceof Range) {
-                style = RANGE;
+                style = STYLE.RANGE;
             } else {
-                style = ASSET;
-            }
-            break;
+                style = STYLE.ASSET;
+            } break;
         }
         return allow(alias, values, style);
     }
@@ -104,8 +109,9 @@ public class StatisGrader {
      * @param style  TOTAL 求和, ASSET 限定...
      * @return
      */
-    public StatisGrader allow(String alias, Set values, int style) {
-        styles.put(alias, style);
+    public StatisGrader allow(String alias, Set values, STYLE style) {
+        try {
+
         Map countz = new HashMap();
         switch (style) {
         case TOTAL:
@@ -121,8 +127,13 @@ public class StatisGrader {
                 countz.put(value, new Count(value));
             } break;
         }
-        counts.put(alias, countz);
+        styles.put( alias, style );
+        counts.put( alias, countz);
         return this;
+
+        } catch (ClassCastException ex) {
+            throw new CruxExemption(ex, "Values for "+alias+" must be Range");
+        }
     }
 
     /**
@@ -140,19 +151,19 @@ public class StatisGrader {
     }
 
     /**
-     * 归并器
+     * 归集器
      */
     public static class Filch implements CollectorManager<Fetch, Integer> {
 
         private final Field[] fields;
         private final Map<String, Map> counts;
         private final Map<String, Set> countx;
-        private final Map<String, Integer> styles;
+        private final Map<String, STYLE> styles;
 
         public Filch (Field[] fields,
                       Map<String, Map> counts,
                       Map<String, Set> countx,
-                      Map<String, Integer> styles) {
+                      Map<String, STYLE> styles) {
             if (fields == null || fields.length == 0) {
                 throw new NullPointerException("Fields required");
             }
@@ -166,19 +177,19 @@ public class StatisGrader {
         @Override
         public Fetch newCollector() throws IOException {
             // 两层拷贝 {字段: {取值: 计数}}, 计数对象为 Coach, 需 clone
-            Map countz = new HashMap(counts.size());
-            for(Map.Entry<String, Map> et : counts.entrySet()) {
-                String f = et.getKey();
-                Map vs = et.getValue();
-                if (vs  != null) {
-                    Map vz = new HashMap(vs.size());
-                    for(Object o2 : vz.entrySet ()) {
-                        Map.Entry e2  = (Map.Entry) o2;
+            Map countz = new HashMap(fields.length);
+            for(Field  d : fields ) {
+                String f = d.alias;
+                Map vs = counts.get (f);
+                if (vs!= null) {
+                Map vz = new HashMap(vs.size());
+                    for(Object o2 :  vs.entrySet()) {
+                    Map.Entry  e2 = (Map.Entry) o2;
                         Coach  c2 = (Coach) e2.getValue();
-                        vz.put(e2.getKey( ) , c2.clone());
+                        vz.put(e2.getKey(), c2.clone( ) );
                     }
+                    countz.put(f, vz);
                 }
-                countz.put(f, vs);
             }
 
             return new Fetch(fields, countz, countx, styles);
@@ -198,7 +209,7 @@ public class StatisGrader {
                     String f = et.getKey();
                     Map vz = et.getValue();
                     Map vs = counts.get(f);
-                    
+
                     if (vz == null) {
                         continue;
                     }
@@ -208,7 +219,7 @@ public class StatisGrader {
                     for(Object o2 : vz.entrySet()) {
                         Map.Entry   e2 = (Map.Entry) o2 ;
                         Object k =  e2.getKey(  );
-                        Coach wz = (Coach) et.getValue();
+                        Coach wz = (Coach) e2.getValue();
                         Coach ws = (Coach) vs.get  ( k );
 
                         if (ws == null) {
@@ -234,14 +245,14 @@ public class StatisGrader {
         private final Field[] fields;
         private final Map<String, Map> counts;
         private final Map<String, Set> countx;
-        private final Map<String, Integer> styles;
+        private final Map<String, STYLE> styles;
 
         private int count = 0 ;
 
         public Fetch (Field[] fields,
                       Map<String, Map> counts,
                       Map<String, Set> countx,
-                      Map<String, Integer> styles) {
+                      Map<String, STYLE> styles) {
             if (fields == null || fields.length == 0) {
                 throw new NullPointerException("Fields required");
             }
@@ -276,7 +287,7 @@ public class StatisGrader {
                     counts.put(k, cntc );
                 }
 
-                switch (Synt.defxult(styles.get(k), 0)) {
+                switch (Synt.defoult(styles.get(k), STYLE.COUNT)) {
                 case TOTAL:   // 计数,求和,最小,最大
                 case TALLY:   // 计数,0,最小,最大
                 case RANGE: { // 计数

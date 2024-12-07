@@ -20,12 +20,12 @@ public class CruxExemption
   extends RuntimeException
   implements CruxCause {
 
-    protected final CruxFault that;
+    protected final CruxDemon that;
 
     public CruxExemption(Throwable cause, int errno, String error, Object... cases) {
         super(cause);
 
-        that = new CruxFault(this, errno, error, cases);
+        that = new CruxDemon(this, errno, error, cases);
     }
 
     public CruxExemption(Throwable cause, int errno, String error) {

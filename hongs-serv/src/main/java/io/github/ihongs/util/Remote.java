@@ -279,9 +279,13 @@ public final class Remote {
 
         // 将 GET 参数拼到 URL 上
         if (METHOD.GET == type) {
-            String prm = queryText(data);
-            if ( ! prm.isEmpty()) {
-                url = url + (url.contains("?") ? "&" : "?") + prm;
+            String que = queryText(data);
+            if ( ! que.isEmpty()) {
+                if (! url.contains("?")) {
+                    url = url +"?"+ que ;
+                } else {
+                    url = url +"&"+ que ;
+                }
             }
             data = null;
         }

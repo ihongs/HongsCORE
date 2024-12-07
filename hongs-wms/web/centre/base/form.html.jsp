@@ -13,7 +13,7 @@
 %>
 <h2 class="hide"><%=_locale.translate("fore."+_action+".title", _title)%></h2>
 <div id="<%=_pageId%>" class="<%=_pageId+" "+_action%>-form">
-    <form action="<%=_module%>/<%=_entity%>/<%=_action%>.act"
+    <form action="<%=_module%>/<%=_entity%>/<%=_action%>.act?<%=Cnst.AB_KEY%>=!errs"
           method="POST" enctype="multipart/form-data" class="form-horizontal">
         <div class="panel panel-default">
         <div class="form-body">

@@ -2,13 +2,13 @@ package io.github.ihongs.util;
 
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CruxException;
+import io.github.ihongs.CruxExemption;
 import io.github.ihongs.action.ActionHelper;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -20,27 +20,31 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.ParseException;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPatch;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.ContentBody;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpPut;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.classic.methods.HttpPatch;
+import org.apache.hc.client5.http.classic.methods.HttpDelete;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.config.ConnectionConfig;
+import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
+import org.apache.hc.client5.http.entity.mime.ContentBody;
+import org.apache.hc.client5.http.entity.mime.HttpMultipartMode;
+import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.client5.http.impl.io.BasicHttpClientConnectionManager;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.NameValuePair;
+import org.apache.hc.core5.http.ParseException;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.http.message.BasicNameValuePair;
+import org.apache.hc.core5.util.Timeout;
 
 /**
  * 远程请求工具
@@ -178,7 +182,7 @@ public final class Remote {
         final SimpleException[ ] err = new SimpleException[1];
         request(type, kind, url, data, head, (rsp) -> {
             try {
-                txt[0] = EntityUtils.toString(rsp.getEntity(), "UTF-8").trim();
+                txt[0] = EntityUtils.toString(rsp.getEntity(), Charset.forName("UTF-8")).trim();
             } catch (IOException | ParseException ex) {
                 err[0] = new SimpleException(url, ex);
             }
@@ -267,49 +271,35 @@ public final class Remote {
      * @throws StatusException
      * @throws SimpleException
      */
-    public static void request(METHOD type, FORMAT kind, String url, Map data, Map head, Consumer<HttpResponse> con)
+    public static void request(METHOD type, FORMAT kind, String url, Map data, Map head, Consumer<ClassicHttpResponse> con)
             throws CruxException, StatusException, SimpleException {
         if (url == null) {
             throw new NullPointerException("Request url can not be null");
         }
 
-        HttpRequestBase http = null;
         try {
             // 构建 HTTP 请求对象
+            ClassicHttpRequest req ;
+            URI uri = new URI (url);
             switch (type) {
-                case DELETE: http = new HttpDelete(); break;
-                case PATCH : http = new HttpPatch( ); break;
-                case POST  : http = new HttpPost(  ); break;
-                case PUT   : http = new HttpPut(   ); break;
-                default    : http = new HttpGet(   ); break;
+                case DELETE: req = new HttpDelete(uri); break;
+                case PATCH : req = new HttpPatch (uri); break;
+                case POST  : req = new HttpPost  (uri); break;
+                case PUT   : req = new HttpPut   (uri); break;
+                default    : req = new HttpGet   (uri); break;
             }
 
             // 设置报文
             if (data != null) {
-                if (http instanceof HttpEntityEnclosingRequest) {
-                    HttpEntityEnclosingRequest htte = (HttpEntityEnclosingRequest) http;
-                    if (null != kind) switch ( kind ) {
-                    case JSON:
-                        htte.setEntity(buildJson(data));
-                        break;
-                    case PART:
-                        htte.setEntity(buildPart(data));
-                        break;
-                    default:
-                        htte.setEntity(buildPost(data));
-                        break;
-                    } else {
-                        htte.setEntity(buildPost(data));
-                    }
-                } else {
-                    String qry = EntityUtils.toString(buildPost(data), "UTF-8");
-                    if (url.indexOf('?') == -1) {
-                        url += "?" + qry;
-                    } else {
-                        url += "&" + qry;
-                    }
+            if (null != kind) {
+                switch (kind) {
+                case JSON  : req.setEntity(buildJson(data)); break;
+                case PART  : req.setEntity(buildPart(data)); break;
+                default    : req.setEntity(buildPost(data)); break;
                 }
-            }
+            } else {
+                req.setEntity(buildPost(data));
+            }}
 
             // 设置报头
             if (head != null) {
@@ -319,50 +309,61 @@ public final class Remote {
                     k = Synt.asString(e.getKey  ());
                     if (k.startsWith(":")) continue;
                     v = Synt.asString(e.getValue());
-                    http.setHeader(k, v);
+                    req.setHeader(k, v);
                 }
             }
 
             // 设置超时
             CoreConfig cc = CoreConfig.getInstance();
-            RequestConfig.Builder cb = RequestConfig.custom();
+            RequestConfig.Builder rb = RequestConfig.custom();
+            ConnectionConfig.Builder cb = ConnectionConfig.custom();
+            BasicHttpClientConnectionManager cm = new BasicHttpClientConnectionManager();
             int tt;
-            tt = Synt.declare(head != null ? head.get(":WAIT-TIMEOUT") : null, cc.getProperty("core.remote.request.wait.timeout", 0));
-            if (tt > 0) cb.setConnectionRequestTimeout ( tt );
-            tt = Synt.declare(head != null ? head.get(":CONN-TIMEOUT") : null, cc.getProperty("core.remote.request.conn.timeout", 0));
-            if (tt > 0) cb.setConnectTimeout(tt);
             tt = Synt.declare(head != null ? head.get(":SOCK-TIMEOUT") : null, cc.getProperty("core.remote.request.sock.timeout", 0));
-            if (tt > 0) cb.setSocketTimeout (tt);
+            if (tt > 0) cb.setSocketTimeout (Timeout.ofMilliseconds(tt));
+            tt = Synt.declare(head != null ? head.get(":CONN-TIMEOUT") : null, cc.getProperty("core.remote.request.conn.timeout", 0));
+            if (tt > 0) cb.setConnectTimeout(Timeout.ofMilliseconds(tt));
+            tt = Synt.declare(head != null ? head.get(":WAIT-TIMEOUT") : null, cc.getProperty("core.remote.request.wait.timeout", 0));
+            if (tt > 0) rb.setConnectionRequestTimeout (Timeout.ofMilliseconds(tt));
             tt = Synt.declare(head != null ? head.get(":MAX-REDIRECT") : null, cc.getProperty("core.remote.request.max.redirect", 0));
-            if (tt > 0) { cb.setMaxRedirects(tt); cb.setRedirectsEnabled(true); }
-            http.setConfig( cb.build() );
+            if (tt > 0) { rb.setMaxRedirects(tt); rb.setRedirectsEnabled(true); }
+            cm.setConnectionConfig( cb.build() );
 
             // 执行请求
-            http.setURI(new URI(url));
-            HttpResponse rsp = HttpClients
-                     .createDefault()
-                     .execute( http );
+            try (
+                CloseableHttpClient client = HttpClientBuilder
+                    .create()
+                    .setConnectionManager(cm)
+                    .setDefaultRequestConfig(rb.build())
+                    .build ();
+            ) {
+                StatusException[] se = new StatusException[1];
+                client.execute(req, rsp -> {
+                    // 异常处理
+                    int sta = rsp.getCode();
+                    if (sta >= 300 && sta <= 399) {
+                        Header hea = rsp.getFirstHeader( "Location" );
+                        String loc = hea != null ? hea.getValue(): "";
+                        se[0]= new StatusException(url, loc, sta);
+                        return null;
+                    }
+                    if (sta >= 400 || sta <= 199) {
+                        HttpEntity t = rsp.getEntity();
+                        String txt = EntityUtils.toString(t, "UTF-8");
+                        se[0]= new StatusException(url, txt, sta);
+                        return null;
+                    }
 
-            // 异常处理
-            int sta = rsp.getStatusLine().getStatusCode();
-            if (sta >= 300 && sta <= 399) {
-                Header hea = rsp.getFirstHeader( "Location" );
-                String loc = hea != null ? hea.getValue(): "";
-                throw  new StatusException(url, loc, sta);
-            }
-            if (sta >= 400 || sta <= 199) {
-                HttpEntity t = rsp.getEntity();
-                String txt = EntityUtils.toString(t, "UTF-8");
-                throw  new StatusException(url, txt, sta);
-            }
+                    con.accept(rsp);
 
-            con.accept( rsp );
+                    return null;
+                });
+                if (null != se [0]) {
+                    throw   se [0];
+                }
+            }
         } catch (URISyntaxException | IOException ex) {
             throw new SimpleException(url, ex);
-        } finally {
-            if (http != null) {
-                http.releaseConnection( );
-            }
         }
     }
 
@@ -402,6 +403,19 @@ public final class Remote {
     }
 
     /**
+     * 构建查询字串
+     * @param data
+     * @return
+     */
+    public static String queryText(Map data) {
+        try {
+            return EntityUtils.toString(buildPost(data), Charset.forName("UTF-8"));
+        } catch (ParseException | IOException ex) {
+            throw  new CruxExemption ( ex, 1111 );
+        }
+    }
+
+    /**
      * 构建JSON实体
      *
      * 讲数据处理成JSON格式,
@@ -409,14 +423,9 @@ public final class Remote {
      *
      * @param data
      * @return
-     * @throws CruxException
      */
-    public static HttpEntity buildJson(Map<String, Object> data)
-            throws CruxException {
-        StringEntity enti = new StringEntity(Dist.toString(data), "UTF-8");
-                     enti.setContentType/**/("application/json");
-                     enti.setContentEncoding("UTF-8");
-        return enti;
+    public static HttpEntity buildJson(Map<String, Object> data) {
+        return new StringEntity(Dist.toString(data), ContentType.create("application/json", "UTF-8"), "UTF-8", false);
     }
 
     /**
@@ -428,10 +437,8 @@ public final class Remote {
      *
      * @param data
      * @return
-     * @throws CruxException
      */
-    public static HttpEntity buildPost(Map<String, Object> data)
-            throws CruxException {
+    public static HttpEntity buildPost(Map<String, Object> data) {
         List<NameValuePair> pair = new ArrayList(data.size());
         for (Map.Entry<String, Object> et : data.entrySet ()) {
             String n = et.getKey(  );
@@ -455,12 +462,7 @@ public final class Remote {
                     pair.add(new BasicNameValuePair(n, s));
             }
         }
-        try {
-            return new UrlEncodedFormEntity(pair, "UTF-8");
-        }
-        catch (UnsupportedEncodingException e) {
-            throw  new CruxException(e , 1111);
-        }
+        return new UrlEncodedFormEntity(pair, Charset.forName("UTF-8"));
     }
 
     /**
@@ -473,13 +475,11 @@ public final class Remote {
      *
      * @param data
      * @return
-     * @throws CruxException
      */
-    public static HttpEntity buildPart(Map<String, Object> data)
-            throws CruxException {
+    public static HttpEntity buildPart(Map<String, Object> data) {
         MultipartEntityBuilder part = MultipartEntityBuilder.create();
-        part.setMode( HttpMultipartMode.BROWSER_COMPATIBLE );
-        part.setCharset( Charset.forName("UTF-8") );
+        part.setMode (HttpMultipartMode.EXTENDED);
+        part.setCharset(Charset.forName("UTF-8"));
         for (Map.Entry<String, Object> et : data.entrySet()) {
             String n = et.getKey(  );
             Object o = et.getValue();

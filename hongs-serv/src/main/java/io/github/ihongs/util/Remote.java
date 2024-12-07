@@ -277,6 +277,19 @@ public final class Remote {
             throw new NullPointerException("Request url can not be null");
         }
 
+        // 将 GET 参数拼到 URL 上
+        if (type == METHOD.GET) {
+            String qry = queryText(data);
+            if ( ! qry.isEmpty()) {
+                if (! url.contains("?")) {
+                    url += "?"+ qry;
+                } else {
+                    url += "&"+ qry;
+                }
+            }
+            data = null;
+        }
+
         try {
             // 构建 HTTP 请求对象
             ClassicHttpRequest req ;
@@ -337,7 +350,7 @@ public final class Remote {
                     .setDefaultRequestConfig(rb.build())
                     .build ();
             ) {
-                StatusException[] se = new StatusException[1];
+                final StatusException[] se = new StatusException[ 1 ];
                 client.execute(req, rsp -> {
                     // 异常处理
                     int sta = rsp.getCode();

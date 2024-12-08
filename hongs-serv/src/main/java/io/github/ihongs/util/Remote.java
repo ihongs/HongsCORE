@@ -9,9 +9,9 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.InputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -182,7 +182,7 @@ public final class Remote {
         final SimpleException[ ] err = new SimpleException[1];
         request(type, kind, url, data, head, (rsp) -> {
             try {
-                txt[0] = EntityUtils.toString(rsp.getEntity(), Charset.forName("UTF-8")).trim();
+                txt[0] = EntityUtils.toString(rsp.getEntity(), StandardCharsets.UTF_8).trim();
             } catch (IOException | ParseException ex) {
                 err[0] = new SimpleException(url, ex);
             }
@@ -423,7 +423,7 @@ public final class Remote {
      */
     public static String queryText(Map data) {
         try {
-            return EntityUtils.toString(buildPost(data), Charset.forName("UTF-8"));
+            return EntityUtils.toString(buildPost(data), StandardCharsets.UTF_8);
         } catch (ParseException | IOException ex) {
             throw  new CruxExemption ( ex, 1111 );
         }
@@ -432,14 +432,14 @@ public final class Remote {
     /**
      * 构建JSON实体
      *
-     * 讲数据处理成JSON格式,
+     * 将数据处理成JSON格式,
      * Content-Type: application/json; charset=utf-8
      *
      * @param data
      * @return
      */
     public static HttpEntity buildJson(Map<String, Object> data) {
-        return new StringEntity(Dist.toString(data), ContentType.create("application/json", "UTF-8"), "UTF-8", false);
+        return new StringEntity(Dist.toString(data), ContentType.APPLICATION_JSON);
     }
 
     /**
@@ -476,7 +476,7 @@ public final class Remote {
                     pair.add(new BasicNameValuePair(n, s));
             }
         }
-        return new UrlEncodedFormEntity(pair, Charset.forName("UTF-8"));
+        return new UrlEncodedFormEntity(pair, StandardCharsets.UTF_8);
     }
 
     /**
@@ -492,8 +492,8 @@ public final class Remote {
      */
     public static HttpEntity buildPart(Map<String, Object> data) {
         MultipartEntityBuilder part = MultipartEntityBuilder.create();
-        part.setMode (HttpMultipartMode.EXTENDED);
-        part.setCharset(Charset.forName("UTF-8"));
+        part.setMode(HttpMultipartMode.EXTENDED);
+        part.setCharset(StandardCharsets.UTF_8 );
         for (Map.Entry<String, Object> et : data.entrySet()) {
             String n = et.getKey(  );
             Object o = et.getValue();

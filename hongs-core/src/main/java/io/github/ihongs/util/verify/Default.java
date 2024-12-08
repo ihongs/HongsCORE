@@ -191,7 +191,7 @@ public class Default extends Rule {
             case  "id"  :
                 return Core.newIdentity(/**/);
             case "cid"  :
-                return watch.isPresent() ? watch.get( ) : Core.newIdentity();
+                return ! watch.isPresent( ) ? Core.newIdentity( ) : PASS;
             case "uid"  :
                 return ActionHelper.getInstance().getSessibute(Cnst.UID_SES);
         }

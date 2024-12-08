@@ -17,12 +17,22 @@ import java.util.regex.Pattern;
  * 默认取值
  * <pre>
  * 规则参数:
- *  deforce 强制写, 控制不同阶段, create 创建时, update 更新时, always 任何时, blanks 存 null 读补全
- *  default 默认值, 可使用 @id 新唯一ID, @addr 客户端IP, @lang 访客语言, @zone 访客时区, 更多的如下:
+ *  deforce 强制写, 控制不同阶段, 取值如下:
+ *      create 创建时
+ *      update 更新时
+ *      always 任何时
+ *      blanks 空串存 null 读时补全
+ *  default 默认值, @ 开头有特殊意义, 如下:
+ *      @id    新取ID
+ *      @uid   用户ID
+ *      @cid   客制ID, 未指定则新取
+ *      @addr  客户端IP
+ *      @lang  访客语言
+ *      @zone  访客时区
+ *      @time+或-偏移毫秒
  *      @session.会话属性
  *      @conetxt.应用属性
- *      @now+或-偏移毫秒
- *      @merge:合并字段, 如: ${字段}xxx${字段2}
+ *      @merge:合并字段, 如: @merge:${字段1} ${字段2}
  *      @alias:别名字段
  *      @count:字段计数
  *      @min:字段最小值
@@ -180,6 +190,8 @@ public class Default extends Rule {
                 return Core.CLIENT_ADDR.get();
             case  "id"  :
                 return Core.newIdentity(/**/);
+            case "cid"  :
+                return watch.isPresent() ? watch.get( ) : Core.newIdentity();
             case "uid"  :
                 return ActionHelper.getInstance().getSessibute(Cnst.UID_SES);
         }

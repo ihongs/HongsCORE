@@ -103,12 +103,12 @@ public class Values implements Value {
     }
 
     /**
-     * 是否赋值且非空
+     * 是否非空非空串
      * @return 
      */
     @Override
     public boolean isPresent() {
-        return value != null;
+        return value != null && !"".equals(value);
     }
 
 }

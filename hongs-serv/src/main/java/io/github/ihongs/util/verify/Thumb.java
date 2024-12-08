@@ -14,7 +14,7 @@ import net.coobird.thumbnailator.Thumbnails.Builder;
  *
  * 规则参数:
  *  thumb-kind      格式名称, 如 jpg
- *  thumb-size      缩放尺寸, 如 _lg:80*40, _md:60*30, _sm:40*20
+ *  thumb-size      缩放尺寸, 如 80*40:_lg, 60*30:_md, 40*20:_sm
  *  thumb-mode      处理模式, 如 pick 截取, keep 保留, test 检查(此时 thumb-size 不加后缀)
  *  thumb-index     返回索引, 默认为 0, 即首个
  *  thumb-color     背景颜色
@@ -181,15 +181,24 @@ public class Thumb extends IsFile {
                 siz = siz.trim();
                 if (  siz.contains ( ":" ) ) {
                     arr = siz.split( ":" , 2 );
-                    suf = arr[0].trim();
-                    siz = arr[1].trim();
-                } else
-                if (! siz.contains ( "*" )
-                &&  ! siz.contains ( "/" ) ) {
-                    suf = siz;
-                    siz = "" ;
+                    siz = arr[0].trim();
+                    suf = arr[1].trim();
+                    // 尺寸扩展放左右都行
+                    if (! siz.contains("*")
+                    &&  ! siz.contains("/")) {
+                        String ss = suf;
+                        suf = siz;
+                        siz =  ss;
+                    }
                 } else {
-                    suf = "" ;
+                    // 检查是尺寸还是扩展
+                    if (! siz.contains("*")
+                    &&  ! siz.contains("/")) {
+                        suf = siz;
+                        siz =  "";
+                    } else {
+                        suf =  "";
+                    }
                 }
                 if (! siz.isEmpty( ) ) {
                     if (rat = siz.contains("/")) {
@@ -247,7 +256,7 @@ public class Thumb extends IsFile {
              */
             int w = rw;
             int h = rh;
-            
+
             bui = make(nrl, col );
 
             // 保存到文件

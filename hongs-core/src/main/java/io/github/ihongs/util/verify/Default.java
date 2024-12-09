@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
  * <pre>
  * 规则参数:
  *  deforce 强制写, 控制不同阶段, 取值如下:
+ *      aerate 创建时, 但修改不丢弃
  *      create 创建时
  *      update 更新时
  *      always 任何时
@@ -48,6 +49,11 @@ public class Default extends Rule {
     public Object verify(Value watch) throws Wrong, Wrongs {
         Object value = watch.get();
         Object force = getParam("deforce");
+        if ("aerate".equals(force)) {
+            if (watch.isUpdated( ) == true ) {
+                return PASS;
+            }
+        } else
         if ("create".equals(force)) {
             if (watch.isUpdated( ) == true ) {
                 return QUIT;
@@ -190,8 +196,8 @@ public class Default extends Rule {
                 return Core.CLIENT_ADDR.get();
             case  "id"  :
                 return Core.newIdentity(/**/);
-            case "cid"  :
-                return ! watch.isPresent( ) ? Core.newIdentity( ) : PASS;
+            case "nid"  :
+                return ! watch.isPresent() ? Core.newIdentity() : PASS;
             case "uid"  :
                 return ActionHelper.getInstance().getSessibute(Cnst.UID_SES);
         }

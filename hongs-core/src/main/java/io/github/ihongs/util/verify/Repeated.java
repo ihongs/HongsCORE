@@ -45,7 +45,7 @@ public class Repeated extends Rule implements Rulx {
         Object value = watch.get();
         if (value == null) {
             // 更新而未给值则跳过
-            if (watch.isUpdate ( )
+            if (watch.isUpdated( )
             && !watch.isDefined()) {
                 return  QUIT;
             } else {

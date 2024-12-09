@@ -6,7 +6,7 @@ import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.verify.Default;
 import io.github.ihongs.util.verify.Defiant;
 import io.github.ihongs.util.verify.IsUnique;
-import io.github.ihongs.util.verify.Ordinary;
+import io.github.ihongs.util.verify.Normally;
 import io.github.ihongs.util.verify.Optional;
 import io.github.ihongs.util.verify.Repeated;
 import io.github.ihongs.util.verify.Required;
@@ -120,7 +120,7 @@ public class VerifyHelper extends Verify {
                     rule.config (opts);
                     this.addRule(name , rule );
                 } else {
-                    Rule rule = new Ordinary();
+                    Rule rule = new Normally();
                     rule.config (opts);
                     this.addRule(name , rule );
                 }

@@ -9,7 +9,7 @@ import java.util.Map;
  * 单值约束
  * @author Hongs
  */
-public class Ordinary extends Rule {
+public class Normally extends Rule {
     @Override
     public Object verify(Value watch) throws Wrong {
         Object value = watch.get();

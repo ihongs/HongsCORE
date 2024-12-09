@@ -36,8 +36,8 @@ public class IsForm extends Rule {
         }
 
         VerifyHelper hlpr = new VerifyHelper();
-        boolean update = watch.isUpdate();
-        boolean prompt = watch.isPrompt();
+        boolean update = watch.isUpdated();
+        boolean excite = watch.isExcited();
 
         /**
          * 字段外部可能会有特殊要求
@@ -52,7 +52,7 @@ public class IsForm extends Rule {
                 update = true ;
             }
             if (flag.contains("prompt")) {
-                prompt = true ;
+                excite = true ;
             }
         }
 
@@ -65,6 +65,6 @@ public class IsForm extends Rule {
             throw e.toExemption( );
         }
 
-        return  hlpr.verify(Synt.asMap(value), update, prompt);
+        return  hlpr.verify(Synt.asMap(value), update, excite);
     }
 }

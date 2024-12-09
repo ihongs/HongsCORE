@@ -26,12 +26,12 @@ public interface Value {
     /**
      * @return 更新时为 true
      */
-    public boolean isUpdate();
+    public boolean isUpdated();
 
     /**
      * @return 速断则为 true
      */
-    public boolean isPrompt();
+    public boolean isExcited();
 
     /**
      * @return 有传值为 true

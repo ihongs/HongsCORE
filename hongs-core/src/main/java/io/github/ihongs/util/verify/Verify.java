@@ -82,16 +82,16 @@ public class Verify {
     /**
      * 校验数据
      * @param values 待验数据
-     * @param update 更新模式
-     * @param prompt 速断模式
+     * @param updated 更新模式
+     * @param excited 速断模式
      * @return
      * @throws Wrongs
      */
-    public Map verify(Map values, boolean update, boolean prompt) throws Wrongs {
+    public Map verify(Map values, boolean updated, boolean excited) throws Wrongs {
         if (values == null) values = new HashMap();
         Map<String, Object> cleans = new LinkedHashMap();
         Map<String, Wrong > wrongz = new LinkedHashMap();
-        Values veriby = new Values(values, cleans, update,prompt);
+        Values veriby = new Values(values, cleans, updated,excited);
 
         for(Map.Entry<String , List<Ruly>> et : rules.entrySet()) {
             List<Ruly> rulez = et.getValue();
@@ -101,9 +101,9 @@ public class Verify {
 
             keys = Dict.splitKeys(name);
             data = Dict.get(values, PASS, keys);
-            data = verify(values, cleans, wrongz, veriby, name, data, rulez);
+            data = verify(wrongz, veriby, name, data, rulez);
 
-            if (prompt && ! wrongz.isEmpty()) {
+            if (excited && ! wrongz.isEmpty() ) {
                 break;
             } else
             if (data == QUIT) {
@@ -150,7 +150,7 @@ public class Verify {
      * @return
      * @throws Wrongs
      */
-    private Object verify(Map values, Map cleans, Map wrongz, Values veri, String name, Object data, List<Ruly> rulez)
+    private Object verify(Map wrongz, Values veri, String name, Object data, List<Ruly> rulez)
     throws Wrongs {
         int i = 0;
         int j =  rulez. size();
@@ -168,7 +168,7 @@ public class Verify {
 
             if (rule instanceof Rulx) {
             if (data != PASS) {
-                data  = verify(values, cleans, wrongz, veri, name, data, rulez.subList(i, j), (Rulx) rule);
+                data  = verify(wrongz, veri, name, data, rulez.subList(i, j), (Rulx) rule);
             }
                 break;
             }
@@ -179,7 +179,7 @@ public class Verify {
          * 则跳过当前取值
          */
         if (data == PASS) {
-        if (veri.isUpdate( ) ) {
+        if (veri.isUpdated()) {
             return  PASS;
         }
             return  null ;
@@ -189,8 +189,6 @@ public class Verify {
 
     /**
      * 校验字段的多个值
-     * @param values
-     * @param cleans
      * @param wrongz
      * @param veri
      * @param name
@@ -200,7 +198,7 @@ public class Verify {
      * @return
      * @throws Wrongs
      */
-    private Object verify(Map values, Map cleans, Map wrongz, Values veri, String name, Object data, List<Ruly> rulez, Rulx rule)
+    private Object verify(Map wrongz, Values veri, String name, Object data, List<Ruly> rulez, Rulx rule)
     throws Wrongs {
         Collection data2 = rule.getContext();
         Collection skips = rule.getDefiant();
@@ -219,9 +217,9 @@ public class Verify {
                 }
 
                 String name3 = name + "[" + i3 + "]";
-                Object dist3 = verify(values, cleans, wrongz, veri, name3, data3, rulez);
+                Object dist3 = verify(wrongz, veri, name3, data3, rulez);
 
-                if (veri.isPrompt() && !wrongz.isEmpty()) {
+                if (veri.isExcited() && !wrongz.isEmpty()) {
                     return   QUIT;
                 }
                 if (dist3 == QUIT) {
@@ -244,9 +242,9 @@ public class Verify {
                 }
 
                 String name3 = name + "." + k3 + "" ;
-                Object dist3 = verify(values, cleans, wrongz, veri, name3, data3, rulez);
+                Object dist3 = verify(wrongz, veri, name3, data3, rulez);
 
-                if (veri.isPrompt() && !wrongz.isEmpty()) {
+                if (veri.isExcited() && !wrongz.isEmpty()) {
                     return   QUIT;
                 }
                 if (dist3 == QUIT) {

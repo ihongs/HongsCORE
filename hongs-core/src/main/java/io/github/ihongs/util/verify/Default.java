@@ -49,12 +49,12 @@ public class Default extends Rule {
         Object value = watch.get();
         Object force = getParam("deforce");
         if ("create".equals(force)) {
-            if (watch.isUpdate() == true ) {
+            if (watch.isUpdated( ) == true ) {
                 return QUIT;
             }
         } else
         if ("update".equals(force)) {
-            if (watch.isUpdate() == false) {
+            if (watch.isUpdated( ) == false) {
                 return QUIT;
             }
         } else
@@ -65,10 +65,10 @@ public class Default extends Rule {
              * 空串空值将设为默认值
              * 更新时没赋值将会跳过
              */
-            if (value != null && ! "".equals( value ) ) {
+            if (value != null && ! "".equals(value)) {
                 return value;
             }
-            if (watch.isUpdate() && !watch.isDefined()) {
+            if (watch.isUpdated() && !watch.isDefined()) {
                 return QUIT;
             }
         } else {
@@ -77,10 +77,10 @@ public class Default extends Rule {
              * 空串空值将设为空对象
              * 更新时没赋值也会跳过
              */
-            if (value != null && ! "".equals( value ) ) {
+            if (value != null && ! "".equals(value)) {
                 return value;
             }
-            if (watch.isUpdate() && !watch.isDefined()) {
+            if (watch.isUpdated() && !watch.isDefined()) {
                 return QUIT;
             } else {
                 return null;
@@ -313,7 +313,7 @@ public class Default extends Rule {
          * 创建时不理会缺失的值, 作空处理即可
          * 更新时除非全部未给值, 否则校验错误
          */
-        if (watch.isUpdate(  )
+        if (watch.isUpdated( )
             &&  i != 0) {
             if (i != j) {
                 throw new Wrong("Default merge need vars: "+a.toString());

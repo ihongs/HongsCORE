@@ -18,15 +18,15 @@ public class Values implements Value {
     private final Map     values;
     private final Map     cleans;
     private final boolean update;
-    private final boolean prompt;
+    private final boolean excite;
     private       boolean valued;
     private       Object  value ;
 
-    public Values(Map values, Map cleans, boolean update, boolean prompt) {
+    public Values(Map values, Map cleans, boolean update, boolean excite) {
         this.values = values;
         this.cleans = cleans;
         this.update = update;
-        this.prompt = prompt;
+        this.excite = excite;
     }
 
     /**
@@ -75,7 +75,7 @@ public class Values implements Value {
      * @return
      */
     @Override
-    public boolean isUpdate() {
+    public boolean isUpdated() {
         return update;
     }
 
@@ -84,8 +84,8 @@ public class Values implements Value {
      * @return
      */
     @Override
-    public boolean isPrompt() {
-        return prompt;
+    public boolean isExcited() {
+        return excite;
     }
 
     /**

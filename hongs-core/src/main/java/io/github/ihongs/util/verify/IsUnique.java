@@ -85,7 +85,7 @@ public class IsUnique extends Rule {
         rd.put(Cnst.RB_KEY, Synt.setOf(Cnst.ID_KEY));
 
         // 更新需排除当前记录
-        if (watch.isUpdate( )) {
+        if (watch.isUpdated()) {
             Map ne = new HashMap( );
             ne.put(Cnst.NE_REL, id);
             rd.put(Cnst.ID_KEY, ne);
@@ -120,7 +120,7 @@ public class IsUnique extends Rule {
         }
 
         // 补充缺的旧的字段值
-        if (watch.isUpdate() && !ns.isEmpty()) {
+        if (watch.isUpdated() && !ns.isEmpty()) {
             Map cd = new HashMap(0);
             Map ud = new HashMap(3);
             ud.put(Cnst.ID_KEY, id);

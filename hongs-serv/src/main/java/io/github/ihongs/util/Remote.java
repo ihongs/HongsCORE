@@ -344,15 +344,14 @@ public final class Remote {
 
             // 执行请求
             try (
-                CloseableHttpClient client = HttpClientBuilder
-                    .create()
-                    .setConnectionManager(cm)
+                CloseableHttpClient hc = HttpClientBuilder.create ( )
                     .setDefaultRequestConfig(rb.build())
-                    .build ();
+                    .setConnectionManager(cm)
+                    .build();
             ) {
-                final String   rel = url ;
+                final String rel = url ;
                 final StatusException[ ] se = new StatusException [1];
-                client.execute(req , rsp -> {
+                hc.execute ( req , rsp -> {
                     // 异常处理
                     int sta  = rsp.getCode();
                     if (sta >= 300 && sta <= 399) {

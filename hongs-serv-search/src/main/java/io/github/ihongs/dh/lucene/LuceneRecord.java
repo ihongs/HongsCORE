@@ -714,13 +714,13 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
     }
 
     public Map padDat(Document doc, Set rb) {
-        Map map = new LinkedHashMap();
+        Map map = new LinkedHashMap(rb!=null?rb.size() : getFields().size());
         padDat(doc, map, rb  );
         return map;
     }
 
     public Map padDat(Document doc) {
-        Map map = new LinkedHashMap();
+        Map map = new LinkedHashMap(getFields().size());
         padDat(doc, map, null);
         return map;
     }

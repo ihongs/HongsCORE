@@ -336,7 +336,9 @@
     });
 
     var statobj = context.hsCate({
-        _url: "<%=_module%>/<%=_entity%>/acount.act?<%=Cnst.RN_KEY%>=<%=Cnst.RN_DEF%>&<%=Cnst.OB_KEY%>=-&<%=Cnst.AB_KEY%>=linked,_text,_fork"
+        _url: "<%=_module%>/<%=_entity%>/acount.act?<%=Cnst.AB_KEY%>=_text,_fork,linked,resort&"
+            + "<%=Cnst.RN_KEY%>=<%=Cnst.RN_DEF%>&<%=Cnst.OB_KEY%>=-&"
+            +  $.param(hsSerialArr(loadres))
     });
 
     // 延迟加载

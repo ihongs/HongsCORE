@@ -579,18 +579,24 @@ HsForm.prototype = {
             return jQuery(inp);
         }
 
-        var fn = inp+"";
-        inp = jQuery( );
-        this.formBox
-            .find("[data-fn],[data-ft],[data-test],.form-field")
-            .each(function() {
-            if (fn == $(this).data( "fn" )
-            ||  fn == $(this).attr("name")) {
-                inp = $(this);
-                return  false;
-            }
+        // 通过名称查找字段
+        var fn = "" + inp;
+        inp = this.formBox
+          .find(".form-field,[data-fn],[data-ft],[data-test]")
+          .filter( function( ) {
+            return fn === $(this).data( "fn" )
+                || fn === $(this).attr("name");
         });
-        return  inp;
+
+        // 先找分组再找字段
+        if (0>=inp.length)
+        inp = this.formBox
+          .find(".form-group")
+          .filter( function( ) {
+            return fn === $(this).data("name");
+        }).find(".form-field,[data-fn],[data-ft],[data-test]");
+
+        return inp;
     },
     getValue : function(inp) {
         // 非表单项则需向下查找
@@ -682,12 +688,12 @@ HsForm.prototype = {
             }
         }}
 
-        if (err===undefined) {
-            blk.empty ( );
-            grp.removeClass("has-error");
-        } else {
+        if (err) {
             blk.text(err);
             grp.   addClass("has-error");
+        } else {
+            blk.empty ( );
+            grp.removeClass("has-error");
         }
     },
 

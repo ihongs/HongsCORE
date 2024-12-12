@@ -86,22 +86,21 @@ public class CoreRoster {
         Lock wlock = RWLOCKS.writeLock();
         wlock.lock();
         try {
+            CoreConfig cc = CoreConfig.getInstance("defines");
+            String[] pkgs = cc.getProperty("mount.serv" , "").split(";");
+            String[] exps = cc.getProperty("evict.serv" , "").split(";");
             ACTIONS = new HashMap();
             COMBATS = new HashMap();
-            String[] pkgs = CoreConfig
-                    .getInstance("defines"   )
-                    .getProperty("mount.serv")
-                    .split(";");
-            addHandles(ACTIONS , COMBATS , pkgs );
+            addHandles(ACTIONS, COMBATS, pkgs, exps);
         } finally {
             wlock.unlock();
         }
     }
 
-    private static void addHandles(Map<String, Mathod> acts, Map<String, Method> cmds, String... pkgs) {
+    private static void addHandles(Map<String, Mathod> acts, Map<String, Method> cmds, String[] pkgs, String[] exps) {
         for(String pkgn : pkgs) {
             pkgn = pkgn.trim( );
-            if (pkgn.length ( ) == 0) {
+            if (pkgn.isEmpty()) {
                 continue;
             }
 
@@ -127,6 +126,17 @@ public class CoreRoster {
                     addCombats(cmds, cmdo, clsn, clso);
                 }
             }
+        }
+
+        // 删除不需要的服务
+        for(String expn : exps) {
+            expn = expn.trim( );
+            if (expn.isEmpty()) {
+                continue;
+            }
+
+            acts.remove(expn);
+            cmds.remove(expn);
         }
     }
 

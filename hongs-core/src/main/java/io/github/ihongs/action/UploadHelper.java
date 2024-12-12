@@ -25,7 +25,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -204,12 +203,14 @@ public class UploadHelper {
     }
 
     private String getUploadTemp(String path) {
+        /*
         Map m = new HashMap(4);
         m.put("BASE_PATH", Core.BASE_PATH);
         m.put("CORE_PATH", Core.CORE_PATH);
         m.put("CONF_PATH", Core.CONF_PATH);
         m.put("DATA_PATH", Core.DATA_PATH);
         path = Syno.inject(path, m );
+        */
 
         if (! new File(path).isAbsolute()) {
             path = Core.BASE_PATH  + "/" + path;
@@ -219,12 +220,14 @@ public class UploadHelper {
     }
 
     private String getResultPath(String path) {
+        /*
         Map m = new HashMap(4);
         m.put("BASE_PATH", Core.BASE_PATH);
         m.put("CORE_PATH", Core.CORE_PATH);
         m.put("CONF_PATH", Core.CONF_PATH);
         m.put("DATA_PATH", Core.DATA_PATH);
         path = Syno.inject(path, m );
+        */
 
         if (! new File(path).isAbsolute()) {
             path = Core.BASE_PATH  + "/" + path;
@@ -234,15 +237,16 @@ public class UploadHelper {
     }
 
     private String getResultHref(String href) {
+        /*
+        Map m = new HashMap(3);
         String CURR_SERV_HREF = Core.SERVER_HREF.get();
         String CORE_SERV_PATH = Core.SERVER_PATH.get();
-
-        Map m = new HashMap(3);
         m.put("SERV_HREF", CURR_SERV_HREF);
         m.put("SERV_PATH", CORE_SERV_PATH);
         m.put("BASE_HREF", CURR_SERV_HREF
                          + CORE_SERV_PATH);
         href = Syno.inject(href, m );
+        */
 
         return href;
     }

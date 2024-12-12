@@ -125,7 +125,7 @@ public class CoreLocale
    * @param rep
    * @return 翻译后的语言, 会替换特定标识
    */
-  public String translate(String key, Collection rep)
+  public String translate(String key, List rep)
   {
     String str =  this.getProperty(key);
     if  (  str == null  )  str  =  key ;

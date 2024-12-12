@@ -1,6 +1,5 @@
 package io.github.ihongs.util.verify;
 
-import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CruxExemption;
 import io.github.ihongs.action.DownPart;
@@ -16,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.http.Part;
 
@@ -30,13 +30,12 @@ import javax.servlet.http.Part;
  *  keep-origin yes|no 返回原始路径, 不理会 checks 中新创建的
  *  keep-naming yes|no 保持原文件名, 会对网址末尾的文件名编码(将废弃,请改用 hash-status)
  *  hash-status yes|no 末尾附加信息, #n=文件名称&s=文件大小等
- *  name-add-id 路径要增加ID, 将会从 cleans 提取 id
- *  name-digest 命名摘要算法, 如: MD5,SHA-1,SHA-256
  *  temp 上传临时目录, 可用变量 $DATA_PATH, $BASE_PATH 等
  *  path 上传目标目录, 可用变量 $BASE_PATH, $DATA_PATH 等
  *  href 上传文件链接, 可用变量 $SERV_PATH, $SERV_HREF 等, 后者包含域名
  *  size 文件大小限制, 字节单位
  *  accept 类型许可表, 逗号分隔, Mime-Type 或 .extension
+ *  digest 文件名算法, 摘要算法, 如: MD5, SHA-1, SHA-256
  * </pre>
  * @author Hongs
  */
@@ -51,6 +50,7 @@ public class IsFile extends Rule {
         if (value.equals("")) {
             return PASS;
         }
+        Map cleans = watch.getCleans ( );
 
         if (value instanceof String) {
 
@@ -87,7 +87,7 @@ public class IsFile extends Rule {
                 // 如果是目标路径则不再下载
                 x = (String) getParam ("href");
                 if (x != null && !"".equals(x)) {
-                    x  = getUrl(x); // 补全
+                    x  = getUrl(x, cleans); // 补全
                     if (u.startsWith(x)) {
                         value = u ;
                         break ;
@@ -96,12 +96,12 @@ public class IsFile extends Rule {
                 // 如果有临时目录则下载到这
                 x = (String) getParam ("temp");
                 if (x != null && !"".equals(x)) {
-                    x  = getDir(x); // 补全
+                    x  = getDir(x, cleans); // 补全
                 } else {
                     x  = Core.BASE_PATH
                        + "/static/upload/tmp" ;
                 }
-                value  = stores(value.toString( ), x);
+                value  = stores(value.toString(), x);
                 if (value == null) {
                     return   null;
                 }
@@ -120,30 +120,14 @@ public class IsFile extends Rule {
 
         para = getParam("accept");
         if (para != null && !"".equals(para)) hlpr.setAccept(Synt.toSet(para));
+        para = getParam("digest");
+        if (para != null && !"".equals(para)) hlpr.setDigestType(Synt.asString(para));
         para = getParam("temp");
-        if (para != null && !"".equals(para)) hlpr.setUploadTemp(Synt.declare(para, String.class));
+        if (para != null && !"".equals(para)) hlpr.setUploadTemp(getDir(Synt.asString(para), cleans));
         para = getParam("path");
-        if (para != null && !"".equals(para)) hlpr.setUploadPath(Synt.declare(para, String.class));
+        if (para != null && !"".equals(para)) hlpr.setUploadPath(getDir(Synt.asString(para), cleans));
         para = getParam("href");
-        if (para != null && !"".equals(para)) hlpr.setUploadHref(Synt.declare(para, String.class));
-        para = getParam("name-digest");
-        if (para != null && !"".equals(para)) hlpr.setDigestType(Synt.declare(para, String.class));
-
-        /**
-         * 给当前路径末尾追加记录 ID
-         * 以便检测和清理无效文件
-         */
-        if (Synt.declare(getParam("name-add-id"), false)) {
-            String id = Synt.declare(watch.getCleans().get(Cnst.ID_KEY), String.class);
-            if (id == null || id.isEmpty()) {
-                throw new Wrong(Cnst.ID_KEY +" required for file");
-            }
-            id   = Syno.splitPath(id); // 避免单层目录数量过多
-            path = Synt.declare(getParam("path"), "static/upload");
-            href = Synt.declare(getParam("href"), "static/upload");
-            hlpr.setUploadPath(path + "/" + id );
-            hlpr.setUploadHref(href + "/" + id );
-        }
+        if (para != null && !"".equals(para)) hlpr.setUploadHref(getUrl(Synt.asString(para), cleans));
 
         String hash = "";
         if (value instanceof Part ) {
@@ -228,7 +212,11 @@ public class IsFile extends Rule {
             path = hp[1];
         }
 
-        if (getParam("keep-naming", false)) {
+        /**
+         * 保留原始的文件名
+         * 建议 hash-status
+         */
+        if (Synt.declare(getParam("keep-naming"), false)) {
             // 检查外部文件名是否合法
             if (name.getBytes( ).length > 256 ) {
                 throw new Wrong("@fore.file.name.toolong", name);
@@ -289,7 +277,11 @@ public class IsFile extends Rule {
             href = encode(href);
         }
 
-        if (getParam("hash-status", false)) {
+        /**
+         * 文件名尾追加参数
+         * 如原始名称大小等
+         */
+        if (Synt.declare(getParam("hash-status"), false)) {
             /**
              * 附加上原始名称、文件大小
              * 也可能由 checks 附加信息
@@ -383,27 +375,28 @@ public class IsFile extends Rule {
         return path + name;
     }
 
-    private String getUrl(String href) {
+    private String getUrl(String href, Map vals) throws Wrong {
+        Map vars = new HashMap(4);
         String CURR_SERV_HREF = Core.SERVER_HREF.get();
         String CORE_SERV_PATH = Core.SERVER_PATH.get();
+        vars.put("SERV_HREF", CURR_SERV_HREF);
+        vars.put("SERV_PATH", CORE_SERV_PATH);
+        vars.put("BASE_HREF", CURR_SERV_HREF
+                            + CORE_SERV_PATH);
 
-        Map m = new HashMap(3);
-        m.put("SERV_HREF", CURR_SERV_HREF);
-        m.put("SERV_PATH", CORE_SERV_PATH);
-        m.put("BASE_HREF", CURR_SERV_HREF
-                         + CORE_SERV_PATH);
-        href = Syno.inject(href, m );
+        href = inject (href , vals , vars);
 
         return href;
     }
 
-    private String getDir(String path) {
-        Map m = new HashMap(4);
-        m.put("BASE_PATH", Core.BASE_PATH);
-        m.put("CORE_PATH", Core.CORE_PATH);
-        m.put("CONF_PATH", Core.CONF_PATH);
-        m.put("DATA_PATH", Core.DATA_PATH);
-        path = Syno.inject(path, m );
+    private String getDir(String path, Map vals) throws Wrong {
+        Map vars = new HashMap(4);
+        vars.put("BASE_PATH", Core.BASE_PATH);
+        vars.put("CORE_PATH", Core.CORE_PATH);
+        vars.put("CONF_PATH", Core.CONF_PATH);
+        vars.put("DATA_PATH", Core.DATA_PATH);
+
+        path = inject (path , vals , vars);
 
         // 对相对路径进行补全
         if (! new File(path).isAbsolute()) {
@@ -413,7 +406,66 @@ public class IsFile extends Rule {
         return path;
     }
 
-    private static final Pattern HREF_PATT = Pattern.compile("^(https?:)?//.*");
+    private String inject(String path, Map vals, Map vars) throws Wrong {
+        Matcher matcher = PATH_PATT.matcher(path);
+        StringBuffer sb = new  StringBuffer();
+        Object       ob;
+        String       ss;
+        String       st;
+        String       sd;
+
+        while  ( matcher.find() ) {
+            ss = matcher.group(1);
+            st = matcher.group(2);
+
+            if (! st.equals(ss) ) {
+                if (st.startsWith("{")) {
+                    st = st.substring(1, st.length() - 1);
+                    // 默认值
+                    int p  = st.indexOf  ("|");
+                    if (p != -1) {
+                        sd = st.substring(1+p);
+                        st = st.substring(0,p);
+                    } else {
+                        sd = null;
+                    }
+                } else {
+                        sd = null;
+                }
+
+                    ob  = vars.get (st);
+                if (ob != null) {
+                    st  = ob.toString();
+                } else {
+                    ob  = vals.get (st);
+                if (ob != null) {
+                    st  = ob.toString();
+                } else {
+                if (sd != null) {
+                    st  = sd;
+                } else
+                {
+                    throw new Wrong(st + " required for file");
+                }
+                } // End if vals
+                } // End if vars
+
+                // % 打头的进行拆分
+                if ("%".equals(ss)) {
+                    st = Syno. splitPath (ss);
+                }
+            }
+
+            st = Matcher.quoteReplacement(st);
+            matcher.appendReplacement(sb, st);
+        }
+        matcher.appendTail(sb);
+
+        return sb.toString(  );
+    }
+
     private static final Pattern NAME_PATT = Pattern.compile( "[\"\\/<>*:?|]" );
+    private static final Pattern HREF_PATT = Pattern.compile("^(https?:)?//.*");
+    private static final Pattern PATH_PATT = Pattern.compile("([\\$%])([\\$%]|\\w+|\\{.+?\\})");
 
 }

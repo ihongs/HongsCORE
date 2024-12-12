@@ -291,21 +291,21 @@ public class Default extends Rule {
                         sd = st.substring(1+p);
                         st = st.substring(0,p);
                     } else {
-                        sd = "";
+                        sd = null;
                     }
                 } else {
-                        sd = "";
+                        sd = null;
                 }
 
                 // 记下缺失的字段
-                if (! vars.containsKey(st)) {
+                if (sd == null && ! vars.containsKey(st)) {
                     a.add( st );
                     i ++;
                 }   j ++;
 
-                    ob  = vars.get (st);
+                    ob  = vars.get( st );
                 if (ob != null) {
-                    st  = ob.toString();
+                    st  = ob.toString( );
                 } else {
                     st  = sd;
                 }

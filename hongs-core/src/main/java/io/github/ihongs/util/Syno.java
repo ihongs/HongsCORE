@@ -2,7 +2,9 @@ package io.github.ihongs.util;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -312,6 +314,55 @@ public final class Syno
 
   /**
    * 注入参数
+   * 将语句中的$x或${x}通过函数处理替换
+   * @param str
+   * @param func
+   * @return
+   */
+  public static String inject(String str, Function<String, String> func)
+  {
+      Matcher matcher = INJ.matcher( str );
+      StringBuffer sb = new StringBuffer();
+      Object       ob;
+      String       st;
+      String       sd;
+
+      while  ( matcher.find() ) {
+          st = matcher.group(1);
+
+          if (! "$".equals(st)) {
+              if (st.startsWith("{")) {
+                  st = st.substring(1, st.length() - 1);
+                  // 默认值
+                  int p  = st.indexOf  ("|");
+                  if (p != -1) {
+                      sd = st.substring(1+p);
+                      st = st.substring(0,p);
+                  } else {
+                      sd = "";
+                  }
+              } else {
+                      sd = "";
+              }
+
+                  ob  = func.apply(st);
+              if (ob != null) {
+                  st  = ob.toString( );
+              } else {
+                  st  = sd;
+              }
+          }
+
+          st = Matcher.quoteReplacement(st);
+          matcher.appendReplacement(sb, st);
+      }
+      matcher.appendTail(sb);
+
+      return sb.toString(  );
+  }
+
+  /**
+   * 注入参数
    * 将语句中的$x或${x}替换为对应的文字
    * @param str
    * @param vars
@@ -343,9 +394,67 @@ public final class Syno
                       sd = "";
               }
 
-                  ob  = vars.get (st);
+                  ob  = vars.get( st );
               if (ob != null) {
-                  st  = ob.toString();
+                  st  = ob.toString( );
+              } else {
+                  st  = sd;
+              }
+          }
+
+          st = Matcher.quoteReplacement(st);
+          matcher.appendReplacement(sb, st);
+      }
+      matcher.appendTail(sb);
+
+      return sb.toString(  );
+  }
+
+  /**
+   * 注入参数
+   * 将语句中的$n或${n}替换为对应的文字, n从0开始
+   * @param str
+   * @param vars
+   * @return 注入后的文本
+   */
+  public static String inject(String str, List vars)
+  {
+      Matcher matcher = INJ.matcher( str );
+      StringBuffer sb = new StringBuffer();
+      Object       ob;
+      String       st;
+      String       sd;
+      int          id;
+
+      while  ( matcher.find() ) {
+          st = matcher.group(1);
+
+          if (! st.equals("$")) {
+              if (st.startsWith("{")) {
+                  st = st.substring(1, st.length() - 1);
+                  // 默认值
+                  int p  = st.indexOf  ("|");
+                  if (p != -1) {
+                      sd = st.substring(1+p);
+                      st = st.substring(0,p);
+                  } else {
+                      sd = "";
+                  }
+              } else {
+                      sd = "";
+              }
+
+              // 尝试转为数字然后按下标提取
+              try {
+                  id  = Integer.valueOf(st);
+                  ob  = vars.get( id );
+              }
+              catch (NumberFormatException|IndexOutOfBoundsException ex) {
+                  ob  = null;
+              }
+
+              if (ob != null) {
+                  st  = ob.toString( );
               } else {
                   st  = sd;
               }
@@ -396,15 +505,14 @@ public final class Syno
               // 尝试转为数字然后按下标提取
               try {
                   id  = Integer.valueOf(st);
-                  ob  = vars[id];
+                  ob  = vars[ id ];
               }
               catch (NumberFormatException|ArrayIndexOutOfBoundsException ex) {
                   ob  = null;
               }
 
-              //  ob  = vars.get (st);
               if (ob != null) {
-                  st  = ob.toString();
+                  st  = ob.toString( );
               } else {
                   st  = sd;
               }
@@ -416,18 +524,6 @@ public final class Syno
       matcher.appendTail(sb);
 
       return sb.toString(  );
-  }
-
-  /**
-   * 注入参数
-   * 将语句中的$n或${n}替换为对应的文字, n从0开始
-   * @param str
-   * @param vars
-   * @return 注入后的文本
-   */
-  public static String inject(String str, Collection vars)
-  {
-      return inject(str, vars.toArray());
   }
 
   //** 拼接 **/

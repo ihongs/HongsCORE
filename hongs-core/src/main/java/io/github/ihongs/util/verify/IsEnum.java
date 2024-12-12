@@ -42,7 +42,7 @@ public class IsEnum extends Rule {
             throw e.toExemption( );
         }
         if (! data.containsKey( value.toString( ) ) ) {
-            throw new Wrong("@fore.form.not.in.enum");
+            throw new Wrong("@fore.form.not.in.enum", value);
         }
 
         return value;

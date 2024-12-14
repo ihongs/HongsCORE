@@ -30,9 +30,9 @@ import javax.servlet.http.Part;
  *  keep-origin yes|no 返回原始路径, 不理会 checks 中新创建的
  *  keep-naming yes|no 保持原文件名, 会对网址末尾的文件名编码(将废弃,请改用 hash-status)
  *  hash-status yes|no 末尾附加信息, #n=文件名称&s=文件大小等
- *  temp 上传临时目录, 可用变量 ${DATA_PATH}, ${BASE_PATH} 或 ${字段名} %{字段名} 等, % 开头的将拆分路径
- *  path 上传目标目录, 可用变量 ${BASE_PATH}, ${DATA_PATH} 或 ${字段名} %{字段名} 等, % 开头的将拆分路径
- *  href 上传文件链接, 可用变量 ${SERV_PATH}, ${SERV_HREF} 或 ${字段名} %{字段名} 等, % 开头的将拆分路径
+ *  temp 上传临时目录, 可用变量 ${DATA_PATH}, ${BASE_PATH} 或 ${字段名} ${字段名:split} 等, :split 的将拆分路径
+ *  path 上传目标目录, 可用变量 ${BASE_PATH}, ${DATA_PATH} 或 ${字段名} ${字段名:split} 等, :split 的将拆分路径
+ *  href 上传文件链接, 可用变量 ${SERV_PATH}, ${SERV_HREF} 或 ${字段名} ${字段名:split} 等, :split 的将拆分路径
  *  size 文件大小限制, 字节单位
  *  accept 类型许可表, 逗号分隔, Mime-Type 或 .extension
  *  digest 文件名算法, 摘要算法, 如: MD5, SHA-1, SHA-256
@@ -410,27 +410,25 @@ public class IsFile extends Rule {
         Matcher matcher = PATH_PATT.matcher(path);
         StringBuffer sb = new  StringBuffer();
         Object       ob;
-        String       ss;
         String       st;
-        String       sd;
+        String       sp;
 
         while  ( matcher.find() ) {
-            ss = matcher.group(1);
-            st = matcher.group(2);
+            st = matcher.group(1);
 
-            if (! st.equals(ss) ) {
+            if (! "$".equals(st)) {
                 if (st.startsWith("{")) {
                     st = st.substring(1, st.length() - 1);
                     // 默认值
-                    int p  = st.indexOf  ("|");
+                    int p  = st.indexOf  (":");
                     if (p != -1) {
-                        sd = st.substring(1+p);
+                        sp = st.substring(1+p);
                         st = st.substring(0,p);
                     } else {
-                        sd = null;
+                        sp = null;
                     }
                 } else {
-                        sd = null;
+                        sp = null;
                 }
 
                     ob  = vars.get (st);
@@ -441,19 +439,25 @@ public class IsFile extends Rule {
                 if (ob != null) {
                     st  = ob.toString();
                 } else {
-                if (sd != null) {
-                    st  = sd;
-                } else
-                {
                     throw new Wrong(st + " required for file");
-                }
                 } // End if vals
                 } // End if vars
 
-                // % 打头的进行拆分
-                if ("%".equals(ss)) {
-                    st = Syno. splitPath (ss);
-                }
+                // 拆分
+                if (sp != null) {
+                try {
+                    if (sp.equals    ("split" )) {
+                        st = Syno.splitPath(st);
+                    } else
+                    if (sp.startsWith("split,")) {
+                        st = Syno.splitPath(st, Synt.declare(sp.substring(6), 3));
+                    } else
+                    {
+                        throw new Wrong(    "Unsupported file code ending :"+ sp);
+                    }
+                } catch (ClassCastException ex ) {
+                        throw new Wrong(ex, "Unsupported file code ending :"+ sp);
+                }}
             }
 
             st = Matcher.quoteReplacement(st);
@@ -466,6 +470,6 @@ public class IsFile extends Rule {
 
     private static final Pattern HREF_PATT = Pattern.compile("^(https?:)?//.*");
     private static final Pattern NAME_PATT = Pattern.compile( "[\\/<>*\":?|]" );
-    private static final Pattern PATH_PATT = Pattern.compile("([\\$%])([\\$%]|\\w+|\\{.+?\\})");
+    private static final Pattern PATH_PATT = Pattern.compile("\\$(\\$|\\w+|\\{.+?\\})");
 
 }

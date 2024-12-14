@@ -602,6 +602,53 @@ public final class Syno
       return str.substring(off);
   }
 
+  //** 分割 **/
+
+  /**
+   * 拆分字串
+   * @param str 待拆字串
+   * @param sep 间隔符号
+   * @param len 间隔长度
+   * @return
+   */
+  public static String split(String str, String sep, int len) {
+      int l = str.length( );
+      int p = l / len;
+      int q = p * len;
+      int i = 0x0;
+      int j = len;
+      StringBuilder path = new StringBuilder(l + p);
+      for ( ; i < q ; i += len , j += len ) {
+          path.append( str.substring(i,j) )
+              .append( sep );
+      }   path.append( str );
+      return path.toString();
+  }
+
+  /**
+   * 拆分文件名为路径, 按间隔长度拆分
+   * 防止单个目录下文件过多而无法存放
+   * 分割符总是 /, 规避不同系统的困扰
+   * @param str 待拆名称
+   * @param len 间隔长度
+   * @return
+   */
+  public static String splitPath(String str, int len) {
+      return split(str, "/", len);
+  }
+
+  /**
+   * 拆分文件名为路径, 按三个三个拆分
+   * 防止单个目录下文件过多而无法存放
+   * 分割符总是 /, 规避不同系统的困扰
+   * @param str 待拆名称
+   * @return
+   */
+  public static String splitPath(String str) {
+      // 不用 File.separator, 规避 Windows 下造成困扰
+      return split(str, "/", 0x3);
+  }
+
   //** 清理 **/
 
   /**
@@ -692,40 +739,6 @@ public final class Syno
     pat = Pattern.compile("(\\son\\w+=('.*?'|\".*?\"))", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
     str = pat.matcher(str).replaceAll("" );
     return  str;
-  }
-
-  //** 路径 **/
-
-  /**
-   * 拆分文件名为路径, 按三个三个拆分
-   * 防止单个目录下文件过多而无法存放
-   * @param name
-   * @return
-   */
-  public static String splitPath(String name) {
-      return splitPath(name, '/', 3); // 不用 File.separator, 规避 Windows 下造成困扰
-  }
-
-  /**
-   * 拆分文件名为路径
-   * 防止单个目录下文件过多而无法存放
-   * @param name 待拆名称
-   * @param sign 间隔符号
-   * @param span 间隔长度
-   * @return
-   */
-  public static String splitPath(String name, char sign, int span) {
-      int l = name.length( );
-      int p = l / span;
-      int q = p * span;
-      int i = 0x0 ;
-      int j = span;
-      StringBuilder path = new StringBuilder(l + p);
-      for ( ; i < q ; i += span, j += span) {
-          path.append(name.substring(i, j))
-              .append(sign );
-      }   path.append(name );
-      return path.toString();
   }
 
 }

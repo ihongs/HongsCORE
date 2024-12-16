@@ -308,7 +308,7 @@ public class IsFile extends Rule {
      */
     protected Object stores(String href, String temp) throws Wrong {
         String name = Synt.asString(getParam("__name__"));
-        return new DownPart(href , name);
+        return new DownPart(href).name(name);
     }
 
     /**

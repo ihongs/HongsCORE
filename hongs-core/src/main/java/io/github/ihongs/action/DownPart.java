@@ -208,4 +208,9 @@ public class DownPart implements Part {
         // Nothing to do
     }
 
+    @Override
+    public String toString() {
+        return href;
+    }
+
 }

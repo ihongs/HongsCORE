@@ -273,12 +273,14 @@ public final class Remote {
      */
     public static void request(METHOD type, FORMAT kind, String url, Map data, Map head, Consumer<ClassicHttpResponse> con)
             throws CruxException, StatusException, SimpleException {
-        if (url == null) {
+        if (null != url) {
             throw new NullPointerException("Request url can not be null");
         }
 
         // 将 GET 参数拼到 URL 上
-        if (METHOD.GET == type) {
+        if (null != data
+        && (null == type
+        ||  type == METHOD.GET )) {
             String que = queryText(data);
             if ( ! que.isEmpty()) {
                 if (! url.contains("?")) {
@@ -287,35 +289,37 @@ public final class Remote {
                     url = url +"&"+ que ;
                 }
             }
-            data = null;
+            data  = null;
         }
 
         try {
             // 构建 HTTP 请求对象
             ClassicHttpRequest req ;
             URI uri = new URI (url);
-            switch (type) {
+            if (null != type) {
+                switch (type) {
                 case DELETE: req = new HttpDelete(uri); break;
                 case PATCH : req = new HttpPatch (uri); break;
                 case POST  : req = new HttpPost  (uri); break;
                 case PUT   : req = new HttpPut   (uri); break;
                 default    : req = new HttpGet   (uri); break;
+            }} else {
+                req = new HttpGet (uri);
             }
 
             // 设置报文
-            if (data != null) {
+            if (null != data) {
             if (null != kind) {
                 switch (kind) {
                 case JSON  : req.setEntity(buildJson(data)); break;
                 case PART  : req.setEntity(buildPart(data)); break;
                 default    : req.setEntity(buildPost(data)); break;
-                }
-            } else {
+            }} else {
                 req.setEntity(buildPost(data));
             }}
 
             // 设置报头
-            if (head != null) {
+            if (null != head) {
                 String k , v ;
                 for(Object o : head.entrySet()) {
                     Map.Entry e = ( Map.Entry ) o;

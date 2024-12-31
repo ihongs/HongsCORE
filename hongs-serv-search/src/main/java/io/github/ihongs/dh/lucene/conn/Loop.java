@@ -51,11 +51,11 @@ public class Loop implements Iterable<Document>, Iterator<Document> {
         }
 
         // 是否获取全部
-        if (l == 0 ) {
+        if (l > 0) {
+            t = true ;
+        } else {
             l = 1000 ;
             t = false;
-        } else {
-            t = true ;
         }
 
         this.q = q;
@@ -80,38 +80,40 @@ public class Loop implements Iterable<Document>, Iterator<Document> {
     @Override
     public boolean hasNext() {
         try {
-            TopDocs   tops;
-            TotalHits tots;
             if ( docs == null) {
-                int L  = l+b ;
+              TotalHits  tots;
+                TopDocs  tops;
+                int L  = l+ b;
                 if (s != null) {
                     tops = schr.searchAfter(doc, q, L, s);
                 } else {
                     tops = schr.searchAfter(doc, q, L);
                 }
-                i    = b;
-                docs = tops.scoreDocs;
-                h    = docs.length;
-                if ( ! T ) {
+                if (! T) {
                 tots = tops.totalHits;
                 H    = tots.value ;
                 T    = tots.relation == TotalHits.Relation.EQUAL_TO;
                 }
+                i    = b;
+                docs = tops.scoreDocs;
+                h    = docs.length;
             } else
             if (! t && i >= h) {
+              TotalHits  tots;
+                TopDocs  tops;
                 if (s != null) {
                     tops = schr.searchAfter(doc, q, l, s);
                 } else {
                     tops = schr.searchAfter(doc, q, l);
                 }
-                i    = 0;
-                docs = tops.scoreDocs;
-                h    = docs.length;
-                if ( ! T ) {
+                if (! T) {
                 tots = tops.totalHits;
                 H    = tots.value ;
                 T    = tots.relation == TotalHits.Relation.EQUAL_TO;
                 }
+                docs = tops.scoreDocs;
+                h    = docs.length;
+                i    = 0;
             }
             return i < h;
         } catch (IOException|AlreadyClosedException e) {

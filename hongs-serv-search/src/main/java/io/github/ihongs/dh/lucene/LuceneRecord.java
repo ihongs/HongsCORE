@@ -2214,6 +2214,17 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         }
 
         /**
+         * 获取全部数量
+         * @deprecated 建议使用 count
+         * @return
+         */
+        public int hits() {
+            long   H = count();
+            return H < Integer.MAX_VALUE
+            ?(int) H : Integer.MAX_VALUE;
+        }
+
+        /**
          * 真实命中总数
          * @return
          */

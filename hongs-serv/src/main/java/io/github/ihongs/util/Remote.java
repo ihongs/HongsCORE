@@ -273,7 +273,7 @@ public final class Remote {
      */
     public static void request(METHOD type, FORMAT kind, String url, Map data, Map head, Consumer<ClassicHttpResponse> con)
             throws CruxException, StatusException, SimpleException {
-        if (null != url) {
+        if (null == url) {
             throw new NullPointerException("Request url can not be null");
         }
 

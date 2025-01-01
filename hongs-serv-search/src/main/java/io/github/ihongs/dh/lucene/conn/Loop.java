@@ -33,6 +33,7 @@ public class Loop implements Iterable<Document>, Iterator<Document> {
     private       int     i; // 提取游标
     private       int     h; // 单次总数
     private       long    H; // 全局总数
+    private       boolean T; // 精确总数
 
     /**
      * 查询迭代器
@@ -51,7 +52,7 @@ public class Loop implements Iterable<Document>, Iterator<Document> {
 
         // 是否获取全部
         if (l == 0 ) {
-            l = 65536;
+            l = 1000 ;
             t = false;
         } else {
             t = true ;
@@ -79,31 +80,38 @@ public class Loop implements Iterable<Document>, Iterator<Document> {
     @Override
     public boolean hasNext() {
         try {
+            TopDocs   tops;
+            TotalHits tots;
             if ( docs == null) {
                 int L  = l+b ;
-                 TopDocs tops;
-               TotalHits tots;
                 if (s != null) {
                     tops = schr.searchAfter(doc, q, L, s);
                 } else {
                     tops = schr.searchAfter(doc, q, L);
                 }
-                tots = tops.totalHits;
-                H    = tots.value ;
+                i    = b;
                 docs = tops.scoreDocs;
                 h    = docs.length;
-                i    = b;
+                if ( ! T ) {
+                tots = tops.totalHits;
+                H    = tots.value ;
+                T    = tots.relation == TotalHits.Relation.EQUAL_TO;
+                }
             } else
             if (! t && i >= h) {
-                 TopDocs tops;
                 if (s != null) {
                     tops = schr.searchAfter(doc, q, l, s);
                 } else {
                     tops = schr.searchAfter(doc, q, l);
                 }
+                i    = 0;
                 docs = tops.scoreDocs;
                 h    = docs.length;
-                i    = 0;
+                if ( ! T ) {
+                tots = tops.totalHits;
+                H    = tots.value ;
+                T    = tots.relation == TotalHits.Relation.EQUAL_TO;
+                }
             }
             return i < h;
         } catch (IOException|AlreadyClosedException e) {
@@ -128,41 +136,55 @@ public class Loop implements Iterable<Document>, Iterator<Document> {
      * 获取单次数量
      * @return
      */
-    public int  size() {
-        if (docs == null) {
-            hasNext ();
-        }
+    public int size() {
         int L;
         if (t) {
+            total();
             L  = (int) (h - b);
         } else {
+            count();
             L  = (int) (H - b);
         }
         return L > 0 ?  L : 0 ;
     }
 
     /**
-     * 获取命中总数
-     * @return
-     */
-    public int  hits() {
-        if (docs == null) {
-            hasNext ();
-        }
-        // 最多 2G
-        return H < Integer.MAX_VALUE
-        ?(int) H : Integer.MAX_VALUE;
-    }
-
-    /**
      * 真实命中总数
      * @return
      */
-    public long tots() {
+    public long count() {
         if (docs == null) {
-            hasNext ();
+            hasNext();
+        }
+        if (! T) try {
+            T =  true;
+            H = (long) schr . count(q);
+        } catch (IOException|AlreadyClosedException e) {
+            throw new CruxExemption(e);
         }
         return H ;
+    }
+
+    /**
+     * 可能命中总数
+     * @return
+     */
+    public long total() {
+        if (docs == null) {
+            hasNext();
+        }
+        return H ;
+    }
+
+    /**
+     * 可信的 total
+     * @return
+     */
+    public boolean truly( ) {
+        if (docs == null) {
+            hasNext();
+        }
+        return T ;
     }
 
     @Override

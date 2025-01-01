@@ -1673,7 +1673,7 @@ public class Data extends SearchEntity {
 
             // 查询依赖当前表的资源
             Data inst = Data.getInstance(c, f);
-            int  hits = inst.search( ar, 0, 1).hits( );
+            long hits = inst.search( ar, 0, 1).count();
             if ( hits > 0 ) {
                 String  l = (String) inst.getParams( ).get("__text__");
                 nb.append(l).append(" (").append(hits).append( "), " );

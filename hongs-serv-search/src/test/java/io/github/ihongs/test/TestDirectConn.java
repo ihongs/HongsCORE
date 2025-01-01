@@ -86,8 +86,8 @@ public class TestDirectConn {
         es.awaitTermination(waitTime, TimeUnit.SECONDS);
 
         // 复查数量
-        SearchEntity se = new TestEntity( fields , dbPath , dbName );
-        assertEquals(dataSize, se.search(Synt.mapOf(), 0, 0).hits());
+        SearchEntity se = new TestEntity(fields, dbPath, dbName);
+        assertEquals(dataSize, (int) se.search(Synt.mapOf(), 0, 0).count());
     }
 
     private void delDir(String path) {

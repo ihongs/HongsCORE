@@ -207,29 +207,30 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         }
 
         // 指定页码 0, 仅获取分页
-        boolean  nl = pn == 0 ;
-        if (nl)  pn = /***/ 1 ;
-        int bn = rn * (pn - 1);
-
-        Loop roll = search(rd, bn, rn);
-
-        long rc =        roll.tots(); // real rows
-        long vc = (long) roll.hits(); // view rows
-        long pc = (long) Math.ceil((double) vc / rn);
-        int  st = rc > bn ? 1 : 0 ;
+        int bn  = 0;
+        if (pn != 0) {
+            bn  = ((pn - 01) * rn);
+        }
 
         Map  resp = new HashMap(6);
         Map  page = new HashMap(5);
         page.put(Cnst.RN_KEY , rn);
         page.put(Cnst.PN_KEY , pn);
-        page.put("count", rc);
-        page.put("total", pc);
-        page.put("state", st);
 
-        if (! nl) {
-            List list = roll.toList();
-            resp.put ( "list", list );
-        }   resp.put ( "page", page );
+        Loop roll = search(rd, bn, rn);
+
+        if (pn != 0) {
+            List list = roll.toList( );
+            resp.put ( "list" , list );
+        }   resp.put ( "page" , page );
+
+        long rc = roll.count();
+        long pc = (long) Math.ceil((double) rc / rn);
+        int  st = rc>bn ? 1: 0;
+
+        page.put("count", rc );
+        page.put("total", pc );
+        page.put("state", st );
 
         return resp;
     }
@@ -461,7 +462,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 rd.put(Cnst.ID_KEY, Synt.mapOf(Cnst.NE_REL, id));
             }
 
-            if (search(rd, 0, 1).hits() > 0) {
+            if (search(rd, 0, 1).size() > 0 ) {
                 throw new CruxException(1088, "UNIQUE KEY $0 ($1)", fn, Syno.concat(",", us));
             }
         }
@@ -2208,24 +2209,32 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
          * 获取单次数量
          * @return
          */
-        public int  size() {
+        public int size() {
             return loop.size();
-        }
-
-        /**
-         * 获取命中总数
-         * @return
-         */
-        public int  hits() {
-            return loop.hits();
         }
 
         /**
          * 真实命中总数
          * @return
          */
-        public long tots() {
-            return loop.tots();
+        public long count() {
+            return loop.count();
+        }
+
+        /**
+         * 可能命中总数
+         * @return
+         */
+        public long total() {
+            return loop.total();
+        }
+
+        /**
+         * 可信的 total
+         * @return
+         */
+        public boolean truly() {
+            return loop.truly();
         }
 
         public List<Map> toList() {

@@ -135,6 +135,22 @@ public class Loop implements Iterable<Document>, Iterator<Document> {
     }
 
     /**
+     * 获取当前评分
+     * @return
+     */
+    public float score() {
+        return doc.score;
+    }
+
+    /**
+     * 获取当前编号
+     * @return
+     */
+    public int docid() {
+        return doc.doc;
+    }
+
+    /**
      * 获取单次数量
      * @return
      */

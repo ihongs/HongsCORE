@@ -625,6 +625,22 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         Query q = padQry(rd);
         Sort  s = padSrt(rd);
         Set   r = Synt.toTerms (rd.get(Cnst.RB_KEY));
+
+        // 清理字段列表
+        // 限定查询范围
+        if (r  != null ) {
+        if (r.isEmpty()) {
+            r   = null ;
+        } else {
+            Set doci = this.getFields().keySet();
+            Set z = new HashSet(doci.size() + 2);
+            z.addAll(doci);
+            z.add("__docid__");
+            z.add("__score__");
+            z.retainAll(  r  );
+            r = z;
+        }}
+
         Loop  l = new Loop(this, q,s,r, begin,limit);
 
         if ( 4 == (4 & Core.DEBUG) ) {
@@ -715,13 +731,24 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
     }
 
     public Map padDat(Document doc, Set rb) {
-        Map map = new LinkedHashMap(rb!=null?rb.size() : getFields().size());
+        int len;
+        if (rb != null) {
+        if ( ! rb.isEmpty()) {
+            len = rb.size( );
+        }  else {
+            rb  = null;
+            len = getFields( ).size(   );
+        }} else {
+            len = getFields( ).size(   );
+        }
+        Map map = new LinkedHashMap(len);
         padDat(doc, map, rb  );
         return map;
     }
 
     public Map padDat(Document doc) {
-        Map map = new LinkedHashMap(getFields().size());
+        int len = getFields( ).size(   );
+        Map map = new LinkedHashMap(len);
         padDat(doc, map, null);
         return map;
     }
@@ -2149,6 +2176,8 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         private final io.github.ihongs.dh.lucene.conn.Loop loop;
         private final LuceneRecord that;
         private final Set cols;
+        private final boolean docid;
+        private final boolean score;
 
         /**
          * 查询迭代器
@@ -2176,6 +2205,10 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             loop = new io.github.ihongs.dh.lucene.conn.Loop(p, q, s, r, b, l);
             that = d;
             cols = r;
+
+            // 特殊标记字段
+            docid = r != null && r.contains("__docid__");
+            score = r != null && r.contains("__score__");
         }
 
         @Override
@@ -2201,8 +2234,31 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         }
 
         @Override
-        public Map  next() {
-            return that.padDat(nextDoc(), cols);
+        public Map next() {
+            Map map = that.padDat(nextDoc(), cols);
+            if (docid) {
+                map.put("__docid__", docid());
+            }
+            if (score) {
+                map.put("__score__", score());
+            }
+            return map;
+        }
+
+        /**
+         * 获取当前编号
+         * @return
+         */
+        public int docid() {
+            return loop.docid();
+        }
+
+        /**
+         * 获取当前评分
+         * @return
+         */
+        public float score() {
+            return loop.score();
         }
 
         /**

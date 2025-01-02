@@ -2246,14 +2246,6 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         }
 
         /**
-         * 获取当前编号
-         * @return
-         */
-        public int docid() {
-            return loop.docid();
-        }
-
-        /**
          * 获取当前评分
          * @return
          */
@@ -2262,10 +2254,18 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         }
 
         /**
+         * 获取当前编号
+         * @return
+         */
+        public int docid() {
+            return loop.docid();
+        }
+
+        /**
          * 获取单次数量
          * @return
          */
-        public int size() {
+        public int size () {
             return loop.size();
         }
 
@@ -2274,7 +2274,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
          * @deprecated 建议使用 count
          * @return
          */
-        public int hits() {
+        public int hits () {
             long   H = count();
             return H < Integer.MAX_VALUE
             ?(int) H : Integer.MAX_VALUE;

@@ -154,7 +154,7 @@ public class Loop implements Iterable<Document>, Iterator<Document> {
      * 获取单次数量
      * @return
      */
-    public int size() {
+    public int size () {
         int L;
         if (t) {
             total();

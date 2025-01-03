@@ -29,7 +29,7 @@ public class Loop implements Iterable<ScoreDoc>, Iterator<ScoreDoc> {
     private final Set     r;
     private final int     b; // 起始位置
     private final int     l; // 数量限制
-    private final boolean a; // 数量不限
+    private final boolean u; // 数量不限
     private final boolean c; // 需要打分
     private       int     i; // 提取游标
     private       int     h; // 单次总数
@@ -62,9 +62,9 @@ public class Loop implements Iterable<ScoreDoc>, Iterator<ScoreDoc> {
         // 是否获取全部
         if (l == 0) {
             l  = 1000 ;
-            a  = true ;
+            u  = true ;
         } else {
-            a  = false;
+            u  = false;
         }
 
         this.q = q;
@@ -107,7 +107,7 @@ public class Loop implements Iterable<ScoreDoc>, Iterator<ScoreDoc> {
                 h    = docs.length;
                 i    = b;
             } else
-            if ( a && i >= h ) {
+            if ( u && i >= h ) {
               TotalHits  tots;
                 TopDocs  tops;
                 if (s != null) {
@@ -156,7 +156,7 @@ public class Loop implements Iterable<ScoreDoc>, Iterator<ScoreDoc> {
      */
     public int size () {
         int n;
-        if (a) {
+        if (u) {
             count();
             n  = (int) (H - b);
         } else {

@@ -760,11 +760,11 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
     }
 
     public Query padQry(Map rd) throws CruxException {
-        BooleanQuery.Builder qr = new BooleanQuery.Builder();
+        BooleanQuery.Builder qb = new BooleanQuery.Builder();
 
-        padQry(qr, rd);
+        padQry(qb, rd);
 
-        BooleanQuery qu = qr.build();
+        BooleanQuery qu = qb.build();
         if (! qu.clauses().isEmpty()) {
             return qu ;
         }
@@ -777,11 +777,13 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
         padSrt(of, rd);
 
-        if (of.isEmpty()) {
-            of.add(SortField.FIELD_DOC);
+        if (! of.isEmpty()) {
+            SortField[] sf;
+            sf  =  new SortField [of.size()];
+            return new Sort (of.toArray(sf));
         }
 
-        return new Sort(of.toArray(new SortField[0]));
+        return null;
     }
 
     //** 组件封装 **/
@@ -1209,10 +1211,10 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             if (qa instanceof VectorQuest) {
                 VectorQuest qv = (VectorQuest) qa;
                 float[] w;
-                int l = 1;
+                int l = Synt.declare( rd.get( Cnst.RN_KEY ) , 1 );
                 if (v instanceof Map) {
                     Map vd = (Map) v;
-                    l = Synt.declare( vd.get( Cnst.UP_REL ) , l );
+                    l = Synt.declare( vd.get( Cnst.RN_KEY ) , l );
                     w = VectorQuest.toVector(vd.get(Cnst.ON_REL));
                 } else {
                     w = VectorQuest.toVector(v);

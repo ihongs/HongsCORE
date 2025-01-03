@@ -19,7 +19,7 @@ import org.apache.lucene.store.AlreadyClosedException;
  * 查询读取
  * @author Hongs
  */
-public class Loop implements Iterable<Document>, Iterator<Document> {
+public class Loop implements Iterable<ScoreDoc>, Iterator<ScoreDoc> {
     private final IndexSearcher schr;
     private final StoredFields  fids;
     private       ScoreDoc[]    docs;
@@ -29,7 +29,7 @@ public class Loop implements Iterable<Document>, Iterator<Document> {
     private final Set     r;
     private final int     b; // 起始位置
     private final int     l; // 数量限制
-    private final boolean t; // 有限查询
+    private final boolean a; // 数量不限
     private final boolean c; // 需要打分
     private       int     i; // 提取游标
     private       int     h; // 单次总数
@@ -47,23 +47,24 @@ public class Loop implements Iterable<Document>, Iterator<Document> {
      */
     public Loop(IndexSearcher p, Query q, Sort s, Set r, int b, int l) {
         // 空取全部字段
-        if (r!= null && r.isEmpty()) {
-            r = null ;
+        if (r != null && r.isEmpty( )) {
+            r  = null ;
         }
-        
+
         // 是否需要打分
-        if (r!= null && r.contains("__score__")) {
-            c = true ;
+        if (s != null && r != null
+        &&  r.contains( "__score__" )) {
+            c  = true ;
         } else {
-            c = false;
+            c  = false;
         }
 
         // 是否获取全部
-        if (l > 0) {
-            t = true ;
+        if (l == 0) {
+            l  = 1000 ;
+            a  = true ;
         } else {
-            l = 1000 ;
-            t = false;
+            a  = false;
         }
 
         this.q = q;
@@ -81,7 +82,7 @@ public class Loop implements Iterable<Document>, Iterator<Document> {
     }
 
     @Override
-    public Iterator<Document> iterator() {
+    public Iterator<ScoreDoc> iterator() {
         return this;
     }
 
@@ -102,11 +103,11 @@ public class Loop implements Iterable<Document>, Iterator<Document> {
                 H    = tots.value ;
                 T    = tots.relation == TotalHits.Relation.EQUAL_TO;
                 }
-                i    = b;
                 docs = tops.scoreDocs;
                 h    = docs.length;
+                i    = b;
             } else
-            if (! t && i >= h) {
+            if ( a && i >= h ) {
               TotalHits  tots;
                 TopDocs  tops;
                 if (s != null) {
@@ -125,37 +126,28 @@ public class Loop implements Iterable<Document>, Iterator<Document> {
             }
             return i < h;
         } catch (IOException|AlreadyClosedException e) {
-            throw new CruxExemption( e );
+            throw new CruxExemption ( e );
         }
     }
 
     @Override
-    public Document next() {
-        if ( i >= h ) {
+    public ScoreDoc next() {
+        try {
+            doc = docs[i ++];
+        } catch (ArrayIndexOutOfBoundsException e ) {
             throw new NullPointerException("hasNext not run?");
         }
+        return doc;
+    }
+
+    public Document curr() {
         try {
-            doc =  docs[i ++ ];
             return fids.document(doc.doc, r);
+        } catch (NullPointerException e ) {
+            throw new NullPointerException("hasNext not run?");
         } catch (IOException|AlreadyClosedException e) {
-            throw new CruxExemption( e );
+            throw new CruxExemption ( e );
         }
-    }
-
-    /**
-     * 获取当前评分
-     * @return
-     */
-    public float score() {
-        return doc.score;
-    }
-
-    /**
-     * 获取当前编号
-     * @return
-     */
-    public int docid() {
-        return doc.doc;
     }
 
     /**
@@ -163,15 +155,15 @@ public class Loop implements Iterable<Document>, Iterator<Document> {
      * @return
      */
     public int size () {
-        int L;
-        if (t) {
-            total();
-            L  = (int) (h - b);
-        } else {
+        int n;
+        if (a) {
             count();
-            L  = (int) (H - b);
+            n  = (int) (H - b);
+        } else {
+            total();
+            n  = (int) (h - b);
         }
-        return L > 0 ?  L : 0 ;
+        return n > 0 ?  n : 0 ;
     }
 
     /**

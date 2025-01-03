@@ -2227,7 +2227,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             }
         }
 
-        public Document nextDoc( ) {
+        public ScoreDoc nextOne( ) {
             try {
                 return loop.next();
             } catch (CruxExemption e) {
@@ -2235,32 +2235,26 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             }
         }
 
+        public Document currDoc( ) {
+            try {
+                return loop.curr();
+            } catch (CruxExemption e) {
+                throw new Lost (e);
+            }
+        }
+
         @Override
         public Map next() {
-            Map map = that.padDat(nextDoc(), cols);
-            if (docid) {
-                map.put("__docid__", docid());
-            }
+            ScoreDoc  sco = nextOne();
+            Document  doc = currDoc();
+            Map map = that. padDat (doc, cols);
             if (score) {
-                map.put("__score__", score());
+                map.put("__score__",sco.score);
+            }
+            if (docid) {
+                map.put("__docid__",sco. doc );
             }
             return map;
-        }
-
-        /**
-         * 获取当前评分
-         * @return
-         */
-        public float score() {
-            return loop.score();
-        }
-
-        /**
-         * 获取当前编号
-         * @return
-         */
-        public int docid() {
-            return loop.docid();
         }
 
         /**

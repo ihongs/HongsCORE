@@ -30,6 +30,7 @@ public class Loop implements Iterable<Document>, Iterator<Document> {
     private final int     b; // 起始位置
     private final int     l; // 数量限制
     private final boolean t; // 有限查询
+    private final boolean c; // 需要打分
     private       int     i; // 提取游标
     private       int     h; // 单次总数
     private       long    H; // 全局总数
@@ -48,6 +49,13 @@ public class Loop implements Iterable<Document>, Iterator<Document> {
         // 空取全部字段
         if (r!= null && r.isEmpty()) {
             r = null ;
+        }
+        
+        // 是否需要打分
+        if (r!= null && r.contains("__score__")) {
+            c = true ;
+        } else {
+            c = false;
         }
 
         // 是否获取全部
@@ -85,7 +93,7 @@ public class Loop implements Iterable<Document>, Iterator<Document> {
                 TopDocs  tops;
                 int L  = l+ b;
                 if (s != null) {
-                    tops = schr.searchAfter(doc, q, L, s);
+                    tops = schr.searchAfter(doc, q, L, s, c);
                 } else {
                     tops = schr.searchAfter(doc, q, L);
                 }
@@ -102,7 +110,7 @@ public class Loop implements Iterable<Document>, Iterator<Document> {
               TotalHits  tots;
                 TopDocs  tops;
                 if (s != null) {
-                    tops = schr.searchAfter(doc, q, l, s);
+                    tops = schr.searchAfter(doc, q, l, s, c);
                 } else {
                     tops = schr.searchAfter(doc, q, l);
                 }

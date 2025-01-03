@@ -440,7 +440,9 @@ public final class Synt {
          * 尝试通过字符串转数字
          */
         String str = val.toString().trim();
-        if (str.isEmpty()) {
+        if (str.isEmpty()
+        ||  str.equalsIgnoreCase ( "NaN" )
+        ||  str.equalsIgnoreCase ("NULL")) {
             return null;
         }
         try {
@@ -457,6 +459,12 @@ public final class Synt {
      */
     public static String asString(Number val) {
         if (val == null) {
+            return null;
+        }
+
+        // 非数值判断
+        if ((val instanceof Float  && ((Float ) val).isNaN() )
+        || ( val instanceof Double && ((Double) val).isNaN())) {
             return null;
         }
 

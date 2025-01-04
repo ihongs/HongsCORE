@@ -56,9 +56,13 @@ public final class Cnst {
 
     public static final String NE_REL = "ne"; // 不等于
 
-    public static final String SP_REL = "sp"; // 匹配
+    public static final String CP_REL = "cp"; // 通配
 
-    public static final String NS_REL = "ns"; // 不匹配
+    public static final String NC_REL = "nc"; // 通配排除
+
+    public static final String SP_REL = "sp"; // 搜索
+
+    public static final String NS_REL = "ns"; // 搜索排除
 
     public static final String LT_REL = "lt"; // 小于
 

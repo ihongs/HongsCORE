@@ -60,6 +60,10 @@ public class AssocCase {
      */
     public  static final String  FINDABLE = "FINDABLE";
     /**
+     * 可匹配字段, 用于 FetchCase 的 Option
+     */
+    public  static final String  SEEKABLE = "SEEKABLE";
+    /**
      * 可搜索字段, 用于 FetchCase 的 Option
      */
     public  static final String  SRCHABLE = "SRCHABLE";
@@ -83,6 +87,8 @@ public class AssocCase {
     private static final Pattern ANPT = Pattern.compile("^[\\w\\.]+\\s*(:|$)");
     private static final Pattern CNPT = Pattern.compile("^[\\w]+$" );
     private static final Pattern SEPA = Pattern.compile("\\s*,\\s*");
+    private static final Pattern WORD = Pattern.compile("[_%/\\[\\]]"); // SQL 通配符: _%/[]
+    private static final Pattern WILD = Pattern.compile("[?*\\\\]"   ); // 通用通配符: ?*\
 
     private final FetchCase        that;
     private final Map<String, Map> opts;
@@ -243,7 +249,7 @@ public class AssocCase {
      * @return
      */
     public AssocCase allow(Map fc) {
-        String[] ks = new String[] {LISTABLE, FINDABLE, SORTABLE, SRCHABLE, RSCHABLE, RANKABLE};
+        String[] ks = new String[] {LISTABLE, FINDABLE, SORTABLE, SEEKABLE, SRCHABLE, RSCHABLE, RANKABLE};
         for(String k : ks) {
             k = k.toLowerCase( );
             Object s = fc.get(k);
@@ -258,6 +264,7 @@ public class AssocCase {
         allow(LISTABLE, fc.getListable());
         allow(FINDABLE, fc.getFindable());
         allow(SORTABLE, fc.getSortable());
+        allow(SEEKABLE, fc.getSeekable());
         allow(SRCHABLE, fc.getSrchable());
         allow(RSCHABLE, fc.getRschable());
         allow(RANKABLE, fc.getRankable());
@@ -483,6 +490,7 @@ public class AssocCase {
 
         Map<String, String> af = allow(FINDABLE);
         Map<String, String> rf = allow(RANKABLE);
+        Map<String, String> ef = allow(SEEKABLE);
         Map<String, String> sf = allow(SRCHABLE);
 
         Set<String>  ks  =  new  LinkedHashSet();
@@ -633,22 +641,35 @@ public class AssocCase {
 
             } // End rf
 
-            // 模糊匹配
+            // 模糊查询
             fn = sf.get( kn );
             if ( fn != null ) {
 
             vo = vm.get(Cnst.SP_REL);
             if ( vo != null && !"".equals(vo) ) {
-                Set<String> ws = Synt.toWords(vo);
-                likes(caze, ws , fn , /**/"LIKE");
+                words(caze, vo , fn , "LIKE");
             }
             vo = vm.get(Cnst.NS_REL);
             if ( vo != null && !"".equals(vo) ) {
-                Set<String> ws = Synt.toWords(vo);
-                likes(caze, ws , fn , "NOT LIKE");
+                words(caze, vo , fn , "NOT LIKE");
             }
 
             } // End sf
+
+            // 通配查询
+            fn = ef.get( kn );
+            if ( fn != null ) {
+
+            vo = vm.get(Cnst.CP_REL);
+            if ( vo != null && !"".equals(vo) ) {
+                wilds(caze, vo , fn , "LIKE");
+            }
+            vo = vm.get(Cnst.NC_REL);
+            if ( vo != null && !"".equals(vo) ) {
+                wilds(caze, vo , fn , "NOT LIKE");
+            }
+
+            } // End ef
 
             // 2019/07/27 为避免歧义, 剩余值不再 IN
         }
@@ -746,17 +767,19 @@ public class AssocCase {
         }
     }
 
-    private void likes(FetchCase caze, Set wd, String fn, String rn) {
-        int  i = 0;
-        int  l = wd.size( );
+    private void words(FetchCase caze, Object fv, String fn, String rn) {
+        Set wd = Synt.toWords(fv);
+        int  l = wd.size();
+        int  i = 0 ;
+
         Object[]      ab = new Object[l];
         Set<String>   xd = new HashSet();
-        StringBuilder sb = new StringBuilder(  );
+        StringBuilder sb = new StringBuilder();
 
         // 转义待查词, 避开通配符, 以防止歧义
-        for(Object  fo : wd) {
-            String  fw = fo.toString(  );
-            xd.add("%" + Syno.escape(fw , "/%_[]" , "/") + "%");
+        for(Object fo : wd) {
+            String fw = words(fo);
+            xd.add("%"+ fw + "%");
         }
 
         sb.append("(");
@@ -769,6 +792,36 @@ public class AssocCase {
         sb.append(")");
 
         caze.filter (sb.toString(), ab);
+    }
+
+    private void wilds(FetchCase caze, Object fv, String fn, String rn) {
+        String fw;
+        fw  = words (fv);
+        fw  = wilds (fw);
+        caze.filter (fn+" "+rn+" ? ESCAPE '/'", fw);
+    }
+
+    private String words(Object fv) {
+        String  fw = fv.toString (  );
+        Matcher ma = WORD.matcher(fw);
+        return  ma.replaceAll ("/$0");
+    }
+
+    private String wilds(Object fv) {
+        String  fw = fv.toString (  );
+        Matcher ma = WILD.matcher(fw);
+        StringBuffer sb = new StringBuffer();
+        while (ma.find()) {
+            String st = ma.group(0);
+            switch (st) {
+                case "\\": st = "/"; break;
+                case "?" : st = "_"; break;
+                case "*" : st = "%"; break;
+            }
+            sb.append(st);
+        }
+        ma.appendTail(sb);
+        return sb.toString();
     }
 
     private Object alone(Object fv, String fn, String rn) {

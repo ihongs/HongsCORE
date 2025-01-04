@@ -27,7 +27,8 @@ public class JFigure implements IFigure {
     private Set _rb_fns = null;
     private Set _ob_fns = null;
     private Set _wh_fns = null;
-    private Set _wd_fns = null;
+    private Set _sh_fns = null;
+    private Set _sk_fns = null;
     private Set _rk_fns = null;
 
     /**
@@ -245,15 +246,27 @@ public class JFigure implements IFigure {
     }
 
     /**
+     * 获取可匹配的字段 (通配符或正则)
+     * @return
+     */
+    public Set<String> getSeekable() {
+        if (null != _sk_fns) {
+            return  _sk_fns;
+        }
+        _sk_fns = getCaseNames("seekable");
+        return _sk_fns;
+    }
+
+    /**
      * 获取可搜索的字段 (用于模糊查询)
      * @return
      */
     public Set<String> getSrchable() {
-        if (null != _wd_fns) {
-            return  _wd_fns;
+        if (null != _sh_fns) {
+            return  _sh_fns;
         }
-        _wd_fns = getCaseNames("srchable");
-        return _wd_fns;
+        _sh_fns = getCaseNames("srchable");
+        return _sh_fns;
     }
 
     /**

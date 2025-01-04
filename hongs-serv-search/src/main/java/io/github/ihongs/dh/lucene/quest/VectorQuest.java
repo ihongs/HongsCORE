@@ -4,6 +4,7 @@ import java.util.List;
 import io.github.ihongs.util.Synt;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.KnnFloatVectorQuery;
+import org.apache.lucene.search.FloatVectorSimilarityQuery;
 
 /**
  * 向量查询
@@ -42,12 +43,24 @@ public class VectorQuest implements IQuest {
      * @param n 数量
      * @return
      */
-    public Query vtr(String k, Object v, Object n) {
-        float[] f = toVector(v  );
-        int d = Synt.declare(n,1);
-        return new KnnFloatVectorQuery ("@"+k,f,d);
+    public Query vtr(String k, Object v, int n) {
+        float[] f = toVector(v);
+        return new KnnFloatVectorQuery("@"+k, f, n);
     }
-    
+
+    /**
+     * 向量查询
+     * @param k 字段
+     * @param v 取值
+     * @param g 最小
+     * @param l 最大
+     * @return
+     */
+    public Query vtr(String k, Object v, float g, float l) {
+        float[] f = toVector(v);
+        return new FloatVectorSimilarityQuery("@"+k, f, g, l);
+    }
+
     @Override
     public Query wdr(String k, Object v) {
         throw new UnsupportedOperationException("Field "+k+" does not support search");

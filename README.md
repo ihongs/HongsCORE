@@ -1,7 +1,7 @@
 # HongsCORE framework for Java
 
-* 文档版本: 19.01.12
-* 软件版本: 1.0.6-20220326
+* 软件版本: 1.1.0
+* 文档版本: 20250101
 * 设计作者: 黄弘(Hongs)
 * 技术支持: kevin.hongs@gmail.com
 
@@ -205,19 +205,21 @@ action 和 combat 使用 @Action 和 @Combat 注解来设置访问路径, 如果
 
 其中 eq 这样的标识为过滤操作符, 其含义为:
 
-    is  空或非空
     eq  等于
     ne  不等于
-    sp  匹配
-    ns  不匹配
     lt  小于
     le  小于或等于
     gt  大于
     ge  大于或等于
     at  区间
+    is  空或非空
     in  包含
     no  不包含
     on  全包含
+    se  搜索
+    ns  搜索排除
+    co  匹配
+    nc  匹配排除
     up  加权
 
 其中 wd 这样的参数有特定的意义, 列举如下:
@@ -322,7 +324,8 @@ dete2mic 或 date2sec 搭配 all2str 则将转换后的时间戳数字再转为�
     listable    字段可获取(可通过rb参数控制)
     sortable    字段可排序(可通过ob参数控制, 枚举等类型的字段实为分组类聚)
     rschable    字段可搜索(可通过wd参数限制)
-    srchable    字段可搜索(可以模糊匹配)
+    srchable    字段可搜索(可以模糊搜索)
+    combable    字段可匹配(可以用表达式)
     rankable    字段可区间(可以比较大小)
     findable    字段可过滤(可以用于查询, 用过滤标识时, 以层级数据结构给出)
     unstored    完全不保存(纯粹虚拟字段, 例如分隔栏等)

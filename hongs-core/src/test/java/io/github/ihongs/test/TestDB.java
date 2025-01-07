@@ -109,6 +109,22 @@ public class TestDB {
         ));
         assertEquals(ss.toString(), zz.toString());
         //System.out.println(ss);
+
+        // 匹配和搜索
+        fc = new FetchCase(  );
+        ac = new AssocCase(fc);
+        fc.from("a_table", "table1");
+        ac.allow(AssocCase.LISTABLE, "id","name","ctime","mtime","state");
+        ac.allow(AssocCase.COMBABLE, "word");
+        ac.allow(AssocCase.SRCHABLE, "word");
+        ac.parse(Synt.mapOf(
+            "rb", "id,name",
+            "word", Synt.mapOf(
+                "co", ":abc?ef*xy_",
+                "se", "abc def xyz"
+            )
+        ));
+        assertEquals(fc.toString(), "SELECT `table1`.`id` AS `id`, `table1`.`name` AS `name` FROM `a_table` AS `table1` WHERE `table1`.`word` LIKE 'abc_ef%xy/_' ESCAPE '/' AND (`table1`.`word` LIKE '%abc%' ESCAPE '/' AND `table1`.`word` LIKE '%def%' ESCAPE '/' AND `table1`.`word` LIKE '%xyz%' ESCAPE '/')");
     }
 
 }

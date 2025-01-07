@@ -27,9 +27,9 @@ public class JFigure implements IFigure {
     private Set _rb_fns = null;
     private Set _ob_fns = null;
     private Set _wh_fns = null;
-    private Set _sh_fns = null;
-    private Set _sk_fns = null;
-    private Set _rk_fns = null;
+    private Set _at_fns = null;
+    private Set _co_fns = null;
+    private Set _se_fns = null;
 
     /**
      * 设置表单字段
@@ -238,23 +238,23 @@ public class JFigure implements IFigure {
      * @return
      */
     public Set<String> getRankable() {
-        if (null != _rk_fns) {
-            return  _rk_fns;
+        if (null != _at_fns) {
+            return  _at_fns;
         }
-        _rk_fns = getCaseNames("rankable");
-        return _rk_fns;
+        _at_fns = getCaseNames("rankable");
+        return _at_fns;
     }
 
     /**
      * 获取可匹配的字段 (通配符或正则)
      * @return
      */
-    public Set<String> getSeekable() {
-        if (null != _sk_fns) {
-            return  _sk_fns;
+    public Set<String> getCombable() {
+        if (null != _co_fns) {
+            return  _co_fns;
         }
-        _sk_fns = getCaseNames("seekable");
-        return _sk_fns;
+        _co_fns = getCaseNames("combable");
+        return _co_fns;
     }
 
     /**
@@ -262,11 +262,11 @@ public class JFigure implements IFigure {
      * @return
      */
     public Set<String> getSrchable() {
-        if (null != _sh_fns) {
-            return  _sh_fns;
+        if (null != _se_fns) {
+            return  _se_fns;
         }
-        _sh_fns = getCaseNames("srchable");
-        return _sh_fns;
+        _se_fns = getCaseNames("srchable");
+        return _se_fns;
     }
 
     /**

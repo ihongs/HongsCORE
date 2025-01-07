@@ -1,5 +1,7 @@
 # 更新日志
 
+* 2024/12/08 升级 httpclient 到 5
+* 2024/11/09 升级 lucene 到 9.12, 增加向量类型支持
 * 2022/05/15 master dept 更名为 unit, matrix unit 更名为 furl
 * 2022/03/26 cmdlet 更名为 combat
 * 2022/03/25 重构内部资源获取方法

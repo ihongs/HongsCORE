@@ -1347,7 +1347,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
             //** 模糊匹配 **/
 
-            v = vd.get(Cnst.SP_REL);
+            v = vd.get(Cnst.SE_REL);
             if ( v != null && ! "".equals(v) ) {
                 qr.add(qa.wdr(k, v), BooleanClause.Occur.MUST);
                 i ++;

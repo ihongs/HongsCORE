@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletResponse;
  * 版本兼容转换
  *
  * 参数 versions 取值:
- * 0.9.0 将 :xx 操作符换成 xx, ni 换成 no, cq 换成 sp, rg 换成 at
+ * 0.9.0 将 :xx 操作符换成 xx, ni 换成 no, rg 换成 at, cq 和 sp 换成 se
  * 1.0.0 将 enum/menu 换成 enfo, create 增加 info, update 返回 size
  * 1.0.5 在 acount/amount 统计接口默认添加逆序 rb=!
  * 1.0.7 将 amount 转向 acount
@@ -346,7 +346,7 @@ public class VersFilter extends ActionDriver {
                 doChange((Object [ ]) v);
             }
 
-            // 去掉键的冒号前缀, 更换 ni,cq,rg
+            // 去掉键的冒号前缀, 更换 ni,rg,cq,sp
             if (k instanceof String) {
                 String  n = (String) k;
                 if (n.length() == 3
@@ -360,13 +360,14 @@ public class VersFilter extends ActionDriver {
                     rp.put(n,v);
                     it.remove();
                 } else
-                if ("cq".equals(n)) {
-                    n = Cnst.SP_REL;
+                if ("rg".equals(n)) {
+                    n = Cnst.AT_REL;
                     rp.put(n,v);
                     it.remove();
                 } else
-                if ("rg".equals(n)) {
-                    n = Cnst.AT_REL;
+                if ("cq".equals(n)
+                ||  "sp".equals(n)) {
+                    n = Cnst.SE_REL;
                     rp.put(n,v);
                     it.remove();
                 }

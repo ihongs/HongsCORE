@@ -4,6 +4,7 @@ import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLocale;
 import io.github.ihongs.CruxException;
+import io.github.ihongs.db.util.AssocCase;
 import io.github.ihongs.db.util.FetchCase;
 import io.github.ihongs.db.util.AssocMore;
 import io.github.ihongs.util.Synt;
@@ -179,6 +180,16 @@ public class Table
           .use(db).from(tableName, name);
     AssocMore.checkCase(fc, getParams());
     return     fc ;
+  }
+
+  /**
+   * 构建关联用例(会根据配置设置许可)
+   * @param caze
+   * @return 用例对象
+   */
+  public AssocCase assocCase(FetchCase caze)
+  {
+    return new AssocCase(caze).allow(this);
   }
 
   /**

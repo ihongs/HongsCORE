@@ -182,7 +182,7 @@
                                 <a href="javascript:;" data-name="<%=name%>.<%=Cnst.EQ_REL%>" data-placeholder="精确查找">精确查找</a>
                             </li>
                             <li>
-                                <a href="javascript:;" data-name="<%=name%>.<%=Cnst.SP_REL%>" data-placeholder="模糊匹配">模糊匹配</a>
+                                <a href="javascript:;" data-name="<%=name%>.<%=Cnst.SE_REL%>" data-placeholder="模糊匹配">模糊匹配</a>
                             </li>
                         </ul>
                     </div>
@@ -192,7 +192,7 @@
                 <%}%>
             <%} else if ("search".equals(type) || "textarea".equals(type) || "textview".equals(type)) {%>
                 <%if (_sd.contains(name)) {%>
-                <input class="form-control" type="text" name="<%=name%>.<%=Cnst.SP_REL%>" placeholder="模糊匹配" />
+                <input class="form-control" type="text" name="<%=name%>.<%=Cnst.SE_REL%>" placeholder="模糊匹配" />
                 <%} else {%>
                 <input class="form-control" type="text" name="<%=name%>.<%=Cnst.EQ_REL%>" placeholder="精确查找" />
                 <%}%>

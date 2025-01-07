@@ -62,7 +62,7 @@ public class AssocCase {
     /**
      * 可匹配字段, 用于 FetchCase 的 Option
      */
-    public  static final String  SEEKABLE = "SEEKABLE";
+    public  static final String  COMBABLE = "COMBABLE";
     /**
      * 可搜索字段, 用于 FetchCase 的 Option
      */
@@ -249,7 +249,7 @@ public class AssocCase {
      * @return
      */
     public AssocCase allow(Map fc) {
-        String[] ks = new String[] {LISTABLE, FINDABLE, SORTABLE, SEEKABLE, SRCHABLE, RSCHABLE, RANKABLE};
+        String[] ks = new String[] {LISTABLE, FINDABLE, SORTABLE, COMBABLE, SRCHABLE, RSCHABLE, RANKABLE};
         for(String k : ks) {
             k = k.toLowerCase( );
             Object s = fc.get(k);
@@ -264,7 +264,7 @@ public class AssocCase {
         allow(LISTABLE, fc.getListable());
         allow(FINDABLE, fc.getFindable());
         allow(SORTABLE, fc.getSortable());
-        allow(SEEKABLE, fc.getSeekable());
+        allow(COMBABLE, fc.getCombable());
         allow(SRCHABLE, fc.getSrchable());
         allow(RSCHABLE, fc.getRschable());
         allow(RANKABLE, fc.getRankable());
@@ -331,7 +331,7 @@ public class AssocCase {
 
     //** 内部工具方法 **/
 
-    private void parse(FetchCase caze, Map rd) {
+    protected void parse(FetchCase caze, Map rd) {
         if (rd == null || rd.isEmpty()) return;
 
         if (! caze.hasField()) {
@@ -341,12 +341,12 @@ public class AssocCase {
             order(caze, Synt.toTerms(rd.remove(Cnst.OB_KEY)));
         }
 
-        query(caze, Synt.toWords(rd.remove(Cnst.WD_KEY)));
+        whose(caze, Synt.toWords(rd.remove(Cnst.WD_KEY)));
 
         where(caze, rd);
     }
 
-    private void field(FetchCase caze, Set<String> rb) {
+    protected void field(FetchCase caze, Set<String> rb) {
         if (rb == null || rb.isEmpty()) return;
         Map<String, String > af = allow(LISTABLE);
         if (af == null || af.isEmpty()) return;
@@ -422,7 +422,7 @@ public class AssocCase {
         }
     }
 
-    private void order(FetchCase caze, Set<String> ob) {
+    protected void order(FetchCase caze, Set<String> ob) {
         if (ob == null || ob.isEmpty()) return;
         Map<String, String> af = allow(SORTABLE);
         if (af == null || af.isEmpty()) return;
@@ -452,7 +452,7 @@ public class AssocCase {
         }
     }
 
-    private void query(FetchCase caze, Set<String> wd) {
+    protected void whose(FetchCase caze, Set<String> wd) {
         if (wd == null || wd.isEmpty()) return;
         Map<String, String> af = allow(RSCHABLE);
         if (af == null || af.isEmpty()) return;
@@ -485,12 +485,12 @@ public class AssocCase {
         }
     }
 
-    private void where(FetchCase caze, Map rd) {
+    protected void where(FetchCase caze, Map rd) {
         if (rd == null || rd.isEmpty()) return;
 
         Map<String, String> af = allow(FINDABLE);
         Map<String, String> rf = allow(RANKABLE);
-        Map<String, String> ef = allow(SEEKABLE);
+        Map<String, String> ef = allow(COMBABLE);
         Map<String, String> sf = allow(SRCHABLE);
 
         Set<String>  ks  =  new  LinkedHashSet();
@@ -641,35 +641,35 @@ public class AssocCase {
 
             } // End rf
 
-            // 模糊查询
-            fn = sf.get( kn );
-            if ( fn != null ) {
-
-            vo = vm.get(Cnst.SP_REL);
-            if ( vo != null && !"".equals(vo) ) {
-                words(caze, vo , fn , "LIKE");
-            }
-            vo = vm.get(Cnst.NS_REL);
-            if ( vo != null && !"".equals(vo) ) {
-                words(caze, vo , fn , "NOT LIKE");
-            }
-
-            } // End sf
-
             // 通配查询
             fn = ef.get( kn );
             if ( fn != null ) {
 
-            vo = vm.get(Cnst.CP_REL);
+            vo = vm.get(Cnst.CO_REL);
             if ( vo != null && !"".equals(vo) ) {
-                wilds(caze, vo , fn , "LIKE");
+                combs(caze, vo , fn , "LIKE");
             }
             vo = vm.get(Cnst.NC_REL);
             if ( vo != null && !"".equals(vo) ) {
-                wilds(caze, vo , fn , "NOT LIKE");
+                combs(caze, vo , fn , "NOT LIKE");
             }
 
             } // End ef
+
+            // 模糊查询
+            fn = sf.get( kn );
+            if ( fn != null ) {
+
+            vo = vm.get(Cnst.SE_REL);
+            if ( vo != null && !"".equals(vo) ) {
+                srchs(caze, vo , fn , "LIKE");
+            }
+            vo = vm.get(Cnst.NS_REL);
+            if ( vo != null && !"".equals(vo) ) {
+                srchs(caze, vo , fn , "NOT LIKE");
+            }
+
+            } // End sf
 
             // 2019/07/27 为避免歧义, 剩余值不再 IN
         }
@@ -683,7 +683,7 @@ public class AssocCase {
         where(caze, Synt.asSet(rd.get(Cnst.NR_KEY)), "NOT");
     }
 
-    private void where(FetchCase caze, Set ar, String rn) {
+    protected void where(FetchCase caze, Set ar, String rn) {
         if (ar == null || ar.isEmpty()) return;
 
         String nr;
@@ -719,7 +719,7 @@ public class AssocCase {
         }
     }
 
-    private void range(FetchCase caze, Set ir, String fn) {
+    protected void range(FetchCase caze, Set ir, String fn) {
         StringBuilder sb = new StringBuilder( );
         List sp = new ArrayList();
         int i = 0;
@@ -767,19 +767,42 @@ public class AssocCase {
         }
     }
 
-    private void words(FetchCase caze, Object fv, String fn, String rn) {
+    protected void combs(FetchCase caze, Object fv, String fn, String rn) {
+        String  fw = fv.toString();
+        if (fw.length() <= 1) {
+            return;
+        }
+        char fc = fw.charAt(0);
+        fw = fw.substring( 1 );
+        switch (fc) {
+            case '^':
+                fw = words(fw);
+                fw = fw + "%" ;
+                caze.filter(fn+" "+rn+" ? ESCAPE '/'", fw);
+                break;
+            case ':':
+                fw = words(fw);
+                fw = wilds(fw);
+                caze.filter(fn+" "+rn+" ? ESCAPE '/'", fw);
+                break;
+            default:
+                throw new CruxExemption(1050, "Wrong comb type for "+fn+" "+rn);
+        }
+    }
+
+    protected void srchs(FetchCase caze, Object fv, String fn, String rn) {
         Set wd = Synt.toWords(fv);
         int  l = wd.size();
         int  i = 0 ;
 
         Object[]      ab = new Object[l];
-        Set<String>   xd = new HashSet();
+        Set<String>   xd = new LinkedHashSet();
         StringBuilder sb = new StringBuilder();
 
         // 转义待查词, 避开通配符, 以防止歧义
         for(Object fo : wd) {
-            String fw = words(fo);
-            xd.add("%"+ fw + "%");
+            String fw = fo.toString();
+            xd.add("%"+words(fw)+"%");
         }
 
         sb.append("(");
@@ -794,46 +817,36 @@ public class AssocCase {
         caze.filter (sb.toString(), ab);
     }
 
-    private void wilds(FetchCase caze, Object fv, String fn, String rn) {
-        String fw;
-        fw  = words (fv);
-        fw  = wilds (fw);
-        caze.filter (fn+" "+rn+" ? ESCAPE '/'", fw);
-    }
-
-    private String words(Object fv) {
-        String  fw = fv.toString (  );
+    protected String words(String fw) {
         Matcher ma = WORD.matcher(fw);
         return  ma.replaceAll ("/$0");
     }
 
-    private String wilds(Object fv) {
-        String  fw = fv.toString (  );
+    protected String wilds(String fw) {
         Matcher ma = WILD.matcher(fw);
         StringBuffer sb = new StringBuffer();
         while (ma.find()) {
             String st = ma.group(0);
-            switch (st) {
+            switch ( st ) {
                 case "\\": st = "/"; break;
                 case "?" : st = "_"; break;
                 case "*" : st = "%"; break;
             }
-            sb.append(st);
-        }
-        ma.appendTail(sb);
-        return sb.toString();
+            ma.appendReplacement(sb, st);
+        }   ma.appendTail (sb);
+        return sb.toString(  );
     }
 
-    private Object alone(Object fv, String fn, String rn) {
+    protected Object alone(Object fv, String fn, String rn) {
         if (fv instanceof Map
         ||  fv instanceof Collection
         ||  fv instanceof Object [] ) {
-            throw new CruxExemption(1050, "Wrong value type for "+fn+rn);
+            throw new CruxExemption(1050, "Wrong value type for "+fn+" "+rn);
         }
         return fv;
     }
 
-    private Map allow(String on) {
+    protected Map allow(String on) {
         Map af  = bufs.get ( on );
         if (af != null ) {
             return af;
@@ -844,7 +857,7 @@ public class AssocCase {
         return af;
     }
 
-    private Map allowCheck(String on) {
+    protected Map allowCheck(String on) {
         Map af  = opts.get(on);
 
         // 相对查询字段增加, 删减
@@ -903,7 +916,7 @@ public class AssocCase {
         }
     }
 
-    private Map allowDiffs(Map af) {
+    protected Map allowDiffs(Map af) {
         Map ic = new LinkedHashMap();
         Set ec = new HashSet();
 
@@ -938,7 +951,7 @@ public class AssocCase {
         return xf;
     }
 
-    private Map allowTrans(Map af) {
+    protected Map allowTrans(Map af) {
         String n = that.getName( );
         Map al = new LinkedHashMap();
 
@@ -955,7 +968,7 @@ public class AssocCase {
         return  al;
     }
 
-    private Map allowSaves(Map af) {
+    protected Map allowSaves(Map af) {
         Map al = new LinkedHashMap();
 
         for(Object ot : af.entrySet()) {
@@ -1007,13 +1020,18 @@ public class AssocCase {
             allow(table, table, table.getAssocs(), name, null, af);
             bufs.put(LISTABLE, af);
         }
-        cs = (String) ps.get("findable");
-        if (cs != null) allow(FINDABLE, SEPA.split(cs.trim()));
 
         cs = (String) ps.get("sortable");
         if (cs != null) allow(SORTABLE, SEPA.split(cs.trim()));
+
+        cs = (String) ps.get("findable");
+        if (cs != null) allow(FINDABLE, SEPA.split(cs.trim()));
+
         cs = (String) ps.get("rankable");
         if (cs != null) allow(RANKABLE, SEPA.split(cs.trim()));
+
+        cs = (String) ps.get("combable");
+        if (cs != null) allow(COMBABLE, SEPA.split(cs.trim()));
 
         cs = (String) ps.get("srchable");
         if (cs != null) allow(SRCHABLE, SEPA.split(cs.trim()));

@@ -830,6 +830,17 @@ implements IEntity
       return table.fetchCase().setOption("CLEVER_MODE", false);
   }
 
+  /**
+   * 内建 AssocCase
+   * 默认直接调用 table 的 assocCase
+   * @param caze
+   * @return
+   */
+  public AssocCase assocCase(FetchCase caze)
+  {
+      return table.assocCase(caze);
+  }
+
   //** 辅助过滤方法 **/
 
   /**
@@ -1001,7 +1012,7 @@ implements IEntity
     // 以此绕开 AssocCase
     // 后续调试可正常观察
     try {
-      AssocCase uc = new AssocCase(caze);
+      AssocCase uc = assocCase(caze);
       uc.allow(this);
       uc.parse( rd );
     } finally {

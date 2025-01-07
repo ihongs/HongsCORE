@@ -161,7 +161,7 @@
 <b>.<%=Cnst.IS_REL%></b>  空或非空
 <b>.<%=Cnst.EQ_REL%></b>  等于
 <b>.<%=Cnst.NE_REL%></b>  不等于
-<b>.<%=Cnst.SP_REL%></b>  匹配
+<b>.<%=Cnst.SE_REL%></b>  匹配
 <b>.<%=Cnst.NS_REL%></b>  不匹配
 <b>.<%=Cnst.LT_REL%></b>  小于
 <b>.<%=Cnst.LE_REL%></b>  小于或等于
@@ -172,7 +172,7 @@
 <b>.<%=Cnst.NO_REL%></b>  不包含
 <b>.<%=Cnst.ON_REL%></b>  全包含
                 </pre>
-                <p><code>.<%=Cnst.SP_REL%>/.<%=Cnst.NS_REL%></code> 需要字段支持模糊查询,</p>
+                <p><code>.<%=Cnst.SE_REL%>/.<%=Cnst.NS_REL%></code> 需要字段支持模糊查询,</p>
                 <p><code>.<%=Cnst.LT_REL%>/.<%=Cnst.LE_REL%></code> 等需字段为数字或时间,</p>
                 <p><code>.<%=Cnst.AT_REL%></code> 为数学区间表达式: <code>[0,9]</code> 开区间, <code>(0,9)</code> 闭区间, 无括号默认开区间.</p>
                 <p><code>.<%=Cnst.IN_REL%>/.<%=Cnst.NO_REL%>/.<%=Cnst.ON_REL%></code> 可用半角逗号(,)分隔多个取值, 或用 <code>fn.in.=1&fn.in.=2</code> 给出多个取值.</p>

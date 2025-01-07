@@ -50,19 +50,9 @@ public final class Cnst {
 
     //** 关系符号 **/
 
-    public static final String IS_REL = "is"; // 是否为空  (取值: null, not-null, none, not-none, empty, not-empty)
-
     public static final String EQ_REL = "eq"; // 等于
 
     public static final String NE_REL = "ne"; // 不等于
-
-    public static final String CP_REL = "cp"; // 通配
-
-    public static final String NC_REL = "nc"; // 通配排除
-
-    public static final String SP_REL = "sp"; // 搜索
-
-    public static final String NS_REL = "ns"; // 搜索排除
 
     public static final String LT_REL = "lt"; // 小于
 
@@ -74,11 +64,21 @@ public final class Cnst {
 
     public static final String AT_REL = "at"; // 区间
 
+    public static final String IS_REL = "is"; // 是否为空  (取值: null, not-null, none, not-none, empty, not-empty)
+
     public static final String IN_REL = "in"; // 包含
 
     public static final String NO_REL = "no"; // 不包含
 
     public static final String ON_REL = "on"; // 全包含
+
+    public static final String SE_REL = "se"; // 搜索
+
+    public static final String NS_REL = "ns"; // 搜索排除
+
+    public static final String CO_REL = "co"; // 匹配
+
+    public static final String NC_REL = "nc"; // 匹配排除
 
     public static final String UP_REL = "up"; // 加权
 

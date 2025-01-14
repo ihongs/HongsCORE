@@ -369,6 +369,7 @@ HsList.prototype = {
             that._keep_list = true ;
             back.apply(that, arguments);
             that._keep_list = false;
+            that.loadBack = back;
         };
         this.loadPage (parseInt(p) + 1);
     },

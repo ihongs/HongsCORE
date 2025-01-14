@@ -42,9 +42,10 @@ function HsList(context, opts) {
         loadUrl = hsFixPms(loadUrl, loadBox);
         this._url  = loadUrl;
     }
-    if (loadDat) {
-        loadDat = hsSerialObj(loadDat);
-        this._data = loadDat;
+
+    // 每页条数
+    if (this._url && hsGetParam(this._url, this.rowsKey) == undefined) {
+        this._url  = hsSetParam(this._url, this.rowsKey, this.rowsNum);
     }
 
     // 搜索事件
@@ -66,9 +67,6 @@ HsList.prototype = {
         data =  hsSerialObj (data) ;
         if (url ) this._url  = url ;
         if (data) this._data = data;
-        if (undefined === hsGetParam(this._url, this.rowsKey)) { // 每页条数
-            this._url  =  hsSetParam(this._url, this.rowsKey, this.rowsNum);
-        }
         this.ajax({
             "url"      : this._url ,
             "data"     : this._data,
@@ -290,8 +288,7 @@ HsList.prototype = {
         var tm = null;
         var go = function(p) {
             if ( tm ) clearTimeout(tm);
-            hsSetSeria(that._data, that.pageKey, p);
-            that.load ( );
+            that.loadPage(p);
         };
         var to = function(p) {
             if ( tm ) clearTimeout(tm);
@@ -354,13 +351,26 @@ HsList.prototype = {
             evt.preventDefault( );
             evt.stopPropagation();
             jQuery(this).closest(".modal").modal("hide");
-            var rn = $(this).find( "[name=rn]" ).val(  );
             var pn = $(this).find( "[name=pn]" ).val(  );
-            that._data = hsSerialArr(that._data);
-            hsSetSeria(that._data, that.rowsKey, rn);
-            hsSetSeria(that._data, that.pageKey, pn);
-            that.load();
+            var rn = $(this).find( "[name=rn]" ).val(  );
+            that.loadPage(pn, rn);
         });
+    },
+    loadPage : function(pn, rn) {
+        if (pn) hsSetSeria(this._data, this.rowsKey, rn);
+        if (rn) hsSetSeria(this._data, this.pageKey, pn);
+        this.load(false);
+    },
+    loadMore : function() {
+        var p = hsGetSeria(this._data, this.pageKey, 1 );
+        var that = this;
+        var back = this.loadBack;
+        this.loadBack = function() {
+            that._keep_list = true ;
+            back.apply(that, arguments);
+            that._keep_list = false;
+        };
+        this.loadPage (parseInt(p) + 1);
     },
     _ps_key  : "state" ,
     _pc_key  : "total" ,

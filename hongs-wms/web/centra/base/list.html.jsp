@@ -168,7 +168,7 @@
                                         <a href="javascript:;" data-name="<%=name%>.<%=Cnst.EQ_REL%>" data-placeholder="精确查找">精确查找</a>
                                     </li>
                                     <li>
-                                        <a href="javascript:;" data-name="<%=name%>.<%=Cnst.SE_REL%>" data-placeholder="模糊匹配">模糊匹配</a>
+                                        <a href="javascript:;" data-name="<%=name%>.<%=Cnst.SE_REL%>" data-placeholder="模糊搜索">模糊搜索</a>
                                     </li>
                                 </ul>
                             </div>
@@ -178,7 +178,7 @@
                         <%}%>
                     <%} else if ("search".equals(type) || "textarea".equals(type) || "textview".equals(type)) {%>
                         <%if (_sd.contains(name)) {%>
-                        <input class="form-control" type="text" name="<%=name%>.<%=Cnst.SE_REL%>" placeholder="模糊匹配" />
+                        <input class="form-control" type="text" name="<%=name%>.<%=Cnst.SE_REL%>" placeholder="模糊搜索" />
                         <%} else {%>
                         <input class="form-control" type="text" name="<%=name%>.<%=Cnst.EQ_REL%>" placeholder="精确查找" />
                         <%}%>
@@ -326,7 +326,7 @@
                                 String ln = info.containsKey("data-ln") ? (String) info.get("data-ln") : name;
                                 extr = " data-ln=\""+ln+"\"";
                                 if (_sd.contains(name)) {
-                                    rels =  "is,eq,ne,sp,ns";
+                                    rels =  "is,eq,ne,se,ns";
                                 } else {
                                     rels =  "is,eq,ne";
                                 }
@@ -336,7 +336,7 @@
                                 String ln = info.containsKey("data-ln") ? (String) info.get("data-ln") : name;
                                 extr = " data-ln=\""+ln+"\"";
                                 if (_sd.contains(name)) {
-                                    rels =  "is,sp,ns";
+                                    rels =  "is,se,ns";
                                 } else {
                                     rels =  "is,eq,ne";
                                 }
@@ -357,8 +357,8 @@
                         <option value="is">为</option>
                         <option value="eq">等于</option>
                         <option value="ne">不等于</option>
-                        <option value="sp">匹配</option>
-                        <option value="ns">不匹配</option>
+                        <option value="se">搜索</option>
+                        <option value="ns">搜索排除</option>
                         <option value="gt">大于</option>
                         <option value="ge">大于或等于</option>
                         <option value="lt">小于</option>

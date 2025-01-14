@@ -104,7 +104,15 @@ HsList.prototype = {
     fillList : function(list) {
         var ths, th, tb, tr, td, i, j, n, t, v, f;
         ths = this.listBox.find("thead th,thead td" );
-        tb  = this.listBox.find("tbody"); tb.empty( );
+        tb  = this.listBox.find("tbody");
+
+        // _keep_list 无论何种情况都不清空之前的列表
+        // _keep_last 加载不到数据时不清空之前的列表
+        if (! this._keep_list
+        && (! this._keep_last
+        ||  0 < list.length)) {
+            tb.empty();
+        }
 
         // 排序
         var sn = hsGetSeria (this._data,this.sortKey);
@@ -917,9 +925,9 @@ function hsListFillItem(list) {
     }
     tt  = this.itemBox;
 
-    // _keep_prev 无论何种情况都不清空之前的列表
+    // _keep_list 无论何种情况都不清空之前的列表
     // _keep_last 加载不到数据时不清空之前的列表
-    if (! this._keep_prev
+    if (! this._keep_list
     && (! this._keep_last
     ||  0 <  list.length  )) {
         this.listBox.empty();

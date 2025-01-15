@@ -357,8 +357,8 @@ HsList.prototype = {
         });
     },
     loadPage : function(pn, rn) {
-        if (pn) hsSetSeria(this._data, this.rowsKey, rn);
-        if (rn) hsSetSeria(this._data, this.pageKey, pn);
+        if (rn) hsSetSeria(this._data, this.rowsKey, rn);
+        if (pn) hsSetSeria(this._data, this.pageKey, pn);
         this.load(false);
     },
     loadMore : function() {

@@ -1210,13 +1210,13 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
             if (qa instanceof VectorQuest) {
                 VectorQuest qv = (VectorQuest) qa;
-                float[] w;
+                float [ ] w;
                 float g = 0;
                 float l = 0;
                 int   n = 0;
                 if (v instanceof Map) {
                     Map vd = (Map) v;
-                    w = VectorQuest.toVector(vd.get(Cnst.ON_REL));
+                    w = VectorQuest.toVector(vd.get(Cnst.AT_REL));
                     n = Synt.declare( vd.get(Cnst.RN_KEY) , 0   );
                 if (n == 0) {
                     g = Synt.declare( vd.get(Cnst.GE_REL) , 0.1f);

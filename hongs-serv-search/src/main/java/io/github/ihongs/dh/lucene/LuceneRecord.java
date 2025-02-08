@@ -1210,29 +1210,26 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
             if (qa instanceof VectorQuest) {
                 VectorQuest qv = (VectorQuest) qa;
+                int   n = 0x0 ;
+                float u = 0.1f;
                 float [ ] w;
-                float g = 0;
-                float l = 0;
-                int   n = 0;
                 if (v instanceof Map) {
                     Map vd = (Map) v;
+                    n = Synt.declare( vd.get( Cnst.RN_KEY ) , n );
+                    u = Synt.declare( vd.get( Cnst.UP_REL ) , u );
                     w = VectorQuest.toVector(vd.get(Cnst.AT_REL));
-                    n = Synt.declare( vd.get(Cnst.RN_KEY) , 0   );
-                if (n == 0) {
-                    g = Synt.declare( vd.get(Cnst.GE_REL) , 0.1f);
-                    l = Synt.declare( vd.get(Cnst.LE_REL) , 1.0f);
-                }} else {
+                } else {
                     w = VectorQuest.toVector(v);
                 }
                 if (0 < w.length ) {
                     try {
-                        if (n != 0) {
-                            qr.add(qv.vtr(k, w, n   ), BooleanClause.Occur.MUST);
+                        if (n > 0) {
+                            qr.add(qv.vtr(k, w, n), BooleanClause.Occur.MUST);
                         } else {
-                            qr.add(qv.vtr(k, w, g, l), BooleanClause.Occur.MUST);
+                            qr.add(qv.vtr(k, w, u), BooleanClause.Occur.MUST);
                         }
-                    } catch (IllegalArgumentException ex) { // 维数不符合
-                        throw new CruxException(ex , 400);
+                    } catch (IllegalArgumentException e) { // 维数不符
+                        throw new CruxException(e , 400);
                     }
                     i ++;
                 }

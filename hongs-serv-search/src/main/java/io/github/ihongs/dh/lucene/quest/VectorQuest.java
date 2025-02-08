@@ -40,7 +40,7 @@ public class VectorQuest implements IQuest {
      * 向量查询
      * @param k 字段
      * @param v 取值
-     * @param n 数量
+     * @param n 最多数量
      * @return
      */
     public Query vtr(String k, Object v, int n) {
@@ -52,13 +52,12 @@ public class VectorQuest implements IQuest {
      * 向量查询
      * @param k 字段
      * @param v 取值
-     * @param g 最小
-     * @param l 最大
+     * @param u 最小相似
      * @return
      */
-    public Query vtr(String k, Object v, float g, float l) {
+    public Query vtr(String k, Object v, float u) {
         float[] f = toVector(v);
-        return new FloatVectorSimilarityQuery("@"+k, f, g, l);
+        return new FloatVectorSimilarityQuery("@"+k, f, u);
     }
 
     @Override

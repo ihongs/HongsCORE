@@ -94,7 +94,7 @@ if __name__ == '__main__':
     fns = []
     lns = []
 
-    opts, args = getopt(sys.argv[1:], "s:c:f:l:h", ["search=", "cookie=", "fields=", "labels=", "help"])
+    opts, args = getopt(sys.argv[1:], "o:s:c:f:l:h", ["output=", "search=", "cookie=", "fields=", "labels=", "help"])
     for n,v in opts:
         if  n in ("-o", "--output"):
             xls = v

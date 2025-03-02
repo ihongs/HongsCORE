@@ -110,55 +110,54 @@ public class Data extends SearchEntity {
      * @throws CruxExemption 实例构建失败
      * @throws ClassCastException 不是 Data 的子类
      */
-    public static Data getInstance(String conf , String form) throws CruxException {
-        // 外部指定
-        Map    dict = FormSet.getInstance(conf).getForm(form);
-        String name = ( String ) Dict.get(dict, null, "@", "db-class");
-        if (name != null && !name.isEmpty() && !name.equals(Data.class.getName())) {
-            Class type ;
-            try {
-                  type = Class.forName (name);
-            } catch (ClassNotFoundException e) {
-                throw new CruxExemption(821, "Can not find class by name '"+name+"'." );
-            }
-
-            try {
-                Method func = type.getMethod("getInstance", new Class [] {String.class, String.class});
-                int    modi = func.getModifiers();
-                if (! Modifier.isPublic(modi)
-                ||  ! Modifier.isStatic(modi)
-                ||  type != func.getDeclaringClass ()
-                ||  func.isAnnotationPresent(Deprecated.class)) {
-                    throw new NoSuchMethodException();
-                }
-                return (Data) func.invoke(null, new Object[] {conf, form});
-            } catch (NoSuchMethodException ex) {
-                return (Data) Core.getInstance (type);
-            } catch (InvocationTargetException ex) {
-                Throwable ta = ex.getCause(  );
-                // 调用层级过多, 最好直接抛出
-                if (ta instanceof StackOverflowError) {
-                    throw (StackOverflowError) ta;
-                }
-                throw new CruxExemption(ta, 823, "Can not call '"+name+".getInstance'");
-            } catch ( IllegalArgumentException ex) {
-                throw new CruxExemption(ex, 823, "Can not call '"+name+".getInstance'");
-            } catch (   IllegalAccessException ex) {
-                throw new CruxExemption(ex, 823, "Can not call '"+name+".getInstance'");
-            } catch (        SecurityException se) {
-                throw new CruxExemption(se, 823, "Can not call '"+name+".getInstance'");
-            }
+    public static Data getInstance(String conf, String form) throws CruxException {
+        String name = Data.class.getName()+":"+ conf +":"+ form;
+        Core   core = Core. getInstance ();
+        Data   inst =(Data) core.get(name);
+        if (null != inst) {
+            return  inst;
         }
 
-        // 默认构造
-        name = Data.class.getName() +":"+ conf +":"+ form;
-        Core core =  Core.getInstance(  );
-        Data inst = (Data) core.get(name);
-        if (inst == null) {
-            inst = new Data (conf , form);
-            core.set ( name, inst );
+        Map    dict = FormSet.getInstance(conf).getForm( form );
+        String clsn = Dict.getValue(dict , "", "@", "db-class");
+        if (clsn.isEmpty() || clsn.equals(Data.class.getName())) {
+            inst  = new Data( conf, form );
+                    core.set( name, inst );
+            return  inst;
         }
-        return inst;
+
+        Class type ;
+        try {
+              type = Class.forName (clsn);
+        } catch (ClassNotFoundException e) {
+            throw new CruxExemption(821, "Can not find class by name '"+clsn+"'." );
+        }
+        try {
+            Method func = type.getMethod("getInstance", new Class [] {String.class, String.class});
+            int    modi = func.getModifiers();
+            if (! Modifier.isPublic(modi)
+            ||  ! Modifier.isStatic(modi)
+            ||  type != func.getDeclaringClass ()
+            ||  func.isAnnotationPresent(Deprecated.class)) {
+                throw new NoSuchMethodException();
+            }
+            return (Data) func.invoke(null, new Object[] {conf, form});
+        } catch (NoSuchMethodException ex) {
+            return (Data) Core.getInstance (type);
+        } catch (InvocationTargetException ex) {
+            Throwable ta = ex.getCause(  );
+            // 调用层级过多, 最好直接抛出
+            if (ta instanceof StackOverflowError) {
+                throw (StackOverflowError) ta;
+            }
+            throw new CruxExemption(ta, 823, "Can not call '"+clsn+".getInstance'");
+        } catch ( IllegalArgumentException ex) {
+            throw new CruxExemption(ex, 823, "Can not call '"+clsn+".getInstance'");
+        } catch (   IllegalAccessException ex) {
+            throw new CruxExemption(ex, 823, "Can not call '"+clsn+".getInstance'");
+        } catch (        SecurityException se) {
+            throw new CruxExemption(se, 823, "Can not call '"+clsn+".getInstance'");
+        }
     }
 
     public Table getTable() throws CruxException {

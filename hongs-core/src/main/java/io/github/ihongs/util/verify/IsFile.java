@@ -23,7 +23,7 @@ import javax.servlet.http.Part;
  * 文件校验
  * <pre>
  * 规则参数:
- *  pass-locals yes|no 是否跳过本地路径(本地网络存在的)
+ *  pass-exists yes|no 是否跳过本地路径(本地网络存在的)
  *  pass-remote yes|no 是否跳过远程链接(开头为 http://)
  *  down-remote yes|no 是否下载远程文件
  *  drop-origin yes|no 抛弃原始文件, 仅使用 checks 中新创建的
@@ -35,7 +35,8 @@ import javax.servlet.http.Part;
  *  href 上传文件链接, 可用变量 ${SERV_PATH}, ${SERV_HREF} 或 ${字段名} ${字段名:split} 等, :split 的将拆分路径
  *  size 文件大小限制, 字节单位
  *  accept 类型许可表, 逗号分隔, Mime-Type 或 .extension
- *  digest 文件名算法, 摘要算法, 如: MD5, SHA-1, SHA-256
+ *  reject 类型禁止表, 逗号分隔, Mime-Type 或 .extension
+ *  naming 文件名算法, 摘要算法, 如: MD5, SHA-1, SHA-256; 或者保留名称 keep; 也可指定名称 keep:xxx.xxx
  * </pre>
  * @author Hongs
  */
@@ -54,8 +55,9 @@ public class IsFile extends Rule {
 
         if (value instanceof String) {
 
-        // 跳过资源路径
-        if (Synt.declare(getParam("pass-locals"), false)) {
+        // 跳过资源路径, 兼容旧的 "pass-locals"
+        if (Synt.declare(getParam("pass-exists"), false)
+        ||  Synt.declare(getParam("pass-locals"), false)) {
             String u = value.toString( );
             if (new File(Core.BASE_PATH +"/"+u).isFile()) {
                 return u;
@@ -115,32 +117,66 @@ public class IsFile extends Rule {
         Object para;
         String path;
         String href;
+        String lead;
         String name;
         long   size;
 
-        para = getParam("accept");
-        if (para != null && !"".equals(para)) hlpr.setAccept(Synt.toSet(para));
-        para = getParam("digest");
-        if (para != null && !"".equals(para)) hlpr.setDigestType(Synt.asString(para));
         para = getParam("temp");
         if (para != null && !"".equals(para)) hlpr.setUploadTemp(getDir(Synt.asString(para), cleans));
         para = getParam("path");
         if (para != null && !"".equals(para)) hlpr.setUploadPath(getDir(Synt.asString(para), cleans));
         para = getParam("href");
         if (para != null && !"".equals(para)) hlpr.setUploadHref(getUrl(Synt.asString(para), cleans));
+        para = getParam("accept");
+        if (para != null && !"".equals(para)) hlpr.setAccept(Synt.toSet(para));
+        para = getParam("reject");
+        if (para != null && !"".equals(para)) hlpr.setReject(Synt.toSet(para));
+
+        // 命名方式, 兼容旧版
+        para = Synt.defoult(getParam("naming"), getParam("digest"));
+        if (para != null && !"".equals(para)) {
+            lead  = Synt.asString (para);
+            if (lead.startsWith("keep:")) {
+                lead = lead.substring(5);
+            } else
+            if (lead.equals    ("keep" )) {
+                lead =  "" ;
+            } else {
+                hlpr.setDigestType(lead);
+                lead = null;
+            }
+        } else {
+            lead  = null;
+        }
 
         String hash = "";
         if (value instanceof Part ) {
             Part part =(Part) value;
             name = part.getSubmittedFileName();
             size = part.getSize ( );
-            hlpr.upload(part);
+            if (lead == null) {
+                hlpr.upload( part );
+            } else
+            if (lead.isEmpty()) {
+                hlpr.upload( part, name );
+            } else
+            {
+                hlpr.upload( part, lead );
+            }
         } else
         if (value instanceof File ) {
             File file =(File) value;
             name = file.getName ( );
             size = file.length  ( );
-            hlpr.upload(file);
+            if (lead == null) {
+                hlpr.upload( file );
+            } else
+            if (lead.isEmpty()) {
+                hlpr.upload( file, name );
+            } else
+            {
+                hlpr.upload( file, lead );
+            }
         } else
         {
             href = value.toString();
@@ -379,6 +415,7 @@ public class IsFile extends Rule {
         Map vars = new HashMap(4);
         String CURR_SERV_HREF = Core.SERVER_HREF.get();
         String CORE_SERV_PATH = Core.SERVER_PATH.get();
+        vars.put("SERVER_ID", Core.SERVER_ID);
         vars.put("SERV_HREF", CURR_SERV_HREF);
         vars.put("SERV_PATH", CORE_SERV_PATH);
         vars.put("BASE_HREF", CURR_SERV_HREF
@@ -391,6 +428,7 @@ public class IsFile extends Rule {
 
     private String getDir(String path, Map vals) throws Wrong {
         Map vars = new HashMap(4);
+        vars.put("SERVER_ID", Core.SERVER_ID);
         vars.put("BASE_PATH", Core.BASE_PATH);
         vars.put("CORE_PATH", Core.CORE_PATH);
         vars.put("CONF_PATH", Core.CONF_PATH);

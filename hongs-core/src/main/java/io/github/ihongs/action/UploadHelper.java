@@ -280,7 +280,17 @@ public class UploadHelper {
 
     private String getDigestName(File file) {
         if (digestType == null) {
-            return Core.newIdentity();
+            throw new NullPointerException("Digest type is not specified");
+        }
+
+        // 不拆名称
+        String d, o;
+        if (digestType.endsWith(".")) {
+            d = digestType.substring(0, digestType.length() - 1);
+            o = ".";
+        } else {
+            d = digestType;
+            o = "" ;
         }
 
         // 摘要计算
@@ -292,7 +302,7 @@ public class UploadHelper {
         ) {
             MappedByteBuffer bb = fc.map (FileChannel.MapMode.READ_ONLY, 0, l);
             MessageDigest m ;
-            m = MessageDigest.getInstance(digestType);
+            m = MessageDigest.getInstance(d);
                 m.update(bb);
             a = m.digest(  );
         }
@@ -314,7 +324,7 @@ public class UploadHelper {
             s.append(x);
             s.append(y);
         }
-        return s.toString();
+        return s.toString() + o;
     }
 
     private File getDigestFile(File file) {
@@ -365,7 +375,7 @@ public class UploadHelper {
      * @param xis  上传文件输入流
      * @param type 上传文件类型, 如 image/png
      * @param kind 上传文件扩展, 如 .png
-     * @param lead 目标文件名称
+     * @param lead 目标文件名称, 注意: 如果不含'/'或'.'会被当作ID进行拆分
      * @return
      * @throws Wrong
      */
@@ -429,7 +439,7 @@ public class UploadHelper {
     /**
      * 检查上传对象并写入目标目录
      * @param part
-     * @param lead
+     * @param lead 目标文件名称, 注意: 如果不含'/'或'.'会被当作ID进行拆分
      * @return
      * @throws Wrong
      */
@@ -473,12 +483,8 @@ public class UploadHelper {
 
     /**
      * 检查文件对象并写入目标目录
-     *
-     * 文件在临时目录里则移动过去
-     * 文件不在上传目录则复制过去
-     *
      * @param file
-     * @param lead
+     * @param lead 目标文件名称, 注意: 如果不含'/'或'.'会被当作ID进行拆分
      * @return
      * @throws Wrong
      */
@@ -502,6 +508,10 @@ public class UploadHelper {
         chkTypeOrKind(type, kind);
         setResultName(lead, kind);
 
+        /**
+         * 文件在临时目录里则移动过去
+         * 文件不在上传目录则复制过去
+         */
         try {
             Path srce = file.toPath().toAbsolutePath();
             Path dist = Paths.get(getResultPath()).toAbsolutePath();

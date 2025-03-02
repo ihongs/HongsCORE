@@ -532,7 +532,7 @@ public class Core
     return SUPER;
   }
 
-  public Object get(String key)
+  public Object  get(String key)
   {
     return sup().get(key);
   }
@@ -542,7 +542,7 @@ public class Core
     return sup().put(key, obj);
   }
 
-  public Object remove(String key)
+  public Object  remove(String key)
   {
     return sup().remove( key );
   }

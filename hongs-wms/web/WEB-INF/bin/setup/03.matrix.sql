@@ -24,7 +24,7 @@ CREATE INDEX `IK_a_matrix_furl_state` ON `a_matrix_furl` (`state`);
 CREATE INDEX `IK_a_matrix_furl_boost` ON `a_matrix_furl` (`boost` DESC);
 CREATE INDEX `IK_a_matrix_furl_ctime` ON `a_matrix_furl` (`ctime` DESC);
 CREATE INDEX `IK_a_matrix_furl_mtime` ON `a_matrix_furl` (`mtime` DESC);
-CREATE UNIQUE INDEX `UK_a_matrix_furl_name` ON `a_matrix_furl` (`name`,`pid`);
+CREATE UNIQUE INDEX `UK_a_matrix_furl_name` ON `a_matrix_furl` (`pid`,`name`);
 
 --
 -- 表单
@@ -51,7 +51,7 @@ CREATE INDEX `IK_a_matrix_form_state` ON `a_matrix_form` (`state`);
 CREATE INDEX `IK_a_matrix_form_boost` ON `a_matrix_form` (`boost` DESC);
 CREATE INDEX `IK_a_matrix_form_ctime` ON `a_matrix_form` (`ctime` DESC);
 CREATE INDEX `IK_a_matrix_form_mtime` ON `a_matrix_form` (`mtime` DESC);
-CREATE UNIQUE INDEX `UK_a_matrix_form_name` ON `a_matrix_form` (`name`,`furl_id`);
+CREATE UNIQUE INDEX `UK_a_matrix_form_name` ON `a_matrix_form` (`furl_id`,`name`);
 
 --
 -- 数据
@@ -70,7 +70,7 @@ CREATE TABLE `a_matrix_data` (
   `etime` INTEGER(10) NOT NULL,
   `rtime` INTEGER(10) DEFAULT NULL, /* 从哪个时间点恢复 */
   `state` TINYINT DEFAULT '1',
-  PRIMARY KEY (`id`,`form_id`,`ctime`)
+  PRIMARY KEY (`form_id`,`id`,`ctime`)
 );
 
 CREATE INDEX `IK_a_matrix_data_id` ON `a_matrix_data` (`id`);
@@ -81,7 +81,7 @@ CREATE INDEX `IK_a_matrix_data_state` ON `a_matrix_data` (`state`);
 CREATE INDEX `IK_a_matrix_data_etime` ON `a_matrix_data` (`etime`);
 CREATE INDEX `IK_a_matrix_data_rtime` ON `a_matrix_data` (`rtime`);
 CREATE INDEX `IK_a_matrix_data_ctime` ON `a_matrix_data` (`ctime` DESC);
-CREATE UNIQUE INDEX `UK_a_matrix_data_uk` ON `a_matrix_data` (`id`,`form_id`,`etime`);
+CREATE UNIQUE INDEX `UK_a_matrix_data_uk` ON `a_matrix_data` (`form_id`,`id`,`etime`);
 
 --
 -- 字段

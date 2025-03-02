@@ -475,9 +475,7 @@ public class Data extends SearchEntity {
      * @throws CruxException
      */
     public Map reveal(Map rd) throws CruxException {
-        FetchCase fc = getModel().fetchCase();
-        fc.filter("`form_id`=?", getFormId());
-        Map rsp = getModel ().search (rd, fc);
+        Map rsp = getModel( ).search(rd, fenceCase());
 
         return rsp;
     }
@@ -489,9 +487,7 @@ public class Data extends SearchEntity {
      * @throws CruxException
      */
     public Map remind(Map rd) throws CruxException {
-        FetchCase fc = getModel().fetchCase();
-        fc.filter("`form_id`=?", getFormId());
-        Map rsp = getModel ().recite (rd, fc);
+        Map rsp = getModel( ).recite(rd, fenceCase());
 
         if (rsp.containsKey("info")) {
             Map inf = (Map) rsp.get("info");
@@ -513,20 +509,20 @@ public class Data extends SearchEntity {
                 Object fid = inf.get("form_id");
                 long ctime = Synt.declare(inf.get("ctime"), 0L);
                 if (ab.contains("older")) {
-                    Map row = getModel().table.fetchCase()
-                       .filter("`id` = ? AND `form_id` = ? AND `ctime` < ?", id, fid, ctime)
+                    Map row = fenceCase()
+                       .filter("`id` = ? AND `ctime` < ?", id, ctime )
                        .assort("`ctime` DESC")
                        .select("`ctime`")
                        .getOne();
-                    inf.put("older" , ! row.isEmpty() ? row.get("ctime") : null);
+                    inf.put("older", !row.isEmpty() ? row.get("ctime") : null);
                 }
                 if (ab.contains("newer")) {
-                    Map row = getModel().table.fetchCase()
-                       .filter("`id` = ? AND `form_id` = ? AND `ctime` > ?", id, fid, ctime)
+                    Map row = fenceCase()
+                       .filter("`id` = ? AND `ctime` > ?", id, ctime )
                        .assort("`ctime`  ASC")
                        .select("`ctime`")
                        .getOne();
-                    inf.put("newer" , ! row.isEmpty() ? row.get("ctime") : null);
+                    inf.put("newer", !row.isEmpty() ? row.get("ctime") : null);
                 }
             }
         }}
@@ -604,21 +600,16 @@ public class Data extends SearchEntity {
         Document dc = padDoc(dd);
         addDoc(id, dc);
 
-        Table table = getTable();
-        if (table == null) {
+        FetchCase sc = fenceCase();
+        if (sc == null) {
             return 1;
         }
-
-        String   uid   = getUserId();
-        String   fid   = getFormId();
 
         Map nd = new HashMap();
         nd.put("ctime", ctime);
         nd.put("etime",   0  );
         nd.put("state",   1  );
-        nd.put(     "id", id );
-        nd.put("form_id", fid);
-        nd.put("user_id", uid);
+        nd.put(  "id" ,  id  );
 
         // 数据快照和日志标题
         nd.put("__data__", dd);
@@ -633,7 +624,8 @@ public class Data extends SearchEntity {
             nd.put("meno", getText(rd, "meno"));
         }
 
-        table.insert(nd);
+        sc.insert(nd);
+
         return 1;
     }
 
@@ -664,17 +656,15 @@ public class Data extends SearchEntity {
         Document dc = padDoc(dd);
         setDoc(id, dc);
 
-        Table table = getTable();
-        if (table == null) {
+        FetchCase sc = fenceCase();
+        if (sc == null) {
             return 1;
         }
 
-        String   uid   = getUserId();
-        String   fid   = getFormId();
-        Object[] param = new String[] {id, fid, "0"};
-        String   where = "`id`=? AND `form_id`=? AND `etime`=?";
+        Object[] param = new String[] {id, "0"};
+        String   where = "`id`=? AND `etime`=?";
 
-        Map od = table.fetchCase()
+        Map od = sc
             .filter( where,param )
             .select("ctime,state")
             .getOne( );
@@ -698,9 +688,7 @@ public class Data extends SearchEntity {
         nd.put("ctime", ctime);
         nd.put("etime",   0  );
         nd.put("state",   t  );
-        nd.put(     "id", id );
-        nd.put("form_id", fid);
-        nd.put("user_id", uid);
+        nd.put(  "id" ,  id  );
 
         // 数据快照和日志标题
         nd.put("__data__", dd);
@@ -715,8 +703,8 @@ public class Data extends SearchEntity {
             nd.put("meno", getText(rd, "meno"));
         }
 
-        table.update(ud, where, param);
-        table.insert(nd);
+        sc.update(ud);
+        sc.insert(nd);
 
         return 1;
     }
@@ -748,17 +736,15 @@ public class Data extends SearchEntity {
         Document dc = padDoc(dd);
         setDoc(id, dc);
 
-        Table table = getTable();
-        if (table == null) {
+        FetchCase sc = fenceCase();
+        if (sc == null) {
             return 1;
         }
 
-        String   uid   = getUserId();
-        String   fid   = getFormId();
-        Object[] param = new String[] {id, fid, "0"};
-        String   where = "`id`=? AND `form_id`=? AND `etime`=?";
+        Object[] param = new String[] {id, "0"};
+        String   where = "`id`=? AND `etime`=?";
 
-        Map od = table.fetchCase()
+        Map od = sc
             .filter( where,param )
             .select("ctime,state")
             .getOne( );
@@ -796,7 +782,7 @@ public class Data extends SearchEntity {
             }
             */
 
-            if (table.update(nd, where, param) > 0) {
+            if (sc.update(nd) > 0) {
                 CoreLogger.info("Set data for {}, id: {}, ctime: {}. {} {}", getFormId(), id, od.get("ctime"), rd.get("meno"), rd.get("memo"));
                 return 1;
             } else {
@@ -811,9 +797,7 @@ public class Data extends SearchEntity {
         nd.put("ctime", ctime);
         nd.put("etime",   0  );
         nd.put("state",   t  );
-        nd.put(     "id", id );
-        nd.put("form_id", fid);
-        nd.put("user_id", uid);
+        nd.put(  "id" ,  id  );
 
         // 数据快照和日志标题
         nd.put("__data__", dd);
@@ -828,8 +812,8 @@ public class Data extends SearchEntity {
             nd.put("meno", getText(rd, "meno"));
         }
 
-        table.update(ud, where, param);
-        table.insert(nd);
+        sc.update(ud);
+        sc.insert(nd);
 
         return 1;
     }
@@ -850,17 +834,15 @@ public class Data extends SearchEntity {
     public int del(String id, Map rd, long ctime) throws CruxException {
         delDoc(id);
 
-        Table table = getTable();
-        if (table == null) {
+        FetchCase sc = fenceCase();
+        if (sc == null) {
             return 1;
         }
 
-        String   uid   = getUserId();
-        String   fid   = getFormId();
-        Object[] param = new String[] {id, fid, "0"};
-        String   where = "`id`=? AND `form_id`=? AND `etime`=?";
+        Object[] param = new String[] {id, "0"};
+        String   where = "`id`=? AND `etime`=?";
 
-        Map od = table.fetchCase()
+        Map od = sc
             .filter( where,param )
             .select("ctime,state,data,name")
             .getOne( );
@@ -879,9 +861,7 @@ public class Data extends SearchEntity {
         nd.put("ctime", ctime);
         nd.put("etime",   0  );
         nd.put("state",   0  );
-        nd.put(     "id", id );
-        nd.put("form_id", fid);
-        nd.put("user_id", uid);
+        nd.put(  "id" ,  id  );
 
         // 拷贝快照和日志标题
         nd.put("data", od.get("data"));
@@ -895,8 +875,8 @@ public class Data extends SearchEntity {
             nd.put("meno", getText(rd, "meno"));
         }
 
-        table.update(ud, where, param);
-        table.insert(nd);
+        sc.update(ud);
+        sc.insert(nd);
 
         return 1;
     }
@@ -917,17 +897,15 @@ public class Data extends SearchEntity {
     public int end(String id, Map rd, long ctime) throws CruxException {
         delDoc(id);
 
-        Table table = getTable();
-        if (table == null) {
+        FetchCase sc = fenceCase();
+        if (sc == null) {
             return 1;
         }
 
-        String   uid   = getUserId();
-        String   fid   = getFormId();
-        Object[] param = new String[] {id, fid, "0"};
-        String   where = "`id`=? AND `form_id`=? AND `etime`=?";
+        Object[] param = new String[] {id, "0"};
+        String   where = "`id`=? AND `etime`=?";
 
-        Map od = table.fetchCase()
+        Map od = sc
             .filter( where,param )
             .select("ctime,state,data,name")
             .getOne( );
@@ -956,7 +934,7 @@ public class Data extends SearchEntity {
             }
             */
 
-            if (table.update(nd, where, param) > 0) {
+            if (sc.update(nd) > 0) {
                 CoreLogger.info("End data for {}, id: {}, ctime: {}. {} {}", getFormId(), id, od.get("ctime"), rd.get("meno"), rd.get("memo"));
                 return 1;
             } else {
@@ -971,9 +949,7 @@ public class Data extends SearchEntity {
         nd.put("ctime", ctime);
         nd.put("etime",   0  );
         nd.put("state",   0  );
-        nd.put(     "id", id );
-        nd.put("form_id", fid);
-        nd.put("user_id", uid);
+        nd.put(  "id" ,  id  );
 
         // 拷贝快照和日志标题
         nd.put("data", od.get("data"));
@@ -987,8 +963,8 @@ public class Data extends SearchEntity {
             nd.put("meno", getText(rd, "meno"));
         }
 
-        table.update(ud, where, param);
-        table.insert(nd);
+        sc.update(ud);
+        sc.insert(nd);
 
         return 1;
     }
@@ -1002,22 +978,21 @@ public class Data extends SearchEntity {
      * @throws CruxException
      */
     public int rev(String id, Map rd, long ctime) throws CruxException {
-        Table table = getTable();
-        if (table == null) {
+        FetchCase sc = fenceCase();
+        if (sc == null) {
             throw new CruxException(405, "@matrix:matrix.rev.unsupported", getFormId());
         }
+        FetchCase s2 = fenceCase();
 
-        String   uid   = getUserId();
-        String   fid   = getFormId();
         long     rtime = Synt.declare (rd.get("rtime"), 0L);
-        Object[] param = new String[] {id,fid,  "0"  };
-        String   where = "`id`=? AND `form_id`=? AND `etime`=?";
-        Object[] para2 = new Object[] {id,fid, rtime };
-        String   wher2 = "`id`=? AND `form_id`=? AND `ctime`=?";
+        Object[] para2 = new Object[] {id, rtime};
+        String   wher2 = "`id`=? AND `ctime`=?";
+        Object[] param = new String[] {id, "0"};
+        String   where = "`id`=? AND `etime`=?";
 
         // 恢复最终数据
         if (rtime == 0L) {
-            Map od = table.fetchCase()
+            Map od = sc
                 .filter( where, param)
             //  .assort("etime  DESC")
                 .select("state, data")
@@ -1036,7 +1011,7 @@ public class Data extends SearchEntity {
         }
 
         // 获取当前数据
-        Map od = table.fetchCase()
+        Map od = sc
             .filter( where, param)
         //  .assort("etime  DESC")
             .select("ctime")
@@ -1049,7 +1024,7 @@ public class Data extends SearchEntity {
         }
 
         // 获取快照数据
-        Map sd = table.fetchCase()
+        Map sd = s2
             .filter( wher2, para2)
         //  .assort("ctime  DESC")
             .getOne( );
@@ -1091,9 +1066,7 @@ public class Data extends SearchEntity {
         nd.put("rtime", rtime);
         nd.put("etime",   0  );
         nd.put("state",   3  );
-        nd.put(     "id", id );
-        nd.put("form_id", fid);
-        nd.put("user_id", uid);
+        nd.put(  "id" ,  id  );
 
         // 数据快照和日志标题
         nd.put("__data__", dd);
@@ -1108,10 +1081,23 @@ public class Data extends SearchEntity {
             nd.put("meno", getText(rd, "meno"));
         }
 
-        table.update(ud, where, param);
-        table.insert(nd);
+        sc.update(ud);
+        sc.insert(nd);
 
         return 1;
+    }
+
+    /**
+     * 数据记录, 含表单参数
+     * @return
+     * @throws CruxException
+     */
+    public FetchCase fenceCase() throws CruxException {
+        Table table = getTable();
+        if (table == null) {
+            return   null;
+        }
+        return new DataFence(this, table);
     }
 
     /**

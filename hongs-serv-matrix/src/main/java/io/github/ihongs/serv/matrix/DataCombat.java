@@ -12,6 +12,7 @@ import io.github.ihongs.db.DB;
 import io.github.ihongs.db.PrivTable;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.db.link.Loop;
+import io.github.ihongs.db.util.FetchCase;
 import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
@@ -774,15 +775,10 @@ public class DataCombat {
         public void rev(String id, Map sd, long ctime) throws CruxException {
             try {
 
-            String   uid   = that.getUserId();
-            String   fid   = that.getFormId();
-            Object[] param = new String[] {id, fid, "0"};
-            String   where = "`id`=? AND `form_id`=? AND `etime`=?";
-            long     rtime = Synt.declare (sd. get( "rtime" ), 0L );
-
             // 解密并解析
             dc.accept(sd);
-            Map  od = that.getData((String) sd. get( "data" ));
+            Map  od = that.getData((String) sd.get("data"));
+            long rtime = Synt.declare(sd.get("rtime"), 0L );
 
             // 填充并写入
             pad (id , od);
@@ -796,8 +792,7 @@ public class DataCombat {
             nd.put("rtime", rtime);
             nd.put("etime",   0  );
             nd.put("state",   3  );
-            nd.put("form_id", fid);
-            nd.put("user_id", uid);
+            nd.put(  "id" ,  id  );
 
             // 数据快照和日志标题
             nd.put("__data__", od);
@@ -812,8 +807,13 @@ public class DataCombat {
                 nd.put("meno", that.getText(sd, "meno"));
             }
 
-            that.getTable().update(ud, where, param);
-            that.getTable().insert(nd);
+            FetchCase sc = that.fenceCase ( );
+            Object[] param = new String[] {id, "0"};
+            String   where = "`id`=? AND `etime`=?";
+            sc.where(where, param);
+
+            sc.update(ud);
+            sc.insert(nd);
 
             } catch (Exception ex) {
                 throw new Exid(ex, id);
@@ -825,7 +825,7 @@ public class DataCombat {
 
             // 解密并解析
             dc.accept(sd);
-            Map  od = that.getData((String) sd. get( "data" ));
+            Map  od = that.getData((String) sd.get("data"));
 
             // 填充并写入
             pad (id , od);

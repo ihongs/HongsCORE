@@ -90,6 +90,7 @@ import org.apache.lucene.store.AlreadyClosedException;
 public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoCloseable {
 
     protected boolean REFLUX_MODE = false;
+    protected int     QUERY_DEPTH = 2    ;
 
     private String dbpath;
     private String dbname;
@@ -760,7 +761,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
     }
 
     public Query padQry(Map rd) throws CruxException {
-        BooleanQuery.Builder qb = new BooleanQuery.Builder();
+        BooleanQuery.Builder qb = new Queries();
 
         padQry(qb, rd);
 
@@ -773,14 +774,14 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
     }
 
     public Sort  padSrt(Map rd) throws CruxException {
-        List<SortField> of = new ArrayList();
+        List<SortField> sr = new ArrayList();
 
-        padSrt(of, rd);
+        padSrt(sr, rd);
 
-        if (! of.isEmpty()) {
+        if (! sr.isEmpty()) {
             SortField[] sf;
-            sf  =  new SortField [of.size()];
-            return new Sort (of.toArray(sf));
+            sf  =  new SortField [sr.size()];
+            return new Sort (sr.toArray(sf));
         }
 
         return null;
@@ -1018,10 +1019,15 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                     throw x.toExemption( );
                 }
 
-                float[] w = VectorQuest.toVector(v);
-                int d  = Synt.declare(m.get("vector-dimension"), 0);
-                if (d != 0 && d != w.length) {
-                    throw new CruxExemption(400, "Vector dimension for field `$0` is $1, but $2", k, d, w.length);
+                float[] w;
+                try {
+                    w = VectorQuest.toVector(v);
+                } catch ( ClassCastException x) {
+                    throw new  CruxExemption(400, "Vector value for field `$0` is invalid, $1", k, x.getMessage());
+                }
+                int d = Synt.declare(m.get("vector-dimension"), 0);
+                if (d > 0 && d != w.length) {
+                    throw new  CruxExemption(400, "Vector dimension for field `$0` is $1, but $2", k, d, w.length);
                 }
                 v = w ;
             }
@@ -1109,7 +1115,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
     protected void padQry(BooleanQuery.Builder qr, Map rd) throws CruxException {
         try {
             padQry(qr, rd, 0);
-        } catch (BooleanQuery.TooManyClauses | ClassCastException | NullPointerException ex) {
+        } catch (IndexSearcher.TooManyClauses | ClassCastException | NullPointerException ex) {
             throw new CruxException(ex, 400);
         }
     }
@@ -1120,12 +1126,10 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      *
      * @param qr
      * @param rd
-     * @param r 递归层级
+     * @param rl 递归层级
      * @throws CruxException
      */
-    protected void padQry(BooleanQuery.Builder qr, Map rd, int r) throws CruxException {
-        int i = 0, j = 0; // 条件数量, 否定数量, 计数规避全否定时查不到数据
-
+    protected void padQry(BooleanQuery.Builder qr, Map rd, int rl) throws CruxException {
         Map<String, Map> fields = getFields();
         Set<String> ks = new LinkedHashSet(fields.keySet());
                     ks.retainAll(rd.keySet());
@@ -1133,6 +1137,11 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         for(String k : ks) {
             Object v = rd .get(k);
             if (v == null) {
+                continue;
+            }
+
+            // 自定义条件
+            if (! padQry(qr, rd, k,v)) {
                 continue;
             }
 
@@ -1147,11 +1156,6 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
              * 在调用查询类方法时自然会报错,
              * 是否可查完全由存储时分类处理.
              */
-
-            // 自定义条件
-            if (! padQry(qr, rd, k,v)) {
-                continue;
-            }
 
             IQuest qa ;
             String t  =  datatype (m);
@@ -1212,26 +1216,33 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 VectorQuest qv = (VectorQuest) qa;
                 int   n = 0x0 ;
                 float u = 0.1f;
-                float [ ] w;
                 if (v instanceof Map) {
                     Map vd = (Map) v;
-                    n = Synt.declare( vd.get( Cnst.RN_KEY ) , n );
-                    u = Synt.declare( vd.get( Cnst.UP_REL ) , u );
-                    w = VectorQuest.toVector(vd.get(Cnst.AT_REL));
-                } else {
-                    w = VectorQuest.toVector(v);
+                    n = Synt.declare(vd.get(Cnst.RN_KEY), n);
+                    u = Synt.declare(vd.get(Cnst.UP_REL), u);
+                    v = vd.get(Cnst.AT_REL);
                 }
-                if (0 < w.length ) {
-                    try {
-                        if (n > 0) {
-                            qr.add(qv.vtr(k, w, n), BooleanClause.Occur.MUST);
-                        } else {
-                            qr.add(qv.vtr(k, w, u), BooleanClause.Occur.MUST);
-                        }
-                    } catch (IllegalArgumentException e) { // 维数不符
-                        throw new CruxException(e , 400);
+                if (v.equals("")) continue ;
+
+                float[] w;
+                try {
+                    w = VectorQuest.toVector(v);
+                } catch ( ClassCastException x) {
+                    throw new  CruxExemption(400, "Vector value for field `$0` is invalid, $1", k, x.getMessage());
+                }
+                int d = Synt.declare(m.get("vector-dimension"), 0);
+                if (d > 0 && d != w.length) {
+                    throw new  CruxExemption(400, "Vector dimension for field `$0` is $1, but $2", k, d, w.length);
+                }
+
+                try {
+                    if (n > 0) {
+                        qr.add(qv.vtr(k, w, n), BooleanClause.Occur.MUST);
+                    } else {
+                        qr.add(qv.vtr(k, w, u), BooleanClause.Occur.MUST);
                     }
-                    i ++;
+                } catch (IllegalArgumentException e) { // 维数不符
+                    throw new CruxException(e , 400);
                 }
                 continue;
             }
@@ -1252,13 +1263,11 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                         qx.add(qa.whr(k, vv), BooleanClause.Occur.SHOULD);
                     }
                         qr.add(qx.build (  ), BooleanClause.Occur.MUST  );
-                        i ++;
                 }
                 continue;
             } else {
                 if (!v.equals("")) {
                     qr.add(qa.whr(k, v), BooleanClause.Occur.MUST);
-                    i ++;
                 }
                 continue;
             }
@@ -1297,32 +1306,26 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                     case "NOT-NULL" :
                         p = new IsNotNull(b + k);
                         qr.add(p, BooleanClause.Occur.MUST);
-                        i ++ ;
                         break;
                     case "NULL" :
                         p = new IsNotNull(b + k);
                         qr.add(p, BooleanClause.Occur.MUST_NOT);
-                        i ++ ; j ++ ;
                         break;
                     case "NOT-NONE" :
                         p = new IsNotNone(b + k);
                         qr.add(p, BooleanClause.Occur.MUST);
-                        i ++ ;
                         break;
                     case "NONE" :
                         p = new IsNotNone(b + k);
                         qr.add(p, BooleanClause.Occur.MUST_NOT);
-                        i ++ ; j ++ ;
                         break;
                     case "EMPTY":
                         p = new IsEmpty(b + k);
                         qr.add(p, BooleanClause.Occur.MUST);
-                        i ++ ;
                         break;
                     case "NOT-EMPTY":
                         p = new IsEmpty(b + k);
                         qr.add(p, BooleanClause.Occur.MUST_NOT);
-                        i ++ ; j ++ ;
                         break;
                     default:
                         throw new CruxException(400, "Unsupported `is`: "+v);
@@ -1334,12 +1337,10 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             v = vd.get(Cnst.EQ_REL);
             if ( v != null && ! "".equals(v) ) {
                 qr.add(qa.whr(k, v), BooleanClause.Occur.MUST);
-                i ++;
             }
             v = vd.get(Cnst.NE_REL);
             if ( v != null && ! "".equals(v) ) {
                 qr.add(qa.whr(k, v), BooleanClause.Occur.MUST_NOT);
-                i ++;  j ++;
             }
 
             //** 模糊匹配 **/
@@ -1347,12 +1348,10 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             v = vd.get(Cnst.SE_REL);
             if ( v != null && ! "".equals(v) ) {
                 qr.add(qa.wdr(k, v), BooleanClause.Occur.MUST);
-                i ++;
             }
             v = vd.get(Cnst.NS_REL);
             if ( v != null && ! "".equals(v) ) {
                 qr.add(qa.wdr(k, v), BooleanClause.Occur.MUST_NOT);
-                i ++;  j ++;
             }
 
             //** 集合查询 **/
@@ -1364,7 +1363,6 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 if(!vs.isEmpty( )) {
                     for(Object vv : vs) {
                         qr.add(qa.whr(k, vv), BooleanClause.Occur.MUST);
-                        i ++;
                     }
                 }
             }
@@ -1374,7 +1372,6 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 if(!vs.isEmpty( )) {
                     for(Object vv : vs) {
                         qr.add(qa.whr(k, vv), BooleanClause.Occur.MUST_NOT);
-                        i ++;  j ++;
                     }
                 }
             }
@@ -1387,7 +1384,6 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                         qx.add(qa.whr(k, vv), BooleanClause.Occur.SHOULD);
                     }
                         qr.add(qx.build (  ), BooleanClause.Occur.MUST  );
-                        i ++;
                 }
             }
 
@@ -1424,7 +1420,6 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             ||  (x != null && ! "".equals(x))) {
                 Query  qu = qa.whr( k, n, x, l, g );
                 qr.add(qu,BooleanClause.Occur.MUST);
-                i ++;
             }
 
             v = vd.get(Cnst.AT_REL);
@@ -1453,7 +1448,6 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 BooleanQuery qz = qx.build();
                 if (qz.clauses().size() > 0) {
                     qr.add ( qz, BooleanClause.Occur.MUST  );
-                    i ++;
                 }
             }
             }
@@ -1481,7 +1475,6 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 BooleanQuery qa = qx.build();
                 if (! qa.clauses().isEmpty()) {
                     qr.add(qa, BooleanClause.Occur.MUST  );
-                    i ++;
                 }
             }
         }
@@ -1490,16 +1483,16 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
         v = rd.get(Cnst.AR_KEY);
         if ( v != null ) {
-            if ( r > 2 ) {
-                throw new CruxException(400, "Key '" + Cnst.AR_KEY + "' can not exceed 2 layers");
+            if (rl > QUERY_DEPTH) {
+                throw new CruxException(400, "Key '" + Cnst.AR_KEY + "' can not exceed " + QUERY_DEPTH + " layers");
             }
             Set<Map> set = Synt.asSet(v);
             if (set != null && ! set.isEmpty()) {
             for(Map  map : set) {
                 if ( map == null) continue; // 规避 NullPointerException
 
-                BooleanQuery.Builder qx = new BooleanQuery.Builder();
-                padQry( qx, map, r + 1 );
+                BooleanQuery.Builder qx = new Queries();
+                padQry(qx, map, rl + 1 );
 
                 BooleanQuery qa = qx.build();
                 if (! qa.clauses().isEmpty()) {
@@ -1511,7 +1504,6 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                     }
 
                     qr.add(qb, BooleanClause.Occur.MUST);
-                    i ++;
                 }
             }
             }
@@ -1519,16 +1511,16 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
         v = rd.get(Cnst.NR_KEY);
         if ( v != null ) {
-            if ( r > 2 ) {
-                throw new CruxException(400, "Key '" + Cnst.NR_KEY + "' can not exceed 2 layers");
+            if (rl > QUERY_DEPTH) {
+                throw new CruxException(400, "Key '" + Cnst.NR_KEY + "' can not exceed " + QUERY_DEPTH + " layers");
             }
             Set<Map> set = Synt.asSet(v);
             if (set != null && ! set.isEmpty()) {
             for(Map  map : set) {
                 if ( map == null) continue; // 规避 NullPointerException
 
-                BooleanQuery.Builder qx = new BooleanQuery.Builder();
-                padQry( qx, map, r + 1 );
+                BooleanQuery.Builder qx = new Queries();
+                padQry(qx, map, rl + 1 );
 
                 BooleanQuery qa = qx.build();
                 if (! qa.clauses().isEmpty()) {
@@ -1540,7 +1532,6 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                     }
 
                     qr.add(qb, BooleanClause.Occur.MUST_NOT);
-                    i ++;  j ++;
                 }
             }
             }
@@ -1548,8 +1539,8 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
         v = rd.get(Cnst.OR_KEY);
         if ( v != null ) {
-            if ( r > 2 ) {
-                throw new CruxException(400, "Key '" + Cnst.OR_KEY + "' can not exceed 2 layers");
+            if (rl > QUERY_DEPTH) {
+                throw new CruxException(400, "Key '" + Cnst.OR_KEY + "' can not exceed " + QUERY_DEPTH + " layers");
             }
             Set<Map> set = Synt.asSet(v);
             if (set != null && ! set.isEmpty()) {
@@ -1557,8 +1548,8 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             for(Map  map : set) {
                 if ( map == null) continue; // 规避 NullPointerException
 
-                BooleanQuery.Builder qx = new BooleanQuery.Builder();
-                padQry( qx, map, r + 1 );
+                BooleanQuery.Builder qx = new Queries();
+                padQry(qx, map, rl + 1 );
 
                 BooleanQuery qa = qx.build();
                 if (! qa.clauses().isEmpty()) {
@@ -1575,17 +1566,8 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 BooleanQuery qa = qz.build();
                 if (! qa.clauses().isEmpty()) {
                     qr.add(qa, BooleanClause.Occur.MUST  );
-                    i ++;
                 }
             }
-        }
-
-        /**
-         * 如果全部条件都是 MUST_NOT 会导致取不到数据
-         * 故有必要增加一个 MUST all 从而规避这个问题
-         */
-        if (i > 0 && i == j) {
-            qr.add(new MatchAllDocsQuery(), BooleanClause.Occur.MUST);
         }
     }
 
@@ -1607,28 +1589,43 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      * 组织排序规则
      * 可覆盖此方法进行补充排序
      *
-     * @param of
+     * @param sr
      * @param rd
      * @throws CruxException
      */
-    protected void padSrt(List<SortField> of, Map rd) throws CruxException {
+    protected void padSrt(List<SortField> sr, Map rd) throws CruxException {
         Set<String> ob = Synt.toTerms(rd.get(Cnst.OB_KEY));
         if (ob == null) {
             return;
         }
 
+        padSrt(sr, rd, ob);
+    }
+
+    /**
+     * 组织排序规则
+     * 可覆盖此方法进行补充排序
+     *
+     * @param sr
+     * @param rd
+     * @param ob 排序字段
+     * @throws CruxException
+     */
+    protected void padSrt(List<SortField> sr, Map rd, Set ob) throws CruxException {
         Map<String, Map> fields = getFields();
 
-        for (String fn: ob) {
+        for(Object fx : ob) {
+            String fn = Synt.asString(fx);
+
             // 相关
             if (fn.equals("-")) {
-                of.add(SortField.FIELD_SCORE);
+                sr.add(SortField.FIELD_SCORE);
                 continue;
             }
 
             // 文档
             if (fn.equals("_")) {
-                of.add(SortField.FIELD_DOC);
+                sr.add(SortField.FIELD_DOC);
                 continue;
             }
 
@@ -1646,7 +1643,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             }
 
             // 自定义排序
-            if (! padSrt(of, rd, fn, rv)) {
+            if (! padSrt(sr, rd, fn, rv)) {
                 continue;
             }
 
@@ -1694,9 +1691,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
              * 2020/03/07 多个值的普通排序只能用其中一个
              */
         //  if (repeated(m)) {
-        //      of.add(new SortField("%" + fn, st, rv));
+        //      sr.add(new SortField("%" + fn, st, rv));
         //  } else {
-                of.add(new SortField("#" + fn, st, rv));
+                sr.add(new SortField("#" + fn, st, rv));
         //  }
         }
     }
@@ -1705,13 +1702,13 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      * 自定排序规则
      * 可覆盖此方法进行特殊排序
      *
-     * @param of
+     * @param sr
      * @param rd
      * @param k 排序字段
      * @param r 是否逆序
      * @return 返回 false 阻断
      */
-    protected boolean padSrt(List<SortField> of, Map rd, String k, boolean r) {
+    protected boolean padSrt(List<SortField> sr, Map rd, String k, boolean r) {
         return true;
     }
 

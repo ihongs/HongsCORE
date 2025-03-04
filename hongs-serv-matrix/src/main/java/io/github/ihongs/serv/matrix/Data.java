@@ -49,7 +49,7 @@ import org.apache.lucene.search.BooleanClause;
  * matrix.item.is.removed=记录已被删除了
  * matrix.node.not.exists=找不到恢复起源
  * matrix.node.is.current=这已是最终记录
- * matrix.rev.unsupported=资源不支持恢复
+ * matrix.rev.unsupported=资源不支持回顾
  * </pre>
  *
  * @author Hongs
@@ -475,7 +475,7 @@ public class Data extends SearchEntity {
      * @throws CruxException
      */
     public Map reveal(Map rd) throws CruxException {
-        Map rsp = getModel( ).search(rd, fenceCase());
+        Map rsp = getModel( ).search(rd, fetchCase());
 
         return rsp;
     }
@@ -487,7 +487,7 @@ public class Data extends SearchEntity {
      * @throws CruxException
      */
     public Map remind(Map rd) throws CruxException {
-        Map rsp = getModel( ).recite(rd, fenceCase());
+        Map rsp = getModel( ).recite(rd, fetchCase());
 
         if (rsp.containsKey("info")) {
             Map inf = (Map) rsp.get("info");
@@ -1088,7 +1088,22 @@ public class Data extends SearchEntity {
     }
 
     /**
+     * 数据查询, 含表单参数
+     * 不支持时抛异常
+     * @return
+     * @throws CruxException
+     */
+    public FetchCase fetchCase() throws CruxException {
+        FetchCase fetch = fenceCase();
+        if (fetch == null) {
+            throw new CruxException(405, "@matrix:matrix.rev.unsupported", getFormId());
+        }
+        return fetch;
+    }
+
+    /**
      * 数据记录, 含表单参数
+     * 不支持时返回空
      * @return
      * @throws CruxException
      */

@@ -16,7 +16,7 @@ public class DataFence extends FetchCase {
     protected final Table table;
 
     public DataFence(Data data, Table table) {
-        super(STRICT);
+        super();
 
         this.data  = data ;
         this.table = table;

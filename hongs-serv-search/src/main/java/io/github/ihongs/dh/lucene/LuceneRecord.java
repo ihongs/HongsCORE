@@ -1141,7 +1141,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             }
 
             // 自定义条件
-            if (! padQry(qr, rd, k,v)) {
+            if (padQry(qr, rd, k, v)) {
                 continue;
             }
 
@@ -1579,10 +1579,10 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      * @param rd
      * @param k 查询字段
      * @param v 字段取值
-     * @return 返回 false 阻断
+     * @return  自定义返 true
      */
     protected boolean padQry(BooleanQuery.Builder qr, Map rd, String k, Object v) {
-        return true;
+        return false;
     }
 
     /**
@@ -1595,11 +1595,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      */
     protected void padSrt(List<SortField> sr, Map rd) throws CruxException {
         Set<String> ob = Synt.toTerms(rd.get(Cnst.OB_KEY));
-        if (ob == null) {
-            return;
+        if (null != ob && !ob.isEmpty()) {
+            padSrt( sr , rd , ob );
         }
-
-        padSrt(sr, rd, ob);
     }
 
     /**
@@ -1643,7 +1641,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             }
 
             // 自定义排序
-            if (! padSrt(sr, rd, fn, rv)) {
+            if (padSrt(sr,rd, fn,rv)) {
                 continue;
             }
 
@@ -1706,10 +1704,10 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      * @param rd
      * @param k 排序字段
      * @param r 是否逆序
-     * @return 返回 false 阻断
+     * @return  自定义返 true
      */
     protected boolean padSrt(List<SortField> sr, Map rd, String k, boolean r) {
-        return true;
+        return false;
     }
 
     //** 事务方法 **/

@@ -505,11 +505,10 @@ public class Data extends SearchEntity {
             if (ab != null
             && (ab.contains("older")
             ||  ab.contains("newer"))) {
-                Object  id = inf.get(/**/ "id");
-                Object fid = inf.get("form_id");
+                Object id = inf.get("id");
                 long ctime = Synt.declare(inf.get("ctime"), 0L);
                 if (ab.contains("older")) {
-                    Map row = fenceCase()
+                    Map row = fetchCase()
                        .filter("`id` = ? AND `ctime` < ?", id, ctime )
                        .assort("`ctime` DESC")
                        .select("`ctime`")
@@ -517,7 +516,7 @@ public class Data extends SearchEntity {
                     inf.put("older", !row.isEmpty() ? row.get("ctime") : null);
                 }
                 if (ab.contains("newer")) {
-                    Map row = fenceCase()
+                    Map row = fetchCase()
                        .filter("`id` = ? AND `ctime` > ?", id, ctime )
                        .assort("`ctime`  ASC")
                        .select("`ctime`")

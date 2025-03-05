@@ -777,12 +777,12 @@ public class DataCombat {
 
             // 解密并解析
             dc.accept(sd);
-            Map  od = that.getData((String) sd.get("data"));
-            long rtime = Synt.declare(sd.get("rtime"), 0L );
+            Map od = that.getData((String) sd.get("data"));
+            long rtime = Synt.declare(sd.get("rtime"), 0L);
 
             // 填充并写入
-            pad (id , od);
-            set (id , that.padDoc(od));
+            pad(id , od);
+            set(id , that.padDoc(od) );
 
             Map ud = new HashMap();
             ud.put("etime", ctime);
@@ -825,11 +825,11 @@ public class DataCombat {
 
             // 解密并解析
             dc.accept(sd);
-            Map  od = that.getData((String) sd.get("data"));
+            Map od = that.getData((String) sd.get("data"));
 
             // 填充并写入
-            pad (id , od);
-            set (id , that.padDoc(od));
+            pad(id , od);
+            set(id , that.padDoc(od) );
 
             } catch (Exception ex) {
                 throw new Exid(ex, id);

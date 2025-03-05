@@ -923,6 +923,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             boolean g = ! inviable(m);
 
             if (Cnst.ID_KEY.equals(k)) {
+                s  = true;
                 q  = true;
                 g  = true;
             }

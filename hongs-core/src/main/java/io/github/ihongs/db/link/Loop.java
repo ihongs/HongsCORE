@@ -7,9 +7,13 @@ import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * 查询结果迭代
@@ -163,6 +167,12 @@ public class Loop implements Iterable<Map>, Iterator<Map>, AutoCloseable {
         }
     }
 
+    @Override
+    protected void finalize() throws Throwable {
+        this .close(   );
+        super.finalize();
+    }
+
     /**
      * @deprecated
      */
@@ -171,10 +181,12 @@ public class Loop implements Iterable<Map>, Iterator<Map>, AutoCloseable {
         throw new UnsupportedOperationException("Not supported remove in this loop.");
     }
 
-    @Override
-    protected void finalize() throws Throwable {
-        this .close(   );
-        super.finalize();
+    public Stream<Map> stream() {
+        return StreamSupport.stream(this.spliterator(), false);
+    }
+
+    public List<Map> toList() {
+        return stream().toList();
     }
 
 }

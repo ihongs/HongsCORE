@@ -12,7 +12,7 @@ import org.apache.lucene.util.NumericUtils;
  * 数值存储
  * @author Hongs
  */
-public class FloatStock implements IStock {
+public class FloatStock extends NumberStock implements IStock {
     @Override
     public Field get(String k, Object v) {
         return new StoredField(/**/k, Synt.declare(v, 0F));
@@ -28,9 +28,5 @@ public class FloatStock implements IStock {
     @Override
     public Field ods(String k, Object v) {
         return new SortedNumericDocValuesField("%"+k, NumericUtils.floatToSortableInt(Synt.declare(v, 0.0F)));
-    }
-    @Override
-    public Field wdr(String k, Object v) {
-        return null; // 数字类型无法模糊搜索, 无法增加搜索字段
     }
 }

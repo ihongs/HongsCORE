@@ -34,6 +34,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.analysis.Analyzer;
@@ -1137,7 +1139,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
         for(String k : ks) {
             Object v = rd .get(k);
-            if (v == null) {
+            if (v == null || "".equals(v)) {
                 continue;
             }
 
@@ -1211,247 +1213,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 }
             }
 
-            //** 向量查询 **/
-
-            if (qa instanceof VectorQuest) {
-                VectorQuest qv = (VectorQuest) qa;
-                int   n = 0x0 ;
-                float u = 0.1f;
-                if (v instanceof Map) {
-                    Map vd = (Map) v;
-                    n = Synt.declare(vd.get(Cnst.RN_KEY), n);
-                    u = Synt.declare(vd.get(Cnst.UP_REL), u);
-                    v = vd.get(Cnst.AT_REL);
-                }
-                if (v.equals("")) continue ;
-
-                float[] w;
-                try {
-                    w = VectorQuest.toVector(v);
-                } catch ( ClassCastException x) {
-                    throw new  CruxExemption(400, "Vector value for field `$0` is invalid, $1", k, x.getMessage());
-                }
-                int d = Synt.declare(m.get("vector-dimension"), 0);
-                if (d > 0 && d != w.length) {
-                    throw new  CruxExemption(400, "Vector dimension for field `$0` is $1, but $2", k, d, w.length);
-                }
-
-                try {
-                    if (n > 0) {
-                        qr.add(qv.vtr(k, w, n), BooleanClause.Occur.MUST);
-                    } else {
-                        qr.add(qv.vtr(k, w, u), BooleanClause.Occur.MUST);
-                    }
-                } catch (IllegalArgumentException e) { // 维数不符
-                    throw new CruxException(e , 400);
-                }
-                continue;
-            }
-
-            //** 常规查询 **/
-
-            Map vd ;
-            if (v instanceof Map) {
-                vd = (Map) v ;
-            } else
-            if (v instanceof Collection
-            ||  v instanceof Object[ ]) {
-                Set vs = Synt.asSet(v);
-                    vs.remove("");
-                if(!vs.isEmpty( )) {
-                    BooleanQuery.Builder  qx = new BooleanQuery.Builder();
-                    for(Object vv : vs) {
-                        qx.add(qa.whr(k, vv), BooleanClause.Occur.SHOULD);
-                    }
-                        qr.add(qx.build (  ), BooleanClause.Occur.MUST  );
-                }
-                continue;
-            } else {
-                if (!v.equals("")) {
-                    qr.add(qa.whr(k, v), BooleanClause.Occur.MUST);
-                }
-                continue;
-            }
-
-            //** 条件关系 **/
-
-            /*
-            // 因可更改符号含义, 可能造成严重漏洞, 故废弃
-            v = vd.get(Cnst.OR_REL);
-            if (Cnst.OR_KEY.equals(v )
-            ||  Cnst.NR_KEY.equals(v)) {
-                List a = new ArrayList ( vd.size() - 1 );
-                for(Object ot : vd.entrySet()) {
-                    Map.Entry et = (Map.Entry) ot;
-                    Object r2 = et.getKey  ();
-                    if (Cnst.OR_KEY.equals(r2)) continue;
-                    Object v2 = et.getValue();
-                    a.add(Synt.mapOf(k, Synt.mapOf(r2, v2)));
-                }
-                if (! a.isEmpty() ) {
-                    padQry(qr , Synt.mapOf(v, a) , r);
-                }
-                continue;
-            }
-            */
-
-            //** 空值查询 **/
-
-            v = vd.get(Cnst.IS_REL);
-            if ( v != null && !"".equals(v) ) {
-                String a = Synt.asString(v).toUpperCase( );
-                String b = inviable(m) && srchable(m) && ! findable(m) ? "$" : "@"; // 可搜素、不可见、不可查询，则用搜素字段
-                Query  p ;
-                // try {
-                switch (a) {
-                    case "NOT-NULL" :
-                        p = new IsNotNull(b + k);
-                        qr.add(p, BooleanClause.Occur.MUST);
-                        break;
-                    case "NULL" :
-                        p = new IsNotNull(b + k);
-                        qr.add(p, BooleanClause.Occur.MUST_NOT);
-                        break;
-                    case "NOT-NONE" :
-                        p = new IsNotNone(b + k);
-                        qr.add(p, BooleanClause.Occur.MUST);
-                        break;
-                    case "NONE" :
-                        p = new IsNotNone(b + k);
-                        qr.add(p, BooleanClause.Occur.MUST_NOT);
-                        break;
-                    case "EMPTY":
-                        p = new IsEmpty(b + k);
-                        qr.add(p, BooleanClause.Occur.MUST);
-                        break;
-                    case "NOT-EMPTY":
-                        p = new IsEmpty(b + k);
-                        qr.add(p, BooleanClause.Occur.MUST_NOT);
-                        break;
-                    default:
-                        throw new CruxException(400, "Unsupported `is`: "+v);
-                }
-            }
-
-            //** 精确匹配 **/
-
-            v = vd.get(Cnst.EQ_REL);
-            if ( v != null && ! "".equals(v) ) {
-                qr.add(qa.whr(k, v), BooleanClause.Occur.MUST);
-            }
-            v = vd.get(Cnst.NE_REL);
-            if ( v != null && ! "".equals(v) ) {
-                qr.add(qa.whr(k, v), BooleanClause.Occur.MUST_NOT);
-            }
-
-            //** 模糊匹配 **/
-
-            v = vd.get(Cnst.SE_REL);
-            if ( v != null && ! "".equals(v) ) {
-                qr.add(qa.wdr(k, v), BooleanClause.Occur.MUST);
-            }
-            v = vd.get(Cnst.NS_REL);
-            if ( v != null && ! "".equals(v) ) {
-                qr.add(qa.wdr(k, v), BooleanClause.Occur.MUST_NOT);
-            }
-
-            //** 集合查询 **/
-
-            // IN/NI/MI 可以拆字符串, 如 fn.in=1,2 同 fn.in.=1&fn.in.=2
-            v = vd.get(Cnst.ON_REL);
-            if ( v != null ) {
-                Set vs = Synt.toSet(v);
-                if(!vs.isEmpty( )) {
-                    for(Object vv : vs) {
-                        qr.add(qa.whr(k, vv), BooleanClause.Occur.MUST);
-                    }
-                }
-            }
-            v = vd.get(Cnst.NO_REL);
-            if ( v != null ) {
-                Set vs = Synt.toSet(v);
-                if(!vs.isEmpty( )) {
-                    for(Object vv : vs) {
-                        qr.add(qa.whr(k, vv), BooleanClause.Occur.MUST_NOT);
-                    }
-                }
-            }
-            v = vd.get(Cnst.IN_REL);
-            if ( v != null ) {
-                Set vs = Synt.toSet(v);
-                if(!vs.isEmpty( )) {
-                    BooleanQuery.Builder  qx = new BooleanQuery.Builder();
-                    for(Object vv : vs) {
-                        qx.add(qa.whr(k, vv), BooleanClause.Occur.SHOULD);
-                    }
-                        qr.add(qx.build (  ), BooleanClause.Occur.MUST  );
-                }
-            }
-
-            //** 区间查询 **/
-
-            Object  n, x;
-            boolean l, g;
-
-            n = vd.get(Cnst.GT_REL);
-            if (n != null) {
-                l  = false;
-            } else {
-            n = vd.get(Cnst.GE_REL);
-            if (n != null) {
-                l  = true ;
-            } else {
-                n  = null ;
-                l  = true ;
-            }}
-
-            x = vd.get(Cnst.LT_REL);
-            if (x != null) {
-                g  = false;
-            } else {
-            x = vd.get(Cnst.LE_REL);
-            if (x != null) {
-                g  = true ;
-            } else {
-                x  = null ;
-                g  = true ;
-            }}
-
-            if ((n != null && ! "".equals(n))
-            ||  (x != null && ! "".equals(x))) {
-                Query  qu = qa.whr( k, n, x, l, g );
-                qr.add(qu,BooleanClause.Occur.MUST);
-            }
-
-            v = vd.get(Cnst.AT_REL);
-            if (v != null) {
-            Set s  = Synt.asSet (v);
-            if (s != null && ! s.isEmpty()) {
-                BooleanQuery.Builder qx = new BooleanQuery.Builder();
-
-                for(Object o : s ) {
-                    Object[] a = Synt.toRange(o);
-                    if (a == null) {
-                        continue ;
-                    }
-
-                    n = a[0]; l = (boolean) a[2];
-                    x = a[1]; g = (boolean) a[3];
-                    if (n == null
-                    &&  x == null) {
-                        continue ;
-                    }
-
-                       Query qu = qa.whr (k , n , x , l , g);
-                    qx.add ( qu, BooleanClause.Occur.SHOULD);
-                }
-
-                BooleanQuery qz = qx.build();
-                if (qz.clauses().size() > 0) {
-                    qr.add ( qz, BooleanClause.Occur.MUST  );
-                }
-            }
-            }
+            padQry(qr, rd, k, v, qa, m);
         }
 
         Object v;
@@ -1581,9 +1343,235 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      * @param k 查询字段
      * @param v 字段取值
      * @return  自定义返 true
+     * @throws CruxException
      */
-    protected boolean padQry(BooleanQuery.Builder qr, Map rd, String k, Object v) {
+    protected boolean padQry(BooleanQuery.Builder qr, Map rd, String k, Object v) throws CruxException {
         return false;
+    }
+
+    protected void padQry(BooleanQuery.Builder qr, Map rd, String k, Object v, IQuest q, Map m) throws CruxException {
+        IQuest qa = q;
+
+        //** 常规查询 **/
+
+        Map vd ;
+        if (v instanceof Map) {
+            vd = (Map) v ;
+        } else
+        if (v instanceof Collection
+        ||  v instanceof Object[ ]) {
+            Set vs = Synt.asSet(v);
+                vs.remove("");
+            if(!vs.isEmpty( )) {
+                BooleanQuery.Builder  qx = new BooleanQuery.Builder();
+                for(Object vv : vs) {
+                    qx.add(qa.whr(k, vv), BooleanClause.Occur.SHOULD);
+                }
+                    qr.add(qx.build (  ), BooleanClause.Occur.MUST  );
+            }
+            return;
+        } else {
+            if (!v.equals("")) {
+                qr.add(qa.whr(k, v), BooleanClause.Occur.MUST);
+            }
+            return;
+        }
+
+        //** 空值查询 **/
+
+        v = vd.get(Cnst.IS_REL);
+        if ( v != null && !"".equals(v) ) {
+            String a = Synt.asString(v).toUpperCase( );
+            String b = inviable(m) && srchable(m) && ! findable(m) ? "$" : "@"; // 可搜素、不可见、不可查询，则用搜素字段
+            Query  p ;
+            // try {
+            switch (a) {
+                case "NOT-NULL" :
+                    p = new IsNotNull(b + k);
+                    qr.add(p, BooleanClause.Occur.MUST);
+                    break;
+                case "NULL" :
+                    p = new IsNotNull(b + k);
+                    qr.add(p, BooleanClause.Occur.MUST_NOT);
+                    break;
+                case "NOT-NONE" :
+                    p = new IsNotNone(b + k);
+                    qr.add(p, BooleanClause.Occur.MUST);
+                    break;
+                case "NONE" :
+                    p = new IsNotNone(b + k);
+                    qr.add(p, BooleanClause.Occur.MUST_NOT);
+                    break;
+                case "EMPTY":
+                    p = new IsEmpty(b + k);
+                    qr.add(p, BooleanClause.Occur.MUST);
+                    break;
+                case "NOT-EMPTY":
+                    p = new IsEmpty(b + k);
+                    qr.add(p, BooleanClause.Occur.MUST_NOT);
+                    break;
+                default:
+                    throw new CruxException(400, "Unsupported `is`: "+v);
+            }
+        }
+
+        //** 精确匹配 **/
+
+        v = vd.get(Cnst.EQ_REL);
+        if ( v != null && ! "".equals(v) ) {
+            qr.add(qa.whr(k, v), BooleanClause.Occur.MUST);
+        }
+        v = vd.get(Cnst.NE_REL);
+        if ( v != null && ! "".equals(v) ) {
+            qr.add(qa.whr(k, v), BooleanClause.Occur.MUST_NOT);
+        }
+
+        //** 模糊匹配 **/
+
+        v = vd.get(Cnst.SE_REL);
+        if ( v != null && ! "".equals(v) ) {
+            qr.add(qa.wdr(k, v), BooleanClause.Occur.MUST);
+        }
+        v = vd.get(Cnst.NS_REL);
+        if ( v != null && ! "".equals(v) ) {
+            qr.add(qa.wdr(k, v), BooleanClause.Occur.MUST_NOT);
+        }
+
+        //** 集合查询 **/
+
+        // IN/NI/MI 可以拆字符串, 如 fn.in=1,2 同 fn.in.=1&fn.in.=2
+        v = vd.get(Cnst.ON_REL);
+        if ( v != null ) {
+            Set vs = Synt.toSet(v);
+            if(!vs.isEmpty( )) {
+                for(Object vv : vs) {
+                    qr.add(qa.whr(k, vv), BooleanClause.Occur.MUST);
+                }
+            }
+        }
+        v = vd.get(Cnst.NO_REL);
+        if ( v != null ) {
+            Set vs = Synt.toSet(v);
+            if(!vs.isEmpty( )) {
+                for(Object vv : vs) {
+                    qr.add(qa.whr(k, vv), BooleanClause.Occur.MUST_NOT);
+                }
+            }
+        }
+        v = vd.get(Cnst.IN_REL);
+        if ( v != null ) {
+            Set vs = Synt.toSet(v);
+            if(!vs.isEmpty( )) {
+                BooleanQuery.Builder  qx = new BooleanQuery.Builder();
+                for(Object vv : vs) {
+                    qx.add(qa.whr(k, vv), BooleanClause.Occur.SHOULD);
+                }
+                    qr.add(qx.build (  ), BooleanClause.Occur.MUST  );
+            }
+        }
+
+        //** 区间查询 **/
+
+        Object  n, x;
+        boolean l, g;
+
+        n = vd.get(Cnst.GT_REL);
+        if (n != null) {
+            l  = false;
+        } else {
+        n = vd.get(Cnst.GE_REL);
+        if (n != null) {
+            l  = true ;
+        } else {
+            n  = null ;
+            l  = true ;
+        }}
+
+        x = vd.get(Cnst.LT_REL);
+        if (x != null) {
+            g  = false;
+        } else {
+        x = vd.get(Cnst.LE_REL);
+        if (x != null) {
+            g  = true ;
+        } else {
+            x  = null ;
+            g  = true ;
+        }}
+
+        if ((n != null && ! "".equals(n))
+        ||  (x != null && ! "".equals(x))) {
+            Query  qu = qa.whr( k, n, x, l, g );
+            qr.add(qu,BooleanClause.Occur.MUST);
+        }
+
+        v = vd.get(Cnst.AT_REL);
+        if (v != null) {
+        Set s  = Synt.asSet (v);
+        if (s != null && ! s.isEmpty()) {
+            BooleanQuery.Builder qx = new BooleanQuery.Builder();
+
+            for(Object o : s ) {
+                Object[] a = Synt.toRange(o);
+                if (a == null) {
+                    continue ;
+                }
+
+                n = a[0]; l = (boolean) a[2];
+                x = a[1]; g = (boolean) a[3];
+                if (n == null
+                &&  x == null) {
+                    continue ;
+                }
+
+                   Query qu = qa.whr (k , n , x , l , g);
+                qx.add ( qu, BooleanClause.Occur.SHOULD);
+            }
+
+            BooleanQuery qz = qx.build();
+            if (qz.clauses().size() > 0) {
+                qr.add ( qz, BooleanClause.Occur.MUST  );
+            }
+        }
+        }
+    }
+
+    protected void padQry(BooleanQuery.Builder qr, Map rd, String k, Object v, VectorQuest q, Map m) throws CruxException {
+        IQuest qa = q;
+
+        //** 向量查询 **/
+
+        VectorQuest qv = (VectorQuest) qa;
+        int   n = 0x0 ;
+        float u = 0.1f;
+        if (v instanceof Map) {
+            Map vd = (Map) v;
+            n = Synt.declare(vd.get(Cnst.RN_KEY), n);
+            u = Synt.declare(vd.get(Cnst.UP_REL), u);
+            v = vd.get(Cnst.AT_REL);
+        }
+        if ( "".equals(v) ) return ;
+
+        float[] w;
+        try {
+            w = VectorQuest.toVector(v);
+        } catch ( ClassCastException x) {
+            throw new  CruxException(400, "Vector value for field `$0` is invalid, $1", k, x.getMessage());
+        }
+        int d = Synt.declare(m.get("vector-dimension"), 0);
+        if (d > 0 && d != w.length) {
+            throw new  CruxException(400, "Vector dimension for field `$0` is $1, but $2", k, d, w.length);
+        }
+
+        try {
+            if (n > 0) {
+                qr.add(qv.vtr(k, w, n), BooleanClause.Occur.MUST);
+            } else {
+                qr.add(qv.vtr(k, w, u), BooleanClause.Occur.MUST);
+            }
+        } catch (IllegalArgumentException e) { // 维数不符
+            throw new CruxException(e , 400);
+        }
     }
 
     /**
@@ -1706,8 +1694,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      * @param k 排序字段
      * @param r 是否逆序
      * @return  自定义返 true
+     * @throws CruxException
      */
-    protected boolean padSrt(List<SortField> sr, Map rd, String k, boolean r) {
+    protected boolean padSrt(List<SortField> sr, Map rd, String k, boolean r) throws CruxException {
         return false;
     }
 
@@ -2302,6 +2291,16 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             return loop.truly();
         }
 
+        @Override
+        @Deprecated
+        public void remove() {
+            throw new UnsupportedOperationException("Not supported remove in search loop.");
+        }
+
+        public Stream<Map> stream() {
+            return StreamSupport.stream(this.spliterator(), false);
+        }
+
         public List<Map> toList() {
             List<Map> list = new ArrayList(size());
             while  (  hasNext() ) {
@@ -2317,12 +2316,6 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                  .append(" ")
                  .append(loop. toString())
                  .toString( );
-        }
-
-        @Override
-        @Deprecated
-        public void remove() {
-            throw new UnsupportedOperationException("Not supported remove in search loop.");
         }
     }
 

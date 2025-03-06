@@ -8,11 +8,7 @@ import org.apache.lucene.search.Query;
  * 数值查询
  * @author Hongs
  */
-public class LongQuest implements IQuest {
-    @Override
-    public Query wdr(String k, Object v) {
-        throw new UnsupportedOperationException("Field "+k+" does not support search");
-    }
+public class LongQuest extends NumberQuest implements IQuest {
     @Override
     public Query whr(String k, Object v) {
         Long   n2;

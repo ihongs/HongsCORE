@@ -11,7 +11,7 @@ import org.apache.lucene.document.SortedNumericDocValuesField;
  * 数值存储
  * @author Hongs
  */
-public class LongStock implements IStock {
+public class LongStock extends NumberStock implements IStock {
     @Override
     public Field get(String k, Object v) {
         return new StoredField(/**/k, Synt.declare(v, 0L));
@@ -27,9 +27,5 @@ public class LongStock implements IStock {
     @Override
     public Field ods(String k, Object v) {
         return new SortedNumericDocValuesField("%"+k, Synt.declare(v, 0L));
-    }
-    @Override
-    public Field wdr(String k, Object v) {
-        return null; // 数字类型无法模糊搜索, 无法增加搜索字段
     }
 }

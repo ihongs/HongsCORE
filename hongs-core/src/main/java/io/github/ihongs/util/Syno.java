@@ -653,6 +653,7 @@ public final class Syno
 
   /**
    * 清理首尾空白(含全角)
+   * @deprecated Java 11 开始内置 strip
    * @param str
    * @return
    */

@@ -1,6 +1,7 @@
 package io.github.ihongs.serv.centra;
 
 import io.github.ihongs.Cnst;
+import io.github.ihongs.Core;
 import io.github.ihongs.CoreLocale;
 import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionHelper;
@@ -10,10 +11,14 @@ import io.github.ihongs.action.anno.Preset;
 import io.github.ihongs.action.anno.Verify;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Table;
+import io.github.ihongs.db.util.FetchCase;
 import io.github.ihongs.serv.auth.AuthKit;
 import io.github.ihongs.serv.master.UserAction;
+import io.github.ihongs.util.Digest;
+import io.github.ihongs.util.Synt;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * 管理区我的信息
@@ -153,6 +158,32 @@ public class MineAction {
 
         UserAction ua = new UserAction( );
         ua.doSave( ah );
+    }
+
+    @Action("auth-code")
+    @CommitSuccess
+    public void authCode(ActionHelper ah)
+    throws CruxException {
+        Object id = ah.getSessibute(Cnst.UID_SES);
+        if (id == null || "".equals(id) ) {
+            throw new  CruxException ( 401 , "" );
+        }
+
+        String unit = "auth";
+        String code = "sk-" + Digest.md5(UUID.randomUUID().toString() + id );
+
+        FetchCase fc = DB
+              .getInstance("master")
+              .getTable("user_sign")
+              .fetchCase()
+              .filter("`user_id` = ? AND `unit` = ?", id, unit);
+        if (fc.update(Synt.mapOf("code", code)) == 0) {
+            fc.insert(Synt.mapOf("code", code, "unit", unit, "user_id", id));
+        }
+
+        ah.reply(Synt.mapOf(
+            "code", code
+        ));
     }
 
 }

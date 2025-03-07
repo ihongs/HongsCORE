@@ -126,6 +126,24 @@
     </filter-mapping>
     <!-- Auth Filter -->
     <filter>
+        <filter-name>AuthCodeFilter</filter-name>
+        <filter-class>io.github.ihongs.serv.auth.AuthFilter</filter-class>
+        <init-param>
+            <param-name>url-exclude</param-name>
+            <param-value>
+                /centra/sign/*,
+                /centre/sign/*
+            </param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>AuthCodeFilter</filter-name>
+        <url-pattern>/api/*</url-pattern>
+        <url-pattern>*.api</url-pattern>
+        <url-pattern>*.act</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
+    <filter>
         <filter-name>AuthFilter_Centra</filter-name>
         <filter-class>io.github.ihongs.action.serv.AuthFilter</filter-class>
         <init-param>

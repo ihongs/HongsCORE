@@ -17,7 +17,8 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
  *
  * 注意: 必须放在 SessInDB 或 SessInFile 之前
  * 可在 defines.properties 中设置:
- *  jetty.session.tracking.mode=HEADER,PARAMS
+ *  jetty.session.tracking.mode=AUTHOR,HEADER,PARAMS,URL
+ *  jetty.session.author.type=Authorization 类型名
  *  jetty.session.header.name=选项名
  *  jetty.session.params.name=参数名
  * 这是对 web.xml session-config 的补充
@@ -35,12 +36,16 @@ public class SessId implements Initer {
         CoreConfig cc = CoreConfig.getInstance("defines");
         Set tm  = Synt.toSet(cc.getProperty("jetty.session.tracking.mode"));
         if (tm != null && !tm.isEmpty()) {
+            hd.setUsingAuthors(tm.contains("AUTHOR"));
             hd.setUsingHeaders(tm.contains("HEADER"));
             hd.setUsingRequest(tm.contains("PARAMS"));
+            hd.setUsingURLs(tm.contains("URL"));
         }
     }
 
     private static class Hand extends SessionHandler {
+        protected boolean _usingAuthors = false;
+        protected String _sessionAuthorType = null;
         protected boolean _usingHeaders = false;
         protected String _sessionHeaderName = null;
         protected boolean _usingRequest = false;
@@ -52,6 +57,27 @@ public class SessId implements Initer {
 
         public void setUsingURLs(boolean used) {
             _usingURLs = used;
+        }
+
+        public boolean isUsingAuthors() {
+            return _usingAuthors;
+        }
+
+        public void setUsingAuthors(boolean used) {
+            _usingAuthors = used;
+        }
+
+        public void setSessionAuthorType(String param) {
+            _sessionAuthorType = param;
+        }
+
+        public String getSessionAuthorType() {
+            if (_sessionAuthorType == null ) {
+                _sessionAuthorType  = CoreConfig.getInstance("defines").getProperty("jetty.session.author.type");
+            if (_sessionAuthorType == null ) {
+                _sessionAuthorType  = "Session";
+            }}
+            return _sessionAuthorType;
         }
 
         public boolean isUsingHeaders() {
@@ -143,6 +169,26 @@ public class SessId implements Initer {
             }
 
             boolean fromCook = ssid != null;
+
+            if (ssid == null && isUsingAuthors()) {
+                String authType = getSessionAuthorType();
+                String authCode = request.getHeader("Authorization");
+                if (authCode != null) {
+                    int p = authCode.indexOf(" ");
+                    if (p > 0) {
+                        String t = authCode.substring(0,p);
+                        if (authType.equalsIgnoreCase( t )) {
+                            ssid = authCode.substring(1+p);
+                            HttpSession sess = getHttpSession (ssid);
+                            if (sess != null && isValid (sess)) {
+                                baseRequest.enterSession(sess);
+                                baseRequest.  setSession(sess);
+                                CoreLogger.debug("Got session id from Authorization: {} {}", authCode, ssid);
+                            }
+                        }
+                    }
+                }
+            }
 
             if (ssid == null && isUsingHeaders()) {
                 String sessName = getSessionHeaderName();

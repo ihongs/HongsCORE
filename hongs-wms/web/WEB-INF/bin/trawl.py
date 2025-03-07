@@ -44,14 +44,20 @@ def hsFetch(fv, ks, i=0):
         return fa
     return  fv
 
-def hsTrawl(sh, url, cok, fil, prt=False):
+def hsTrawl(sh, url, fil, cok=None, aut=None, prt=False):
     pn  = 0
     tn  = 1
+
+    hds = {'X-Requested-With': 'XMLHttpRequest'}
+    if  aut:
+        hds["Authorization"] = "Bearer " + aut
+    if  cok:
+        hds["Cookie"] = cok
 
     while True:
         pn  = pn + 1
         dat = parse.urlencode({'pn': pn}).encode('utf-8')
-        req = request.Request(url, data=dat, headers={'Cookie': cok, 'X-Requested-With': 'XMLHttpRequest'})
+        req = request.Request(url, data=dat, headers=hds)
         rsp = request.urlopen(req)
         rst = rsp.read().decode('utf-8')
         rst = json.loads(rst)
@@ -83,14 +89,16 @@ if __name__ == '__main__':
         print("Options:")
         print("  -o --output file      Output Xlsx")
         print("  -s --search href      Search Href")
-        print("  -c --cookie key=val   HTTP Cookie")
         print("  -f --fields fn1,fn2   List fields")
         print("  -l --labels fn1,fn2   List labels")
+        print("  -c --cookie key=val   HTTP Cookie")
+        print("  -a --auth code        Auth Code"  )
         print("  -h --help             Show this msg")
 
     xls = ''
     url = ''
     cok = ''
+    aut = ''
     fns = []
     lns = []
 
@@ -100,12 +108,14 @@ if __name__ == '__main__':
             xls = v
         if  n in ("-s", "--search"):
             url = v
-        if  n in ("-c", "--cookie"):
-            cok = v
         if  n in ("-f", "--fields"):
             fns = v.split(',')
         if  n in ("-l", "--labels"):
             lns = v.split(',')
+        if  n in ("-c", "--cookie"):
+            cok = v
+        if  n in ("-a", "--auth"):
+            aut = v
         if  n in ("-h", "--help"):
             cmd_help( )
             sys.exit(0)
@@ -126,6 +136,6 @@ if __name__ == '__main__':
 
     sh.append(lns)
 
-    hsTrawl(sh, url, cok, fil, True)
+    hsTrawl(sh, url, fil, cok, aut, True)
 
     wb.save(xls)

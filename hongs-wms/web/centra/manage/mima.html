@@ -21,6 +21,7 @@
         </div>
         <div class="form-group form-control-static" style="padding-top: 0;">
             <a href="javascript:;" class="new-password">生成密码</a>
+            <a href="javascript:;" class="new-authcode pull-right" title="API Key 用于以当前用户身份调用接口">获取/重置 API Key</a>
         </div>
         <div class="form-group">
             <button type="submit" class="commit btn btn-primary">提交</button>
@@ -98,6 +99,51 @@
                 ps.push (cs[x][y]);
             }
             return ps.join("");
+        }
+
+        if (! H$('!centra/mine/auth-code.act')) {
+            context.find(".new-authcode").remove();
+        }
+        context.on("click", ".new-authcode", function() {
+            newAuthCode( );
+        });
+        function newAuthCode() {
+            $.hsMask({
+                title: "获取/重置 API Key",
+                text : "这将创建新的 API Key, 旧的将会失效(如果有). 确定要执行吗?",
+                glass: "alert-danger",
+                mode : "warn",
+                focus: 2
+            }, {
+                label: "确定创建",
+                glass: "btn-danger",
+                click: function() {
+                    $.hsAjax({
+                        url: "centra/mine/auth-code.act",
+                        dataType: "json",
+                        success : function(rsp) {
+                            rsp = hsResponse(rsp);
+                            console.log(rsp.code);
+                            if (rsp.ok) {
+                                $.hsMask({
+                                    html : "请记住并避免泄露, 此后将无法再查看.</p>",
+                                    glass: "alert-success",
+                                    mode : "warn"
+                                }, {
+                                    label: "确定并拷贝 API Key",
+                                    glass: "btn-success",
+                                    click: function() {
+                                        $(this).closest(".modal").find(".code").hsCopy();
+                                    }
+                                }).find(".alert-title").html('API Key: <b class="code">'+ rsp.code +'</b>');
+                            }
+                        }
+                    });
+                }
+            }, {
+                label: "取消",
+                glass: "btn-default"
+            });
         }
     })(jQuery);
 </script>

@@ -154,8 +154,6 @@ public class Data extends SearchEntity {
             throw new CruxExemption(ex, 824, "Can not call '"+clsn+".getInstance'");
         } catch (   IllegalAccessException ex) {
             throw new CruxExemption(ex, 824, "Can not call '"+clsn+".getInstance'");
-        } catch (        SecurityException se) {
-            throw new CruxExemption(se, 824, "Can not call '"+clsn+".getInstance'");
         }
     }
 

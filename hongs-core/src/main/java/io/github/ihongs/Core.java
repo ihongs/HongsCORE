@@ -282,7 +282,7 @@ public class Core
   /**
    * 类名构建实例
    *
-   * 先尝试调用工厂方法 getInstacne(),
+   * 先尝试调用静态方法 getInstacne(),
    * 没有则调用构造方法.
    *
    * @param name
@@ -307,7 +307,7 @@ public class Core
   /**
    * 从类构建实例
    *
-   * 先尝试调用工厂方法 getInstacne(),
+   * 先尝试调用静态方法 getInstacne(),
    * 没有则调用构造方法.
    *
    * @param <T>
@@ -450,7 +450,7 @@ public class Core
    */
   public static final Object runFunction(Class clas, String func, Class[] types, Object[] paras)
   {
-    // 获取工厂方法
+    // 获取静态方法
     Method method;
     try
     {
@@ -470,7 +470,7 @@ public class Core
       throw new CruxExemption(/**/822, "Can not found $0.$1", clas.getName(), func);
     }
 
-    // 执行工厂方法
+    // 执行静态方法
     try
     {
       return method.invoke(null, paras);

@@ -30,7 +30,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * @author hongs
  */
-public final class Chore implements AutoCloseable, Core.Singleton, Core.Soliloquy {
+@Core.Singleton
+@Core.Soliloquy
+public final class Chore implements AutoCloseable {
 
     private final ThreadGroup TGS = new ThreadGroup ( "CORE-Chore" );
     private final ScheduledExecutorService SES;

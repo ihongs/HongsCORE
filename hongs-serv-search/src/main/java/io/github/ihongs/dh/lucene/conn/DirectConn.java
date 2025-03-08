@@ -27,9 +27,11 @@ import org.apache.lucene.store.FSDirectory;
  * 提交立即写入磁盘
  * @author Hongs
  */
+@Core.Singleton
 public class DirectConn implements Conn {
 
-    public static class Getter implements ConnGetter, Core.Soliloquy {
+    @Core.Soliloquy
+    public static class Getter implements ConnGetter {
 
         @Override
         public Conn get (String dbpath, String dbname) {

@@ -29,9 +29,11 @@ import org.apache.lucene.store.FSDirectory;
  * 间隔时间写入磁盘
  * @author Hongs
  */
-public class FlashyConn implements Conn, Core.Singleton {
+@Core.Singleton
+public class FlashyConn implements Conn {
 
-    public static class Getter implements ConnGetter, Core.Soliloquy {
+    @Core.Soliloquy
+    public static class Getter implements ConnGetter {
 
         @Override
         public Conn get (String dbpath, String dbname) {

@@ -13,7 +13,7 @@ import org.apache.lucene.index.VectorSimilarityFunction;
  */
 public class VectorStock implements IStock {
     private VectorSimilarityFunction sim = null;
-    public void similarly(VectorSimilarityFunction f) {
+    public void similar(VectorSimilarityFunction f) {
         sim = f;
     }
 

@@ -1017,7 +1017,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
              */
             if (q && f instanceof VectorStock) {
                 try {
-                    ((VectorStock) f).similarly(getSimilar(m));
+                    ((VectorStock) f). similar (getSimilar(m));
                 } catch ( CruxException x) {
                     throw x.toExemption( );
                 }

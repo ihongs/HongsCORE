@@ -2,6 +2,10 @@ package io.github.ihongs;
 
 import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.ActionHelper;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.InvocationTargetException;
@@ -52,8 +56,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * <h3>错误代码:</h3>
  * <pre>
  * 821 无法获取对应的类
- * 822 无法执行构造方法
- * 823 无法执行工厂方法
+ * 822 无法获取对应方法
+ * 823 无法执行构造方法
+ * 824 无法执行工厂方法
  * </pre>
  *
  * @author Hongs
@@ -275,9 +280,10 @@ public class Core
   }
 
   /**
-   * 类名构建单例
+   * 类名构建实例
    *
-   * 注意: 未存储
+   * 先尝试调用工厂方法 getInstacne(),
+   * 没有则调用构造方法.
    *
    * @param name
    * @return
@@ -299,9 +305,10 @@ public class Core
   }
 
   /**
-   * 按类构建单例
+   * 从类构建实例
    *
-   * 注意; 未存储
+   * 先尝试调用工厂方法 getInstacne(),
+   * 没有则调用构造方法.
    *
    * @param <T>
    * @param clas
@@ -311,97 +318,196 @@ public class Core
   {
     try
     {
-      // 获取工厂方法
-      Method method = clas.getMethod("getInstance", new Class[]{});
-      int    modifs = method.getModifiers();
-
-      // 非父类定义的 public static
-      if (! Modifier.isPublic(modifs)
-      ||  ! Modifier.isStatic(modifs)
-      || clas != method.getDeclaringClass()
-      || method.isAnnotationPresent(Deprecated.class))
-      {
-        throw  new  NoSuchMethodException();
-      }
-
-      // 获取工厂对象
-      try
-      {
-        return (T) method.invoke(null, new Object[]{});
-      }
-      catch (InvocationTargetException ex)
-      {
-        Throwable ta = ex.getCause();
-
-        // 调用层级过多, 最好直接抛出
-        if (ta instanceof StackOverflowError)
-        {
-          throw ( StackOverflowError ) ta;
-        }
-
-        // 框架常规异常, 可以直接抛出
-        if (ta instanceof CruxCause )
-        {
-          throw ((CruxCause) ta).toExemption();
-        }
-
-        throw new CruxExemption(ta, 823, "Can not build "+clas.getName());
-      }
-      catch (IllegalArgumentException ex)
-      {
-        throw new CruxExemption(ex, 823, "Can not build "+clas.getName());
-      }
-      catch (  IllegalAccessException ex)
-      {
-        throw new CruxExemption(ex, 823, "Can not build "+clas.getName());
-      }
-      catch (  SecurityException ex)
-      {
-        throw new CruxExemption(ex, 823, "Can not build "+clas.getName());
-      }
+      return (T) runFunction(clas, "getInstance", new Class[]{}, new Object[]{});
     }
-    catch (NoSuchMethodException ez)
+    catch  ( CruxExemption ex )
     {
-      // 获取标准对象
-      try
+      if (822 == ex.getErrno())
       {
-        return clas.getDeclaredConstructor().newInstance();
+        return   newInstance(clas, new Class[]{}, new Object[]{});
       }
-      catch (InvocationTargetException ex)
-      {
-        Throwable ta = ex.getCause();
+      throw ex;
+    }
+  }
 
-        // 调用层级过多, 最好直接抛出
-        if (ta instanceof StackOverflowError)
-        {
-          throw ( StackOverflowError ) ta;
-        }
+  /**
+   * 类名构建实例
+   *
+   * @param clsn
+   * @param types 参数类型
+   * @param paras 参数列表
+   * @return
+   */
+  public static final Object newInstance(String clsn, Class[] types, Object[] paras)
+  {
+    // 获取类
+    Class clas;
+    try
+    {
+      clas  =  Class.forName  ( clsn );
+    }
+    catch ( ClassNotFoundException e )
+    {
+      throw new CruxExemption (e, 821);
+    }
 
-        // 框架常规异常, 可以直接抛出
-        if (ta instanceof CruxCause )
-        {
-          throw ((CruxCause) ta).toExemption();
-        }
+    return  newInstance(clas, types, paras);
+  }
 
-        throw new CruxExemption(ex, 822, "Can not build "+clas.getName());
-      }
-      catch (InstantiationException ex)
+  /**
+   * 从类构建实例
+   *
+   * 需有公开的构造方法.
+   *
+   * @param <T>
+   * @param clas
+   * @param types 参数类型
+   * @param paras 参数列表
+   * @return
+   */
+  public static final <T>T newInstance(Class<T> clas, Class[] types, Object[] paras)
+  {
+    // 执行构造方法
+    try
+    {
+      return clas.getDeclaredConstructor(types).newInstance(paras);
+    }
+    catch (InvocationTargetException ex)
+    {
+      Throwable ta = ex.getCause();
+
+      // 调用层级过多, 最好直接抛出
+      if (ta instanceof StackOverflowError)
       {
-        throw new CruxExemption(ex, 822, "Can not build "+clas.getName());
+        throw ( StackOverflowError ) ta;
       }
-      catch (IllegalAccessException ex)
+
+      // 框架常规异常, 可以直接抛出
+      if (ta instanceof CruxCause )
       {
-        throw new CruxExemption(ex, 822, "Can not build "+clas.getName());
+        throw ((CruxCause) ta).toExemption();
       }
-      catch ( NoSuchMethodException ex)
+
+      throw new CruxExemption(ex, 823, "Can not build "+clas.getName());
+    }
+    catch (IllegalArgumentException ex)
+    {
+      throw new CruxExemption(ex, 823, "Can not build "+clas.getName());
+    }
+    catch (IllegalAccessException ex)
+    {
+      throw new CruxExemption(ex, 823, "Can not build "+clas.getName());
+    }
+    catch (InstantiationException ex)
+    {
+      throw new CruxExemption(ex, 823, "Can not build "+clas.getName());
+    }
+    catch ( NoSuchMethodException ex)
+    {
+      throw new CruxExemption(ex, 822, "Can not build "+clas.getName());
+    }
+  }
+
+  /**
+   * 执行静态方法
+   *
+   * 需为公开的静态方法,
+   * 且不是从父类继承的.
+   *
+   * @param clsn
+   * @param func
+   * @param types 参数类型
+   * @param paras 参数列表
+   * @return
+   */
+  public static final Object runFunction(String clsn, String func, Class[] types, Object[] paras)
+  {
+    // 获取类
+    Class clas;
+    try
+    {
+      clas  =  Class.forName  ( clsn );
+    }
+    catch ( ClassNotFoundException e )
+    {
+      throw new CruxExemption (e, 821);
+    }
+
+    return  runFunction(clas, func, types, paras);
+  }
+
+  /**
+   * 执行静态方法
+   *
+   * 需为公开的静态方法,
+   * 且不是从父类继承的.
+   *
+   * @param clas
+   * @param func
+   * @param types 参数类型
+   * @param paras 参数列表
+   * @return
+   */
+  public static final Object runFunction(Class clas, String func, Class[] types, Object[] paras)
+  {
+    // 获取工厂方法
+    Method method;
+    try
+    {
+      method = clas.getMethod(func , types);
+    }
+    catch ( NoSuchMethodException ex)
+    {
+      throw new CruxExemption(ex, 822, "Can not found $0.$1", clas.getName(), func);
+    }
+
+    // 非父类定义的 public static
+    int mods  = method.getModifiers();
+    if (! Modifier.isPublic(mods)
+    ||  ! Modifier.isStatic(mods)
+    ||  clas != method.getDeclaringClass())
+    {
+      throw new CruxExemption(/**/822, "Can not found $0.$1", clas.getName(), func);
+    }
+
+    // 执行工厂方法
+    try
+    {
+      return method.invoke(null, paras);
+    }
+    catch (InvocationTargetException ex)
+    {
+      Throwable ta = ex.getCause();
+
+      // 调用层级过多, 最好直接抛出
+      if (ta instanceof StackOverflowError)
       {
-        throw new CruxExemption(ex, 822, "Can not build "+clas.getName());
+        throw ( StackOverflowError ) ta;
       }
+
+      // 框架常规异常, 可以直接抛出
+      if (ta instanceof CruxCause )
+      {
+        throw ((CruxCause) ta).toExemption();
+      }
+
+      throw new CruxExemption(ta, 824, "Can not apply $0.$1", clas.getName(), func);
+    }
+    catch (IllegalArgumentException ex)
+    {
+      throw new CruxExemption(ex, 824, "Can not apply $0.$1", clas.getName(), func);
+    }
+    catch (IllegalAccessException ex)
+    {
+      throw new CruxExemption(ex, 824, "Can not apply $0.$1", clas.getName(), func);
     }
   }
 
   /**
    * 新建唯一标识
+   *
+   * 此为时序相关
+   * 请勿用于密码
    *
    * 36进制的16位字串(服务器ID占两位)
    * 可以用到: 2101/01/18 02:32:27
@@ -621,11 +727,11 @@ public class Core
     {
       return (T) val;
     }
-    if (Singleton.class.isAssignableFrom(cls))
+    if (cls.isAnnotationPresent(Singleton.class))
     {
       return Core.GLOBAL_CORE.got (cln , cls);
     }
-    if (Soliloquy.class.isAssignableFrom(cls))
+    if (cls.isAnnotationPresent(Soliloquy.class))
     {
       return newInstance(cls);
     }
@@ -656,11 +762,11 @@ public class Core
     {
       return (T) val;
     }
-    if (Singleton.class.isAssignableFrom(sup.getClass()))
+    if (sup.getClass().isAnnotationPresent(Singleton.class))
     {
       return Core.GLOBAL_CORE.got (key , sup);
     }
-    if (Soliloquy.class.isAssignableFrom(sup.getClass()))
+    if (sup.getClass().isAnnotationPresent(Soliloquy.class))
     {
       return sup.get();
     }
@@ -1058,14 +1164,18 @@ public class Core
 
   /**
    * 单例模式
-   * 实现此接口, 则在全局环境唯一, 常驻且仅构造一次
+   * 添加此注解, 则在全局环境唯一, 常驻且仅构造一次
    */
-  static public interface Singleton {}
+  @Target(ElementType.TYPE)
+  @Retention(RetentionPolicy.RUNTIME)
+  static public @interface Singleton {}
 
   /**
    * 自持模式
-   * 实现此接口, 则自行维护其实例, 不会主动进行存储
+   * 添加此注解, 则自行维护其实例, 不会主动登记缓存
    */
-  static public interface Soliloquy {}
+  @Target(ElementType.TYPE)
+  @Retention(RetentionPolicy.RUNTIME)
+  static public @interface Soliloquy {}
 
 }

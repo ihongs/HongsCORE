@@ -31,11 +31,11 @@ import java.util.Map;
  *
  * <pre>
  *  调远程命令
- *  access.exec 命令 参数1 参数2 ...
+ *  access.exec 命令 认证 参数1 参数2 ...
  *  调远程动作
  *  access.eval 动作 --request 请求参数 ...
  *  调本地动作
- *  access.eval 动作 --request 请求参数 ...
+ *  access.call 动作 --request 请求参数 ...
  * </p>
  *
  * <p>注意: 远程调用默认关闭, 开启后需设白名单, 可以跳过权限检查, 详见 io.github.ihongs.action.serv.MoreAction</p>
@@ -65,6 +65,9 @@ public class Access {
         // 命令接口
         String url = Core.SERV_HREF+Core.SERV_PATH + "/common/more/exec" +Cnst.ACT_EXT;
 
+        // 认证代码
+        String tok = CoreConfig.getInstance( ).getProperty( "core.access.token" , "" );
+
         try {
             HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
             conn.setDoInput        ( true );
@@ -73,7 +76,8 @@ public class Access {
             conn.setConnectTimeout (  0   );
             conn.setRequestMethod  ("POST");
             conn.setRequestProperty("Accept" , "application/json,text/html,*/*;q=0.8");
-            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("Content-Type" , "application/json");
+            conn.setRequestProperty("Authorization", "Bearer "  +  tok );
             conn.setRequestProperty("X-Requested-With", CoreConfig.getInstance().getProperty("core.powered.by"));
 
             String         ln;
@@ -136,6 +140,9 @@ public class Access {
         // 动作接口
         String url = Core.SERV_HREF+Core.SERV_PATH + "/common/more/eval" +Cnst.ACT_EXT;
 
+        // 认证代码
+        String tok = CoreConfig.getInstance( ).getProperty( "core.access.token" , "" );
+
         try {
             HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
             conn.setDoInput        ( true );
@@ -144,7 +151,8 @@ public class Access {
             conn.setConnectTimeout (  0   );
             conn.setRequestMethod  ("POST");
             conn.setRequestProperty("Accept" , "application/json,text/html,*/*;q=0.8");
-            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("Content-Type" , "application/json");
+            conn.setRequestProperty("Authorization", "Bearer "  +  tok );
             conn.setRequestProperty("X-Requested-With", CoreConfig.getInstance().getProperty("core.powered.by"));
 
             String         ln;

@@ -100,21 +100,28 @@ public class MoreAction {
         HttpServletResponse rsp = helper.getResponse();
 
         // 许可及IP白名单
-        boolean sw  = cnf.getProperty( "core.eval.more.enable" , false);
-        String  ia  = cnf.getProperty( "core.eval.more.allows" );
+        String  aut = req.getHeader  ("Authorization");
+        String  tok = cnf.getProperty("core.access.token");
+        String  ia  = cnf.getProperty("core.access.allow");
         String  ip  = ActionDriver.getClientAddr (req);
         Set     ias = Synt.toTerms( ia );
-        if (ias == null || ias.isEmpty()) {
-            ias =  new  HashSet();
+        if (aut != null) {
+        if (aut.startsWith( "Bearer " )) {
+            aut  = aut. substring ( 07 );
+        } else {
+            aut  = "" ;
+        }}
+        if (ias == null) {
+            ias  = new  HashSet();
             ias.add(       "::1"       );
             ias.add(    "127.0.0.1"    );
             ias.add( "0:0:0:0:0:0:0:1" );
         }
-        if (! sw ) {
-            throw new CruxException(400, "Illegal request!");
+        if (tok == null || tok.isEmpty() || ! tok.equals(aut)) {
+            throw new CruxException( 400, "Illegal request!" );
         }
-        if (! ias.contains(ip) ) {
-            throw new CruxException(400, "Illegal request.");
+        if ( ! ias.contains(ip) && ! ias.contains("*") ) {
+            throw new CruxException( 400, "Illegal request." );
         }
 
         Map    map = helper.getRequestData();
@@ -141,21 +148,28 @@ public class MoreAction {
         HttpServletResponse rsp = helper.getResponse();
 
         // 许可及IP白名单
-        boolean sw  = cnf.getProperty( "core.exec.more.enable" , false);
-        String  ia  = cnf.getProperty( "core.exec.more.allows" );
+        String  aut = req.getHeader  ("Authorization");
+        String  tok = cnf.getProperty("core.access.token");
+        String  ia  = cnf.getProperty("core.access.allow");
         String  ip  = ActionDriver.getClientAddr (req);
         Set     ias = Synt.toTerms( ia );
-        if (ias == null || ias.isEmpty()) {
-            ias =  new  HashSet();
+        if (aut != null) {
+        if (aut.startsWith( "Bearer " )) {
+            aut  = aut. substring ( 07 );
+        } else {
+            aut  = "" ;
+        }}
+        if (ias == null) {
+            ias  = new  HashSet();
             ias.add(       "::1"       );
             ias.add(    "127.0.0.1"    );
             ias.add( "0:0:0:0:0:0:0:1" );
         }
-        if (! sw ) {
-            throw new CruxException(400, "Illegal request!");
+        if (tok == null || tok.isEmpty() || ! tok.equals(aut)) {
+            throw new CruxException( 400, "Illegal request!" );
         }
-        if (! ias.contains(ip) ) {
-            throw new CruxException(400, "Illegal request.");
+        if ( ! ias.contains(ip) && ! ias.contains("*") ) {
+            throw new CruxException( 400, "Illegal request." );
         }
 
         Map    map = helper.getRequestData();

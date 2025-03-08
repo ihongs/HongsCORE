@@ -428,12 +428,24 @@ public final class Dict
   }
 
   /**
-   * 获取树纵深值
+   * @see getScion
+   * @deprecated
    * @param map
    * @param keys
    * @return
    */
   public static Object getDepth(Map map, Object... keys)
+  {
+    return get(map, null, keys);
+  }
+
+  /**
+   * 获取树纵深值
+   * @param map
+   * @param keys
+   * @return
+   */
+  public static Object getWorth(Map map, Object... keys)
   {
     return get(map, null, keys);
   }
@@ -481,7 +493,7 @@ public final class Dict
    */
   public static Object getParam(Map map, String path)
   {
-    return getDepth(map, splitKeys(path));
+    return getWorth(map, splitKeys(path));
   }
 
   /**

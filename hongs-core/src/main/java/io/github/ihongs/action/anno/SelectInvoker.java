@@ -108,8 +108,8 @@ public class SelectInvoker implements FilterInvoker {
 
             SelectHelper sel = new SelectHelper();
             sel.setItemsInForm( rb );
-            sel.addItemsByForm( conf, form, data);
-            sel.select ( rsp, adds );
+            sel.addItemsByForm(data);
+            sel.select ( rsp , adds);
         } catch (CruxException  ex ) {
             int  ec  = ex.getErrno();
             if  (ec != 910 && ec != 911 && ec != 912) { // 非表单缺失

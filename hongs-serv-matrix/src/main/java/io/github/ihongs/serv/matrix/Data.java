@@ -137,8 +137,7 @@ public class Data extends SearchEntity {
             int    modi = func.getModifiers();
             if (! Modifier.isPublic(modi)
             ||  ! Modifier.isStatic(modi)
-            ||  type != func.getDeclaringClass ()
-            ||  func.isAnnotationPresent(Deprecated.class)) {
+            ||  type != func.getDeclaringClass()) {
                 throw new NoSuchMethodException();
             }
             return (Data) func.invoke(null, new Object[] {conf, form});
@@ -150,13 +149,13 @@ public class Data extends SearchEntity {
             if (ta instanceof StackOverflowError) {
                 throw (StackOverflowError) ta;
             }
-            throw new CruxExemption(ta, 823, "Can not call '"+clsn+".getInstance'");
+            throw new CruxExemption(ta, 824, "Can not call '"+clsn+".getInstance'");
         } catch ( IllegalArgumentException ex) {
-            throw new CruxExemption(ex, 823, "Can not call '"+clsn+".getInstance'");
+            throw new CruxExemption(ex, 824, "Can not call '"+clsn+".getInstance'");
         } catch (   IllegalAccessException ex) {
-            throw new CruxExemption(ex, 823, "Can not call '"+clsn+".getInstance'");
+            throw new CruxExemption(ex, 824, "Can not call '"+clsn+".getInstance'");
         } catch (        SecurityException se) {
-            throw new CruxExemption(se, 823, "Can not call '"+clsn+".getInstance'");
+            throw new CruxExemption(se, 824, "Can not call '"+clsn+".getInstance'");
         }
     }
 

@@ -58,7 +58,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * 821 无法获取对应的类
  * 822 无法获取对应方法
  * 823 无法执行构造方法
- * 824 无法执行工厂方法
+ * 824 无法执行静态方法
  * </pre>
  *
  * @author Hongs

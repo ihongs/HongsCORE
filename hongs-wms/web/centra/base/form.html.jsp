@@ -54,7 +54,7 @@
             <input type="hidden" name="<%=name%>" data-fn/>
         <%} else if ("legend".equals(type)) {%>
             <%
-                text = Synt.defxult(Synt.asString(info.get("form-text")), text, "");
+                text = Synt.defxult(Synt.asString(info.get("form-fame")), text, "");
             %>
             <div class="form-group row" data-name="<%=name%>">
                 <div class="col-xs-12">
@@ -63,7 +63,7 @@
             </div>
         <%} else if ("figure".equals(type)) {%>
             <%
-                text = Synt.defxult(Synt.asString(info.get("form-text")), text, "");
+                text = Synt.defxult(Synt.asString(info.get("form-fame")), text, "");
             %>
             <div class="form-group row" data-name="<%=name%>">
                 <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2">
@@ -72,7 +72,7 @@
             </div>
         <%} else if ( roly ) { //** 此部分来自 info.jsp **/ %>
             <%
-                text = Synt.defxult(Synt.asString(info.get("info-text")), text, "");
+                text = Synt.defxult(Synt.asString(info.get("info-fame")), text, "");
                 hint = Synt.defxult(Synt.asString(info.get("info-hint")), hint, "");
             %>
             <%if ("form".equals(type) || "part".equals(type)) {%>
@@ -246,7 +246,7 @@
         <%} else {%>
             <%
                 String hold;
-                text = Synt.defxult(Synt.asString(info.get("form-text")), text, "");
+                text = Synt.defxult(Synt.asString(info.get("form-fame")), text, "");
                 hint = Synt.defxult(Synt.asString(info.get("form-hint")), hint, "");
                 hold = Synt.defxult(Synt.asString(info.get("form-hold")), "");
             %>

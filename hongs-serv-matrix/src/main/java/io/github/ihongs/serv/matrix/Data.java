@@ -306,6 +306,14 @@ public class Data extends SearchEntity {
         return    fields ;
     }
 
+    public final String getForm() {
+        return form;
+    }
+
+    public final String getConf() {
+        return conf;
+    }
+
     /**
      * 背景配置
      * 当前表单不在管理区之内时,

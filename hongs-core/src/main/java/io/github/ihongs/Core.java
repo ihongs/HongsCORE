@@ -1164,7 +1164,7 @@ public class Core
 
   /**
    * 单例模式
-   * 添加此注解, 则在全局环境唯一, 常驻且仅构造一次
+   * 加此注解, 则在全局环境唯一, 常驻且仅构造一次
    */
   @Target(ElementType.TYPE)
   @Retention(RetentionPolicy.RUNTIME)
@@ -1172,7 +1172,7 @@ public class Core
 
   /**
    * 自持模式
-   * 添加此注解, 则自行维护其实例, 不会主动登记缓存
+   * 加此注解, 则自行维护其实例, 不会自动登记缓存
    */
   @Target(ElementType.TYPE)
   @Retention(RetentionPolicy.RUNTIME)

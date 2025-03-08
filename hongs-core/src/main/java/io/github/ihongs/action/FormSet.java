@@ -43,7 +43,8 @@ import org.xml.sax.SAXException;
     forms = {
         "form_name" : {
             "field_name" : {
-                __text__ : "Label",
+                __fame__ : "Label",
+                __hint__ : "Title",
                 __type__ : "string|number|date|file|enum|form",
                 __rule__ : "rule.class.Name",
                 __required__ : "true|false",
@@ -306,8 +307,12 @@ public class FormSet
         attr = element2.getAttribute("rule");
         items.put("__rule__", attr);
 
+        // 旧版兼容
         attr = element2.getAttribute("text");
-        items.put("__text__", gotLanguage(attr));
+        items.put("__fame__", gotLanguage(attr));
+        
+        attr = element2.getAttribute("fame");
+        items.put("__fame__", gotLanguage(attr));
 
         attr = element2.getAttribute("hint");
         items.put("__hint__", gotLanguage(attr));

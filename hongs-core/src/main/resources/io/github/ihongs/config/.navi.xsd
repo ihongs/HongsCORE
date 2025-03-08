@@ -26,7 +26,7 @@
     <xs:element name="role">
         <xs:complexType>
             <xs:attribute ref="name" use="required"/>
-            <xs:attribute ref="text"/>
+            <xs:attribute ref="fame"/>
             <xs:attribute ref="hint"/>
             <xs:all>
                 <xs:element ref="action" maxOccurs="unbounded"/>
@@ -41,7 +41,7 @@
             <xs:attribute ref="href" use="required"/>
             <xs:attribute ref="hrel"/>
             <xs:attribute ref="icon"/>
-            <xs:attribute ref="text"/>
+            <xs:attribute ref="fame"/>
             <xs:attribute ref="hint"/>
             <xs:all>
                 <xs:element ref="menu" maxOccurs="unbounded"/>

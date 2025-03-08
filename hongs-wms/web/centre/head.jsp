@@ -20,7 +20,7 @@
         int edge  = -1;
 
         if (list != null) for (Map item: list) {
-            String text = (String) item.get("text");
+            String text = (String) item.get("fame");
             String hint = (String) item.get("hint");
             String href = (String) item.get("href");
             String hrel = (String) item.get("hrel");

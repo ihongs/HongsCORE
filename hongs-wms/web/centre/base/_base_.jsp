@@ -35,14 +35,14 @@
             if (menu != null) {
                     $menu   = menu;
                     $hrel   = (String) menu.get("hrel");
-                    $title  = Synt.declare (menu.get("text"),"");
+                    $title  = Synt.declare (menu.get("fame"),"");
                 break;
             }
             menu  = site.getMenu($module +"/#"+$entity);
             if (menu != null) {
                     $menu   = menu;
                     $hrel   = (String) menu.get("hrel");
-                    $title  = Synt.declare (menu.get("text"),"");
+                    $title  = Synt.declare (menu.get("fame"),"");
                 break;
             }
         } catch (CruxException ex) {

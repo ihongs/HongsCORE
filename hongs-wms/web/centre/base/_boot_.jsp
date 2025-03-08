@@ -132,7 +132,7 @@
                 if (_params == null) {
                     _params = new LinkedHashMap();
                 }
-                _title   = (String) _params.get("__text__");
+                _title   = (String) _params.get("__fame__");
                 if (_title  == null) {
                     _title  = "";
                 }

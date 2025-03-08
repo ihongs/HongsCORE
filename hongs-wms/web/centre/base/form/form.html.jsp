@@ -30,7 +30,7 @@
             }
 
             String  type = Synt.asString(info.get("__type__"));
-            String  text = Synt.asString(info.get("__text__"));
+            String  text = Synt.asString(info.get("__fame__"));
             String  hint = Synt.asString(info.get("__hint__"));
             boolean rqrd = Synt.declare(info.get("__required__"), false);
             boolean rptd = Synt.declare(info.get("__repeated__"), false);
@@ -43,8 +43,8 @@
             }
 
             // 可以自定义字段显示文本
-            if (info.containsKey("text")) {
-                text  = (String) info.get("text");
+            if (info.containsKey("fame")) {
+                text  = (String) info.get("fame");
             }
             if (info.containsKey("hint")) {
                 hint  = (String) info.get("hint");

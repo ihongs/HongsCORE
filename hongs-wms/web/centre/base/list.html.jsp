@@ -41,7 +41,7 @@
                         StringBuilder sp = new StringBuilder( );
                         if (! _wd.isEmpty()) {
                         for(String ss : _wd) {
-                            ss = Dict.getValue(_fields, "", ss , "__text__" );
+                            ss = Dict.getValue(_fields, "", ss , "__fame__" );
                             if (ss.length() != 0) sp.append(ss).append(", " );
                         }   if (sp.length() != 0) sp.setLength(sp.length()-2);
                         } else {
@@ -68,7 +68,7 @@
             Map     info = (Map ) et.getValue();
             String  name = (String) et.getKey();
             String  type = (String) info.get ("__type__");
-            String  text = (String) info.get ("__text__");
+            String  text = (String) info.get ("__fame__");
 
             if ("@".equals(name) || "id".equals(name)
             ||  Synt.declare(info.get("unopenable"), false)) {
@@ -240,7 +240,7 @@
             Map.Entry et = (Map.Entry) it4.next();
             Map     info = (Map ) et.getValue();
             String  name = (String) et.getKey();
-            String  text = (String) info.get ("__text__");
+            String  text = (String) info.get ("__fame__");
 
             if ("@".equals(name) || "id".equals(name)
             || !Synt.declare(info.get("sortable"), false)) {

@@ -1679,7 +1679,7 @@ public class Data extends SearchEntity {
             Data inst = Data.getInstance(c, f);
             long hits = inst.search( ar, 0, 1).count();
             if ( hits > 0 ) {
-                String  l = (String) inst.getParams( ).get("__text__");
+                String  l = (String) inst.getParams( ).get("__fame__");
                 nb.append(l).append(" (").append(hits).append( "), " );
                 sb.append(f).append(" (").append(hits).append( "), " );
             }

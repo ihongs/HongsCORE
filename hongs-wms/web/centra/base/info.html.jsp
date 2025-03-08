@@ -31,7 +31,7 @@
             }
 
             String  type = Synt.asString(info.get("__type__"));
-            String  text = Synt.asString(info.get("__text__"));
+            String  text = Synt.asString(info.get("__fame__"));
             String  hint = Synt.asString(info.get("__hint__"));
             boolean rptd = Synt.declare(info.get("__repeated__"), false);
 

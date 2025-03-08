@@ -308,7 +308,7 @@ public class Form extends Model {
 
             // 补全表配置项
             fld = Synt.mapOf(
-                "__text__", name,
+                "__fame__", name,
                 "form_id" , id  ,
                 "part_id" , id  ,
                 "db-name" , "matrix/base" ,
@@ -332,7 +332,7 @@ public class Form extends Model {
 
             // 补全编号字段
             fld = Synt.mapOf(
-                "__text__", "ID",
+                "__fame__", "ID",
                 "__name__", "id",
                 "__type__", "hidden",
                 "deforce" , "create",
@@ -579,8 +579,8 @@ public class Form extends Model {
             if (n != null) item.setAttribute("name", n); else n = "";
             t = (String) fiel.get("__type__");
             if (t != null) item.setAttribute("type", t); else t = "";
-            y = (String) fiel.get("__text__");
-            if (y != null) item.setAttribute("text", y);
+            y = (String) fiel.get("__fame__");
+            if (y != null) item.setAttribute("fame", y);
             y = (String) fiel.get("__hint__");
             if (y != null) item.setAttribute("hint", y);
             y = (String) fiel.get("__rule__");
@@ -895,11 +895,11 @@ public class Form extends Model {
 
         menu = getNodeByTagNameAndAttr(root, "menu", "href", href);
         if (menu != null) {
-            menu.setAttribute("text" , name );
+            menu.setAttribute("fame" , name );
         } else {
             menu = docm.createElement("menu");
             root.appendChild ( menu );
-            menu.setAttribute("text" , name );
+            menu.setAttribute("fame" , name );
             menu.setAttribute("href" , href );
 
             // 会话
@@ -913,7 +913,7 @@ public class Form extends Model {
             role = docm.createElement("role");
             menu.appendChild ( role );
             role.setAttribute("name", href +"search");
-            role.setAttribute("text", "查看");
+            role.setAttribute("fame", "查看");
             actn = docm.createElement("action");
             role.appendChild ( actn );
             actn.appendChild ( docm.createTextNode(href +"search"+ Cnst.ACT_EXT) );
@@ -938,7 +938,7 @@ public class Form extends Model {
             role = docm.createElement("role");
             menu.appendChild ( role );
             role.setAttribute("name", href +"create");
-            role.setAttribute("text", "添加");
+            role.setAttribute("fame", "添加");
             actn = docm.createElement("action");
             role.appendChild ( actn );
             actn.appendChild ( docm.createTextNode(href +"create"+ Cnst.ACT_EXT) );
@@ -956,7 +956,7 @@ public class Form extends Model {
             role = docm.createElement("role");
             menu.appendChild ( role );
             role.setAttribute("name", href +"update");
-            role.setAttribute("text", "修改");
+            role.setAttribute("fame", "修改");
             actn = docm.createElement("action");
             role.appendChild ( actn );
             actn.appendChild ( docm.createTextNode(href +"update"+ Cnst.ACT_EXT) );
@@ -971,7 +971,7 @@ public class Form extends Model {
             role = docm.createElement("role");
             menu.appendChild ( role );
             role.setAttribute("name", href +"delete");
-            role.setAttribute("text", "删除");
+            role.setAttribute("fame", "删除");
             actn = docm.createElement("action");
             role.appendChild ( actn );
             actn.appendChild ( docm.createTextNode(href +"delete"+ Cnst.ACT_EXT) );
@@ -984,7 +984,7 @@ public class Form extends Model {
             role = docm.createElement("role");
             menu.appendChild ( role );
             role.setAttribute("name", href +"reveal");
-            role.setAttribute("text", "回看");
+            role.setAttribute("fame", "回顾");
             actn = docm.createElement("action");
             role.appendChild ( actn );
             actn.appendChild ( docm.createTextNode(href +"reveal"+ Cnst.ACT_EXT) );
@@ -999,7 +999,7 @@ public class Form extends Model {
             role = docm.createElement("role");
             menu.appendChild ( role );
             role.setAttribute("name", href +"revert");
-            role.setAttribute("text", "恢复");
+            role.setAttribute("fame", "恢复");
             actn = docm.createElement("action");
             role.appendChild ( actn );
             actn.appendChild ( docm.createTextNode(href +"revert"+ Cnst.ACT_EXT) );
@@ -1040,7 +1040,7 @@ public class Form extends Model {
         menu = getNodeByTagNameAndAttr(root, "xxxx", "href", href);
         }
         if (menu != null) {
-            menu.setAttribute("text" , name );
+            menu.setAttribute("fame" , name );
 
             /**
              * 1 为内部资源, 改名使其失效
@@ -1062,7 +1062,7 @@ public class Form extends Model {
         } else {
             menu = docm.createElement("menu");
             root.appendChild ( menu );
-            menu.setAttribute("text" , name );
+            menu.setAttribute("fame" , name );
             menu.setAttribute("href" , href );
 
             /**

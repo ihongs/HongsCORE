@@ -33,7 +33,7 @@
                     StringBuilder sp = new StringBuilder( );
                     if (! _wd.isEmpty()) {
                     for(String ss : _wd) {
-                        ss = Dict.getValue(_fields, "", ss , "__text__" );
+                        ss = Dict.getValue(_fields, "", ss , "__fame__" );
                         if (ss.length() != 0) sp.append(ss).append(", " );
                     }   if (sp.length() != 0) sp.setLength(sp.length()-2);
                     } else {
@@ -55,9 +55,9 @@
                     <th data-fn="id." data-ft="_check" class="_check">
                         <input name="id." type="checkbox" class="checkall"/>
                     </th>
-                    <th data-fn="name" data-ob="name" class="sortable name"><%=Dict.getDepth(_fields, "name" , "__text__")%></th>
-                    <th data-fn="note" data-ob="note" class="noteable note"><%=Dict.getDepth(_fields, "note" , "__text__")%></th>
-                    <th data-fn="mtime" data-ob="mtime" data-ft="_htime" data-fill="v*1000" class="sortable" style="width: 5em;"><%=Dict.getDepth(_fields, "mtime", "__text__")%></th>
+                    <th data-fn="name" data-ob="name" class="sortable name"><%=Dict.getWorth(_fields, "name" , "__fame__")%></th>
+                    <th data-fn="note" data-ob="note" class="noteable note"><%=Dict.getWorth(_fields, "note" , "__fame__")%></th>
+                    <th data-fn="mtime" data-ob="mtime" data-ft="_htime" data-fill="v*1000" class="sortable" style="width: 5em;"><%=Dict.getWorth(_fields, "mtime", "__fame__")%></th>
                 </tr>
             </thead>
             <tbody>
@@ -65,7 +65,7 @@
         </table>
     </div>
     <div style="display: table; width: 100%;">
-        <div style="display: table-cell; width: 100%; vertical-align: middel;">
+        <div style="display: table-cell; width: 100%; vertical-align: middle;">
             <div class="toolbox" style="margin-bottom: 0;">
                 <button type="button" class="commit btn btn-primary"><%=_locale.translate("fore.select")%></button>
                 <button type="button" class="cancel btn btn-link   "><%=_locale.translate("fore.cancel")%></button>

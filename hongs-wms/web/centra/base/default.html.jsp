@@ -23,7 +23,7 @@
             Map menu = (Map) et.getValue();
             String href = (String) et.getKey ();
             String hrel = (String) menu.get("hrel");
-            String text = (String) menu.get("text");
+            String text = (String) menu.get("fame");
             if (href != null &&  href.startsWith("!")
             &&  hrel != null && !hrel.startsWith("!")) {
                 text  = $locale.translate(text);

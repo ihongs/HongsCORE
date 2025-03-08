@@ -86,7 +86,7 @@
                                     Object n = xt.getKey();
                                     if ( "@".equals(n) ) continue;
                                     Object t = fc.get("__type__");
-                                    Object l = fc.get("__text__");
+                                    Object l = fc.get("__fame__");
                                     fl.add(new Object[]{n, t, l});
                                 }
                             %>
@@ -129,7 +129,7 @@
                         <%}%>
                         </td>
                         <td><%=info.get("__type__")%></td>
-                        <td><%=info.get("__text__")%></td>
+                        <td><%=info.get("__fame__")%></td>
                         <td>
                             <%if (Synt.declare(info.get("__required__"), false)) {%><span class="label label-primary" style="margin-right: 2px;">必填</span><%}%>
                             <%if (Synt.declare(info.get("__repeated__"), false)) {%><span class="label label-primary" style="margin-right: 2px;">多值</span><%}%>

@@ -282,7 +282,7 @@ public class Verify {
                 if (rule instanceof Rule) {
                     Rule r = (Rule) rule ;
                     w.setLocalizedCaption(Synt.defxult(
-                            Synt.asString(r.getParam("__text__")),
+                            Synt.asString(r.getParam("__fame__")),
                             Synt.asString(r.getParam("__name__")),
                                           name)  );
                 } else {
@@ -317,7 +317,7 @@ public class Verify {
                 if (rule instanceof Rule) {
                     Rule r = (Rule) rule ;
                     w.setLocalizedCaption(Synt.defxult(
-                            Synt.asString(r.getParam("__text__")),
+                            Synt.asString(r.getParam("__fame__")),
                             Synt.asString(r.getParam("__name__")),
                                           name)  );
                 } else {

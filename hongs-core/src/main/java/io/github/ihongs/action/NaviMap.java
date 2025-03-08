@@ -48,7 +48,7 @@ import org.xml.sax.SAXException;
       "href" : {
         hrel: 页面,
         icon: 图标,
-        text: 名称,
+        fame: 名称,
         hint: 说明,
         menus : {
           子级菜单...
@@ -63,7 +63,7 @@ import org.xml.sax.SAXException;
     }
     roles = {
       "name" : {
-        text: 名称,
+        fame: 名称,
         hint: 说明,
         depends : [
           "fole.name1",
@@ -363,8 +363,12 @@ public class NaviMap
         String icon = element2.getAttribute("icon");
         if (icon != null) menu2.put( "icon", icon );
 
+        // 兼容旧版
         String text = element2.getAttribute("text");
-        if (text != null) menu2.put( "text", gotLanguage(text));
+        if (text != null) menu2.put( "fame", gotLanguage(text));
+
+        String fame = element2.getAttribute("fame");
+        if (fame != null) menu2.put( "fame", gotLanguage(text));
 
         String hint = element2.getAttribute("hint");
         if (hint != null) menu2.put( "hint", gotLanguage(hint));
@@ -399,12 +403,16 @@ public class NaviMap
             role2 = (Map) roles.get(namz);
         } else {
             role2 =  new  HashMap( );
-            role2.put("text",  ""  );
+            role2.put("fame",  ""  );
             role2.put("hint",  ""  );
             roles.put( namz , role2);
         }
+        // 兼容旧版
         if (element2.hasAttribute("text")) {
-            role2.put("text", element2.getAttribute("text"));
+            role2.put("fame", element2.getAttribute("text"));
+        }
+        if (element2.hasAttribute("fame")) {
+            role2.put("fame", element2.getAttribute("fame"));
         }
         if (element2.hasAttribute("hint")) {
             role2.put("hint", element2.getAttribute("hint"));
@@ -832,14 +840,14 @@ public class NaviMap
 
           String p = (String) v.get("hrel");
           String d = (String) v.get("icon");
-          String s = Synt.declare(v.get("text"), "");
+          String s = Synt.declare(v.get("fame"), "");
           String z = Synt.declare(v.get("hint"), "");
 
           Map menu = new HashMap(6);
           menu.put("href", h);
           menu.put("hrel", p);
           menu.put("icon", d);
-          menu.put("text", s);
+          menu.put("fame", s);
           menu.put("hint", z);
           menu.put("menus" , subz );
           list.add( menu);
@@ -944,7 +952,7 @@ public class NaviMap
           Map m = (Map) v.get ("menus");
           Set r = (Set) v.get ("roles");
 
-          String t = Synt.declare(v.get("text"), "");
+          String t = Synt.declare(v.get("fame"), "");
           String d = Synt.declare(v.get("hint"), "");
 
           if (r != null) {
@@ -961,7 +969,7 @@ public class NaviMap
               Map o = getRole(n);
               Set x = (Set) o.get ("depends");
 
-              String l = Synt.declare(o.get("text"), "");
+              String l = Synt.declare(o.get("fame"), "");
               String b = Synt.declare(o.get("hint"), "");
 
               if (l == null
@@ -971,7 +979,7 @@ public class NaviMap
 
               Map role = new HashMap(4);
               role.put("name", n);
-              role.put("text", l);
+              role.put("fame", l);
               role.put("hint", b);
               role.put("rels", x);
               rolz.add(role);
@@ -988,7 +996,7 @@ public class NaviMap
               menu.put("href", h);
               menu.put("hrel", l);
               menu.put("icon", b);
-              menu.put("text", t);
+              menu.put("fame", t);
               menu.put("hint", d);
               menu.put("tabs", p);
               menu.put("roles" , rolz );

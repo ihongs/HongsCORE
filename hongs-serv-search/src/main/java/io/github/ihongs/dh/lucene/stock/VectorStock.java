@@ -1,11 +1,11 @@
 package io.github.ihongs.dh.lucene.stock;
 
+import io.github.ihongs.dh.lucene.query.Vectors;
 import io.github.ihongs.util.Synt;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.KnnFloatVectorField;
 import org.apache.lucene.index.VectorSimilarityFunction;
-import static io.github.ihongs.dh.lucene.quest.VectorQuest.toVector;
 
 /**
  * 向量存储
@@ -13,19 +13,29 @@ import static io.github.ihongs.dh.lucene.quest.VectorQuest.toVector;
  */
 public class VectorStock implements IStock {
     private VectorSimilarityFunction sim = null;
-    public void  similar(VectorSimilarityFunction f) {
-        this.sim = f;
+    public void similarly(VectorSimilarityFunction f) {
+        sim = f;
     }
+
+    private int dim = 0;
+    public void dimension(int d) {
+        dim = d;
+    }
+
+    public float[] toVector(Object v) {
+        return Vectors.toVector(v, dim);
+    }
+
     @Override
     public Field get(String k, Object v) {
         float[] f = toVector(v);
         StringBuilder b = new StringBuilder();
         for( float x : f) {
             String s = Synt.asString(x);
-            b.append( s ).append( ", ");
+            b.append( s ).append( "," );
         }
         if (f.length > 0) {
-            b.setLength(b.length() - 2);
+            b.setLength(b.length() - 1);
         }
         return new StoredField(k , b.toString());
     }

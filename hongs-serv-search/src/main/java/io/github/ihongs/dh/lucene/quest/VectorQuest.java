@@ -1,7 +1,6 @@
 package io.github.ihongs.dh.lucene.quest;
 
-import java.util.List;
-import io.github.ihongs.util.Synt;
+import io.github.ihongs.dh.lucene.query.Vectors;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.KnnFloatVectorQuery;
 import org.apache.lucene.search.FloatVectorSimilarityQuery;
@@ -11,29 +10,13 @@ import org.apache.lucene.search.FloatVectorSimilarityQuery;
  * @author Hongs
  */
 public class VectorQuest implements IQuest {
-    /**
-     * 转为向量
-     * @param v 取值
-     * @return
-     */
-    public static float[] toVector(Object v) {
-        if (v == null) {
-            return new float [0];
-        }
-        if (v instanceof float[]) {
-            return ( float[] ) v;
-        }
-        List    l;
-        float[] f;
-        int     i;
-        i = 0;
-        l = Synt.toList(v);
-        f = new float[l.size( )];
-        for (Object j : l) {
-            f [i] = Synt.declare(j, 0f);
-            i ++;
-        }
-        return f;
+    private int dim = 0;
+    public void dimension(int d) {
+        dim = d;
+    }
+
+    public float[] toVector(Object v) {
+        return Vectors.toVector(v, dim);
     }
 
     /**

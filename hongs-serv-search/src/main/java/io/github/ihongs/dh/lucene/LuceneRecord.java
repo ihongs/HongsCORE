@@ -1013,26 +1013,19 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             /**
              * 2024/11/11
              * 指定向量指定近似函数
-             * 同时检查数据存储维数
+             * 同时设置数据存储维数
              */
             if (q && f instanceof VectorStock) {
                 try {
-                    ((VectorStock) f).similar (getSimilar (m));
+                    ((VectorStock) f).similarly(getSimilar(m));
                 } catch ( CruxException x) {
                     throw x.toExemption( );
                 }
-
-                float[] w;
                 try {
-                    w = VectorQuest.toVector(v);
-                } catch ( ClassCastException x) {
-                    throw new  CruxExemption(400, "Vector value for field `$0` is invalid, $1", k, x.getMessage());
+                    ((VectorStock) f).dimension(Synt.declare(m.get("vector-dimension"), 0));
+                } catch (ClassCastException x) {
+                    throw new CruxExemption(400, "Vector value for field `$0` is invalid, $1", k, x.getMessage());
                 }
-                int d = Synt.declare(m.get("vector-dimension"), 0);
-                if (d > 0 && d != w.length) {
-                    throw new  CruxExemption(400, "Vector dimension for field `$0` is $1, but $2", k, d, w.length);
-                }
-                v = w ;
             }
 
             if (r) {
@@ -1070,12 +1063,12 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                     for (Object w: a) {
                         doc.add(f.whr(k, w));
                     }
+                } else {
+                    // 不可查也要放, 以便判断空/非空/空串
+                    doc.add(f.whr(k, v.equals("")?"":"0"));
                 }
                 if (p) {
-                    doc.add(f.wdr(k, getSrchText(m, a)));
-                }
-                if (g && !q) { // 仅存储的仍可判断空/非空/空串
-                    doc.add(f.whr(k, v.equals("") ? "" : "0"));
+                    doc.add(f.wdr(k, getSrchText( m, a )));
                 }}
             } else
             {
@@ -1087,12 +1080,12 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 }
                 if (q) {
                     doc.add(f.whr(k, v));
+                } else {
+                    // 不可查也要放, 以便判断空/非空/空串
+                    doc.add(f.whr(k, v.equals("")?"":"0"));
                 }
                 if (p) {
-                    doc.add(f.wdr(k, getSrchText(m, v)));
-                }
-                if (g && !q) { // 仅存储的仍可判断空/非空/空串
-                    doc.add(f.whr(k, v.equals("") ? "" : "0"));
+                    doc.add(f.wdr(k, getSrchText( m, v )));
                 }
             }
         }
@@ -1183,7 +1176,12 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 qa = new StringQuest();
                 break;
             case "vector":
-                qa = new VectorQuest();
+                // 向量指定维度
+                VectorQuest qv ;
+                int d = Synt.declare(m.get("vector-dimension"), 0);
+                qv = new VectorQuest();
+                qv.dimension(d);
+                qa = qv;
                 break;
             default:
                 // 区分能否搜索
@@ -1213,7 +1211,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 }
             }
 
-            padQry(qr, rd, k, v, qa, m);
+            padQry(qr, rd, k, v, qa);
         }
 
         Object v;
@@ -1349,7 +1347,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         return false;
     }
 
-    protected void padQry(BooleanQuery.Builder qr, Map rd, String k, Object v, IQuest q, Map m) throws CruxException {
+    protected void padQry(BooleanQuery.Builder qr, Map rd, String k, Object v, IQuest q) throws CruxException {
         IQuest qa = q;
 
         //** 常规查询 **/
@@ -1381,33 +1379,32 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
         v = vd.get(Cnst.IS_REL);
         if ( v != null && !"".equals(v) ) {
-            String a = Synt.asString(v).toUpperCase( );
-            String b = inviable(m) && srchable(m) && ! findable(m) ? "$" : "@"; // 可搜素、不可见、不可查询，则用搜素字段
+            String a = Synt.asString(v).toUpperCase();
+            String b = "@" + k ;
             Query  p ;
-            // try {
             switch (a) {
-                case "NOT-NULL" :
-                    p = new IsNotNull(b + k);
+                case "NOT-NULL":
+                    p = new IsNotNull(b);
                     qr.add(p, BooleanClause.Occur.MUST);
                     break;
-                case "NULL" :
-                    p = new IsNotNull(b + k);
+                case "NULL":
+                    p = new IsNotNull(b);
                     qr.add(p, BooleanClause.Occur.MUST_NOT);
                     break;
-                case "NOT-NONE" :
-                    p = new IsNotNone(b + k);
+                case "NOT-NONE":
+                    p = new IsNotNone(b);
                     qr.add(p, BooleanClause.Occur.MUST);
                     break;
-                case "NONE" :
-                    p = new IsNotNone(b + k);
+                case "NONE":
+                    p = new IsNotNone(b);
                     qr.add(p, BooleanClause.Occur.MUST_NOT);
                     break;
                 case "EMPTY":
-                    p = new IsEmpty(b + k);
+                    p = new IsEmpty(b);
                     qr.add(p, BooleanClause.Occur.MUST);
                     break;
                 case "NOT-EMPTY":
-                    p = new IsEmpty(b + k);
+                    p = new IsEmpty(b);
                     qr.add(p, BooleanClause.Occur.MUST_NOT);
                     break;
                 default:
@@ -1536,7 +1533,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         }
     }
 
-    protected void padQry(BooleanQuery.Builder qr, Map rd, String k, Object v, VectorQuest q, Map m) throws CruxException {
+    protected void padQry(BooleanQuery.Builder qr, Map rd, String k, Object v, VectorQuest q) throws CruxException {
         IQuest qa = q;
 
         //** 向量查询 **/
@@ -1552,25 +1549,14 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         }
         if ( "".equals(v) ) return ;
 
-        float[] w;
-        try {
-            w = VectorQuest.toVector(v);
-        } catch ( ClassCastException x) {
-            throw new  CruxException(400, "Vector value for field `$0` is invalid, $1", k, x.getMessage());
-        }
-        int d = Synt.declare(m.get("vector-dimension"), 0);
-        if (d > 0 && d != w.length) {
-            throw new  CruxException(400, "Vector dimension for field `$0` is $1, but $2", k, d, w.length);
-        }
-
         try {
             if (n > 0) {
-                qr.add(qv.vtr(k, w, n), BooleanClause.Occur.MUST);
+                qr.add(qv.vtr(k, v, n), BooleanClause.Occur.MUST);
             } else {
-                qr.add(qv.vtr(k, w, u), BooleanClause.Occur.MUST);
+                qr.add(qv.vtr(k, v, u), BooleanClause.Occur.MUST);
             }
-        } catch (IllegalArgumentException e) { // 维数不符
-            throw new CruxException(e , 400);
+        } catch (ClassCastException | IllegalArgumentException e) {
+            throw new CruxException(e , 400 , "Vector value for field `$0` is invalid, $1", k, e.getMessage());
         }
     }
 

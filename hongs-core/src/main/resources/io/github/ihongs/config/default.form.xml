@@ -119,11 +119,11 @@
             <param name="accept">image/*,.jpg,.png</param>
         </field>
         <field name="fork" text="关联" type="fork,pick">
-            <param name="data-at">assoc/action</param>
-            <param name="data-al">assoc/page.html</param>
-            <param name="data-rl">refer/page.html</param>
-            <param name="data-tk"></param>
-            <param name="data-vk"></param>
+            <param name="data-sk">id</param>
+            <param name="data-rk">name</param>
+            <param name="data-at">select/action</param>
+            <param name="data-st">select/page.html</param>
+            <param name="data-rt">recite/page.html</param>
         </field>
         <field name="form" text="表单" type="form,part">
             <param name="conf"></param>

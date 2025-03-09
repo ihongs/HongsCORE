@@ -708,8 +708,8 @@ HsForm.prototype = {
         // 枚举,列表,选项,标签
         if (inp.is("ul,ol,.repeated,.multiple")) {
             var a = inp.data("data") || [];
-            var k = inp.attr("data-vk") || 0;
-            var t = inp.attr("data-tk") || 1;
+            var k = inp.attr("data-sk") || 0;
+            var t = inp.attr("data-rk") || 1;
             var x = jQuery( inp.is("ul,ol") ? '<li></li>' : '<div></div>' );
             var m = { };
             var i, c, e;
@@ -813,8 +813,8 @@ HsForm.prototype = {
             }
         }
         // 同 _feed__select
-        var vk = inp.attr("data-vk"); if(!vk) vk = 0;
-        var tk = inp.attr("data-tk"); if(!tk) tk = 1;
+        var vk = inp.attr("data-sk"); if(!vk) vk = 0;
+        var tk = inp.attr("data-rk"); if(!tk) tk = 1;
         var gs = inp.attr("data-group-start") || this._group_start;
         for(var i = 0; i < v.length; i ++) {
             var k = hsGetValue(v[i], vk);
@@ -842,8 +842,8 @@ HsForm.prototype = {
 
     _feed__select : function(inp, v, n) {
         if (v === undefined) return ;
-        var vk = inp.attr("data-vk"); if(!vk) vk = 0;
-        var tk = inp.attr("data-tk"); if(!tk) tk = 1;
+        var vk = inp.attr("data-sk"); if(!vk) vk = 0;
+        var tk = inp.attr("data-rk"); if(!tk) tk = 1;
         var gs = inp.attr("data-group-start") || this._group_start;
         for(var i = 0; i < v.length; i ++) {
             var k = hsGetValue(v[i], vk);
@@ -874,8 +874,8 @@ HsForm.prototype = {
 
     _feed__radio : function(inp, v, n) {
         if (v === undefined) return ;
-        var vk = inp.attr("data-vk"); if(!vk) vk = 0;
-        var tk = inp.attr("data-tk"); if(!tk) tk = 1;
+        var vk = inp.attr("data-sk"); if(!vk) vk = 0;
+        var tk = inp.attr("data-rk"); if(!tk) tk = 1;
         var gs = inp.attr("data-group-start") || this._group_start;
         for(var i = 0; i < v.length; i ++) {
             var k = hsGetValue(v[i], vk);
@@ -914,8 +914,8 @@ HsForm.prototype = {
 
     _feed__check : function(inp, v, n) {
         if (v === undefined) return ;
-        var vk = inp.attr("data-vk"); if(!vk) vk = 0;
-        var tk = inp.attr("data-tk"); if(!tk) tk = 1;
+        var vk = inp.attr("data-sk"); if(!vk) vk = 0;
+        var tk = inp.attr("data-rk"); if(!tk) tk = 1;
         var gs = inp.attr("data-group-start") || this._group_start;
         for(var i = 0; i < v.length; i ++) {
             var k = hsGetValue(v[i], vk);
@@ -954,10 +954,10 @@ HsForm.prototype = {
 
     _feed__checkset : function(inp, v, n) {
         if (v === undefined) return ;
-        var vk = inp.attr("data-vk"); if(!vk) vk = 0;
-        var tk = inp.attr("data-tk"); if(!tk) tk = 1;
-        var vl = inp.attr("data-vl"); if(!vl) vl = 0; // Value List
-        var tl = inp.attr("data-tl"); if(!tl) tl = 1; // Title Line
+        var vk = inp.attr("data-sk"); if(!vk) vk = 0;
+        var tk = inp.attr("data-rk"); if(!tk) tk = 1;
+        var vl = inp.attr("data-sl"); if(!vl) vl = 0;
+        var tl = inp.attr("data-rl"); if(!tl) tl = 1;
         var bc = inp.attr("data-body-class") || "checkbox";
         var ic = inp.attr("data-item-class") || "col-xs-6";
 

@@ -32,7 +32,7 @@
             }
 
             String  type = Synt.asString(info.get("__type__"));
-            String  text = Synt.asString(info.get("__fame__"));
+            String  fame = Synt.asString(info.get("__fame__"));
             String  hint = Synt.asString(info.get("__hint__"));
             boolean rqrd = Synt.declare(info.get("__required__"), false);
             boolean rptd = Synt.declare(info.get("__repeated__"), false);
@@ -55,25 +55,25 @@
             <input type="hidden" name="<%=name%>" data-fn/>
         <%} else if ("legend".equals(type)) {%>
             <%
-                text = Synt.defxult(Synt.asString(info.get("form-fame")), text, "");
+                fame = Synt.defxult(Synt.asString(info.get("form-html")), Synt.asString(info.get("html")), fame, "");
             %>
             <div class="form-group row" data-name="<%=name%>">
                 <div class="col-xs-12">
-                    <legend><%=text%></legend>
+                    <legend><%=fame%></legend>
                 </div>
             </div>
         <%} else if ("figure".equals(type)) {%>
             <%
-                text = Synt.defxult(Synt.asString(info.get("form-fame")), text, "");
+                fame = Synt.defxult(Synt.asString(info.get("form-html")), Synt.asString(info.get("html")), fame, "");
             %>
             <div class="form-group row" data-name="<%=name%>">
                 <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2">
-                    <figure><%=text%></figure>
+                    <figure><%=fame%></figure>
                 </div>
             </div>
         <%} else if ( roly ) { //** 此部分来自 info.jsp **/ %>
             <%
-                text = Synt.defxult(Synt.asString(info.get("info-fame")), text, "");
+                fame = Synt.defxult(Synt.asString(info.get("info-fame")), fame, "");
                 hint = Synt.defxult(Synt.asString(info.get("info-hint")), hint, "");
             %>
             <%if ("form".equals(type) || "part".equals(type)) {%>
@@ -81,7 +81,7 @@
                 <%
                     String extr = "";
                     String kind =  "_form";
-                    String href = Synt.defxult(Synt.asString(info.get("data-rl")), "");
+                    String href = Synt.defxult(Synt.asString(info.get("data-rt")), "");
                     href = href.replace( "centra", "centre" );
                         if (rptd) {
                         name  = name + "."; // 多选末尾加点
@@ -89,14 +89,14 @@
                     }
                 %>
                 <div class="col-xs-12">
-                    <legend class="group"><%=text%></legend>
+                    <legend class="group"><%=fame%></legend>
                     <div class="help-block text-muted form-control-static"><%=hint%></div>
                     <div class="form-subs" data-ft="<%=kind%>" data-fn="<%=name%>" data-href="<%=href%>"<%=extr%> data-sub-class="group panel panel-body panel-default"></div>
                 </div>
             </div>
             <%continue; } /*End sub form*/%>
             <div class="form-group row" data-name="<%=name%>">
-                <label class="col-sm-3 col-md-2 text-right form-label control-label form-control-static"><%=text%></label>
+                <label class="col-sm-3 col-md-2 text-right form-label control-label form-control-static"><%=fame%></label>
                 <div class="col-sm-9 col-md-8">
                 <%if ("fork".equals(type) || "pick".equals(type)) {%>
                     <%
@@ -113,23 +113,23 @@
                             name  = name + "."; // 多选末尾加点
                             extr += " data-repeated=\"repeated\"";
                         }
-                        String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
-                        String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") : "id";
+                        String rk = info.containsKey("data-rk") ? (String) info.get("data-rk") : "name";
+                        String sk = info.containsKey("data-sk") ? (String) info.get("data-sk") : "id";
                         String ln = info.containsKey("data-ln") ? (String) info.get("data-ln") :  kn ;
-                        String rl = info.containsKey("data-rl") ? (String) info.get("data-rl") :  "" ;
-                        rl = rl.replace("centra", "centre");
+                        String rt = info.containsKey("data-rt") ? (String) info.get("data-rt") :  "" ;
+                        rt = rt.replace("centra", "centre");
                         /**
                          * 默认禁止扩展功能
                          */
-                        if (!rl.isEmpty() && !rl.contains(".deny=")) {
-                            if (!rl.contains("?") && !rl.contains("#")) {
-                                rl = rl + "?.deny=.expand";
+                        if (!rt.isEmpty() && rt.contains(".deny=")) {
+                            if (!rt.contains("?") && !rt.contains("#")) {
+                                rt = rt + "?.deny=.expand";
                             } else {
-                                rl = rl + "&.deny=.expand";
+                                rt = rt + "&.deny=.expand";
                             }
                         }
-                        kind += "\" data-ln=\""+ln+"\" data-tk=\""+tk+"\" data-vk=\""+vk
-                             +  "\" data-href=\""+rl+"\" data-target=\"";
+                        kind += "\" data-ln=\""+ln+"\" data-rk=\""+rk+"\" data-sk=\""+sk
+                             +  "\" data-href=\""+rt+"\" data-target=\"";
                     %>
                     <div class="form-control-static">
                         <ul class="repeated forkbox" data-fn="<%=name%>" data-ft="<%=kind%>"<%=extr%> data-readonly="readonly"></ul>
@@ -247,7 +247,7 @@
         <%} else {%>
             <%
                 String hold;
-                text = Synt.defxult(Synt.asString(info.get("form-fame")), text, "");
+                fame = Synt.defxult(Synt.asString(info.get("form-fame")), fame, "");
                 hint = Synt.defxult(Synt.asString(info.get("form-hint")), hint, "");
                 hold = Synt.defxult(Synt.asString(info.get("form-hold")), "");
             %>
@@ -256,7 +256,7 @@
                 <%
                     String extr = "";
                     String kind =  "_form";
-                    String href = Synt.defxult(Synt.asString(info.get("data-al")), "");
+                    String href = Synt.defxult(Synt.asString(info.get("data-st")), "");
                     href = href.replace("centre", "centra");
                     if (rptd) {
                         name  = name + ".";
@@ -267,25 +267,25 @@
                     }
                 %>
                 <div class="col-xs-12">
-                    <legend class="group"><%=text%></legend>
+                    <legend class="group"><%=fame%></legend>
                     <div class="help-block text-muted form-control-static"><%=hint%></div>
                     <div class="form-subs" data-ft="<%=kind%>" data-fn="<%=name%>" data-href="<%=href%>"<%=extr%> data-sub-class="group panel panel-body panel-default"></div>
                     <div class="help-block text-error form-control-static"></div>
                     <div class="row form-sub-add hide">
                         <div class="col-sm-9 col-md-8 col-sm-offset-3 col-md-offset-2">
-                            <button type="button" class="btn btn-default" data-toggle="hsFormSubAdd"><%=Synt.defxult(hold, _locale.translate("fore.form.sub.add", text))%></button>
+                            <button type="button" class="btn btn-default" data-toggle="hsFormSubAdd"><%=Synt.defxult(hold, _locale.translate("fore.form.sub.add", fame))%></button>
                         </div>
                     </div>
                     <div class="row form-sub-del hide">
                         <div class="col-sm-9 col-md-8 col-sm-offset-3 col-md-offset-2">
-                            <button type="button" class="btn btn-warning" data-toggle="hsFormSubDel"><%=Synt.defxult(hold, _locale.translate("fore.form.sub.del", text))%></button>
+                            <button type="button" class="btn btn-warning" data-toggle="hsFormSubDel"><%=Synt.defxult(hold, _locale.translate("fore.form.sub.del", fame))%></button>
                         </div>
                     </div>
                 </div>
             </div>
             <%continue; } /*End sub form*/%>
             <div class="form-group row" data-name="<%=name%>">
-                <label class="col-sm-3 col-md-2 text-right form-label control-label form-control-static"><%=text%></label>
+                <label class="col-sm-3 col-md-2 text-right form-label control-label form-control-static"><%=fame%></label>
                 <div class="col-sm-9 col-md-8">
                 <%if ("fork".equals(type) || "pick".equals(type)) {%>
                     <%
@@ -304,30 +304,30 @@
                         if (rqrd) {
                             extr += " required=\"required\"";
                         }
-                        String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
-                        String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") : "id";
+                        String rk = info.containsKey("data-rk") ? (String) info.get("data-rk") : "name";
+                        String sk = info.containsKey("data-sk") ? (String) info.get("data-sk") : "id";
                         String ln = info.containsKey("data-ln") ? (String) info.get("data-ln") :  kn ;
-                        String rl = info.containsKey("data-rl") ? (String) info.get("data-rl") :  "" ;
-                        String al = info.containsKey("data-al") ? (String) info.get("data-al") :  "" ;
+                        String rt = info.containsKey("data-rt") ? (String) info.get("data-rt") :  "" ;
+                        String st = info.containsKey("data-st") ? (String) info.get("data-st") :  "" ;
                         String at = info.containsKey("data-at") ? (String) info.get("data-at") :  "" ;
-                        rl = rl.replace("centra", "centre");
-                        al = al.replace("centra", "centre");
+                        rt = rt.replace("centra", "centre");
+                        st = st.replace("centra", "centre");
                         at = at.replace("centra", "centre");
                         /**
                          * 默认禁止扩展功能
                          */
-                        if (!rl.isEmpty() && !rl.contains(".deny=")) {
-                            if (!rl.contains("?") && !rl.contains("#")) {
-                                rl = rl + "?.deny=.expand";
+                        if (!rt.isEmpty() && !rt.contains(".deny=")) {
+                            if (!rt.contains("?") && !rt.contains("#")) {
+                                rt = rt + "?.deny=.expand";
                             } else {
-                                rl = rl + "&.deny=.expand";
+                                rt = rt + "&.deny=.expand";
                             }
                         }
-                        if (!al.isEmpty() && !al.contains(".deny=")) {
-                            if (!al.contains("?") && !al.contains("#")) {
-                                al = al + "?.deny=.expand";
+                        if (!st.isEmpty() && !st.contains(".deny=")) {
+                            if (!st.contains("?") && !st.contains("#")) {
+                                st = st + "?.deny=.expand";
                             } else {
-                                al = al + "&.deny=.expand";
+                                st = st + "&.deny=.expand";
                             }
                         }
                         /**
@@ -347,9 +347,9 @@
                                 at = at + Cnst.ACT_EXT;
                             }
                         }
-                        extr += " data-ln=\""+ln+"\" data-tk=\""+tk+"\" data-vk=\""+vk+"\" data-at=\""+at+"\""
-                             +  " data-link-href=\""+rl+"\" data-link-target=\"\""
-                             +  " data-pick-href=\""+al+"\" data-pick-target=\"\"";
+                        extr += " data-ln=\""+ln+"\" data-rk=\""+rk+"\" data-sk=\""+sk+"\" data-at=\""+at+"\""
+                             +  " data-link-href=\""+rt+"\" data-link-target=\"\""
+                             +  " data-pick-href=\""+st+"\" data-pick-target=\"\"";
                     %>
                     <input type="hidden" name="<%=name%>" data-toggle="<%=mode%>"<%=extr%> class="form-final"/>
                 <%} else if ("file".equals(type) || "image".equals(type) || "video".equals(type) || "audio".equals(type)) {%>
@@ -417,7 +417,7 @@
                         }
                     %>
                     <select class="form-field form-control" name="<%=name%>"<%=extr%>>
-                        <option value=""><%=_locale.translate("fore.form.select", text)%></option>
+                        <option value=""><%=_locale.translate("fore.form.select", fame)%></option>
                     </select>
                 <%} else if ("check".equals(type)) {%>
                     <%
@@ -434,7 +434,7 @@
                     %>
                     <input type="hidden" name="<%=name%>" class="form-final"/>
                     <%} /* End if */ %>
-                    <div class="checkbox" data-fn="<%=name%>" data-ft="_check" data-vk="<%=Synt.defoult(info.get("data-vk"), "0")%>" data-tk="<%=Synt.defoult(info.get("data-tk"), "1")%>"<%=extr%>></div>
+                    <div class="checkbox" data-fn="<%=name%>" data-ft="_check" data-sk="<%=Synt.defoult(info.get("data-sk"), "0")%>" data-rk="<%=Synt.defoult(info.get("data-rk"), "1")%>"<%=extr%>></div>
                 <%} else if ("radio".equals(type)) {%>
                     <%
                         String extr = "";
@@ -450,7 +450,7 @@
                     %>
                     <input type="hidden" name="<%=name%>" class="form-final"/>
                     <%} /* End if */ %>
-                    <div class="radio"    data-fn="<%=name%>" data-ft="_radio" data-vk="<%=Synt.defoult(info.get("data-vk"), "0")%>" data-tk="<%=Synt.defoult(info.get("data-tk"), "1")%>"<%=extr%>></div>
+                    <div class="radio"    data-fn="<%=name%>" data-ft="_radio" data-sk="<%=Synt.defoult(info.get("data-sk"), "0")%>" data-rk="<%=Synt.defoult(info.get("data-rk"), "1")%>"<%=extr%>></div>
                 <%} else if ("textarea".equals(type) || "textview".equals(type)) {%>
                     <%
                         String extr = "";

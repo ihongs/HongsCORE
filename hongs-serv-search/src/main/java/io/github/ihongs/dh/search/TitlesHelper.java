@@ -244,8 +244,8 @@ public class TitlesHelper {
      */
     protected void addForks(List<List> ls, Map fc, String fn) throws CruxException {
         String at = (String) fc.get("data-at");
-        String vk = (String) fc.get("data-vk");
-        String tk = (String) fc.get("data-tk");
+        String vk = (String) fc.get("data-sk");
+        String tk = (String) fc.get("data-rk");
 
         if (at == null || at.isEmpty()) {
             String c = (String) fc.get("conf");
@@ -324,8 +324,8 @@ public class TitlesHelper {
      */
     protected void addForkz(List<Object[]> ls, Map fc, String fn) throws CruxException {
         String at = (String) fc.get("data-at");
-        String vk = (String) fc.get("data-vk");
-        String tk = (String) fc.get("data-tk");
+        String vk = (String) fc.get("data-sk");
+        String tk = (String) fc.get("data-rk");
 
         if (at == null || at.isEmpty()) {
             String c = (String) fc.get("conf");

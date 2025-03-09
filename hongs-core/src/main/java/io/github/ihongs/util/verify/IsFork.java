@@ -19,7 +19,7 @@ import java.util.Set;
  *  conf    配置名, 默认为当前配置
  *  form    表单名, 默认同 field.name
  *  data-at 关联动作名
- *  data-vk 关联取值键
+ *  data-sk 关联取值键
  *  pass-id 跳过像ID的
  * </pre>
  * @author Hongs
@@ -46,7 +46,7 @@ public class IsFork extends Rule {
         }
 
         String at = (String) getParam("data-at" );
-        String vk = (String) getParam("data-vk" );
+        String vk = (String) getParam("data-sk" );
         String fk = (String) getParam("__name__");
         String ck = (String) getParam("__conf__");
         String fl = (String) getParam(  "form"  );

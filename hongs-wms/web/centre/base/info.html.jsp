@@ -32,7 +32,7 @@
             }
 
             String  type = Synt.asString(info.get("__type__"));
-            String  text = Synt.asString(info.get("__fame__"));
+            String  fame = Synt.asString(info.get("__fame__"));
             String  hint = Synt.asString(info.get("__hint__"));
             boolean rptd = Synt.declare(info.get("__repeated__"), false);
 
@@ -43,9 +43,9 @@
                 || "hidden".equals(type)) {
                     type = "text";
                 }
-                if (text == null
-                ||  text.length( ) == 0 ) {
-                    text =  "ID" ;
+                if (fame == null
+                ||  fame.length( ) == 0 ) {
+                    fame =  "ID" ;
                 }
             }
         %>
@@ -53,25 +53,25 @@
             <input type="hidden" name="<%=name%>" data-fn/>
         <%} else if ("legend".equals(type)) {%>
             <%
-                text = Synt.defxult(Synt.asString(info.get("info-text")), text, "");
+                fame = Synt.defxult(Synt.asString(info.get("info-html")), Synt.asString(info.get("html")), fame, "");
             %>
             <div class="form-group row" data-name="<%=name%>">
                 <div class="col-xs-12">
-                    <legend><%=text%></legend>
+                    <legend><%=fame%></legend>
                 </div>
             </div>
         <%} else if ("figure".equals(type)) {%>
             <%
-                text = Synt.defxult(Synt.asString(info.get("info-text")), text, "");
+                fame = Synt.defxult(Synt.asString(info.get("info-html")), Synt.asString(info.get("html")), fame, "");
             %>
             <div class="form-group row" data-name="<%=name%>">
                 <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2">
-                    <figure><%=text%></figure>
+                    <figure><%=fame%></figure>
                 </div>
             </div>
         <%} else {%>
             <%
-                text = Synt.defxult(Synt.asString(info.get("info-text")), text, "");
+                fame = Synt.defxult(Synt.asString(info.get("info-fame")), fame, "");
                 hint = Synt.defxult(Synt.asString(info.get("info-hint")), hint, "");
             %>
             <%if ("form".equals(type) || "part".equals(type)) {%>
@@ -79,20 +79,20 @@
                 <%
                     String extr = "";
                     String kind =  "_form";
-                    String href = Synt.defxult(Synt.asString(info.get("data-rl")), "");
+                    String href = Synt.defxult(Synt.asString(info.get("data-rt")), "");
                     href = href.replace( "centra", "centre" );
                         if (rptd) {
                         name  = name + "."; // 多选末尾加点
                         extr += " data-repeated=\"repeated\"";
                     }
                 %>
-                <legend class="group"><%=text%></legend>
+                <legend class="group"><%=fame%></legend>
                 <div class="help-block text-muted form-control-static"><%=hint%></div>
                 <div class="form-subs" data-ft="<%=kind%>" data-fn="<%=name%>" data-href="<%=href%>"<%=extr%> data-sub-class="group panel panel-body panel-default" data-sub-style="padding-left:0;padding-right:0;"></div>
             </div>
             <%continue; } /*End sub form*/%>
             <div class="form-group row" data-name="<%=name%>">
-                <label class="col-sm-3 col-md-2 text-right form-label control-label form-control-static"><%=text%></label>
+                <label class="col-sm-3 col-md-2 text-right form-label control-label form-control-static"><%=fame%></label>
                 <div class="col-sm-9 col-md-8">
                 <%if ("fork".equals(type) || "pick".equals(type)) {%>
                     <%
@@ -109,23 +109,23 @@
                             name  = name + "."; // 多选末尾加点
                             extr += " data-repeated=\"repeated\"";
                         }
-                        String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
-                        String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") : "id";
+                        String rk = info.containsKey("data-rk") ? (String) info.get("data-rk") : "name";
+                        String sk = info.containsKey("data-sk") ? (String) info.get("data-sk") : "id";
                         String ln = info.containsKey("data-ln") ? (String) info.get("data-ln") :  kn ;
-                        String rl = info.containsKey("data-rl") ? (String) info.get("data-rl") :  "" ;
-                        rl = rl.replace("centra", "centre");
+                        String rt = info.containsKey("data-rt") ? (String) info.get("data-rt") :  "" ;
+                        rt = rt.replace("centra", "centre");
                         /**
                          * 默认禁止扩展功能
                          */
-                        if (!rl.isEmpty() && !rl.contains(".deny=")) {
-                            if (!rl.contains("?") && !rl.contains("#")) {
-                                rl = rl + "?.deny=.expand";
+                        if (!rt.isEmpty() && rt.contains(".deny=")) {
+                            if (!rt.contains("?") && !rt.contains("#")) {
+                                rt = rt + "?.deny=.expand";
                             } else {
-                                rl = rl + "&.deny=.expand";
+                                rt = rt + "&.deny=.expand";
                             }
                         }
-                        kind += "\" data-ln=\""+ln+"\" data-tk=\""+tk+"\" data-vk=\""+vk
-                             +  "\" data-href=\""+rl+"\" data-target=\"@";
+                        kind += "\" data-ln=\""+ln+"\" data-rk=\""+rk+"\" data-sk=\""+sk
+                             +  "\" data-href=\""+rt+"\" data-target=\"@";
                     %>
                     <div class="form-control-static">
                         <ul class="repeated forkbox" data-fn="<%=name%>" data-ft="<%=kind%>"<%=extr%> data-readonly="readonly"></ul>

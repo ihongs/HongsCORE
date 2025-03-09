@@ -19,22 +19,24 @@
         data-ft     字段类型
     Pick:
         data-ln     逻辑名称
-        data-vk     关联数据取值键
-        data-tk     关联数据标题键
         data-at     查询接口
-        data-al     关联选取页
-        data-rl     关联查看页
+        data-st     关联选取页
+        data-rt     关联查看页
+        data-sk     关联数据取值键
+        data-rk     关联数据标题键
     Part:
-        data-al     子级表单页
-        data-rl     子级详情页
+        data-st     子级表单页
+        data-rt     子级详情页
     Checkbox:
-        data-vk     选项数据取值键
-        data-tk     选项数据标签键
+        data-sk     选项数据取值键
+        data-rk     选项数据标签键
     Checkset:
-        data-vl     子项数据取值键
-        data-tl     子项数据标题键
+        data-sl     子项数据取值键
+        data-rl     子项数据标题键
 
 另外还有 data-fill/data-feed/data-test 用于填充/预设/检测, 值为表达式, 参数可使用 this,form|list,v,n; 其他 data-toggle,data-target 等的意义同 bootstrap 中相关功能.
+
+*题外话: 以上两字母缩写有何意义? 没意义, 强迫症, 显得整齐些. 非得找点意义, s 子级/选择/查找, r 表示/查阅, t 目标, k 键, l 层.*
 
 ## 环境加载
 

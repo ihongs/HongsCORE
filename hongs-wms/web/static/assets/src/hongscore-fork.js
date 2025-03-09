@@ -9,7 +9,7 @@
  * 在表单配置区域添加:
  * data--0="_fill__fork:(hsFormFillFork)"
  * 在表单选项区域添加:
- * <input name="xx_id" type="hidden" data-topple="hsForkInit" data-ln="xx" data-vk="id" data-tk="name" data-pick-href="xx/pick.html" data-pick-target="@" data-link-href="xx/info.html" data-link-target="@"/>
+ * <input name="xx_id" type="hidden" data-topple="hsForkInit" data-ln="xx" data-sk="id" data-rk="name" data-pick-href="xx/pick.html" data-pick-target="@" data-link-href="xx/info.html" data-link-target="@"/>
  *
  * 子表单加载构建用法:
  * 在表单配置区域添加:
@@ -50,8 +50,8 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
     var v    = { };
     var n    = box.attr("data-fn") || "";
     var t    = box.attr("data-ft") || "";
-    var vk   = box.attr("data-vk") || "id";
-    var tk   = box.attr("data-tk") || "name";
+    var vk   = box.attr("data-sk") || "id";
+    var tk   = box.attr("data-rk") || "name";
     var at   = box.attr("data-at");
     var mul  = box.is( ".pickmul")
             || box.is("[data-multiple]")
@@ -293,8 +293,8 @@ jQuery.fn.hsPickInit = function() {
         // 填充和校验
         lis.attr("data-fn"    , inp.attr("name"   ) || "");
         lis.attr("data-ln"    , inp.attr("data-ln") || "");
-        lis.attr("data-vk"    , inp.attr("data-vk") || "");
-        lis.attr("data-tk"    , inp.attr("data-tk") || "");
+        lis.attr("data-sk"    , inp.attr("data-sk") || "");
+        lis.attr("data-rk"    , inp.attr("data-rk") || "");
         lis.attr("data-at"    , inp.attr("data-at") || "");
         lis.attr("data-ft"    , inp.attr("data-form-ft"    ) || "_fork");
         lis.attr("data-href"  , inp.attr("data-link-href"  ) || "");
@@ -437,8 +437,8 @@ function hsFormFillPick(box, v, n) {
 
     // 对表单初始化数据转换为关联组件的字典格式
     if (jQuery.isArray(v)) {
-        var tk = box.attr("data-tk") || "name";
-        var vk = box.attr("data-vk") ||  "id" ;
+        var tk = box.attr("data-rk") || "name";
+        var vk = box.attr("data-sk") ||  "id" ;
         var v2 = {};
         for(var i = 0; i < v.length; i++) {
             var j = v[ i];
@@ -502,7 +502,7 @@ function hsFormFillPick(box, v, n) {
             var opt = jQuery(this).closest("li");
             var val = opt.find(".value" ).val( )
                    || opt.data( "value" );
-            var key = box.attr("data-vk")||"id" ;
+            var key = box.attr("data-sk")||"id" ;
             var url = box.attr("data-href"  );
             var rel = box.attr("data-target");
             if (url === "-" || rel === "-"

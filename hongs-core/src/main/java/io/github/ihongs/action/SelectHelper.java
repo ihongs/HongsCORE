@@ -274,7 +274,7 @@ public class SelectHelper {
                 case "fork" : {
                     Map xnum = new HashMap(mt);
                     if (! mt.containsKey("data-at" )
-                    &&  ! mt.containsKey("data-al")) {
+                    &&  ! mt.containsKey("data-st")) {
                     if (! mt.containsKey("form")) {
                         xnum.put("form" , name.replace("_id", "")); // 去除其后缀
                     }
@@ -604,8 +604,8 @@ public class SelectHelper {
 
             String at = (String) mt.get("data-at"); // 关联动作路径
             String ln = (String) mt.get("data-ln"); // 数据放入此下
-            String vk = (String) mt.get("data-vk"); // 关联字段
-            String tk = (String) mt.get("data-tk"); // 名称字段
+            String vk = (String) mt.get("data-sk"); // 关联字段
+            String tk = (String) mt.get("data-rk"); // 名称字段
 
             if (at == null || at.isEmpty()) {
                 String c = (String) mt.get("conf");

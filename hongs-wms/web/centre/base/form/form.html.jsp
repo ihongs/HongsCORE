@@ -84,7 +84,7 @@
                 <%
                     String extr = "";
                     String kind =  "_form";
-                    String href = Synt.defxult(Synt.asString(info.get("data-al")), "");
+                    String href = Synt.defxult(Synt.asString(info.get("data-st")), "");
                     href = href.replace("centre", "centra");
                     if (rptd) {
                         name  = name + ".";
@@ -136,11 +136,11 @@
                         if (rqrd) {
                             extr += " required=\"required\"";
                         }
-                        String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
-                        String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") : "id";
+                        String tk = info.containsKey("data-rk") ? (String) info.get("data-rk") : "name";
+                        String vk = info.containsKey("data-sk") ? (String) info.get("data-sk") : "id";
                         String ln = info.containsKey("data-ln") ? (String) info.get("data-ln") :  kn ;
-                        String rl = info.containsKey("data-rl") ? (String) info.get("data-rl") :  "" ;
-                        String al = info.containsKey("data-al") ? (String) info.get("data-al") :  "" ;
+                        String rl = info.containsKey("data-rt") ? (String) info.get("data-rt") :  "" ;
+                        String al = info.containsKey("data-st") ? (String) info.get("data-st") :  "" ;
                         String at = info.containsKey("data-at") ? (String) info.get("data-at") :  "" ;
                         rl = rl.replace("centra", "centre");
                         al = al.replace("centra", "centre");
@@ -179,7 +179,7 @@
                                 at = at + Cnst.ACT_EXT;
                             }
                         }
-                        extr += " data-ln=\""+ln+"\" data-tk=\""+tk+"\" data-vk=\""+vk+"\" data-at=\""+at+"\""
+                        extr += " data-ln=\""+ln+"\" data-rk=\""+tk+"\" data-sk=\""+vk+"\" data-at=\""+at+"\""
                              +  " data-link-href=\""+rl+"\" data-link-target=\"\""
                              +  " data-pick-href=\""+al+"\" data-pick-target=\"\"";
                     %>
@@ -266,7 +266,7 @@
                     %>
                     <input type="hidden" name="<%=name%>" class="form-final"/>
                     <%} /* End if */ %>
-                    <div class="checkbox" data-fn="<%=name%>" data-ft="_check" data-vk="<%=Synt.defoult(info.get("data-vk"), "0")%>" data-tk="<%=Synt.defoult(info.get("data-tk"), "1")%>"<%=extr%>></div>
+                    <div class="checkbox" data-fn="<%=name%>" data-ft="_check" data-sk="<%=Synt.defoult(info.get("data-sk"), "0")%>" data-rk="<%=Synt.defoult(info.get("data-rk"), "1")%>"<%=extr%>></div>
                 <%} else if ("radio".equals(type)) {%>
                     <%
                         String extr = "";
@@ -282,7 +282,7 @@
                     %>
                     <input type="hidden" name="<%=name%>" class="form-final"/>
                     <%} /* End if */ %>
-                    <div class="radio"    data-fn="<%=name%>" data-ft="_radio" data-vk="<%=Synt.defoult(info.get("data-vk"), "0")%>" data-tk="<%=Synt.defoult(info.get("data-tk"), "1")%>"<%=extr%>></div>
+                    <div class="radio"    data-fn="<%=name%>" data-ft="_radio" data-sk="<%=Synt.defoult(info.get("data-sk"), "0")%>" data-rk="<%=Synt.defoult(info.get("data-rk"), "1")%>"<%=extr%>></div>
                 <%} else if ("textarea".equals(type) || "textview".equals(type)) {%>
                     <%
                         String extr = "";

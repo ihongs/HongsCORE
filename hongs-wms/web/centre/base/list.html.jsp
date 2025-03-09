@@ -68,7 +68,7 @@
             Map     info = (Map ) et.getValue();
             String  name = (String) et.getKey();
             String  type = (String) info.get ("__type__");
-            String  text = (String) info.get ("__fame__");
+            String  fame = (String) info.get ("__fame__");
 
             if ("@".equals(name) || "id".equals(name)
             ||  Synt.declare(info.get("unopenable"), false)) {
@@ -77,7 +77,7 @@
         %>
         <% /***/ if (Synt.declare(info.get("statable"), false)) {%>
         <div class="stat-group form-group form-group-sm row" data-name="<%=name%>">
-            <label class="col-md-3 col-sm-2 control-label form-label text-right"><%=text%></label>
+            <label class="col-md-3 col-sm-2 control-label form-label text-right"><%=fame%></label>
             <div class="col-md-6 col-sm-8">
                 <%
                     // 检查是否有枚举数据
@@ -117,7 +117,7 @@
         </div>
         <%} else if (Synt.declare(info.get("filtable"), false)) {%>
         <div class="filt-group form-group form-group-sm row" data-name="<%=name%>">
-            <label class="col-md-3 col-sm-2 control-label form-label text-right"><%=text%></label>
+            <label class="col-md-3 col-sm-2 control-label form-label text-right"><%=fame%></label>
             <div class="col-md-6 col-sm-8">
             <%if ("fork".equals(type) || "pick".equals(type)) {%>
                 <%
@@ -130,27 +130,27 @@
                         fn = fn.substring(0, fn.length() - 3);
                         kn = fn;
                     }
-                    String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
-                    String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") : "id";
+                    String rk = info.containsKey("data-rk") ? (String) info.get("data-rk") : "name";
+                    String sk = info.containsKey("data-sk") ? (String) info.get("data-sk") : "id";
                     String ln = info.containsKey("data-ln") ? (String) info.get("data-ln") :  kn ;
-                    String al = info.containsKey("data-al") ? (String) info.get("data-al") :  "" ;
-                    al = al.replace("centra", "centre");
+                    String st = info.containsKey("data-st") ? (String) info.get("data-st") :  "" ;
+                    st = st.replace("centra", "centre");
                     // 选择时禁用创建
-                    if ( ! al.isEmpty (   )) {
-                    if ( ! al.contains("#")) {
-                        al = al + "#.deny=.create";
+                    if ( ! st.isEmpty (   )) {
+                    if ( ! st.contains("#")) {
+                        st = st + "#.deny=.create";
                     } else {
-                        al = al + "&.deny=.create";
+                        st = st + "&.deny=.create";
                     }}
                 %>
-                <ul class="pickbox pickmul" data-ft="_fork" data-fn="<%=name%>.<%=Cnst.IN_REL%>." data-ln="<%=ln%>" data-tk="<%=tk%>" data-vk="<%=vk%>" data-item-class="btn btn-sm btn-info" data-icon-class="-"></ul>
-                <button type="button" class="btn btn-sm btn-default form-control" data-toggle="hsFork" data-target="@" data-href="<%=al%>"><%=_locale.translate("fore.fork.select", text)%></button>
+                <ul class="pickbox pickmul" data-ft="_fork" data-fn="<%=name%>.<%=Cnst.IN_REL%>." data-ln="<%=ln%>" data-rk="<%=rk%>" data-sk="<%=sk%>" data-item-class="btn btn-sm btn-info" data-icon-class="-"></ul>
+                <button type="button" class="btn btn-sm btn-default form-control" data-toggle="hsFork" data-target="@" data-href="<%=st%>"><%=_locale.translate("fore.fork.select", fame)%></button>
             <%} else if ("enum".equals(type) || "type".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
                 <%
                     String ln = info.containsKey("data-ln") ? (String) info.get("data-ln") : name;
                 %>
                 <select class="form-control" name="<%=name%>.<%=Cnst.EQ_REL%>" data-ln="<%=ln%>" data-ft="_enum">
-                    <option value=""><%=_locale.translate("fore.form.select", text)%></option>
+                    <option value=""><%=_locale.translate("fore.form.select", fame)%></option>
                 </select>
             <%} else if ("date".equals(type) || "time" .equals(type) || "datetime" .equals(type)) {%>
                 <%

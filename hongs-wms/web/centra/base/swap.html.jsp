@@ -105,8 +105,8 @@
                                 // 内部字段
                                 Matcher m0 = FORK_RB.matcher(at);
                                 if (m0.find()) rb = m0.group(01);
-                                else rb = Synt.declare(info.get("data-vk"), "id" )
-                                    +","+ Synt.declare(info.get("data-tk"),"name");
+                                else rb = Synt.declare(info.get("data-sk"), "id" )
+                                    +","+ Synt.declare(info.get("data-rk"),"name");
                                 // 关联资源
                                 Matcher m1 = FORK_AT.matcher(at);
                                 if (m1.find()) at = m1.group(01);

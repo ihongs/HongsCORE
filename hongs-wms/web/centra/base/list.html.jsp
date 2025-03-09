@@ -78,7 +78,7 @@
                     Map     info = (Map ) et.getValue();
                     String  name = (String) et.getKey();
                     String  type = (String) info.get("__type__");
-                    String  text = (String) info.get("__fame__");
+                    String  fame = (String) info.get("__fame__");
 
                     if ("@".equals(name) || "id".equals(name)) {
                         continue;
@@ -94,7 +94,7 @@
                 %>
                 <div class="filt-group form-group" data-name="<%=name%>">
                     <label class="form-label control-label">
-                        <%=text != null ? text : ""%>
+                        <%=fame != null ? fame : ""%>
                     </label>
                     <div>
                     <%if ("fork".equals(type) || "pick".equals(type)) {%>
@@ -108,29 +108,29 @@
                                 fn = fn.substring(0, fn.length() - 3);
                                 kn = fn;
                             }
-                            String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
-                            String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") : "id";
+                            String rk = info.containsKey("data-rk") ? (String) info.get("data-rk") : "name";
+                            String sk = info.containsKey("data-sk") ? (String) info.get("data-sk") : "id";
                             String ln = info.containsKey("data-ln") ? (String) info.get("data-ln") :  kn ;
-                            String al = info.containsKey("data-al") ? (String) info.get("data-al") :  "" ;
-                            al = al.replace("centre", "centra");
+                            String st = info.containsKey("data-st") ? (String) info.get("data-st") :  "" ;
+                            st = st.replace("centre", "centra");
                             // 选择时禁用创建
-                            if ( ! al.isEmpty (   )) {
-                            if ( ! al.contains("#")) {
-                                al = al + "#.deny=.create";
+                            if ( ! st.isEmpty (   )) {
+                            if ( ! st.contains("#")) {
+                                st = st + "#.deny=.create";
                             } else {
-                                al = al + "&.deny=.create";
+                                st = st + "&.deny=.create";
                             }}
                         %>
                         <div class="form-control multiple">
-                            <ul class="repeated labelbox labelist forkbox" data-ft="_fork" data-fn="<%=name%>.<%=Cnst.EQ_REL%>" data-ln="<%=ln%>" data-tk="<%=tk%>" data-vk="<%=vk%>"></ul>
-                            <a href="javascript:;" data-toggle="hsFork" data-target="@" data-href="<%=al%>"><%=_locale.translate("fore.fork.select", text)%></a>
+                            <ul class="repeated labelbox labelist forkbox" data-ft="_fork" data-fn="<%=name%>.<%=Cnst.EQ_REL%>" data-ln="<%=ln%>" data-rk="<%=rk%>" data-sk="<%=sk%>"></ul>
+                            <a href="javascript:;" data-toggle="hsFork" data-target="@" data-href="<%=st%>"><%=_locale.translate("fore.fork.select", fame)%></a>
                         </div>
                     <%} else if ("enum".equals(type) || "type".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
                         <%
                             String ln = info.containsKey("data-ln") ? (String) info.get("data-ln") : name;
                         %>
                         <select class="form-control" name="<%=name%>.<%=Cnst.EQ_REL%>" data-ln="<%=ln%>" data-ft="_enum">
-                            <option value=""><%=_locale.translate("fore.form.select", text)%></option>
+                            <option value=""><%=_locale.translate("fore.form.select", fame)%></option>
                         </select>
                     <%} else if ("date".equals(type) || "time" .equals(type) || "datetime" .equals(type)) {%>
                         <%
@@ -264,19 +264,19 @@
                                     fn = fn.substring(0, fn.length() - 3);
                                     kn = fn;
                                 }
-                                String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
-                                String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") : "id";
+                                String rk = info.containsKey("data-rk") ? (String) info.get("data-rk") : "name";
+                                String sk = info.containsKey("data-sk") ? (String) info.get("data-sk") : "id";
                                 String ln = info.containsKey("data-ln") ? (String) info.get("data-ln") :  kn ;
-                                String al = info.containsKey("data-al") ? (String) info.get("data-al") :  "" ;
+                                String st = info.containsKey("data-st") ? (String) info.get("data-st") :  "" ;
                                 String at = info.containsKey("data-at") ? (String) info.get("data-at") :  "" ;
-                                al = al.replace("centre", "centra");
+                                st = st.replace("centre", "centra");
                                 at = at.replace("centre", "centra");
                                 // 选择时禁用创建
-                                if ( ! al.isEmpty (   )) {
-                                if ( ! al.contains("#")) {
-                                    al = al + "#.deny=.create";
+                                if ( ! st.isEmpty (   )) {
+                                if ( ! st.contains("#")) {
+                                    st = st + "#.deny=.create";
                                 } else {
-                                    al = al + "&.deny=.create";
+                                    st = st + "&.deny=.create";
                                 }}
                                 /**
                                  * 关联路径: base/search|data/xxxx/search?rb=a,b,c
@@ -295,7 +295,7 @@
                                         at = at + Cnst.ACT_EXT;
                                     }
                                 }
-                                extr = " data-ln=\""+ln+"\" data-vk=\""+vk+"\" data-tk=\""+tk+"\" data-href=\""+al+"\" data-target=\"@\"";
+                                extr = " data-ln=\""+ln+"\" data-sk=\""+sk+"\" data-rk=\""+rk+"\" data-href=\""+st+"\" data-target=\"@\"";
                                 rels =  "is,eq,ne";
                                 kind =  "fork";
                             } else
@@ -636,8 +636,8 @@
                 <%} else if ("pick".equals(type) || "fork".equals(type)) {%>
                     <%
                         String subn =  "name" ;
-                        if (info.get("data-tk") != null) {
-                            subn = (String) info.get("data-tk");
+                        if (info.get("data-rk") != null) {
+                            subn = (String) info.get("data-rk");
                         }
                         if (info.get("data-ln") != null) {
                             name = (String) info.get("data-ln");

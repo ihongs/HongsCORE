@@ -308,7 +308,7 @@ HsSift.prototype = {
             var tk  = fno.data("tk") || "name";
             var url = fno.data( "href" ) || "";
             var bin = fno.data("target") || "";
-            var box = jQuery('<div></div>').attr({"data-ln": ln, "data-vk": vk, "data-tk": tk});
+            var box = jQuery('<div></div>').attr({"data-ln": ln, "data-sk": vk, "data-rk": tk});
             var btn = $(this);
 
             btn.hsPick( url, bin, box, function (btn, v) {

@@ -109,11 +109,11 @@ INSERT INTO a_matrix_form (`id`, `furl_id`, `name`, `icon`, `note`, `conf`, `cti
 VALUES ('user', '-', '用户', '', '', '{
     "form":"user",
     "conf":"master",
-    "data-vk":"id",
-    "data-tk":"name",
+    "data-sk":"id",
+    "data-rk":"name",
     "data-at":"centra/master/user/list",
-    "data-al":"centra/master/user/pick.html",
-    "data-rl":""
+    "data-st":"centra/master/user/pick.html",
+    "data-rt":""
 }', 0, 0, 0, 6);
 
 INSERT INTO a_matrix_feed (`fn`, `ft`)

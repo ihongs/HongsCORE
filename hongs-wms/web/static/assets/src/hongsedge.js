@@ -268,8 +268,8 @@ function hsListFeedFilt(x, v, n) {
      * 如果选项没有设置空值
      * 需要补充一个空的选项
      */
-    var vk = x.attr("data-vk") || 0;
-    var tk = x.attr("data-tk") || 1;
+    var vk = x.attr("data-sk") || 0;
+    var tk = x.attr("data-rk") || 1;
     var ek = x.find("[value='']").size() == 0;
     if (ek)
     for(var i = 0; i < v.length; i ++) {

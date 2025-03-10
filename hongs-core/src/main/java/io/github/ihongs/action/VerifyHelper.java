@@ -52,8 +52,7 @@ public class VerifyHelper extends Verify {
     }
 
     public VerifyHelper addRulesByForm(String conf, String form) throws CruxException {
-        Map fs = FormSet.getInstance(conf /**/)
-                        .getForm    (form /**/);
+        Map fs = FormSet.getInstance(conf).getForm(form);
         return addRulesByForm( conf, form, fs );
     }
 

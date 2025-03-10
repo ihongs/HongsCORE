@@ -195,10 +195,33 @@ public class SelectHelper {
      * @return
      * @throws CruxException
      */
-    public SelectHelper addItemsByForm(Map fs) throws CruxException {
-      //String form = (String)Dict.get(fs, null, "@", "conf");
-        String conf = (String)Dict.get(fs, null, "@", "conf");
+    public SelectHelper addItemsByForm(Map fs ) throws CruxException {
+        String conf = Dict.getValue( fs, "default", "@", "conf");
+        String form = Dict.getValue( fs, "unknown", "@", "form");
+        return addItemsByForm( conf, form, fs );
+    }
 
+    /**
+     * 依照表单设置选项
+     * @param conf
+     * @param form
+     * @return
+     * @throws CruxException
+     */
+    public SelectHelper addItemsByForm(String conf, String form) throws CruxException {
+        Map fs = FormSet.getInstance(conf).getForm(form);
+        return addItemsByForm( conf, form, fs );
+    }
+
+    /**
+     * 依照表单设置选项
+     * @param conf
+     * @param form
+     * @param fs
+     * @return
+     * @throws CruxException
+     */
+    public SelectHelper addItemsByForm(String conf, String form, Map fs) throws CruxException {
         Map ts = FormSet.getInstance("default")
                         .getEnum ( "__types__");
         Iterator it = fs.entrySet().iterator( );
@@ -304,19 +327,6 @@ public class SelectHelper {
         }
 
         return this;
-    }
-
-    public SelectHelper addItemsByForm(String conf, String form) throws CruxException {
-        Map fs = FormSet.getInstance(conf).getForm(form);
-        return addItemsByForm(fs);
-    }
-
-    /**
-     * @deprecated 兼容旧版
-     * @see addItemsByForm(Map, String)
-     */
-    public SelectHelper addItemsByForm(String conf, String form, Map fs) throws CruxException {
-        return addItemsByForm(fs);
     }
 
     /**

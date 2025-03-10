@@ -108,7 +108,7 @@ public class SelectInvoker implements FilterInvoker {
 
             SelectHelper sel = new SelectHelper();
             sel.setItemsInForm( rb );
-            sel.addItemsByForm(data);
+            sel.addItemsByForm(conf , form, data);
             sel.select ( rsp , adds);
         } catch (CruxException  ex ) {
             int  ec  = ex.getErrno();

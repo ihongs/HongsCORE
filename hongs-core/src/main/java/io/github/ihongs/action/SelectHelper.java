@@ -297,7 +297,7 @@ public class SelectHelper {
                 case "fork" : {
                     Map xnum = new HashMap(mt);
                     if (! mt.containsKey("data-at" )
-                    &&  ! mt.containsKey("data-al")) {
+                    &&  ! mt.containsKey("data-st")) {
                     if (! mt.containsKey("form")) {
                         xnum.put("form" , name.replace("_id", "")); // 去除其后缀
                     }

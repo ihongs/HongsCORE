@@ -112,8 +112,8 @@ VALUES ('user', '-', '用户', '', '', '{
     "data-vk":"id",
     "data-tk":"name",
     "data-at":"centra/master/user/list",
-    "data-al":"centra/master/user/pick.html",
-    "data-rl":""
+    "data-st":"centra/master/user/pick.html",
+    "data-rt":""
 }', 0, 0, 0, 6);
 
 INSERT INTO a_matrix_feed (`fn`, `ft`)

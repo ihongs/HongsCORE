@@ -113,20 +113,21 @@
                         String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
                         String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") : "id";
                         String ln = info.containsKey("data-ln") ? (String) info.get("data-ln") :  kn ;
-                        String rl = info.containsKey("data-rl") ? (String) info.get("data-rl") :  "" ;
-                        rl = rl.replace("centre", "centra");
+                        String rt = info.containsKey("data-rt") ? (String) info.get("data-rt") :
+                                  ( info.containsKey("data-rl") ? (String) info.get("data-rl") :  "" );
+                        rt = rt.replace("centre", "centra");
                         /**
                          * 默认禁止扩展功能
                          */
-                        if (!rl.isEmpty() && !rl.contains(".deny=")) {
-                            if (!rl.contains("?") && !rl.contains("#")) {
-                                rl = rl + "?.deny=.expand";
+                        if (!rt.isEmpty() && !rt.contains(".deny=")) {
+                            if (!rt.contains("?") && !rt.contains("#")) {
+                                rt = rt + "?.deny=.expand";
                             } else {
-                                rl = rl + "&.deny=.expand";
+                                rt = rt + "&.deny=.expand";
                             }
                         }
                         kind += "\" data-ln=\""+ln+"\" data-tk=\""+tk+"\" data-vk=\""+vk
-                             +  "\" data-href=\""+rl+"\" data-target=\"@";
+                             +  "\" data-href=\""+rt+"\" data-target=\"@";
                     %>
                     <div class="form-control-static">
                         <ul class="repeated labelbox forkbox" data-fn="<%=name%>" data-ft="<%=kind%>"<%=extr%> data-readonly="readonly"></ul>

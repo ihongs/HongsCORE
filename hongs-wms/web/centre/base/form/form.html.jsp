@@ -75,7 +75,7 @@
                 <%
                     String extr = "";
                     String kind =  "_form";
-                    String href = Synt.defxult(Synt.asString(info.get("data-al")), "");
+                    String href = Synt.defxult(Synt.asString(info.get("data-st")), Synt.asString(info.get("data-al")), "");
                     href = href.replace("centre", "centra");
                     if (rptd) {
                         name  = name + ".";
@@ -130,27 +130,29 @@
                         String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
                         String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") : "id";
                         String ln = info.containsKey("data-ln") ? (String) info.get("data-ln") :  kn ;
-                        String rl = info.containsKey("data-rl") ? (String) info.get("data-rl") :  "" ;
-                        String al = info.containsKey("data-al") ? (String) info.get("data-al") :  "" ;
                         String at = info.containsKey("data-at") ? (String) info.get("data-at") :  "" ;
-                        rl = rl.replace("centra", "centre");
-                        al = al.replace("centra", "centre");
+                        String rt = info.containsKey("data-rt") ? (String) info.get("data-rt") :
+                                  ( info.containsKey("data-rl") ? (String) info.get("data-rl") :  "" );
+                        String st = info.containsKey("data-st") ? (String) info.get("data-st") :
+                                  ( info.containsKey("data-al") ? (String) info.get("data-al") :  "" );
                         at = at.replace("centra", "centre");
+                        rt = rt.replace("centra", "centre");
+                        st = st.replace("centra", "centre");
                         /**
                          * 默认禁止扩展功能
                          */
-                        if (!rl.isEmpty() && !rl.contains(".deny=")) {
-                            if (!rl.contains("?") && !rl.contains("#")) {
-                                rl = rl + "?.deny=.expand";
+                        if (!rt.isEmpty() && !rt.contains(".deny=")) {
+                            if (!rt.contains("?") && !rt.contains("#")) {
+                                rt = rt + "?.deny=.expand";
                             } else {
-                                rl = rl + "&.deny=.expand";
+                                rt = rt + "&.deny=.expand";
                             }
                         }
-                        if (!al.isEmpty() && !al.contains(".deny=")) {
-                            if (!al.contains("?") && !al.contains("#")) {
-                                al = al + "?.deny=.expand";
+                        if (!st.isEmpty() && !st.contains(".deny=")) {
+                            if (!st.contains("?") && !st.contains("#")) {
+                                st = st + "?.deny=.expand";
                             } else {
-                                al = al + "&.deny=.expand";
+                                st = st + "&.deny=.expand";
                             }
                         }
                         /**
@@ -171,8 +173,8 @@
                             }
                         }
                         extr += " data-ln=\""+ln+"\" data-tk=\""+tk+"\" data-vk=\""+vk+"\" data-at=\""+at+"\""
-                             +  " data-link-href=\""+rl+"\" data-link-target=\"\""
-                             +  " data-pick-href=\""+al+"\" data-pick-target=\"\"";
+                             +  " data-link-href=\""+rt+"\" data-link-target=\"\""
+                             +  " data-pick-href=\""+st+"\" data-pick-target=\"\"";
                     %>
                     <input type="hidden" name="<%=name%>" data-toggle="<%=mode%>"<%=extr%> class="form-final"/>
                 <%} else if ("file".equals(type) || "image".equals(type) || "video".equals(type) || "audio".equals(type)) {%>

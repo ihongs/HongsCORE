@@ -120,10 +120,10 @@
         </field>
         <field name="fork" text="关联" type="fork,pick">
             <param name="data-at">assoc/action</param>
-            <param name="data-al">assoc/page.html</param>
-            <param name="data-rl">refer/page.html</param>
-            <param name="data-tk"></param>
+            <param name="data-st">assoc/page.html</param>
+            <param name="data-rt">refer/page.html</param>
             <param name="data-vk"></param>
+            <param name="data-tk"></param>
         </field>
         <field name="form" text="表单" type="form,part">
             <param name="conf"></param>

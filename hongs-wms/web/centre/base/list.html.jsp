@@ -133,18 +133,19 @@
                     String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
                     String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") : "id";
                     String ln = info.containsKey("data-ln") ? (String) info.get("data-ln") :  kn ;
-                    String al = info.containsKey("data-al") ? (String) info.get("data-al") :  "" ;
-                    al = al.replace("centra", "centre");
+                    String st = info.containsKey("data-st") ? (String) info.get("data-st") :
+                              ( info.containsKey("data-al") ? (String) info.get("data-al") :  "" );
+                    st = st.replace("centra", "centre");
                     // 选择时禁用创建
-                    if ( ! al.isEmpty (   )) {
-                    if ( ! al.contains("#")) {
-                        al = al + "#.deny=.create";
+                    if ( ! st.isEmpty (   )) {
+                    if ( ! st.contains("#")) {
+                        st = st + "#.deny=.create";
                     } else {
-                        al = al + "&.deny=.create";
+                        st = st + "&.deny=.create";
                     }}
                 %>
                 <ul class="pickbox pickmul" data-ft="_fork" data-fn="<%=name%>.<%=Cnst.IN_REL%>." data-ln="<%=ln%>" data-tk="<%=tk%>" data-vk="<%=vk%>" data-item-class="btn btn-sm btn-info" data-icon-class="-"></ul>
-                <button type="button" class="btn btn-sm btn-default form-control" data-toggle="hsFork" data-target="@" data-href="<%=al%>"><%=_locale.translate("fore.fork.select", text)%></button>
+                <button type="button" class="btn btn-sm btn-default form-control" data-toggle="hsFork" data-target="@" data-href="<%=st%>"><%=_locale.translate("fore.fork.select", text)%></button>
             <%} else if ("enum".equals(type) || "type".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
                 <%
                     String ln = info.containsKey("data-ln") ? (String) info.get("data-ln") : name;

@@ -27,7 +27,7 @@
             <param name="data-tk">name</param>
             <param name="data-ln">owner</param>
             <param name="data-at">centra/master/user/list</param>
-            <param name="data-al">centra/master/user/pick.html?unit_id=CENTRA&amp;find-depth=1</param>
+            <param name="data-st">centra/master/user/pick.html?unit_id=CENTRA&amp;find-depth=1</param>
         </field>
         <field text="限用户" name="users" type="fork" repeated="yes">
             <param name="listable">no</param>
@@ -35,7 +35,7 @@
             <param name="data-tk">name</param>
             <param name="data-ln">users</param>
             <param name="data-at">centra/master/user/list</param>
-            <param name="data-al">centra/master/user/pick.html?unit_id=CENTRA&amp;find-depth=1</param>
+            <param name="data-st">centra/master/user/pick.html?unit_id=CENTRA&amp;find-depth=1</param>
         </field>
         <field text="限部门" name="units" type="fork" repeated="yes">
             <param name="listable">no</param>
@@ -43,7 +43,7 @@
             <param name="data-tk">name</param>
             <param name="data-ln">units</param>
             <param name="data-at">centra/master/unit/list</param>
-            <param name="data-al">centra/master/unit/pick.html?pid=CENTRA&amp;find-depth=1</param>
+            <param name="data-st">centra/master/unit/pick.html?pid=CENTRA&amp;find-depth=1</param>
         </field>
         <field text="任务类型" name="kinds" type="text" repeated="yes">
             <param name="diverse">yes</param>
@@ -93,7 +93,7 @@
             <param name="data-vk">id</param>
             <param name="data-tk">name</param>
             <param name="data-at">centra/data/upland/plan/search</param>
-            <param name="data-al">centra/data/upland/plan/pick.html</param>
+            <param name="data-st">centra/data/upland/plan/pick.html</param>
         </field>
         <field text="名称" name="name" type="text" required="yes">
             <param name="listable">yes</param>
@@ -137,7 +137,7 @@
             <param name="data-tk">name</param>
             <param name="data-ln">users</param>
             <param name="data-at">centra/master/user/list</param>
-            <param name="data-al">centra/master/user/pick.html?unit_id=CENTRA&amp;find-depth=1</param>
+            <param name="data-st">centra/master/user/pick.html?unit_id=CENTRA&amp;find-depth=1</param>
         </field>
         <field text="内容" name="body" type="textview">
             <param name="srchable">yes</param>
@@ -182,7 +182,7 @@
             <param name="data-vk">id</param>
             <param name="data-tk">name</param>
             <param name="data-at">centra/data/upland/task/search</param>
-            <param name="data-al">centra/data/upland/task/pick.html</param>
+            <param name="data-st">centra/data/upland/task/pick.html</param>
         </field>
         <field text="时间" name="ctime" type="datetime">
             <param name="type">timestamp</param>
@@ -199,7 +199,7 @@
             <param name="data-tk">name</param>
             <param name="data-ln">cuser</param>
             <param name="data-at">centra/master/user/list?rb=id,name,head</param>
-            <param name="data-al">centra/master/user/pick.html</param>
+            <param name="data-st">centra/master/user/pick.html</param>
             <param name="default">@uid</param>
             <param name="deforce">create</param>
         </field>

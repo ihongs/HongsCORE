@@ -111,19 +111,20 @@
                             String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
                             String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") : "id";
                             String ln = info.containsKey("data-ln") ? (String) info.get("data-ln") :  kn ;
-                            String al = info.containsKey("data-al") ? (String) info.get("data-al") :  "" ;
-                            al = al.replace("centre", "centra");
+                            String st = info.containsKey("data-st") ? (String) info.get("data-st") :
+                                      ( info.containsKey("data-al") ? (String) info.get("data-al") :  "" );
+                            st = st.replace("centre", "centra");
                             // 选择时禁用创建
-                            if ( ! al.isEmpty (   )) {
-                            if ( ! al.contains("#")) {
-                                al = al + "#.deny=.create";
+                            if ( ! st.isEmpty (   )) {
+                            if ( ! st.contains("#")) {
+                                st = st + "#.deny=.create";
                             } else {
-                                al = al + "&.deny=.create";
+                                st = st + "&.deny=.create";
                             }}
                         %>
                         <div class="form-control multiple">
                             <ul class="repeated labelbox labelist forkbox" data-ft="_fork" data-fn="<%=name%>.<%=Cnst.EQ_REL%>" data-ln="<%=ln%>" data-tk="<%=tk%>" data-vk="<%=vk%>"></ul>
-                            <a href="javascript:;" data-toggle="hsFork" data-target="@" data-href="<%=al%>"><%=_locale.translate("fore.fork.select", text)%></a>
+                            <a href="javascript:;" data-toggle="hsFork" data-target="@" data-href="<%=st%>"><%=_locale.translate("fore.fork.select", text)%></a>
                         </div>
                     <%} else if ("enum".equals(type) || "type".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
                         <%
@@ -267,16 +268,17 @@
                                 String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
                                 String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") : "id";
                                 String ln = info.containsKey("data-ln") ? (String) info.get("data-ln") :  kn ;
-                                String al = info.containsKey("data-al") ? (String) info.get("data-al") :  "" ;
                                 String at = info.containsKey("data-at") ? (String) info.get("data-at") :  "" ;
-                                al = al.replace("centre", "centra");
+                                String st = info.containsKey("data-st") ? (String) info.get("data-st") :
+                                          ( info.containsKey("data-al") ? (String) info.get("data-al") :  "" );
                                 at = at.replace("centre", "centra");
+                                st = st.replace("centre", "centra");
                                 // 选择时禁用创建
-                                if ( ! al.isEmpty (   )) {
-                                if ( ! al.contains("#")) {
-                                    al = al + "#.deny=.create";
+                                if ( ! st.isEmpty (   )) {
+                                if ( ! st.contains("#")) {
+                                    st = st + "#.deny=.create";
                                 } else {
-                                    al = al + "&.deny=.create";
+                                    st = st + "&.deny=.create";
                                 }}
                                 /**
                                  * 关联路径: base/search|data/xxxx/search?rb=a,b,c
@@ -295,7 +297,7 @@
                                         at = at + Cnst.ACT_EXT;
                                     }
                                 }
-                                extr = " data-ln=\""+ln+"\" data-vk=\""+vk+"\" data-tk=\""+tk+"\" data-href=\""+al+"\" data-target=\"@\"";
+                                extr = " data-ln=\""+ln+"\" data-vk=\""+vk+"\" data-tk=\""+tk+"\" data-href=\""+st+"\" data-target=\"@\"";
                                 rels =  "is,eq,ne";
                                 kind =  "fork";
                             } else

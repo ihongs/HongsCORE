@@ -306,7 +306,8 @@ function saveConf(modal, field) {
     // 关联路径
     if (fd.is("[data-ft=_fork]")) {
         fd.siblings(  "button"  )
-          .attr("data-href", fd.attr("data-al"))
+          .attr("data-href", fd.attr("data-al")) // 兼容旧版
+          .attr("data-href", fd.attr("data-st"))
           .attr("data-hrel", fd.attr("data-at"));
     }
 }
@@ -565,7 +566,10 @@ function drawFlds(fields, area, wdgt, pre, suf) {
             }
 
             // 关联参数以 data- 打头
-            if (k === "data-al" ) {
+            if (k === "data-al" ) { // 兼容旧版
+                input.siblings("button").attr("data-href", field[k]);
+            } else
+            if (k === "data-st" ) {
                 input.siblings("button").attr("data-href", field[k]);
             } else
             if (k === "data-at" ) {

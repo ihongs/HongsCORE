@@ -19,14 +19,14 @@
         data-ft     字段类型
     Pick:
         data-ln     逻辑名称
+        data-at     查询接口
+        data-st     关联选取页
+        data-rt     关联查看页
         data-vk     关联数据取值键
         data-tk     关联数据标题键
-        data-at     查询接口
-        data-al     关联选取页
-        data-rl     关联查看页
     Part:
-        data-al     子级表单页
-        data-rl     子级详情页
+        data-st     子级表单页
+        data-rt     子级详情页
     Checkbox:
         data-vk     选项数据取值键
         data-tk     选项数据标签键

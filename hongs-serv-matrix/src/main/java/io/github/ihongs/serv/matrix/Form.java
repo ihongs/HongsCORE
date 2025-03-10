@@ -581,8 +581,6 @@ public class Form extends Model {
             if (t != null) item.setAttribute("type", t); else t = "";
             y = (String) fiel.get("__text__");
             if (y != null) item.setAttribute("text", y);
-            y = (String) fiel.get("__hint__");
-            if (y != null) item.setAttribute("hint", y);
             y = (String) fiel.get("__rule__");
             if (y != null && y.length() != 0) item.setAttribute("rule", y);
             y = (String) fiel.get("__required__");

@@ -33,7 +33,6 @@
 
             String  type = Synt.asString(info.get("__type__"));
             String  text = Synt.asString(info.get("__text__"));
-            String  hint = Synt.asString(info.get("__hint__"));
             boolean rptd = Synt.declare(info.get("__repeated__"), false);
 
             // 显示 ID
@@ -71,8 +70,9 @@
             </div>
         <%} else {%>
             <%
+                String hint;
                 text = Synt.defxult(Synt.asString(info.get("info-text")), text, "");
-                hint = Synt.defxult(Synt.asString(info.get("info-hint")), hint, "");
+                hint = Synt.defxult(Synt.asString(info.get("info-hint")), "" );
             %>
             <%if ("form".equals(type) || "part".equals(type)) {%>
             <div class="form-group" data-name="<%=name%>" style="margin:0;">

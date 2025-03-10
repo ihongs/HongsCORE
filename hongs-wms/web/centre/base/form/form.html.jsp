@@ -31,7 +31,6 @@
 
             String  type = Synt.asString(info.get("__type__"));
             String  text = Synt.asString(info.get("__text__"));
-            String  hint = Synt.asString(info.get("__hint__"));
             boolean rqrd = Synt.declare(info.get("__required__"), false);
             boolean rptd = Synt.declare(info.get("__repeated__"), false);
 
@@ -40,14 +39,6 @@
             &&  info.containsKey("default" )
             &&  info.containsKey("deforce")) {
                 continue;
-            }
-
-            // 可以自定义字段显示文本
-            if (info.containsKey("text")) {
-                text  = (String) info.get("text");
-            }
-            if (info.containsKey("hint")) {
-                hint  = (String) info.get("hint");
             }
         %>
         <%/****/ if ("hidden".equals(type)) {%>
@@ -68,9 +59,9 @@
             </div>
         <%} else {%>
             <%
-                String hold, pfc, gfc;
+                String hint, hold, pfc, gfc;
                 text = Synt.defxult(Synt.asString(info.get("form-text")), text, "");
-                hint = Synt.defxult(Synt.asString(info.get("form-hint")), hint, "");
+                hint = Synt.defxult(Synt.asString(info.get("form-hint")), "" );
                 hold = Synt.defxult(Synt.asString(info.get("form-hold")), "" );
                 pfc  = Synt.defxult(Synt.asString(info.get("page-form-class")), "");
                 gfc  =  "" ;

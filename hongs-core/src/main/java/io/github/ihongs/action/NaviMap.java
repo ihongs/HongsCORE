@@ -49,7 +49,7 @@ import org.xml.sax.SAXException;
         hrel: 页面,
         icon: 图标,
         text: 名称,
-        hint: 说明,
+        tips: 说明,
         menus : {
           子级菜单...
         },
@@ -64,7 +64,7 @@ import org.xml.sax.SAXException;
     roles = {
       "name" : {
         text: 名称,
-        hint: 说明,
+        tips: 说明,
         depends : [
           "fole.name1",
           "role.name2",
@@ -366,8 +366,8 @@ public class NaviMap
         String text = element2.getAttribute("text");
         if (text != null) menu2.put( "text", gotLanguage(text));
 
-        String hint = element2.getAttribute("hint");
-        if (hint != null) menu2.put( "hint", gotLanguage(hint));
+        String hint = element2.getAttribute("tips");
+        if (hint != null) menu2.put( "tips", gotLanguage(hint));
 
         Map menus2 = new LinkedHashMap();
         Set roles2 = new LinkedHashSet();
@@ -391,7 +391,7 @@ public class NaviMap
         if (namz == null) namz = "" ;
 
         /**
-         * 角色可以服用和补充
+         * 角色可以复用和补充
          * 角色标签文本为可选
          */
         Map role2 ;
@@ -400,14 +400,14 @@ public class NaviMap
         } else {
             role2 =  new  HashMap( );
             role2.put("text",  ""  );
-            role2.put("hint",  ""  );
+            role2.put("tips",  ""  );
             roles.put( namz , role2);
         }
         if (element2.hasAttribute("text")) {
-            role2.put("text", element2.getAttribute("text"));
+            role2.put("text", gotLanguage(element2.getAttribute("text")));
         }
-        if (element2.hasAttribute("hint")) {
-            role2.put("hint", element2.getAttribute("hint"));
+        if (element2.hasAttribute("tips")) {
+            role2.put("tips", gotLanguage(element2.getAttribute("tips")));
         }
 
         Set actions2 = new HashSet();

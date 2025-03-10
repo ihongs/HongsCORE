@@ -32,7 +32,6 @@
 
             String  type = Synt.asString(info.get("__type__"));
             String  text = Synt.asString(info.get("__text__"));
-            String  hint = Synt.asString(info.get("__hint__"));
             boolean rqrd = Synt.declare(info.get("__required__"), false);
             boolean rptd = Synt.declare(info.get("__repeated__"), false);
             boolean roly = Synt.declare(info.get(  "readonly"  ), false);
@@ -72,8 +71,9 @@
             </div>
         <%} else if ( roly ) { //** 此部分来自 info.jsp **/ %>
             <%
+                String hint;
                 text = Synt.defxult(Synt.asString(info.get("info-text")), text, "");
-                hint = Synt.defxult(Synt.asString(info.get("info-hint")), hint, "");
+                hint = Synt.defxult(Synt.asString(info.get("info-hint")), "" );
             %>
             <%if ("form".equals(type) || "part".equals(type)) {%>
             <div class="form-group row" data-name="<%=name%>">
@@ -245,10 +245,10 @@
             </div>
         <%} else {%>
             <%
-                String hold;
+                String hint, hold;
                 text = Synt.defxult(Synt.asString(info.get("form-text")), text, "");
-                hint = Synt.defxult(Synt.asString(info.get("form-hint")), hint, "");
-                hold = Synt.defxult(Synt.asString(info.get("form-hold")), "");
+                hint = Synt.defxult(Synt.asString(info.get("form-hint")), "" );
+                hold = Synt.defxult(Synt.asString(info.get("form-hold")), "" );
             %>
             <%if ("form".equals(type) || "part".equals(type)) {%>
             <div class="form-group" data-name="<%=name%>" data-form-error="&gt;*&gt;.text-error">

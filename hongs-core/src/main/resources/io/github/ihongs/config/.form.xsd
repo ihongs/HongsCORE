@@ -3,10 +3,9 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <!-- 基础属性 -->
-  <xs:attribute name="name" type="xs:string"/>
   <xs:attribute name="code" type="xs:string"/>
+  <xs:attribute name="name" type="xs:string"/>
   <xs:attribute name="text" type="xs:string"/>
-  <xs:attribute name="hint" type="xs:string"/>
   <xs:attribute name="type" type="xs:string"/>
   <xs:attribute name="rule" type="xs:string"/>
   <xs:attribute name="required" type="xs:string"/>
@@ -25,7 +24,6 @@
     <xs:complexType>
       <xs:attribute ref="name"/>
       <xs:attribute ref="text"/>
-      <xs:attribute ref="hint"/>
       <xs:attribute ref="type"/>
       <xs:attribute ref="rule"/>
       <xs:attribute ref="required"/>

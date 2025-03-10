@@ -309,9 +309,6 @@ public class FormSet
         attr = element2.getAttribute("text");
         items.put("__text__", gotLanguage(attr));
 
-        attr = element2.getAttribute("hint");
-        items.put("__hint__", gotLanguage(attr));
-
         if (element2.hasAttribute("required")) {
             attr = element2.getAttribute("required");
             items.put("__required__", attr );

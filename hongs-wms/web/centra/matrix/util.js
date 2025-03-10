@@ -338,7 +338,6 @@ function gainFlds(fields, area) {
             "__name__": name,
             "__type__": type,
             "__text__": text,
-//          "__hint__": hint,
             "__required__": required ,
             "__repeated__": repeated
         };
@@ -349,7 +348,6 @@ function gainFlds(fields, area) {
         if (/^@$/.test(name)) {
             delete params["__type__"];
             delete params["__text__"];
-            delete params["__hint__"];
             delete params["__required__"];
             delete params["__repeated__"];
         }
@@ -438,7 +436,6 @@ function drawFlds(fields, area, wdgt, pre, suf) {
         var name  = field['__name__'];
         var type  = field["__type__"];
         var text  = field["__text__"];
-//      var hint  = field["__hint__"];
         var required = field["__required__"];
         var repeated = field["__repeated__"];
 

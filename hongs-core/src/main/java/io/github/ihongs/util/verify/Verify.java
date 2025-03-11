@@ -278,15 +278,15 @@ public class Verify {
             return rule.verify(veri /**/);
         } catch (Wrong  w) {
             // 设置字段标签
-            if ( w.getLocalizedCaption( ) == null) {
+            if (null == w.getLabel( )) {
                 if (rule instanceof Rule) {
                     Rule r = (Rule) rule ;
-                    w.setLocalizedCaption(Synt.defxult(
-                            Synt.asString(r.getParam("__text__")),
-                            Synt.asString(r.getParam("__name__")),
-                                          name)  );
+                    w.withLabel((CharSequence) Synt.defoult(
+                                r.getParam("__text__"),
+                                r.getParam("__name__"),
+                                name));
                 } else {
-                    w.setLocalizedCaption(name);
+                    w.withLabel(name);
                 }
             }
             fail(wrongz, w, name);
@@ -313,15 +313,15 @@ public class Verify {
             return rule.remedy(veri,data);
         } catch (Wrong  w) {
             // 设置字段标签
-            if ( w.getLocalizedCaption( ) == null) {
+            if (null == w.getLabel( )) {
                 if (rule instanceof Rule) {
                     Rule r = (Rule) rule ;
-                    w.setLocalizedCaption(Synt.defxult(
-                            Synt.asString(r.getParam("__text__")),
-                            Synt.asString(r.getParam("__name__")),
-                                          name)  );
+                    w.withLabel((CharSequence) Synt.defoult(
+                                r.getParam("__text__"),
+                                r.getParam("__name__"),
+                                name));
                 } else {
-                    w.setLocalizedCaption(name);
+                    w.withLabel(name);
                 }
             }
             fail(wrongz, w, name);

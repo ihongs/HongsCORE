@@ -428,7 +428,7 @@ public final class Dict
   }
 
   /**
-   * @see getScion
+   * @see getWorth
    * @deprecated
    * @param map
    * @param keys

@@ -1347,9 +1347,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         return false;
     }
 
-    protected void padQry(BooleanQuery.Builder qr, Map rd, String k, Object v, IQuest q) throws CruxException {
-        IQuest qa = q;
-
+    protected void padQry(BooleanQuery.Builder qr, Map rd, String k, Object v, IQuest qa) throws CruxException {
         //** 常规查询 **/
 
         Map vd ;
@@ -1533,30 +1531,78 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         }
     }
 
-    protected void padQry(BooleanQuery.Builder qr, Map rd, String k, Object v, VectorQuest q) throws CruxException {
-        IQuest qa = q;
-
+    protected void padQry(BooleanQuery.Builder qr, Map rd, String k, Object v, VectorQuest qv) throws CruxException {
         //** 向量查询 **/
 
-        VectorQuest qv = (VectorQuest) qa;
+        if ("".equals(v) ) {
+            return;
+        }
+
         int   n = 0x0 ;
         float u = 0.1f;
-        if (v instanceof Map) {
-            Map vd = (Map) v;
-            n = Synt.declare(vd.get(Cnst.RN_KEY), n);
-            u = Synt.declare(vd.get(Cnst.UP_REL), u);
-            v = vd.get(Cnst.AT_REL);
-        }
-        if ( "".equals(v) ) return ;
 
-        try {
-            if (n > 0) {
-                qr.add(qv.vtr(k, v, n), BooleanClause.Occur.MUST);
-            } else {
-                qr.add(qv.vtr(k, v, u), BooleanClause.Occur.MUST);
+        if (!(v instanceof Map)) {
+            try {
+                if (n > 0) {
+                    qr.add(qv.vtr(k, v, n), BooleanClause.Occur.MUST);
+                } else {
+                    qr.add(qv.vtr(k, v, u), BooleanClause.Occur.MUST);
+                }
+            } catch (ClassCastException | IllegalArgumentException e) {
+                throw new CruxException(e , 400 , "Vector value for `$0` is invalid, $1", k, e.getMessage());
             }
-        } catch (ClassCastException | IllegalArgumentException e) {
-            throw new CruxException(e , 400 , "Vector value for field `$0` is invalid, $1", k, e.getMessage());
+            return;
+        }
+
+        Map vd = (Map) v;
+        n = Synt.declare(vd.get(Cnst.RN_KEY), n);
+        u = Synt.declare(vd.get(Cnst.UP_REL), u);
+
+        v = vd.get(Cnst.AT_REL);
+        if (v != null && !"".equals(v)) {
+            try {
+                if (n > 0) {
+                    qr.add(qv.vtr(k, v, n), BooleanClause.Occur.MUST);
+                } else {
+                    qr.add(qv.vtr(k, v, u), BooleanClause.Occur.MUST);
+                }
+            } catch (ClassCastException | IllegalArgumentException e) {
+                throw new CruxException(e , 400 , "Vector value for `$0` is invalid, $1", k+"."+Cnst.AT_REL, e.getMessage());
+            }
+        }
+
+        v = vd.get(Cnst.ON_REL);
+        if (v != null && !"".equals(v)) {
+            Collection  c = Synt.asColl (v);
+            for (Object o : c) {
+                try {
+                    if (n > 0) {
+                        qr.add(qv.vtr(k, o, n), BooleanClause.Occur.MUST);
+                    } else {
+                        qr.add(qv.vtr(k, o, u), BooleanClause.Occur.MUST);
+                    }
+                } catch (ClassCastException | IllegalArgumentException e) {
+                    throw new CruxException(e , 400 , "Vector value for `$0` is invalid, $1", k+"."+Cnst.ON_REL, e.getMessage());
+                }
+            }
+        }
+
+        v = vd.get(Cnst.IN_REL);
+        if (v != null && !"".equals(v)) {
+            BooleanQuery.Builder qx = new BooleanQuery.Builder();
+            Collection  c = Synt.asColl (v);
+            for (Object o : c) {
+                try {
+                    if (n > 0) {
+                        qx.add(qv.vtr(k, o, n), BooleanClause.Occur.SHOULD);
+                    } else {
+                        qx.add(qv.vtr(k, o, u), BooleanClause.Occur.SHOULD);
+                    }
+                } catch (ClassCastException | IllegalArgumentException e) {
+                    throw new CruxException(e , 400 , "Vector value for `$0` is invalid, $1", k+"."+Cnst.IN_REL, e.getMessage());
+                }
+            }
+            qr.add(qx.build(), BooleanClause.Occur.MUST);
         }
     }
 

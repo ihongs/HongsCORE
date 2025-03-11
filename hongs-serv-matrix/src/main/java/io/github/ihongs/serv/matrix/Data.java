@@ -597,7 +597,7 @@ public class Data extends SearchEntity {
      */
     public int add(String id, Map rd, long ctime) throws CruxException {
         Map dd = new HashMap();
-        padInf(dd, rd);
+        padDif(dd, rd);
 
         // 保存到文档库
         dd.put(Cnst.ID_KEY , id);
@@ -649,7 +649,7 @@ public class Data extends SearchEntity {
     public int put(String id, Map rd, long ctime) throws CruxException {
         Map dd = get(id);
         int t  = dd.isEmpty()? 1: 2;
-        int i  = padInf(dd , rd);
+        int i  = padDif(dd , rd);
         // 无更新不存储
         if (i  ==  0) {
             return 0;
@@ -729,7 +729,7 @@ public class Data extends SearchEntity {
     public int set(String id, Map rd, long ctime) throws CruxException {
         Map dd = get(id);
         int t  = dd.isEmpty()? 1: 2;
-        int i  = padInf(dd , rd);
+        int i  = padDif(dd , rd);
         // 无更新不存储
         if (i  ==  0) {
             return 0;
@@ -1005,7 +1005,7 @@ public class Data extends SearchEntity {
                 Map dd = getData((String) od.get("data"));
                 Map xd = new HashMap(00);
                 dd.put(Cnst.ID_KEY , id);
-                padInf(dd, xd);
+                padDif(dd, xd);
                 Document dc = padDoc(dd);
                 setDoc(id, dc);
             } else {
@@ -1058,7 +1058,7 @@ public class Data extends SearchEntity {
 
         // 保存到文档库
         dd.put(Cnst.ID_KEY , id);
-        padInf(dd, xd);
+        padDif(dd, xd);
         Document dc = padDoc(dd);
         setDoc(id, dc);
 
@@ -1206,27 +1206,20 @@ public class Data extends SearchEntity {
     }
 
     /**
-     * 填充准备保存的信息
+     * 比对数据变更并填充
      * @param dd 旧数据
      * @param rd 新数据
      * @return 0 无更新
+     * @throws CruxException
      */
-    protected int padInf(Map dd, Map rd) {
+    protected int padDif(Map dd, Map rd) throws CruxException {
         Map xd = new Casc.Mixes (rd, dd);
 
         // 填充关联冗余
-        try {
-            includes(xd);
-        } catch (CruxException ex) {
-            throw ex.toExemption();
-        }
+        includes(xd);
 
         // 扩充合并字段
-        try {
-            incloses(xd);
-        } catch (CruxException ex) {
-            throw ex.toExemption();
-        }
+        incloses(xd);
 
         // 合并数据, 检查变更
         int i = 0;

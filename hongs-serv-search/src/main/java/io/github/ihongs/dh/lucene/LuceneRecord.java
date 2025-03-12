@@ -1181,8 +1181,8 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 int d = Synt.declare(m.get("vector-dimension"), 0);
                 qv = new VectorQuest();
                 qv.dimension(d);
-                qa = qv;
-                break;
+                padQry(qr, rd, k, v, qv);
+                continue ;
             default:
                 // 区分能否搜索
                 if ( ! srchable(m)) {

@@ -604,7 +604,7 @@ public class Data extends SearchEntity {
         Document dc = padDoc(dd);
         addDoc(id, dc);
 
-        FetchCase sc = fenceCase();
+        FenceCase sc = fenceCase();
         if (sc == null) {
             return 1;
         }
@@ -660,7 +660,7 @@ public class Data extends SearchEntity {
         Document dc = padDoc(dd);
         setDoc(id, dc);
 
-        FetchCase sc = fenceCase();
+        FenceCase sc = fenceCase();
         if (sc == null) {
             return 1;
         }
@@ -740,7 +740,7 @@ public class Data extends SearchEntity {
         Document dc = padDoc(dd);
         setDoc(id, dc);
 
-        FetchCase sc = fenceCase();
+        FenceCase sc = fenceCase();
         if (sc == null) {
             return 1;
         }
@@ -838,7 +838,7 @@ public class Data extends SearchEntity {
     public int del(String id, Map rd, long ctime) throws CruxException {
         delDoc(id);
 
-        FetchCase sc = fenceCase();
+        FenceCase sc = fenceCase();
         if (sc == null) {
             return 1;
         }
@@ -901,7 +901,7 @@ public class Data extends SearchEntity {
     public int end(String id, Map rd, long ctime) throws CruxException {
         delDoc(id);
 
-        FetchCase sc = fenceCase();
+        FenceCase sc = fenceCase();
         if (sc == null) {
             return 1;
         }
@@ -982,11 +982,11 @@ public class Data extends SearchEntity {
      * @throws CruxException
      */
     public int rev(String id, Map rd, long ctime) throws CruxException {
-        FetchCase sc = fenceCase();
+        FenceCase sc = fenceCase();
         if (sc == null) {
             throw new CruxException(405, "@matrix:matrix.rev.unsupported", getFormId());
         }
-        FetchCase s2 = fenceCase();
+        FenceCase s2 = fenceCase();
 
         long     rtime = Synt.declare (rd.get("rtime"), 0L);
         Object[] para2 = new Object[] {id, rtime};
@@ -1098,11 +1098,11 @@ public class Data extends SearchEntity {
      * @throws CruxException
      */
     public FetchCase fetchCase() throws CruxException {
-        FetchCase fetch = fenceCase();
-        if (fetch == null) {
-            throw new CruxException(405, "@matrix:matrix.rev.unsupported", getFormId());
+        Model model = getModel();
+        if (model == null) {
+            throw new CruxException( 405 , "@matrix:matrix.rev.unsupported" , getFormId());
         }
-        return fetch;
+        return model.fetchCase().filter("`"+model.table.name+"`.`form_id`=?", getFormId());
     }
 
     /**
@@ -1111,12 +1111,12 @@ public class Data extends SearchEntity {
      * @return
      * @throws CruxException
      */
-    public FetchCase fenceCase() throws CruxException {
+    public FenceCase fenceCase() throws CruxException {
         Table table = getTable();
         if (table == null) {
             return   null;
         }
-        return new DataFence(this, table);
+        return new FenceCase(this, table);
     }
 
     /**

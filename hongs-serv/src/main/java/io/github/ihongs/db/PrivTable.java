@@ -85,8 +85,7 @@ public abstract class PrivTable extends Table implements Cloneable {
     }
 
     @Override
-    public FetchCase fetchCase()
-    throws CruxException {
+    public FetchCase fetchCase() {
         FetchCase  fc = new PCase(this)
               .use(db).from(tableName, name);
         AssocMore.checkCase(fc, getParams());

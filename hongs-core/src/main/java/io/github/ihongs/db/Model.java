@@ -825,7 +825,7 @@ implements IEntity
    * @return
    * @throws io.github.ihongs.CruxException
    */
-  public FetchCase fetchCase() throws CruxException
+  public FetchCase fetchCase()
   {
       return table.fetchCase().setOption("CLEVER_MODE", false);
   }

@@ -807,10 +807,10 @@ public class DataCombat {
                 nd.put("meno", that.getText(sd, "meno"));
             }
 
-            FetchCase sc = that.fenceCase ( );
+            FenceCase sc = that.fenceCase ( );
             Object[] param = new String[] {id, "0"};
             String   where = "`id`=? AND `etime`=?";
-            sc.where(where, param);
+            sc.filter(where, param);
 
             sc.update(ud);
             sc.insert(nd);

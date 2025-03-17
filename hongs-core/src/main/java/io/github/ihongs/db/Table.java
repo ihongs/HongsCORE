@@ -171,10 +171,8 @@ public class Table
    * 可用 getAll, getOne  得到结果, 以及 delete, update 操作数据
    * 但与 fetchMore,fetchLess 不同, 不会自动关联和排除已删的数据
    * @return 绑定了 db, table 的查询对象
-   * @throws io.github.ihongs.CruxException
    */
   public FetchCase fetchCase()
-    throws CruxException
   {
     FetchCase  fc = new FetchCase()
           .use(db).from(tableName, name);

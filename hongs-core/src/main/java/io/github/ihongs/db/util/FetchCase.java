@@ -118,13 +118,7 @@ public class FetchCase
    * 查找列名加关联层级名
    */
   static final Pattern SQL_ALIAS = Pattern
-          .compile("([:!]|['`\\w\\)]\\s+)?(?:(\\w+)|`(\\w+)`)(\\s*(?:,?$))");
-
-  /**
-   * 上级表或保留名标识符
-   */
-  static final Pattern SQL_POINT = Pattern
-          .compile( "\".*?\"|'.*?'|[:!](?=`.*?`|\\w+|\\*)" );
+          .compile("(['`\\w\\)]\\s+)?(?:(\\w+)|`(\\w+)`)(\\s*(?:,?$))");
 
   /**
    * 查找与字段相关的元素, 如果存在字符串内含单引号将无法正确处理
@@ -694,11 +688,11 @@ public class FetchCase
       }
       if (this.joinExpr != null && this.joinExpr.length() != 0)
       {
-        CharSequence s = this.joinExpr;
+        CharSequence  s  = this.joinExpr;
         if (fixField) {
-          s = fixSQLField( s, tn, pn );
+          s = fixSQLField( s, tn );
         }
-        b.append( " ON " ).append( s );
+        b.append(" ON ").append(s);
       }
 
       /**
@@ -726,20 +720,16 @@ public class FetchCase
 
       // 为关联表的查询列添加层级名
       if (fixField && null != joinName) {
-        if ( 0 < joinName.length(  )  ) {
+        if ( 0 < joinName.length( ) ) {
           s  = fixSQLAlias(s, joinName);
         } else
-        if ( 0 < qn.length(  )  ) {
-          s  = fixSQLAlias(s, qn);
+        if ( 0 < qn.length( ) ) {
+          s  = fixSQLAlias(s , qn);
         }
       }
 
-      if (fixField) {
-        if (hasJoins) {
-          s  = fixSQLField(s, tn, pn);
-        } else {
-          s  = fixSQLPoint(s, "", pn);
-        }
+      if (fixField && hasJoins) {
+          s  = fixSQLField(s , tn);
       }
 
       f.append(" ").append(s);
@@ -750,12 +740,8 @@ public class FetchCase
     {
       CharSequence s = this.wheres.toString().trim();
 
-      if (fixField) {
-        if (hasJoins) {
-          s  = fixSQLField(s, tn, pn);
-        } else {
-          s  = fixSQLPoint(s, "", pn);
-        }
+      if (fixField && hasJoins) {
+          s  = fixSQLField(s , tn);
       }
 
       w.append(" ").append(s);
@@ -766,12 +752,8 @@ public class FetchCase
     {
       CharSequence s = this.groups.toString().trim();
 
-      if (fixField) {
-        if (hasJoins) {
-          s  = fixSQLField(s, tn, pn);
-        } else {
-          s  = fixSQLPoint(s, "", pn);
-        }
+      if (fixField && hasJoins) {
+          s  = fixSQLField(s , tn);
       }
 
       g.append(" ").append(s);
@@ -782,12 +764,8 @@ public class FetchCase
     {
       CharSequence s = this.havins.toString().trim();
 
-      if (fixField) {
-        if (hasJoins) {
-          s  = fixSQLField(s, tn, pn);
-        } else {
-          s  = fixSQLPoint(s, "", pn);
-        }
+      if (fixField && hasJoins) {
+          s  = fixSQLField(s , tn);
       }
 
       h.append(" ").append(s);
@@ -798,12 +776,8 @@ public class FetchCase
     {
       CharSequence s = this.orders.toString().trim();
 
-      if (fixField) {
-        if (hasJoins) {
-          s  = fixSQLField(s, tn, pn);
-        } else {
-          s  = fixSQLPoint(s, "", pn);
-        }
+      if (fixField && hasJoins) {
+          s  = fixSQLField(s , tn);
       }
 
       o.append(" ").append(s);
@@ -818,6 +792,91 @@ public class FetchCase
         caze.getSQLDeep(t, f, w, g, h, o, tn, qn, fixField, hasJoins);
       }
     }
+  }
+
+  /**
+   * 替换SQL表名(聪明模式, 慢)
+   * @param s
+   * @param tn
+   * @return
+   */
+  protected static CharSequence fixSQLField(CharSequence s, String tn)
+  {
+      StringBuffer b = new StringBuffer ( );
+      StringBuffer f = new StringBuffer (s);
+      Matcher      m = SQL_FIELD.matcher(f);
+      String       z = "`"+ tn +"`.$0";
+      String       x ;
+
+      /**
+       * 为字段名前添加表别名
+       * 先找出所有可能是字段的单元
+       * 判断该单元是不是以 .|(|{ 结尾, 这些是表别名或函数名等, 跳过此组
+       * 判断该单元是不是以 .|:|! 开头, 这些是前版本的别名方案, 待后处理
+       * 然后排除掉纯字符串,保留字,别名,数字等
+       *
+       * 通过疑似字段的前后环境及偏移记录来判断, 符合以下规范:
+       * [TABLE.]FIELD[[ AS] ALIAS], FUNCTION(FIELDS...)
+       *
+       * 以下 i 为单元开始位置, j 为单元结束位置, k 为上一组单元结束位置
+       * 单元包含结尾空白字符
+       */
+
+      int i;
+      int j;
+      int k = -1;
+      int l = f.length();
+
+      while ( m.find( )) {
+          // 以 .|( 结尾的要跳过
+          j = m.end ( );
+          if ( j <  l ) {
+              char r = f.charAt(j - 0);
+              if ( r == '.' || r == '(' || r == '{' ) {
+                   k = j;
+                  continue;
+              }
+          }
+
+          // 以 .|: 开头的要跳过
+          i = m.start();
+          if ( i >  0 ) {
+              char r = f.charAt(i - 1);
+              if ( r == '.' || r == ':' || r == '!' ) {
+                   k = j;
+                   continue;
+              }
+          }
+
+          x = m.group (1);
+          if (x.charAt(0) == '\''
+          ||  x.charAt(0) == '"'
+          ||  x.charAt(0) == ')') {
+              // 字符串后不跟字段, 函数调用块也要跳过
+              k  = j;
+          } else
+          if (x.charAt(0) == '*'
+          && (k == i || f.charAt(j) == ')')) {
+              // 跳过乘号且不偏移, COUNT (*) 也要跳过
+          } else
+          if (SQL_FIELD_BEFORE_ALIAS.matcher(x).matches()) {
+              // 跳过别名和数字等
+              k  = j;
+          } else
+          if (SQL_FIELD_BEFORE_WORDS.matcher(x).matches()) {
+              // 跳过保留字不偏移
+          } else
+          if (k == i) {
+              // 紧挨前字段要跳过
+              k  = j;
+          } else {
+              // 为字段添加表前缀
+              k  = j;
+              m.appendReplacement(b, z);
+          }
+      }
+
+      return m.appendTail(b);
   }
 
   /**
@@ -912,10 +971,6 @@ public class FetchCase
       String  n ;
 
       if (m.find()) {
-              n = m.group(1);
-          if ( ":".equals(n) || "!".equals(n)) {
-              return s;
-          }
               n = m.group(2);
           if (n == null) {
               n = m.group(3);
@@ -933,119 +988,12 @@ public class FetchCase
   }
 
   /**
-   * 替换SQL表名(聪明模式, 慢)
-   * @param s
-   * @param tn
-   * @param pn
-   * @return
-   */
-  protected static CharSequence fixSQLField(CharSequence s, String tn, String pn)
-  {
-      StringBuffer b = new StringBuffer ( );
-      StringBuffer f = new StringBuffer (s);
-      Matcher      m = SQL_FIELD.matcher(f);
-      String       z = "`"+ tn +"`.$0";
-      String       x ;
-
-      /**
-       * 为字段名前添加表别名
-       * 先找出所有可能是字段的单元
-       * 判断该单元是不是以 .|(|{ 结尾, 这些是表别名或函数名等, 跳过此组
-       * 判断该单元是不是以 .|:|! 开头, 这些是前版本的别名方案, 待后处理
-       * 然后排除掉纯字符串,保留字,别名,数字等
-       *
-       * 通过疑似字段的前后环境及偏移记录来判断, 符合以下规范:
-       * [TABLE.]FIELD[[ AS] ALIAS], FUNCTION(FIELDS...)
-       *
-       * 以下 i 为单元开始位置, j 为单元结束位置, k 为上一组单元结束位置
-       * 单元包含结尾空白字符
-       */
-
-      int i;
-      int j;
-      int k = -1;
-      int l = f.length();
-
-      while ( m.find( )) {
-          // 以 .|( 结尾的要跳过
-          j = m.end ( );
-          if ( j <  l ) {
-              char r = f.charAt(j - 0);
-              if ( r == '.' || r == '(' || r == '{' ) {
-                   k = j;
-                  continue;
-              }
-          }
-
-          // 以 .|: 开头的要跳过
-          i = m.start();
-          if ( i >  0 ) {
-              char r = f.charAt(i - 1);
-              if ( r == '.' || r == ':' || r == '!' ) {
-                   k = j;
-                   continue;
-              }
-          }
-
-          x = m.group (1);
-          if (x.charAt(0) == '\''
-          ||  x.charAt(0) == '"'
-          ||  x.charAt(0) == ')') {
-              // 字符串后不跟字段, 函数调用块也要跳过
-              k  = j;
-          } else
-          if (x.charAt(0) == '*'
-          && (k == i || f.charAt(j) == ')')) {
-              // 跳过乘号且不偏移, COUNT (*) 也要跳过
-          } else
-          if (SQL_FIELD_BEFORE_ALIAS.matcher(x).matches()) {
-              // 跳过别名和数字等
-              k  = j;
-          } else
-          if (SQL_FIELD_BEFORE_WORDS.matcher(x).matches()) {
-              // 跳过保留字不偏移
-          } else
-          if (k == i) {
-              // 紧挨前字段要跳过
-              k  = j;
-          } else {
-              // 为字段添加表前缀
-              k  = j;
-              m.appendReplacement(b, z);
-          }
-      }
-      f = m.appendTail(b);
-
-      return fixSQLPoint( f , "" , pn );
-  }
-
-  private static CharSequence fixSQLPoint(CharSequence s, String sn, String pn) {
-      StringBuffer b = new StringBuffer ( );
-      StringBuffer f = new StringBuffer (s);
-      Matcher      m = SQL_POINT.matcher(f);
-      pn  = "`" + pn + "`.";
-
-      while (m.find()) {
-          switch (m.group(0).charAt(0)) {
-              case ':': m.appendReplacement(b, pn); break;
-              case '!': m.appendReplacement(b, sn); break;
-          }
-      }
-      f = m.appendTail(b);
-
-      return f;
-  }
-
-  /**
    * 清除SQL表名
    * @param s
    * @return
    */
   protected final String delSQLTable(CharSequence s)
   {
-      if (getOption("CLEVER_MODE", false)) {
-             s = fixSQLPoint(s, "", "NaT");
-      }
       String n = Pattern.quote( getName());
       String p = "('.*?')|(?:`"+ n +"`|"+ n +")\\s*\\.\\s*";
       return Pattern.compile(p).matcher(s).replaceAll("$1");

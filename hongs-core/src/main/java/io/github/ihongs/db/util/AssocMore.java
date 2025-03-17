@@ -59,17 +59,16 @@ public class AssocMore {
     }
 
     String  sq;
-    String  pn = "NaT";
-    String  pu = caze.joinName;
+    String  jn = caze.joinName;
     boolean cm = caze.getOption("CLEVER_MODE", false);
 
     sq = (String) params.get("fields");
     if (sq != null) { // 外部设置将无效
         if (! cm && sq.length() != 0) {
-            if (pu != null && pu.length() != 0) {
-                sq  = FetchCase.fixSQLAlias(sq, pu).toString();
+            if (jn != null && jn.length() != 0) {
+                sq  = FetchCase.fixSQLAlias(sq, jn).toString();
             }
-            sq = FetchCase.fixSQLField(sq, caze.getName(), pn).toString();
+            sq = FetchCase.fixSQLField(sq, caze.getName()).toString();
         }
         caze.field(sq);
     }
@@ -77,7 +76,7 @@ public class AssocMore {
     sq = (String) params.get("orders");
     if (sq != null) { // 外部设置将无效
         if (! cm && sq.length() != 0) {
-            sq = FetchCase.fixSQLField(sq, caze.getName(), pn).toString();
+            sq = FetchCase.fixSQLField(sq, caze.getName()).toString();
         }
         caze.order(sq);
     }
@@ -85,7 +84,7 @@ public class AssocMore {
     sq = (String) params.get("groups");
     if (sq != null) { // 外部设置将无效
         if (! cm && sq.length() != 0) {
-            sq = FetchCase.fixSQLField(sq, caze.getName(), pn).toString();
+            sq = FetchCase.fixSQLField(sq, caze.getName()).toString();
         }
         caze.group(sq);
     }
@@ -93,7 +92,7 @@ public class AssocMore {
     sq = (String) params.get("filter");
     if (sq != null && sq.length() != 0) { // 此处为附加条件, 外部条件仍有效
         if (! cm && sq.length() != 0) {
-            sq = FetchCase.fixSQLField(sq, caze.getName(), pn).toString();
+            sq = FetchCase.fixSQLField(sq, caze.getName()).toString();
         }
         caze.filter(sq);
     }
@@ -101,7 +100,7 @@ public class AssocMore {
     sq = (String) params.get("having");
     if (sq != null && sq.length() != 0) { // 此处为附加条件, 外部条件仍有效
         if (! cm && sq.length() != 0) {
-            sq = FetchCase.fixSQLField(sq, caze.getName(), pn).toString();
+            sq = FetchCase.fixSQLField(sq, caze.getName()).toString();
         }
         caze.having(sq);
     }

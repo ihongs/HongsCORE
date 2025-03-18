@@ -103,28 +103,16 @@ public class FetchCase
   public static final byte STRING = 4;
 
   /**
-   * 字段可能的前导字符
-   */
-  static final Pattern PRE_FIELD = Pattern
-          .compile("^\\s*,\\s*" /***/ , Pattern.CASE_INSENSITIVE);
-
-  /**
-   * 条件可能的前导字符
-   */
-  static final Pattern PRE_WHERE = Pattern
-          .compile("^\\s*(AND|OR)\\s+", Pattern.CASE_INSENSITIVE);
-
-  /**
    * 查找列名加关联层级名
    */
   static final Pattern SQL_ALIAS = Pattern
-          .compile("(['`\\w\\)]\\s+)?(?:(\\w+)|`(\\w+)`)(\\s*(?:,?$))");
+          .compile("([\"'`\\w\\)]\\s+)?(?:`(\\w+)`|(\\w+))(\\s*,?$)");
 
   /**
    * 查找与字段相关的元素, 如果存在字符串内含单引号将无法正确处理
    */
   static final Pattern SQL_FIELD = Pattern
-          .compile("(\".*?\"|'.*?'|`.*?`|\\w+|\\*|\\))\\s*");
+          .compile("(\\s*)(\".*?\"|'.*?'|`.*?`|\\w+|\\*|\\))(\\s*)" );
 
   /**
    * 后面不跟字段可跟别名, \\d 换成 \\w 则仅处理被 '`' 包裹的字段
@@ -364,7 +352,9 @@ public class FetchCase
    */
   public FetchCase select(String field)
   {
-    this.fields.append(", ").append(field);
+    if (this.fields.length() > 0) {
+        this.fields.append( ", ");
+    }   this.fields.append(field);
     return this;
   }
 
@@ -376,7 +366,9 @@ public class FetchCase
    */
   public FetchCase filter(String where, Object... params)
   {
-    this.wheres.append(" AND ").append(where);
+    if (this.wheres.length() > 0) {
+        this.wheres.append(" AND ");
+    }   this.wheres.append( where );
     this.wparams.addAll(Arrays.asList(params));
     return this;
   }
@@ -388,7 +380,9 @@ public class FetchCase
    */
   public FetchCase gather(String field)
   {
-    this.groups.append(", ").append(field);
+    if (this.groups.length() > 0) {
+        this.groups.append( ", ");
+    }   this.groups.append(field);
     return this;
   }
 
@@ -400,7 +394,9 @@ public class FetchCase
    */
   public FetchCase having(String where, Object... params)
   {
-    this.havins.append(" AND ").append(where);
+    if (this.havins.length() > 0) {
+        this.havins.append(" AND ");
+    }   this.havins.append( where );
     this.vparams.addAll(Arrays.asList(params));
     return this;
   }
@@ -412,7 +408,9 @@ public class FetchCase
    */
   public FetchCase assort(String field)
   {
-    this.orders.append(", ").append(field);
+    if (this.orders.length() > 0) {
+        this.orders.append( ", ");
+    }   this.orders.append(field);
     return this;
   }
 
@@ -586,15 +584,15 @@ public class FetchCase
     }
 
     // 字段
-    if (f.length() != 0)
+    if (f.length() > 0)
     {
       sql.append( " " )
-         .append(PRE_FIELD.matcher(f).replaceFirst(""));
+         .append(  f  );
     }
     else
     {
       sql.append(" `" )
-         .append(name != null && name.length() != 0 ? name : tableName)
+         .append(name != null && !name.isEmpty() ? name : tableName)
          .append("`.*");
     }
 
@@ -602,31 +600,31 @@ public class FetchCase
     sql.append(" FROM ").append(t);
 
     // 条件
-    if (w.length() != 0)
+    if (w.length() > 0)
     {
       sql.append(" WHERE " )
-         .append(PRE_WHERE.matcher(w).replaceFirst(""));
+         .append(  w  );
     }
 
     // 分组
-    if (g.length() != 0)
+    if (g.length() > 0)
     {
       sql.append(" GROUP BY ")
-         .append(PRE_FIELD.matcher(g).replaceFirst(""));
+         .append(  g  );
     }
 
     // 过滤
-    if (h.length() != 0)
+    if (h.length() > 0)
     {
       sql.append(" HAVING ")
-         .append(PRE_WHERE.matcher(h).replaceFirst(""));
+         .append(  h  );
     }
 
     // 排序
-    if (o.length() != 0)
+    if (o.length() > 0)
     {
       sql.append(" ORDER BY ")
-         .append(PRE_FIELD.matcher(o).replaceFirst(""));
+         .append(  o  );
     }
 
     // 限额, 不同库不同方式, 就不在此处理了
@@ -652,7 +650,7 @@ public class FetchCase
                          boolean hasJoins)
   {
     if (this.tableName == null
-    ||  this.tableName.length() < 1)
+    ||  this.tableName.length() == 0)
     {
         throw new CruxExemption(1162, "tableName can not be empty");
     }
@@ -716,7 +714,7 @@ public class FetchCase
     // 字段
     if (this.fields.length() != 0)
     {
-      CharSequence s = this.fields.toString().trim();
+      CharSequence s = this.fields.toString();
 
       // 为关联表的查询列添加层级名
       if (fixField && null != joinName) {
@@ -732,31 +730,37 @@ public class FetchCase
           s  = fixSQLField(s , tn);
       }
 
-      f.append(" ").append(s);
+      if (f.length() > 0) {
+          f.append( ", ");
+      }   f.append(  s  );
     }
 
     // 条件
     if (this.wheres.length() != 0)
     {
-      CharSequence s = this.wheres.toString().trim();
+      CharSequence s = this.wheres.toString();
 
       if (fixField && hasJoins) {
           s  = fixSQLField(s , tn);
       }
 
-      w.append(" ").append(s);
+      if (w.length() > 0) {
+          w.append(" AND ");
+      }   w.append(  s  );
     }
 
     // 分组
     if (this.groups.length() != 0)
     {
-      CharSequence s = this.groups.toString().trim();
+      CharSequence s = this.groups.toString();
 
       if (fixField && hasJoins) {
           s  = fixSQLField(s , tn);
       }
 
-      g.append(" ").append(s);
+      if (g.length() > 0) {
+          g.append( ", ");
+      }   g.append(  s  );
     }
 
     // 筛选
@@ -768,7 +772,9 @@ public class FetchCase
           s  = fixSQLField(s , tn);
       }
 
-      h.append(" ").append(s);
+      if (h.length() > 0) {
+          h.append(" AND ");
+      }   h.append(  s  );
     }
 
     // 排序
@@ -780,7 +786,9 @@ public class FetchCase
           s  = fixSQLField(s , tn);
       }
 
-      o.append(" ").append(s);
+      if (o.length() > 0) {
+          o.append( ", ");
+      }   o.append(  s  );
     }
 
     // 下级
@@ -805,15 +813,15 @@ public class FetchCase
       StringBuffer b = new StringBuffer ( );
       StringBuffer f = new StringBuffer (s);
       Matcher      m = SQL_FIELD.matcher(f);
-      String       z = "`"+ tn +"`.$0";
+      String       z = "$1`" +tn+ "`.$2$3" ;
       String       x ;
 
       /**
        * 为字段名前添加表别名
-       * 先找出所有可能是字段的单元
-       * 判断该单元是不是以 .|(|{ 结尾, 这些是表别名或函数名等, 跳过此组
-       * 判断该单元是不是以 .|:|! 开头, 这些是前版本的别名方案, 待后处理
-       * 然后排除掉纯字符串,保留字,别名,数字等
+       * 先找出所有可能是字段的单元;
+       * 判断该单元是不是以 .( 结尾, 这些是表别名或函数名等, 跳过;
+       * 判断该单元是不是以 .) 开头, 这些有表别名或字段别名, 跳过;
+       * 然后排除掉纯字符串, 保留字, 别名, 数字等.
        *
        * 通过疑似字段的前后环境及偏移记录来判断, 符合以下规范:
        * [TABLE.]FIELD[[ AS] ALIAS], FUNCTION(FIELDS...)
@@ -828,27 +836,27 @@ public class FetchCase
       int l = f.length();
 
       while ( m.find( )) {
-          // 以 .|( 结尾的要跳过
+          // 以 .( 结尾的要跳过
           j = m.end ( );
           if ( j <  l ) {
               char r = f.charAt(j - 0);
-              if ( r == '.' || r == '(' || r == '{' ) {
+              if ( r == '.' || r == '(' ) {
                    k = j;
                   continue;
               }
           }
 
-          // 以 .|: 开头的要跳过
+          // 以 .) 开头的要跳过
           i = m.start();
           if ( i >  0 ) {
               char r = f.charAt(i - 1);
-              if ( r == '.' || r == ':' || r == '!' ) {
+              if ( r == '.' || r == ')' ) {
                    k = j;
                    continue;
               }
           }
 
-          x = m.group (1);
+          x = m.group (2);
           if (x.charAt(0) == '\''
           ||  x.charAt(0) == '"'
           ||  x.charAt(0) == ')') {
@@ -992,9 +1000,9 @@ public class FetchCase
    * @param s
    * @return
    */
-  protected final String delSQLTable(CharSequence s)
+  protected String delSQLTable (CharSequence s)
   {
-      String n = Pattern.quote( getName());
+      String n = Pattern.quote (getName());
       String p = "('.*?')|(?:`"+ n +"`|"+ n +")\\s*\\.\\s*";
       return Pattern.compile(p).matcher(s).replaceAll("$1");
   }
@@ -1370,8 +1378,7 @@ public class FetchCase
     try (Loop rs = select()) {
     while ( ( ro = rs.next() ) != null ) {
        ra.add(ro);
-    }
-    }
+    } }
 
     return  ra;
   }
@@ -1392,37 +1399,35 @@ public class FetchCase
 
   /**
    * 删除全部匹配的记录
-   * 注意: 考虑到 SQL 兼容性, 忽略了 join 的条件, 有 :n, xx.n 的字段条件会报 SQL 错误
+   * 注意: 考虑到 SQL 兼容性, 忽略了 join 的条件, 有 xx.n 的字段条件会报 SQL 错误
    * @return
    * @throws CruxException
    */
   public int delete() throws CruxException {
     if (_db_ == null) {
-      throw new CruxException(1163);
+      throw new CruxException ( 1163 );
     }
 
     // 删除条件中字段上的表名
-    String where = PRE_WHERE.matcher ( wheres ).replaceFirst("");
-           where = delSQLTable(where );
+    String where = delSQLTable(wheres);
 
     return _db_.delete(tableName, /**/ where, wparams.toArray());
   }
 
   /**
    * 更新全部匹配的数据
-   * 注意: 考虑到 SQL 兼容性, 忽略了 join 的条件, 有 :n, xx.n 的字段条件会报 SQL 错误
+   * 注意: 考虑到 SQL 兼容性, 忽略了 join 的条件, 有 xx.n 的字段条件会报 SQL 错误
    * @param dat
    * @return
    * @throws CruxException
    */
   public int update(Map<String, Object> dat) throws CruxException {
     if (_db_ == null) {
-      throw new CruxException(1163);
+      throw new CruxException ( 1163 );
     }
 
     // 删除条件中字段上的表名
-    String where = PRE_WHERE.matcher ( wheres ).replaceFirst("");
-           where = delSQLTable(where );
+    String where = delSQLTable(wheres);
 
     return _db_.update(tableName, dat, where, wparams.toArray());
   }
@@ -1437,7 +1442,7 @@ public class FetchCase
    */
   public int insert(Map<String, Object> dat) throws CruxException {
     if (_db_ == null) {
-      throw new CruxException(1163);
+      throw new CruxException ( 1163 );
     }
 
     return _db_.insert(tableName, dat);

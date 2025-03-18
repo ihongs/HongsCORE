@@ -688,10 +688,10 @@ public class AssocCase {
 
         String nr;
         if ("NOT".equals(rn)) {
-            nr = " NOT ";
-            rn =  "AND" ;
+            nr = "NOT ";
+            rn = "AND" ;
         } else {
-            nr =   ""   ;
+            nr = "" ;
         }
 
         StringBuilder sb = new StringBuilder();
@@ -705,17 +705,20 @@ public class AssocCase {
             where(caxe, rd);
 
             if (caxe.wheres.length() > 0) {
-                String wh = FetchCase.PRE_WHERE.matcher(caxe.wheres).replaceFirst("");
+                String wh = caxe.wheres.toString(   );
                 sb.append('(').append(wh).append(')')
                   .append(' ').append(rn).append(' ');
             }
         }
 
-        if (sb.length() > 0) {
-            sb.setLength( sb.length()-rn.length()-2 );
-            caze.wheres .append(" AND " ).append(nr )
-                  .append('(').append(sb).append(')');
-            caze.wparams.addAll(caxe.wparams );
+        if (! sb.isEmpty() ) {
+            sb.setLength(sb.length() - rn.length() - 2);
+            if (caze.wheres.length() > 0) {
+                caze.wheres.append(" AND ");
+            }
+            caze.wheres .append(nr).append('(')
+                        .append(sb).append(')');
+            caze.wparams.addAll( caxe.wparams );
         }
     }
 

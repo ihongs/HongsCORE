@@ -432,18 +432,19 @@ public class FetchCase
   public FetchCase join(FetchCase caze)
   {
     this.joinSet.add(caze);
-    caze.options = options;
     if (caze.joinType <= NONE)
     {
         caze.joinType = INNER;
     }
     if (caze.joinName == null)
     {
-        caze.joinName =  ""  ;
+        caze.joinName = "";
     }
+    /* 不再需要, 构建语句时会判断关联
+    caze.options = options;
     if (this.hasOption("CLEVER_MODE") == false) {
         this.setOption("CLEVER_MODE"  ,  true );
-    }
+    }*/
     return this;
   }
 

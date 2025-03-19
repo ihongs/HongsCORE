@@ -123,7 +123,7 @@ public final class FetchPage
       return this.tb.db;
     } else
     {
-      Link link  = this.caze.linker();
+      Link link  = this.caze.getDB( );
       if ( link != null ) return link;
       throw new CruxException( 1163 );
     }

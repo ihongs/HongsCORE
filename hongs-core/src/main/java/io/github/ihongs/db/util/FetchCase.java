@@ -34,8 +34,8 @@ import java.util.regex.Pattern;
  * 注意:
  * field, where, group, havin, order  为设置方法, 将清空原值;
  * select,filter,gather,having,assort 为追加方法, 保留原设值;
- * 如果 CLEVER_MODE 开启, !打头的不加表别名, :的将加上级表别名;
- * 避免 CLEVER_MODE 下使用较复杂的语句, 仅对常规语句有做过测试;
+ * 如果 CLEVER_MODE 开启, 将自动根据关联层级补全表名和别名;
+ * 避免 CLEVER_MODE 下使用较复杂的语句, 仅对常规语句有测试;
  * </pre>
  *
  * <h3>系统已知 options:</h3>
@@ -69,64 +69,83 @@ public class FetchCase
   implements Cloneable, Serializable
 {
 
-  protected String              name;
-  protected String              tableName;
+  /**
+   * 可变常量 ^_^
+   * @param <T>
+   */
+  protected static final class Var<T> {
+    private  T v;
+    public Var() {}
+    public Var(T v) {
+      this.v = v;
+    }
+    public void set(T v) {
+      this.v = v;
+    }
+    public T get( ) {
+      return   v;
+    }
+    @Override
+    public String toString() {
+      return Synt.declare(v, "");
+    }
+  }
 
-  protected StringBuilder       fields;
-  protected StringBuilder       wheres;
-  protected StringBuilder       groups;
-  protected StringBuilder       havins;
-  protected StringBuilder       orders;
-  protected int                 start ;
-  protected int                 limit ;
-
-  protected List<Object>        wparams;
-  protected List<Object>        vparams;
-  protected Map<String,Object>  options;
-
-  protected Set<FetchCase>      joinSet;
-  protected String              joinName;
-  protected String              joinExpr;
-  protected byte                joinType;
+  protected final Var<String>    tableName;
+  protected final Var<String>    name;
+  protected final Var<Integer>   start;
+  protected final Var<Integer>   limit;
+  protected final StringBuilder  fields;
+  protected final StringBuilder  wheres;
+  protected final StringBuilder  groups;
+  protected final StringBuilder  havins;
+  protected final StringBuilder  orders;
+  protected final List           wparams;
+  protected final List           vparams;
+  protected final Var<Map>       options;
+  protected final Set<FetchCase> joinSet;
+  protected final Var<FetchCase> joinSup;
+  protected final Var<String>    joinName;
+  protected final Var<String>    joinExpr;
+  protected final Var<Byte>      joinType;
+  protected final Var<Link>      link;
 
   public static final byte DISTINCT = -1;
-
-  public static final byte NONE   = 0;
-  public static final byte INNER  = 1;
-  public static final byte LEFT   = 2;
-  public static final byte RIGHT  = 3;
-  public static final byte FULL   = 4;
-  public static final byte CROSS  = 5;
-
-  public static final byte STRICT = 2;
-  public static final byte CLEVER = 3;
-  public static final byte STRING = 4;
+  public static final byte NONE     =  0;
+  public static final byte INNER    =  1;
+  public static final byte LEFT     =  2;
+  public static final byte RIGHT    =  3;
+  public static final byte FULL     =  4;
+  public static final byte CROSS    =  5;
+  public static final byte STRICT   =  2;
+  public static final byte CLEVER   =  3;
+  public static final byte STRING   =  4;
 
   /**
    * 查找列名加关联层级名
    */
-  static final Pattern SQL_ALIAS = Pattern
-          .compile("([\"'`\\w\\)]\\s+)?(?:`(\\w+)`|(\\w+))(\\s*,?$)");
+  private static final Pattern SQL_ALIAS = Pattern
+        .compile("([\"'`\\w\\)]\\s+)?(?:`(\\w+)`|(\\w+))(\\s*,?$)");
 
   /**
    * 查找与字段相关的元素, 如果存在字符串内含单引号将无法正确处理
    */
-  static final Pattern SQL_FIELD = Pattern
-          .compile("(\\s*)(\".*?\"|'.*?'|`.*?`|\\w+|\\*|\\))(\\s*)" );
+  private static final Pattern SQL_FIELD = Pattern
+        .compile("(\\s*)(\".*?\"|'.*?'|`.*?`|\\w+|\\*|\\))(\\s*)" );
 
   /**
    * 后面不跟字段可跟别名, \\d 换成 \\w 则仅处理被 '`' 包裹的字段
    */
-  static final Pattern SQL_FIELD_BEFORE_ALIAS = Pattern
-          .compile("AS|END|NULL|TRUE|FALSE|\\)|\\d.*"
-                         , Pattern.CASE_INSENSITIVE);
+  private static final Pattern SQL_FIELD_BEFORE_ALIAS = Pattern
+        .compile("AS|END|NULL|TRUE|FALSE|\\)|\\d.*"
+                    ,  Pattern.CASE_INSENSITIVE);
 
   /**
    * 后面可跟字段的关键词
    */
-  static final Pattern SQL_FIELD_BEFORE_WORDS = Pattern
-          .compile("IS|IN|ON|OR|AND|NOT|TOP|CASE|WHEN|THEN|ELSE|LIKE|ESCAPE|BETWEEN|DISTINCT"
-                         , Pattern.CASE_INSENSITIVE);
+  private static final Pattern SQL_FIELD_BEFORE_WORDS = Pattern
+        .compile("IS|IN|ON|OR|AND|NOT|TOP|CASE|WHEN|THEN|ELSE|LIKE|ESCAPE|BETWEEN|DISTINCT"
+                    ,  Pattern.CASE_INSENSITIVE);
 
   //** 构造 **/
 
@@ -141,78 +160,104 @@ public class FetchCase
   /**
    * 高级构造
    * mode 可选常量:
-   * OBJECT 对象模式, 获取的结果为字段类型对应的对象
    * CLEVER 智能模式, 自动根据关联层级补全表名和别名
    * STRICT 严格模式, 与智能模式相反, 但拼接速度较快
-   * 不设置 CLEVER 或 STRICT 则当用 JOIN 时开启 CLEVER 模式
-   * @param mode 2 STRICT, 3 CLEVER, 4 OBJECT
+   * STRING 字符模式, 总是获取字符串
+   * 不设置 CLEVER 或 STRICT 则当有 JOIN 时使用 CLEVER 模式
+   * @param mode 2 STRICT, 3 CLEVER, 4 STRING
    */
   public FetchCase(byte mode)
   {
-    this.name       = null;
-    this.tableName  = null;
+    this.tableName  = new Var( );
+    this.name       = new Var( );
+    this.start      = new Var(0);
+    this.limit      = new Var(0);
     this.fields     = new StringBuilder();
     this.wheres     = new StringBuilder();
     this.groups     = new StringBuilder();
     this.havins     = new StringBuilder();
     this.orders     = new StringBuilder();
-    this.start      = 0;
-    this.limit      = 0;
     this.wparams    = new ArrayList();
     this.vparams    = new ArrayList();
-    this.options    = new HashMap();
+    this.options    = new Var(new HashMap());
     this.joinSet    = new LinkedHashSet();
-    this.joinType   = NONE;
-    this.joinExpr   = null;
-    this.joinName   = null;
+    this.joinType   = new Var(NONE);
+    this.joinExpr   = new Var( );
+    this.joinName   = new Var( );
+    this.joinSup    = new Var( );
+    this.link       = new Var( );
 
     if (4 == (4 & mode)) {
-      this.options.put("STRING_MODE", true);
+      this.options.get().put("STRING_MODE", true);
     }
     if (3 == (3 & mode)) {
-      this.options.put("CLEVER_MODE", true);
+      this.options.get().put("CLEVER_MODE", true);
     } else
     if (2 == (2 & mode)) {
-      this.options.put("CLEVER_MODE",false);
+      this.options.get().put("CLEVER_MODE",false);
     }
   }
 
   /**
-   * 深度构造
-   * 用于 clone 和 copy
+   * 镜像构造
+   * 用于重写部分方法
+   * @param caze 原用例
+   */
+  protected FetchCase(FetchCase caze)
+  {
+    this.tableName  = caze.tableName;
+    this.name       = caze.name;
+    this.start      = caze.start;
+    this.limit      = caze.limit;
+    this.fields     = caze.fields;
+    this.wheres     = caze.wheres;
+    this.groups     = caze.groups;
+    this.havins     = caze.havins;
+    this.orders     = caze.orders;
+    this.wparams    = caze.wparams;
+    this.vparams    = caze.vparams;
+    this.options    = caze.options;
+    this.joinSet    = caze.joinSet;
+    this.joinType   = caze.joinType;
+    this.joinExpr   = caze.joinExpr;
+    this.joinName   = caze.joinName;
+    this.joinSup    = caze.joinSup;
+    this.link       = caze.link;
+  }
+
+  /**
+   * 拷贝构造
+   * 用于 clone/klone
    * @param caze 源用例
-   * @param opts 新选项
    * @param deep 深拷贝
    */
-  protected FetchCase(FetchCase caze, Map opts, boolean deep)
+  protected FetchCase(FetchCase caze, boolean deep)
   {
-    if (caze == null) {
-      throw new NullPointerException("Param caze can not be null");
-    }
-    if (opts == null) {
-      throw new NullPointerException("Param opts can not be null");
-    }
-
-    this._db_       = caze._db_;
-    this.name       = caze.name;
-    this.tableName  = caze.tableName;
+    this(caze,null, new HashMap(caze.options.get()), deep);
+  }
+  private FetchCase(FetchCase caze, FetchCase csup, Map opts, boolean deep)
+  {
+    this.tableName  = new Var(caze.tableName.get());
+    this.name       = new Var(caze.name.get());
+    this.start      = new Var(caze.start.get());
+    this.limit      = new Var(caze.limit.get());
     this.fields     = new StringBuilder(caze.fields);
     this.wheres     = new StringBuilder(caze.wheres);
     this.groups     = new StringBuilder(caze.groups);
     this.havins     = new StringBuilder(caze.havins);
     this.orders     = new StringBuilder(caze.orders);
-    this.start      = caze.start;
-    this.limit      = caze.limit;
     this.wparams    = new ArrayList(caze.wparams);
     this.vparams    = new ArrayList(caze.vparams);
-    this.options    = opts;
+    this.options    = new Var(opts);
     this.joinSet    = new LinkedHashSet();
-    this.joinType   = caze.joinType;
-    this.joinExpr   = caze.joinExpr;
-    this.joinName   = caze.joinName;
+    this.joinType   = new Var(caze.joinType.get());
+    this.joinExpr   = new Var(caze.joinExpr.get());
+    this.joinName   = new Var(caze.joinName.get());
+    this.joinSup    = new Var(csup);
+    this.link       = new Var(caze.link.get());
 
-    if (deep) for(/**/FetchCase caxe : caze.joinSet) {
-      joinSet.add(new FetchCase(caxe , opts , deep));
+    if (deep) for(/**/FetchCase caxe : caze.joinSet/**/) {
+      joinSet.add(new FetchCase(caxe , this, opts, deep));
     }
   }
 
@@ -226,8 +271,8 @@ public class FetchCase
    */
   public FetchCase from(String tableName, String name)
   {
-    this.tableName = tableName;
-    this.name = name;
+    this.tableName.set(tableName);
+    this.name.set(name);
     return this;
   }
 
@@ -238,9 +283,9 @@ public class FetchCase
    */
   public FetchCase from(String tableName)
   {
-    this.tableName = tableName;
-    if (this.name == null)
-        this.name  = tableName;
+    this.tableName.set(tableName);
+    if ( this.name.get() == null)
+         this.name.set(tableName);
     return this;
   }
 
@@ -326,8 +371,8 @@ public class FetchCase
    */
   public FetchCase limit(int start, int limit)
   {
-    this.start = start;
-    this.limit = limit;
+    this.start.set(start);
+    this.limit.set(limit);
     return this;
   }
 
@@ -338,8 +383,7 @@ public class FetchCase
    */
   public FetchCase limit(int limit)
   {
-    this.limit = limit;
-    this.start = 0;
+    this.limit(0 , limit);
     return this;
   }
 
@@ -432,16 +476,17 @@ public class FetchCase
   public FetchCase join(FetchCase caze)
   {
     this.joinSet.add(caze);
-    if (caze.joinType <= NONE)
+    caze.joinSup.set(this);
+    caze.options.set(options.get( ));
+    if (caze.joinType.get() <= NONE)
     {
-        caze.joinType = INNER;
+        caze.joinType.set(INNER);
     }
-    if (caze.joinName == null)
+    if (caze.joinName.get() == null)
     {
-        caze.joinName = "";
+        caze.joinName.set("");
     }
     /* 不再需要, 构建语句时会判断关联
-    caze.options = options;
     if (this.hasOption("CLEVER_MODE") == false) {
         this.setOption("CLEVER_MODE"  ,  true );
     }*/
@@ -516,9 +561,9 @@ public class FetchCase
    * @param type
    * @return
    */
-  public FetchCase by( byte  type)
+  public FetchCase by(byte type)
   {
-    this.joinType = type;
+    this.joinType.set(type);
     return this;
   }
 
@@ -529,7 +574,7 @@ public class FetchCase
    */
   public FetchCase on(String expr)
   {
-    this.joinExpr = expr;
+    this.joinExpr.set(expr);
     return this;
   }
 
@@ -543,7 +588,7 @@ public class FetchCase
    */
   public FetchCase in(String name)
   {
-    this.joinName = name;
+    this.joinName.set(name);
     return this;
   }
 
@@ -579,9 +624,9 @@ public class FetchCase
     StringBuilder sql = new StringBuilder("SELECT");
 
     // 去重
-    if (joinType == DISTINCT )
+    if (joinType.get() == DISTINCT)
     {
-      sql.append( " DISTINCT");
+      sql.append( " DISTINCT" );
     }
 
     // 字段
@@ -593,7 +638,7 @@ public class FetchCase
     else
     {
       sql.append(" `" )
-         .append(name != null && !name.isEmpty() ? name : tableName)
+         .append(getName())
          .append("`.*");
     }
 
@@ -628,14 +673,6 @@ public class FetchCase
          .append(  o  );
     }
 
-    // 限额, 不同库不同方式, 就不在此处理了
-//    if (this.limits.length > 0)
-//    {
-//      sql.append(" LIMIT ?, ?");
-//    }
-
-//    sql = DB.formatSQLFields(sql);
-
     return sql;
   }
 
@@ -650,33 +687,27 @@ public class FetchCase
                          boolean fixField,
                          boolean hasJoins)
   {
-    if (this.tableName == null
-    ||  this.tableName.length() == 0)
+    // 表名
+    String tn = this.tableName.get();
+    if (tn == null || tn.length() == 0)
     {
         throw new CruxExemption(1162, "tableName can not be empty");
     }
-
-    // 表名
-    String tn;
     StringBuilder b = new StringBuilder();
-    b.append("`" ).append(this.tableName).append("`");
+    b .append("`").append(tn).append("`");
 
     // 别名
-    if ( this.name != null && !this.name .equals("" )
-    && ! this.name.equals(this.tableName))
+    String an = this.name.get();
+    if (an != null && an.length() != 0 && !an.equals(tn))
     {
-      b.append(" AS `").append(this.name).append("`");
-      tn = this.name /**/;
-    }
-    else
-    {
-      tn = this.tableName;
+      b.append(" AS `").append(an).append("`");
+      tn = an;
     }
 
     // 关联
     if (pn != null)
     {
-      switch (this.joinType)
+      switch (this.joinType.get())
       {
         case FetchCase.LEFT : b.insert(0, " LEFT JOIN "); break;
         case FetchCase.RIGHT: b.insert(0," RIGHT JOIN "); break;
@@ -685,9 +716,10 @@ public class FetchCase
         case FetchCase.CROSS: b.insert(0," CROSS JOIN "); break;
         default: return;
       }
-      if (this.joinExpr != null && this.joinExpr.length() != 0)
+
+      CharSequence s = this.joinExpr.get();
+      if (s != null && s.length( ) != 0)
       {
-        CharSequence  s  = this.joinExpr;
         if (fixField) {
           s = fixSQLField( s, tn );
         }
@@ -718,9 +750,10 @@ public class FetchCase
       CharSequence s = this.fields.toString();
 
       // 为关联表的查询列添加层级名
-      if (fixField && null != joinName) {
-        if ( 0 < joinName.length( ) ) {
-          s  = fixSQLAlias(s, joinName);
+      String jn = joinName.get(  );
+      if (fixField && jn != null ) {
+        if ( 0 < jn.length( ) ) {
+          s  = fixSQLAlias(s , jn);
         } else
         if ( 0 < qn.length( ) ) {
           s  = fixSQLAlias(s , qn);
@@ -796,7 +829,7 @@ public class FetchCase
     hasJoins = true ;
     for  (FetchCase caze : this.joinSet)
     {
-      if (caze.joinType != 0)
+      if (caze.joinType.get() != 0)
       {
         caze.getSQLDeep(t, f, w, g, h, o, tn, qn, fixField, hasJoins);
       }
@@ -1010,12 +1043,12 @@ public class FetchCase
 
   public int getStart()
   {
-    return this.start;
+    return this.start.get();
   }
 
   public int getLimit()
   {
-    return this.limit;
+    return this.limit.get();
   }
 
   /**
@@ -1055,7 +1088,7 @@ public class FetchCase
 
     for(FetchCase caze : this.joinSet)
     {
-      if ( NONE < caze.joinType)
+      if ( NONE < caze.joinType.get())
       {
         caze.getParamsDeep(wparamz, hparamz);
       }
@@ -1072,7 +1105,7 @@ public class FetchCase
    */
   public FetchCase setOption(String key, Object obj)
   {
-    this.options.put(key, obj);
+    this.options.get().put(key, obj);
     return this;
   }
 
@@ -1096,7 +1129,7 @@ public class FetchCase
    */
   public Object  getOption(String key)
   {
-    return this.options.get(key);
+    return this.options.get().get(key);
   }
 
   /**
@@ -1106,7 +1139,7 @@ public class FetchCase
    */
   public Object  delOption(String key)
   {
-    return this.options.remove(key);
+    return this.options.get().remove(key);
   }
 
   /**
@@ -1116,28 +1149,10 @@ public class FetchCase
    */
   public boolean hasOption(String key)
   {
-    return this.options.containsKey(key);
+    return this.options.get().containsKey(key);
   }
 
   //** 递进 **/
-
-  /**
-   * 全部选项
-   * @return 全部选项
-   */
-  public Map<String,Object> getOptions()
-  {
-    return this.options;
-  }
-
-  /**
-   * 全部关联
-   * @return 关联集合
-   */
-  public Set<  FetchCase  > getJoinSet()
-  {
-    return this.joinSet;
-  }
 
   /**
    * 获取关联对象
@@ -1211,16 +1226,45 @@ public class FetchCase
   }
 
   /**
+   * 获取关联的上级对象
+   * @return
+   */
+  public FetchCase getSup()
+  {
+    FetchCase  caze = joinSup.get();
+    if (caze.joinSet.contains(this)) {
+        return caze ;
+    }
+    return null;
+  }
+
+  /**
+   * 获取关联的顶级对象
+   * @return
+   */
+  public FetchCase getTop()
+  {
+    FetchCase  caxe ;
+    FetchCase  caze = this;
+    do {
+        caxe = caze.getSup();
+    }
+    while (caxe != null);
+    return caze;
+  }
+
+  /**
    * 获取查询用例名称
    * 同时也是关联名称
    * @return
    */
   public String getName()
   {
-    if (null != name && name.length() > 0) {
-        return  name;
+    String   n  = name.get();
+    if (n == null || n.length() == 0) {
+        n  = tableName.get();
     }
-    return tableName;
+    return n;
   }
 
   //** 探查 **/
@@ -1279,11 +1323,12 @@ public class FetchCase
   @Override
   public String toString()
   {
+    Link  db  = link.get();
     try
     {
-      if ( _db_ != null )
+      if (db != null)
       {
-        return new Lump(_db_, getSQL(), getStart(), getLimit(), getParams()).toString();
+        return new Lump(db, getSQL(), getStart(), getLimit(), getParams()).toString();
       }
       else
       {
@@ -1291,12 +1336,14 @@ public class FetchCase
         List ps = getParamsList();
         Link.checkSQLParams (sb , ps);
         Link.mergeSQLParams (sb , ps);
-        if (start != 0 || limit != 0)
+        int b = start.get();
+        int l = limit.get();
+        if (b != 0 || l != 0)
         {
           sb.append(" /* LIMIT ")
-            .append(start)
+            .append(  b  )
             .append( "," )
-            .append(limit)
+            .append(  l  )
             .append(" */");
         }
         return sb.toString();
@@ -1316,7 +1363,7 @@ public class FetchCase
   @Override
   public FetchCase clone()
   {
-    return new FetchCase(this, new HashMap(this.options), true );
+    return new FetchCase(this, true );
   }
 
   /**
@@ -1326,45 +1373,29 @@ public class FetchCase
    */
   public FetchCase klone()
   {
-    return new FetchCase(this, new HashMap(this.options), false);
+    return new FetchCase(this, false);
   }
 
   //** 串联 **/
 
-  private Link _db_ = null;
-
   /**
-   * 指定查询要查询的库
+   * 指定操作的库
    * @param db
    * @return
    */
   public FetchCase use(Link db)
   {
-    _db_ =  db ;
+    link.set(db);
     return this;
   }
 
-  public Link linker()
-  {
-    return _db_;
-  }
-
   /**
-   * 查询并获取记录迭代
+   * 获取操作的库
    * @return
-   * @throws CruxException
    */
-  public Loop select() throws CruxException {
-    if (_db_ == null) {
-      throw new CruxException(1163);
-    }
-
-    Loop rs = _db_.query(getSQL(), getStart(), getLimit(), getParams());
-    if (hasOption("STRING_MODE")) {
-         rs.inStringMode(getOption("STRING_MODE", false));
-    }
-
-    return  rs;
+  public Link getDB()
+  {
+    return link.get();
   }
 
   /**
@@ -1399,20 +1430,40 @@ public class FetchCase
   }
 
   /**
+   * 查询并获取记录迭代
+   * @return
+   * @throws CruxException
+   */
+  public Loop select() throws CruxException {
+    Link db = link.get();
+    if ( db == null ) {
+      throw new CruxException(1163);
+    }
+
+    Loop rs = db.query(getSQL(), getStart(), getLimit(), getParams());
+    if ( hasOption("STRING_MODE") ) {
+         rs.inStringMode(getOption("STRING_MODE", false));
+    }
+
+    return  rs;
+  }
+
+  /**
    * 删除全部匹配的记录
    * 注意: 考虑到 SQL 兼容性, 忽略了 join 的条件, 有 xx.n 的字段条件会报 SQL 错误
    * @return
    * @throws CruxException
    */
   public int delete() throws CruxException {
-    if (_db_ == null) {
+    Link db = link.get();
+    if ( db == null ) {
       throw new CruxException ( 1163 );
     }
 
     // 删除条件中字段上的表名
     String where = delSQLTable(wheres);
 
-    return _db_.delete(tableName, /**/ where, wparams.toArray());
+    return db.delete(tableName.get(), /**/ where, wparams.toArray());
   }
 
   /**
@@ -1423,14 +1474,15 @@ public class FetchCase
    * @throws CruxException
    */
   public int update(Map<String, Object> dat) throws CruxException {
-    if (_db_ == null) {
+    Link db = link.get();
+    if ( db == null ) {
       throw new CruxException ( 1163 );
     }
 
     // 删除条件中字段上的表名
     String where = delSQLTable(wheres);
 
-    return _db_.update(tableName, dat, where, wparams.toArray());
+    return db.update(tableName.get(), dat, where, wparams.toArray());
   }
 
   /**
@@ -1442,11 +1494,12 @@ public class FetchCase
    * @throws CruxException
    */
   public int insert(Map<String, Object> dat) throws CruxException {
-    if (_db_ == null) {
+    Link db = link.get();
+    if ( db == null ) {
       throw new CruxException ( 1163 );
     }
 
-    return _db_.insert(tableName, dat);
+    return db.insert(tableName.get(), dat);
   }
 
 }

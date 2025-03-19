@@ -135,13 +135,14 @@ public class FetchMore
     DB db = table.db;
     String       name   = table.name;
     String  tableName   = table.tableName;
+    String   caseName   = caze.name.get();
     boolean multi       = caze.getOption("ASSOC_MULTI", false);
     boolean merge       = caze.getOption("ASSOC_MERGE", false);
     boolean patch       = caze.getOption("ASSOC_PATCH", false);
 
-    if (null != caze.name && 0 != caze.name.length())
+    if (null != caseName && 0 != caseName.length())
     {
-        name  = caze.name;
+        name  = caseName;
     }
 
     // 获取id及行号

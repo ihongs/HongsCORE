@@ -59,7 +59,7 @@ public class AssocMore {
     }
 
     String  sq;
-    String  jn = caze.joinName;
+    String  jn = caze.joinName.get();
     boolean cm = caze.getOption("CLEVER_MODE", false);
 
     sq = (String) params.get("fields");
@@ -170,9 +170,7 @@ public class AssocMore {
     Set tps = (Set)caze.getOption("ASSOC_TYPES");
     Set jns = (Set)caze.getOption("ASSOC_JOINS");
     Set jis = new HashSet(Arrays.asList("MERGE", ""));
-    String tn = caze.name;
-    if (tn == null || tn.length() == 0)
-           tn = caze.tableName;
+    String tn = caze.getName( );
 
     for(Map.Entry et : (Set<Map.Entry>)assocs.entrySet()) {
         Map assoc = (Map) et.getValue();

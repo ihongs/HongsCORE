@@ -3,9 +3,9 @@ package io.github.ihongs.db;
 import io.github.ihongs.CruxException;
 import io.github.ihongs.CruxExemption;
 import io.github.ihongs.db.link.Loop;
-import io.github.ihongs.db.util.AssocMore;
 import io.github.ihongs.db.util.FetchCase;
 import io.github.ihongs.util.Crypto;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -85,24 +85,30 @@ public abstract class PrivTable extends Table implements Cloneable {
     }
 
     @Override
+    public List fetchMore(FetchCase caze)
+    throws CruxException {
+        if (caze instanceof PCase) {
+            return super.fetchMore (caze);
+        }
+        return super.fetchMore(new PCase(this, caze));
+    }
+
+    @Override
     public FetchCase fetchCase() {
-        FetchCase  fc = new PCase(this)
-              .use(db).from(tableName, name);
-        AssocMore.checkCase(fc, getParams());
-        return     fc ;
+        return new PCase (this, super. fetchCase ( ));
     }
 
     private static class PCase extends FetchCase {
 
-        private final PrivTable table;
+        final  PrivTable table;
 
-        public PCase (PrivTable table) {
-            super ( (byte) 0 );
+        public PCase(PrivTable table , FetchCase caze) {
+            super(caze);
             this.table = table;
         }
 
         @Override
-        public int insert(Map<String, Object> values) throws CruxException {
+        public int insert(Map values) throws CruxException {
             // 加密
             table.encrypt().accept(values);
 
@@ -110,7 +116,7 @@ public abstract class PrivTable extends Table implements Cloneable {
         }
 
         @Override
-        public int update(Map<String, Object> values) throws CruxException {
+        public int update(Map values) throws CruxException {
             // 加密
             table.encrypt().accept(values);
 

@@ -1340,15 +1340,15 @@ public class FetchCase
     protected final FetchCase that;
 
     public Doer(FetchCase caze) {
-        that = caze;
+      that =  caze;
     }
 
-    protected  Link getLink() {
-        return that.getLink();
+    protected Link getLink() {
+      return  that.getLink();
     }
 
-    protected  Link gotLink() throws CruxException {
-        return that.gotLink();
+    protected Link gotLink() throws CruxException {
+      return  that.gotLink();
     }
 
     public Loop select() throws CruxException {

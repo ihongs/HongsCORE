@@ -1380,19 +1380,8 @@ public class FetchCase
 
   }
 
-  protected Link link;
   protected Doer doer;
-
-  /**
-   * 指定操作的库
-   * @param db
-   * @return
-   */
-  public FetchCase use(Link db)
-  {
-    link = db;
-    return this;
-  }
+  protected Link link;
 
   /**
    * 指定操作方法
@@ -1406,12 +1395,14 @@ public class FetchCase
   }
 
   /**
-   * 获取操作的库
+   * 指定操作的库
+   * @param db
    * @return
    */
-  public Link getLink()
+  public FetchCase use(Link db)
   {
-    return link;
+    link = db;
+    return this;
   }
 
   /**
@@ -1423,22 +1414,27 @@ public class FetchCase
     return doer;
   }
 
-  private Link gotLink()
-    throws CruxException
+  /**
+   * 获取操作的库
+   * @return
+   */
+  public Link getLink()
   {
-    if (link == null) {
-        throw new CruxException(1163);
-    }
     return link;
   }
 
-  private Doer gotDoer()
-    throws CruxException
-  {
+  private Doer gotDoer() {
     if (doer == null) {
         doer  = new Doer(this);
     }
     return doer;
+  }
+
+  private Link gotLink() throws CruxException {
+    if (link == null) {
+        throw new CruxException(1163);
+    }
+    return link;
   }
 
   /**

@@ -1394,6 +1394,11 @@ public class FetchCase
     return this;
   }
 
+  /**
+   * 指定操作方法
+   * @param dr
+   * @return 
+   */
   public FetchCase use(Doer dr)
   {
     doer = dr;

@@ -59,7 +59,7 @@ public class AssocMore {
     }
 
     String  sq;
-    String  jn = caze.joinName.get();
+    String  jn = caze.joinName ;
     boolean cm = caze.getOption("CLEVER_MODE", false);
 
     sq = (String) params.get("fields");

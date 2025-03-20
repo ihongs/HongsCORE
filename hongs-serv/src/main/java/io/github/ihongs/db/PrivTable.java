@@ -87,22 +87,30 @@ public abstract class PrivTable extends Table implements Cloneable {
     @Override
     public List fetchMore(FetchCase caze)
     throws CruxException {
-        if (caze instanceof PCase) {
+        FetchCase. Doer doer = caze.getDoer (  );
+        try {
+            if (! (doer instanceof PCase) ) {
+                caze.use( new PCase(caze, this));
+            }
             return super.fetchMore (caze);
         }
-        return super.fetchMore(new PCase(this, caze));
+        finally {
+            caze.use(doer);
+        }
     }
 
     @Override
     public FetchCase fetchCase() {
-        return new PCase (this, super. fetchCase ( ));
+        FetchCase caze = super.fetchCase( );
+        caze.use( new PCase( caze, this ) );
+        return caze;
     }
 
-    private static class PCase extends FetchCase {
+    private static class PCase extends FetchCase.Doer {
 
         final  PrivTable table;
 
-        public PCase(PrivTable table , FetchCase caze) {
+        public PCase(FetchCase caze, PrivTable table) {
             super(caze);
             this.table = table;
         }

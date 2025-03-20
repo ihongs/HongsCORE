@@ -69,32 +69,10 @@ public class FetchCase
   implements Cloneable, Serializable
 {
 
-  /**
-   * 可变常量 ^_^
-   * @param <T>
-   */
-  protected static final class Var<T> {
-    private  T v;
-    public Var() {}
-    public Var(T v) {
-      this.v = v;
-    }
-    public void set(T v) {
-      this.v = v;
-    }
-    public T get( ) {
-      return   v;
-    }
-    @Override
-    public String toString() {
-      return Synt.declare(v, "");
-    }
-  }
-
-  protected final Var<String>    tableName;
-  protected final Var<String>    name;
-  protected final Var<Integer>   start;
-  protected final Var<Integer>   limit;
+  protected       String         tableName;
+  protected       String         name;
+  protected       int            start;
+  protected       int            limit;
   protected final StringBuilder  fields;
   protected final StringBuilder  wheres;
   protected final StringBuilder  groups;
@@ -102,13 +80,12 @@ public class FetchCase
   protected final StringBuilder  orders;
   protected final List           wparams;
   protected final List           vparams;
-  protected final Var<Map>       options;
+  protected       Map            options;
   protected final Set<FetchCase> joinSet;
-  protected final Var<FetchCase> joinSup;
-  protected final Var<String>    joinName;
-  protected final Var<String>    joinExpr;
-  protected final Var<Byte>      joinType;
-  protected final Var<Link>      link;
+  protected       FetchCase      joinSup;
+  protected       String         joinName;
+  protected       String         joinExpr;
+  protected       byte           joinType;
 
   public static final byte DISTINCT = -1;
   public static final byte NONE     =  0;
@@ -168,10 +145,8 @@ public class FetchCase
    */
   public FetchCase(byte mode)
   {
-    this.tableName  = new Var( );
-    this.name       = new Var( );
-    this.start      = new Var(0);
-    this.limit      = new Var(0);
+    this.start      = 0;
+    this.limit      = 0;
     this.fields     = new StringBuilder();
     this.wheres     = new StringBuilder();
     this.groups     = new StringBuilder();
@@ -179,50 +154,19 @@ public class FetchCase
     this.orders     = new StringBuilder();
     this.wparams    = new ArrayList();
     this.vparams    = new ArrayList();
-    this.options    = new Var(new HashMap());
+    this.options    = new  HashMap ();
     this.joinSet    = new LinkedHashSet();
-    this.joinType   = new Var(NONE);
-    this.joinExpr   = new Var( );
-    this.joinName   = new Var( );
-    this.joinSup    = new Var( );
-    this.link       = new Var( );
+    this.joinType   = NONE;
 
     if (4 == (4 & mode)) {
-      this.options.get().put("STRING_MODE", true);
+      this.options.put("STRING_MODE", true );
     }
     if (3 == (3 & mode)) {
-      this.options.get().put("CLEVER_MODE", true);
+      this.options.put("CLEVER_MODE", true );
     } else
     if (2 == (2 & mode)) {
-      this.options.get().put("CLEVER_MODE",false);
+      this.options.put("CLEVER_MODE", false);
     }
-  }
-
-  /**
-   * 镜像构造
-   * 用于重写部分方法
-   * @param caze 原用例
-   */
-  protected FetchCase(FetchCase caze)
-  {
-    this.tableName  = caze.tableName;
-    this.name       = caze.name;
-    this.start      = caze.start;
-    this.limit      = caze.limit;
-    this.fields     = caze.fields;
-    this.wheres     = caze.wheres;
-    this.groups     = caze.groups;
-    this.havins     = caze.havins;
-    this.orders     = caze.orders;
-    this.wparams    = caze.wparams;
-    this.vparams    = caze.vparams;
-    this.options    = caze.options;
-    this.joinSet    = caze.joinSet;
-    this.joinType   = caze.joinType;
-    this.joinExpr   = caze.joinExpr;
-    this.joinName   = caze.joinName;
-    this.joinSup    = caze.joinSup;
-    this.link       = caze.link;
   }
 
   /**
@@ -233,14 +177,14 @@ public class FetchCase
    */
   protected FetchCase(FetchCase caze, boolean deep)
   {
-    this(caze,null, new HashMap(caze.options.get()), deep);
+    this(caze,null, new HashMap(caze.options),deep);
   }
   private FetchCase(FetchCase caze, FetchCase csup, Map opts, boolean deep)
   {
-    this.tableName  = new Var(caze.tableName.get());
-    this.name       = new Var(caze.name.get());
-    this.start      = new Var(caze.start.get());
-    this.limit      = new Var(caze.limit.get());
+    this.tableName  = caze.tableName;
+    this.name       = caze.name;
+    this.start      = caze.start;
+    this.limit      = caze.limit;
     this.fields     = new StringBuilder(caze.fields);
     this.wheres     = new StringBuilder(caze.wheres);
     this.groups     = new StringBuilder(caze.groups);
@@ -248,13 +192,14 @@ public class FetchCase
     this.orders     = new StringBuilder(caze.orders);
     this.wparams    = new ArrayList(caze.wparams);
     this.vparams    = new ArrayList(caze.vparams);
-    this.options    = new Var(opts);
+    this.options    = opts;
     this.joinSet    = new LinkedHashSet();
-    this.joinType   = new Var(caze.joinType.get());
-    this.joinExpr   = new Var(caze.joinExpr.get());
-    this.joinName   = new Var(caze.joinName.get());
-    this.joinSup    = new Var(csup);
-    this.link       = new Var(caze.link.get());
+    this.joinType   = caze.joinType;
+    this.joinExpr   = caze.joinExpr;
+    this.joinName   = caze.joinName;
+    this.joinSup    = csup;
+    this.link       = caze.link;
+    this.doer       = caze.doer;
 
     if (deep) for(/**/FetchCase caxe : caze.joinSet/**/) {
       joinSet.add(new FetchCase(caxe , this, opts, deep));
@@ -271,8 +216,8 @@ public class FetchCase
    */
   public FetchCase from(String tableName, String name)
   {
-    this.tableName.set(tableName);
-    this.name.set(name);
+    this.tableName = tableName;
+    this.name = name;
     return this;
   }
 
@@ -283,9 +228,9 @@ public class FetchCase
    */
   public FetchCase from(String tableName)
   {
-    this.tableName.set(tableName);
-    if ( this.name.get() == null)
-         this.name.set(tableName);
+    this.tableName = tableName;
+    if ( this.name == null )
+         this.name = tableName;
     return this;
   }
 
@@ -371,8 +316,8 @@ public class FetchCase
    */
   public FetchCase limit(int start, int limit)
   {
-    this.start.set(start);
-    this.limit.set(limit);
+    this.start = start;
+    this.limit = limit;
     return this;
   }
 
@@ -476,20 +421,16 @@ public class FetchCase
   public FetchCase join(FetchCase caze)
   {
     this.joinSet.add(caze);
-    caze.joinSup.set(this);
-    caze.options.set(options.get( ));
-    if (caze.joinType.get() <= NONE)
+    caze.joinSup =   this ;
+    caze.options = options;
+    if (caze.joinType <= NONE)
     {
-        caze.joinType.set(INNER);
+        caze.joinType = INNER;
     }
-    if (caze.joinName.get() == null)
+    if (caze.joinName == null)
     {
-        caze.joinName.set("");
+        caze.joinName =  ""  ;
     }
-    /* 不再需要, 构建语句时会判断关联
-    if (this.hasOption("CLEVER_MODE") == false) {
-        this.setOption("CLEVER_MODE"  ,  true );
-    }*/
     return this;
   }
 
@@ -563,7 +504,7 @@ public class FetchCase
    */
   public FetchCase by(byte type)
   {
-    this.joinType.set(type);
+    this.joinType = type;
     return this;
   }
 
@@ -574,7 +515,7 @@ public class FetchCase
    */
   public FetchCase on(String expr)
   {
-    this.joinExpr.set(expr);
+    this.joinExpr = expr;
     return this;
   }
 
@@ -588,7 +529,7 @@ public class FetchCase
    */
   public FetchCase in(String name)
   {
-    this.joinName.set(name);
+    this.joinName = name;
     return this;
   }
 
@@ -624,9 +565,9 @@ public class FetchCase
     StringBuilder sql = new StringBuilder("SELECT");
 
     // 去重
-    if (joinType.get() == DISTINCT)
+    if (joinType == DISTINCT )
     {
-      sql.append( " DISTINCT" );
+      sql.append( " DISTINCT");
     }
 
     // 字段
@@ -688,7 +629,7 @@ public class FetchCase
                          boolean hasJoins)
   {
     // 表名
-    String tn = this.tableName.get();
+    String tn = this.tableName;
     if (tn == null || tn.length() == 0)
     {
         throw new CruxExemption(1162, "tableName can not be empty");
@@ -697,7 +638,7 @@ public class FetchCase
     b .append("`").append(tn).append("`");
 
     // 别名
-    String an = this.name.get();
+    String an = this.name;
     if (an != null && an.length() != 0 && !an.equals(tn))
     {
       b.append(" AS `").append(an).append("`");
@@ -707,7 +648,7 @@ public class FetchCase
     // 关联
     if (pn != null)
     {
-      switch (this.joinType.get())
+      switch (this.joinType)
       {
         case FetchCase.LEFT : b.insert(0, " LEFT JOIN "); break;
         case FetchCase.RIGHT: b.insert(0," RIGHT JOIN "); break;
@@ -717,7 +658,7 @@ public class FetchCase
         default: return;
       }
 
-      CharSequence s = this.joinExpr.get();
+      CharSequence s = this.joinExpr;
       if (s != null && s.length( ) != 0)
       {
         if (fixField) {
@@ -750,7 +691,7 @@ public class FetchCase
       CharSequence s = this.fields.toString();
 
       // 为关联表的查询列添加层级名
-      String jn = joinName.get(  );
+      String jn = joinName;
       if (fixField && jn != null ) {
         if ( 0 < jn.length( ) ) {
           s  = fixSQLAlias(s , jn);
@@ -800,7 +741,7 @@ public class FetchCase
     // 筛选
     if (this.havins.length() != 0)
     {
-      CharSequence s = this.havins.toString().trim();
+      CharSequence s = this.havins.toString();
 
       if (fixField && hasJoins) {
           s  = fixSQLField(s , tn);
@@ -814,7 +755,7 @@ public class FetchCase
     // 排序
     if (this.orders.length() != 0)
     {
-      CharSequence s = this.orders.toString().trim();
+      CharSequence s = this.orders.toString();
 
       if (fixField && hasJoins) {
           s  = fixSQLField(s , tn);
@@ -827,9 +768,9 @@ public class FetchCase
 
     // 下级
     hasJoins = true ;
-    for  (FetchCase caze : this.joinSet)
+    for (FetchCase caze : this.joinSet)
     {
-      if (caze.joinType.get() != 0)
+      if (caze.joinType != 0)
       {
         caze.getSQLDeep(t, f, w, g, h, o, tn, qn, fixField, hasJoins);
       }
@@ -1034,21 +975,11 @@ public class FetchCase
    * @param s
    * @return
    */
-  protected String delSQLTable (CharSequence s)
+  private String delSQLTable (CharSequence s)
   {
       String n = Pattern.quote (getName());
       String p = "('.*?')|(?:`"+ n +"`|"+ n +")\\s*\\.\\s*";
       return Pattern.compile(p).matcher(s).replaceAll("$1");
-  }
-
-  public int getStart()
-  {
-    return this.start.get();
-  }
-
-  public int getLimit()
-  {
-    return this.limit.get();
   }
 
   /**
@@ -1070,7 +1001,7 @@ public class FetchCase
     List wparamz = new ArrayList();
     List hparamz = new ArrayList();
 
-    this.getParamsDeep(wparamz, hparamz);
+    this.getParamsDeep(wparamz , hparamz);
     paramz.addAll(wparamz);
     paramz.addAll(hparamz);
 
@@ -1088,11 +1019,39 @@ public class FetchCase
 
     for(FetchCase caze : this.joinSet)
     {
-      if ( NONE < caze.joinType.get())
+      if ( NONE < caze.joinType)
       {
         caze.getParamsDeep(wparamz, hparamz);
       }
     }
+  }
+
+  public int getStart()
+  {
+    return this.start;
+  }
+
+  public int getLimit()
+  {
+    return this.limit;
+  }
+
+  /**
+   * 获取本级条件语句
+   * @return
+   */
+  public String getWhere()
+  {
+    return this.delSQLTable(wheres);
+  }
+
+  /**
+   * 获取本级条件参数
+   * @return
+   */
+  public Object[] getWheres()
+  {
+    return this.wparams.toArray(  );
   }
 
   //** 选项 **/
@@ -1105,7 +1064,7 @@ public class FetchCase
    */
   public FetchCase setOption(String key, Object obj)
   {
-    this.options.get().put(key, obj);
+    this.options.put(key, obj);
     return this;
   }
 
@@ -1129,7 +1088,7 @@ public class FetchCase
    */
   public Object  getOption(String key)
   {
-    return this.options.get().get(key);
+    return this.options.get(key);
   }
 
   /**
@@ -1139,7 +1098,7 @@ public class FetchCase
    */
   public Object  delOption(String key)
   {
-    return this.options.get().remove(key);
+    return this.options.remove(key);
   }
 
   /**
@@ -1149,7 +1108,7 @@ public class FetchCase
    */
   public boolean hasOption(String key)
   {
-    return this.options.get().containsKey(key);
+    return this.options.containsKey(key);
   }
 
   //** 递进 **/
@@ -1231,7 +1190,7 @@ public class FetchCase
    */
   public FetchCase getSup()
   {
-    FetchCase  caze = joinSup.get();
+    FetchCase  caze = joinSup;
     if (caze.joinSet.contains(this)) {
         return caze ;
     }
@@ -1260,9 +1219,9 @@ public class FetchCase
    */
   public String getName()
   {
-    String   n  = name.get();
+    String   n  = name;
     if (n == null || n.length() == 0) {
-        n  = tableName.get();
+        n  = tableName;
     }
     return n;
   }
@@ -1323,7 +1282,7 @@ public class FetchCase
   @Override
   public String toString()
   {
-    Link  db  = link.get();
+    Link  db  = link;
     try
     {
       if (db != null)
@@ -1336,14 +1295,12 @@ public class FetchCase
         List ps = getParamsList();
         Link.checkSQLParams (sb , ps);
         Link.mergeSQLParams (sb , ps);
-        int b = start.get();
-        int l = limit.get();
-        if (b != 0 || l != 0)
+        if (start != 0 || limit != 0)
         {
           sb.append(" /* LIMIT ")
-            .append(  b  )
+            .append(start)
             .append( "," )
-            .append(  l  )
+            .append(limit)
             .append(" */");
         }
         return sb.toString();
@@ -1378,6 +1335,54 @@ public class FetchCase
 
   //** 串联 **/
 
+  public static class Doer {
+
+    protected final FetchCase that;
+
+    public Doer(FetchCase caze) {
+        that = caze;
+    }
+
+    protected  Link getLink() {
+        return that.getLink();
+    }
+
+    protected  Link gotLink() throws CruxException {
+        return that.gotLink();
+    }
+
+    public Loop select() throws CruxException {
+      Link db = that.gotLink();
+
+      Loop rs = db.query(that.getSQL(), that.getStart(), that.getLimit(), that.getParams());
+      rs . inStringMode (that.getOption("STRING_MODE", false));
+
+      return rs;
+    }
+
+    public int delete() throws CruxException {
+      Link db = that.gotLink();
+
+      return db.delete(that.tableName, /**/ that.getWhere(), that.getWheres());
+    }
+
+    public int update(Map<String, Object> dat) throws CruxException {
+      Link db = that.gotLink();
+
+      return db.update(that.tableName, dat, that.getWhere(), that.getWheres());
+    }
+
+    public int insert(Map<String, Object> dat) throws CruxException {
+      Link db = that.gotLink();
+
+      return db.insert(that.tableName, dat);
+    }
+
+  }
+
+  protected Link link;
+  protected Doer doer;
+
   /**
    * 指定操作的库
    * @param db
@@ -1385,7 +1390,13 @@ public class FetchCase
    */
   public FetchCase use(Link db)
   {
-    link.set(db);
+    link = db;
+    return this;
+  }
+
+  public FetchCase use(Doer dr)
+  {
+    doer = dr;
     return this;
   }
 
@@ -1393,9 +1404,36 @@ public class FetchCase
    * 获取操作的库
    * @return
    */
-  public Link getDB()
+  public Link getLink()
   {
-    return link.get();
+    return link;
+  }
+
+  /**
+   * 获取操作方法
+   * @return
+   */
+  public Doer getDoer()
+  {
+    return doer;
+  }
+
+  private Link gotLink()
+    throws CruxException
+  {
+    if (link == null) {
+        throw new CruxException(1163);
+    }
+    return link;
+  }
+
+  private Doer gotDoer()
+    throws CruxException
+  {
+    if (doer == null) {
+        doer  = new Doer(this);
+    }
+    return doer;
   }
 
   /**
@@ -1435,17 +1473,7 @@ public class FetchCase
    * @throws CruxException
    */
   public Loop select() throws CruxException {
-    Link db = link.get();
-    if ( db == null ) {
-      throw new CruxException(1163);
-    }
-
-    Loop rs = db.query(getSQL(), getStart(), getLimit(), getParams());
-    if ( hasOption("STRING_MODE") ) {
-         rs.inStringMode(getOption("STRING_MODE", false));
-    }
-
-    return  rs;
+    return gotDoer().select();
   }
 
   /**
@@ -1455,15 +1483,7 @@ public class FetchCase
    * @throws CruxException
    */
   public int delete() throws CruxException {
-    Link db = link.get();
-    if ( db == null ) {
-      throw new CruxException ( 1163 );
-    }
-
-    // 删除条件中字段上的表名
-    String where = delSQLTable(wheres);
-
-    return db.delete(tableName.get(), /**/ where, wparams.toArray());
+    return gotDoer().delete();
   }
 
   /**
@@ -1474,15 +1494,7 @@ public class FetchCase
    * @throws CruxException
    */
   public int update(Map<String, Object> dat) throws CruxException {
-    Link db = link.get();
-    if ( db == null ) {
-      throw new CruxException ( 1163 );
-    }
-
-    // 删除条件中字段上的表名
-    String where = delSQLTable(wheres);
-
-    return db.update(tableName.get(), dat, where, wparams.toArray());
+    return gotDoer().update(dat);
   }
 
   /**
@@ -1494,12 +1506,7 @@ public class FetchCase
    * @throws CruxException
    */
   public int insert(Map<String, Object> dat) throws CruxException {
-    Link db = link.get();
-    if ( db == null ) {
-      throw new CruxException ( 1163 );
-    }
-
-    return db.insert(tableName.get(), dat);
+    return gotDoer().insert(dat);
   }
 
 }

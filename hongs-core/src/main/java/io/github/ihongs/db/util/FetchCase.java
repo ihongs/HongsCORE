@@ -541,14 +541,14 @@ public class FetchCase
    */
   public String getSQL()
   {
-    return this.getSQLStrs().toString();
+    return this.getSQLText().toString();
   }
 
   /**
    * 获取SQL字串
    * @return SQL字串
    */
-  private StringBuilder getSQLStrs()
+  private StringBuilder getSQLText()
   {
     StringBuilder t = new StringBuilder();
     StringBuilder f = new StringBuilder();
@@ -1291,7 +1291,7 @@ public class FetchCase
       }
       else
       {
-        StringBuilder sb = getSQLStrs();
+        StringBuilder sb = getSQLText();
         List ps = getParamsList();
         Link.checkSQLParams (sb , ps);
         Link.mergeSQLParams (sb , ps);
@@ -1343,14 +1343,29 @@ public class FetchCase
       that =  caze;
     }
 
+    /**
+     * 获取数据连接, 未指定时返空
+     * @return
+     */
     protected Link getLink() {
       return  that.getLink();
     }
 
+    /**
+     * 获取数据连接, 未指定抛异常
+     * @return
+     * @throws CruxException
+     */
     protected Link gotLink() throws CruxException {
       return  that.gotLink();
     }
 
+    /**
+     * 查询并获取记录迭代
+     * 注意: 完全重写需区分选项是否有设置字符模式
+     * @return
+     * @throws CruxException
+     */
     public Loop select() throws CruxException {
       Link db = that.gotLink();
 
@@ -1360,18 +1375,37 @@ public class FetchCase
       return rs;
     }
 
+  /**
+   * 删除全部匹配的记录
+   * 注意: 考虑到 SQL 兼容性, 忽略了 join 的条件, 有 xx.n 的字段条件会报 SQL 错误
+   * @return
+   * @throws CruxException
+   */
     public int delete() throws CruxException {
       Link db = that.gotLink();
 
       return db.delete(that.tableName, /**/ that.getWhere(), that.getWheres());
     }
 
+  /**
+   * 更新全部匹配的数据
+   * 注意: 考虑到 SQL 兼容性, 忽略了 join 的条件, 有 xx.n 的字段条件会报 SQL 错误
+   * @param dat
+   * @return
+   * @throws CruxException
+   */
     public int update(Map<String, Object> dat) throws CruxException {
       Link db = that.gotLink();
 
       return db.update(that.tableName, dat, that.getWhere(), that.getWheres());
     }
 
+  /**
+   * 插入当前指定的数据
+   * @param dat
+   * @return
+   * @throws CruxException
+   */
     public int insert(Map<String, Object> dat) throws CruxException {
       Link db = that.gotLink();
 
@@ -1386,7 +1420,7 @@ public class FetchCase
   /**
    * 指定操作方法
    * @param dr
-   * @return 
+   * @return
    */
   public FetchCase use(Doer dr)
   {

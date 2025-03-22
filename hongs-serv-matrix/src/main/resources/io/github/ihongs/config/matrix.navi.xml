@@ -1,34 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
     <menu text="模型矩阵" href="centra/matrix/">
-        <role text="查看表单" name="centra/matrix/form/search">
+        <role text="浏览表单" name="centra/matrix/form/search">
             <depend>centra</depend>
             <depend>centra/matrix/furl/search</depend>
-            <action>centra/matrix/form/search.act</action>
+            <action>centra/matrix/form/list.act</action>
         </role>
-        <role text="添加表单" name="centra/matrix/form/create">
+        <role text="维护表单" name="centra/matrix/form/update">
             <depend>centra/matrix/form/search</depend>
-            <action>centra/matrix/form/create.act</action>
-        </role>
-        <role text="修改表单" name="centra/matrix/form/update">
-            <depend>centra/matrix/form/search</depend>
-            <action>centra/matrix/form/update.act</action>
+            <action>centra/matrix/form/info.act</action>
+            <action>centra/matrix/form/save.act</action>
+            <action>centra/matrix/form/unique.act</action>
         </role>
         <role text="删除表单" name="centra/matrix/form/delete">
             <depend>centra/matrix/form/search</depend>
             <action>centra/matrix/form/delete.act</action>
         </role>
-        <role text="查看单元" name="centra/matrix/furl/search">
+        <role text="浏览单元" name="centra/matrix/furl/search">
             <depend>centra/matrix/form/search</depend>
-            <action>centra/matrix/furl/search.act</action>
+            <action>centra/matrix/furl/list.act</action>
         </role>
-        <role text="添加单元" name="centra/matrix/furl/create">
+        <role text="维护单元" name="centra/matrix/furl/update">
             <depend>centra/matrix/furl/search</depend>
-            <action>centra/matrix/furl/create.act</action>
-        </role>
-        <role text="修改单元" name="centra/matrix/furl/update">
-            <depend>centra/matrix/furl/search</depend>
-            <action>centra/matrix/furl/update.act</action>
+            <action>centra/matrix/furl/info.act</action>
+            <action>centra/matrix/furl/save.act</action>
+            <action>centra/matrix/furl/unique.act</action>
         </role>
         <role text="删除单元" name="centra/matrix/furl/delete">
             <depend>centra/matrix/furl/search</depend>

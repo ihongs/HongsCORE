@@ -430,7 +430,7 @@
         };
 
         $.hsAjax({
-            url: "centra/info/search.act?rb=app_info,sys_info,run_info,dir_info,core_info,cron_info,lock_info,task_info",
+            url: "common/info/search.act?rb=app_info,sys_info,run_info,dir_info,core_info,cron_info,lock_info,task_info",
             dataType: "json",
             success: function(rst) {
                 var box;
@@ -489,7 +489,7 @@
                         return;
                     }
                     $.hsAjax({
-                        url: "centra/info/search.act?rb=run_info",
+                        url: "common/info/search.act?rb=run_info",
                         dataType: "json",
                         success: function(rst) {
                             addSysOption(sysOpts, rst.info.run_info, rst.info.now_msec);
@@ -522,7 +522,7 @@
 
         context.find(".reload-core-and-lock").click(function() {
             $.hsAjax({
-                url: "centra/info/search.act?rb=core_info,cron_info,lock_info,task_info",
+                url: "common/info/search.act?rb=core_info,cron_info,lock_info,task_info",
                 dataType: "json",
                 success: function(rst) {
                     // 应用信息

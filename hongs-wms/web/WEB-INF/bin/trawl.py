@@ -102,7 +102,7 @@ if __name__ == '__main__':
     fns = []
     lns = []
 
-    opts, args = getopt(sys.argv[1:], "o:s:c:f:l:h", ["output=", "search=", "cookie=", "fields=", "labels=", "help"])
+    opts, args = getopt(sys.argv[1:], "o:s:f:l:c:a:h", ["output=", "search=", "fields=", "labels=", "cookie=", "auth=", "help"])
     for n,v in opts:
         if  n in ("-o", "--output"):
             xls = v
@@ -127,6 +127,9 @@ if __name__ == '__main__':
         print("Options `--output` and `--search` required")
         cmd_help( )
         sys.exit(1)
+
+    if  not   lns:
+        lns = fns
 
     xls = os.path.abspath(xls)
     fil = hsFills(fns)

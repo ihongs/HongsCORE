@@ -145,12 +145,12 @@ public final class CruxDemon {
 
             Throwable  erroo = cause.getCause();
             if (erroo != null) {
-                return erroo.getMessage();
+                return erroo.getMessage( );
             }
 
             // 参数作为消息
             if (cases != null && cases.length > 0) {
-                return Syno . concat (", ", cases);
+                return getStage( )+": "+Syno.concat(", ", cases);
             }
 
             return null;

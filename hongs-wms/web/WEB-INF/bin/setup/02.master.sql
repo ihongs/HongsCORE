@@ -105,9 +105,9 @@ CREATE INDEX `IK_a_master_user_role_role` ON `a_master_user_role` (`role`);
 
 INSERT INTO `a_master_user_role` VALUES ('1','centra');
 INSERT INTO `a_master_user_role` VALUES ('1','centre');
-INSERT INTO `a_master_user_role` VALUES ('1','centra/manage/info');
-INSERT INTO `a_master_user_role` VALUES ('1','centra/manage/file');
-INSERT INTO `a_master_user_role` VALUES ('1','centra/manage/fils');
+INSERT INTO `a_master_user_role` VALUES ('1','common/info/browse');
+INSERT INTO `a_master_user_role` VALUES ('1','common/fold/browse');
+INSERT INTO `a_master_user_role` VALUES ('1','common/fold/manage');
 INSERT INTO `a_master_user_role` VALUES ('1','centra/master/user/search');
 INSERT INTO `a_master_user_role` VALUES ('1','centra/master/user/create');
 INSERT INTO `a_master_user_role` VALUES ('1','centra/master/user/update');

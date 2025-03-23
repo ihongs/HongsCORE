@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
     <menu text="系统信息" href="centra/manage/info/">
-        <role text="系统信息" name="centra/manage/info">
+        <role text="系统信息" name="common/info/browse">
             <depend>centra</depend>
-            <action>centra/info/search.act</action>
+            <action>common/info/search.act</action>
         </role>
     </menu>
     <menu text="文件管理" href="centra/manage/file/">
-        <role text="文件查看" name="centra/manage/file">
+        <role text="文件查阅" name="common/fold/browse">
             <depend>centra</depend>
-            <action>centra/file/search.act</action>
+            <action>common/fold/search.act</action>
         </role>
-        <role text="文件操作" name="centra/manage/fils">
+        <role text="文件操作" name="centra/fold/manage">
             <depend>centra</depend>
-            <depend>centra/manage/file</depend>
-            <action>centra/file/create.act</action>
-            <action>centra/file/update.act</action>
-            <action>centra/file/delete.act</action>
+            <depend>centra/fold/browse</depend>
+            <action>common/fold/create.act</action>
+            <action>common/fold/update.act</action>
+            <action>common/fold/delete.act</action>
         </role>
     </menu>
 </root>

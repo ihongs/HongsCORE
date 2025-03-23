@@ -1,5 +1,6 @@
 package io.github.ihongs.action.serv;
 
+import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLocale;
@@ -7,7 +8,7 @@ import io.github.ihongs.CoreLogger;
 import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
-import io.github.ihongs.dh.IAction;
+import io.github.ihongs.action.anno.Permit;
 import io.github.ihongs.util.Synt;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -30,8 +31,8 @@ import java.util.Set;
  * 文件管理
  * @author Hongs
  */
-@Action("centra/file")
-public class FoldAction implements IAction {
+@Action("common/fold")
+public class FoldAction {
 
     private static final Map<String, Byte> TYPE_SORT = new HashMap();
     static {
@@ -61,8 +62,8 @@ public class FoldAction implements IAction {
         ));
     }
 
-    @Override
     @Action("search")
+    @Permit(role={"common/fold/browse", "@common/fold/search"+Cnst.ACT_EXT})
     public void search(ActionHelper helper) throws CruxException {
         CoreLocale lang = CoreLocale.getInstance("manage");
         String type = helper.getParameter("type");
@@ -245,14 +246,8 @@ public class FoldAction implements IAction {
         }
     }
 
-    @Override
-    @Deprecated
-    public void recite(ActionHelper helper) throws CruxException {
-        // just search
-    }
-
-    @Override
     @Action("create")
+    @Permit(role={"common/fold/manage", "@common/fold/create"+Cnst.ACT_EXT})
     public void create(ActionHelper helper) throws CruxException {
         CoreLocale lang = CoreLocale.getInstance("manage");
         String path = helper.getParameter("path");
@@ -299,8 +294,8 @@ public class FoldAction implements IAction {
         helper.reply("");
     }
 
-    @Override
     @Action("update")
+    @Permit(role={"common/fold/manage", "@common/fold/update"+Cnst.ACT_EXT})
     public void update(ActionHelper helper) throws CruxException {
         CoreLocale lang = CoreLocale.getInstance("manage");
         String path = helper.getParameter("path");
@@ -367,10 +362,10 @@ public class FoldAction implements IAction {
         helper.reply("");
     }
 
-    @Override
     @Action("delete")
+    @Permit(role={"common/fold/manage", "@common/fold/delete"+Cnst.ACT_EXT})
     public void delete(ActionHelper helper) throws CruxException {
-        CoreLocale  lang = CoreLocale.getInstance( "manage" );
+        CoreLocale  lang = CoreLocale.getInstance("manage");
         Set<String> list = Synt.asSet(helper.getRequestData().get("path"));
         if ( list == null || list.isEmpty() ) {
             helper.fault(lang.translate("core.manage.file.path.required"));

@@ -6,6 +6,7 @@ import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
+import io.github.ihongs.action.anno.Permit;
 import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.daemon.Chore;
 import io.github.ihongs.util.daemon.Gate;
@@ -33,10 +34,11 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
  * 管理信息
  * @author Hongs
  */
-@Action("centra/info")
+@Action("common/info")
 public class InfoAction {
 
     @Action("search")
+    @Permit(role={"common/info/browse", "@common/info/search"+Cnst.ACT_EXT})
     public void search(ActionHelper helper) throws CruxException {
         Map  rsp = new HashMap();
         Map  req = helper.getRequestData();

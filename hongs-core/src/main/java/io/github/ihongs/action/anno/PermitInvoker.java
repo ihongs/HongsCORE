@@ -34,16 +34,12 @@ public class PermitInvoker implements FilterInvoker {
         Set     rol = map.getUserRoles( );
         boolean has = false;
 
-        if (rol  == null) {
-            throw new CruxException(1101);
-        }
-
         if (role == null || role.length < 1) {
             has  =  map.chkAuth(chains.getAction());
         } else for (String rale:role) {
             if (rale.startsWith("@")) {
                 if (map.chkAuth(rale.substring(1))) {
-                    has = true;
+                    has  = true;
                     break;
                 }
             } else
@@ -53,7 +49,7 @@ public class PermitInvoker implements FilterInvoker {
                     break;
                 }
             } else
-            {
+            if (rol != null) {
                 if (rol.contains(rale)) {
                     has = true;
                     break;
@@ -62,7 +58,7 @@ public class PermitInvoker implements FilterInvoker {
         }
 
         if (! has) {
-            throw new CruxException(1103);
+            throw new CruxException(rol == null ? 1101 : 1103, "", chains.getAction());
         }
 
         chains.doAction();

@@ -67,18 +67,9 @@ public class ActionDriver implements Filter, Servlet {
     private static final Pattern URL_REG = Pattern.compile("^\\w+://[^/]+");
     private static final Pattern URI_REG = Pattern.compile("^\\w+://|^/"  );
 
-    private transient  FilterConfig FILT_CONF = null;
-    private transient ServletConfig SERV_CONF = null;
-
-    /**
-     * 首位标识, 为 true 表示最先执行，负责初始化和清理
-     */
-    private transient boolean FIRST = false;
-
-    /**
-     * 关闭标识, 为 true 表示有初始化, 需要承担全局清理
-     */
-    private transient boolean SETUP = false;
+    private ServletConfig SERV_CONF = null;
+    private  FilterConfig FILT_CONF = null;
+    private   int STATE = 0;
 
     /**
      * 初始化 Filter
@@ -105,21 +96,22 @@ public class ActionDriver implements Filter, Servlet {
     /**
      * 公共初始化
      * @param cont
+     * @return 2 初始化, 1 头一个
      * @throws ServletException
      */
-    synchronized final void init(ServletContext cont) throws ServletException {
+    synchronized protected int init(ServletContext cont) throws ServletException {
         if (Core.ENVIR != 1) {
             Core.ENVIR  = 1;
         } else {
-            return;
+            return 0;
         }
 
         Properties def = CoreConfig.getInstance("default");
         Properties cnf = CoreConfig.getInstance("defines");
 
-        FIRST=true;
-        if (Core.SERV_PATH == null) {
-        SETUP=true;
+        this.STATE = Core.SERV_PATH == null ? 2 : 1;
+
+        if (this.STATE != 1) {
 
             System.setProperty("file.encoding", "UTF-8");
 
@@ -242,6 +234,8 @@ public class ActionDriver implements Filter, Servlet {
             Core.DATA_PATH, Core.BASE_PATH,
             Core.SERV_HREF, Core.SERV_PATH
         );
+
+        return this.STATE;
     }
 
     /**
@@ -249,7 +243,7 @@ public class ActionDriver implements Filter, Servlet {
      */
     @Override
     public void destroy () {
-        if (!FIRST) {
+        if (this.STATE == 0) {
             return;
         }
 
@@ -261,12 +255,12 @@ public class ActionDriver implements Filter, Servlet {
             + "\r\n\tSERVER_ID   : {}"
             + "\r\n\tServ time   : {}"
             + "\r\n\tInstances   : {}",
-            Core.SERVER_ID,
-            Inst.phrase(time),
-            core.toString ( )
+            Core.SERVER_ID ,
+            Inst.phrase( time ),
+            core.toString( )
         );
 
-        if (!SETUP) {
+        if (this.STATE == 1) {
             return;
         }
 

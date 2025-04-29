@@ -45,7 +45,7 @@ public class FenceCase {
         return this;
     }
 
-    protected FetchCase fetchCase() {
+    public FetchCase fetchCase() {
         return table.fetchCase().filter("`form_id`=?", data.getFormId());
     }
 
@@ -64,7 +64,11 @@ public class FenceCase {
     }
 
     public int update(Map<String, Object> dat) throws CruxException {
-        return table.update(dat, wheres, params);
+        FetchCase  fc = fetchCase();
+        if (wheres != null) {
+            fc.filter(wheres, params != null ? params : new Object[] {});
+        }
+        return table.update(dat, fc.getWhere(), fc.getWheres());
     }
 
     public int insert(Map<String, Object> dat) throws CruxException {

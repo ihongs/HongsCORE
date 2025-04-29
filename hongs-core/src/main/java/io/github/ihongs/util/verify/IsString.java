@@ -49,7 +49,7 @@ public class IsString extends Rule {
                 str = Syno.strip    (str); // 清理首尾
             }
             if (sa.contains("gaps")) {
-                str = Syno.stripEnds(str); // 清除空行
+                str = Syno.stripGaps(str); // 清除空行
             }
             if (sa.contains("ends")) {
                 str = Syno.stripEnds(str); // 清除换行

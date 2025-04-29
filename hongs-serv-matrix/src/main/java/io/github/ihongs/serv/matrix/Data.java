@@ -618,14 +618,14 @@ public class Data extends SearchEntity {
         // 数据快照和日志标题
         nd.put("__data__", dd);
         nd.put("data", getData(dd));
-        nd.put("name", getText(dd, "name"));
+        nd.put("name", getTval(dd, "name"));
 
         // 操作备注和终端代码
         if (rd.containsKey("memo")) {
-            nd.put("memo", getText(rd, "memo"));
+            nd.put("memo", getTval(rd, "memo"));
         }
         if (rd.containsKey("meno")) {
-            nd.put("meno", getText(rd, "meno"));
+            nd.put("meno", getTval(rd, "meno"));
         }
 
         sc.insert(nd);
@@ -697,14 +697,14 @@ public class Data extends SearchEntity {
         // 数据快照和日志标题
         nd.put("__data__", dd);
         nd.put("data", getData(dd));
-        nd.put("name", getText(dd, "name"));
+        nd.put("name", getTval(dd, "name"));
 
         // 操作备注和终端代码
         if (rd.containsKey("memo")) {
-            nd.put("memo", getText(rd, "memo"));
+            nd.put("memo", getTval(rd, "memo"));
         }
         if (rd.containsKey("meno")) {
-            nd.put("meno", getText(rd, "meno"));
+            nd.put("meno", getTval(rd, "meno"));
         }
 
         sc.update(ud);
@@ -773,7 +773,7 @@ public class Data extends SearchEntity {
             // 数据快照和日志标题
             nd.put("__data__", dd);
             nd.put("data", getData(dd));
-            nd.put("name", getText(dd, "name"));
+            nd.put("name", getTval(dd, "name"));
 
             /*
             // 改记日志, 以免冲掉
@@ -806,14 +806,14 @@ public class Data extends SearchEntity {
         // 数据快照和日志标题
         nd.put("__data__", dd);
         nd.put("data", getData(dd));
-        nd.put("name", getText(dd, "name"));
+        nd.put("name", getTval(dd, "name"));
 
         // 操作备注和终端代码
         if (rd.containsKey("memo")) {
-            nd.put("memo", getText(rd, "memo"));
+            nd.put("memo", getTval(rd, "memo"));
         }
         if (rd.containsKey("meno")) {
-            nd.put("meno", getText(rd, "meno"));
+            nd.put("meno", getTval(rd, "meno"));
         }
 
         sc.update(ud);
@@ -873,10 +873,10 @@ public class Data extends SearchEntity {
 
         // 操作备注和终端代码
         if (rd.containsKey("memo")) {
-            nd.put("memo", getText(rd, "memo"));
+            nd.put("memo", getTval(rd, "memo"));
         }
         if (rd.containsKey("meno")) {
-            nd.put("meno", getText(rd, "meno"));
+            nd.put("meno", getTval(rd, "meno"));
         }
 
         sc.update(ud);
@@ -961,10 +961,10 @@ public class Data extends SearchEntity {
 
         // 操作备注和终端代码
         if (rd.containsKey("memo")) {
-            nd.put("memo", getText(rd, "memo"));
+            nd.put("memo", getTval(rd, "memo"));
         }
         if (rd.containsKey("meno")) {
-            nd.put("meno", getText(rd, "meno"));
+            nd.put("meno", getTval(rd, "meno"));
         }
 
         sc.update(ud);
@@ -1075,14 +1075,14 @@ public class Data extends SearchEntity {
         // 数据快照和日志标题
         nd.put("__data__", dd);
         nd.put("data", getData(dd));
-        nd.put("name", getText(dd, "name"));
+        nd.put("name", getTval(dd, "name"));
 
         // 操作备注和终端代码
         if (rd.containsKey("memo")) {
-            nd.put("memo", getText(rd, "memo"));
+            nd.put("memo", getTval(rd, "memo"));
         }
         if (rd.containsKey("meno")) {
-            nd.put("meno", getText(rd, "meno"));
+            nd.put("meno", getTval(rd, "meno"));
         }
 
         sc.update(ud);
@@ -1287,7 +1287,7 @@ public class Data extends SearchEntity {
      * @return
      * @throws CruxException
      */
-    protected String getText(Map dd, String fn)
+    public String getTval(Map dd, String fn)
     throws CruxException {
         String s;
         if (dd.containsKey(fn)) {
@@ -1332,7 +1332,7 @@ public class Data extends SearchEntity {
      * @param dd
      * @return
      */
-    protected String getName(Map dd) {
+    public String getName(Map dd) {
         String fl = Synt.asString(getParams().get("nameless"));
         if (fl != null && ! fl.isEmpty()) {
             return Syno.inject( fl , dd );
@@ -1365,7 +1365,7 @@ public class Data extends SearchEntity {
      * @param dd
      * @return
      */
-    protected String getWord(Map dd) {
+    public String getWord(Map dd) {
         String fl = Synt.asString(getParams().get("wordless"));
         if (fl != null && ! fl.isEmpty()) {
             return Syno.inject( fl , dd );
@@ -1398,7 +1398,7 @@ public class Data extends SearchEntity {
      * @param dd 原始数据
      * @return
      */
-    protected String getData(Map dd) {
+    public String getData(Map dd) {
         return Dist.toString(dd, true);
     }
 
@@ -1407,7 +1407,7 @@ public class Data extends SearchEntity {
      * @param ds 库存数据
      * @return
      */
-    protected Map getData(String ds) {
+    public Map getData(String ds) {
         return (Map) Dist.toObject(ds);
     }
 

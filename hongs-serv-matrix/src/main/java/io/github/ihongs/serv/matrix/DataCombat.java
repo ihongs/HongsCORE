@@ -797,14 +797,14 @@ public class DataCombat {
             // 数据快照和日志标题
             nd.put("__data__", od);
             nd.put("data", that.getData(od));
-            nd.put("name", that.getText(od, "name"));
+            nd.put("name", that.getTval(od, "name"));
 
             // 操作备注和终端代码
             if (od.containsKey("memo")) {
-                nd.put("memo", that.getText(sd, "memo"));
+                nd.put("memo", that.getTval(sd, "memo"));
             }
             if (od.containsKey("meno")) {
-                nd.put("meno", that.getText(sd, "meno"));
+                nd.put("meno", that.getTval(sd, "meno"));
             }
 
             FenceCase sc = that.fenceCase ( );

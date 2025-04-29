@@ -1038,11 +1038,21 @@ public class FetchCase
 
   /**
    * 获取本级条件语句
+   * 注意: 会清理表名
+   * @return
+   */
+  public String getWhile()
+  {
+    return this.delSQLTable(wheres);
+  }
+
+  /**
+   * 获取本级条件语句
    * @return
    */
   public String getWhere()
   {
-    return this.delSQLTable(wheres);
+    return this.wheres.toString(  );
   }
 
   /**
@@ -1375,37 +1385,37 @@ public class FetchCase
       return rs;
     }
 
-  /**
-   * 删除全部匹配的记录
-   * 注意: 考虑到 SQL 兼容性, 忽略了 join 的条件, 有 xx.n 的字段条件会报 SQL 错误
-   * @return
-   * @throws CruxException
-   */
+    /**
+     * 删除全部匹配的记录
+     * 注意: 考虑到 SQL 兼容性, 忽略了 join 的条件, 有 xx.n 的字段条件会报 SQL 错误
+     * @return
+     * @throws CruxException
+     */
     public int delete() throws CruxException {
       Link db = that.gotLink();
 
-      return db.delete(that.tableName, /**/ that.getWhere(), that.getWheres());
+      return db.delete(that.tableName, /**/ that.getWhile(), that.getWheres());
     }
 
-  /**
-   * 更新全部匹配的数据
-   * 注意: 考虑到 SQL 兼容性, 忽略了 join 的条件, 有 xx.n 的字段条件会报 SQL 错误
-   * @param dat
-   * @return
-   * @throws CruxException
-   */
+    /**
+     * 更新全部匹配的数据
+     * 注意: 考虑到 SQL 兼容性, 忽略了 join 的条件, 有 xx.n 的字段条件会报 SQL 错误
+     * @param dat
+     * @return
+     * @throws CruxException
+     */
     public int update(Map<String, Object> dat) throws CruxException {
       Link db = that.gotLink();
 
-      return db.update(that.tableName, dat, that.getWhere(), that.getWheres());
+      return db.update(that.tableName, dat, that.getWhile(), that.getWheres());
     }
 
-  /**
-   * 插入当前指定的数据
-   * @param dat
-   * @return
-   * @throws CruxException
-   */
+    /**
+     * 插入当前指定的数据
+     * @param dat
+     * @return
+     * @throws CruxException
+     */
     public int insert(Map<String, Object> dat) throws CruxException {
       Link db = that.gotLink();
 

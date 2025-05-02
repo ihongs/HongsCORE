@@ -30,17 +30,21 @@ public class CoreRoster {
     private static Map<String, Mathod> ACTIONS = null;
 
     public  static final class Mathod {
-        private Method   method;
-        private Class<?> mclass;
-        @Override
-        public String    toString() {
-            return mclass.getName()+"."+method.getName();
+        private final Class  mclass;
+        private final Method method;
+        public Mathod(Class  mclass, Method method) {
+            this.mclass = mclass;
+            this.method = method;
         }
-        public Method   getMethod() {
+        public Class  getMclass() {
+            return mclass;
+        }
+        public Method getMethod() {
             return method;
         }
-        public Class<?> getMclass() {
-            return mclass;
+        @Override
+        public String  toString() {
+            return mclass.getName()+"."+method.getName();
         }
     }
 
@@ -166,9 +170,7 @@ public class CoreRoster {
                 throw new CruxExemption(832, "Can not find action method '"+clsn+"."+mtdn+"(ActionHelper)'.");
             }
 
-            Mathod mtdx = new Mathod();
-            mtdx.method = mtdo;
-            mtdx.mclass = clso;
+            Mathod mtdx = new Mathod( clso , mtdo );
 
             if ("__main__".equals(actx)) {
                 acts.put(actn /*__main__*/ , mtdx );

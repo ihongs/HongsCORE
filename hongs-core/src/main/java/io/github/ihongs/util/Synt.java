@@ -952,28 +952,28 @@ public final class Synt {
             return null;
         }
 
-        if (String.class.isAssignableFrom(cls)) {
-            val = asString(val);
-        } else
         if (Boolean.class.isAssignableFrom(cls)) {
             val = asBool(val);
         } else
-        if (Integer.class.isAssignableFrom(cls)) {
+        if (String.class.isAssignableFrom(cls)) {
+            val = asString(val);
+        } else
+        if (Integer.class.isAssignableFrom(cls) || int.class == cls) {
             val = asInt(val);
         } else
-        if (Long.class.isAssignableFrom(cls)) {
-            val = asLong(val);
-        } else
-        if (Float.class.isAssignableFrom(cls)) {
-            val = asFloat(val);
-        } else
-        if (Double.class.isAssignableFrom(cls)) {
+        if (Double.class.isAssignableFrom(cls) || double.class == cls) {
             val = asDouble(val);
         } else
-        if (Short.class.isAssignableFrom(cls)) {
+        if (Float.class.isAssignableFrom(cls) || float.class == cls) {
+            val = asFloat(val);
+        } else
+        if (Long.class.isAssignableFrom(cls) || long.class == cls) {
+            val = asLong(val);
+        } else
+        if (Short.class.isAssignableFrom(cls) || short.class == cls) {
             val = asShort(val);
         } else
-        if (Byte.class.isAssignableFrom(cls)) {
+        if (Byte.class.isAssignableFrom(cls) || byte.class == cls) {
             val = asByte(val);
         } else
         if (List.class.isAssignableFrom(cls)) {

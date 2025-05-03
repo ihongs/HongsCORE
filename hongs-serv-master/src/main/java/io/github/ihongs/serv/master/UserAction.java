@@ -14,6 +14,7 @@ import io.github.ihongs.db.DB;
 import io.github.ihongs.db.util.FetchCase;
 import io.github.ihongs.dh.Roster;
 import io.github.ihongs.serv.auth.AuthKit;
+import io.github.ihongs.util.Digest;
 import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Synt;
 import java.time.LocalDate;
@@ -27,6 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * 用户动作接口
@@ -272,6 +274,32 @@ public class UserAction {
                 helper.setSessibute(Cnst.UST_SES, System.currentTimeMillis() / 1000);
             }
         }
+    }
+
+    @Action("auth")
+    @CommitSuccess
+    public void doAuth(ActionHelper ah)
+    throws CruxException {
+        Object id = ah.getParameter(Cnst.ID_KEY);
+        if (id == null || "".equals(id)) {
+            ah.fault("id required!");
+        }
+
+        String unit = "auth";
+        String code = "sk-" + Digest.md5(UUID.randomUUID().toString() + id );
+
+        FetchCase fc = DB
+              .getInstance("master")
+              .getTable("user_sign")
+              .fetchCase()
+              .filter("`user_id` = ? AND `unit` = ?", id, unit);
+        if (fc.update(Synt.mapOf("code", code)) == 0) {
+            fc.insert(Synt.mapOf("code", code, "unit", unit, "user_id", id));
+        }
+
+        ah.reply(Synt.mapOf(
+            "code", code
+        ));
     }
 
     @Action("delete")

@@ -1,7 +1,6 @@
 package io.github.ihongs.serv.centra;
 
 import io.github.ihongs.Cnst;
-import io.github.ihongs.Core;
 import io.github.ihongs.CoreLocale;
 import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionHelper;
@@ -11,14 +10,10 @@ import io.github.ihongs.action.anno.Preset;
 import io.github.ihongs.action.anno.Verify;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Table;
-import io.github.ihongs.db.util.FetchCase;
 import io.github.ihongs.serv.auth.AuthKit;
 import io.github.ihongs.serv.master.UserAction;
-import io.github.ihongs.util.Digest;
-import io.github.ihongs.util.Synt;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * 管理区我的信息
@@ -160,7 +155,9 @@ public class MineAction {
         ua.doSave( ah );
     }
 
-    @Action("auth-code")
+    /*
+    // 暂不开放
+    @Action("auth")
     @CommitSuccess
     public void authCode(ActionHelper ah)
     throws CruxException {
@@ -185,5 +182,6 @@ public class MineAction {
             "code", code
         ));
     }
+    */
 
 }

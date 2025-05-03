@@ -14,6 +14,7 @@
             <div class="btn-group">
                 <button type="button" class="create btn btn-default">创建用户</button>
                 <button type="button" class="modify for-choose btn btn-default">修改</button>
+                <button type="button" class="authen for-choose btn btn-default">认证</button>
                 <button type="button" class="remove for-choose btn btn-default" title="移出"><span class="bi bi-hi-delete text-danger"></span></button>
                 <button type="button" class="delete for-checks btn btn-default" title="删除"><span class="bi bi-hi-remove text-danger"></span></button>
             </div>
@@ -39,6 +40,7 @@
                             <a href="javascript:;" data-toggle="dropdown"><span class="bi bi-hi-action"></span></a>
                             <ul class="dropdown-menu">
                                 <li><a href="javascript:;" class="modify">修改</a></li>
+                                <li><a href="javascript:;" class="authen">认证</a></li>
                                 <li><a href="javascript:;" class="remove"><span class="text-danger">移出</span></a></li>
                                 <li><a href="javascript:;" class="delete"><span class="text-danger">删除</span></a></li>
                             </ul>
@@ -118,5 +120,53 @@
             }
             c.closest( "tr" ).data( "unit_ids" , unitIds);
         });
+
+        // 设置 Auth Code
+        context.on("click", ".authen", function() {
+            var listobj = context.data ("HsList");
+            var ch = listobj.getIds(this);
+            if (ch) {
+                newAuthCode (ch.val());
+            }
+        });
+        function newAuthCode(id) {
+            $.hsMask({
+                title: "获取/重置 API Key",
+                text : "这将创建新的 API Key, 旧的将会失效(如果有). 确定要执行吗?",
+                glass: "alert-danger",
+                mode : "warn",
+                focus: 2
+            }, {
+                label: "确定创建",
+                glass: "btn-danger",
+                click: function() {
+                    $.hsAjax({
+                        url : "centra/master/user/auth.act",
+                        data: { id: id },
+                        dataType: "json",
+                        success : function(rsp) {
+                            rsp = hsResponse(rsp);
+                            console.log(rsp.code);
+                            if (rsp.ok) {
+                                $.hsMask({
+                                    html : "请记住并避免泄露, 此后将无法再查看.</p>",
+                                    glass: "alert-success",
+                                    mode : "warn"
+                                }, {
+                                    label: "确定并拷贝 API Key",
+                                    glass: "btn-success",
+                                    click: function() {
+                                        $(this).closest(".modal").find(".code").hsCopy();
+                                    }
+                                }).find(".alert-title").html('API Key: <b class="code">'+ rsp.code +'</b>');
+                            }
+                        }
+                    });
+                }
+            }, {
+                label: "取消",
+                glass: "btn-default"
+            });
+        }
     })(jQuery);
 </script>

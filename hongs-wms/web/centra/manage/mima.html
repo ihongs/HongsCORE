@@ -21,7 +21,7 @@
         </div>
         <div class="form-group form-control-static" style="padding-top: 0;">
             <a href="javascript:;" class="new-password">生成密码</a>
-            <a href="javascript:;" class="new-authcode pull-right" title="API Key 用于以当前用户身份调用接口">获取/重置 API Key</a>
+            <!--a href="javascript:;" class="new-authcode pull-right" title="API Key 用于以当前用户身份调用接口">获取/重置 API Key</a-->
         </div>
         <div class="form-group">
             <button type="submit" class="commit btn btn-primary">提交</button>
@@ -101,7 +101,9 @@
             return ps.join("");
         }
 
-        if (! H$('!centra/mine/auth-code.act')) {
+        /*
+        // 暂不开放
+        if (! H$('!centra/mine/auth.act')) {
             context.find(".new-authcode").remove();
         }
         context.on("click", ".new-authcode", function() {
@@ -119,7 +121,7 @@
                 glass: "btn-danger",
                 click: function() {
                     $.hsAjax({
-                        url: "centra/mine/auth-code.act",
+                        url: "centra/mine/auth.act",
                         dataType: "json",
                         success : function(rsp) {
                             rsp = hsResponse(rsp);
@@ -145,5 +147,6 @@
                 glass: "btn-default"
             });
         }
+        */
     })(jQuery);
 </script>

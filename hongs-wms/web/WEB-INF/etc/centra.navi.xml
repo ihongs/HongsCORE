@@ -8,10 +8,6 @@
             <action>centra/mine/same.act</action>
             <action>centra/mine/save.act</action>
         </role>
-        <role text="接口认证" name="centra/mine/auth-code">
-            <depend>centra</depend>
-            <action>centra/mine/auth-code.act</action>
-        </role>
         <menu text="首页" href="centra/#manage" hrel="centra/manage/main.html"></menu>
         <menu text="系统" href="common/menu.act?m=centra&amp;n=system">
             <import>manage</import>

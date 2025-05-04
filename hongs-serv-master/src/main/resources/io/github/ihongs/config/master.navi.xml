@@ -30,9 +30,9 @@
             <depend>centra/master/unit/search</depend>
             <action>centra/master/unit/delete.act</action>
         </role>
-        <role text="API Key"  name="centra/master/user/auth-code">
+        <role text="AuthCode" name="centra/master/user/auth">
             <depend>centra/master/user/search</depend>
-            <action>centra/master/user/auth-code.act</action>
+            <action>centra/master/user/auth.act</action>
         </role>
     </menu>
 </root>

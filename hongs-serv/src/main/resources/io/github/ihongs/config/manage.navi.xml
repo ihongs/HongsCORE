@@ -11,7 +11,7 @@
             <depend>centra</depend>
             <action>common/fold/search.act</action>
         </role>
-        <role text="文件操作" name="centra/fold/manage">
+        <role text="文件操作" name="common/fold/manage">
             <depend>centra</depend>
             <depend>centra/fold/browse</depend>
             <action>common/fold/create.act</action>

@@ -9,6 +9,7 @@ set KLASSPATH=%CLASSPATH%;%CORE_PATH%\classes;%CORE_PATH%\lib\classes;%CORE_PATH
 
 "%JAVA_PATH%" %JAVA_OPTS% ^
   -classpath "%KLASSPATH%"^
+  -Dfile.encoding="UTF-8" ^
   -Dlog4j.configurationFile="\\%CORE_PATH%\etc\log.xml"^
   -Dlogs.dir="\\%CORE_PATH%\var\log"^
   -Dtmps.dir="\\%CORE_PATH%\var\tmp"^

@@ -12,13 +12,16 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 /**
  * 守护线程池
@@ -266,6 +269,171 @@ public final class Chore implements AutoCloseable {
      */
     public ScheduledFuture runTimed(Runnable task) {
         return ran (task, DTT, DTT);
+    }
+
+    /**
+     * 异步任务, 可等待, 可中止
+     * @param task
+     * @return
+     */
+    public Defer defer(Consumer<Defer> task) {
+        Defer def = new Defer(false);
+        this.exe(() -> {
+            def.begin();
+            task.accept(def);
+            def.done ();
+        });
+        return def;
+    }
+
+    /**
+     * 延迟等待工具
+     * @param <T>
+     */
+    public static class Defer<T> implements Future<T> {
+
+        // 0 待运行 1 运行中 2 主程等待 3 中断 4 完成
+        final AtomicInteger stat;
+
+        private  Throwable  fail;
+
+        private  T data ;
+
+        public Defer() {
+            this(true);
+        }
+
+        /**
+         * @param begin 是否立即开始
+         */
+        public Defer(boolean begin) {
+            stat = new AtomicInteger(begin ? 1 : 0);
+            fail = null;
+            data = null;
+        }
+
+        @Override
+        public T get() throws InterruptedException, ExecutionException {
+            if (stat.get( ) < 2) {
+                stat.set(2);
+                synchronized(this) {
+                    wait( );
+                }
+            }
+            if (fail != null) {
+                throw new ExecutionException(fail);
+            }
+            return data;
+        }
+
+        @Override
+        public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+            if (stat.get( ) < 2) {
+                stat.set(2);
+                synchronized(this) {
+                    wait(unit.convert(timeout, TimeUnit.MILLISECONDS));
+                }
+            }
+            if (fail != null) {
+                throw new ExecutionException(fail);
+            }
+            return data;
+        }
+
+        @Override
+        public boolean cancel(boolean mayInterruptIfRunning) {
+            if (! mayInterruptIfRunning) {
+                int st = stat.get();
+                if ( st < 1 ) {
+                    stat.set(3);
+                    return true;
+                }
+            } else {
+                int st = stat.get();
+                if ( st < 2 ) {
+                    stat.set(3);
+                    return true;
+                } else
+                if ( st < 3 ) {
+                    stat.set(3);
+                    // 唤起主程
+                    synchronized (this) {
+                      notify( );
+                    }
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public boolean isDone() {
+            return stat.get() == 4;
+        }
+
+        @Override
+        public boolean isCancelled() {
+            return stat.get() == 3;
+        }
+
+        /**
+         * 任务取消或完成
+         * @return
+         */
+        public boolean interrupted() {
+            return stat.get() >= 3;
+        }
+
+        /**
+         * 任务开始
+         */
+        public void begin() {
+            this.stat.set(1);
+        }
+
+        /**
+         * 任务完成
+         */
+        public void done() {
+            int st = stat.getAndSet(4);
+            if (st == 2) {
+                // 唤起主程
+                synchronized (this) {
+                    notify();
+                }
+            }
+        }
+
+        /**
+         * 任务完成(带结果)
+         * @param data
+         */
+        public void done(T data) {
+            this.data = data;
+            int st = stat.getAndSet(4);
+            if (st == 2) {
+                // 唤起主程
+                synchronized (this) {
+                    notify();
+                }
+            }
+        }
+
+        /**
+         * 任务失败(带异常)
+         * @param ex
+         */
+        public void fail(Throwable ex) {
+            this.fail =  ex ;
+            int st = stat.getAndSet(3);
+            if (st == 2) {
+                // 唤起主程
+                synchronized (this) {
+                    notify();
+                }
+            }
+        }
+
     }
 
     /**

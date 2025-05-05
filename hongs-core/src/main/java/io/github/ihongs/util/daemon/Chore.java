@@ -287,7 +287,7 @@ public final class Chore implements AutoCloseable {
      *
      * // 任务循环中:
      * if (defer.interrupted()) {
-     *     // 中止任务, 视情况 break 退出或 throw 异常
+     *     // 中止任务, 视情况 break 退出或 throw 异常等
      * }
      *
      * // 任务中结束(无结果):

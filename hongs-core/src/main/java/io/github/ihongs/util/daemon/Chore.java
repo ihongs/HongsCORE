@@ -272,25 +272,42 @@ public final class Chore implements AutoCloseable {
     }
 
     /**
-     * 异步任务, 可等待, 可中止
-     * @param task
-     * @return
-     */
-    public Defer defer(Consumer<Defer> task) {
-        Defer def = new Defer(false);
-        this.exe(() -> {
-            def.init();
-            task.accept(def);
-            def.done();
-        });
-        return def;
-    }
-
-    /**
-     * 延迟等待工具
+     * 延迟等待辅助
+     *
+     * <p>
+     * 为已有异步任务增加取消和等待,
+     * 未使用线程的 sleep/interrupt,
+     * 复杂任务请用 run(task).
+     * </p>
+     *
+     * <h4>Usage:</h4>
+     * <code>
+     * final Defer defer = new Defer();
+     * // 可将其存入 GLOBAL_CORE 以便中止
+     *
+     * // 任务循环中:
+     * if (defer.interrupted()) {
+     *     // 中止任务, 视情况 break 退出或 throw 异常
+     * }
+     *
+     * // 任务中结束(无结果):
+     * defer.done();
+     *
+     * // 任务中结束(有结果):
+     * defer.done(rs);
+     *
+     * // 任务中结束(有异常):
+     * defer.fail(ex);
+     *
+     * // 主程等待(有异常会抛出 ExecutionException):
+     * rs = defer.get();
+     *
+     * // 取消任务:
+     * defer.cancel();
+     * </code>
      * @param <T>
      */
-    public static class Defer<T> implements Future<T> {
+    public static class Defer<T> implements Future<T>, AutoCloseable {
 
         // 0 待运行 1 运行中 2 主程等待 3 中断 4 完成
         final AtomicInteger stat;
@@ -340,21 +357,30 @@ public final class Chore implements AutoCloseable {
             return data;
         }
 
+        /**
+         * 关闭时将取消任务
+         */
+        @Override
+        public void close() {
+            cancel(true);
+            cancel(true);
+        }
+
         @Override
         public boolean cancel(boolean mayInterruptIfRunning) {
             if (! mayInterruptIfRunning) {
                 int st = stat.get();
-                if ( st < 1 ) {
+                if (st < 1) {
                     stat.set(3);
                     return true;
                 }
             } else {
                 int st = stat.get();
-                if ( st < 2 ) {
+                if (st < 2) {
                     stat.set(3);
                     return true;
                 } else
-                if ( st < 3 ) {
+                if (st < 3) {
                     stat.set(3);
                     // 唤起主程
                     synchronized (this) {

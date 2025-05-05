@@ -279,9 +279,9 @@ public final class Chore implements AutoCloseable {
     public Defer defer(Consumer<Defer> task) {
         Defer def = new Defer(false);
         this.exe(() -> {
-            def.begin();
+            def.init();
             task.accept(def);
-            def.done ();
+            def.done();
         });
         return def;
     }
@@ -387,7 +387,7 @@ public final class Chore implements AutoCloseable {
         /**
          * 任务开始
          */
-        public void begin() {
+        public void init() {
             this.stat.set(1);
         }
 

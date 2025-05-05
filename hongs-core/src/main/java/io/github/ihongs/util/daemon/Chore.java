@@ -303,7 +303,7 @@ public final class Chore implements AutoCloseable {
      * rs = defer.get();
      *
      * // 取消任务:
-     * defer.cancel();
+     * defer.cancel(true);
      * </code>
      * @param <T>
      */

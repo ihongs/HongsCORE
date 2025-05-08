@@ -2365,6 +2365,12 @@ $.hsWait = function(msg, xhr, xhu) {
         stt  = ctt ;
     };
     box.setProgress = function(pzt) {
+        if (isNaN   (pct)
+        || !isFinite(pct)) {
+            box.prog(1.0, "...");
+            return ;
+        }
+
         pct  = pzt ;
 
         var ctt ;
@@ -2387,12 +2393,21 @@ $.hsWait = function(msg, xhr, xhu) {
         box.prog( pct , pzt );
     };
     box.prog = function(pct, tip) {
-        if (tip === undefined) tip = "...";
-        if (pct === Infinity ) pct =  1.0 ;
+        if (isNaN   (pct)
+        || !isFinite(pct)) {
+            pct = 1.0;
+        } else
+        if (pct > 1.0) {
+            pct = 1.0;
+        } else
+        if (pct < 0.0) {
+            pct = 0.0;
+        }
+
         pct *= 100;
         bar.css ( "width" , pct + "%");
         bar.attr("aria-valuenow", pct);
-        per.text( tip );
+        per.text( tip || "..." );
     };
     box.hide = function() {
         mod.modal("hide");

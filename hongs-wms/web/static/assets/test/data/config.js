@@ -101,6 +101,10 @@ if(!window.HsLANG)window.HsLANG={};$.extend(window.HsLANG,{
 	"date.today":"今天",
 	"time.today":"${0}",
 	"week.start":0,
+        "time.today.title":"当前时间",
+        "time.clear.title":"清除时间",
+        "time.remaining":"剩余",
+        "time.consuming":"用时",
 
 	"file.browse":"选择...",
 	"file.upload":"上传",

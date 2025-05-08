@@ -2355,6 +2355,9 @@ $.hsWait = function(msg, xhr, xhu) {
         return pzt ;
     }
 
+    box.remaining = hsGetLang("time.remaining");
+    box.consuming = hsGetLang("time.consuming");
+
     box.getStarting = function() {
         return stt ;
     };
@@ -2379,17 +2382,17 @@ $.hsWait = function(msg, xhr, xhu) {
 
         var ctt ;
         if (stt < 0) {
-            ctt = new Date().getTime() + stt ;
+            ctt = new Date().getTime() + stt;
             ctt = ctt / pct - ctt ; // 剩余时间
             ctt = getProgtime(ctt);
             pzt = getProgcent(pzt);
-            pzt = pzt +" -" + ctt ;
+            pzt = pzt + " " + box.remaining + " " + ctt;
         } else
         if (stt > 0) {
-            ctt = new Date().getTime() - stt ;
+            ctt = new Date().getTime() - stt;
             ctt = getProgtime(ctt);
             pzt = getProgcent(pzt);
-            pzt = pzt +" +" + ctt ;
+            pzt = pzt + " " + box.consuming + " " + ctt;
         } else {
             pzt = getProgcent(pzt);
         }

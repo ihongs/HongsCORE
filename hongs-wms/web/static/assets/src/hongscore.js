@@ -2370,6 +2370,10 @@ $.hsWait = function(msg, xhr, xhu) {
             box.prog(1.0, "...");
             return ;
         }
+        if (stt < 0 && pct == 0) {
+            box.prog(0.0, "0%" );
+            return ;
+        }
 
         pct  = pzt ;
 

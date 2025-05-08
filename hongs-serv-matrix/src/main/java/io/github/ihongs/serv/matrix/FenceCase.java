@@ -63,6 +63,14 @@ public class FenceCase {
         return fc.getOne( );
     }
 
+    public int delete() throws CruxException {
+        FetchCase  fc = fetchCase();
+        if (wheres != null) {
+            fc.filter(wheres, params != null ? params : new Object[] {});
+        }
+        return table.delete(/**/ fc.getWhere(), fc.getWheres());
+    }
+
     public int update(Map<String, Object> dat) throws CruxException {
         FetchCase  fc = fetchCase();
         if (wheres != null) {

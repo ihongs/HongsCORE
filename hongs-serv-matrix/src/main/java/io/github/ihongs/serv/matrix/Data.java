@@ -998,7 +998,7 @@ public class Data extends SearchEntity {
         if (rtime == 0L) {
             Map od = sc
                 .filter( where, param)
-            //  .assort("etime  DESC")
+            //  .assort("ctime  DESC")
                 .select("state, data")
                 .getOne( );
             if (Synt.declare(od.get("state"), 0) > 0) {
@@ -1017,7 +1017,7 @@ public class Data extends SearchEntity {
         // 获取当前数据
         Map od = sc
             .filter( where, param)
-        //  .assort("etime  DESC")
+        //  .assort("ctime  DESC")
             .select("ctime")
             .getOne( );
         if (od.isEmpty()) {
@@ -1041,6 +1041,7 @@ public class Data extends SearchEntity {
             throw new CruxException(400, "@matrix:matrix.node.is.current", getFormId(), id, ctime);
         }}
 
+        /*
         // 处理不可逆值
         Map xd , zd ;
         Map dd = getData((String) sd.get("data"));
@@ -1048,17 +1049,22 @@ public class Data extends SearchEntity {
         if (null != ur && ! ur.isEmpty( ) ) {
             zd = getData((String) od.get("data"));
             xd = new HashMap ( ur.size( ) );
-            for( Object n : ur /****/ ) {
+            for( Object n : ur  ) {
             if ( zd . containsKey (n) ) {
                 xd.put( n , zd.get(n) );
             }}
         } else {
             xd = new HashMap(00);
         }
+        */
+
+        // 从快照再构建
+        Map dd = getData((String) sd.get("data"));
+        Map xd = new HashMap(00);
+        padDif(dd, xd);
 
         // 保存到文档库
         dd.put(Cnst.ID_KEY , id);
-        padDif(dd, xd);
         Document dc = padDoc(dd);
         setDoc(id, dc);
 
@@ -1073,9 +1079,8 @@ public class Data extends SearchEntity {
         nd.put(  "id" ,  id  );
 
         // 数据快照和日志标题
-        nd.put("__data__", dd);
-        nd.put("data", getData(dd));
-        nd.put("name", getTval(dd, "name"));
+        nd.put("data", sd.get("data"));
+        nd.put("name", sd.get("name"));
 
         // 操作备注和终端代码
         if (rd.containsKey("memo")) {

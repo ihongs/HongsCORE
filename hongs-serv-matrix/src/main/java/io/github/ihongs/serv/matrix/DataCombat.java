@@ -120,6 +120,7 @@ public class DataCombat {
             "cascades:b",
             "includes:b",
             "incloses:b",
+            "rollback:b",
             "!A",
             "?Usage: revert --conf CONF_NAME --form FORM_NAME [--time TIMESTAMP] ID0 ID1 ..."
         });
@@ -127,17 +128,7 @@ public class DataCombat {
         String conf = (String) opts.get("conf");
         String form = (String) opts.get("form");
         Data dr = Data.getInstance(conf, form );
-
-        /**
-         * 级联更新操作
-         * 默认不作级联
-         */
-        Casc da = new Casc(
-             dr ,
-             Synt.declare (opts.get("cascades"), false),
-             Synt.declare (opts.get("includes"), false),
-             Synt.declare (opts.get("incloses"), false)
-        );
+        Casc da = new Casc(dr, opts);
 
         revert(da, opts);
     }
@@ -245,17 +236,16 @@ public class DataCombat {
         if ( ct  !=  0  ) {
         for(Map od : lp ) {
             String id = ( String ) od.get( Cnst.ID_KEY ) ;
+            sd.put( "name" , od.get( "name"));
+            sd.put( "data" , od.get( "data"));
+            sd.put("rtime" , od.get("ctime"));
             if (Synt.declare(od.get("etime"), 0L) != 0L) {
             if (Synt.declare(od.get("state"), 1 ) >= 1 ) {
-                sd.put("rtime" , od.get("ctime"));
-                sd.put( "data" , od.get( "data"));
                 da.rev(id,sd,tc);
             }  else {
                 da.del(id,sd,tc);
             }} else {
             if (Synt.declare(od.get("state"), 1 ) >= 1 ) {
-                sd.put("rtime" , od.get("ctime"));
-                sd.put( "data" , od.get( "data"));
                 da.rev(id,sd);
             }  else {
                 da.del(id,sd);
@@ -274,9 +264,9 @@ public class DataCombat {
         }} else {
         for(Map od : lp ) {
             String id = ( String ) od.get( Cnst.ID_KEY ) ;
+            sd.put("rtime" , od.get("ctime"));
+            sd.put( "data" , od.get( "data"));
             if (Synt.declare(od.get("state"), 1 ) >= 1 ) {
-                sd.put("rtime" , od.get("ctime"));
-                sd.put( "data" , od.get( "data"));
                 da.rev(id,sd);
             }  else {
                 da.del(id,sd);
@@ -741,14 +731,16 @@ public class DataCombat {
         protected final boolean cascades;
         protected final boolean includes;
         protected final boolean incloses;
+        protected final boolean rollback;
         protected final Consumer<Map> dc;
 
-        public Casc (Data data, boolean cascades, boolean includes, boolean incloses)
+        public Casc (Data data, boolean cascades, boolean includes, boolean incloses, boolean rollback)
         throws CruxException {
             this.that  =  data;
             this.cascades = cascades;
             this.includes = includes;
             this.incloses = incloses;
+            this.rollback = rollback;
 
             // 解密, 用于下方数据恢复
             Table tb = data.getTable();
@@ -759,62 +751,78 @@ public class DataCombat {
             }
         }
 
+        public Casc (Data data, Map opts)
+        throws CruxException {
+            this(
+                data,
+                Synt.declare (opts.get("cascades"), false),
+                Synt.declare (opts.get("includes"), false),
+                Synt.declare (opts.get("incloses"), false),
+                Synt.declare (opts.get("rollback"), false)
+            );
+        }
+
         public Data getInstance() {
             return that;
         }
 
-        public void pad(String id, Map  od) throws CruxException {
-            if (includes) that.includes(od);
-            if (incloses) that.incloses(od);
-        }
-
-        public void set(String id, Document doc) throws CruxException {
-            that.setDoc(id, doc);
-        }
-
         public void rev(String id, Map sd, long ctime) throws CruxException {
             try {
+                // 解密并解析
+                dc.accept(sd);
+                Map dd = that.getData((String) sd.get("data"));
+                long rtime = Synt.declare(sd.get("rtime"), 0L);
 
-            // 解密并解析
-            dc.accept(sd);
-            Map od = that.getData((String) sd.get("data"));
-            long rtime = Synt.declare(sd.get("rtime"), 0L);
+                // 填充并写入
+                pad( id, dd );
+                set( id, dd );
 
-            // 填充并写入
-            pad(id , od);
-            set(id , that.padDoc(od) );
+            if (rollback) {
+                FenceCase sc = that.fenceCase ( );
+                Object[] param = new Object[] {id, rtime};
+                String   where = "`id`=? AND `ctime`=?";
+                String   wher2 = "`id`=? AND `ctime`>?";
 
-            Map ud = new HashMap();
-            ud.put("etime", ctime);
+                Map ud = new HashMap();
+                ud.put("etime",   0  );
 
-            Map nd = new HashMap();
-            nd.put("ctime", ctime);
-            nd.put("rtime", rtime);
-            nd.put("etime",   0  );
-            nd.put("state",   3  );
-            nd.put(  "id" ,  id  );
+                sc.filter(wher2, param);
+                sc.delete(  );
 
-            // 数据快照和日志标题
-            nd.put("__data__", od);
-            nd.put("data", that.getData(od));
-            nd.put("name", that.getTval(od, "name"));
+                sc.filter(where, param);
+                sc.update(ud);
+            } else {
+                FenceCase sc = that.fenceCase ( );
+                Object[] param = new String[] {id, "0"};
+                String   where = "`id`=? AND `etime`=?";
 
-            // 操作备注和终端代码
-            if (od.containsKey("memo")) {
-                nd.put("memo", that.getTval(sd, "memo"));
-            }
-            if (od.containsKey("meno")) {
-                nd.put("meno", that.getTval(sd, "meno"));
-            }
+                Map ud = new HashMap();
+                ud.put("etime", ctime);
 
-            FenceCase sc = that.fenceCase ( );
-            Object[] param = new String[] {id, "0"};
-            String   where = "`id`=? AND `etime`=?";
-            sc.filter(where, param);
+                Map nd = new HashMap();
+                nd.put("ctime", ctime);
+                nd.put("rtime", rtime);
+                nd.put("etime",   0  );
+                nd.put("state",   3  );
+                nd.put(  "id" ,  id  );
 
-            sc.update(ud);
-            sc.insert(nd);
+                // 数据快照和日志标题
+                nd.put("data", sd.get("data"));
+                nd.put("name", sd.get("name"));
 
+                // 操作备注和终端代码
+                if (sd.containsKey("memo")) {
+                    nd.put("memo", that.getTval(sd, "memo"));
+                }
+                if (sd.containsKey("meno")) {
+                    nd.put("meno", that.getTval(sd, "meno"));
+                }
+
+                sc.filter(where, param);
+                sc.update(ud);
+
+                sc.insert(nd);
+            } // End rollback
             } catch (Exception ex) {
                 throw new Exid(ex, id);
             }
@@ -822,15 +830,13 @@ public class DataCombat {
 
         public void rev(String id, Map sd) throws CruxException {
             try {
+                // 解密并解析
+                dc.accept(sd);
+                Map dd = that.getData((String) sd.get("data"));
 
-            // 解密并解析
-            dc.accept(sd);
-            Map od = that.getData((String) sd.get("data"));
-
-            // 填充并写入
-            pad(id , od);
-            set(id , that.padDoc(od) );
-
+                // 填充并写入
+                pad( id, dd );
+                set( id, dd );
             } catch (Exception ex) {
                 throw new Exid(ex, id);
             }
@@ -838,7 +844,56 @@ public class DataCombat {
 
         public void del(String id, Map sd, long ctime) throws CruxException {
             try {
-                that.del(id,sd, ctime);
+                that.delDoc(id);
+
+                long rtime = Synt.declare(sd.get("rtime"), 0L);
+
+            if (rollback) {
+                FenceCase sc = that.fenceCase ( );
+                Object[] param = new Object[] {id, rtime};
+                String   where = "`id`=? AND `ctime`=?";
+                String   wher2 = "`id`=? AND `ctime`>?";
+
+                Map ud = new HashMap();
+                ud.put("etime",   0  );
+
+                sc.filter(wher2, param);
+                sc.delete(  );
+
+                sc.filter(where, param);
+                sc.update(ud);
+            } else {
+                FenceCase sc = that.fenceCase ( );
+                Object[] param = new String[] {id, "0"};
+                String   where = "`id`=? AND `etime`=?";
+
+                Map ud = new HashMap();
+                ud.put("etime", ctime);
+
+                Map nd = new HashMap();
+                nd.put("ctime", ctime);
+                nd.put("rtime", rtime);
+                nd.put("etime",   0  );
+                nd.put("state",   0  );
+                nd.put(  "id" ,  id  );
+
+                // 数据快照和日志标题
+                nd.put("data", sd.get("data"));
+                nd.put("name", sd.get("name"));
+
+                // 操作备注和终端代码
+                if (sd.containsKey("memo")) {
+                    nd.put("memo", that.getTval(sd, "memo"));
+                }
+                if (sd.containsKey("meno")) {
+                    nd.put("meno", that.getTval(sd, "meno"));
+                }
+
+                sc.filter(where, param);
+                sc.update(ud);
+
+                sc.insert(nd);
+            } // End rollback
             } catch (Exception ex) {
                 throw new Exid(ex, id);
             }
@@ -846,10 +901,19 @@ public class DataCombat {
 
         public void del(String id, Map sd) throws CruxException {
             try {
-                that.delDoc   (id);
+                that.delDoc(id);
             } catch (Exception ex) {
                 throw new Exid(ex, id);
             }
+        }
+
+        public void pad(String id, Map dd) throws CruxException {
+            if (includes) that.includes(dd);
+            if (incloses) that.incloses(dd);
+        }
+
+        public void set(String id, Map dd) throws CruxException {
+            that.setDoc(id, that.padDoc(dd));
         }
 
         public void commit( ) {

@@ -103,12 +103,12 @@
         });
         $("#prog1").click(function() {
             var box = $.hsWait("开始上传 C:\\WINDOWS\\SYSTEM32\\CONFIG\\SYSTEM");
-            box.setProgress();
         });
         $("#prog2").click(function() {
             var box = $.hsWait("开始上传 C:\\WINDOWS\\SYSTEM32\\CONFIG\\SYSTEM");
             var cnt = 0;
             var ord = 1;
+            var tim = new Date().getTime();
             setInterval(function() {
                 if (ord) {
                     cnt += Math.floor(Math.random() * 100) % 5 ;
@@ -123,7 +123,7 @@
                         ord = 1 ;
                     }
                 }
-                box.setProgress(cnt / 100);
+                box.progress(cnt / 100, new Date().getTime() - tim);
             } , 100);
         });
 

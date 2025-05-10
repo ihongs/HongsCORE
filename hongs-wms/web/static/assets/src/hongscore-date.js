@@ -304,8 +304,8 @@
              * 当前时间和取消设置等
              */
             box. find ('span').last()
-               .append('<a href="javascript:;" title="'+hsGetLang('time.today.title')+'" class="today bi bi-hi-time"  ></a>')
-               .append('<a href="javascript:;" title="'+hsGetLang('time.clear.title')+'" class="clear bi bi-hi-delete"></a>');
+               .append('<a href="javascript:;" title="'+hsGetLang('time.today.tip')+'" class="today bi bi-hi-time"  ></a>')
+               .append('<a href="javascript:;" title="'+hsGetLang('time.clear.tip')+'" class="clear bi bi-hi-delete"></a>');
 
             /**
              * 输入框组是不可嵌套的

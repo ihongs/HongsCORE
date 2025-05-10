@@ -2319,11 +2319,24 @@ $.hsWait = function(msg, xhr, xhu) {
     var mod = box.closest(".modal");
     var bar = box.find(".progress-bar");
     var per = box.find(".progress-per");
-    var stt = 0; // 开始时间, 正数: 执行时间, 负数: 剩余时间
-    var pct = 0; // 执行进度, [0.00,1.00]
+
+    // 百分保留两位小数, 小数位补 0
+    function progcent(pct) {
+        var pzt = ""+(Math.ceil(pct * 100) / 100);
+        if (/^\d+$/.test(pzt)) {
+            pzt = pzt +".00%";
+        } else
+        if (/\.\d$/.test(pzt)) {
+            pzt = pzt +  "0%";
+        } else
+        {
+            pzt = pzt +   "%";
+        }
+        return pzt ;
+    }
 
     // 剩余时间文本表示, h:mm:ss
-    function getProgtime (rtt) {
+    function progtime(rtt) {
         var ctt, snt;
         snt  =  ""  ;
         rtt  = Math.round(rtt /1000); // 精确到秒
@@ -2340,93 +2353,45 @@ $.hsWait = function(msg, xhr, xhu) {
         return snt ;
     }
 
-    // 百分保留两位小数, 小数位补 0
-    function getProgcent (pct) {
-        var pzt = "" + (Math.round(pct * 100 * 100) / 100);
-        if (/^\d+$/.test(pzt)) {
-            pzt = pzt +".00%";
-        } else
-        if (/\.\d$/.test(pzt)) {
-            pzt = pzt +  "0%";
-        } else
-        {
-            pzt = pzt +   "%";
-        }
-        return pzt ;
-    }
-
-    box.remaining = hsGetLang("time.remaining");
-    box.consuming = hsGetLang("time.consuming");
-
-    box.getStarting = function() {
-        return stt ;
-    };
-    box.getProgress = function() {
-        return pct ;
-    };
-    box.setStarting = function(ctt) {
-        stt  = ctt ;
-    };
-    box.setProgress = function(pzt) {
-        if (isNaN   (pct)
-        || !isFinite(pct)) {
-            box.prog(1.0, "...");
-            return ;
-        }
-        if (stt < 0 && pct == 0) {
-            box.prog(0.0, "0%" );
-            return ;
-        }
-
-        pct  = pzt ;
-
-        var ctt ;
-        if (stt < 0) {
-            ctt = new Date().getTime() + stt;
-            ctt = ctt / pct - ctt ; // 剩余时间
-            ctt = getProgtime(ctt);
-            pzt = getProgcent(pzt);
-            pzt = pzt + " " + box.remaining + " " + ctt;
-        } else
-        if (stt > 0) {
-            ctt = new Date().getTime() - stt;
-            ctt = getProgtime(ctt);
-            pzt = getProgcent(pzt);
-            pzt = pzt + " " + box.consuming + " " + ctt;
-        } else {
-            pzt = getProgcent(pzt);
-        }
-
-        box.prog( pct , pzt );
-    };
-    box.prog = function(pct, tip) {
-        if (isNaN   (pct)
-        || !isFinite(pct)) {
-            pct = 1.0;
-        } else
-        if (pct > 1.0) {
-            pct = 1.0;
-        } else
-        if (pct < 0.0) {
-            pct = 0.0;
-        }
-
-        pct *= 100;
+    box.progress = function(pct , tip) {
+        pct *= 100 ;
         bar.css ( "width" , pct + "%");
         bar.attr("aria-valuenow", pct);
-        per.text( tip || "..." );
+
+        // 时间提示
+        if (typeof tip == "number") {
+            var tim = tip ;
+            if (tim < 0.0) {
+                tim = Math.abs(tim);
+                pct = progcent(pct);
+                tim = progtime(tim);
+                tip = pct +" "+box.remaining+" "+ tim;
+            } else
+            if (tim > 0.0) {
+                pct = progcent(pct);
+                tim = progtime(tim);
+                tip = pct +" "+box.consuming+" "+ tim;
+            } else
+            {
+                tip = progcent(pct);
+            }
+        }
+
+        per.text(tip || "");
     };
     box.hide = function() {
         mod.modal("hide");
     };
-    box.done = function() {}; // 全部完成
     box.over = function() {}; // 发送完成
+    box.done = function() {}; // 全部完成
+    box.remaining = hsGetLang("time.remaining"); // 剩余时间
+    box.consuming = hsGetLang("time.consuming"); // 已用时间
 
     if (xhu)
     xhu.addEventListener("progress", function(evt) {
         if (evt.lengthComputable) {
             var pct  = evt.loaded / evt.total;
-            box.setProgress (pct) ;
+            box.progress(pct,0.0);
             if (pct >= 1.0) {
                 box.over( );
             }

@@ -2353,6 +2353,44 @@ $.hsWait = function(msg, xhr, xhu) {
         return snt ;
     }
 
+    // 旧版方案, 不建议用, 改用下面 progress
+    var stt = 0; // 开始时间, 正数: 执行时间, 负数: 剩余时间
+    var pct = 0; // 执行进度, [0.00,1.00]
+    box.getStarting = function() {
+        return stt ;
+    };
+    box.getProgress = function() {
+        return pct ;
+    };
+    box.setStarting = function(ctt) {
+        stt  = ctt ;
+    };
+    box.setProgress = function(pzt) {
+        pct  = pzt ;
+
+        if (isNaN   (pct)
+        || !isFinite(pct)) {
+            box.progress(1.0, "...");
+            return;
+        }
+        if (stt < 0 && pct <= 0) {
+            box.progress(0.0, "...");
+            return;
+        }
+
+        if (stt < 0) {
+            pzt = new Date().getTime( ) + stt;
+            pzt = 0 - (pzt / pct - pzt); // 剩余时间
+        } else
+        if (stt > 0) {
+            pzt = new Date().getTime( ) - stt;
+        } else {
+            pzt = "...";
+        }
+
+        box.progress(pct, pzt);
+    };
+
     box.progress = function(pct , tip) {
         pct *= 100 ;
         bar.css ( "width" , pct + "%");

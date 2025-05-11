@@ -2390,10 +2390,12 @@ $.hsWait = function(msg, xhr, xhu) {
     if (xhu)
     xhu.addEventListener("progress", function(evt) {
         if (evt.lengthComputable) {
-            var pct  = evt.loaded / evt.total;
-            box.progress(pct,0.0);
-            if (pct >= 1.0) {
-                box.over( );
+            var pct = evt.loaded / evt.total;
+            if (pct < 1.0) {
+                box.progress(pct,  0.0 );
+            } else {
+                box.progress(pct, "...");
+                box.over();
             }
         }
     } , false );

@@ -155,7 +155,7 @@ public class AutoFilter extends ActionDriver {
                 return;
             }
 
-            if (ActionRunner.getActions().containsKey(act) == false) {
+            if (! ActionRunner.getActions().containsKey(act)) {
                 for(String axt: getacts()) {
                     if (act.endsWith(axt)) {
                         if (cstset.contains(axt)) {
@@ -168,14 +168,19 @@ public class AutoFilter extends ActionDriver {
                 }
             }
         } else {
-            // 默认引导页总是叫 default.html
+            // 默认引导页总叫 default.html
             if (url.endsWith("/")) {
                 url  = url + "default.html";
             }
 
-            if (new File(Core.BASE_PATH + url).exists() == false) {
+            if (! new File(Core.BASE_PATH + url).exists()) {
                 // xxx.xxx > xxx.xxx.jsp
                 String jsp = url + ".jsp";
+
+                if (new File(Core.BASE_PATH + jsp).exists()) {
+                    forward ( req, rsp, url , jsp);
+                    return;
+                }
 
                 for(String uri: getlays()) {
                     if (jsp.endsWith(uri)) {
@@ -267,7 +272,7 @@ public class AutoFilter extends ActionDriver {
                               .getMclass( );
         } catch ( NullPointerException ex ) {
             throw new CruxExemption(ex, 1130,
-                "Auto action '" + action.substring(1) + "/search' is not exists");
+                 "Auto action '" + action.substring(1) + "/search' is not exists");
         }
 
         cstset = new HashSet();

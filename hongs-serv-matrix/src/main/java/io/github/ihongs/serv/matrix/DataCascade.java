@@ -36,31 +36,31 @@ import java.util.Set;
  *
  * @author Hongs
  */
-public class DataCascad {
+public class DataCascade {
 
     private enum ACTION {UPDATE, DELETE};
 
-    private static final Async QUEUE = new Queue();
+    private static final Async PIPE = new Pipe();
 
-    private static final class Queue extends Async <Group> {
+    private static final class Pipe extends Async<Part> {
 
-        public Queue () {
+        public Pipe () {
             super ("matrix.cascade", Integer.MAX_VALUE, 1);
         }
 
         @Override
-        public void run (Group group) {
-            group.run();
+        public void run (Part part) {
+            part.run();
         }
     }
 
-    private static final class Group implements  Runnable  {
+    private static final class Part implements Runnable {
 
         public final     ACTION  ac;
         public final     Object  id;
         public final Set<String> aq;
 
-        public Group(Set<String> aq, Object id, ACTION ac) {
+        public Part (Set<String> aq, Object id, ACTION ac) {
             this.aq = aq;
             this.id = id;
             this.ac = ac;
@@ -76,8 +76,8 @@ public class DataCascad {
                 hlpr.setSessibute (Cnst.UID_SES, Cnst.ADM_UID);
 
                 switch (ac) {
-                    case UPDATE: update (aq, id, time); break;
-                    case DELETE: delete (aq, id, time); break;
+                    case UPDATE: update( aq, id, time ); break;
+                    case DELETE: delete( aq, id, time ); break;
                 }
             }
             catch (Exception|Error e) {
@@ -95,7 +95,7 @@ public class DataCascad {
      * 
      * 仅能 get/put, 专供 Data 的 includes/incloses
      */
-    public static final class Mixes implements Map {
+    public static final class Mix implements Map {
 
         public final Map ND;
         public final Map OD;
@@ -104,7 +104,7 @@ public class DataCascad {
          * @param nd 目标数据
          * @param od 默认数据
          */
-        public Mixes(Map nd, Map od) {
+        public Mix(Map nd, Map od) {
             this.ND = nd;
             this.OD = od;
         }
@@ -190,7 +190,7 @@ public class DataCascad {
      */
     public static void update(Set<String> aq, Object id) {
         if (id != null && aq != null && ! aq.isEmpty( )) {
-            QUEUE.add (new Group(aq, id, ACTION.UPDATE));
+            PIPE.add( new Part(aq, id, ACTION.UPDATE) );
         }
     }
 
@@ -201,7 +201,7 @@ public class DataCascad {
      */
     public static void delete(Set<String> aq, Object id) {
         if (id != null && aq != null && ! aq.isEmpty( )) {
-            QUEUE.add (new Group(aq, id, ACTION.DELETE));
+            PIPE.add( new Part(aq, id, ACTION.DELETE) );
         }
     }
 

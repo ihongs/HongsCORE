@@ -1218,7 +1218,7 @@ public class Data extends SearchEntity {
      * @throws CruxException
      */
     protected int padDif(Map dd, Map rd) throws CruxException {
-        Map xd = new DataCascad.Mixes(rd, dd);
+        Map xd = new DataCascade.Mix(rd, dd);
 
         // 填充关联冗余
         includes(xd);
@@ -1617,13 +1617,13 @@ public class Data extends SearchEntity {
         // 放入队列, 异步处理
         if (rs != null && ! rs.isEmpty()) {
             for(Object id : rs) {
-                DataCascad.delete(rq, id);
-                DataCascad.update(vq, id);
+                DataCascade.delete(rq,id);
+                DataCascade.update(vq,id);
             }
         }
         if (us != null && ! us.isEmpty()) {
             for(Object id : us) {
-                DataCascad.update(uq, id);
+                DataCascade.update(uq,id);
             }
         }
     }

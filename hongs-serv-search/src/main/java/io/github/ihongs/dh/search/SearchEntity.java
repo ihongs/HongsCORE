@@ -5,6 +5,7 @@ import io.github.ihongs.CruxException;
 import io.github.ihongs.action.FormSet;
 import io.github.ihongs.dh.lucene.LuceneRecord;
 import io.github.ihongs.dh.lucene.conn.Lost;
+import java.io.IOException;
 
 import java.util.List;
 import java.util.Map;
@@ -111,6 +112,27 @@ public class SearchEntity extends LuceneRecord {
             super.permit(rd, ids, ern);
         } catch (Lost e) {
             super.permit(rd, ids, ern);
+        }
+    }
+
+    @Override
+    public void commit() {
+        REFLUX_MODE = false;
+        Map<String, Document> writes = getWrites();
+        if (writes.isEmpty()) {
+            return;
+        }
+        try {
+            // 失败重试
+            try {
+                getDbConn().write(writes);
+            } catch (IOException ex) {
+                getDbConn().write(writes);
+            }
+        } catch (IOExceptoin ex) {
+            throw new Lost(ex, "@core.conn.lost.writer");
+        } finally {
+            writes.clear( );
         }
     }
 

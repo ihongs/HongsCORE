@@ -4,7 +4,6 @@ import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLogger;
-import io.github.ihongs.CruxCause;
 import io.github.ihongs.CruxException;
 import io.github.ihongs.CruxExemption;
 import io.github.ihongs.action.FormSet;
@@ -14,6 +13,7 @@ import io.github.ihongs.dh.IReflux;
 import io.github.ihongs.dh.lucene.conn.Conn;
 import io.github.ihongs.dh.lucene.conn.ConnGetter;
 import io.github.ihongs.dh.lucene.conn.DirectConn;
+import io.github.ihongs.dh.lucene.conn.Lost;
 import io.github.ihongs.dh.lucene.query.*;
 import io.github.ihongs.dh.lucene.quest.*;
 import io.github.ihongs.dh.lucene.stock.*;
@@ -726,9 +726,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             } else {
                 return null;
             }
-        } catch (IOException ex) {
-            throw new Lost(ex, "@core.conn.lost.reader");
         } catch (AlreadyClosedException ex) {
+            throw new Lost(ex, "@core.conn.lost.reader");
+        } catch (IOException ex) {
             throw new Lost(ex, "@core.conn.lost.reader");
         }
     }
@@ -1788,8 +1788,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             getDbConn().write(writes);
         } catch (IOException ex) {
             throw new Lost(ex, "@core.conn.lost.writer");
+        } finally {
+            writes.clear( );
         }
-        writes.clear();
     }
 
     /**
@@ -1801,7 +1802,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         if (writes.isEmpty()) {
             return;
         }
-        writes.clear();
+        /**/writes.clear( );
     }
 
     //** 底层方法 **/
@@ -1858,6 +1859,10 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             CoreLogger . trace ("Lucene conn to {} by {}" , dn , cn);
         }}
         return dbconn;
+    }
+
+    protected Map<String, Document> getWrites() {
+        return writes;
     }
 
     public IndexWriter getWriter() throws CruxException {
@@ -2235,28 +2240,16 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         }
 
         @Override
-        public boolean  hasNext( ) {
-            try {
-                return loop.hasNext();
-            } catch (CruxExemption e) {
-                throw new Lost (e, "@core.conn.lost.reader");
-            }
+        public boolean  hasNext() {
+            return loop.hasNext();
         }
 
         public ScoreDoc nextOne( ) {
-            try {
-                return loop.next();
-            } catch (CruxExemption e) {
-                throw new Lost (e, "@core.conn.lost.reader");
-            }
+            return loop.next();
         }
 
         public Document currDoc( ) {
-            try {
-                return loop.curr();
-            } catch (CruxExemption e) {
-                throw new Lost (e, "@core.conn.lost.reader");
-            }
+            return loop.curr();
         }
 
         @Override
@@ -2342,25 +2335,6 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                  .append(loop. toString())
                  .toString( );
         }
-    }
-
-    /**
-     * 查询中断异常
-     */
-    public static class Lost extends CruxExemption {
-
-        public Lost (AlreadyClosedException cause, String error) {
-            super(cause, 1031, error);
-        }
-
-        public Lost (IOException cause, String error) {
-            super(cause, 1031, error);
-        }
-
-        public Lost (CruxCause ex, String error) {
-            super(ex.getCause(), 1031, error);
-        }
-
     }
 
 }

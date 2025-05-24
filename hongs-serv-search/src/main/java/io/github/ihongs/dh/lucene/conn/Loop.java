@@ -77,7 +77,7 @@ public class Loop implements Iterable<ScoreDoc>, Iterator<ScoreDoc> {
             schr = p;
             fids = schr.storedFields();
         } catch (IOException e) {
-            throw new CruxExemption(e);
+            throw new Lost(e, "@core.conn.lost.reader");
         }
     }
 
@@ -125,8 +125,10 @@ public class Loop implements Iterable<ScoreDoc>, Iterator<ScoreDoc> {
                 i    = 0;
             }
             return i < h;
-        } catch (IOException|AlreadyClosedException e) {
-            throw new CruxExemption ( e );
+        } catch (AlreadyClosedException e) {
+            throw new Lost(e, "@core.conn.lost.reader");
+        } catch (IOException e) {
+            throw new Lost(e, "@core.conn.lost.reader");
         }
     }
 
@@ -145,8 +147,8 @@ public class Loop implements Iterable<ScoreDoc>, Iterator<ScoreDoc> {
             return fids.document(doc.doc, r);
         } catch (NullPointerException e ) {
             throw new NullPointerException("hasNext not run?");
-        } catch (IOException|AlreadyClosedException e) {
-            throw new CruxExemption ( e );
+        } catch (IOException e) {
+            throw new Lost(e, "@core.conn.lost.reader");
         }
     }
 
@@ -176,9 +178,11 @@ public class Loop implements Iterable<ScoreDoc>, Iterator<ScoreDoc> {
         }
         if (! T) try {
             T =  true;
-            H = (long) schr . count(q);
-        } catch (IOException|AlreadyClosedException e) {
-            throw new CruxExemption(e);
+            H = (long) schr.count(q);
+        } catch (AlreadyClosedException e) {
+            throw new Lost(e, "@core.conn.lost.reader");
+        } catch (IOException e) {
+            throw new Lost(e, "@core.conn.lost.reader");
         }
         return H ;
     }

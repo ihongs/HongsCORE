@@ -8,7 +8,9 @@ import java.util.Map;
 /**
  * 数据限定表
  *
- * 注意: filter/assort/select 并非追加, 多次调会覆盖
+ * 注意: filter/select/assort 并非追加, 多次调会覆盖.
+ * 如需增加限定和补充记录可重写 Data.fenceCase(),
+ * 返回新限定对象继承此类并重写 fetchCase,insert.
  *
  * @author Hongs
  */

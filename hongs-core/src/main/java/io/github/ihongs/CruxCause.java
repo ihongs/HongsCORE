@@ -72,7 +72,7 @@ public interface CruxCause
      * @param ern
      * @return
      */
-    public default boolean like (int ern) {
+    public default boolean like(int ern) {
         return getErrno() == ern;
     }
 
@@ -81,8 +81,12 @@ public interface CruxCause
      * @param err
      * @return
      */
-    public default boolean like (String err) {
-        return getError().equals(err);
+    public default boolean like(String err) {
+        String ero = getError( );
+        if (ero != null) {
+          return ero.equals(err);
+        }
+        return false;
     }
 
 }

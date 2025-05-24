@@ -122,19 +122,19 @@ public final class CruxDemon {
         String  errox;
 
         R: {
-            CoreConfig conf = getConfig( );
+            CoreConfig cc = getConfig();
 
             if ( mark != null && ! mark.isEmpty()) {
-                errox  = conf.getProperty(mark);
+                errox  = cc.getProperty(mark);
                 if (errox != null) break R;
             }
 
             if (errno >= 600 ) {
-                errox  = conf.getProperty("Ex" + Integer.toString(errno, 10));
+                errox  = cc.getProperty("Ex" + Integer.toString(errno, 10));
                 if (errox != null) break R;
             } else
             if (errno >= 400 ) {
-                errox  = conf.getProperty("Er" + Integer.toString(errno, 10));
+                errox  = cc.getProperty("Er" + Integer.toString(errno, 10));
                 if (errox != null) break R;
             }
 
@@ -173,19 +173,19 @@ public final class CruxDemon {
         String  errox;
 
         R: {
-            CoreConfig conf = getLocale( );
+            CoreConfig cl = getLocale();
 
             if ( mark != null && ! mark.isEmpty()) {
-                errox  = conf.getProperty(mark);
+                errox  = cl.getProperty(mark);
                 if (errox != null) break R;
             }
 
             if (errno >= 600 ) {
-                errox  = conf.getProperty("Ex" + Integer.toString(errno, 10));
+                errox  = cl.getProperty("Ex" + Integer.toString(errno, 10));
                 if (errox != null) break R;
             } else
             if (errno >= 400 ) {
-                errox  = conf.getProperty("Er" + Integer.toString(errno, 10));
+                errox  = cl.getProperty("Er" + Integer.toString(errno, 10));
                 if (errox != null) break R;
             }
 

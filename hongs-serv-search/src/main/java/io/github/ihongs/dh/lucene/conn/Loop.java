@@ -1,6 +1,5 @@
 package io.github.ihongs.dh.lucene.conn;
 
-import io.github.ihongs.CruxExemption;
 import io.github.ihongs.util.Syno;
 import java.io.IOException;
 import java.util.Iterator;

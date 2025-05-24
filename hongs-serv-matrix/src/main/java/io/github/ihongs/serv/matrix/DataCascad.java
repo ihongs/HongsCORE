@@ -36,7 +36,7 @@ import java.util.Set;
  *
  * @author Hongs
  */
-public class Casc {
+public class DataCascad {
 
     private enum ACTION {UPDATE, DELETE};
 

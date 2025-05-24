@@ -194,11 +194,14 @@ public class DirectConn implements Conn {
 
     @Override
     public void write(Map<String, Document> docs) throws IOException {
-        IndexWriter iw = getWriter();
-
+        if (docs == null || docs.isEmpty()) {
+            return;
+        }
+        
         RL.writeLock().lock();
         try {
-            if (docs != null)
+            IndexWriter  iw = getWriter  ();
+
             for(Map.Entry<String, Document> et : docs.entrySet()) {
                 String   id = et.getKey  ();
                 Document dc = et.getValue();

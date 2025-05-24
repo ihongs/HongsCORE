@@ -5,16 +5,15 @@ import io.github.ihongs.CruxException;
 import io.github.ihongs.action.FormSet;
 import io.github.ihongs.dh.lucene.LuceneRecord;
 
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import org.apache.lucene.document.Document;
 
 /**
  * 搜索记录
  *
  * 经过重构, 已与父类无差异;
- * 当查询获取连接中断异常时,
- * 将会尝试再查询并获取一次.
+ * 当查询或提交时连接被中断,
+ * 将会尝试重新执行一遍操作.
  *
  * @author Hongs
  */
@@ -64,57 +63,31 @@ public class SearchEntity extends LuceneRecord {
     }
 
     @Override
-    protected void permit(Map rd, Set ids, int ern)
+    public Document getDoc(String id)
     throws CruxException {
-        /**
-         * 遇到中途关闭情况再查一遍
-         * 还那么倒霉只好就这样算了
-         * 下同此
-         */
         try {
-            super.permit(rd, ids, ern);
+            return super.getDoc(id);
         } catch (Lost e) {
-            super.permit(rd, ids, ern);
+            return super.getDoc(id);
         }
     }
 
     @Override
-    public Map  search(Map rd)
+    public Loop search(Map rd, int begin, int limit)
     throws CruxException {
         try {
-            return super.search(rd);
+            return super.search(rd, begin, limit);
         } catch (Lost e) {
-            return super.search(rd);
+            return super.search(rd, begin, limit);
         }
     }
 
     @Override
-    public Map  get(String id)
-    throws CruxException {
+    public void commit() {
         try {
-            return super.get(id);
+            super.commit();
         } catch (Lost e) {
-            return super.get(id);
-        }
-    }
-
-    @Override
-    public Map  getOne(Map rd)
-    throws CruxException {
-        try {
-            return super.getOne(rd);
-        } catch (Lost e) {
-            return super.getOne(rd);
-        }
-    }
-
-    @Override
-    public List getAll(Map rd)
-    throws CruxException {
-        try {
-            return super.getAll(rd);
-        } catch (Lost e) {
-            return super.getAll(rd);
+            super.commit();
         }
     }
 

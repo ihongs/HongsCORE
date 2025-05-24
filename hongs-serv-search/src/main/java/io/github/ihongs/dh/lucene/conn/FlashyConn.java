@@ -215,11 +215,14 @@ public class FlashyConn implements Conn {
 
     @Override
     public void write(Map<String, Document> docs) throws IOException {
-        IndexWriter iw = getWriter();
-
+        if (docs == null || docs.isEmpty()) {
+            return;
+        }
+        
         RL.writeLock().lock();
         try {
-            if (docs != null)
+            IndexWriter  iw = getWriter  ();
+
             for(Map.Entry<String, Document> et : docs.entrySet()) {
                 String   id = et.getKey  ();
                 Document dc = et.getValue();
@@ -232,14 +235,14 @@ public class FlashyConn implements Conn {
                 count += 1;
             }
 
+            vary = true;
+
             // 超量冲刷, 后台执行
             if (count >= limit) {
                 count  = 0;
                 Chore.getInstance()
                      .exe( flushr );
             }
-
-            vary = true;
         } finally {
             RL.writeLock().unlock();
         }

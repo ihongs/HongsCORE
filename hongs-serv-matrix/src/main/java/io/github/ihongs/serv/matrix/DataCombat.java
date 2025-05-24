@@ -12,7 +12,6 @@ import io.github.ihongs.db.DB;
 import io.github.ihongs.db.PrivTable;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.db.link.Loop;
-import io.github.ihongs.db.util.FetchCase;
 import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
@@ -31,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
-import org.apache.lucene.document.Document;
 
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;

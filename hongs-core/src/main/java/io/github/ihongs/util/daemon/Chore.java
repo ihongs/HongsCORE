@@ -335,6 +335,9 @@ public final class Chore implements AutoCloseable {
                 synchronized(this) {
                     wait( );
                 }
+                if (stat.get( ) < 2) {
+                    stat.set(3);
+                }
             }
             if (fail != null) {
                 throw new ExecutionException(fail);
@@ -348,6 +351,9 @@ public final class Chore implements AutoCloseable {
                 stat.set(2);
                 synchronized(this) {
                     wait(unit.convert(timeout, TimeUnit.MILLISECONDS));
+                }
+                if (stat.get( ) < 2) {
+                    stat.set(3);
                 }
             }
             if (fail != null) {

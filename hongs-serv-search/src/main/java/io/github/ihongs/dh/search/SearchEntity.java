@@ -5,8 +5,8 @@ import io.github.ihongs.CruxException;
 import io.github.ihongs.action.FormSet;
 import io.github.ihongs.dh.lucene.LuceneRecord;
 import io.github.ihongs.dh.lucene.conn.Lost;
+import org.apache.lucene.document.Document;
 import java.io.IOException;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -129,7 +129,7 @@ public class SearchEntity extends LuceneRecord {
             } catch (IOException ex) {
                 getDbConn().write(writes);
             }
-        } catch (IOExceptoin ex) {
+        } catch (IOException ex) {
             throw new Lost(ex, "@core.conn.lost.writer");
         } finally {
             writes.clear( );

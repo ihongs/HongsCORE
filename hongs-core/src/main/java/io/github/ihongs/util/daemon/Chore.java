@@ -353,7 +353,7 @@ public final class Chore implements AutoCloseable {
                     wait(unit.convert(timeout, TimeUnit.MILLISECONDS));
                 }
                 if (stat.get( ) < 2) {
-                    stat.set(3);
+                    throw new TimeoutException ( );
                 }
             }
             if (fail != null) {

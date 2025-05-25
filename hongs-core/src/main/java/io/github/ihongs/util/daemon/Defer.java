@@ -27,8 +27,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * defer.cancel(true);
  *
  * // 任务循环中:
- * if (defer.interrupted()) {
- *     // 中止任务, 视情况 break 退出或 throw 异常等
+ * if (defer.interrupted() || Thread.interrupted()) {
+ *     // 中止之, 视情况 cancel 或 fail 后退出
  * }
  *
  * // 任务中结束(无结果):
@@ -145,7 +145,7 @@ public class Defer<T> implements Future<T>, AutoCloseable {
     }
 
     /**
-     * 任务取消或完成
+     * 任务结束(取消或完成)
      * @return
      */
     public boolean interrupted() {

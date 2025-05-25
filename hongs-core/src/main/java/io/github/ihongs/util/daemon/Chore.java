@@ -282,20 +282,12 @@ public final class Chore implements AutoCloseable {
 
         /**
          * @param task 任务
-         * @param name 对应 Core.ACTION_NAME
-         */
-        public Actor(Runnable task, String name) {
-            R= task;
-            N= name;
-            L= Core.ACTION_LANG.get();
-            Z= Core.ACTION_ZONE.get();
-        }
-
-        /**
-         * @param task 任务
          */
         public Actor(Runnable task) {
-            this(task, Core.ACTION_NAME.get() + ".run");
+            R= task;
+            N= Core.ACTION_NAME.get()+".run";
+            L= Core.ACTION_LANG.get();
+            Z= Core.ACTION_ZONE.get();
         }
 
         @Override

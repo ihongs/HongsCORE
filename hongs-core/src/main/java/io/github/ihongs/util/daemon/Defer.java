@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 特别注意:
  * 并不建议在多个线程内等待执行.
  * 如果需要在多个线程内等待 get,
- * Defer 第二参数务必设为 false.
+ * 务必设构造参数 multi 为 true.
  * </p>
  *
  * <h4>Usage:</h4>
@@ -67,25 +67,25 @@ public class Defer<T> implements Future<T>, AutoCloseable {
      * 立即开始, 单处等待
      */
     public Defer () {
-        this( true, true );
+        this( true, false);
     }
 
     /**
-     * @param init 是否立即开始
+     * @param begin 是否立即开始
      */
-    public Defer (boolean init) {
-        this( init, true );
+    public Defer (boolean begin) {
+        this(begin, false);
     }
 
     /**
-     * @param init 是否立即开始
-     * @param solo 是否单处等待
+     * @param begin 是否立即开始
+     * @param multi 是否多处等待
      */
-    public Defer (boolean init, boolean solo) {
-        this.stat = new AtomicInteger ( init ? 1 : 0 );
-        this.solo = solo;
-        this.fail = null;
-        this.data = null;
+    public Defer (boolean begin, boolean multi) {
+        stat = new AtomicInteger(begin ? 1 : 0);
+        solo = ! multi;
+        fail = null;
+        data = null;
     }
 
     /**

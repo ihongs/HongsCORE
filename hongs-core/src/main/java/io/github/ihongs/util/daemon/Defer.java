@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * final Defer defer = new Defer();
  * // 可以存入 GLOBAL_CORE 以便中止
  *
- * // 主程等待(有异常会抛出 ExecutionException):
+ * // 主程等待(异常会抛出 ExecutionException, 取消会抛出 CancellationException):
  * rs = defer.get();
  *
  * // 取消任务:

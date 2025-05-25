@@ -17,6 +17,12 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 复杂任务请用 Chore.run(task).
  * </p>
  *
+ * <p>
+ * 特别注意:
+ * 如果需要在多个线程内等待 get,
+ * Defer 第二参数务必设为 false.
+ * </p>
+ *
  * <h4>Usage:</h4>
  * <code>
  * final Defer defer = new Defer();

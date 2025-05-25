@@ -1,9 +1,11 @@
 package io.github.ihongs.util.daemon;
 
-import java.util.concurrent.ExecutionException;
+import java.util.function.Consumer;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -26,7 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * // 取消任务:
  * defer.cancel(true);
  *
- * // 任务循环中:
+ * // 任务执行中:
  * if (defer.interrupted() || Thread.interrupted()) {
  *     // 中止之, 视情况 cancel 或 fail 后退出
  * }
@@ -45,57 +47,89 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class Defer<T> implements Future<T>, AutoCloseable {
 
-    // 0 待运行 1 运行中 2 主程等待 3 中断 4 完成
-    final   AtomicInteger stat;
+    // 0 排队 1 运行 2 (排队)等待 3 (运行)等待 4 中断 5 完成
+    private final AtomicInteger stat;
+
+    private final boolean solo;
 
     private Throwable fail;
 
-    private T data ;
+    private T data;
 
-    public Defer( ) {
-        this (true);
+    /**
+     * 立即开始, 单处等待
+     */
+    public Defer () {
+        this( true, true );
     }
 
     /**
-     * @param begin 是否立即开始
+     * @param init 是否立即开始
      */
-    public Defer(boolean begin) {
-        stat = new AtomicInteger(begin ? 1 : 0);
-        fail = null;
-        data = null;
+    public Defer (boolean init) {
+        this( init, true );
     }
 
+    /**
+     * @param init 是否立即开始
+     * @param solo 是否单处等待
+     */
+    public Defer (boolean init, boolean solo) {
+        this.stat = new AtomicInteger ( init ? 1 : 0 );
+        this.solo = solo;
+        this.fail = null;
+        this.data = null;
+    }
+
+    /**
+     * @throws CancellationException {@inheritDoc}
+     */
     @Override
     public T get() throws InterruptedException, ExecutionException {
-        if (stat.get( ) < 2) {
-            stat.set(2);
-            synchronized(this) {
-                wait( );
+        int st = stat.getAndUpdate(t -> t < 2 ? t + 2 : t);
+        if (st <  4) { // 未结束则等待
+            synchronized (this) {
+                wait ( );
             }
-            if (stat.get( ) < 2) {
-                stat.set(3);
+            st = stat.get( );
+            if (st <  4) { // 未结束则取消
+                cancel(true);
+            }
+            if (st == 4) { // 取消则抛异常
+                throw new CancellationException();
             }
         }
+
         if (fail != null) {
             throw new ExecutionException(fail);
         }
+
         return data;
     }
 
+    /**
+     * @throws CancellationException {@inheritDoc}
+     */
     @Override
     public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-        if (stat.get( ) < 2) {
-            stat.set(2);
-            synchronized(this) {
+        int st = stat.getAndUpdate(t -> t < 2 ? t + 2 : t);
+        if (st <  4) { // 未结束则等待
+            synchronized (this) {
                 wait(unit.convert(timeout, TimeUnit.MILLISECONDS));
             }
-            if (stat.get( ) < 2) {
-                throw new TimeoutException ( );
+            st = stat.get( );
+            if (st <  4) { // 未结束则超时
+                throw new TimeoutException (/**/);
+            }
+            if (st == 4) { // 取消则抛异常
+                throw new CancellationException();
             }
         }
+
         if (fail != null) {
             throw new ExecutionException(fail);
         }
+
         return data;
     }
 
@@ -108,40 +142,37 @@ public class Defer<T> implements Future<T>, AutoCloseable {
         cancel(true);
     }
 
+    /**
+     * 取消任务
+     * @param  mayInterruptIfRunning 为 false 仅能取消未执行的任务
+     * @return mayInterruptIfRunning 为 false 则在执行中返回 false
+     */
     @Override
     public boolean cancel(boolean mayInterruptIfRunning) {
-        if (! mayInterruptIfRunning) {
-            int st = stat.get();
-            if (st < 1) {
-                stat.set(3);
-                return true;
+        if (mayInterruptIfRunning ) {
+            int st = stat.getAndUpdate(t -> t != 4 && t != 5 ? 4 : t); // 取消未结束的
+            if (st == 2 || st == 3) { // 等待中
+                synchronized (this) {
+                    wakeup();
+                }
             }
         } else {
-            int st = stat.get();
-            if (st < 2) {
-                stat.set(3);
-                return true;
-            } else
-            if (st < 3) {
-                stat.set(3);
-                // 唤起主程
-                synchronized (this) {
-                  notify( );
-                }
-                return true;
+            int st = stat.getAndUpdate(t -> t == 0 || t == 2 ? 4 : t); // 取消未开始的
+            if (st == 1 || st == 3) { // 运行中
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     @Override
     public boolean isDone() {
-        return stat.get() == 4;
+        return stat.get() == 5;
     }
 
     @Override
     public boolean isCancelled() {
-        return stat.get() == 3;
+        return stat.get() == 4;
     }
 
     /**
@@ -149,25 +180,25 @@ public class Defer<T> implements Future<T>, AutoCloseable {
      * @return
      */
     public boolean interrupted() {
-        return stat.get() >= 3;
+        return stat.get() >= 4;
     }
 
     /**
      * 任务开始
      */
     public void init() {
-        this.stat.set(1);
+        this.stat.getAndUpdate(t -> t == 0 || t == 2 ? t + 1 : t); // 排队变运行
     }
 
     /**
      * 任务完成
      */
     public void done() {
-        int st = stat.getAndSet(4);
-        if (st == 2) {
-            // 唤起主程
+        int st = stat.getAndSet(5);
+        if (st == 2 || st == 3) {
+            // 唤起等待中的主程
             synchronized (this) {
-                notify();
+                wakeup();
             }
         }
     }
@@ -178,11 +209,11 @@ public class Defer<T> implements Future<T>, AutoCloseable {
      */
     public void done(T data) {
         this.data = data;
-        int st = stat.getAndSet(4);
-        if (st == 2) {
-            // 唤起主程
+        int st = stat.getAndSet(5);
+        if (st == 2 || st == 3) {
+            // 唤起等待中的主程
             synchronized (this) {
-                notify();
+                wakeup();
             }
         }
     }
@@ -193,13 +224,39 @@ public class Defer<T> implements Future<T>, AutoCloseable {
      */
     public void fail(Throwable ex) {
         this.fail =  ex ;
-        int st = stat.getAndSet(3);
-        if (st == 2) {
-            // 唤起主程
+        int st = stat.getAndSet(4);
+        if (st == 2 || st == 3) {
+            // 唤起等待中的主程
             synchronized (this) {
-                notify();
+                wakeup();
             }
         }
+    }
+
+    private void wakeup() {
+        if (solo) {
+            notify();
+        } else {
+            notifyAll();
+        }
+    }
+
+    /**
+     * 快捷异步任务
+     * @param task
+     * @return
+     */
+    public static Defer run(Consumer<Defer> task) {
+        Defer defer = new Defer( );
+        Chore.getInstance().exe(() -> {
+            try {
+                task.accept(defer);
+            }
+            catch (Exception e) {
+                defer. fail (e);
+            }
+        });
+        return  defer;
     }
 
 }

@@ -40,7 +40,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * // 任务中结束(有异常):
  * defer.fail(ex);
  * </code>
- * @param <T>
+ *
+ * @param <T> 返回数据类型
  */
 public class Defer<T> implements Future<T>, AutoCloseable {
 

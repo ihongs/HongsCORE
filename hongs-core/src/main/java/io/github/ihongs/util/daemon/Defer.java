@@ -19,6 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * <p>
  * 特别注意:
+ * 并不建议在多个线程内等待执行.
  * 如果需要在多个线程内等待 get,
  * Defer 第二参数务必设为 false.
  * </p>

@@ -1,5 +1,6 @@
 package io.github.ihongs.util.daemon;
 
+import io.github.ihongs.Core;
 import java.util.function.Consumer;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -7,6 +8,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiConsumer;
 
 /**
  * 延迟等待辅助
@@ -258,9 +260,43 @@ public class Defer<T> implements Future<T>, AutoCloseable {
         Chore.getInstance().exe(() -> {
             try {
                 task.accept(defer);
+            } catch (Throwable e ) {
+                defer.fail(e);
             }
-            catch (Exception e) {
-                defer. fail (e);
+        });
+        return  defer;
+    }
+
+    /**
+     * 执行异步任务(附带 Core 环境)
+     * @param task
+     * @return
+     */
+    public static Defer run(BiConsumer<Defer, Core> task) {
+        String name = Core.ACTION_NAME.get()+".run";
+        String lang = Core.ACTION_LANG.get();
+        String zone = Core.ACTION_ZONE.get();
+
+        Defer defer = new Defer( );
+        Chore.getInstance().exe(() -> {
+            try {
+
+            Core core = Core.getInstance();
+            Core.ACTION_NAME.set(name);
+            Core.ACTION_LANG.set(lang);
+            Core.ACTION_ZONE.set(zone);
+            Core.ACTION_TIME.set(System.currentTimeMillis());
+
+            try {
+                task.accept(defer, core);
+            } catch (Throwable e ) {
+                defer.fail(e);
+            } finally {
+                core.reset( );
+            }
+
+            } catch (Throwable e ) {
+                e.printStackTrace( );
             }
         });
         return  defer;

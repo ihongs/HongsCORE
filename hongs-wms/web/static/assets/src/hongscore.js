@@ -2486,13 +2486,13 @@ $.hsXhrp = function(msg, evt) {
 $.fn.hsLoad = function(url, data, complete) {
     if (arguments.length === 2) {
         if ($.isFunction(data)) {
-            complete  =  data ;
-            data  =  undefined;
+            complete  =  data  ;
+            data  =  undefined ;
         }
     } else
     if (arguments.length === 0) {
-        url  = $(this).data("href");
-        data = $(this).data("data");
+       data = this.data("data");
+        url = this.data("href");
     }
 
     var dat = data ? hsSerialArr(data): [];

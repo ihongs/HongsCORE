@@ -2391,6 +2391,10 @@ $.hsWait = function(msg, xhr, xhu) {
         box.progress(pct, pzt);
     };
 
+    /**
+     * @param {type} pct 进度, 取值范围: [0.0,1.0]
+     * @param {type} tip 提示; 或者计时, 已用时间, 单位毫秒, 负值估算倒计时, 为零显示百分数
+     */
     box.progress = function(pct , tip) {
         pct *= 100 ;
         bar.css ( "width" , pct + "%");

@@ -1770,7 +1770,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
     public void begin() {
         if (REFLUX_MODE
         && !writes.isEmpty()) {
-            throw new CruxExemption(1054, "@Uncommitted changes");
+            throw new CruxExemption(1054, "Uncommitted");
         }
         REFLUX_MODE = true ;
     }

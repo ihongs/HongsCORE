@@ -2484,12 +2484,15 @@ $.hsXhrp = function(msg, evt) {
 };
 
 $.fn.hsLoad = function(url, data, complete) {
-    if ( $.isFunction(  data  )) {
-        complete = data ;
-        data = undefined;
-    }
-    if (!$.isFunction(complete)) {
-        complete = function() {};
+    if (arguments.length === 2) {
+        if ($.isFunction(data)) {
+            complete  =  data ;
+            data  =  undefined;
+        }
+    } else
+    if (arguments.length === 0) {
+        url  = $(this).data("href");
+        data = $(this).data("data");
     }
 
     var dat = data ? hsSerialArr(data): [];
@@ -2526,7 +2529,9 @@ $.fn.hsLoad = function(url, data, complete) {
 
     return  $.fn.load.call (this, url, dat, function() {
         $(this).removeClass("loading").hsReady();
-        complete.apply(this,arguments);
+        if ($.isFunction( complete ) ) {
+            complete .apply( this  , arguments );
+        }
     });
 };
 $.fn.hsOpen = function(url, data, complete) {

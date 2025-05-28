@@ -71,6 +71,16 @@ public class SearchQuest extends StringQuest {
 
     @Override
     public Query wdr(String k, Object v) {
+        // 查询参数
+        Boolean dor = this.dor;
+        Boolean des = this.des;
+        if (v instanceof Map) {
+            Map m =  (Map) v;
+            v = m.get("v");
+            dor = Synt.declare(m.get("or"), dor);
+            des = Synt.declare(m.get("es"), des);
+        }
+
         String v2;
         try {
             v2 = Synt.asString(v);

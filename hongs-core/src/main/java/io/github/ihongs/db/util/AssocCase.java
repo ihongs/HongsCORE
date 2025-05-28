@@ -771,30 +771,38 @@ public class AssocCase {
     }
 
     protected void combs(FetchCase caze, Object fv, String fn, String rn) {
-        String  fw = fv.toString();
-        if (fw.length() <= 1) {
-            return;
+        boolean pr = false ;
+        if (fv  instanceof Map) {
+            Map  m =  (Map) fv;
+            fv = m.get("v");
+            pr = Synt.declare(m.get("pr"), pr);
         }
-        char fc = fw.charAt(0);
-        fw = fw.substring( 1 );
-        switch (fc) {
-            case '^':
-                fw = words(fw);
-                fw = fw + "%" ;
-                caze.filter(fn+" "+rn+" ? ESCAPE '/'", fw);
-                break;
-            case ':':
-                fw = words(fw);
-                fw = wilds(fw);
-                caze.filter(fn+" "+rn+" ? ESCAPE '/'", fw);
-                break;
-            default:
-                throw new CruxExemption(1050, "Wrong comb type for "+fn+" "+rn);
+
+        String  fw = fv.toString();
+        if (fw.isEmpty( )) return ;
+
+        if (pr) {
+            fw = words(fw);
+            fw = fw + "%" ;
+            caze.filter(fn+" "+rn+" ? ESCAPE '/'", fw);
+        } else {
+            fw = words(fw);
+            fw = wilds(fw);
+            caze.filter(fn+" "+rn+" ? ESCAPE '/'", fw);
         }
     }
 
     protected void srchs(FetchCase caze, Object fv, String fn, String rn) {
+        boolean or = false ;
+        if (fv  instanceof Map) {
+            Map  m =  (Map) fv;
+            fv = m.get("v");
+            or = Synt.declare(m.get("or"), or);
+        }
+        String  ar =  ( or ? " OR " : " AND ");
+
         Set wd = Synt.toWords(fv);
+        if (wd.isEmpty( )) return;
         int  l = wd.size();
         int  i = 0 ;
 
@@ -811,13 +819,13 @@ public class AssocCase {
         sb.append("(");
         for(String wb : xd) {
             ab[ i++ ] = wb;
-            sb.append(fn).append(" ").append(rn)
-              .append(  " ? ESCAPE '/' AND "   );
+            sb.append(fn).append(" " ).append(rn)
+              .append(" ? ESCAPE '/'").append(ar);
         }
-        sb.setLength(sb.length(  ) - 5);
+        sb.setLength( sb.length() - ar.length() );
         sb.append(")");
 
-        caze.filter (sb.toString(), ab);
+        caze.filter(sb.toString() , ab);
     }
 
     protected String words(String fw) {

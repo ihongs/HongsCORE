@@ -44,9 +44,11 @@ public final class Cnst {
 
     public static final String OR_KEY = "or"; // 或条件    (Or )
 
+    public static final String AR_KEY = "ar"; // 与条件    (And)
+
     public static final String NR_KEY = "nr"; // 否条件    (Not)
 
-    public static final String AR_KEY = "ar"; // 与条件    (And)
+    public static final String SR_KEY = "sr"; // 优先条件  (Should, Lucene 加权)
 
     //** 关系符号 **/
 

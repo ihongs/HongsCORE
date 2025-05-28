@@ -1298,6 +1298,34 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             }
         }
 
+        v = rd.get(Cnst.SR_KEY);
+        if ( v != null ) {
+            if (rl > QUERY_DEPTH) {
+                throw new CruxException(400, "Key '" + Cnst.SR_KEY + "' can not exceed " + QUERY_DEPTH + " layers");
+            }
+            Set<Map> set = Synt.asSet(v);
+            if (set != null && ! set.isEmpty()) {
+            for(Map  map : set) {
+                if ( map == null) continue; // 规避 NullPointerException
+
+                BooleanQuery.Builder qx = new Queries();
+                padQry(qx, map, rl + 1 );
+
+                BooleanQuery qa = qx.build();
+                if (! qa.clauses().isEmpty()) {
+                    // 权重
+                    Query qb = qa;
+                    v = map.get(Cnst.UP_REL);
+                    if (v != null && !"".equals(v)) {
+                        qb = new BoostQuery(qa, Synt.declare(v, 1f));
+                    }
+
+                    qr.add(qb, BooleanClause.Occur.SHOULD);
+                }
+            }
+            }
+        }
+
         v = rd.get(Cnst.OR_KEY);
         if ( v != null ) {
             if (rl > QUERY_DEPTH) {

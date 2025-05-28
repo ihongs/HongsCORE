@@ -120,11 +120,11 @@ public class TestDB {
         ac.parse(Synt.mapOf(
             "rb", "id,name",
             "word", Synt.mapOf(
-                "co", ":abc?ef*xy_",
+                "co", "abc?def*xy_",
                 "se", "abc def xyz"
             )
         ));
-        assertEquals(fc.toString(), "SELECT `table1`.`id` AS `id`, `table1`.`name` AS `name` FROM `a_table` AS `table1` WHERE `table1`.`word` LIKE 'abc_ef%xy/_' ESCAPE '/' AND (`table1`.`word` LIKE '%abc%' ESCAPE '/' AND `table1`.`word` LIKE '%def%' ESCAPE '/' AND `table1`.`word` LIKE '%xyz%' ESCAPE '/')");
+        assertEquals(fc.toString(), "SELECT `table1`.`id` AS `id`, `table1`.`name` AS `name` FROM `a_table` AS `table1` WHERE `table1`.`word` LIKE 'abc_def%xy/_' ESCAPE '/' AND (`table1`.`word` LIKE '%abc%' ESCAPE '/' AND `table1`.`word` LIKE '%def%' ESCAPE '/' AND `table1`.`word` LIKE '%xyz%' ESCAPE '/')");
     }
 
 }

@@ -424,13 +424,18 @@ HsTree.prototype = {
         btn.trigger("openBack", [box, data, this]);
 
         box.on("saveBack", function(evt, rst, rel) {
-            var ext = jQuery.Event( "saveBack" );
+            var ext = jQuery.Event ("saveBack");
             ext.relatedTarget = evt.target;
             ext.relatedHsInst = rel /****/;
-            btn.trigger(ext , [rst, data, that]);
-            if (ext.isDefaultPrevented()) return;
+            btn.trigger(ext, [rst, data, that]);
+            if (ext.isDefaultPrevented()) {
+                return false ;
+            }
 
-            box.hsClose(); // 关闭内页
+            // 关闭内页
+            if (rst && ! rst.DONT_CLOSE ) {
+                box.hsClose();
+            }
 
             if (data[that.pidKey] !== undefined) {
                 that.load(/* Saved */ data[that.pidKey]); // 更新

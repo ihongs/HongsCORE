@@ -566,14 +566,21 @@ HsList.prototype = {
         btn.trigger("openBack", [box, data, this]);
 
         box.on("saveBack", function(evt, rst, rel) {
-            var ext = jQuery.Event( "saveBack" );
+            var ext = jQuery.Event ("saveBack");
             ext.relatedTarget = evt.target;
             ext.relatedHsInst = rel /****/;
-            btn.trigger(ext , [rst, data, that]);
-            if (ext.isDefaultPrevented()) return;
-
-            box.hsClose(); // 关闭内页
-            that . load(); // 重载列表
+            btn.trigger(ext, [rst, data, that]);
+            if (ext.isDefaultPrevented()) {
+                return false ;
+            }
+            
+            // 关闭内页
+            if (rst && ! rst.DONT_CLOSE ) {
+                box.hsClose();
+            }
+            
+            // 重载列表
+            that.load();
         });
     },
 

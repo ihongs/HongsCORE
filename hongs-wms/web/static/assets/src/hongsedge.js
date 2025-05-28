@@ -28,7 +28,17 @@ H$.src  = function() {
 };
 H$.load = function(req) {
     var mod = H$.mod();
-    mod.load(undefined, hsSerialMix(mod._data, req));
+    var dat = hsSerialMix(mod._data, req);
+    mod.load(undefined, dat);
+};
+H$.open = function(url, req) {
+    var mod = H$.mod();
+    var box = mod.context.hsFind ("@");
+    mod.open(undefined, box, url, req);
+};
+H$.send = function(url, req) {
+    var mod = H$.mod();
+    mod.send(undefined, "" , url, req);
 };
 H$.post = function(url, req) {
     var rzt;

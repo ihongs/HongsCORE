@@ -1,5 +1,6 @@
 package io.github.ihongs.dh.lucene.quest;
 
+import io.github.ihongs.CruxExemption;
 import io.github.ihongs.dh.lucene.query.Vectors;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.KnnFloatVectorQuery;
@@ -45,14 +46,14 @@ public class VectorQuest implements IQuest {
 
     @Override
     public Query wdr(String k, Object v) {
-        throw new UnsupportedOperationException("Field "+k+" does not support search");
+        throw new CruxExemption(1051, "Field "+k+" does not support search");
     }
     @Override
     public Query whr(String k, Object v) {
-        throw new UnsupportedOperationException("Field "+k+" does not support filter");
+        throw new CruxExemption(1051, "Field "+k+" does not support filter");
     }
     @Override
     public Query whr(String k, Object n, Object x, boolean l, boolean g) {
-        throw new UnsupportedOperationException("Field "+k+" does not support filter");
+        throw new CruxExemption(1051, "Field "+k+" does not support filter");
     }
 }

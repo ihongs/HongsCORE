@@ -60,10 +60,6 @@ public class AssocCase {
      */
     public  static final String  FINDABLE = "FINDABLE";
     /**
-     * 可匹配字段, 用于 FetchCase 的 Option
-     */
-    public  static final String  COMBABLE = "COMBABLE";
-    /**
      * 可搜索字段, 用于 FetchCase 的 Option
      */
     public  static final String  SRCHABLE = "SRCHABLE";
@@ -249,7 +245,7 @@ public class AssocCase {
      * @return
      */
     public AssocCase allow(Map fc) {
-        String[] ks = new String[] {LISTABLE, FINDABLE, SORTABLE, COMBABLE, SRCHABLE, RSCHABLE, RANKABLE};
+        String[] ks = new String[] {LISTABLE, FINDABLE, SORTABLE, SRCHABLE, RSCHABLE, RANKABLE};
         for(String k : ks) {
             k = k.toLowerCase( );
             Object s = fc.get(k);
@@ -264,7 +260,6 @@ public class AssocCase {
         allow(LISTABLE, fc.getListable());
         allow(FINDABLE, fc.getFindable());
         allow(SORTABLE, fc.getSortable());
-        allow(COMBABLE, fc.getCombable());
         allow(SRCHABLE, fc.getSrchable());
         allow(RSCHABLE, fc.getRschable());
         allow(RANKABLE, fc.getRankable());
@@ -490,7 +485,6 @@ public class AssocCase {
 
         Map<String, String> af = allow(FINDABLE);
         Map<String, String> rf = allow(RANKABLE);
-        Map<String, String> ef = allow(COMBABLE);
         Map<String, String> sf = allow(SRCHABLE);
 
         Set<String>  ks  =  new  LinkedHashSet();
@@ -641,28 +635,13 @@ public class AssocCase {
 
             } // End rf
 
-            // 通配查询
-            fn = ef.get( kn );
-            if ( fn != null ) {
-
-            vo = vm.get(Cnst.CO_REL);
-            if ( vo != null && !"".equals(vo) ) {
-                combs(caze, vo , fn , "LIKE");
-            }
-            vo = vm.get(Cnst.NC_REL);
-            if ( vo != null && !"".equals(vo) ) {
-                combs(caze, vo , fn , "NOT LIKE");
-            }
-
-            } // End ef
-
             // 模糊查询
             fn = sf.get( kn );
             if ( fn != null ) {
 
             vo = vm.get(Cnst.SE_REL);
             if ( vo != null && !"".equals(vo) ) {
-                srchs(caze, vo , fn , "LIKE");
+                srchs(caze, vo , fn , /**/"LIKE");
             }
             vo = vm.get(Cnst.NS_REL);
             if ( vo != null && !"".equals(vo) ) {
@@ -770,62 +749,77 @@ public class AssocCase {
         }
     }
 
-    protected void combs(FetchCase caze, Object fv, String fn, String rn) {
-        boolean pr = false ;
-        if (fv  instanceof Map) {
-            Map  m =  (Map) fv;
-            fv = m.get("v");
-            pr = Synt.declare(m.get("pr"), pr);
-        }
-
-        String  fw = fv.toString();
-        if (fw.isEmpty( )) return ;
-
-        if (pr) {
-            fw = words(fw);
-            fw = fw + "%" ;
-            caze.filter(fn+" "+rn+" ? ESCAPE '/'", fw);
-        } else {
-            fw = words(fw);
-            fw = wilds(fw);
-            caze.filter(fn+" "+rn+" ? ESCAPE '/'", fw);
-        }
-    }
-
     protected void srchs(FetchCase caze, Object fv, String fn, String rn) {
-        boolean or = false ;
+        String  md = "search";
+        boolean or =  false  ;
+        boolean ic =  false  ;
         if (fv  instanceof Map) {
             Map  m =  (Map) fv;
-            fv = m.get("v");
-            or = Synt.declare(m.get("or"), or);
-        }
-        String  ar =  ( or ? " OR " : " AND ");
-
-        Set wd = Synt.toWords(fv);
-        if (wd.isEmpty( )) return;
-        int  l = wd.size();
-        int  i = 0 ;
-
-        Object[]      ab = new Object[l];
-        Set<String>   xd = new LinkedHashSet();
-        StringBuilder sb = new StringBuilder();
-
-        // 转义待查词, 避开通配符, 以防止歧义
-        for(Object fo : wd) {
-            String fw = fo.toString();
-            xd.add("%"+words(fw)+"%");
+            fv = m.get("value");
+            md = Synt.declare(m.get("mode"), "");
+            or = Synt.declare(m.get( "or" ), or);
+            ic = Synt.declare(m.get( "ic" ), ic);
         }
 
-        sb.append("(");
-        for(String wb : xd) {
-            ab[ i++ ] = wb;
-            sb.append(fn).append(" " ).append(rn)
-              .append(" ? ESCAPE '/'").append(ar);
-        }
-        sb.setLength( sb.length() - ar.length() );
-        sb.append(")");
+        switch (md) {
+            case "search": {
+                String  ar = (or ? " OR " : " AND ");
 
-        caze.filter(sb.toString() , ab);
+                Set wd = Synt.toWords(fv);
+                if (wd.isEmpty( )) return;
+                int  l = wd.size();
+                int  i = 0 ;
+
+                Object[]      ab = new Object[l];
+                Set<String>   xd = new LinkedHashSet();
+                StringBuilder sb = new StringBuilder();
+
+                if (ic) fn = "LOWER(" + fn + ")";
+
+                // 转义待查词, 避开通配符, 以防止歧义
+                for(Object fo : wd) {
+                    String fw = fo.toString();
+                    if(ic) fw = fw.toLowerCase();
+                    xd.add("%"+words(fw)+"%");
+                }
+
+                sb.append("(");
+                for(String wb : xd) {
+                    ab[ i++ ] = wb;
+                    sb.append(fn).append(" " ).append(rn)
+                      .append(" ? ESCAPE '/'").append(ar);
+                }
+                sb.setLength( sb.length() - ar.length() );
+                sb.append(")");
+
+                caze.filter(sb.toString() , ab);
+            } break;
+            case "prefix": {
+                String fw = fv.toString();
+                if (fw.isEmpty( )) return;
+                fw = words(fw);
+                fw = fw + "%" ;
+                if (ic) {
+                    fn = "LOWER("+ fn +")";
+                    fw = fw.toLowerCase();
+                }
+                caze.filter(fn+" "+rn+" ? ESCAPE '/'", fw);
+            } break;
+            case "wildcard": {
+                String fw = fv.toString();
+                if (fw.isEmpty( )) return;
+                fw = words(fw);
+                fw = wilds(fw);
+                if (ic) {
+                    fn = "LOWER("+ fn +")";
+                    fw = fw.toLowerCase();
+                }
+                caze.filter(fn+" "+rn+" ? ESCAPE '/'", fw);
+            } break;
+            default:
+                throw new CruxExemption(1050, "Wrong search mode for "+fn+" "+rn);
+        }
+
     }
 
     protected String words(String fw) {
@@ -1040,9 +1034,6 @@ public class AssocCase {
 
         cs = (String) ps.get("rankable");
         if (cs != null) allow(RANKABLE, SEPA.split(cs.trim()));
-
-        cs = (String) ps.get("combable");
-        if (cs != null) allow(COMBABLE, SEPA.split(cs.trim()));
 
         cs = (String) ps.get("srchable");
         if (cs != null) allow(SRCHABLE, SEPA.split(cs.trim()));

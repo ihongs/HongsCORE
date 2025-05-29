@@ -78,10 +78,6 @@ public final class Cnst {
 
     public static final String NS_REL = "ns"; // 搜索排除
 
-    public static final String CO_REL = "co"; // 匹配
-
-    public static final String NC_REL = "nc"; // 匹配排除
-
     public static final String UP_REL = "up"; // 加权
 
     //** 配置扩展 **/

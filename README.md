@@ -325,7 +325,6 @@ dete2mic 或 date2sec 搭配 all2str 则将转换后的时间戳数字再转为�
     sortable    字段可排序(可通过ob参数控制, 枚举等类型的字段实为分组类聚)
     rschable    字段可搜索(可通过wd参数限制)
     srchable    字段可搜索(可以模糊搜索)
-    combable    字段可匹配(可以用表达式)
     rankable    字段可区间(可以比较大小)
     findable    字段可过滤(可以用于查询, 用过滤标识时, 以层级数据结构给出)
     unstored    完全不保存(纯粹虚拟字段, 例如分隔栏等)

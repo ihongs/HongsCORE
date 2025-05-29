@@ -1,5 +1,6 @@
 package io.github.ihongs.dh.lucene.quest;
 
+import io.github.ihongs.CruxExemption;
 import io.github.ihongs.util.Synt;
 import org.apache.lucene.document.FloatPoint;
 import org.apache.lucene.search.Query;
@@ -16,10 +17,10 @@ public class FloatQuest extends NumberQuest implements IQuest {
             n2 = Synt.asFloat(v);
         }
         catch (ClassCastException ex) {
-            throw new   ClassCastException("Query for "+k+" must be number");
+            throw new CruxExemption(1050, "Query for "+k+" must be number");
         }
         if (n2 == null) {
-            throw new NullPointerException("Query for "+k+" must be number");
+            throw new CruxExemption(1050, "Query for "+k+" must be number, but null");
         }
         Query  q2 = FloatPoint.newExactQuery("@"+k, n2);
         return q2;
@@ -32,10 +33,10 @@ public class FloatQuest extends NumberQuest implements IQuest {
             x2 = Synt.asFloat(x);
         }
         catch (ClassCastException ex) {
-            throw new   ClassCastException("Range for "+k+" must be number");
+            throw new CruxExemption(1050, "Range for "+k+" must be number");
         }
         if (n2 == null && x2 == null) {
-            throw new NullPointerException("Range for "+k+" must be number");
+            throw new CruxExemption(1050, "Range for "+k+" must be number, but null");
         }
         if (n2 == null) {
             n2 = Float.NEGATIVE_INFINITY;

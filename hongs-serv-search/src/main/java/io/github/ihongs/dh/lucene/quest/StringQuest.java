@@ -1,5 +1,6 @@
 package io.github.ihongs.dh.lucene.quest;
 
+import io.github.ihongs.CruxExemption;
 import io.github.ihongs.util.Synt;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.Query;
@@ -13,7 +14,7 @@ import org.apache.lucene.search.TermRangeQuery;
 public class StringQuest implements IQuest {
     @Override
     public Query wdr(String k, Object v) {
-        throw new UnsupportedOperationException("Field "+k+" does not support search");
+        throw new CruxExemption(1051, "Field "+k+" does not support search");
     }
     @Override
     public Query whr(String k, Object v) {
@@ -22,10 +23,10 @@ public class StringQuest implements IQuest {
             v2 = Synt.asString(v);
         }
         catch (ClassCastException ex) {
-            throw new   ClassCastException("Query for "+k+" must be string");
+            throw new CruxExemption(1050, "Query for "+k+" must be string");
         }
         if (v2 == null) {
-            throw new NullPointerException("Query for "+k+" must be string, but null");
+            throw new CruxExemption(1050, "Query for "+k+" must be string, but null");
         }
         v2 = v2.trim( );
 
@@ -40,10 +41,10 @@ public class StringQuest implements IQuest {
             x2 = Synt.asString(x);
         }
         catch (ClassCastException ex) {
-            throw new   ClassCastException("Range for "+k+" must be string");
+            throw new CruxExemption(1050, "Range for "+k+" must be string");
         }
         if (n2 == null && x2 == null) {
-            throw new NullPointerException("Range for "+k+" must be string");
+            throw new CruxExemption(1050, "Range for "+k+" must be string, but null");
         }
         n2 = Synt.defoult(n2, "").trim();
         x2 = Synt.defoult(x2, "").trim();

@@ -24,12 +24,6 @@ public class JFigure implements IFigure {
 
     private Map _fields = null;
     private Map _params = null;
-    private Set _rb_fns = null;
-    private Set _ob_fns = null;
-    private Set _wh_fns = null;
-    private Set _at_fns = null;
-    private Set _co_fns = null;
-    private Set _se_fns = null;
 
     /**
      * 设置表单字段
@@ -194,6 +188,8 @@ public class JFigure implements IFigure {
         return Synt.toSet(ab);
     }
 
+    private Set _rb_fns = null;
+
     /**
      * 获取可列举的字段
      * @return
@@ -206,6 +202,8 @@ public class JFigure implements IFigure {
         _rb_fns = getCaseNames("listable");
         return _rb_fns;
     }
+
+    private Set _ob_fns = null;
 
     /**
      * 获取可排序的字段
@@ -220,6 +218,8 @@ public class JFigure implements IFigure {
         return _ob_fns;
     }
 
+    private Set _wh_fns = null;
+
     /**
      * 获取可过滤的字段
      * @return
@@ -233,6 +233,8 @@ public class JFigure implements IFigure {
         return _wh_fns;
     }
 
+    private Set _at_fns = null;
+
     /**
      * 获取可比对的字段 (用于区间查询)
      * @return
@@ -245,17 +247,7 @@ public class JFigure implements IFigure {
         return _at_fns;
     }
 
-    /**
-     * 获取可匹配的字段 (通配符或正则)
-     * @return
-     */
-    public Set<String> getCombable() {
-        if (null != _co_fns) {
-            return  _co_fns;
-        }
-        _co_fns = getCaseNames("combable");
-        return _co_fns;
-    }
+    private Set _se_fns = null;
 
     /**
      * 获取可搜索的字段 (用于模糊查询)

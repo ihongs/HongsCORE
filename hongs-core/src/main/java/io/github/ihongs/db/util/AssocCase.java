@@ -639,13 +639,16 @@ public class AssocCase {
             fn = sf.get( kn );
             if ( fn != null ) {
 
+            Object sa;
+            sa = vm.get(Cnst.SA_REL);
+
             vo = vm.get(Cnst.SE_REL);
             if ( vo != null && !"".equals(vo) ) {
-                srchs(caze, vo , fn , /**/"LIKE");
+                srchs(caze, vo , sa , fn , /**/"LIKE");
             }
             vo = vm.get(Cnst.NS_REL);
             if ( vo != null && !"".equals(vo) ) {
-                srchs(caze, vo , fn , "NOT LIKE");
+                srchs(caze, vo , sa , fn , "NOT LIKE");
             }
 
             } // End sf
@@ -749,16 +752,39 @@ public class AssocCase {
         }
     }
 
-    protected void srchs(FetchCase caze, Object fv, String fn, String rn) {
+    protected void srchs(FetchCase caze, Object fv, Object fa, String fn, String rn) {
+        // 提取模式和参数
+        String  sa = Synt.asString(fa);
         String  md = "search";
         boolean or =  false  ;
-        boolean ic =  false  ;
-        if (fv  instanceof Map) {
-            Map  m =  (Map) fv;
-            fv = m.get("value");
-            md = Synt.declare(m.get("mode"), "");
-            or = Synt.declare(m.get( "or" ), or);
-            ic = Synt.declare(m.get( "ic" ), ic);
+        boolean ci =  false  ;
+        if (sa != null && ! sa.isEmpty()) {
+            int p  = sa. indexOf (",");
+            if (p  < 0) {
+                md = sa;
+            } else {
+                md = sa.substring(0,p);
+
+                int b, l;
+                String t;
+                l = sa.length();
+                do {
+                    b = p + 1;
+                    p = sa.indexOf("," , b);
+                    if (p < 0) {
+                        t = sa.substring(b, l);
+                    } else {
+                        t = sa.substring(b, p);
+                    }
+
+                    if ("or".equals(t)) {
+                        or = true;
+                    } else
+                    if ("ci".equals(t)) {
+                        ci = true;
+                    }
+                } while (p > 0);
+            }
         }
 
         switch (md) {
@@ -774,12 +800,12 @@ public class AssocCase {
                 Set<String>   xd = new LinkedHashSet();
                 StringBuilder sb = new StringBuilder();
 
-                if (ic) fn = "LOWER(" + fn + ")";
+                if (ci) fn = "LOWER(" + fn + ")";
 
                 // 转义待查词, 避开通配符, 以防止歧义
                 for(Object fo : wd) {
                     String fw = fo.toString();
-                    if(ic) fw = fw.toLowerCase();
+                    if(ci) fw = fw.toLowerCase();
                     xd.add("%"+words(fw)+"%");
                 }
 
@@ -795,25 +821,25 @@ public class AssocCase {
                 caze.filter(sb.toString() , ab);
             } break;
             case "prefix": {
-                String fw = fv.toString();
-                if (fw.isEmpty( )) return;
+                String fw = fv.toString() ;
+                if (fw.isEmpty( )) return ;
+                if (ci) {
+                    fn = "LOWER("+ fn +")";
+                    fw = fw.toLowerCase() ;
+                }
                 fw = words(fw);
                 fw = fw + "%" ;
-                if (ic) {
-                    fn = "LOWER("+ fn +")";
-                    fw = fw.toLowerCase();
-                }
                 caze.filter(fn+" "+rn+" ? ESCAPE '/'", fw);
             } break;
             case "wildcard": {
-                String fw = fv.toString();
-                if (fw.isEmpty( )) return;
+                String fw = fv.toString() ;
+                if (fw.isEmpty( )) return ;
+                if (ci) {
+                    fn = "LOWER("+ fn +")";
+                    fw = fw.toLowerCase() ;
+                }
                 fw = words(fw);
                 fw = wilds(fw);
-                if (ic) {
-                    fn = "LOWER("+ fn +")";
-                    fw = fw.toLowerCase();
-                }
                 caze.filter(fn+" "+rn+" ? ESCAPE '/'", fw);
             } break;
             default:

@@ -9,7 +9,7 @@ import org.apache.lucene.search.Query;
  */
 abstract public class NumberQuest implements IQuest {
     @Override
-    public Query wdr(String k, Object v) {
+    public Query wdr(String k, Object v, Object a) {
         throw new CruxExemption(1051, "Field "+k+" does not support search");
     }
 }

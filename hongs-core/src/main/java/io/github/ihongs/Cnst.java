@@ -66,7 +66,7 @@ public final class Cnst {
 
     public static final String AT_REL = "at"; // 区间
 
-    public static final String IS_REL = "is"; // 是否为空  (取值: null, not-null, none, not-none, empty, not-empty)
+    public static final String IS_REL = "is"; // 是否为空  (取值: none, not-none, null, not-null, empty, not-empty)
 
     public static final String IN_REL = "in"; // 包含
 
@@ -74,7 +74,9 @@ public final class Cnst {
 
     public static final String ON_REL = "on"; // 全包含
 
-    public static final String SE_REL = "se"; // 搜索
+    public static final String SA_REL = "sa"; // 搜索参数  (格式: "mode,a1,a2,a3", mode 总在首位, 后面参数顺序无关)
+
+    public static final String SE_REL = "se"; // 搜索匹配
 
     public static final String NS_REL = "ns"; // 搜索排除
 

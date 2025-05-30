@@ -13,10 +13,6 @@ import org.apache.lucene.search.TermRangeQuery;
  */
 public class StringQuest implements IQuest {
     @Override
-    public Query wdr(String k, Object v) {
-        throw new CruxExemption(1051, "Field "+k+" does not support search");
-    }
-    @Override
     public Query whr(String k, Object v) {
         String v2;
         try {
@@ -51,5 +47,9 @@ public class StringQuest implements IQuest {
 
         Query  q2 = TermRangeQuery.newStringRange("@" + k, n2, x2, l, g);
         return q2 ;
+    }
+    @Override
+    public Query wdr(String k, Object v, Object a) {
+        throw new CruxExemption(1051, "Field "+k+" does not support search");
     }
 }

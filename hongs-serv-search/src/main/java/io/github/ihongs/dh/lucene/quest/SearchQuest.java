@@ -22,8 +22,6 @@ import org.apache.lucene.search.WildcardQuery;
 public class SearchQuest extends StringQuest {
     private Set      mod = null;
     private Analyzer ana = null;
-    private Boolean  des = null;
-    private Boolean  dor = null;
     private Integer  phr = null;
     private Integer  fpl = null;
     private Float    fms = null;
@@ -32,29 +30,14 @@ public class SearchQuest extends StringQuest {
     private Boolean  epi = null;
     private Boolean  agp = null;
 
-    public void smartParse(Boolean x) {
-        this.des = x;
-    }
-    public void lightMatch(Boolean x) {
-        this.dor = x;
-    }
-
     public void analyser(Analyzer a) {
         this.ana = a;
     }
 
-    /**
-     * 快捷设置 lightMatch,smartParse 等, 但不包含 analyser
-     * @param m
-     */
     public void settings(Map m) {
         Object obj;
         obj = m.get("search-mode");
         if (obj != null) mod = Synt.toSet  (obj);
-        obj = m.get("lucene-smart-parse");
-        if (obj != null) des = Synt.asBool (obj);
-        obj = m.get("lucene-light-match");
-        if (obj != null) dor = Synt.asBool (obj);
         obj = m.get("lucene-phrase-slop");
         if (obj != null) phr = Synt.asInt  (obj);
         obj = m.get("lucene-fuzzy-pre-len");
@@ -72,78 +55,103 @@ public class SearchQuest extends StringQuest {
     }
 
     @Override
-    public  Query  wdr(String k, Object v) {
-        Boolean dor = this.dor;
-        Boolean des = this.des;
-
-        // 查询参数
-        if (v instanceof Map ) {
-            Map m =  ( Map ) v;
-            v = m.get("value");
-            String mod;
-            mod = Synt.declare(m.get("mode"), "" );
-            dor = Synt.declare(m.get( "or" ), dor != null ? dor : false);
-
-            if (this.mod != null) {
-                if (!this.mod.contains(mod)) {
-                    throw new CruxExemption(1051, "Unsupported search mode for `"+k+"`: "+mod);
-                }
+    public  Query  wdr(String k, Object v, Object a) {
+        // 提取模式和参数(同 AssocCase.srchs)
+        String  sa = Synt.asString (a);
+        String  md = "search";
+        boolean or =  false  ;
+        if (sa != null && ! sa.isEmpty( )) {
+            int p  = sa. indexOf (",");
+            if (p  < 0) {
+                md = sa;
             } else {
-                if (!"search". equals (mod)) {
-                    throw new CruxExemption(1051, "Unsupported search mode for `"+k+"`: "+mod);
-                }
-            }
+                md = sa.substring(0,p);
 
-            switch (mod) {
-                case "search": {
-                    des = false;
-                } break;
-                case "lucene": {
-                    des = true ;
-                } break;
-                case "regexp": {
-                    String s = str(v);
-                    if (s.isEmpty ()) {
-                        return all(k);
+                int b, l;
+                String t;
+                l = sa.length();
+                do {
+                    b = p + 1;
+                    p = sa.indexOf("," , b);
+                    if (p < 0) {
+                        t = sa.substring(b, l);
+                    } else {
+                        t = sa.substring(b, p);
                     }
-                    return new RegexpQuery(new Term("@" + k, v.toString()));
-                }
-                case "prefix": {
-                    String s = str(v);
-                    if (s.isEmpty ()) {
-                        return all(k);
+
+                    if ("or".equals(t)) {
+                        or = true; break;
                     }
-                    return new PrefixQuery(new Term("@" + k, v.toString()));
-                }
-                case "wildcard": {
-                    String s = str(v);
-                    if (s.isEmpty ()) {
-                        return all(k);
-                    }
-                    return new WildcardQuery(new Term("@" + k, v.toString()));
-                }
-                default:
-                    throw  new CruxExemption(1051, "Wrong search mode for `"+ k +"`: "+ mod );
+                } while (p > 0);
             }
         }
 
-        String s = str(v).trim();
-        if (s.isEmpty ()) {
-            return all(k);
+        if (this.mod != null) {
+            if (!this.mod.contains(md)) {
+                throw new CruxExemption(1051, "Unsupported search mode for `"+k+"`: "+mod);
+            }
+        } else {
+            if (!"search". equals (md)) {
+                throw new CruxExemption(1051, "Unsupported search mode for `"+k+"`: "+mod);
+            }
         }
 
-        QueryParser qp = new QueryParser("$" + k, ana != null ? ana : new StandardAnalyzer());
+        String s = Synt.asString(v);
+        if (s == null) {
+            s  =  "" ;
+        }
+
+        switch (md) {
+            case "search": {
+                    s = s.trim( );
+                if (s.isEmpty ()) {
+                    return all("$" + k);
+                }
+                return wdr ("$" + k, s, true , or);
+            }
+            case "lucene": {
+                    s = s.trim( );
+                if (s.isEmpty ()) {
+                    return all("$" + k);
+                }
+                return wdr ("$" + k, s, false, or);
+            }
+            case "regexp": {
+                if (s.isEmpty ()) {
+                    return all("@" + k);
+                }
+                return new RegexpQuery(new Term("@" + k, s));
+            }
+            case "prefix": {
+                if (s.isEmpty ()) {
+                    return all("@" + k);
+                }
+                return new PrefixQuery(new Term("@" + k, s));
+            }
+            case "wildcard": {
+                if (s.isEmpty ()) {
+                    return all("@" + k);
+                }
+                return new WildcardQuery(new Term("@" + k, s));
+            }
+            default:
+                throw  new CruxExemption(1050, "Wrong search mode for `"+ k +"`: "+ mod );
+        }
+    }
+
+    private Query  wdr(String k, String s, boolean se, boolean or) {
+        QueryParser qp = new QueryParser(k, ana != null ? ana : new StandardAnalyzer());
 
         // 是否转义
-        if (des == null || !des) {
+        if (se) {
             s = "\""+ Syno.concat( "\" \"", Synt.toWords(s) ) +"\"" ;
         }
 
         // 词间关系
-        if (dor == null || !dor) {
-            qp.setDefaultOperator( QueryParser.AND_OPERATOR );
-        } else {
+        if (or) {
             qp.setDefaultOperator( QueryParser. OR_OPERATOR );
+        } else {
+            qp.setDefaultOperator( QueryParser.AND_OPERATOR );
         }
 
         // 其他设置
@@ -165,22 +173,12 @@ public class SearchQuest extends StringQuest {
 
     private Query  all(String k) {
         try {
-            QueryParser qp = new QueryParser("$" + k, new StandardAnalyzer());
+            QueryParser qp = new QueryParser(k, new StandardAnalyzer());
             String s ="[* TO *]";
             return qp. parse (s);
         }
         catch (ParseException e) {
             throw new CruxExemption(e);
-        }
-    }
-
-    private String str(Object v) {
-        try {
-            String s =Synt.asString(v);
-            return s == null ? "" : s ;
-        }
-        catch (ClassCastException e) {
-            throw new CruxExemption(e , 1050);
         }
     }
 

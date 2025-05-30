@@ -115,21 +115,23 @@ public class TestDB {
         ac = new AssocCase(fc);
         fc.from("a_table", "table1");
         ac.allow(AssocCase.LISTABLE, "id","name","ctime","mtime","state");
-        ac.allow(AssocCase.SRCHABLE, "word","text");
+        ac.allow(AssocCase.SRCHABLE, "word","txt0","txt1");
         ac.parse(Synt.mapOf(
             "rb", "id,name",
             "word", Synt.mapOf(
                 "se", "abc def xyz"
             ),
-            "text", Synt.mapOf(
-                "se", Synt.mapOf(
-                    "mode", "wildcard",
-                    "value", "abc?def*xy_"
-                )
+            "txt0", Synt.mapOf(
+                "sa", "search,or",
+                "se", "abc def xyz"
+            ),
+            "txt1", Synt.mapOf(
+                "sa", "wildcard,ci",
+                "se", "abc?Def*xy_"
             )
         ));
         System.out.println(fc.toString());
-        assertEquals(fc.toString(), "SELECT `table1`.`id` AS `id`, `table1`.`name` AS `name` FROM `a_table` AS `table1` WHERE (`table1`.`word` LIKE '%abc%' ESCAPE '/' AND `table1`.`word` LIKE '%def%' ESCAPE '/' AND `table1`.`word` LIKE '%xyz%' ESCAPE '/') AND `table1`.`text` LIKE 'abc_def%xy/_' ESCAPE '/'");
+        assertEquals(fc.toString(), "SELECT `table1`.`id` AS `id`, `table1`.`name` AS `name` FROM `a_table` AS `table1` WHERE (`table1`.`word` LIKE '%abc%' ESCAPE '/' AND `table1`.`word` LIKE '%def%' ESCAPE '/' AND `table1`.`word` LIKE '%xyz%' ESCAPE '/') AND (`table1`.`txt0` LIKE '%abc%' ESCAPE '/' OR `table1`.`txt0` LIKE '%def%' ESCAPE '/' OR `table1`.`txt0` LIKE '%xyz%' ESCAPE '/') AND LOWER(`table1`.`txt1`) LIKE 'abc_def%xy/_' ESCAPE '/'");
     }
 
 }

@@ -45,15 +45,15 @@ public class VectorQuest implements IQuest {
     }
 
     @Override
-    public Query wdr(String k, Object v) {
-        throw new CruxExemption(1051, "Field "+k+" does not support search");
-    }
-    @Override
     public Query whr(String k, Object v) {
         throw new CruxExemption(1051, "Field "+k+" does not support filter");
     }
     @Override
     public Query whr(String k, Object n, Object x, boolean l, boolean g) {
         throw new CruxExemption(1051, "Field "+k+" does not support filter");
+    }
+    @Override
+    public Query wdr(String k, Object v, Object a) {
+        throw new CruxExemption(1051, "Field "+k+" does not support search");
     }
 }

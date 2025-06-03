@@ -1016,6 +1016,13 @@ function _hsSetDepth(obj, keys, val, pos) {
     if (key == null) {
         if (obj == null) {
             obj =  [];
+        } else
+        if (! jQuery.isArray(obj) ) {
+            if (jQuery.isPlainObject(obj)) {
+                obj = obj.values( );
+            } else {
+                obj = [ obj ];
+            }
         }
 
         if (keys.length == pos + 1) {
@@ -1029,6 +1036,13 @@ function _hsSetDepth(obj, keys, val, pos) {
     if (typeof(key) == "number") {
         if (obj == null) {
             obj =  [];
+        } else
+        if (! jQuery.isArray(obj) ) {
+            if (jQuery.isPlainObject(obj)) {
+                obj = obj.values( );
+            } else {
+                obj = [ obj ];
+            }
         }
 
         // 如果列表长度不够, 填充到索引的长度
@@ -1048,6 +1062,17 @@ function _hsSetDepth(obj, keys, val, pos) {
     } else {
         if (obj == null) {
             obj =  {};
+        } else
+        if (! jQuery.isPlainObject(obj) ) {
+            var dat =  { };
+            if (jQuery.isArray(obj)) {
+                for(var i = 0; i < obj.length; i ++) {
+                    dat[i] = obj[i];
+                }
+            } else {
+                dat [null] = obj;
+            }
+            obj = dat;
         }
 
         if (keys.length == pos + 1) {

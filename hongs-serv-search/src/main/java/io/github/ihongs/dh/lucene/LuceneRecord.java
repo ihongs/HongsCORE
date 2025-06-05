@@ -625,6 +625,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      * @throws CruxException
      */
     public Loop search(Map rd, int begin, int limit) throws CruxException {
+        IndexSearcher p = getFinder();
         Query q = padQry(rd);
         Sort  s = padSrt(rd);
         Set   r = Synt.toTerms (rd.get(Cnst.RB_KEY));
@@ -644,7 +645,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             r = z;
         }}
 
-        Loop  l = new Loop(this, q,s,r, begin,limit);
+        Loop  l = new Loop(this, p, q, s, r, begin, limit);
 
         if ( 4 == (4 & Core.DEBUG) ) {
             CoreLogger.debug("LuceneRecord.search: " + l.toString());
@@ -2235,29 +2236,22 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         /**
          * 查询迭代器
          * @param d 记录实例
+         * @param p 搜索对象
          * @param q 查询对象
          * @param s 排序对象
          * @param r 返回字段
          * @param b 起始偏移
          * @param l 查询限额
          */
-        public Loop(LuceneRecord d, Query q, Sort s, Set r, int b, int l) {
+        public Loop(LuceneRecord d, IndexSearcher p, Query q, Sort s, Set r, int b, int l) {
             // 空取全部字段
             if (r!= null && r.isEmpty()) {
                 r = null ;
             }
 
-            // 获取搜索对象
-            IndexSearcher p;
-            try {
-                p = d.getFinder( );
-            } catch ( CruxException e ) {
-                throw e.toExemption ( );
-            }
-
-            loop = new io.github.ihongs.dh.lucene.conn.Loop(p, q, s, r, b, l);
-            that = d;
-            cols = r;
+            loop  = new io.github.ihongs.dh.lucene.conn.Loop(p, q, s, r, b, l);
+            that  = d ;
+            cols  = r ;
 
             // 特殊标记字段
             docid = r != null && r.contains("__docid__");

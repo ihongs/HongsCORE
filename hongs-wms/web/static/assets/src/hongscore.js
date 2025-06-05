@@ -1957,10 +1957,18 @@ $.hsAjax = function(url, settings) {
 };
 
 $.hsPost = function(url, data, complete) {
+    if (arguments.length === 2) {
+        if ($.isFunction(data)) {
+            complete  =  data  ;
+            data  =  undefined ;
+        }
+    }
     return  $.hsAjax({
         url : url ,
         data: data,
         type: data ? "POST" : "GET",
+        dataKind: "form",
+        dataType: "json",
         complete: function(rst) {
             complete && complete(hsResponse(rst, 3));
         }
@@ -1974,8 +1982,8 @@ $.hsOpen = function(url, data, complete) {
               + '<h4  class="modal-title"  >' + hsGetLang( "opening" ) + '</h4>'
               + '</div><div class="modal-body openbox"></div></div></div></div>');
     var box = div.find('.openbox');
-    $(document.body).append( div );
-    box.hsLoad(url,data, complete);
+    div.appendTo ( document.body );
+    box.hsLoad.apply(box, arguments);
     div.on("hidden.bs.modal", function() {
         div.remove();
     } );
@@ -2606,8 +2614,8 @@ $.fn.hsOpen = function(url, data, complete) {
     }
 
     box = $('<div class="openbox"></div>');
-    box.data("hrev", bak ).appendTo( prt );
-    box.hsLoad(url , data, complete);
+    box.appendTo(prt).data("hrev", bak);
+    box.hsLoad.apply( box , arguments );
     return box;
 };
 $.fn.hsReady = function() {

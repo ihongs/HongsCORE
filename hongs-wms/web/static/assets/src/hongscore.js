@@ -935,7 +935,7 @@ function hsSetSeria (arr, name, value) {
  * @param {Array|Object} arr hsSerialArr 或 HsSerialDic,HsSerialDat
  * @param {String} name
  * @return {Array}
- * @deprecated 只用 hsGetSeria 即可
+ * @deprecated 只用 hsGetSeria 亦可
  */
 function hsGetSerias(arr, name) {
     var value = hsGetSeria(arr, name);
@@ -1019,7 +1019,7 @@ function _hsSetDepth(obj, keys, val, pos) {
         } else
         if (! jQuery.isArray(obj) ) {
             if (jQuery.isPlainObject(obj)) {
-                obj = obj.values( );
+                obj = Object.values (obj);
             } else {
                 obj = [ obj ];
             }
@@ -1039,7 +1039,7 @@ function _hsSetDepth(obj, keys, val, pos) {
         } else
         if (! jQuery.isArray(obj) ) {
             if (jQuery.isPlainObject(obj)) {
-                obj = obj.values( );
+                obj = Object.values (obj);
             } else {
                 obj = [ obj ];
             }
@@ -1957,7 +1957,7 @@ $.hsAjax = function(url, settings) {
 };
 
 $.hsPost = function(url, data, complete) {
-    if (arguments.length === 2) {
+    if (complete === undefined) {
         if ($.isFunction(data)) {
             complete  =  data  ;
             data  =  undefined ;
@@ -2520,23 +2520,32 @@ $.hsXhrp = function(msg, evt) {
     };
 };
 
+/**
+ * 加载内容块
+ * 注意: .html 默认不会发送 data, 增加参数 ?_=任意取值 才会发送
+ * @param {String} url
+ * @param {Object} data
+ * @param {Function} complete
+ * @returns {jQuery} 内容区域
+ */
 $.fn.hsLoad = function(url, data, complete) {
-    if (arguments.length === 2) {
+    if (complete === undefined) {
         if ($.isFunction(data)) {
             complete  =  data  ;
             data  =  undefined ;
         }
-    } else
-    if (arguments.length === 0) {
-       data = this.data("data");
+    }
+    if (url === undefined
+    && data === undefined) {
         url = this.data("href");
+       data = this.data("data");
     }
 
-    var dat = data ? hsSerialArr(data): [];
+    var dat ;
+    url = hsFixUri    (url );
+    dat = hsSerialObj (data);
     this.data( "href", url )
-        .data( "data", dat )
-        .addClass("loadbox")
-        .addClass("loading");
+        .data( "data", dat );
 
     /**
      * 为了给加载区域内传递参数
@@ -2562,15 +2571,26 @@ $.fn.hsLoad = function(url, data, complete) {
     if (dat.length == 0) {
         dat = undefined;
     }
-    url = hsFixUri(url);
 
-    return  $.fn.load.call (this, url, dat, function() {
-        $(this).removeClass("loading").hsReady();
-        if ($.isFunction( complete ) ) {
-            complete .apply( this  , arguments );
+    this.addClass("loadbox")
+        .addClass("loading");
+
+    return $.fn.load.call (this, url, dat, function() {
+        if ( $.isFunction (complete) ) {
+            complete.apply(this, arguments);
         }
+        $(this).removeClass("loading");
+        $(this).hsReady();
     });
 };
+/**
+ * 打开内容块(可关闭恢复)
+ * 注意: .html 默认不会发送 data, 增加参数 ?_=任意取值 才会发送
+ * @param {String} url
+ * @param {Object} data
+ * @param {Function} complete
+ * @returns {jQuery} 内容区域
+ */
 $.fn.hsOpen = function(url, data, complete) {
     var prt = $(this);
     var box;
@@ -2614,10 +2634,15 @@ $.fn.hsOpen = function(url, data, complete) {
     }
 
     box = $('<div class="openbox"></div>');
-    box.appendTo(prt).data("hrev", bak);
-    box.hsLoad.apply( box , arguments );
+    box.appendTo(prt).data("rev", bak);
+    box.hsLoad.apply( box , arguments);
     return box;
 };
+/**
+ * 准备内容块
+ * 执行初始化, 如其内部的国际化、标题、加载、执行、组件等
+ * @returns {jQuery} 当前区域
+ */
 $.fn.hsReady = function() {
     var box = $(this);
 
@@ -2653,6 +2678,10 @@ $.fn.hsReady = function() {
 
     return box;
 };
+/**
+ * 关闭内容块
+ * @returns {jQuery} 当前区域
+ */
 $.fn.hsClose = function() {
     var prt = $(this).parent();
     var box = $(this);
@@ -2684,7 +2713,7 @@ $.fn.hsClose = function() {
 
     // 恢复标签
     if (tab) {
-        var idx = box.data("hrev") ? box.data("hrev").index() : 0 ;
+        var idx = box.data("rev") ? box.data("rev").index() : 0 ;
         var tbs = tab.parent().children();
         var pns = prt.parent().children();
         var tb1 = tbs.filter(".active");
@@ -2704,9 +2733,9 @@ $.fn.hsClose = function() {
         pn2.show().trigger("hsShow");
     } else
     // 恢复内容
-    if (box.data("hrev")) {
-        var bak =  box.data ("hrev");
-        prt.append(bak.contents( ) );
+    if (box.data("rev")) {
+        var bak =  box.data("rev");
+        prt.append(bak.contents());
         box.remove();
         bak.remove();
         prt.trigger("hsShow"); // 重现事件
@@ -2722,6 +2751,10 @@ $.fn.hsClose = function() {
 
     return box;
 };
+/**
+ * 关闭关联块
+ * @returns {jQuery} 当前区域
+ */
 $.fn.hsCloze = function() {
     var box = $(this);
     $( document.body).find( ".openbox" ).each(function( ) {

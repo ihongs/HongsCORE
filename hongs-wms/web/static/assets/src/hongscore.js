@@ -1019,7 +1019,7 @@ function _hsSetDepth(obj, keys, val, pos) {
         } else
         if (! jQuery.isArray(obj) ) {
             if (jQuery.isPlainObject(obj)) {
-                obj = obj.values( );
+                obj = Object. values(obj);
             } else {
                 obj = [ obj ];
             }
@@ -1039,7 +1039,7 @@ function _hsSetDepth(obj, keys, val, pos) {
         } else
         if (! jQuery.isArray(obj) ) {
             if (jQuery.isPlainObject(obj)) {
-                obj = obj.values( );
+                obj = Object. values(obj);
             } else {
                 obj = [ obj ];
             }
@@ -1957,7 +1957,7 @@ $.hsAjax = function(url, settings) {
 };
 
 $.hsPost = function(url, data, complete) {
-    if (arguments.length === 2) {
+    if (complete === undefined) {
         if ($.isFunction(data)) {
             complete  =  data  ;
             data  =  undefined ;

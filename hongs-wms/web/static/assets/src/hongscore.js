@@ -2542,8 +2542,8 @@ $.fn.hsLoad = function(url, data, complete) {
     }
 
     var dat ;
-    url = hsFixUri    (url );
-    dat = hsSerialObj (data);
+    url = hsFixUri    (url ) || "";
+    dat = hsSerialObj (data) || {};
     this.data( "href", url )
         .data( "data", dat );
 
@@ -2554,21 +2554,20 @@ $.fn.hsLoad = function(url, data, complete) {
      * 故, 如果是 html 且无参数"_=RANDOM"
      * 则不传递任何参数到服务端
      */
-    var pos;
-    pos = url.indexOf( "#" );
-    if (pos != -1) {
+    var pos = url. indexOf ("#");
+    if (pos > -1) {
         url = url.substring(0 , pos);
     }
     if (/\.html$|\.html\?/.test(url)
-    && !hsGetParam(url,"_" )
-    && !hsGetSeria(dat,"_")) {
-    pos = url.indexOf( "?" );
-    if (pos != -1) {
+    && !hsGetParam(url, "_")
+    && !hsGetSeria(dat, "_")) {
+        pos = url. indexOf ("?");
+    if (pos > -1) {
         url = url.substring(0 , pos);
     }
         dat = undefined;
     } else
-    if (dat.length == 0) {
+    if ($.isEmptyObject(dat)) {
         dat = undefined;
     }
 

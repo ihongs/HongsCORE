@@ -453,7 +453,7 @@ function hsPickListMore(box, obj) {
                 var bar = $.hsWait("选择中, 请稍等...");
                 hsListPickMore(obj, bn, qn, -1, function(pn, tn) {
                     if (pn !== tn) {
-                        bar.prog(pn / tn, tn <= 0 ? "已选 "+pn+"页" : "已选 "+pn+"页, 共 "+tn+"页");
+                        bar.progress(pn / tn, tn <= 0 ? "已选 "+pn+"页" : "已选 "+pn+"页, 共 "+tn+"页");
                     } else {
                         bar.hide();
                         obj.load();

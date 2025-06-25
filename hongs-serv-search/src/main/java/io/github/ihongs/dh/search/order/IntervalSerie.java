@@ -11,6 +11,7 @@ import org.apache.lucene.search.Pruning;
 /**
  * 区间近邻排序
  * 用法 new SortField("开始字段,结束字段", new IntervalSerie(DIST), DESC)
+ * 字段值为数字
  * @author Hongs
  */
 public class IntervalSerie extends FieldComparatorSource {

@@ -11,6 +11,7 @@ import org.apache.lucene.search.Pruning;
 /**
  * 球面距离排序
  * 用法 new SortField("经度字段,纬度字段", new DistanceSerie(经度,纬度), DESC)
+ * 字段值为数字
  * @author Hongs
  */
 public class DistanceSerie extends FieldComparatorSource {

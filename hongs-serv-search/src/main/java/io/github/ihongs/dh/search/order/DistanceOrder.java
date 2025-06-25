@@ -1,9 +1,9 @@
 package io.github.ihongs.dh.search.order;
 
 import java.io.IOException;
-import org.apache.lucene.index.BinaryDocValues;
 import org.apache.lucene.index.DocValues;
 import org.apache.lucene.index.LeafReader;
+import org.apache.lucene.index.SortedDocValues;
 import org.apache.lucene.search.FieldComparator;
 import org.apache.lucene.search.FieldComparatorSource;
 import org.apache.lucene.search.Pruning;
@@ -46,7 +46,7 @@ public class DistanceOrder extends FieldComparatorSource {
         final float  o;
         final float  a;
         final  long  w;
-        BinaryDocValues docs ;
+        SortedDocValues docs ;
 
         public Comparator(String name, int hits, float o, float a, long w) {
             super(name, hits);
@@ -58,14 +58,14 @@ public class DistanceOrder extends FieldComparatorSource {
         @Override
         protected void doSetNextReader(LeafReader r)
         throws IOException {
-            docs = DocValues.getBinary(r, name);
+            docs = DocValues.getSorted(r, name);
         }
 
         @Override
         protected long toGetCurrDvalue( int d )
         throws IOException {
             try {
-                BytesRef br = docs.advanceExact(d) ? docs.binaryValue() : null;
+                BytesRef br = docs.advanceExact(d) ? docs.lookupOrd(docs.ordValue()) : null;
                 String   fv = br.utf8ToString();
                 String[] xy = fv.split("," , 2);
                 float    fo = Float.parseFloat(xy[0]);

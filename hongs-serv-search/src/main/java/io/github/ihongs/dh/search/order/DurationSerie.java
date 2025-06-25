@@ -11,6 +11,7 @@ import org.apache.lucene.search.Pruning;
 /**
  * 平面距离排序
  * 用法 new SortField("横标字段,纵标字段", new DurationSerie(横标,纵标), DESC)
+ * 字段值为数字
  * @author Hongs
  */
 public class DurationSerie extends FieldComparatorSource {

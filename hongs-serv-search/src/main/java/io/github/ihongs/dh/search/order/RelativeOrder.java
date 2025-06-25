@@ -11,6 +11,7 @@ import org.apache.lucene.search.Pruning;
 /**
  * 相对值排序器
  * 用法 new SortField(FIELD_NAME, new RelativeOrder(DIST), DESC)
+ * 字段值为数字
  * @author Hongs
  */
 public class RelativeOrder extends FieldComparatorSource {

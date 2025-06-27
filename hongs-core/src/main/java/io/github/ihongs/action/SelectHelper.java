@@ -999,29 +999,29 @@ public class SelectHelper {
         }
     }
 
+    /**
+     * 将字段值转换为字段的类型
+     * @param val
+     * @param type
+     * @return 
+     */
     private Object infoAsType(String val, String type) {
-        if (   "int".equals(type)) {
-            return Synt.declare(val, 0 );
-        } else
-        if (  "long".equals(type)) {
-            return Synt.declare(val, 0L);
-        } else
-        if ( "float".equals(type)) {
-            return Synt.declare(val, 0F);
-        } else
-        if ("double".equals(type)
-        ||  "number".equals(type)) {
-            return Synt.declare(val, 0D);
-        } else
-        if ( "short".equals(type)) {
-            return Synt.declare(val, (short) 0);
-        } else
-        if (  "byte".equals(type)) {
-            return Synt.declare(val, (byte ) 0);
-        } else
-        {
-            return val ;
+        if (null != type) switch (type) {
+            case "number":
+            case "double":
+                return Synt.asDouble(val);
+            case "int"   :
+                return Synt.asInt   (val);
+            case "long"  :
+                return Synt.asLong  (val);
+            case "float" :
+                return Synt.asFloat (val);
+            case "short" :
+                return Synt.asShort (val);
+            case "byte"  :
+                return Synt.asByte  (val);
         }
+        return val;
     }
 
     /**

@@ -132,7 +132,8 @@
             <param-name>url-exclude</param-name>
             <param-value>
                 /centra/sign/*,
-                /centre/sign/*
+                /centre/sign/*,
+                /common/more/*
             </param-value>
         </init-param>
     </filter>

@@ -14,7 +14,6 @@ import io.github.ihongs.combat.CombatRunner;
 import io.github.ihongs.dh.MergeMore;
 import io.github.ihongs.util.Synt;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,14 +54,6 @@ import javax.servlet.http.HttpServletResponse;
  * 当顶层 at 未给出时, 顶层资源平行无关联.
  * </p>
  *
- * <p>许可配置, 在 default.properties 中:</p>
- * <pre>
- * core.eval.more.enable eval 远程维护动作开启
- * core.eval.more.allows eval 执行动作 IP 白名单, 默认仅本机
- * core.eval.more.enable eval 远程维命令开启
- * core.eval.more.allows eval 执行命令 IP 白名单, 默认仅本机
- * </pre>
- *
  * @author Hongs
  */
 @Action("common/more")
@@ -100,9 +91,9 @@ public class MoreAction {
         HttpServletResponse rsp = helper.getResponse();
 
         // 许可及IP白名单
-        String  aut = req.getHeader  ("Authorization");
         String  tok = cnf.getProperty("core.access.token");
         String  ia  = cnf.getProperty("core.access.allow");
+        String  aut = req.getHeader  ("Authorization");
         String  ip  = ActionDriver.getClientAddr (req);
         Set     ias = Synt.toTerms( ia );
         if (aut != null) {
@@ -148,9 +139,9 @@ public class MoreAction {
         HttpServletResponse rsp = helper.getResponse();
 
         // 许可及IP白名单
-        String  aut = req.getHeader  ("Authorization");
         String  tok = cnf.getProperty("core.access.token");
         String  ia  = cnf.getProperty("core.access.allow");
+        String  aut = req.getHeader  ("Authorization");
         String  ip  = ActionDriver.getClientAddr (req);
         Set     ias = Synt.toTerms( ia );
         if (aut != null) {
@@ -381,15 +372,15 @@ public class MoreAction {
         args[0] = cmd;
 
         try {
-            InputStream in  = req.getInputStream();
-            PrintStream out = new PrintStream(rsp.getOutputStream(), true);
-            rsp.setContentType("text/plain" );
             rsp.setCharacterEncoding("utf-8");
+            rsp.setContentType ("text/plain");
+            rsp.setHeader("Connection" , "keep-alive");
+            rsp.setHeader("Cache-Control", "no-store");
+            PrintStream out = new PrintStream(rsp.getOutputStream(), true);
 
             try {
-                CombatHelper.ERR.set(out);
                 CombatHelper.OUT.set(out);
-                CombatHelper.IN .set(in );
+                CombatHelper.ERR.set(out);
 
                 CombatRunner.exec( args );
             }
@@ -397,7 +388,6 @@ public class MoreAction {
                 out.print ("ERROR: "+ e.getMessage());
             }
             finally {
-                CombatHelper.IN .remove();
                 CombatHelper.OUT.remove();
                 CombatHelper.ERR.remove();
             }

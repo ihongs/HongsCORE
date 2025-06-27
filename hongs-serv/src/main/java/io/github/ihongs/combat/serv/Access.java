@@ -8,20 +8,15 @@ import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
 import io.github.ihongs.combat.CombatHelper;
 import io.github.ihongs.combat.anno.Combat;
-import io.github.ihongs.util.Dist;
+import io.github.ihongs.util.Remote;
 import io.github.ihongs.util.Synt;
 import java.io.File;
 import java.io.FileReader;
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.IOException;
 import java.io.FileNotFoundException;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,20 +25,45 @@ import java.util.Map;
  * 维护命令
  *
  * <pre>
- *  调远程命令
- *  access.exec 命令 认证 参数1 参数2 ...
- *  调远程动作
- *  access.eval 动作 --request 请求参数 ...
  *  调本地动作
- *  access.call 动作 --request 请求参数 ...
- * </p>
+ *    access.call 动作 --request 请求参数 ...
+ *  调远程动作
+ *    access.eval 动作 --request 请求参数 ...
+ *  调远程命令
+ *    access.exec 命令 参数1 参数2 ...
+ * </pre>
  *
- * <p>注意: 远程调用默认关闭, 开启后需设白名单, 可以跳过权限检查, 详见 io.github.ihongs.action.serv.MoreAction</p>
+ * <p>许可配置, 在 default.properties 中:</p>
+ * <pre>
+ * core.access.serve 远程服务路径, 客户端设置
+ * core.access.token 远程认证口令, 客户端和服务端设置一致
+ * core.access.allow 远程地址(IP), 服务端设置, 默认限本机
+ * </pre>
  *
  * @author hongs
  */
 @Combat("access")
 public class Access {
+
+    @Combat("test")
+    public static void test(String[] args) throws CruxException, InterruptedException {
+        if (args.length < 2) {
+            CombatHelper.println(
+                  "Usage: access.exec access.test TEXT TIMES"
+            );
+            return;
+        }
+
+        String s = args[0];
+        int n = Integer.parseInt(args[1]);
+
+        CombatHelper.println(s);
+        for(int i = 1 ; i <= n ; i ++) {
+            CombatHelper.progres(i, n);
+            Thread.sleep (1000);
+        }
+        CombatHelper.progres( );
+    }
 
     @Combat("exec")
     public static void exec(String[] args) throws CruxException {
@@ -54,54 +74,27 @@ public class Access {
             return;
         }
 
+        CoreConfig cc = CoreConfig.getInstance( );
+        String pow = cc.getProperty("core.powered.by", "hs" );
+        String tok = cc.getProperty("core.access.token", "" );
+        String url = cc.getProperty("core.access.serve", Core.SERV_HREF + Core.SERV_PATH);
+        url += "/common/more/exec" + Cnst.ACT_EXT;
+
+        // 请求报头
+        Map reh = Synt.mapOf(
+            "Accept", "application.json,text/plain,*/*;q=0.8",
+            "Authorization", "Bearer "+ tok ,
+            "X-Requested-With", pow
+        );
+
         // 请求参数
         Map rep = new HashMap(2);
         rep.put("cmd" , args[0]);
         if (args.length > 1 ) {
             rep.put("args", Arrays.copyOfRange(args, 1, args.length));
         }
-        String req = Dist.toString (rep, true);
 
-        // 命令接口
-        String url = Core.SERV_HREF+Core.SERV_PATH + "/common/more/exec" +Cnst.ACT_EXT;
-
-        // 认证代码
-        String tok = CoreConfig.getInstance( ).getProperty( "core.access.token" , "" );
-
-        try {
-            HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
-            conn.setDoInput        ( true );
-            conn.setDoOutput       ( true );
-            conn.setUseCaches      ( false);
-            conn.setConnectTimeout (  0   );
-            conn.setRequestMethod  ("POST");
-            conn.setRequestProperty("Accept" , "application/json,text/html,*/*;q=0.8");
-            conn.setRequestProperty("Content-Type" , "application/json");
-            conn.setRequestProperty("Authorization", "Bearer "  +  tok );
-            conn.setRequestProperty("X-Requested-With", CoreConfig.getInstance().getProperty("core.powered.by"));
-
-            String         ln;
-            PrintStream    ps;
-            PrintWriter    pw;
-            BufferedReader br;
-
-            pw = new PrintWriter(conn.getOutputStream());
-            pw.print(req);
-            pw.flush();
-            pw.close();
-
-            br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            ps = CombatHelper.OUT.get();
-            while ( (ln = br.readLine()) != null ) {
-                ps.print( ln );
-            }   ps.println(  );
-        } catch (UnsupportedEncodingException ex ) {
-            throw new CruxException(ex, 1111);
-        } catch (MalformedURLException ex) {
-            throw new CruxException(ex, 1111);
-        } catch (IOException ex) {
-            throw new CruxException(ex, 1110);
-        }
+        Remote.request(Remote.METHOD.POST, Remote.FORMAT.JSON, url, rep, reh, CombatHelper.OUT.get());
     }
 
     @Combat("eval")
@@ -120,6 +113,19 @@ public class Access {
             return;
         }
 
+        CoreConfig cc = CoreConfig.getInstance( );
+        String pow = cc.getProperty("core.powered.by", "hs" );
+        String tok = cc.getProperty("core.access.token", "" );
+        String url = cc.getProperty("core.access.serve", Core.SERV_HREF + Core.SERV_PATH);
+        url += "/common/more/eval" + Cnst.ACT_EXT;
+
+        // 请求报头
+        Map reh = Synt.mapOf(
+            "Accept", "application/json,text/plain,*/*;q=0.8",
+            "Authorization", "Bearer "+ tok,
+            "X-Requested-With", pow
+        );
+
         // 请求参数
         Map rep = new HashMap(5);
         rep.put("act" , args[0]);
@@ -135,48 +141,8 @@ public class Access {
         if (opts.containsKey("context")) {
             rep.put("context", text((String) opts.get("context")));
         }
-        String req = Dist.toString (rep, true);
 
-        // 动作接口
-        String url = Core.SERV_HREF+Core.SERV_PATH + "/common/more/eval" +Cnst.ACT_EXT;
-
-        // 认证代码
-        String tok = CoreConfig.getInstance( ).getProperty( "core.access.token" , "" );
-
-        try {
-            HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
-            conn.setDoInput        ( true );
-            conn.setDoOutput       ( true );
-            conn.setUseCaches      ( false);
-            conn.setConnectTimeout (  0   );
-            conn.setRequestMethod  ("POST");
-            conn.setRequestProperty("Accept" , "application/json,text/html,*/*;q=0.8");
-            conn.setRequestProperty("Content-Type" , "application/json");
-            conn.setRequestProperty("Authorization", "Bearer "  +  tok );
-            conn.setRequestProperty("X-Requested-With", CoreConfig.getInstance().getProperty("core.powered.by"));
-
-            String         ln;
-            PrintStream    ps;
-            PrintWriter    pw;
-            BufferedReader br;
-
-            pw = new PrintWriter(conn.getOutputStream());
-            pw.print(req);
-            pw.flush();
-            pw.close();
-
-            br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            ps = CombatHelper.OUT.get();
-            while ( (ln = br.readLine()) != null ) {
-                ps.print( ln );
-            }   ps.println(  );
-        } catch (UnsupportedEncodingException ex ) {
-            throw new CruxException(ex);
-        } catch (MalformedURLException ex) {
-            throw new CruxException(ex);
-        } catch (IOException ex) {
-            throw new CruxException(ex);
-        }
+        Remote.request(Remote.METHOD.POST, Remote.FORMAT.JSON, url, rep, reh, CombatHelper.OUT.get());
     }
 
     @Combat("call")

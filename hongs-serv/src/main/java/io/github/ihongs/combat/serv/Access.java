@@ -54,28 +54,16 @@ public class Access {
             return;
         }
 
-        String s = args[0];
-        int    n = args.length > 1 ? Synt.declare(args[1], 0) : 0;
+        CombatHelper.println (args[0]) ;
 
-        CoreConfig cc = CoreConfig.getInstance( );
-        String tok = cc.getProperty("core.access.token", "" );
-        String url = cc.getProperty("core.access.serve", "" );
-        if (url.isEmpty()) {
-            url = Core.SERV_HREF + Core.SERV_PATH;
-        if (url.isEmpty()) {
-            url = "http://localhost:8080";
-        }}
-
-        CombatHelper.println("token: "+ tok);
-        CombatHelper.println("serve: "+ url);
-        CombatHelper.println(s);
-
+        int n = args.length > 1 ? Integer.parseInt(args[1]) : 0;
         if (n > 0) {
-            for( int i = 1 ; i <= n ; i ++ ) {
-                CombatHelper.progres( i, n );
-                Thread.sleep(1000);
-            }
-            CombatHelper.progres();
+            CombatHelper.progres(0, n) ;
+        for(int i = 1 ; i <= n ; i ++) {
+            Thread.sleep(1000) ;
+            CombatHelper.progres(i, n) ;
+        }
+            CombatHelper.progres(/**/) ;
         }
     }
 

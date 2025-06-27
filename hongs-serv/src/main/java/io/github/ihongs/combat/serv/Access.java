@@ -47,7 +47,7 @@ public class Access {
 
     @Combat("test")
     public static void test(String[] args) throws CruxException, InterruptedException {
-        if (args.length < 2) {
+        if (args.length == 0) {
             CombatHelper.println(
                   "Usage: access.exec access.test TEXT TIMES"
             );
@@ -55,14 +55,28 @@ public class Access {
         }
 
         String s = args[0];
-        int n = Integer.parseInt(args[1]);
+        int    n = args.length > 1 ? Synt.declare(args[1], 0) : 0;
 
+        CoreConfig cc = CoreConfig.getInstance( );
+        String tok = cc.getProperty("core.access.token", "" );
+        String url = cc.getProperty("core.access.serve", "" );
+        if (url.isEmpty()) {
+            url = Core.SERV_HREF + Core.SERV_PATH;
+        if (url.isEmpty()) {
+            url = "http://localhost:8080";
+        }}
+        
+        CombatHelper.println("token: "+ tok);
+        CombatHelper.println("serve: "+ url);
         CombatHelper.println(s);
-        for(int i = 1 ; i <= n ; i ++) {
-            CombatHelper.progres(i, n);
-            Thread.sleep (1000);
+        
+        if (n > 0) {
+            for( int i = 1 ; i <= n ; i ++ ) {
+                CombatHelper.progres( i, n );
+                Thread.sleep(1000);
+            }
+            CombatHelper.progres();
         }
-        CombatHelper.progres( );
     }
 
     @Combat("exec")
@@ -77,7 +91,12 @@ public class Access {
         CoreConfig cc = CoreConfig.getInstance( );
         String pow = cc.getProperty("core.powered.by", "hs" );
         String tok = cc.getProperty("core.access.token", "" );
-        String url = cc.getProperty("core.access.serve", Core.SERV_HREF + Core.SERV_PATH);
+        String url = cc.getProperty("core.access.serve", "" );
+        if (url.isEmpty()) {
+            url = Core.SERV_HREF + Core.SERV_PATH;
+        if (url.isEmpty()) {
+            url = "http://localhost:8080";
+        }}
         url += "/common/more/exec" + Cnst.ACT_EXT;
 
         // 请求报头
@@ -116,7 +135,12 @@ public class Access {
         CoreConfig cc = CoreConfig.getInstance( );
         String pow = cc.getProperty("core.powered.by", "hs" );
         String tok = cc.getProperty("core.access.token", "" );
-        String url = cc.getProperty("core.access.serve", Core.SERV_HREF + Core.SERV_PATH);
+        String url = cc.getProperty("core.access.serve", "" );
+        if (url.isEmpty()) {
+            url = Core.SERV_HREF + Core.SERV_PATH;
+        if (url.isEmpty()) {
+            url = "http://localhost:8080";
+        }}
         url += "/common/more/eval" + Cnst.ACT_EXT;
 
         // 请求报头

@@ -2101,18 +2101,20 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      * @return
      */
     protected Object getSrchText(Map fc, Object v) {
+        if (v == null) {
+            return v;
+        }
+
         // 合并多组值
         if (v instanceof Collection) {
-            StringBuilder s = new StringBuilder( );
-            for ( Object  o : ( (Collection) v ) ) {
-                s.append( o )
-                 .append(" ");
-            }
-            v = s;
+            v = Syno.concat(" ", (Collection) v);
+        } else
+        if (v instanceof Object[ ] ) {
+            v = Syno.concat(" ", (Object[ ] ) v);
         }
 
         // 清理富文本
-        if ("textview".equals(fc.get("__type__"))) {
+        if (fc != null && "html".equals(fc.get("type"))) {
             return Syno.stripEnds(Syno.stripTags(Syno.stripCros(v.toString())));
         }
 

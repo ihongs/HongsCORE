@@ -1344,14 +1344,13 @@ public class Data extends SearchEntity {
         }
 
         StringBuilder nn = new StringBuilder();
-        Set < String> ns = getNameable( );
-        for ( String  fn : ns  ) {
-              Object  fv = dd.get(fn);
-            if (fv == null) continue ;
-            if (fv instanceof Collection)
-            for (Object fw : (Collection) fv ) {
-                nn.append(fw).append(' ');
-            } else {
+        Set<String>   ns = getNameable( );
+        Map<String, Map> fs = getFields();
+        for(String  fn : ns ) {
+            Object  fv = dd.get(fn);
+            Map     fc = fs.get(fn);
+                    fv = getSrchText(fc, fv);
+            if (fv == null && !"".equals(fv)) {
                 nn.append(fv).append(' ');
             }
         }
@@ -1377,14 +1376,13 @@ public class Data extends SearchEntity {
         }
 
         StringBuilder nn = new StringBuilder();
-        Set < String> ns = getWordable( );
-        for ( String  fn : ns ) {
-              Object  fv = dd.get(fn);
-            if (fv == null) continue ;
-            if (fv instanceof Collection)
-            for (Object fw : (Collection) fv ) {
-                nn.append(fw).append(' ');
-            } else {
+        Set<String>   ns = getWordable( );
+        Map<String, Map> fs = getFields();
+        for(String  fn : ns ) {
+            Object  fv = dd.get(fn);
+            Map     fc = fs.get(fn);
+                    fv = getSrchText(fc, fv);
+            if (fv == null && !"".equals(fv)) {
                 nn.append(fv).append(' ');
             }
         }

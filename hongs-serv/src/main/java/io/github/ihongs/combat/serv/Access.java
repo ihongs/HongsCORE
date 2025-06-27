@@ -101,7 +101,7 @@ public class Access {
 
         // 请求报头
         Map reh = Synt.mapOf(
-            "Accept", "application.json,text/plain,*/*;q=0.8",
+            "Accept", "application/json,text/plain,*/*;q=0.8",
             "Authorization", "Bearer "+ tok ,
             "X-Requested-With", pow
         );

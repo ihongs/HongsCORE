@@ -65,11 +65,11 @@ public class Access {
         if (url.isEmpty()) {
             url = "http://localhost:8080";
         }}
-        
+
         CombatHelper.println("token: "+ tok);
         CombatHelper.println("serve: "+ url);
         CombatHelper.println(s);
-        
+
         if (n > 0) {
             for( int i = 1 ; i <= n ; i ++ ) {
                 CombatHelper.progres( i, n );

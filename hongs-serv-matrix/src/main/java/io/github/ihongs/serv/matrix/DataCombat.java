@@ -488,7 +488,7 @@ public class DataCombat {
         Map rd = data(dats[0]);
 
         for(Map od : dr.search(rd, 0, 0)) {
-            CombatHelper.preview(od);
+            CombatHelper.println(od);
         }
     }
 

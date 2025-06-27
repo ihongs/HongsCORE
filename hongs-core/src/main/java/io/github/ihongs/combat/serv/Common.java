@@ -181,7 +181,7 @@ public class Common {
             FileInputStream fis = new   FileInputStream(fio);
           ObjectInputStream ois = new ObjectInputStream(fis);
         ) {
-          CombatHelper.preview(ois.readObject());
+          CombatHelper.println(ois.readObject());
         }
         catch (ClassNotFoundException e )
         {

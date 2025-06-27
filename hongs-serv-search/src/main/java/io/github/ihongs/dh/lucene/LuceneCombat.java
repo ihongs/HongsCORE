@@ -36,7 +36,7 @@ public class LuceneCombat {
         String name = Synt.asString(opts.remove("name"));
         LuceneRecord so = LuceneRecord.getInstance(conf, name);
         Map rsp = so.search(opts);
-        CombatHelper.preview(rsp);
+        CombatHelper.println(rsp);
     }
 
     @Combat("delete")

@@ -134,15 +134,15 @@ public class Sources {
                 }
 
                 if (dist == null) {
-                    CombatHelper.paintln(name);
+                    CombatHelper.println(name);
                 } else
                 if (dist.isEmpty()) {
                     name = name +" in "+ root ;
-                    CombatHelper.paintln(name);
+                    CombatHelper.println(name);
                 } else
                 {
                     saveFile(ress, dist, name, file, item);
-                    CombatHelper.paintln(name);
+                    CombatHelper.println(name);
                 }
             }
         }
@@ -159,15 +159,15 @@ public class Sources {
                 }
 
                 if (dist == null) {
-                    CombatHelper.paintln(name);
+                    CombatHelper.println(name);
                 } else
                 if (dist.isEmpty()) {
                     name = name +" in "+ root ;
-                    CombatHelper.paintln(name);
+                    CombatHelper.println(name);
                 } else
                 {
                     saveFile(ress, dist, name, file);
-                    CombatHelper.paintln(name);
+                    CombatHelper.println(name);
                 }
             } else if (recu) {
                 String name = path + "/" + file.getName( );
@@ -218,15 +218,15 @@ public class Sources {
             }
 
             if (dist == null) {
-                CombatHelper.paintln(name);
+                CombatHelper.println(name);
             } else
             if (dist.isEmpty()) {
                 name = name +" in "+ root ;
-                CombatHelper.paintln(name);
+                CombatHelper.println(name);
             } else
             {
                 saveFile(ress, dist, name, file, item);
-                CombatHelper.paintln(name);
+                CombatHelper.println(name);
             }
         }
     }
@@ -239,15 +239,15 @@ public class Sources {
         }
 
         if (dist == null) {
-            CombatHelper.paintln(name);
+            CombatHelper.println(name);
         } else
         if (dist.isEmpty()) {
             name = name +" in "+ root ;
-            CombatHelper.paintln(name);
+            CombatHelper.println(name);
         } else
         {
             saveFile(ress, dist, name, file);
-            CombatHelper.paintln(name);
+            CombatHelper.println(name);
         }
     }
 

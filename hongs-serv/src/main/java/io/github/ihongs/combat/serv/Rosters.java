@@ -33,7 +33,7 @@ public class Rosters {
         if (args.length == 0) {
           CombatHelper.println("Roster ID required!");
         }
-          CombatHelper.preview( Roster.get(args[0]) );
+          CombatHelper.println( Roster.get(args[0]) );
     }
 
 }

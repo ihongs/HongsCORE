@@ -48,7 +48,7 @@ public class Cryptos {
         String[] argz = (String[]) opts.get( "" );
         Crypto crypto = new Crypto(type, sk, iv );
         for (String arg : argz) {
-            CombatHelper.paintln(crypto.encrypt().apply(arg));
+            CombatHelper.println(crypto.encrypt().apply(arg));
         }
     }
 
@@ -76,7 +76,7 @@ public class Cryptos {
         String[] argz = (String[]) opts.get( "" );
         Crypto crypto = new Crypto(type, sk, iv );
         for (String arg : argz) {
-            CombatHelper.paintln(crypto.decrypt().apply(arg));
+            CombatHelper.println(crypto.decrypt().apply(arg));
         }
     }
 
@@ -163,7 +163,7 @@ public class Cryptos {
             for (String es : ers) {
                 CombatHelper.println(es);
             }
-            CombatHelper.paintln("total:"+cnt+" ok:"+ok+" er:"+er);
+            CombatHelper.println("total:"+cnt+" ok:"+ok+" er:"+er);
         }
     }
 

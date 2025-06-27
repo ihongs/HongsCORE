@@ -411,38 +411,44 @@ public class CombatHelper
   //** 输出相关 **/
 
   /**
-   * 输出过程信息
+   * 输出内容
    * 将输出到 OUT
-   * 此方法用于显示条目、日志、名单等
-   * @param text 提示文本
-   */
-  public static void paintln(String text)
-  {
-    OUT.get().println(text);
-  }
-
-  /**
-   * 输出执行状态
-   * 将输出到 ERR
-   * 此方法用于显示错误、状态、进度等
-   * @param text 提示文本
+   * @param text 输出内容
    */
   public static void println(String text)
   {
-    ERR.get().println(text);
+    PrintStream out = OUT.get();
+    out.println(text);
+    out.flush(  );
   }
 
   /**
-   * 输出数据预览
+   * 输出数据
    * 将输出到 OUT
-   * 此方法会将对象(基础类型、集合框架)以 JSON 形式输出到终端.
-   * @param data 预览数据
+   * @param data 输出数据
+   */
+  public static void println(Object data)
+  {
+    PrintStream out = OUT.get();
+    Dist.append(out , data , false);
+    out.println();
+    out.flush(  );
+  }
+
+  /**
+   * @deprecated 改用 println(text)
+   */
+  public static void paintln(String text)
+  {
+    println(text);
+  }
+
+  /**
+   * @deprecated 改用 println(data)
    */
   public static void preview(Object data)
   {
-    PrintStream out = OUT.get ( );
-    Dist.append(out, data, false);
-    out.println();
+    println(data);
   }
 
   /**
@@ -486,14 +492,16 @@ public class CombatHelper
     // 并将光标移回行首
     // 无法获取宽度则为 80 (Windows 默认命令行窗口)
     int k = Synt.defxult(Synt.asInt(System.getenv("COLUMNS")), 80) - 1;
-    int l =     sb.   length ( );
-    if (l > k ) sb.setLength (k);
-    for(int i = l ; i < k; i ++)
+    int l =     sb.   length( );
+    if (l > k ) sb.setLength(k);
+    for(int i = l; i < k; i ++)
     {
       sb.append(' ' );
     } sb.append('\r');
 
-    ERR.get().print(sb);
+    PrintStream out = ERR.get();
+    out.print(sb);
+    out.flush(  );
   }
 
   /**
@@ -525,7 +533,9 @@ public class CombatHelper
    */
   public static void progres()
   {
-    ERR.get().println();
+    PrintStream out = ERR.get();
+    out.println();
+    out.flush(  );
   }
 
 }

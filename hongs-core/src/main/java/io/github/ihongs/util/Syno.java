@@ -24,8 +24,6 @@ public final class Syno
 
   private Syno() {}
 
-  //** 进制 **/
-
   /**
    * 符号转换表
    * <pre>
@@ -48,6 +46,14 @@ public final class Syno
     'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
     'U', 'V', 'W', 'X', 'Y', 'Z'
   };
+
+  // 偶数个转义符$单词或${文本}
+  private static final Pattern INS = Pattern.compile("\\{\\}");
+
+  // 偶数个转义符$单词或${文本}
+  private static final Pattern INJ = Pattern.compile("\\$(\\$|\\w+|\\{.+?\\})");
+
+  //** 进制 **/
 
   /**
    * 十进制转其他进制
@@ -307,54 +313,76 @@ public final class Syno
       return  undent(str, "\t");
   }
 
-  //** 注入 **/
+  //** 拼接 **/
 
-  // 偶数个转义符$单词或${文本}
-  private static final Pattern INJ = Pattern.compile("\\$(\\$|\\w+|\\{.+?\\})");
+  /**
+   * 拼接字串
+   * @param str
+   * @param vars
+   * @return
+   */
+  public static String concat(String str, Object ... vars)
+  {
+      StringBuilder stb = new StringBuilder();
+      for(Object val : vars) {
+          stb.append(val).append(str);
+      }
+      if ( 0 < vars.length ) {
+          stb.setLength(stb.length() - str.length());
+      }
+      return stb.toString();
+  }
+
+  /**
+   * 拼接字串
+   * @param str
+   * @param vars
+   * @return
+   */
+  public static String concat(String str, Collection vars)
+  {
+      StringBuilder stb = new StringBuilder();
+      for(Object val : vars) {
+          stb.append(val).append(str);
+      }
+      if ( ! vars.isEmpty()) {
+          stb.setLength(stb.length() - str.length());
+      }
+      return stb.toString();
+  }
+
+  //** 注入 **/
 
   /**
    * 注入参数
-   * 将语句中的$x或${x}通过函数处理替换
+   * 将语句中的{}替换为对应的文字
    * @param str
-   * @param func
-   * @return
+   * @param vars
+   * @return 注入后的文本
    */
-  public static String inject(String str, Function<String, String> func)
+  public static String insert(String str, Object ... vars)
   {
-      Matcher matcher = INJ.matcher( str );
+      Matcher matcher = INS.matcher( str );
       StringBuffer sb = new StringBuffer();
       Object       ob;
       String       st;
-      String       sd;
+      int          id = 0;
 
-      while  ( matcher.find() ) {
-          st = matcher.group(1);
+      while (matcher.find()) {
+        try {
+            ob  = vars[id++];
+        } catch (ArrayIndexOutOfBoundsException ex) {
+            ob  = null;
+        }
 
-          if (! "$".equals(st)) {
-              if (st.startsWith("{")) {
-                  st = st.substring(1, st.length() - 1);
-                  // 默认值
-                  int p  = st.indexOf  ("|");
-                  if (p != -1) {
-                      sd = st.substring(1+p);
-                      st = st.substring(0,p);
-                  } else {
-                      sd = "";
-                  }
-              } else {
-                      sd = "";
-              }
+        if (ob != null) {
+            st  = ob.toString( );
+        } else {
+            st  = "{"+(id-1)+"}";
+        }
 
-                  ob  = func.apply(st);
-              if (ob != null) {
-                  st  = ob.toString( );
-              } else {
-                  st  = sd;
-              }
-          }
-
-          st = Matcher.quoteReplacement(st);
-          matcher.appendReplacement(sb, st);
+        st = Matcher.quoteReplacement(st);
+        matcher.appendReplacement(sb, st);
       }
       matcher.appendTail(sb);
 
@@ -363,18 +391,55 @@ public final class Syno
 
   /**
    * 注入参数
-   * 将语句中的$x或${x}替换为对应的文字
+   * 将语句中的{}替换为对应的文字
    * @param str
    * @param vars
    * @return 注入后的文本
    */
-  public static String inject(String str, Map vars)
+  public static String insert(String str, List vars)
+  {
+      Matcher matcher = INS.matcher( str );
+      StringBuffer sb = new StringBuffer();
+      Object       ob;
+      String       st;
+      int          id = 0;
+
+      while (matcher.find()) {
+        try {
+            ob  = vars.get(id++);
+        } catch (ArrayIndexOutOfBoundsException ex) {
+            ob  = null;
+        }
+
+        if (ob != null) {
+            st  = ob.toString( );
+        } else {
+            st  = "{"+(id-1)+"}";
+        }
+
+        st = Matcher.quoteReplacement(st);
+        matcher.appendReplacement(sb, st);
+      }
+      matcher.appendTail(sb);
+
+      return sb.toString(  );
+  }
+
+  /**
+   * 注入参数
+   * 将语句中的$n或${n}替换为对应的文字, n从0开始
+   * @param str
+   * @param vars
+   * @return 注入后的文本
+   */
+  public static String inject(String str, Object ... vars)
   {
       Matcher matcher = INJ.matcher( str );
       StringBuffer sb = new StringBuffer();
       Object       ob;
       String       st;
       String       sd;
+      int          id;
 
       while  ( matcher.find() ) {
           st = matcher.group(1);
@@ -394,7 +459,15 @@ public final class Syno
                       sd = "";
               }
 
-                  ob  = vars.get( st );
+              // 尝试转为数字然后按下标提取
+              try {
+                  id  = Integer.valueOf(st);
+                  ob  = vars[ id ];
+              }
+              catch (NumberFormatException|ArrayIndexOutOfBoundsException ex) {
+                  ob  = null;
+              }
+
               if (ob != null) {
                   st  = ob.toString( );
               } else {
@@ -470,19 +543,18 @@ public final class Syno
 
   /**
    * 注入参数
-   * 将语句中的$n或${n}替换为对应的文字, n从0开始
+   * 将语句中的$x或${x}替换为对应的文字
    * @param str
    * @param vars
-   * @return  注入后的文本
+   * @return 注入后的文本
    */
-  public static String inject(String str, Object ... vars)
+  public static String inject(String str, Map vars)
   {
       Matcher matcher = INJ.matcher( str );
       StringBuffer sb = new StringBuffer();
       Object       ob;
       String       st;
       String       sd;
-      int          id;
 
       while  ( matcher.find() ) {
           st = matcher.group(1);
@@ -502,15 +574,7 @@ public final class Syno
                       sd = "";
               }
 
-              // 尝试转为数字然后按下标提取
-              try {
-                  id  = Integer.valueOf(st);
-                  ob  = vars[ id ];
-              }
-              catch (NumberFormatException|ArrayIndexOutOfBoundsException ex) {
-                  ob  = null;
-              }
-
+                  ob  = vars.get( st );
               if (ob != null) {
                   st  = ob.toString( );
               } else {
@@ -526,43 +590,56 @@ public final class Syno
       return sb.toString(  );
   }
 
-  //** 拼接 **/
-
   /**
-   * 拼接字串
+   * 注入参数
+   * 将语句中的$x或${x}通过函数处理替换
    * @param str
-   * @param vars
+   * @param func
    * @return
    */
-  public static String concat(String str, Object ... vars)
+  public static String inject(String str, Function<String, String> func)
   {
-      StringBuilder stb = new StringBuilder();
-      for(Object val : vars) {
-          stb.append(val).append(str);
+      Matcher matcher = INJ.matcher( str );
+      StringBuffer sb = new StringBuffer();
+      Object       ob;
+      String       st;
+      String       sd;
+
+      while  ( matcher.find() ) {
+          st = matcher.group(1);
+
+          if (! "$".equals(st)) {
+              if (st.startsWith("{")) {
+                  st = st.substring(1, st.length() - 1);
+                  // 默认值
+                  int p  = st.indexOf  ("|");
+                  if (p != -1) {
+                      sd = st.substring(1+p);
+                      st = st.substring(0,p);
+                  } else {
+                      sd = "";
+                  }
+              } else {
+                      sd = "";
+              }
+
+                  ob  = func.apply(st);
+              if (ob != null) {
+                  st  = ob.toString( );
+              } else {
+                  st  = sd;
+              }
+          }
+
+          st = Matcher.quoteReplacement(st);
+          matcher.appendReplacement(sb, st);
       }
-      if ( 0 < vars.length ) {
-          stb.setLength(stb.length() - str.length());
-      }
-      return stb.toString();
+      matcher.appendTail(sb);
+
+      return sb.toString(  );
   }
 
-  /**
-   * 拼接字串
-   * @param str
-   * @param vars
-   * @return
-   */
-  public static String concat(String str, Collection vars)
-  {
-      StringBuilder stb = new StringBuilder();
-      for(Object val : vars) {
-          stb.append(val).append(str);
-      }
-      if ( ! vars.isEmpty()) {
-          stb.setLength(stb.length() - str.length());
-      }
-      return stb.toString();
-  }
+  //** 分割 **/
 
   /**
    * 截取字串
@@ -601,8 +678,6 @@ public final class Syno
       }}
       return str.substring(off);
   }
-
-  //** 分割 **/
 
   /**
    * 拆分字串

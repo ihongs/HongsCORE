@@ -35,9 +35,9 @@ import java.util.Map;
  *
  * <p>许可配置, 在 default.properties 中:</p>
  * <pre>
- * core.access.serve 远程服务路径, 客户端设置
  * core.access.token 远程认证口令, 客户端和服务端设置一致
- * core.access.allow 远程地址(IP), 服务端设置, 默认限本机
+ * core.access.serve 远程服务路径, 客户端设置, 默认为本地
+ * core.access.allow 远程地址(IP), 服务端设置, 默认限本地
  * </pre>
  *
  * @author hongs

@@ -1350,7 +1350,7 @@ public class Data extends SearchEntity {
             Object  fv = dd.get(fn);
             Map     fc = fs.get(fn);
                     fv = getSrchText(fc, fv);
-            if (fv == null && !"".equals(fv)) {
+            if (fv != null && !"".equals(fv)) {
                 nn.append(fv).append(' ');
             }
         }
@@ -1382,7 +1382,7 @@ public class Data extends SearchEntity {
             Object  fv = dd.get(fn);
             Map     fc = fs.get(fn);
                     fv = getSrchText(fc, fv);
-            if (fv == null && !"".equals(fv)) {
+            if (fv != null && !"".equals(fv)) {
                 nn.append(fv).append(' ');
             }
         }

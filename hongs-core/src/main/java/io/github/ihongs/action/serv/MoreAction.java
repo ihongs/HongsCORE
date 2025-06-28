@@ -2,25 +2,16 @@ package io.github.ihongs.action.serv;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
-import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CruxCause;
-import io.github.ihongs.CruxException;
-import io.github.ihongs.CruxExemption;
-import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
-import io.github.ihongs.combat.CombatHelper;
-import io.github.ihongs.combat.CombatRunner;
 import io.github.ihongs.dh.MergeMore;
 import io.github.ihongs.util.Synt;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -82,96 +73,6 @@ public class MoreAction {
         }
 
         helper.reply(rs0);
-    }
-
-    @Action("eval")
-    public void eval(ActionHelper helper) throws CruxException {
-        CoreConfig          cnf = CoreConfig.getInstance();
-        HttpServletRequest  req = helper.getRequest( );
-        HttpServletResponse rsp = helper.getResponse();
-
-        // 许可及IP白名单
-        String  tok = cnf.getProperty("core.access.token");
-        String  ia  = cnf.getProperty("core.access.allow");
-        String  aut = req.getHeader  ("Authorization");
-        String  ip  = ActionDriver.getClientAddr (req);
-        Set     ias = Synt.toTerms( ia );
-        if (aut != null) {
-        if (aut.startsWith( "Bearer " )) {
-            aut  = aut. substring ( 07 );
-        } else {
-            aut  = "" ;
-        }}
-        if (ias == null) {
-            ias  = new  HashSet();
-            ias.add(       "::1"       );
-            ias.add(    "127.0.0.1"    );
-            ias.add( "0:0:0:0:0:0:0:1" );
-        }
-        if (tok == null || tok.isEmpty() || ! tok.equals(aut)) {
-            throw new CruxException( 400, "Illegal request!" );
-        }
-        if ( ! ias.contains(ip) && ! ias.contains("*") ) {
-            throw new CruxException( 400, "Illegal request." );
-        }
-
-        Map    map = helper.getRequestData();
-        String act = Core.ACTION_NAME.get( );
-        String uri = (String)map.get("act" );
-
-        // 从参数提取参数
-        helper.setRequestData(data(map, "request"));
-        helper.setContextData(data(map, "context"));
-        helper.setSessionData(data(map, "session"));
-        helper.setCookiesData(data(map, "cookies"));
-
-        try {
-            eval(helper, uri,req,rsp);
-        } finally {
-            Core.ACTION_NAME.set(act);
-        }
-    }
-
-    @Action("exec")
-    public void exec(ActionHelper helper) throws CruxException {
-        CoreConfig          cnf = CoreConfig.getInstance();
-        HttpServletRequest  req = helper.getRequest( );
-        HttpServletResponse rsp = helper.getResponse();
-
-        // 许可及IP白名单
-        String  tok = cnf.getProperty("core.access.token");
-        String  ia  = cnf.getProperty("core.access.allow");
-        String  aut = req.getHeader  ("Authorization");
-        String  ip  = ActionDriver.getClientAddr (req);
-        Set     ias = Synt.toTerms( ia );
-        if (aut != null) {
-        if (aut.startsWith( "Bearer " )) {
-            aut  = aut. substring ( 07 );
-        } else {
-            aut  = "" ;
-        }}
-        if (ias == null) {
-            ias  = new  HashSet();
-            ias.add(       "::1"       );
-            ias.add(    "127.0.0.1"    );
-            ias.add( "0:0:0:0:0:0:0:1" );
-        }
-        if (tok == null || tok.isEmpty() || ! tok.equals(aut)) {
-            throw new CruxException( 400, "Illegal request!" );
-        }
-        if ( ! ias.contains(ip) && ! ias.contains("*") ) {
-            throw new CruxException( 400, "Illegal request." );
-        }
-
-        Map    map = helper.getRequestData();
-        String act = Core.ACTION_NAME.get( );
-        String cmd = (String)map.get("cmd" );
-
-        try {
-            exec(helper, cmd,req,rsp);
-        } finally {
-            Core.ACTION_NAME.set(act);
-        }
     }
 
     private void more(ActionHelper helper, String sub, HttpServletRequest req, HttpServletResponse rsp, Map re0, Map rs0, MergeMore meg, int l) {
@@ -351,70 +252,6 @@ public class MoreAction {
                 map.put("msg", ex.getLocalizedMessage());
                 helper.reply(map);
             }
-        }
-    }
-
-    private void exec(ActionHelper helper, String cmd, HttpServletRequest req, HttpServletResponse rsp) {
-        // 组织参数
-        String[] args;
-        List opts = Synt.asList(helper.getRequestData().get("args"));
-        if (opts == null || opts.isEmpty()) {
-            args = new String[1 /* no args */ ];
-        } else {
-            args = new String[1 + opts.size() ];
-                int  i = 1 ;
-            for(Object opt : opts) {
-                args[i ++] = Synt.asString(opt);
-            }
-        }
-        args[0] = cmd;
-
-        // 环境变量
-        Map env = Synt.asMap(helper.getRequestData().get("env"));
-        if (env == null) {
-            env = Synt.mapOf();
-        }
-
-        try {
-            rsp.setCharacterEncoding("utf-8");
-            rsp.setContentType ("text/plain");
-            rsp.setHeader("Connection" , "keep-alive");
-            rsp.setHeader("Cache-Control", "no-store");
-            PrintStream out = new PrintStream(rsp.getOutputStream(), true);
-
-            Thread thr = Thread.currentThread();
-            String thn = "#"+thr.getId( )+" "+thr.getName( );
-
-            try {
-                CombatHelper.OUT.set(out);
-                CombatHelper.ERR.set(out);
-                CombatHelper.ENV.set(env);
-
-                CombatHelper.println(thn);
-
-                CombatRunner.exec( args );
-            }
-            finally {
-                CombatHelper.OUT.remove();
-                CombatHelper.ERR.remove();
-                CombatHelper.ENV.remove();
-            }
-        }
-        catch (IOException e) {
-            throw new CruxExemption(e);
-        }
-    }
-
-    private Map data(Map map, String key) throws CruxException {
-        Object obj = map.get (key);
-        if (obj == null) {
-            return new HashMap (0);
-        }
-        try {
-            return Synt.toMap(obj);
-        }
-        catch (ClassCastException e) {
-            throw new CruxException(400, "Can not parse "+key);
         }
     }
 

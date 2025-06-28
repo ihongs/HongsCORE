@@ -1,5 +1,6 @@
 package io.github.ihongs.combat.serv;
 
+import static io.github.ihongs.action.serv.Access.JOBS;
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
@@ -20,7 +21,6 @@ import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * 维护命令
@@ -64,7 +64,7 @@ public class Access {
         if (url.isEmpty()) {
             url = "http://localhost:8080";
         }}
-        url += "/common/more/exec" + Cnst.ACT_EXT;
+        url += "/common/access/exec"+Cnst.ACT_EXT;
 
         // 请求报头
         Map reh = Synt.mapOf(
@@ -124,7 +124,7 @@ public class Access {
         if (url.isEmpty()) {
             url = "http://localhost:8080";
         }}
-        url += "/common/more/eval" + Cnst.ACT_EXT;
+        url += "/common/access/eval"+Cnst.ACT_EXT;
 
         // 请求报头
         Map reh = Synt.mapOf(
@@ -203,27 +203,78 @@ public class Access {
         }
     }
 
+    @Combat("list")
+    public static void list(String[] args) throws CruxException, InterruptedException {
+        for(Map.Entry<String, Core> et : JOBS.entrySet()) {
+            String id = et.getKey(  );
+            Core core = et.getValue();
+            CombatHelper.println (id +"\t"+ core.get("!ACTION_NAME"));
+        }
+    }
+
     @Combat("kill")
     public static void kill(String[] args) throws CruxException, InterruptedException {
         if (args.length == 0) {
             CombatHelper.println(
-                  "Usage: access.exec access.kill THREAD_ID"
+                  "Usage: access.exec access.kill TASKID"
             );
             return;
         }
 
-        long id = Long.parseLong (args[0]);
-
-        Set<Thread> ts = Thread.getAllStackTraces().keySet();
-        for(Thread  th : ts) {
-            if (th.getId() == id) {
-                th.interrupt (  );
-                CombatHelper.println("OK");
-                return;
-            }
+        String id = args[0];
+        Core core = JOBS.get(id);
+        if (null == core) {
+            CombatHelper. println ("Not found");
+            return;
         }
 
-        CombatHelper.println ("Not found");
+        Thread th = (Thread)core.get("!THREAD");
+        if (null ==  th ) {
+            CombatHelper. println ("No thread");
+            return;
+        }
+
+        th.interrupt();
+        CombatHelper.println("OK");
+    }
+
+    @Combat("view")
+    public static void view(String[] args) throws CruxException, InterruptedException {
+        if (args.length == 0) {
+            CombatHelper.println(
+                  "Usage: access.exec access.view TASKID"
+            );
+            return;
+        }
+
+        String id = args[0];
+        Core core = JOBS.get(id);
+        if (null == core) {
+            CombatHelper. println ("Not found");
+            return;
+        }
+
+        // 提示输出切换
+        PrintStream out = (PrintStream) core.get("!SYSTEM_OUT");
+        PrintStream err = (PrintStream) core.get("!SYSTEM_ERR");
+        if (out != null) {
+            out.println("Output changed");
+        } else
+        if (err != null) {
+            err.println("Output changed");
+        }
+
+        // 接管任务输出
+        core.put("!SYSTEM_OUT", CombatHelper.OUT.get());
+        core.put("!SYSTEM_ERR", CombatHelper.ERR.get());
+
+        // 等待任务结束
+        while (true) {
+            Thread.sleep(500L);
+            if (!JOBS.containsKey(id)) {
+                break;
+            }
+        }
     }
 
     @Combat("test")

@@ -52,7 +52,8 @@ public class DataCombat {
             "truncate:b",
             "cascades:b",
             "includes:b",
-            "incloses:b"
+            "incloses:b",
+            "progress:b"
         });
 
         List<String> argz = new ArrayList(16);
@@ -81,6 +82,9 @@ public class DataCombat {
         }
         if (Synt.declare(opts.containsKey("incloses"), false)) {
             argz.add("--incloses");
+        }
+        if (Synt.declare(opts.containsKey("progress"), false)) {
+            argz.add("--progress");
         }
         args  = argz.toArray(new String[]{});
 
@@ -119,6 +123,7 @@ public class DataCombat {
             "includes:b",
             "incloses:b",
             "rollback:b",
+            "progress:b",
             "!A",
             "?Usage: revert --conf CONF_NAME --form FORM_NAME [--time TIMESTAMP] ID0 ID1 ..."
         });
@@ -236,7 +241,7 @@ public class DataCombat {
         }
 
         long tx = System.currentTimeMillis();
-        boolean pr = 4 != ( 4 & Core.DEBUG );
+        boolean pr = Synt.declare(opts.get("progress"), false);
 
         dr.begin ( );
         CombatHelper.println("Revert for "+form+" to "+dr.getDbName());

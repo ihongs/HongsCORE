@@ -500,7 +500,7 @@ public class CombatHelper
 
     if (rate >= 0)
     {
-      ft.format("%6.2f%% ", rate);
+      ft.format("%0.2f%% ", rate);
     }
 
     if (null != text)

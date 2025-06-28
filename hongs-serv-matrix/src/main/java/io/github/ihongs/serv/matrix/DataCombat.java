@@ -235,8 +235,8 @@ public class DataCombat {
             return;
         }
 
-        boolean pr = Core.DEBUG == 0 && Core.ENVIR == 0;
         long tx = System.currentTimeMillis();
+        boolean pr = Core.DEBUG == 0 && Core.ENVIR == 0;
 
         dr.begin ( );
         if ( pr) {

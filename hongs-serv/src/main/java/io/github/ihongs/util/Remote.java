@@ -336,14 +336,14 @@ public final class Remote {
             ConnectionConfig.Builder cb = ConnectionConfig.custom();
             BasicHttpClientConnectionManager cm = new BasicHttpClientConnectionManager();
             int tt;
-            tt = Synt.declare(head != null ? head.get(":SOCK-TIMEOUT") : null, cc.getProperty("core.remote.request.sock.timeout", 0));
-            if (tt > 0) cb.setSocketTimeout (Timeout.ofMilliseconds(tt));
-            tt = Synt.declare(head != null ? head.get(":CONN-TIMEOUT") : null, cc.getProperty("core.remote.request.conn.timeout", 0));
-            if (tt > 0) cb.setConnectTimeout(Timeout.ofMilliseconds(tt));
-            tt = Synt.declare(head != null ? head.get(":WAIT-TIMEOUT") : null, cc.getProperty("core.remote.request.wait.timeout", 0));
-            if (tt > 0) rb.setConnectionRequestTimeout (Timeout.ofMilliseconds(tt));
-            tt = Synt.declare(head != null ? head.get(":MAX-REDIRECT") : null, cc.getProperty("core.remote.request.max.redirect", 0));
-            if (tt > 0) { rb.setMaxRedirects(tt); rb.setRedirectsEnabled(true); }
+            tt = Synt.declare(head != null ? head.get(":SOCK-TIMEOUT") : null, cc.getProperty("core.remote.request.sock.timeout", -1));
+            if (tt > -1) cb.setSocketTimeout (Timeout.ofMilliseconds(tt));
+            tt = Synt.declare(head != null ? head.get(":CONN-TIMEOUT") : null, cc.getProperty("core.remote.request.conn.timeout", -1));
+            if (tt > -1) cb.setConnectTimeout(Timeout.ofMilliseconds(tt));
+            tt = Synt.declare(head != null ? head.get(":WAIT-TIMEOUT") : null, cc.getProperty("core.remote.request.wait.timeout", -1));
+            if (tt > -1) rb.setConnectionRequestTimeout(Timeout.ofMilliseconds(tt));
+            tt = Synt.declare(head != null ? head.get(":MAX-REDIRECT") : null, cc.getProperty("core.remote.request.max.redirect", -1));
+            if (tt > -1) { rb.setRedirectsEnabled(true); rb.setMaxRedirects(tt); }
             cm.setConnectionConfig( cb.build() );
 
             // 执行请求

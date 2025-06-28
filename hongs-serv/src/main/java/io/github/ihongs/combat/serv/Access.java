@@ -72,9 +72,9 @@ public class Access {
             "Authorization", "Bearer " + tok,
             "X-Requested-With" , pow ,
             // 超时
-            ":CONN-TIMEOUT", 86400000,
-            ":SOCK-TIMEOUT", 86400000,
-            ":WAIT-TIMEOUT", 86400000
+            ":CONN-TIMEOUT", 0,
+            ":SOCK-TIMEOUT", 0,
+            ":WAIT-TIMEOUT", 0
         );
 
         // 请求参数
@@ -133,9 +133,9 @@ public class Access {
             "Authorization", "Bearer " + tok,
             "X-Requested-With" , pow ,
             // 超时
-            ":CONN-TIMEOUT", 86400000,
-            ":SOCK-TIMEOUT", 86400000,
-            ":WAIT-TIMEOUT", 86400000
+            ":CONN-TIMEOUT", 0,
+            ":SOCK-TIMEOUT", 0,
+            ":WAIT-TIMEOUT", 0
         );
 
         // 请求参数

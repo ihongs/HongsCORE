@@ -70,9 +70,8 @@ public class Access {
         Map reh = Synt.mapOf(
             "Accept", "application/json,text/plain,*/*;q=0.8",
             "Authorization", "Bearer " + tok,
-            "X-Requested-With" , pow ,
+            "X-Requested-With", pow,
             // 超时
-            ":CONN-TIMEOUT", 0,
             ":SOCK-TIMEOUT", 0,
             ":WAIT-TIMEOUT", 0
         );
@@ -131,9 +130,8 @@ public class Access {
         Map reh = Synt.mapOf(
             "Accept", "application/json,text/plain,*/*;q=0.8",
             "Authorization", "Bearer " + tok,
-            "X-Requested-With" , pow ,
+            "X-Requested-With", pow,
             // 超时
-            ":CONN-TIMEOUT", 0,
             ":SOCK-TIMEOUT", 0,
             ":WAIT-TIMEOUT", 0
         );

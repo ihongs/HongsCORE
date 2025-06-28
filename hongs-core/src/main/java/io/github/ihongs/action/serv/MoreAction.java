@@ -382,18 +382,17 @@ public class MoreAction {
             rsp.setHeader("Cache-Control", "no-store");
             PrintStream out = new PrintStream(rsp.getOutputStream(), true);
 
+            Thread thr = Thread.currentThread();
+            String thn = "#"+thr.getId( )+" "+thr.getName( );
+
             try {
                 CombatHelper.OUT.set(out);
                 CombatHelper.ERR.set(out);
                 CombatHelper.ENV.set(env);
 
-                Thread th = Thread.currentThread();
-                CombatHelper.println("#"+ th.getId( ) +" "+ th.getName( ));
+                CombatHelper.println(thn);
 
                 CombatRunner.exec( args );
-            }
-            catch ( Error | Exception e ) {
-                CombatHelper.println("ERROR: "+e.getMessage());
             }
             finally {
                 CombatHelper.OUT.remove();

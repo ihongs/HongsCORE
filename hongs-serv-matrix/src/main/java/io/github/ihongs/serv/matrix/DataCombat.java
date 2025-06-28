@@ -194,6 +194,11 @@ public class DataCombat {
         }
         CombatHelper.println("Search "+c+" item(s) for "+form);
 
+        if (Thread.interrupted()) {
+            CombatHelper.println("Thread interrupted");
+            return;
+        }
+
         // 规避 OOM, 连接参数需加 useCursorFetch=true
         try {
             tb.db.open().setAutoCommit(false);
@@ -219,16 +224,23 @@ public class DataCombat {
                 }   iw.commit();
                 iw.deleteUnusedFiles();
                 iw.maybeMerge();
+                CombatHelper.println("Truncate "+form);
             } catch ( IOException ex ) {
                 throw new CruxException(ex);
             }
         }
 
+        if (Thread.interrupted()) {
+            CombatHelper.println("Thread interrupted");
+            return;
+        }
+
         boolean pr = Core.DEBUG == 0 && Core.ENVIR == 0;
-        long tc = System.currentTimeMillis(/**/) / 1000;
+        long tx = System.currentTimeMillis();
 
         dr.begin ( );
         if ( pr) {
+            CombatHelper.println("Revert for "+form+" to "+dr.getDbName());
             CombatHelper.progres(i, c);
         }
         if ( ct  !=  0  ) {
@@ -238,6 +250,7 @@ public class DataCombat {
             sd.put( "data" , od.get( "data"));
             sd.put("rtime" , od.get("ctime"));
             if (Synt.declare(od.get("etime"), 0L) != 0L) {
+            long tc = System.currentTimeMillis( ) / 1000 ;
             if (Synt.declare(od.get("state"), 1 ) >= 1 ) {
                 da.rev(id,sd,tc);
             }  else {
@@ -256,8 +269,12 @@ public class DataCombat {
                 da.commit(  );
                 dr.begin (  );
                 if ( pr) {
-                    CombatHelper.progres(i, c);
+                    CombatHelper.progres(i, c, System.currentTimeMillis() - tx);
                 }
+            }
+            if (Thread.interrupted()) {
+                CombatHelper.println("Thread interrupted");
+                break;
             }
         }} else {
         for(Map od : lp ) {
@@ -277,16 +294,21 @@ public class DataCombat {
                 da.commit(  );
                 dr.begin (  );
                 if ( pr) {
-                    CombatHelper.progres(i, c);
+                    CombatHelper.progres(i, c, System.currentTimeMillis() - tx);
                 }
+            }
+            if (Thread.interrupted()) {
+                CombatHelper.println("Thread interrupted");
+                break;
             }
         }}
         da.commit( );
-        if ( pr) {
-            CombatHelper.progres(i, c);
-            CombatHelper.progres(    );
-        }
         CombatHelper.println("Revert "+i+" item(s) for "+form+" to "+dr.getDbName());
+
+        if (Thread.interrupted()) {
+            CombatHelper.println("Thread interrupted");
+            return;
+        }
 
         /**
          * 删掉多余数据

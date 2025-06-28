@@ -325,8 +325,7 @@ public class MoreAction {
         }
     }
 
-    private void eval(ActionHelper helper, String act,
-            HttpServletRequest req, HttpServletResponse rsp) {
+    private void eval(ActionHelper helper, String act, HttpServletRequest req, HttpServletResponse rsp) {
         // 重设路径
         act = act + Cnst.ACT_EXT ;
         Core.ACTION_NAME.set(act);
@@ -355,8 +354,7 @@ public class MoreAction {
         }
     }
 
-    private void exec(ActionHelper helper, String cmd,
-            HttpServletRequest req, HttpServletResponse rsp) {
+    private void exec(ActionHelper helper, String cmd, HttpServletRequest req, HttpServletResponse rsp) {
         // 组织参数
         String[] args;
         List opts = Synt.asList(helper.getRequestData().get("args"));
@@ -371,6 +369,12 @@ public class MoreAction {
         }
         args[0] = cmd;
 
+        // 环境变量
+        Map env = Synt.asMap(helper.getRequestData().get("env"));
+        if (env == null) {
+            env = Synt.mapOf();
+        }
+
         try {
             rsp.setCharacterEncoding("utf-8");
             rsp.setContentType ("text/plain");
@@ -381,15 +385,19 @@ public class MoreAction {
             try {
                 CombatHelper.OUT.set(out);
                 CombatHelper.ERR.set(out);
+                CombatHelper.ENV.set(env);
+
+                CombatHelper.println("TID: "+Thread.currentThread().getId());
 
                 CombatRunner.exec( args );
             }
             catch ( Error | Exception e ) {
-                out.print ("ERROR: "+ e.getMessage());
+                CombatHelper.println("ERROR: "+e.getMessage());
             }
             finally {
                 CombatHelper.OUT.remove();
                 CombatHelper.ERR.remove();
+                CombatHelper.ENV.remove();
             }
         }
         catch (IOException e) {

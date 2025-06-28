@@ -1126,7 +1126,7 @@ public class Core
    */
   static public class Variable<T> implements Supplier
   {
-    private  final  String k;
+    protected final String k;
 
     public Variable(String k)
     {

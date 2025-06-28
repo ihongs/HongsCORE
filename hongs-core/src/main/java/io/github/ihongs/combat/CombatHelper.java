@@ -3,6 +3,7 @@ package io.github.ihongs.combat;
 import io.github.ihongs.Core;
 import io.github.ihongs.CruxExemption;
 import io.github.ihongs.util.Dist;
+import io.github.ihongs.util.Inst;
 import io.github.ihongs.util.Synt;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -93,6 +94,21 @@ public class CombatHelper
       return System.getenv (kay) != null;
     }
   }
+
+  /**
+   * 进度条输出中
+   */
+  public static final Core.Variable<Boolean> ING = new Core.Variable("!PROGRESING") {
+    @Override
+    public Boolean get() {
+      Core c  = Core.getInstance ( );
+      Boolean v = (Boolean) c.get(k);
+      if ( v == null) {
+           v  = false;
+      }
+      return  v;
+    }
+  };
 
   /**
    * 参数处理正则
@@ -417,6 +433,8 @@ public class CombatHelper
    */
   public static void println(String text)
   {
+    progres(); // 中止进度条
+
     PrintStream out = OUT.get();
     out.println(text);
     out.flush(  );
@@ -429,8 +447,10 @@ public class CombatHelper
    */
   public static void println(Object data)
   {
+    progres(); // 中止进度条
+
     PrintStream out = OUT.get();
-    Dist.append(out , data , false);
+    Dist.append(out,data,false);
     out.println();
     out.flush(  );
   }
@@ -491,7 +511,7 @@ public class CombatHelper
     // 清除末尾多余字符
     // 并将光标移回行首
     // 无法获取宽度则为 80 (Windows 默认命令行窗口)
-    int k = Synt.defxult(Synt.asInt(System.getenv("COLUMNS")), 80) - 1;
+    int k = Synt.defxult(Synt.asInt(ENV.get().get("COLUMNS")), 80) - 1;
     int l =     sb.   length( );
     if (l > k ) sb.setLength(k);
     for(int i = l; i < k; i ++)
@@ -502,6 +522,7 @@ public class CombatHelper
     PrintStream out = ERR.get();
     out.print(sb);
     out.flush(  );
+    ING.set(true);
   }
 
   /**
@@ -517,10 +538,31 @@ public class CombatHelper
     } else
     if (done > 0)
     {
-      CombatHelper.progres( -1f, ""+done );
+      CombatHelper.progres( -1f, done+"" );
     } else
     {
       CombatHelper.progres( -1f,  "..."  );
+    }
+  }
+
+  /**
+   * 输出执行用时
+   * @param done 完成数量
+   * @param tote 总条目数
+   * @param time 已用时间
+   */
+  public static void progres(int done, int tote, long time)
+  {
+    if (tote > 0)
+    {
+      CombatHelper.progres( (float) done / tote, done+"/"+tote+" "+Inst.phrase(time) );
+    } else
+    if (done > 0)
+    {
+      CombatHelper.progres( -1f, done+" "+Inst.phrase(time) );
+    } else
+    {
+      CombatHelper.progres( -1f,  "... " +Inst.phrase(time) );
     }
   }
 
@@ -533,9 +575,13 @@ public class CombatHelper
    */
   public static void progres()
   {
-    PrintStream out = ERR.get();
-    out.println();
-    out.flush(  );
+    if (ING.get( ))
+    {
+      PrintStream out = ERR.get();
+      out.println();
+      out.flush(  );
+      ING.set(null);
+    }
   }
 
 }

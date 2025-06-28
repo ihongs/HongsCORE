@@ -84,10 +84,11 @@ public class CombatRunner implements Runnable
   @Override
   public void run()
   {
-    Core.ACTION_NAME.set( act );
-    Core.ACTION_TIME.set(System.currentTimeMillis());
+    long now = System.currentTimeMillis( );
+    Core.ACTION_TIME.set(now);
+    Core.ACTION_NAME.set(act);
     try {
-        met.invoke(null , new Object[]{args});
+        met.invoke(null, new Object[]{ args });
     } catch (   IllegalAccessException ex) {
         CoreLogger.error("Illegal access for method "+met.getClass().getName()+"."+met.getName()+"(String[]).");
     } catch ( IllegalArgumentException ex) {
@@ -95,7 +96,7 @@ public class CombatRunner implements Runnable
     } catch (InvocationTargetException ex) {
         CoreLogger.error( ex.getCause( ) );
     } finally {
-        Core.getInstance().reset();
+        Core.getInstance( ).reset( );
     }
   }
 

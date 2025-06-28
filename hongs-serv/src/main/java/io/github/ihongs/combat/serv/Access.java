@@ -20,6 +20,7 @@ import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 维护命令
@@ -44,28 +45,6 @@ import java.util.Map;
  */
 @Combat("access")
 public class Access {
-
-    @Combat("test")
-    public static void test(String[] args) throws CruxException, InterruptedException {
-        if (args.length == 0) {
-            CombatHelper.println(
-                  "Usage: access.exec access.test TEXT TIMES"
-            );
-            return;
-        }
-
-        CombatHelper.println (args[0]) ;
-
-        int n = args.length > 1 ? Integer.parseInt(args[1]) : 0;
-        if (n > 0) {
-            CombatHelper.progres(0, n) ;
-        for(int i = 1 ; i <= n ; i ++) {
-            Thread.sleep(1000) ;
-            CombatHelper.progres(i, n) ;
-        }
-            CombatHelper.progres(/**/) ;
-        }
-    }
 
     @Combat("exec")
     public static void exec(String[] args) throws CruxException {
@@ -95,10 +74,23 @@ public class Access {
         );
 
         // 请求参数
-        Map rep = new HashMap(2);
+        Map rep = new HashMap(3);
         rep.put("cmd" , args[0]);
         if (args.length > 1 ) {
             rep.put("args", Arrays.copyOfRange(args, 1, args.length));
+        }
+
+        // 环境变量
+        Map env = new HashMap(2);
+        rep.put("env" , env );
+        String   val  ;
+        val = CombatHelper.ENV.get().get("COLUMNS");
+        if (val != null && ! val.isEmpty()) {
+            env.put("COLUMNS", val );
+        }
+        val = CombatHelper.ENV.get().get( "LINES" );
+        if (val != null && ! val.isEmpty()) {
+            env.put( "LINES" , val );
         }
 
         Remote.request(Remote.METHOD.POST, Remote.FORMAT.JSON, url, rep, reh, CombatHelper.OUT.get());
@@ -202,6 +194,51 @@ public class Access {
             } else {
                 co.unset( cn );
             }
+        }
+    }
+
+    @Combat("kill")
+    public static void kill(String[] args) throws CruxException, InterruptedException {
+        if (args.length == 0) {
+            CombatHelper.println(
+                  "Usage: access.exec access.kill THREAD_ID"
+            );
+            return;
+        }
+
+        long id = Long.parseLong (args[0]);
+
+        Set<Thread> ts = Thread.getAllStackTraces().keySet();
+        for(Thread  th : ts) {
+            if (th.getId() == id) {
+                th.interrupt (  );
+                CombatHelper.println("OK");
+                return;
+            }
+        }
+
+        CombatHelper.println ("Not found");
+    }
+
+    @Combat("test")
+    public static void test(String[] args) throws CruxException, InterruptedException {
+        if (args.length == 0) {
+            CombatHelper.println(
+                  "Usage: access.exec access.test TEXT SECS"
+            );
+            return;
+        }
+
+        CombatHelper.println (args[0]) ;
+
+        int n = args.length > 1 ? Integer.parseInt(args[1]) : 0;
+        if (n > 0) {
+            CombatHelper.progres(0, n) ;
+        for(int i = 1 ; i <= n ; i ++) {
+            Thread.sleep(1000) ;
+            CombatHelper.progres(i, n) ;
+        }
+            CombatHelper.progres(/**/) ;
         }
     }
 

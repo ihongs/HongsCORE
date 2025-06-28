@@ -387,7 +387,8 @@ public class MoreAction {
                 CombatHelper.ERR.set(out);
                 CombatHelper.ENV.set(env);
 
-                CombatHelper.println("TID: "+Thread.currentThread().getId());
+                Thread th = Thread.currentThread();
+                CombatHelper.println("#"+ th.getId( ) +" "+ th.getName( ));
 
                 CombatRunner.exec( args );
             }

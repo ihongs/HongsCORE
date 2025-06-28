@@ -303,6 +303,10 @@ public class DataCombat {
             }
         }}
         da.commit( );
+        if ( pr) {
+            CombatHelper.progres(i, c);
+            CombatHelper.progres(    );
+        }
         CombatHelper.println("Revert "+i+" item(s) for "+form+" to "+dr.getDbName());
 
         if (Thread.interrupted()) {

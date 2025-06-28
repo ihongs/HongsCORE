@@ -236,11 +236,11 @@ public class DataCombat {
         }
 
         long tx = System.currentTimeMillis();
-        boolean pr = Core.DEBUG == 0 && Core.ENVIR == 0;
+        boolean pr = 4 != ( 4 & Core.DEBUG );
 
         dr.begin ( );
+        CombatHelper.println("Revert for "+form+" to "+dr.getDbName());
         if ( pr) {
-            CombatHelper.println("Revert for "+form+" to "+dr.getDbName());
             CombatHelper.progres(i, c);
         }
         if ( ct  !=  0  ) {
@@ -270,6 +270,8 @@ public class DataCombat {
                 dr.begin (  );
                 if ( pr) {
                     CombatHelper.progres(i, c, System.currentTimeMillis() - tx);
+                } else {
+                    CombatHelper.println(i+"/"+c);
                 }
             }
             if (Thread.interrupted()) {
@@ -295,6 +297,8 @@ public class DataCombat {
                 dr.begin (  );
                 if ( pr) {
                     CombatHelper.progres(i, c, System.currentTimeMillis() - tx);
+                } else {
+                    CombatHelper.println(i+"/"+c);
                 }
             }
             if (Thread.interrupted()) {
@@ -304,8 +308,9 @@ public class DataCombat {
         }}
         da.commit( );
         if ( pr) {
-            CombatHelper.progres(i, c);
-            CombatHelper.progres(    );
+            CombatHelper.progres(i, c, System.currentTimeMillis() - tx);
+        } else {
+            CombatHelper.println(i+"/"+c);
         }
         CombatHelper.println("Revert "+i+" item(s) for "+form+" to "+dr.getDbName());
 

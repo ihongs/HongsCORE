@@ -389,7 +389,8 @@ public class DataCombat {
 
         // 计数计时
         int   c = 0;
-        int   a = ends-skip ;
+        int   k = skip;
+        int   l = ends-skip ;
         long  t = System.currentTimeMillis();
 
         for ( ; skip < ends ; skip += bufs ) {
@@ -427,7 +428,7 @@ public class DataCombat {
             c += j;
 
             if (p) {
-                CombatHelper.progres((float)(lens-skip)/a , c+"(+"+i+",-"+j+") "+ Inst.phrase(System.currentTimeMillis() - t));
+                CombatHelper.progres((float) (lens-k) / l , c+"(+"+i+",-"+j+") "+ Inst.phrase(System.currentTimeMillis() - t));
             } else {
                 CombatHelper.println("("+skip+","+lens+"] "+c+"(+"+i+",-"+j+") "+ Inst.phrase(System.currentTimeMillis() - t));
             }

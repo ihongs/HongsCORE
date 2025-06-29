@@ -96,9 +96,24 @@ public class CombatHelper
   }
 
   /**
-   * 进度条输出中
+   * 任务被中止
    */
-  public static final Core.Variable<Boolean> ING = new Core.Variable("!PROGRESING") {
+  public static final Core.Variable<Boolean> END = new Core.Variable("!END") {
+    @Override
+    public Boolean get() {
+      Core c  = Core.getInstance ( );
+      Boolean v = (Boolean) c.get(k);
+      if ( v == null) {
+           v  = false;
+      }
+      return  v;
+    }
+  };
+
+  /**
+   * 单行输出中
+   */
+  public static final Core.Variable<Boolean> ING = new Core.Variable("!ING") {
     @Override
     public Boolean get() {
       Core c  = Core.getInstance ( );
@@ -582,6 +597,15 @@ public class CombatHelper
       out.flush(  );
       ING.set(null);
     }
+  }
+
+  /**
+   * 是否中止执行
+   * @return
+   */
+  public static boolean aborted()
+  {
+    return END.get() || Thread.interrupted();
   }
 
 }

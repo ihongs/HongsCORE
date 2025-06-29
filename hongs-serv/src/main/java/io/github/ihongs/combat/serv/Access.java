@@ -204,7 +204,7 @@ public class Access {
     }
 
     @Combat("list")
-    public static void list(String[] args) throws CruxException, InterruptedException {
+    public static void list(String[] args) throws CruxException {
         for(Map.Entry<String, Core> et : JOBS.entrySet()) {
             String id = et.getKey(  );
             Core core = et.getValue();
@@ -213,7 +213,7 @@ public class Access {
     }
 
     @Combat("kill")
-    public static void kill(String[] args) throws CruxException, InterruptedException {
+    public static void kill(String[] args) throws CruxException {
         if (args.length == 0) {
             CombatHelper.println(
                   "Usage: access.exec access.kill TASKID"
@@ -231,10 +231,17 @@ public class Access {
         Thread th = (Thread)core.get("!THREAD");
         if (null ==  th ) {
             CombatHelper. println ("No thread");
+            core.put("!END", true);
             return;
         }
 
-        th.interrupt();
+        // 先通知任务, 再通知线程
+        if (Synt.declare(core.get("!END"), false) == false) {
+            core.put("!END", true);
+        } else {
+            th.interrupt( );
+        }
+
         CombatHelper.println("OK");
     }
 

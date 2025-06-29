@@ -44,7 +44,7 @@ public class DataCombat {
 
     @Combat("revert-all")
     public static void revertAll(String[] args)
-    throws CruxException, InterruptedException {
+    throws CruxException {
         Map opts = CombatHelper.getOpts(args, new String[] {
             "user:s",
             "memo:s",
@@ -98,20 +98,24 @@ public class DataCombat {
             try {
                 revert( args );
             }
-            catch (CruxException|InterruptedException e) {
+            catch (CruxException e) {
                 String s;
                 ByteArrayOutputStream b;
                 b = new ByteArrayOutputStream();
-                e.printStackTrace(new PrintStream ( b ));
+                e.printStackTrace(new PrintStream (b));
                 s = b.toString().replaceAll("\r\n|\r|\n", "$0\t");
                 CombatHelper.println(s);
+            }
+            if (CombatHelper.aborted()) {
+                CombatHelper.println( "Task aborted" );
+                return;
             }
         }
     }
 
     @Combat("revert")
     public static void revert(String[] args)
-    throws CruxException, InterruptedException {
+    throws CruxException {
         Map opts = CombatHelper.getOpts(args, new String[] {
             "conf=s",
             "form=s",
@@ -137,7 +141,7 @@ public class DataCombat {
         revert(da, opts);
     }
     public static void revert(Casc da, Map opts)
-    throws CruxException, InterruptedException {
+    throws CruxException {
         Data dr = da.getInstance();
         String form = dr.getFormId();
         String user = (String) opts.get("user");
@@ -200,8 +204,8 @@ public class DataCombat {
         }
         CombatHelper.println("Search "+c+" item(s) for "+form);
 
-        if (Thread.interrupted()) {
-            CombatHelper.println("Thread interrupted");
+        if (CombatHelper.aborted()) {
+            CombatHelper.println( "Task aborted" );
             return;
         }
 
@@ -224,8 +228,8 @@ public class DataCombat {
             CombatHelper.println( "Truncate "+ form );
         }
 
-        if (Thread.interrupted()) {
-            CombatHelper.println("Thread interrupted");
+        if (CombatHelper.aborted()) {
+            CombatHelper.println( "Task aborted" );
             return;
         }
 
@@ -268,9 +272,9 @@ public class DataCombat {
                     CombatHelper.println(i+"/"+c);
                 }
             }
-            if (Thread.interrupted()) {
-                CombatHelper.println("Thread interrupted");
-                break;
+            if (CombatHelper.aborted()) {
+                CombatHelper.println("Task aborted");
+                return;
             }
         }} else {
         for(Map od : lp ) {
@@ -295,9 +299,9 @@ public class DataCombat {
                     CombatHelper.println(i+"/"+c);
                 }
             }
-            if (Thread.interrupted()) {
-                CombatHelper.println("Thread interrupted");
-                break;
+            if (CombatHelper.aborted()) {
+                CombatHelper.println("Task aborted");
+                return;
             }
         }}
         da.commit( );
@@ -308,8 +312,8 @@ public class DataCombat {
         }
         CombatHelper.println("Revert "+i+" item(s) for "+form+" to "+dr.getDbName());
 
-        if (Thread.interrupted()) {
-            CombatHelper.println("Thread interrupted");
+        if (CombatHelper.aborted()) {
+            CombatHelper.println( "Task aborted" );
             return;
         }
 
@@ -377,7 +381,11 @@ public class DataCombat {
          */
         if (Synt.declare(opts.get("truncate"), false)) {
             da.truncate ( );
-            CombatHelper.println( "Truncate "+ fn );
+            CombatHelper.println( "Truncate "  + fn );
+            if (CombatHelper.aborted()) {
+                CombatHelper.println("Task aborted.");
+                return;
+            }
         }
 
         // 查询准备
@@ -432,13 +440,18 @@ public class DataCombat {
             } else {
                 CombatHelper.println("("+skip+","+lens+"] "+c+"(+"+i+",-"+j+") "+ Inst.phrase(System.currentTimeMillis() - t));
             }
+
+            if (CombatHelper.aborted()) {
+                CombatHelper.println("Task aborted!");
+                break;
+            }
         }
         CombatHelper.progres();
     }
 
     @Combat("import")
     public static void impart(String[] args)
-    throws CruxException, InterruptedException {
+    throws CruxException {
         Map opts = CombatHelper.getOpts(args, new String[] {
             "conf=s",
             "form=s",
@@ -455,7 +468,7 @@ public class DataCombat {
         impart(dr, opts);
     }
     public static void impart(Data dr, Map opts)
-    throws CruxException, InterruptedException {
+    throws CruxException {
         String user = (String) opts.get("user");
         String memo = (String) opts.get("memo");
         String[] dats = (String[]) opts.get("");
@@ -487,7 +500,7 @@ public class DataCombat {
 
     @Combat("update")
     public static void update(String[] args)
-    throws CruxException, InterruptedException {
+    throws CruxException {
         Map opts = CombatHelper.getOpts(args, new String[] {
             "conf=s",
             "form=s",
@@ -504,7 +517,7 @@ public class DataCombat {
         update(dr, opts);
     }
     public static void update(Data dr, Map opts)
-    throws CruxException, InterruptedException {
+    throws CruxException {
         String user = (String) opts.get("user");
         String memo = (String) opts.get("memo");
         String[] dats = (String[]) opts.get("");
@@ -541,7 +554,7 @@ public class DataCombat {
 
     @Combat("delete")
     public static void delete(String[] args)
-    throws CruxException, InterruptedException {
+    throws CruxException {
         Map opts = CombatHelper.getOpts(args, new String[] {
             "conf=s",
             "form=s",
@@ -558,7 +571,7 @@ public class DataCombat {
         delete(dr, opts);
     }
     public static void delete(Data dr, Map opts)
-    throws CruxException, InterruptedException {
+    throws CruxException {
         String user = (String) opts.get("user");
         String memo = (String) opts.get("memo");
         String[] dats = (String[]) opts.get("");

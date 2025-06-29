@@ -616,16 +616,16 @@ public class CombatHelper
    */
   public static void abort(Core core, boolean force)
   {
-    if (! force && ! Synt.declare(core.get(END.key()), false))
+    if (force == false )
     {
       core.put(END.key() , true);
       return;
     }
 
     Thread th = (Thread) core.get("!THREAD");
-    if (null !=  th )
+    if (null !=  th)
     {
-      th.interrupt( );
+      th.interrupt();
       return;
     }
 

@@ -238,8 +238,7 @@ public class Access {
             return;
         }
 
-        // 先通知任务, 再通知线程
-        if (! force && ! Synt.declare(core.get(ek), false)) {
+        if (force == false) {
             core.put(ek , true);
         } else {
             th.interrupt( );

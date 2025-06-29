@@ -221,8 +221,6 @@ public class Access {
             return;
         }
 
-        boolean force = args.length > 1 ? "--force".equals(args[1]) : false;
-
         String id = args[0];
         Core core = JOBS.get(id);
         if (null == core) {
@@ -238,7 +236,7 @@ public class Access {
             return;
         }
 
-        if (force == false) {
+        if (! Synt.declare(core.get(ek), false)) {
             core.put(ek , true);
         } else {
             th.interrupt( );

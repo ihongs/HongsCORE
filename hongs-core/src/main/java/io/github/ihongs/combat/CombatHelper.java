@@ -114,7 +114,7 @@ public class CombatHelper
   /**
    * 单行输出中
    */
-  public static final Core.Variable<Boolean> ING = new Core.Variable("!THREAD_ING") {
+  public static final Core.Variable<Boolean> ING = new Core.Variable("!TYPIST_ING") {
     @Override
     public Boolean get() {
       Core c  = Core.getInstance ( );
@@ -449,7 +449,7 @@ public class CombatHelper
    */
   public static void println(String text)
   {
-    progres(); // 中止进度条
+    progres  (  );
 
     PrintStream out = OUT.get();
     out.println(text);
@@ -463,7 +463,7 @@ public class CombatHelper
    */
   public static void println(Object data)
   {
-    progres(); // 中止进度条
+    progres  (  );
 
     PrintStream out = OUT.get();
     Dist.append(out,data,false);
@@ -584,10 +584,6 @@ public class CombatHelper
 
   /**
    * 终止输出进度
-   *
-   * 请将执行块包裹在 try catch 中
-   * 接获到异常或中止执行时
-   * 使用本方法可安全的切行
    */
   public static void progres()
   {
@@ -616,7 +612,7 @@ public class CombatHelper
    */
   public static void abort(Core core, boolean force)
   {
-    if (force == false )
+    if (! force )
     {
       core.put(END.key() , true);
       return;

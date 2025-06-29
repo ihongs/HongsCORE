@@ -13,6 +13,7 @@ import io.github.ihongs.db.PrivTable;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.db.link.Loop;
 import io.github.ihongs.util.Dist;
+import io.github.ihongs.util.Inst;
 import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
 import java.io.ByteArrayOutputStream;
@@ -219,20 +220,8 @@ public class DataCombat {
          * 以便更新结构
          */
         if (Synt.declare(opts.get("truncate"), false)) {
-            IndexWriter iw = dr.getWriter();
-            /**/ String pd = dr.getPartId();
-            try {
-                if (pd != null && ! pd.isEmpty( )) {
-                    iw.deleteDocuments(new Term("@"+Data.PART_ID_KEY, pd));
-                } else {
-                    iw.deleteAll(/**/);
-                }   iw.commit();
-                iw.deleteUnusedFiles();
-                iw.maybeMerge();
-                CombatHelper.println("Truncate "+form);
-            } catch ( IOException ex ) {
-                throw new CruxException(ex);
-            }
+            da.truncate();
+            CombatHelper.println( "Truncate "+ form );
         }
 
         if (Thread.interrupted()) {
@@ -337,6 +326,114 @@ public class DataCombat {
         da.commit( );
         i=ds.size( );
         CombatHelper.println("Remove "+i+" item(s) for "+form+" in "+dr.getDbName());
+    }
+
+    @Combat("repair")
+    public static void repair(String[] args) throws CruxException, IOException, SQLException {
+        Map opts = CombatHelper.getOpts(args, new String[] {
+            "conf=s",
+            "form=s",
+            "skip:i",
+            "bufs:i",
+            "ends:i",
+            "truncate:b",
+            "cascades:b",
+            "includes:b",
+            "incloses:b",
+            "progress:b",
+            "!A",
+            "?Usage: repair --conf CONF_NAME --form FORM_NAME [--skip RNUM_SKIP] [--ends RNUM_ENDS]"
+        });
+
+        String conf = (String) opts.get("conf");
+        String form = (String) opts.get("form");
+        Data dr = Data.getInstance(conf, form );
+        Casc da = new Casc(dr, opts);
+
+        repair(da, opts);
+    }
+    @Combat("repair")
+    public static void repair(Casc da, Map opts) throws CruxException, IOException, SQLException {
+        Data   dr = da.getInstance();
+        Table  tb = dr.getTable ( );
+        String fn = dr.getFormId( );
+
+        int skip  = Synt.declare(opts.get("skip"), 0);
+        int bufs  = Synt.declare(opts.get("bufs"), 0);
+        int ends  = Synt.declare(opts.get("ends"), 0);
+
+        if (bufs == 0) {
+            bufs  = 1000;
+        }
+        if (ends == 0) {
+            Map one = tb.db.fetchOne("SELECT MAX(`rnum`) AS `rnum` FROM `"+tb.tableName+"`");
+            ends  = Synt.declare(one.get("rnum"), ends );
+        }
+
+        boolean p = Synt.declare(opts.get("progress"), false);
+
+        /**
+         * 清空全部数据
+         * 以便更新结构
+         */
+        if (Synt.declare(opts.get("truncate"), false)) {
+            da.truncate ( );
+            CombatHelper.println( "Truncate "+ fn );
+        }
+
+        // 查询准备
+        PreparedStatement ps;
+        ResultSet         rs;
+        Map               ro;
+        ps = tb.db.prepare("SELECT id, data, state FROM `"+tb.tableName+"` WHERE `form_id` = '"+fn+"' AND `etime` = 0 AND rnum > ? AND rnum <= ?");
+        ro = new HashMap(02);
+
+        // 计数计时
+        int   c = 0;
+        int   a = ends-skip ;
+        long  t = System.currentTimeMillis();
+
+        for ( ; skip < ends ; skip += bufs ) {
+            int lens = skip + bufs ;
+            if (lens > ends) {
+                lens = ends ;
+            }
+
+            ps.setInt(1, skip);
+            ps.setInt(2, lens);
+            rs = ps.executeQuery( );
+
+            int i = 0;
+            int j = 0;
+
+            dr.begin();
+            while (rs.next()) {
+                String id = rs.getString( "id" );
+                String ds = rs.getString("data");
+                int    st = rs.getInt( "state" );
+                ro.put( "id" , id);
+                ro.put("data", ds);
+                if (st > 0) {
+                    da.rev(id, ro);
+                    i ++;
+                } else {
+                    da.del(id, ro);
+                    j ++;
+                }
+            }
+            rs.close ( );
+            da.commit( );
+
+            c += i;
+            c += j;
+
+            if (p) {
+                CombatHelper.progres((float)(lens-skip)/a , c+"(+"+i+",-"+j+") "+ Inst.phrase(System.currentTimeMillis() - t));
+            } else {
+                CombatHelper.println("("+skip+","+lens+"] "+c+"(+"+i+",-"+j+") "+ Inst.phrase(System.currentTimeMillis() - t));
+            }
+        }
+        CombatHelper.progres();
     }
 
     @Combat("import")
@@ -955,6 +1052,22 @@ public class DataCombat {
                 that.commit();
             } else {
                 that.submit();
+            }
+        }
+
+        public void truncate() throws CruxException {
+            IndexWriter iw = that.getWriter();
+            /**/ String pd = that.getPartId();
+            try {
+                if (pd != null && ! pd.isEmpty()) {
+                    iw.deleteDocuments(new Term("@"+Data.PART_ID_KEY, pd));
+                } else {
+                    iw.deleteAll(/**/);
+                }   iw.commit();
+                iw.deleteUnusedFiles();
+                iw.maybeMerge();
+            } catch ( IOException ex ) {
+                throw new CruxException(ex);
             }
         }
 

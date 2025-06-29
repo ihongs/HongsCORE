@@ -230,16 +230,17 @@ public class Access {
             return;
         }
 
+        String ek = CombatHelper.END.key();
         Thread th = (Thread)core.get("!THREAD");
         if (null ==  th ) {
             CombatHelper. println ("No thread");
-            core.put("!END", true);
+            core.put(ek , true);
             return;
         }
 
         // 先通知任务, 再通知线程
-        if (! force && ! Synt.declare(core.get("!END"), false)) {
-            core.put("!END", true);
+        if (! force && ! Synt.declare(core.get(ek), false)) {
+            core.put(ek , true);
         } else {
             th.interrupt( );
         }

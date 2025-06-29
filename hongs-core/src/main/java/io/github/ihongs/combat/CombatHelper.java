@@ -99,7 +99,7 @@ public class CombatHelper
   /**
    * 任务被中止
    */
-  public static final Core.Variable<Boolean> END = new Core.Variable("!END") {
+  public static final Core.Variable<Boolean> END = new Core.Variable("!THREAD_END") {
     @Override
     public Boolean get() {
       Core c  = Core.getInstance ( );
@@ -114,7 +114,7 @@ public class CombatHelper
   /**
    * 单行输出中
    */
-  public static final Core.Variable<Boolean> ING = new Core.Variable("!ING") {
+  public static final Core.Variable<Boolean> ING = new Core.Variable("!THREAD_ING") {
     @Override
     public Boolean get() {
       Core c  = Core.getInstance ( );
@@ -616,9 +616,9 @@ public class CombatHelper
    */
   public static void abort(Core core, boolean force)
   {
-    if (! force && ! Synt.declare(core.get("!END"), false))
+    if (! force && ! Synt.declare(core.get(END.key()), false))
     {
-      core.put("!END", true);
+      core.put(END.key() , true);
       return;
     }
 

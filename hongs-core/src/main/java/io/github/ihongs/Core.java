@@ -1133,6 +1133,11 @@ public class Core
       this.k = k;
     }
 
+    public final String key()
+    {
+      return k;
+    }
+
     @Override
     public T get()
     {

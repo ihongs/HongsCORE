@@ -396,10 +396,11 @@ public class DataCombat {
         ro = new HashMap(02);
 
         // 计数计时
-        int   c = 0;
-        int   k = skip;
-        int   l = ends-skip ;
-        long  t = System.currentTimeMillis();
+        int  i = 0;
+        int  j = 0;
+        int  k = skip;
+        int  l = ends - skip;
+        long t = System.currentTimeMillis( );
 
         for ( ; skip < ends ; skip += bufs ) {
             int lens = skip + bufs ;
@@ -410,9 +411,6 @@ public class DataCombat {
             ps.setInt(1, skip);
             ps.setInt(2, lens);
             rs = ps.executeQuery( );
-
-            int i = 0;
-            int j = 0;
 
             dr.begin();
             while (rs.next()) {
@@ -432,13 +430,10 @@ public class DataCombat {
             rs.close ( );
             da.commit( );
 
-            c += i;
-            c += j;
-
             if (p) {
-                CombatHelper.progres((float) (lens-k) / l , c+"(+"+i+",-"+j+") "+ Inst.phrase(System.currentTimeMillis() - t));
+                CombatHelper.progres((float)(lens-k)/l , "+"+i+",-"+j+" "+ Inst.phrase(System.currentTimeMillis() - t));
             } else {
-                CombatHelper.println("("+skip+","+lens+"] "+c+"(+"+i+",-"+j+") "+ Inst.phrase(System.currentTimeMillis() - t));
+                CombatHelper.println("("+skip+","+lens+"] +"+i+",-"+j+" "+ Inst.phrase(System.currentTimeMillis() - t));
             }
 
             if (CombatHelper.aborted()) {

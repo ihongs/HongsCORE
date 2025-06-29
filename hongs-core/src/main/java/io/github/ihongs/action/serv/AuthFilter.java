@@ -249,12 +249,12 @@ public class AuthFilter
 
     if (authset != null) {
         if (actions.contains(aut)
-            &&  !   authset.contains(aut)) {
+        && !authset.contains(aut)) {
             doFailed(core, hlpr, (byte) 2);
             return;
         }
         if (actions.contains(act)
-            &&  !   authset.contains(act)) {
+        && !authset.contains(act)) {
             doFailed(core, hlpr, (byte) 3);
             return;
         }

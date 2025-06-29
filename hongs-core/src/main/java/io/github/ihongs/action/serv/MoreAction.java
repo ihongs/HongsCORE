@@ -122,7 +122,7 @@ public class MoreAction {
                 // 执行请求
                 helper.reply( (Map) null );
                 helper.setRequestData(re1);
-                eval( helper, uri , req, rsp );
+                call( helper, uri , req, rsp );
                 rs1 = helper.getResponseData();
 
                 if (rs1 == null) {
@@ -161,7 +161,7 @@ public class MoreAction {
                 // 执行请求
                 helper.reply( (Map) null );
                 helper.setRequestData(re1);
-                eval( helper, uri , req, rsp );
+                call( helper, uri , req, rsp );
                 rs1 = helper.getResponseData();
 
                 // 响应数据
@@ -226,7 +226,7 @@ public class MoreAction {
         }
     }
 
-    private void eval(ActionHelper helper, String act, HttpServletRequest req, HttpServletResponse rsp) {
+    private void call(ActionHelper helper, String act, HttpServletRequest req, HttpServletResponse rsp) {
         // 重设路径
         act = act + Cnst.ACT_EXT ;
         Core.ACTION_NAME.set(act);

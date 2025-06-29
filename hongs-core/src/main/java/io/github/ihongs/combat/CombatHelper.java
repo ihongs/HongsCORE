@@ -447,6 +447,20 @@ public class CombatHelper
    * 将输出到 OUT
    * @param text 输出内容
    */
+  public static void println(CharSequence text)
+  {
+    progres  (  );
+
+    PrintStream out = OUT.get();
+    out.println(text);
+    out.flush(  );
+  }
+
+  /**
+   * 输出内容
+   * 将输出到 OUT
+   * @param text 输出内容
+   */
   public static void println(String text)
   {
     progres  (  );

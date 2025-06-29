@@ -942,7 +942,6 @@ public class DataCombat {
         }
 
         public void pad(String id, Map dd) throws CruxException {
-            dd.put(Cnst.ID_KEY, id);
             if (includes) that.includes(dd);
             if (incloses) that.incloses(dd);
         }

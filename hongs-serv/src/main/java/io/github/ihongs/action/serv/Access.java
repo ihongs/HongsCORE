@@ -1,11 +1,8 @@
 package io.github.ihongs.action.serv;
 
-import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
-import io.github.ihongs.CruxCause;
 import io.github.ihongs.CruxException;
-import io.github.ihongs.CruxExemption;
 import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
@@ -28,7 +25,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Hongs
  */
-@Action("common/access")
+@Action("access")
 public class Access {
 
     public static final Map<String, Core> JOBS = new HashMap();
@@ -46,7 +43,7 @@ public class Access {
         String  ip  = ActionDriver.getClientAddr (req);
         Set     ias = Synt.toTerms( ia );
         if (aut != null) {
-        if (aut.startsWith( "Bearer " )) {
+        if (aut.startsWith( "Access " )) {
             aut  = aut. substring ( 07 );
         } else {
             aut  = "" ;
@@ -64,24 +61,18 @@ public class Access {
             throw new CruxException( 400, "Illegal request." );
         }
 
-        Map    map = helper.getRequestData();
-        String cmd = (String)map.get("cmd" );
-        String act = Core.ACTION_NAME.get( );
-        Thread job = Thread.currentThread( );
+        Thread job = Thread.currentThread();
         String jid = Core.newIdentity();
         Core  core = Core.getInstance();
 
         core.put("!THREAD", job);
         core.put("!TASKID", jid);
+        JOBS.put(jid , core);
 
         try {
-            Core.ACTION_NAME.set(cmd);
-            JOBS.put(jid , core);
-
-            exec(helper, jid, cmd, req, rsp);
+            exec(helper,jid , req, rsp);
         } finally {
-            Core.ACTION_NAME.set(act);
-            JOBS.remove( jid );
+            JOBS.remove(jid);
         }
     }
 
@@ -98,7 +89,7 @@ public class Access {
         String  ip  = ActionDriver.getClientAddr (req);
         Set     ias = Synt.toTerms( ia );
         if (aut != null) {
-        if (aut.startsWith( "Bearer " )) {
+        if (aut.startsWith( "Access " )) {
             aut  = aut. substring ( 07 );
         } else {
             aut  = "" ;
@@ -116,118 +107,107 @@ public class Access {
             throw new CruxException( 400, "Illegal request." );
         }
 
-        Map    map = helper.getRequestData();
-        String uri = (String)map.get("act" );
-        String act = Core.ACTION_NAME.get( );
-        Thread job = Thread.currentThread( );
+        Thread job = Thread.currentThread();
         String jid = Core.newIdentity();
         Core  core = Core.getInstance();
 
-        act = act + Cnst.ACT_EXT;
         core.put("!THREAD", job);
         core.put("!TASKID", jid);
-
-        // 从参数提取参数
-        helper.setRequestData(data(map, "request"));
-        helper.setContextData(data(map, "context"));
-        helper.setSessionData(data(map, "session"));
-        helper.setCookiesData(data(map, "cookies"));
+        JOBS.put(jid , core);
 
         try {
-            Core.ACTION_NAME.set(act);
-            JOBS.put(jid , core);
-
-            eval(helper, jid, uri, req, rsp);
+            eval(helper,jid , req, rsp);
         } finally {
-            Core.ACTION_NAME.set(act);
-            JOBS.remove( jid );
+            JOBS.remove(jid);
         }
     }
 
-    private void exec(ActionHelper helper, String jid, String cmd, HttpServletRequest req, HttpServletResponse rsp) {
-        // 组织参数
-        String[] args;
-        List opts = Synt.asList(helper.getRequestData().get("args"));
-        if (opts == null || opts.isEmpty()) {
-            args = new String[1 /* no args */ ];
-        } else {
-            args = new String[1 + opts.size() ];
-                int  i = 1 ;
-            for(Object opt : opts) {
-                args[i ++] = Synt.asString(opt);
-            }
-        }
-        args[0] = cmd;
+    private void exec(ActionHelper helper, String jid, HttpServletRequest req, HttpServletResponse rsp) throws CruxException {
+        Map rsd = helper.getRequestData();
 
-        // 环境变量
-        Map env = Synt.asMap(helper.getRequestData().get("env"));
+        Map env = Synt.asMap(rsd.get("env"));
         if (env == null) {
-            env = Synt.mapOf();
+            env = new HashMap(0);
         }
+
+        List<String> arr = Synt.asList( rsd.get( "args" ) );
+        if (arr == null || arr.isEmpty()) {
+            throw new CruxException( 400, "args required" );
+        }
+        String cmd = arr.get (0);
+        String[] args = arr.toArray(new String[arr.size()]);
 
         try {
             rsp.setCharacterEncoding("utf-8");
             rsp.setContentType ("text/plain");
             rsp.setHeader("Connection" , "keep-alive");
             rsp.setHeader("Cache-Control", "no-store");
+
+            helper.setAttribute(Access.class.getName()+":ID", jid );
             PrintStream out = new PrintStream(rsp.getOutputStream(), true);
+            String act = Core.ACTION_NAME.get();
 
             try {
+                Core.ACTION_NAME.set(cmd);
                 CombatHelper.OUT.set(out);
                 CombatHelper.ERR.set(out);
                 CombatHelper.ENV.set(env);
 
-                CombatHelper.println("TaskID: "+ jid + "\n");
-
                 CombatRunner.exec( args );
             }
             finally {
+                Core.ACTION_NAME.set(act);
                 CombatHelper.OUT.remove();
                 CombatHelper.ERR.remove();
                 CombatHelper.ENV.remove();
             }
         }
-        catch (IOException e) {
-            throw new CruxExemption(e);
+        catch ( IOException ex ) {
+            throw new CruxException( ex );
         }
     }
 
-    private void eval(ActionHelper helper, String jid, String act, HttpServletRequest req, HttpServletResponse rsp) {
-        helper.setAttribute(Cnst.ACTION_ATTR, null);
+    private void eval(ActionHelper helper, String jid, HttpServletRequest req, HttpServletResponse rsp) throws CruxException {
+        Map rsd = helper.getRequestData();
+
+        Map env = Synt.asMap(rsd.get("env"));
+        if (env == null) {
+            env = new HashMap(0);
+        }
+
+        List<String> arr = Synt.asList( rsd.get( "args" ) );
+        if (arr == null || arr.isEmpty()) {
+            throw new CruxException( 400, "args required" );
+        }
+        String uri = arr.remove(0);
 
         try {
-            req.getRequestDispatcher("/" + act).include(req, rsp);
-        } catch (ServletException | IOException ex) {
-            if (ex.getCause() instanceof CruxCause) {
-                CruxCause ez = (CruxCause) ex.getCause();
-                String en = Integer.toHexString(ez.getErrno());
-                Map map = new HashMap(4);
-                map.put("ok" ,  false  );
-                map.put("ern", "Ex"+en );
-                map.put("err", ez.getMessage());
-                map.put("msg", ez.getLocalizedMessage());
-                helper.reply(map);
-            } else {
-                Map map = new HashMap(4);
-                map.put("ok" ,  false  );
-                map.put("ern", "Er500" );
-                map.put("err", ex.getMessage());
-                map.put("msg", ex.getLocalizedMessage());
-                helper.reply(map);
+            rsp.setCharacterEncoding("utf-8");
+            rsp.setContentType ("text/plain");
+            rsp.setHeader("Connection" , "keep-alive");
+            rsp.setHeader("Cache-Control", "no-store");
+
+            helper.setAttribute(Access.class.getName()+":ID", jid );
+            PrintStream out = new PrintStream(rsp.getOutputStream(), true);
+            String act = Core.ACTION_NAME.get();
+
+            try {
+                Core.ACTION_NAME.set(uri);
+                CombatHelper.OUT.set(out);
+                CombatHelper.ERR.set(out);
+                CombatHelper.ENV.set(env);
+
+                req.getRequestDispatcher("/"+uri).include(req, rsp);
+            }
+            finally {
+                Core.ACTION_NAME.set(act);
+                CombatHelper.OUT.remove();
+                CombatHelper.ERR.remove();
+                CombatHelper.ENV.remove();
             }
         }
-    }
-
-    private Map data(Map map, String key) throws CruxException {
-        Object obj = map.get (key);
-        if (obj == null) {
-            return new HashMap (0);
-        }
-        try {
-            return Synt.toMap(obj);
-        }
-        catch (ClassCastException e) {
-            throw new CruxException(400, "Can not parse "+key);
+        catch ( IOException|ServletException ex ) {
+            throw new CruxException( ex );
         }
     }
 

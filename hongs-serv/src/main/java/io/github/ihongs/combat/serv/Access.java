@@ -272,8 +272,8 @@ public class Access {
         }
 
         // 接管任务输出
-        core.put("!SYSTEM_OUT", CombatHelper.OUT.get());
-        core.put("!SYSTEM_ERR", CombatHelper.ERR.get());
+        core.put(CombatHelper.OUT.key(), CombatHelper.OUT.get());
+        core.put(CombatHelper.ERR.key(), CombatHelper.ERR.get());
 
         // 等待任务结束
         while (true) {

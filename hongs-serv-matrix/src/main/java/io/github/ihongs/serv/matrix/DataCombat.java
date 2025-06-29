@@ -352,7 +352,6 @@ public class DataCombat {
 
         repair(da, opts);
     }
-    @Combat("repair")
     public static void repair(Casc da, Map opts) throws CruxException, IOException, SQLException {
         Data   dr = da.getInstance();
         Table  tb = dr.getTable ( );

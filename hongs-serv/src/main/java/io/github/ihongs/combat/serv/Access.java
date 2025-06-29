@@ -221,6 +221,8 @@ public class Access {
             return;
         }
 
+        boolean force = args.length > 1 ? "--force".equals(args[1]) : false;
+
         String id = args[0];
         Core core = JOBS.get(id);
         if (null == core) {
@@ -236,7 +238,7 @@ public class Access {
         }
 
         // 先通知任务, 再通知线程
-        if (Synt.declare(core.get("!END"), false) == false) {
+        if (! force && ! Synt.declare(core.get("!END"), false)) {
             core.put("!END", true);
         } else {
             th.interrupt( );

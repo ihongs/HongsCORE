@@ -1,6 +1,7 @@
 package io.github.ihongs.combat;
 
 import io.github.ihongs.Core;
+import io.github.ihongs.CoreLogger;
 import io.github.ihongs.CruxExemption;
 import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Inst;
@@ -606,6 +607,29 @@ public class CombatHelper
   public static boolean aborted()
   {
     return END.get() || Thread.interrupted();
+  }
+
+  /**
+   * 中止执行任务
+   * @param core  任务容器
+   * @param force 中止线程
+   */
+  public static void abort(Core core, boolean force)
+  {
+    if (! force && ! Synt.declare(core.get("!END"), false))
+    {
+      core.put("!END", true);
+      return;
+    }
+
+    Thread th = (Thread) core.get("!THREAD");
+    if (null !=  th )
+    {
+      th.interrupt( );
+      return;
+    }
+
+    CoreLogger.warn("Can not interrupt {}", core.get("!ACTION_NAME"));
   }
 
 }

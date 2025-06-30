@@ -131,7 +131,7 @@
         <init-param>
             <param-name>url-exclude</param-name>
             <param-value>
-                /access/*,
+                /caesar/*,
                 /centra/sign/*,
                 /centre/sign/*
             </param-value>

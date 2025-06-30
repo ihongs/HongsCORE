@@ -1,4 +1,4 @@
-package io.github.ihongs.action.serv;
+package io.github.ihongs.serv.caesar;
 
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
@@ -23,10 +23,23 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * 维护任务
  *
+ * <pre>
+ *  调远程命令
+ *    access/exec.act
+ *  调远程脚本
+ *    access/eval.act
+ * </pre>
+ *
+ * <p>许可配置, 在 default.properties 中:</p>
+ * <pre>
+ * core.access.token 认证口令, 客户端和服务端设置一致
+ * core.access.allow 来源(IP), 服务端设置, 默认限本地
+ * </pre>
+ *
  * @author Hongs
  */
-@Action("access")
-public class Access {
+@Action("caesar")
+public class CaesarAction {
 
     public static final Map<String, Core> JOBS = new HashMap();
 
@@ -37,13 +50,13 @@ public class Access {
         HttpServletResponse rsp = helper.getResponse();
 
         // 许可及IP白名单
-        String  tok = cnf.getProperty("core.access.token");
-        String  ia  = cnf.getProperty("core.access.allow");
+        String  tok = cnf.getProperty("core.caesar.token");
+        String  ia  = cnf.getProperty("core.caesar.allow");
         String  aut = req.getHeader  ("Authorization");
         String  ip  = ActionDriver.getClientAddr (req);
         Set     ias = Synt.toTerms( ia );
         if (aut != null) {
-        if (aut.startsWith( "Access " )) {
+        if (aut.startsWith( "Caesar " )) {
             aut  = aut. substring ( 07 );
         } else {
             aut  = "" ;
@@ -83,13 +96,13 @@ public class Access {
         HttpServletResponse rsp = helper.getResponse();
 
         // 许可及IP白名单
-        String  tok = cnf.getProperty("core.access.token");
-        String  ia  = cnf.getProperty("core.access.allow");
+        String  tok = cnf.getProperty("core.caesar.token");
+        String  ia  = cnf.getProperty("core.caesar.allow");
         String  aut = req.getHeader  ("Authorization");
         String  ip  = ActionDriver.getClientAddr (req);
         Set     ias = Synt.toTerms( ia );
         if (aut != null) {
-        if (aut.startsWith( "Access " )) {
+        if (aut.startsWith( "Caesar " )) {
             aut  = aut. substring ( 07 );
         } else {
             aut  = "" ;
@@ -135,7 +148,8 @@ public class Access {
             throw new CruxException( 400, "args required" );
         }
         String cmd = arr.get (0);
-        String[] args = arr.toArray(new String[arr.size()]);
+        rsd.put("args", arr.subList( 1, arr.size() ) );
+        String[] args = arr.toArray( new String [00] );
 
         try {
             rsp.setCharacterEncoding("utf-8");
@@ -143,7 +157,7 @@ public class Access {
             rsp.setHeader("Connection" , "keep-alive");
             rsp.setHeader("Cache-Control", "no-store");
 
-            helper.setAttribute(Access.class.getName()+":ID", jid );
+            helper.setAttribute( CaesarAction.class.getName()+":ID", jid );
             PrintStream out = new PrintStream(rsp.getOutputStream(), true);
             String act = Core.ACTION_NAME.get();
 
@@ -179,7 +193,8 @@ public class Access {
         if (arr == null || arr.isEmpty()) {
             throw new CruxException( 400, "args required" );
         }
-        String uri = arr.remove(0);
+        String uri = arr.get (0);
+        rsd.put("args", arr.subList( 1, arr.size() ) );
 
         try {
             rsp.setCharacterEncoding("utf-8");
@@ -187,7 +202,7 @@ public class Access {
             rsp.setHeader("Connection" , "keep-alive");
             rsp.setHeader("Cache-Control", "no-store");
 
-            helper.setAttribute(Access.class.getName()+":ID", jid );
+            helper.setAttribute( CaesarAction.class.getName()+":ID", jid );
             PrintStream out = new PrintStream(rsp.getOutputStream(), true);
             String act = Core.ACTION_NAME.get();
 

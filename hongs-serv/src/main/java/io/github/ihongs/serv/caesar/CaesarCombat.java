@@ -1,6 +1,6 @@
-package io.github.ihongs.combat.serv;
+package io.github.ihongs.serv.caesar;
 
-import static io.github.ihongs.action.serv.Access.JOBS;
+import static io.github.ihongs.serv.caesar.CaesarAction.JOBS;
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
@@ -28,41 +28,42 @@ import java.util.Map;
  *
  * <p>许可配置, 在 default.properties 中:</p>
  * <pre>
- * core.access.token 远程认证口令, 客户端和服务端设置一致
- * core.access.serve 远程服务路径, 客户端设置, 默认为本地
- * core.access.allow 远程地址(IP), 服务端设置, 默认限本地
+ * core.access.token 认证口令, 客户端和服务端设置一致
+ * core.access.altar 接口地址, 客户端设置, 默认为本地
  * </pre>
  *
- * @author hongs
+ * @author Hongs
  */
-@Combat("access")
-public class Access {
+@Combat("caesar")
+public class CaesarCombat {
 
     @Combat("exec")
     public static void exec(String[] args) throws CruxException {
         if (args.length == 0) {
             CombatHelper.ERR.get().println(
-                  "Usage: COMBAT_NAME [ARG_0] [ARG_1] ..."
+                  "Usage: caesar.exec COMBAT_NAME [ARG_0] [ARG_1] ..."
             );
             return;
         }
 
         CoreConfig cc = CoreConfig.getInstance( );
         String pow = cc.getProperty("core.powered.by", "hs" );
-        String tok = cc.getProperty("core.access.token", "" );
-        String url = cc.getProperty("core.access.serve", "" );
+        String tok = cc.getProperty("core.caesar.token", "" );
+        String url = cc.getProperty("core.caesar.altar", "" );
         if (url.isEmpty()) {
             url = Core.SERV_HREF + Core.SERV_PATH;
         if (url.isEmpty()) {
             url = "http://localhost:8080";
         }}
-        url += "/access/exec" + Cnst.ACT_EXT;
+        url += "/caesar/exec" + Cnst.ACT_EXT;
 
         // 请求报头
         Map reh = Synt.mapOf(
-            "Accept", "application/json,text/plain,*/*;q=0.8",
-            "Authorization", "Access " + tok,
-            "X-Requested-With", pow,
+            "Authorization"   , "Caesar " + tok ,
+            "Accept"          , "text/plain,*/*;q=0.8",
+            "Accept-Language" , Core.ACTION_LANG.get(),
+            "X-Timezone"      , Core.ACTION_ZONE.get(),
+            "X-Requested-With", pow ,
             // 超时
             ":SOCK-TIMEOUT", 0,
             ":WAIT-TIMEOUT", 0
@@ -92,27 +93,29 @@ public class Access {
     public static void eval(String[] args) throws CruxException {
         if (args.length == 0) {
             CombatHelper.ERR.get().println(
-                "Usage: ACTION_PATH [ARG_0] [ARG_1] ..."
+                "Usage: caesar.eval ACTION_PATH [ARG_0] [ARG_1] ..."
             );
             return;
         }
 
         CoreConfig cc = CoreConfig.getInstance( );
         String pow = cc.getProperty("core.powered.by", "hs" );
-        String tok = cc.getProperty("core.access.token", "" );
-        String url = cc.getProperty("core.access.serve", "" );
+        String tok = cc.getProperty("core.caesar.token", "" );
+        String url = cc.getProperty("core.caesar.altar", "" );
         if (url.isEmpty()) {
             url = Core.SERV_HREF + Core.SERV_PATH;
         if (url.isEmpty()) {
             url = "http://localhost:8080";
         }}
-        url += "/access/eval" + Cnst.ACT_EXT;
+        url += "/caesar/eval" + Cnst.ACT_EXT;
 
         // 请求报头
         Map reh = Synt.mapOf(
-            "Accept", "application/json,text/plain,*/*;q=0.8",
-            "Authorization", "Access " + tok,
-            "X-Requested-With", pow,
+            "Authorization"   , "Caesar " + tok ,
+            "Accept"          , "text/plain,*/*;q=0.8",
+            "Accept-Language" , Core.ACTION_LANG.get(),
+            "X-Timezone"      , Core.ACTION_ZONE.get(),
+            "X-Requested-With", pow ,
             // 超时
             ":SOCK-TIMEOUT", 0,
             ":WAIT-TIMEOUT", 0
@@ -188,7 +191,7 @@ public class Access {
     public static void kill(String[] args) throws CruxException {
         if (args.length == 0) {
             CombatHelper.println(
-                  "Usage: access.exec access.kill TASKID"
+                  "Usage: caesar.exec caesar.kill TASKID"
             );
             return;
         }
@@ -208,7 +211,8 @@ public class Access {
             return;
         }
 
-        if (! Synt.declare(core.get(ek), false)) {
+        if (! Synt.declare(core.get(ek), false)
+        &&  ! "--force".equals(args.length > 1 ? args[1] : "")) {
             core.put(ek , true);
         } else {
             th.interrupt( );
@@ -221,7 +225,7 @@ public class Access {
     public static void view(String[] args) throws CruxException, InterruptedException {
         if (args.length == 0) {
             CombatHelper.println(
-                  "Usage: access.exec access.view TASKID"
+                  "Usage: caesar.exec caesar.view TASKID"
             );
             return;
         }
@@ -234,8 +238,8 @@ public class Access {
         }
 
         // 提示输出切换
-        PrintStream out = (PrintStream) core.get("!SYSTEM_OUT");
-        PrintStream err = (PrintStream) core.get("!SYSTEM_ERR");
+        PrintStream out = (PrintStream) core.get(CombatHelper.OUT.key());
+        PrintStream err = (PrintStream) core.get(CombatHelper.ERR.key());
         if (out != null) {
             out.println("Output changed");
         } else
@@ -260,7 +264,7 @@ public class Access {
     public static void test(String[] args) throws CruxException, InterruptedException {
         if (args.length == 0) {
             CombatHelper.println(
-                  "Usage: access.exec access.test TEXT SECS"
+                  "Usage: caesar.exec caesar.test TEXT SECS"
             );
             return;
         }

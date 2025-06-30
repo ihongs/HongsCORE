@@ -1,7 +1,6 @@
-package io.github.ihongs.jsp;
+package io.github.ihongs.serv.caesar;
 
 import io.github.ihongs.Core;
-import io.github.ihongs.CoreConfig;
 import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.combat.CombatHelper;
@@ -17,9 +16,10 @@ import javax.servlet.jsp.HttpJspPage;
 
 /**
  * 维护脚本
+ *
  * @author Hongs
  */
-abstract public class Evalet extends ActionDriver implements HttpJspPage
+abstract public class CaesarEvalet extends ActionDriver implements HttpJspPage
 {
 
   @Override
@@ -47,12 +47,8 @@ abstract public class Evalet extends ActionDriver implements HttpJspPage
         rsp.sendError(HttpServletResponse.SC_FORBIDDEN, "What's your problem?");
         return;
     }
-
-    // 复查认证
-    String aut = req.getHeader("Authorization");
-    String tok = CoreConfig.getInstance().getProperty("core.access.token");
-    if (tok == null || tok.isEmpty() || ! ("Access " + tok).equals( aut )) {
-        rsp.sendError(HttpServletResponse.SC_FORBIDDEN, "What's your problem!");
+    if (! getOriginPath(req).startsWith("/caesar/eval.")) {
+        rsp.sendError(HttpServletResponse.SC_FORBIDDEN, "What's your problem?");
         return;
     }
 

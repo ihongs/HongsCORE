@@ -1,5 +1,5 @@
 <%@page import="io.github.ihongs.combat.CombatHelper"%>
-<%@page extends="io.github.ihongs.jsp.Evalet"%>
+<%@page extends="io.github.ihongs.serv.caesar.CaesarEvalet"%>
 <%@page contentType="text/plain" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%
     String[] args = args();

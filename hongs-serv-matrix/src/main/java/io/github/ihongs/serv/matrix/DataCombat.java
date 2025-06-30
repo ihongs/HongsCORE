@@ -236,7 +236,7 @@ public class DataCombat {
         long tx = System.currentTimeMillis();
         boolean pr = Synt.declare(opts.get("progress"), false);
 
-        dr.begin ( );
+        da.begin ( );
         CombatHelper.println("Revert for "+form+" to "+dr.getDbName());
         if ( pr) {
             CombatHelper.progres(i, c);
@@ -265,7 +265,7 @@ public class DataCombat {
             if (j == bn) {
                 j  =  0;
                 da.commit(  );
-                dr.begin (  );
+                da.begin (  );
                 if ( pr) {
                     CombatHelper.progres(i, c, System.currentTimeMillis() - tx);
                 } else {
@@ -292,7 +292,7 @@ public class DataCombat {
             if (j == bn) {
                 j  =  0;
                 da.commit(  );
-                dr.begin (  );
+                da.begin (  );
                 if ( pr) {
                     CombatHelper.progres(i, c, System.currentTimeMillis() - tx);
                 } else {
@@ -323,13 +323,80 @@ public class DataCombat {
         if (ds.isEmpty()) {
             return;
         }
-        dr.begin ( );
+        da.begin ( );
         for(String id:ds) {
             dr.delDoc(id);
         }
         da.commit( );
         i=ds.size( );
         CombatHelper.println("Remove "+i+" item(s) for "+form+" in "+dr.getDbName());
+    }
+
+    @Combat("repair-all")
+    public static void repairAll(String[] args)
+    throws CruxException {
+        Map opts = CombatHelper.getOpts(args, new String[] {
+            "skip:i",
+            "bufs:i",
+            "ends:i",
+            "truncate:b",
+            "cascades:b",
+            "includes:b",
+            "incloses:b",
+            "progress:b"
+        });
+
+        List<String> argz = new ArrayList(16);
+        argz.add("--conf"); argz.add("");
+        argz.add("--form"); argz.add("");
+        if (opts.containsKey("skip")) {
+            argz.add("--skip"); argz.add(Synt.asString(opts.get("skip")));
+        }
+        if (opts.containsKey("bufs")) {
+            argz.add("--bufs"); argz.add(Synt.asString(opts.get("bufs")));
+        }
+        if (opts.containsKey("ends")) {
+            argz.add("--ends"); argz.add(Synt.asString(opts.get("ends")));
+        }
+        if (Synt.declare(opts.containsKey("truncate"), false)) {
+            argz.add("--truncate");
+        }
+        if (Synt.declare(opts.containsKey("cascades"), false)) {
+            argz.add("--cascades");
+        }
+        if (Synt.declare(opts.containsKey("includes"), false)) {
+            argz.add("--includes");
+        }
+        if (Synt.declare(opts.containsKey("incloses"), false)) {
+            argz.add("--incloses");
+        }
+        if (Synt.declare(opts.containsKey("progress"), false)) {
+            argz.add("--progress");
+        }
+        args  = argz.toArray(new String[]{});
+
+        Set<String> ls = getRevertNames();
+        for(String  ln : ls) {
+            int p = ln.indexOf(":");
+            args[1] = ln.substring(0,p);
+            args[3] = ln.substring(1+p);
+            CombatHelper.println("repair "+Syno.concat(" ",(Object[])args));
+            try {
+                revert( args );
+            }
+            catch (CruxException e) {
+                String s;
+                ByteArrayOutputStream b;
+                b = new ByteArrayOutputStream();
+                e.printStackTrace(new PrintStream (b));
+                s = b.toString().replaceAll("\r\n|\r|\n", "$0\t");
+                CombatHelper.println(s);
+            }
+            if (CombatHelper.aborted()) {
+                CombatHelper.println( "Task aborted" );
+                return;
+            }
+        }
     }
 
     @Combat("repair")
@@ -412,7 +479,7 @@ public class DataCombat {
             ps.setInt(2, lens);
             rs = ps.executeQuery( );
 
-            dr.begin();
+            da.begin ( );
             while (rs.next()) {
                 String id = rs.getString( "id" );
                 String ds = rs.getString("data");
@@ -431,9 +498,10 @@ public class DataCombat {
             da.commit( );
 
             if (p) {
-                CombatHelper.progres((float)(lens-k)/l , "+"+i+",-"+j+" "+ Inst.phrase(System.currentTimeMillis() - t));
+                float per = (float) (lens - k) / l;
+                CombatHelper.progres(per, lens+" +"+i+",-"+j+" "+ Inst.phrase(System.currentTimeMillis() - t));
             } else {
-                CombatHelper.println("("+skip+","+lens+"] +"+i+",-"+j+" "+ Inst.phrase(System.currentTimeMillis() - t));
+                CombatHelper.println(/**/ lens+" +"+i+",-"+j+" "+ Inst.phrase(System.currentTimeMillis() - t));
             }
 
             if (CombatHelper.aborted()) {
@@ -867,6 +935,7 @@ public class DataCombat {
     public static class Casc {
 
         protected final Data    that    ;
+        protected final Table   table   ;
         protected final boolean cascades;
         protected final boolean includes;
         protected final boolean incloses;
@@ -882,11 +951,11 @@ public class DataCombat {
             this.rollback = rollback;
 
             // 解密, 用于下方数据恢复
-            Table tb = data.getTable();
-            if (tb != null && tb instanceof PrivTable) {
-                dc  = ((PrivTable) tb).decrypt();
+            table  = data.getTable();
+            if ( null != table && table instanceof PrivTable ) {
+                dc = ((PrivTable) table).decrypt();
             } else {
-                dc  = ( Map m ) -> { };
+                dc = ( m ) -> { };
             }
         }
 
@@ -908,7 +977,7 @@ public class DataCombat {
         public void rev(String id, Map sd, long ctime) throws CruxException {
             try {
                 // 解密并解析
-                dc.accept(sd);
+                dec(sd);
                 Map dd = that.getData((String) sd.get("data"));
                 long rtime = Synt.declare(sd.get("rtime"), 0L);
 
@@ -970,7 +1039,7 @@ public class DataCombat {
         public void rev(String id, Map sd) throws CruxException {
             try {
                 // 解密并解析
-                dc.accept(sd);
+                dec(sd);
                 Map dd = that.getData((String) sd.get("data"));
 
                 // 填充并写入
@@ -1055,11 +1124,25 @@ public class DataCombat {
             that.setDoc(id, that.padDoc(dd));
         }
 
-        public void commit( ) {
+        public void dec(Map sd) {
+            dc.accept(sd);
+        }
+
+        public void begin( ) {
+            that.begin( );
+            if (table != null) {
+                table.db.begin( );
+            }
+        }
+
+        public void commit() {
             if (cascades) {
-                that.commit();
+                that.commit( );
             } else {
-                that.submit();
+                that.submit( );
+            }
+            if (table != null) {
+                table.db.commit();
             }
         }
 

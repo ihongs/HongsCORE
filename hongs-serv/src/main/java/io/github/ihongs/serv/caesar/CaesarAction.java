@@ -262,7 +262,7 @@ public class CaesarAction {
             return;
         }
 
-        CoreLogger.warn("Can not interrupt {}", core.get(Core.ACTION_NAME.key()));
+        CoreLogger.error("Can not interrupt {}", core.get(Core.ACTION_NAME.key()));
     }
 
 }

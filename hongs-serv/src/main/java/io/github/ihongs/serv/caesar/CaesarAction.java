@@ -2,6 +2,7 @@ package io.github.ihongs.serv.caesar;
 
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
+import io.github.ihongs.CoreLogger;
 import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.ActionHelper;
@@ -43,6 +44,21 @@ public class CaesarAction {
 
     public static final Map<String, Core> JOBS = new HashMap();
 
+    /**
+     * 任务线程
+     */
+    public static final Core.Valuable<Thread> TASK = new Core.Valuable("!THREAD") {
+        @Override
+        protected Thread initialValue () {
+           return Thread.currentThread();
+        }
+    };
+
+    /**
+     * 执行任务命令
+     * @param helper
+     * @throws CruxException
+     */
     @Action("exec")
     public void exec(ActionHelper helper) throws CruxException {
         CoreConfig          cnf = CoreConfig.getInstance();
@@ -78,8 +94,7 @@ public class CaesarAction {
         String jid = Core.newIdentity();
         Core  core = Core.getInstance();
 
-        core.put("!THREAD", job);
-        core.put("!TASKID", jid);
+        core.put(TASK.key( ), job);
         JOBS.put(jid , core);
 
         try {
@@ -89,6 +104,11 @@ public class CaesarAction {
         }
     }
 
+    /**
+     * 执行任务脚本
+     * @param helper
+     * @throws CruxException
+     */
     @Action("eval")
     public void eval(ActionHelper helper) throws CruxException {
         CoreConfig          cnf = CoreConfig.getInstance();
@@ -124,8 +144,7 @@ public class CaesarAction {
         String jid = Core.newIdentity();
         Core  core = Core.getInstance();
 
-        core.put("!THREAD", job);
-        core.put("!TASKID", jid);
+        core.put(TASK.key( ), job);
         JOBS.put(jid , core);
 
         try {
@@ -224,6 +243,26 @@ public class CaesarAction {
         catch ( IOException|ServletException ex ) {
             throw new CruxException( ex );
         }
+    }
+
+    /**
+     * 中止执行任务
+     * @param core  任务容器
+     * @param force 中止线程
+     */
+    public static void kill(Core core, boolean force) {
+        if (!force) {
+            core.put(Core.INTERRUPTED.key(), true);
+            return;
+        }
+
+        Thread th = (Thread) core.get(TASK.key( ));
+        if (th != null) {
+            th.interrupt();
+            return;
+        }
+
+        CoreLogger.warn("Can not interrupt {}", core.get(Core.ACTION_NAME.key()));
     }
 
 }

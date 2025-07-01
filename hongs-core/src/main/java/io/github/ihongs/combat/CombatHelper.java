@@ -1,7 +1,6 @@
 package io.github.ihongs.combat;
 
 import io.github.ihongs.Core;
-import io.github.ihongs.CoreLogger;
 import io.github.ihongs.CruxExemption;
 import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Inst;
@@ -33,7 +32,7 @@ public class CombatHelper
    * 输入接口
    * 默认为 System.in
    */
-  public static final Core.Variable<InputStream> IN  = new Core.Variable("!SYSTEM_IN" ) {
+  public static final Core.Valuable<InputStream> IN  = new Core.Valuable("!SYSTEM_IN" ) {
     @Override
     protected InputStream initialValue() {
       return System.in ;
@@ -44,7 +43,7 @@ public class CombatHelper
    * 输出接口
    * 默认为 System.out
    */
-  public static final Core.Variable<PrintStream> OUT = new Core.Variable("!SYSTEM_OUT") {
+  public static final Core.Valuable<PrintStream> OUT = new Core.Valuable("!SYSTEM_OUT") {
     @Override
     protected PrintStream initialValue() {
       return System.out;
@@ -55,7 +54,7 @@ public class CombatHelper
    * 错误接口
    * 默认为 System.err
    */
-  public static final Core.Variable<PrintStream> ERR = new Core.Variable("!SYSTEM_ERR") {
+  public static final Core.Valuable<PrintStream> ERR = new Core.Valuable("!SYSTEM_ERR") {
     @Override
     protected PrintStream initialValue() {
       return System.err;
@@ -97,32 +96,12 @@ public class CombatHelper
   }
 
   /**
-   * 任务被中止
-   */
-  public static final Core.Variable<Boolean> END = new Core.Variable("!THREAD_END") {
-    @Override
-    public Boolean get() {
-      Core c  = Core.getInstance ( );
-      Boolean v = (Boolean) c.get(k);
-      if ( v == null) {
-           v  = false;
-      }
-      return  v;
-    }
-  };
-
-  /**
    * 单行输出中
    */
-  public static final Core.Variable<Boolean> ING = new Core.Variable("!TYPIST_ING") {
+  private static final Core.Valuable<Boolean> PR = new Core.Valuable("!PRATING") {
     @Override
-    public Boolean get() {
-      Core c  = Core.getInstance ( );
-      Boolean v = (Boolean) c.get(k);
-      if ( v == null) {
-           v  = false;
-      }
-      return  v;
+    protected Boolean initialValue() {
+      return false;
     }
   };
 
@@ -505,33 +484,16 @@ public class CombatHelper
    * 输出执行进度
    * 将输出到 ERR
    * 由于大部分的终端(命令行)默认宽度普遍为 80 个字符,
-   * 故请将 text 控制在 50 个字符以内, 一个中文占两位.
+   * 故请将 text 控制在 70 个字符以内, 一个中文占两位.
    * @param rate 完成比例, 0~1的浮点数
    * @param text 说明文本
    */
   public static void progres(float rate, String text)
   {
     StringBuilder sb = new StringBuilder();
-    Formatter     ft = new Formatter( sb );
 
-    rate = rate * 100f;
-    int rt = Math.round(Math.max(Math.min(rate, 100f), 0f) / 5f);
-    sb.append('[');
-    for(int i = 00; i < rt; i ++)
-    {
-      sb.append('=');
-    }
-    for(int i = rt; i < 20; i ++)
-    {
-      sb.append(' ');
-    }
-    sb.append(']');
-    sb.append(' ');
-
-    if (rate >= 0)
-    {
-      ft.format("%.2f%% " , rate);
-    }
+    rate = Math.max(0f,Math.min(100f,100f * rate));
+    new Formatter(sb).format("[%6.2f%%] " , rate );
 
     if (null != text)
     {
@@ -552,7 +514,7 @@ public class CombatHelper
     PrintStream out = ERR.get();
     out.print(sb);
     out.flush(  );
-    ING.set(true);
+    PR .set(true);
   }
 
   /**
@@ -601,12 +563,12 @@ public class CombatHelper
    */
   public static void progres()
   {
-    if (ING.get( ))
+    if ( PR.get() )
     {
       PrintStream out = ERR.get();
       out.println();
       out.flush(  );
-      ING.set(null);
+      PR .set(null);
     }
   }
 
@@ -616,30 +578,7 @@ public class CombatHelper
    */
   public static boolean aborted()
   {
-    return END.get() || Thread.interrupted();
-  }
-
-  /**
-   * 中止执行任务
-   * @param core  任务容器
-   * @param force 中止线程
-   */
-  public static void abort(Core core, boolean force)
-  {
-    if (! force )
-    {
-      core.put(END.key() , true);
-      return;
-    }
-
-    Thread th = (Thread) core.get("!THREAD");
-    if (null !=  th)
-    {
-      th.interrupt();
-      return;
-    }
-
-    CoreLogger.warn("Can not interrupt {}", core.get("!ACTION_NAME"));
+    return Thread.interrupted() || Core.INTERRUPTED.get();
   }
 
 }

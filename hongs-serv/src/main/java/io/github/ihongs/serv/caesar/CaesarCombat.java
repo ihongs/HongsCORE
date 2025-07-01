@@ -1,6 +1,7 @@
 package io.github.ihongs.serv.caesar;
 
 import static io.github.ihongs.serv.caesar.CaesarAction.JOBS;
+import static io.github.ihongs.serv.caesar.CaesarAction.TASK;
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
@@ -199,20 +200,20 @@ public class CaesarCombat {
         String id = args[0];
         Core core = JOBS.get(id);
         if (null == core) {
-            CombatHelper. println ("Not found");
+            CombatHelper.println ( "Not found" );
             return;
         }
 
-        String ek = CombatHelper.END.key();
-        Thread th = (Thread)core.get("!THREAD");
+        String ek = Core.INTERRUPTED.key();
+        Thread th = (Thread)core.get(TASK.key());
         if (null ==  th ) {
-            CombatHelper. println ("No thread");
+            CombatHelper.println ( "No thread" );
             core.put(ek , true);
             return;
         }
 
-        if (! Synt.declare(core.get(ek), false)
-        &&  ! "--force".equals(args.length > 1 ? args[1] : "")) {
+        if (! "--force".equals(args.length > 1 ? args[1] : null)
+        &&  ! Synt.declare(core.get(ek), false)) {
             core.put(ek , true);
         } else {
             th.interrupt( );

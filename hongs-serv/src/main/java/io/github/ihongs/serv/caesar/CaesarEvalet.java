@@ -79,13 +79,25 @@ abstract public class CaesarEvalet extends ActionDriver implements HttpJspPage
   }
 
   /**
+   * 任务 ID
+   * @return
+   */
+  public String taskId()
+  {
+    ActionHelper ah = ActionHelper.getInstance();
+    String cn = CaesarAction.class.getName()+":ID";
+    return Synt.asString( ah.getAttribute ( cn ) );
+  }
+
+  /**
    * 命令参数
    * @return
    */
-  public String[] args() {
-      ActionHelper ah = ActionHelper.getInstance();
-      List<String> ar = Synt.asList( ah.getRequestData().get("args") );
-      return ar.toArray( new String[ ar.size() ] );
+  public String[] args()
+  {
+    ActionHelper ah = ActionHelper.getInstance();
+    List<String> ar = Synt.asList( ah.getRequestData().get("args") );
+    return ar.toArray( new String[ ar.size() ] );
   }
 
 }

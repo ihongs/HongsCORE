@@ -239,6 +239,18 @@ public class Core
   };
 
   /**
+   * 任务已被中止
+   * 规避 Thread.interrupt() 导致其他过程中断, 如中断任务后存档
+   */
+  public static final Valuable<Boolean> INTERRUPTED
+                = new Valuable("!INTERRUPTED") {
+      @Override
+      protected Boolean initialValue() {
+          return false;
+      }
+  };
+
+  /**
    * 获取全局核心
    * @return 核心对象
    */
@@ -1122,13 +1134,14 @@ public class Core
 
   /**
    * 核心变量
+   * 不会存储 initialValue 返回的值
    * @param <T>
    */
-  static public class Variable<T> implements Supplier
+  static public class Valuable<T> implements Supplier<T>
   {
     protected final String k;
 
-    public Variable(String k)
+    public Valuable(String k)
     {
       this.k = k;
     }
@@ -1145,9 +1158,7 @@ public class Core
       T    v  = ( T ) c.get(k);
       if ( v == null) {
            v  = initialValue();
-      if ( v != null) {
-           c.put(k,v);
-      }}
+      }
       return v;
     }
 
@@ -1164,6 +1175,32 @@ public class Core
     protected T initialValue()
     {
       return null;
+    }
+  }
+
+  /**
+   * 核心变量
+   * 缺省存储 initialValue 返回的值
+   * @param <T>
+   */
+  static public class Variable<T> extends Valuable<T>
+  {
+    public Variable(String k)
+    {
+      super(k);
+    }
+
+    @Override
+    public T get()
+    {
+      Core c  = Core.getInstance();
+      T    v  = ( T ) c.get(k);
+      if ( v == null) {
+           v  = initialValue();
+      if ( v != null) {
+           c.put(k,v);
+      }}
+      return v;
     }
   }
 

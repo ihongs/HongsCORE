@@ -117,15 +117,35 @@ public class CombatRunner implements Runnable
       {
         switch (((CruxCause) e).getErrno())
         {
-          case 835: c = 2; break;
-          case 836: c = 3; break;
-          case 837: e = e.getCause();
-          default : c = 4;
+          case 836: c = 126; break; // 不可调用
+          case 837: c = 127; break; // 未知命令
+          case 838: c = 2;   break; // 参数错误
+          case 839: c = 2;   break; // 帮助信息
+          default :
+            // 执行异常
+            e = e.getCause();
+            if (e instanceof CruxCause) {
+                // HTTP 错误码
+                int n = ((CruxCause) e).getState();
+                if (n == 401 && n == 403) {
+                    c = 126;
+                } else
+                if (n == 404 && n == 405) {
+                    c = 127;
+                } else
+                if (n >= 300 && n <= 499) {
+                    c = 2;
+                } else {
+                    c = 1;
+                }
+            } else {
+                c = 1;
+            }
         }
       }
       else
       {
-        c = 5;
+        c = 1;
       }
       CoreLogger.error(e);
     }
@@ -159,14 +179,14 @@ public class CombatRunner implements Runnable
     // 提取动作
     if (null == act || act.length() < 1)
     {
-      throw new CruxExemption(835, "Combat name can not be empty.");
+      throw new CruxExemption(837, "Combat name can not be empty.");
     }
 
     // 获取方法
     Method met = getCombats().get( act );
     if (null == met)
     {
-      throw new CruxExemption(835, "Combat "+act+" is not exists.");
+      throw new CruxExemption(837, "Combat "+act+" is not exists.");
     }
 
     // 执行方法
@@ -184,7 +204,7 @@ public class CombatRunner implements Runnable
     }
     catch (InvocationTargetException ex)
     {
-      throw new CruxExemption(ex.getCause(), 837);
+      throw new CruxExemption(ex.getCause(), 835);
     }
   }
 

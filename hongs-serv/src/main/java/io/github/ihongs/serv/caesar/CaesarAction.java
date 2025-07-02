@@ -251,18 +251,16 @@ public class CaesarAction {
      * @param force 中止线程
      */
     public static void kill(Core core, boolean force) {
-        if (!force) {
-            core.put(Core.INTERRUPTED.key(), true);
-            return;
+        if (force) {
+            Thread th = (Thread) core.get(TASK.key());
+            if (th != null) {
+                th.interrupt();
+                return;
+            }
+            CoreLogger.error("Can not kill force: {}", core.get(Core.ACTION_NAME.key()));
         }
 
-        Thread th = (Thread) core.get(TASK.key( ));
-        if (th != null) {
-            th.interrupt();
-            return;
-        }
-
-        CoreLogger.error("Can not interrupt {}", core.get(Core.ACTION_NAME.key()));
+        core.put(Core.INTERRUPTED.key(), true);
     }
 
 }

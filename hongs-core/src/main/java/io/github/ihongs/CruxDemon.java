@@ -58,7 +58,7 @@ public final class CruxDemon {
      * @return
      */
     public int getState() {
-        if (errno >= 200
+        if (errno >= 300
         &&  errno <= 599 ) {
             return errno ;
         } else
@@ -79,7 +79,7 @@ public final class CruxDemon {
      * @return
      */
     public String getStage() {
-        if (errno >= 200
+        if (errno >= 300
         &&  errno <= 599 ) {
             return "Er" + Integer.toString(errno, 10);
         } else

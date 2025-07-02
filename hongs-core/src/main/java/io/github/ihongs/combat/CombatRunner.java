@@ -117,26 +117,34 @@ public class CombatRunner implements Runnable
       {
         switch (((CruxCause) e).getErrno())
         {
-          case 836: c = 126; break; // 不可调用
-          case 837: c = 127; break; // 未知命令
-          case 838: c = 2;   break; // 参数错误
-          case 839: c = 2;   break; // 帮助信息
+          case 123: c = 2;   break; // 帮助信息
+          case 124: c = 2;   break; // 参数错误
+          case 127: c = 127; break; // 未知命令
+          case 126: c = 126; break; // 不可调用
           default :
             // 执行异常
             e = e.getCause();
             if (e instanceof CruxCause) {
-                // HTTP 错误码
-                int n = ((CruxCause) e).getState();
-                if (n == 401 && n == 403) {
-                    c = 126;
-                } else
-                if (n == 404 && n == 405) {
+              CruxCause x = (CruxCause) e;
+                // Exit Code
+                int n = x.getErrno();
+                if (n > 1 & n < 256) {
+                    c = n;
+                    break;
+                }
+
+                // HTTP Code
+                int m = x.getState();
+                if (m >= 404 && m <= 405) {
                     c = 127;
                 } else
-                if (n >= 300 && n <= 499) {
-                    c = 2;
+                if (m >= 401 && m <= 403) {
+                    c = 126;
+                } else
+                if (m >= 500) {
+                    c = 128;
                 } else {
-                    c = 1;
+                    c = 2;
                 }
             } else {
                 c = 1;
@@ -147,11 +155,15 @@ public class CombatRunner implements Runnable
       {
         c = 1;
       }
-      // 记录详细调用错误信息
-      if (c == 1 || c == 126) {
-          CoreLogger.error(e);
+
+      /**
+       * 输入或缺失时输出错误消息即可,
+       * 执行异常时需记录详细错误信息.
+       */
+      if (c == 2 || c == 126 || c == 127) {
+        CoreLogger.error(e.getLocalizedMessage());
       } else {
-          CoreLogger.error(e.getLocalizedMessage());
+        CoreLogger.error(e);
       }
     }
     finally
@@ -184,14 +196,14 @@ public class CombatRunner implements Runnable
     // 提取动作
     if (null == act || act.length() < 1)
     {
-      throw new CruxExemption(837, "Combat name can not be empty.");
+      throw new CruxExemption(127, "Combat name can not be empty.");
     }
 
     // 获取方法
     Method met = getCombats().get( act );
     if (null == met)
     {
-      throw new CruxExemption(837, "Combat "+act+" is not exists.");
+      throw new CruxExemption(127, "Combat "+act+" is not exists.");
     }
 
     // 执行方法
@@ -201,15 +213,15 @@ public class CombatRunner implements Runnable
     }
     catch (   IllegalAccessException ex)
     {
-      throw new CruxExemption(ex, 836, "Illegal access for method "+met.getClass().getName()+"."+met.getName()+"(String[]).");
+      throw new CruxExemption(ex, 126, "Illegal access for method "+met.getClass().getName()+"."+met.getName()+"(String[]).");
     }
     catch ( IllegalArgumentException ex)
     {
-      throw new CruxExemption(ex, 836, "Illegal params for method "+met.getClass().getName()+"."+met.getName()+"(String[]).");
+      throw new CruxExemption(ex, 126, "Illegal params for method "+met.getClass().getName()+"."+met.getName()+"(String[]).");
     }
     catch (InvocationTargetException ex)
     {
-      throw new CruxExemption(ex.getCause(), 835);
+      throw new CruxExemption(ex.getCause(), 128);
     }
   }
 

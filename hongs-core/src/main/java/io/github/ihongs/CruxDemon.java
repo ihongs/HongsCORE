@@ -87,10 +87,10 @@ public final class CruxDemon {
             return "Ex" + Integer.toString(errno, 10);
         } else
         if (null != mark && ! mark.isEmpty()) {
-            return  mark  ;
+            return  mark ;
         } else
         {
-            return this.getClass().getName();
+            return cause.getClass().getName();
         }
     }
 

@@ -113,46 +113,49 @@ public class CombatRunner implements Runnable
     }
     catch (Throwable e)
     {
-      if (e instanceof CruxCause)
-      {
-        switch (((CruxCause) e).getErrno())
-        {
-          case 123: c = 2;   break; // 帮助信息
-          case 124: c = 2;   break; // 参数错误
-          case 127: c = 127; break; // 未知命令
-          case 126: c = 126; break; // 不可调用
-          default :
-            // 执行异常
+      if (e instanceof CruxCause) {
+        CruxCause x = (CruxCause) e;
+        int n = x.getErrno();
+
+        DO: {
+            if (n == 126 || n == 127) {
+                c = n;   break DO;
+            }
+
             e = e.getCause();
             if (e instanceof CruxCause) {
-              CruxCause x = (CruxCause) e;
+                x = (CruxCause) e;
+
                 // Exit Code
-                int n = x.getErrno();
-                if (n > 1 & n < 256) {
-                    c = n;
-                    break;
+                n = x.getErrno( );
+                if (n == 256 || n == 257) {
+                    c = 2;   break DO;
+                }
+                if (n == 0x0 || n == 0x1) {
+                    n = 1;   break DO;
+                }
+                if (n >= 0x2 && n <= 255) {
+                    c = n;   break DO;
                 }
 
                 // HTTP Code
-                int m = x.getState();
-                if (m >= 404 && m <= 405) {
-                    c = 127;
-                } else
-                if (m >= 401 && m <= 403) {
-                    c = 126;
-                } else
-                if (m >= 500) {
-                    c = 128;
-                } else {
-                    c = 2;
+                n = x.getState( );
+                if (n >= 401 && n <= 403) {
+                    c = 126; break DO;
                 }
+                if (n >= 404 && n <= 406) {
+                    c = 127; break DO;
+                }
+                if (n >= 500) {
+                    c = 128; break DO;
+                }
+
+                c = 2;
             } else {
                 c = 1;
             }
         }
-      }
-      else
-      {
+      } else {
         c = 1;
       }
 

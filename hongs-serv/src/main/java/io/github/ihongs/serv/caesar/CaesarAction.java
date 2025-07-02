@@ -84,10 +84,10 @@ public class CaesarAction {
             ias.add( "0:0:0:0:0:0:0:1" );
         }
         if (tok == null || tok.isEmpty() || ! tok.equals(aut)) {
-            throw new CruxException( 400, "Illegal request!" );
+            throw new CruxException( 401, "Illegal request!" );
         }
         if ( ! ias.contains(ip) && ! ias.contains("*") ) {
-            throw new CruxException( 400, "Illegal request." );
+            throw new CruxException( 403, "Illegal request." );
         }
 
         Thread job = Thread.currentThread();
@@ -134,10 +134,10 @@ public class CaesarAction {
             ias.add( "0:0:0:0:0:0:0:1" );
         }
         if (tok == null || tok.isEmpty() || ! tok.equals(aut)) {
-            throw new CruxException( 400, "Illegal request!" );
+            throw new CruxException( 401, "Illegal request!" );
         }
         if ( ! ias.contains(ip) && ! ias.contains("*") ) {
-            throw new CruxException( 400, "Illegal request." );
+            throw new CruxException( 403, "Illegal request." );
         }
 
         Thread job = Thread.currentThread();

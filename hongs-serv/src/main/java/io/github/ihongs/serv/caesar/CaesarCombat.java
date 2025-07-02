@@ -40,17 +40,19 @@ public class CaesarCombat {
 
     @Combat("exec")
     public static void exec(String[] args) throws CruxException {
-        if (args.length == 0) {
-            CombatHelper.ERR.get().println(
-                  "Usage: caesar.exec COMBAT_NAME [ARG_0] [ARG_1] ..."
-            );
-            return;
-        }
+        Map opts = CombatHelper.getOpts(
+            args ,
+            "TOKEN:s",
+            "ALTAR:s",
+            "!A","!U",
+            "?Usage: caesar.exec COMBAT_NAME [ARG_0] [ARG_1] ..."
+        );
+        args = (String[]) opts.get ("");
 
         CoreConfig cc = CoreConfig.getInstance( );
-        String pow = cc.getProperty("core.powered.by", "hs" );
-        String tok = cc.getProperty("core.caesar.token", "" );
-        String url = cc.getProperty("core.caesar.altar", "" );
+        String pow = cc.getProperty("core.powered.by", "hs");
+        String tok = Synt.declare(opts.get("TOKEN"), cc.getProperty("core.caesar.token", ""));
+        String url = Synt.declare(opts.get("ALTAR"), cc.getProperty("core.caesar.altar", ""));
         if (url.isEmpty()) {
             url = Core.SERV_HREF + Core.SERV_PATH;
         if (url.isEmpty()) {
@@ -92,17 +94,19 @@ public class CaesarCombat {
 
     @Combat("eval")
     public static void eval(String[] args) throws CruxException {
-        if (args.length == 0) {
-            CombatHelper.ERR.get().println(
-                "Usage: caesar.eval ACTION_PATH [ARG_0] [ARG_1] ..."
-            );
-            return;
-        }
+        Map opts = CombatHelper.getOpts(
+            args ,
+            "TOKEN:s",
+            "ALTAR:s",
+            "!A","!U",
+            "?Usage: caesar.eval EVALET_PATH [ARG_0] [ARG_1] ..."
+        );
+        args = (String[]) opts.get ("");
 
         CoreConfig cc = CoreConfig.getInstance( );
-        String pow = cc.getProperty("core.powered.by", "hs" );
-        String tok = cc.getProperty("core.caesar.token", "" );
-        String url = cc.getProperty("core.caesar.altar", "" );
+        String pow = cc.getProperty("core.powered.by", "hs");
+        String tok = Synt.declare(opts.get("TOKEN"), cc.getProperty("core.caesar.token", ""));
+        String url = Synt.declare(opts.get("ALTAR"), cc.getProperty("core.caesar.altar", ""));
         if (url.isEmpty()) {
             url = Core.SERV_HREF + Core.SERV_PATH;
         if (url.isEmpty()) {

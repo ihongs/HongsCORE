@@ -147,12 +147,17 @@ public class CombatRunner implements Runnable
       {
         c = 1;
       }
-      CoreLogger.error(e);
+      // 记录详细调用错误信息
+      if (c == 1 || c == 126) {
+          CoreLogger.error(e);
+      } else {
+          CoreLogger.error(e.getLocalizedMessage());
+      }
     }
     finally
     {
-      Core.getInstance( ).close( );
-      Core.getInterior( ).close( );
+      Core.getInstance().close();
+      Core.getInterior().close();
       System.exit(c);
     }
   }

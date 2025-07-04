@@ -34,7 +34,7 @@ public final class Cnst {
 
     public static final String PN_KEY = "pn"; // 页码编号  (Page num)
 
-    public static final String QN_KEY = "qn"; // 续查页数  (Page max)
+    public static final String QN_KEY = "qn"; // 探测页数  (Quiz num)
 
     public static final String OB_KEY = "ob"; // 排序字段  (Order by)
 

@@ -173,6 +173,16 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      * 请注意尽量避免将其作为字段名(id,wd除外)
      * </pre>
      *
+     * <pre>
+     * 分页 page.state 取值:
+     * 0 列表为空
+     * 1 真实总数
+     * 2 估算总数
+     *
+     * state == 0 仅表示此页为空,
+     * count == 0 才表示整体为空.
+     * </pre>
+     *
      * @param rd
      * @return 结构: {list: [], page: {}}
      * @throws CruxException
@@ -227,9 +237,12 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             resp.put ( "list" , list );
         }   resp.put ( "page" , page );
 
-        long rc = roll.count();
+        // 分页信息
+        Set  ab = Synt.declare( rd.get (Cnst.AB_KEY), Set.class );
+        long rc = ab != null && ab.contains("count")
+                ? roll.count() : roll.total();
         long pc = (long) Math.ceil((double) rc / rn);
-        int  st = rc>bn ? 1: 0;
+        int  st = rc > bn ? (roll.truly() ? 1: 2): 0;
 
         page.put("count", rc );
         page.put("total", pc );
@@ -2302,11 +2315,11 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
         /**
          * 获取全部数量
-         * @deprecated 建议使用 count
+         * @deprecated 建议使用 total 或 count
          * @return
          */
         public int hits () {
-            long   H = count();
+            long   H = total();
             return H < Integer.MAX_VALUE
             ?(int) H : Integer.MAX_VALUE;
         }

@@ -283,7 +283,7 @@ public class CaesarCombat {
             Thread.sleep(1000) ;
             CombatHelper.progres(i, n) ;
         }
-            CombatHelper.progres(/**/) ;
+            CombatHelper.printed(/**/) ;
         }
     }
 

@@ -157,7 +157,7 @@ public class Cryptos {
                 }
             }
         }
-        CombatHelper.progres();
+        CombatHelper.printed();
 
         if (!ers.isEmpty()) {
             for (String es : ers) {
@@ -287,7 +287,7 @@ public class Cryptos {
             }
         }
 
-        CombatHelper.progres();
+        CombatHelper.printed();
     }
 
     private static Loop query(DB db, Table tb, String sql, int start, int limit) throws CruxException {

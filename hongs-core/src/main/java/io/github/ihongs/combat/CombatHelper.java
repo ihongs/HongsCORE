@@ -96,9 +96,19 @@ public class CombatHelper
   }
 
   /**
+   * 命令行宽度
+   */
+  public static final Core.Variable<Integer> LW = new Core.Variable("!PRINTLW") {
+     @Override
+    protected Integer initialValue() {
+      return Synt.declare(ENV.get().get("COLUMNS"), 80);
+    }
+  };
+
+  /**
    * 单行输出中
    */
-  private static final Core.Valuable<Boolean> PR = new Core.Valuable("!PRATING") {
+  public static final Core.Valuable<Boolean> LR = new Core.Valuable("!PRINTLR") {
     @Override
     protected Boolean initialValue() {
       return false;
@@ -129,8 +139,6 @@ public class CombatHelper
       "Unrecognized option '%opt'",
       "Unupport anonymous options"
     };
-
-  //** 参数相关 **/
 
   /**
    * 解析参数
@@ -419,16 +427,74 @@ public class CombatHelper
     return opts;
   }
 
-  //** 输出相关 **/
+  /**
+   * 是否中止执行
+   * @return 线程或任务被中止为 true
+   */
+  public static boolean aborted()
+  {
+    return Thread.interrupted() || Core.INTERRUPTED.get();
+  }
+
+  /**
+   * 终止单行输出
+   */
+  public static void printed()
+  {
+    if ( LR.get() )
+    {
+      PrintStream out = OUT.get();
+      out.println();
+      out.flush(  );
+      LR .set(null);
+    }
+  }
+
+  /**
+   * 单行输出
+   *
+   * 行宽为环境变量 COLUMNS,
+   * 超过这个宽度的会被截取.
+   * 别用制表符等非定长字符,
+   * 别用中日韩等非半角字符,
+   * 除非你确信长度不会超出.
+   *
+   * @param text
+   */
+  public static void printlr(CharSequence text)
+  {
+    int k  = LW.get(/***/);
+    int l  = text.length();
+    if (l >= k ) {
+        l  = k - 1 ;
+        text = text.subSequence(0, l);
+    }
+
+    StringBuilder sb = new StringBuilder(k + l + 4);
+
+    // 覆写本行
+    sb.append('\r');
+    for(int i = 0; i < k; i ++)
+    sb.append(' ' );
+
+    // 加入内容
+    sb.append('\r');
+    sb.append(text);
+    sb.append(' ' );
+
+    PrintStream out = OUT.get();
+    out.print(sb);
+    out.flush(  );
+    LR .set(true);
+  }
 
   /**
    * 输出内容
-   * 将输出到 OUT
-   * @param text 输出内容
+   * @param text
    */
   public static void println(CharSequence text)
   {
-    progres  (  );
+    printed  (  );
 
     PrintStream out = OUT.get();
     out.println(text);
@@ -437,12 +503,11 @@ public class CombatHelper
 
   /**
    * 输出内容
-   * 将输出到 OUT
-   * @param text 输出内容
+   * @param text
    */
   public static void println(String text)
   {
-    progres  (  );
+    printed  (  );
 
     PrintStream out = OUT.get();
     out.println(text);
@@ -451,12 +516,11 @@ public class CombatHelper
 
   /**
    * 输出数据
-   * 将输出到 OUT
-   * @param data 输出数据
+   * @param data
    */
   public static void println(Object data)
   {
-    progres  (  );
+    printed  (  );
 
     PrintStream out = OUT.get();
     Dist.append(out,data,false);
@@ -465,27 +529,10 @@ public class CombatHelper
   }
 
   /**
-   * @deprecated 改用 println(text)
-   */
-  public static void paintln(String text)
-  {
-    println(text);
-  }
-
-  /**
-   * @deprecated 改用 println(data)
-   */
-  public static void preview(Object data)
-  {
-    println(data);
-  }
-
-  /**
    * 输出执行进度
-   * 将输出到 ERR
    * 由于大部分的终端(命令行)默认宽度普遍为 80 个字符,
-   * 故请将 text 控制在 70 个字符以内, 一个中文占两位.
-   * @param rate 完成比例, 0~1的浮点数
+   * 进度长 10, 建议将 text 控制在 70, 一个中文占两位.
+   * @param rate 进度比例, 0~1的浮点数
    * @param text 说明文本
    */
   public static void progres(float rate, String text)
@@ -500,21 +547,7 @@ public class CombatHelper
       sb.append(text);
     }
 
-    // 清除末尾多余字符
-    // 并将光标移回行首
-    // 无法获取宽度则为 80 (Windows 默认命令行窗口)
-    int k = Synt.defxult(Synt.asInt(ENV.get().get("COLUMNS")), 80) - 1;
-    int l =     sb.   length( );
-    if (l > k ) sb.setLength(k);
-    for(int i = l; i < k; i ++)
-    {
-      sb.append(' ' );
-    } sb.append('\r');
-
-    PrintStream out = ERR.get();
-    out.print(sb);
-    out.flush(  );
-    PR .set(true);
+    printlr(sb);
   }
 
   /**
@@ -559,26 +592,27 @@ public class CombatHelper
   }
 
   /**
-   * 终止输出进度
+   * @deprecated 改用 println(text)
    */
-  public static void progres()
+  public static void paintln(String text)
   {
-    if ( PR.get() )
-    {
-      PrintStream out = ERR.get();
-      out.println();
-      out.flush(  );
-      PR .set(null);
-    }
+    println(text);
   }
 
   /**
-   * 是否中止执行
-   * @return
+   * @deprecated 改用 println(data)
    */
-  public static boolean aborted()
+  public static void preview(Object data)
   {
-    return Thread.interrupted() || Core.INTERRUPTED.get();
+    println(data);
+  }
+
+  /**
+   * @deprecated 改用 printed()
+   */
+  public static void progres()
+  {
+    printed();
   }
 
 }

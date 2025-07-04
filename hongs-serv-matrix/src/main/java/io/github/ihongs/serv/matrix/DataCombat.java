@@ -509,7 +509,7 @@ public class DataCombat {
                 break;
             }
         }
-        CombatHelper.progres();
+        CombatHelper.printed();
     }
 
     @Combat("import")

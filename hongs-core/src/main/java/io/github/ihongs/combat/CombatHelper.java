@@ -97,6 +97,7 @@ public class CombatHelper
 
   /**
    * 命令行宽度
+   * ENV 重设后务必清除
    */
   public static final Core.Variable<Integer> LW = new Core.Variable("!PRINTLW") {
      @Override

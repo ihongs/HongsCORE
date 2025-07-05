@@ -6,7 +6,7 @@
 
     if (args.length == 0) {
         CombatHelper.println(
-              "Usage: access.exec access/test.jsp TEXT SECS"
+              "Usage: caesar.eval caesar/test.jsp TEXT SECS"
         );
         return;
     }

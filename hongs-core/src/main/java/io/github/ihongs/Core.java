@@ -17,7 +17,6 @@ import java.util.Set;
 import java.util.HashMap;
 import java.util.TreeSet;
 import java.util.function.Supplier;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
@@ -143,6 +142,17 @@ public class Core
           throw  new Error(e);
         }
           super.remove( );
+      }
+  };
+
+  /**
+   * 内部纳秒计数
+   */
+ private static final ThreadLocal<Long> THREAD_NANO
+                = new ThreadLocal() {
+      @Override
+      protected Long initialValue() {
+          return 0L;
       }
   };
 
@@ -530,21 +540,33 @@ public class Core
    */
   public static final String newIdentity(String svid)
   {
-    long time = System.currentTimeMillis ();                  // 时间戳
-    long trid = Thread.currentThread/**/ (). getId ();        // 线程ID
-    int  rand = ThreadLocalRandom.current().nextInt(1679616); // 36^4
-         time = time - 1314320040000L;                        // 2011/08/26, 溜溜生日
-         time = time % 2821109907456L;                        // 36^8
-         trid = trid % 1296L;                                 // 36^2
+    long trid = Thread.currentThread().getId(); // 线程ID
+    long time = System.currentTimeMillis();     // 时间戳
+    long nano = System.nanoTime();              // 纳秒值
 
-    /**
-     * 服务器 ID 改回到末尾,
-     * 避免按 ID 排序被干扰.
-     */
+    // 检查重复
+    if ( nano - THREAD_NANO.get() < 1) {
+        try {
+            Thread. sleep (0, 1);
+        }
+        catch (InterruptedException e) {
+            throw new CruxExemption(e);
+        }
+        return newIdentity(svid);
+    } else {
+        THREAD_NANO . set (nano);
+    }
+
+    // 截取定长
+    time = time - 1314320040000L;               // 2011/08/26, 溜溜生日
+    time = time % 2821109907456L;               // 36^8
+    nano = nano % 1679616L;                     // 36^4
+    trid = trid % 1296L;                        // 36^2
+
     return  String.format(
             "%8s%4s%2s%2s",
             Long.toString(time, 36),
-            Long.toString(rand, 36),
+            Long.toString(nano, 36),
             Long.toString(trid, 36),
             svid
         ).replace(' ','0')

@@ -52,6 +52,24 @@
         <servlet-name>Rest</servlet-name>
         <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
+    <!-- JSPs Servelt -->
+    <servlet id="jsp">  
+        <servlet-name>jsp</servlet-name>  
+        <async-supported>true</async-supported>  
+        <multipart-config>
+            <max-file-size>20971520</max-file-size>
+            <max-request-size>20971520</max-request-size>
+            <file-size-threshold>5242880</file-size-threshold>
+        </multipart-config>
+        <init-param>
+            <param-name>compilerSourceVM</param-name> 
+            <param-value>1.8</param-value>  
+        </init-param>
+        <init-param>
+            <param-name>compilerTargetVM</param-name> 
+            <param-value>1.8</param-value>  
+        </init-param>
+    </servlet>
     <!-- SACL Servlet -->
     <servlet>
         <servlet-name>Sacl</servlet-name>

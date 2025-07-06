@@ -71,6 +71,11 @@ public class Core
   private final Map<String, Object> SUPER;
 
   /**
+   * 内部编号
+   */
+  private final static Idents IDENT = new Idents();
+
+  /**
    * 运行环境(0 Cmd, 1 Web)
    */
   public static byte ENVIR;
@@ -142,17 +147,6 @@ public class Core
           throw  new Error(e);
         }
           super.remove( );
-      }
-  };
-
-  /**
-   * 内部纳秒计数
-   */
- private static final ThreadLocal<Long> THREAD_NANO
-                = new ThreadLocal() {
-      @Override
-      protected Long initialValue() {
-          return 0L;
       }
   };
 
@@ -540,37 +534,46 @@ public class Core
    */
   public static final String newIdentity(String svid)
   {
-    long trid = Thread.currentThread().getId(); // 线程ID
-    long time = System.currentTimeMillis();     // 时间戳
-    long nano = System.nanoTime();              // 纳秒值
+    synchronized (IDENT)
+    {
 
-    // 检查重复
-    if ( nano - THREAD_NANO.get() < 1) {
-        try {
-            Thread. sleep (0, 1);
-        }
-        catch (InterruptedException e) {
-            throw new CruxExemption(e);
-        }
-        return newIdentity(svid);
-    } else {
-        THREAD_NANO . set (nano);
-    }
+    long time, nano;
+
+    /**
+     * 取消线程 ID,
+     * 因其在取余取定长后仍然可能重合,
+     * 线程内唯一无法避免与线程外重复.
+     */
+    time = System.currentTimeMillis();  // 时间戳
+    nano = System.nanoTime( );          // 纳秒值
 
     // 截取定长
-    time = time - 1314320040000L;               // 2011/08/26, 溜溜生日
-    time = time % 2821109907456L;               // 36^8
-    nano = nano % 1679616L;                     // 36^4
-    trid = trid % 1296L;                        // 36^2
+    time = time - 1314320040000L;       // 2011/08/26, 溜溜生日
+    time = time % 2821109907456L;       // 36^8
+    nano = nano % 2176782336L;          // 36^6
 
-    return  String.format(
-            "%8s%4s%2s%2s",
-            Long.toString(time, 36),
-            Long.toString(nano, 36),
-            Long.toString(trid, 36),
-            svid
+    if (IDENT.check(time, nano))
+    {
+      return String.format(
+          "%8s%6s%2s",
+          Long.toString(time, 36),
+          Long.toString(nano, 36),
+          svid
         ).replace(' ','0')
          .toUpperCase(   );
+    }
+
+    }
+
+    // 延时重取
+    System.err.println("ID hits");
+    try {
+        Thread. sleep (0, 1);
+    }
+    catch (InterruptedException e) {
+        throw new CruxExemption(e);
+    }
+    return newIdentity(svid);
   }
 
   /**
@@ -1148,6 +1151,25 @@ public class Core
       } finally {
         super.finalize();
       }
+    }
+
+  }
+
+  private static final class Idents
+  {
+
+    private volatile long time = 0L;
+    private volatile long nano = 0L;
+
+    public boolean check (long time, long nano) {
+        if (this.time < time
+        ||  this.nano < nano) {
+            this.time = time;
+            this.nano = nano;
+            return true ;
+        } else {
+            return false;
+        }
     }
 
   }

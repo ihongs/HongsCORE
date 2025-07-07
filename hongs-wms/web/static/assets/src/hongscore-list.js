@@ -260,10 +260,14 @@ HsList.prototype = {
         var nums = pbox; //jQuery('<ul class="pagination pull-left "></ul>').appendTo(this.pageBox);
         var btns = pbox; //jQuery('<ul class="pagination pull-right"></ul>').appendTo(this.pageBox);
 
+        if (page[this._ps_key] == 3) {
+            qbox.append(jQuery('<span></span>').text(hsGetLang("list.page.above", page)));
+        } else
         if (page[this._ps_key] == 2) {
-            qbox.append(jQuery('<span></span>').text(hsGetLang("list.page.unfo", page)));
-        } else {
-            qbox.append(jQuery('<span></span>').text(hsGetLang("list.page.info", page)));
+            qbox.append(jQuery('<span></span>').text(hsGetLang("list.page.about", page)));
+        } else
+        {
+            qbox.append(jQuery('<span></span>').text(hsGetLang("list.page.state", page)));
         }
 ///     if (t >  this.pugsNum) {
             qbox.append(jQuery('<a href="javascript:;" class="bi bi-hi-page"></a>'));

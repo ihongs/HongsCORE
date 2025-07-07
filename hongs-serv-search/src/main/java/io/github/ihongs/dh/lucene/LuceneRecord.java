@@ -206,9 +206,13 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         if (rn < 0) {
             throw new CruxException (400 , "Wrong param " + Cnst.RN_KEY);
         }
-        int pn = Synt.declare(rd.get(Cnst.PN_KEY), Cnst.PN_DEF);
+        int pn = Synt.declare(rd.get(Cnst.PN_KEY),  1 );
         if (pn < 0) {
             throw new CruxException (400 , "Wrong param " + Cnst.PN_KEY);
+        }
+        int qn = Synt.declare(rd.get(Cnst.QN_KEY), -1 );
+        if (qn > 0) {
+            throw new CruxException (400 , "Wrong param " + Cnst.QN_KEY);
         }
 
         // 指定行数 0, 则获取全部
@@ -238,11 +242,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         }   resp.put ( "page" , page );
 
         // 分页信息
-        Set  ab = Synt.declare( rd.get (Cnst.AB_KEY), Set.class );
-        long rc = ab != null && ab.contains("count")
-                ? roll.count() : roll.total();
-        long pc = (long) Math.ceil((double) rc / rn);
-        int  st = rc > bn ? (roll.truly() ? 1: 2): 0;
+        long rc = qn > -1 ? roll.count() : roll.total();
+        long pc = (long) Math.ceil ( (double) rc / rn );
+        int  st = rc > bn ? (roll.truly() ? 1 : 2) : 0 ;
 
         page.put("count", rc );
         page.put("total", pc );

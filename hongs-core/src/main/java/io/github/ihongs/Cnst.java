@@ -18,8 +18,10 @@ public final class Cnst {
 
     public static final int    RN_DEF =  20 ; // 默认每页行数
 
+    @Deprecated
     public static final int    PN_DEF =   1 ;
 
+    @Deprecated
     public static final int    QN_DEF =   0 ;
 
     //** 查询参数 **/

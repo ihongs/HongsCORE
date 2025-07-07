@@ -25,11 +25,11 @@ public final class FetchPage
 
   private final Map info = new HashMap();
 
-  private int page = Cnst.PN_DEF;
-
-  private int ques = Cnst.QN_DEF;
-
   private int rows = Cnst.RN_DEF;
+
+  private int page = 1;
+
+  private int ques = 0;
 
   public FetchPage(FetchCase caze)
   {
@@ -264,7 +264,7 @@ public final class FetchPage
       if (limit == 0 || limit + start != rc) {
           this.info.put("state", 1 );
       } else {
-          this.info.put("state", 2 );
+          this.info.put("state", 3 );
           rc -= 1;
           pc -= 1;
       }

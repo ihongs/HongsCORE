@@ -156,14 +156,14 @@ implements IEntity
     }
 
     // 获取页码, 默认为第一页
-    int page = Cnst.PN_DEF;
+    int page = 1;
     if (rd.containsKey(Cnst.PN_KEY))
     {
       page = Synt.declare(rd.get(Cnst.PN_KEY), page);
     }
 
     // 续查页数, 默认查总页数
-    int plus = Cnst.QN_DEF;
+    int plus = 0;
     if (rd.containsKey(Cnst.QN_KEY))
     {
       plus = Synt.declare(rd.get(Cnst.QN_KEY), plus);

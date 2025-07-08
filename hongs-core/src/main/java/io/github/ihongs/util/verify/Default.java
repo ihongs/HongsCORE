@@ -306,8 +306,12 @@ public class Default extends Rule {
                     ob  = vars.get( st );
                 if (ob != null) {
                     st  = ob.toString( );
-                } else {
+                } else
+                if (sd != null) {
                     st  = sd;
+                } else
+                {
+                    st  = "";
                 }
             }
 

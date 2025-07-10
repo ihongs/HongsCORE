@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.ArrayList;
@@ -534,6 +535,99 @@ public final class Remote {
         {
             part.addTextBody(n , String.valueOf(v));
         }
+    }
+
+    /**
+     * event-stream 协议支持
+     */
+    public static abstract class EventStream extends OutputStream {
+
+        private final static int END = "\n".getBytes()[0];
+        private              int end = 0;
+        private              int cnt = 0;
+        private final List<Byte> buf = new ArrayList();
+        private final Charset    chs ;
+
+        public EventStream () {
+            this(StandardCharsets.UTF_8);
+        }
+
+        public EventStream (Charset chs) {
+            super();
+            this.chs = chs;
+        }
+
+        @Override
+        public void write(int b) throws IOException {
+            if (END == b) {
+                if (end > 0) {
+                    flush( );
+                    return;
+                }
+
+                cnt += 1;
+                end  = 1;
+            } else {
+                end  = 0;
+            }
+
+            buf.add((byte) b);
+        }
+
+        @Override
+        public void flush() {
+            if (buf.isEmpty()) {
+                return;
+            }
+
+            int i = 0;
+            byte[] bts = new byte[buf.size()];
+            for(Byte c : buf ) {
+                bts[i++] = c ;
+            }
+
+            String str = new String(bts, chs);
+            accept(str);
+
+            buf.clear();
+            end = 0;
+            cnt = 0;
+        }
+
+        @Override
+        public void close() {
+            flush();
+        }
+
+        public void accept(String str) {
+            String[] arr = str.trim().split("\n", cnt);
+            Map<String, String> map = new HashMap(cnt);
+            StringBuilder dat = new StringBuilder(   );
+
+            for(String s : arr) {
+                int p = s.indexOf(":");
+                if (p < 0) {
+                    continue;
+                }
+                String k = s.substring(0, p);
+                String v = s.substring(1+ p);
+                if ("data".equals(k)) {
+                    dat.append(v);
+                } else {
+                    map.put(k, v);
+                }
+            }
+
+            // 一个块可以有多个 data
+            if (! dat.isEmpty() ) {
+                map.put("data", dat.toString());
+            }
+
+            accept( map );
+        }
+
+        abstract public void accept(Map<String, String> map);
+
     }
 
     /**

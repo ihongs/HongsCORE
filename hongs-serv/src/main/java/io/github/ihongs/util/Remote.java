@@ -600,26 +600,38 @@ public final class Remote {
         }
 
         public void accept(String str) {
-            String[] arr = str.trim().split("\n", cnt);
             Map<String, String> map = new HashMap(cnt);
             StringBuilder dat = new StringBuilder(   );
 
-            for(String s : arr) {
-                int p = s.indexOf(":");
-                if (p < 0) {
+            String  s, k, v;
+            int b = 0, d, p;
+            while (true) {
+                d = str.indexOf("\n", b);
+                if (d < 0) {
+                    break;
+                }
+                d = d + 1;
+
+                s = str.substring(b , d);
+                p = s.indexOf(":");
+                if (p < 1) {// : 开头注释也要跳过
                     continue;
                 }
-                String k = s.substring(0, p);
-                String v = s.substring(1+ p);
+
+                k = s.substring(0,p).trim();
+                v = s.substring(1+p).trim();
                 if ("data".equals(k)) {
-                    dat.append(v);
+                    dat.append(v).append("\n");
                 } else {
                     map.put(k, v);
                 }
+
+                b = d;
             }
 
             // 一个块可以有多个 data
             if (! dat.isEmpty() ) {
+                dat.setLength(dat.length() - 1);
                 map.put("data", dat.toString());
             }
 

@@ -1,9 +1,7 @@
 package io.github.ihongs.test;
 
-import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Remote.EventStream;
 import java.io.IOException;
-import java.util.Map;
 import org.junit.Test;
 
 public class TestRemote {
@@ -24,11 +22,10 @@ public class TestRemote {
         };
         
         try (
-            EventStream es = new EventStream() {
-                public void accept(Map<String, String> map) {
-                    System.out.println(Dist.toString(map));
-                }
-            };
+            EventStream es = new EventStream()
+                .on("start"  , dat -> System.out.println( dat ))
+                .on("message", dat -> System.out.println( dat ))
+                .on("end"    , dat -> System.out.println("end"));
         ) {
             for (String str : arr) {
                 es.write(str.getBytes());

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -540,13 +541,14 @@ public final class Remote {
     /**
      * event-stream 协议支持
      */
-    public static abstract class EventStream extends OutputStream {
+    public static class EventStream extends OutputStream {
 
         private final static int END = "\n".getBytes()[0];
         private              int end = 0;
         private              int cnt = 0;
         private final List<Byte> buf = new ArrayList();
         private final Charset    chs ;
+        private final Map<String, Consumer<String>> aps = new HashMap(1);
 
         public EventStream () {
             this(StandardCharsets.UTF_8);
@@ -638,7 +640,23 @@ public final class Remote {
             accept( map );
         }
 
-        abstract public void accept(Map<String, String> map);
+        public void accept(Map<String, String> map) {
+            String evt = map.get("event");
+            String dat = map.get( "data");
+            if (evt == null) {
+                evt = "message";
+            }
+
+            Consumer app = aps.get( evt );
+            if (app != null) {
+                app.accept(dat);
+            }
+        }
+
+        public EventStream on (String evt, Consumer<String> app) {
+            aps.put(evt, app);
+            return this;
+        }
 
     }
 

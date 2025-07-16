@@ -544,8 +544,8 @@ public final class Remote {
     public static class EventStream extends OutputStream {
 
         private final static int END = "\n".getBytes()[0];
-        private              int end = 0;
-        private              int cnt = 0;
+        private              int end = 0; // 连续换行计数
+        private              int cnt = 0; // 有效的行计数
         private final List<Byte> buf = new ArrayList();
         private final Charset    chs ;
         private final Map<String, Consumer<String>> aps = new HashMap(1);
@@ -562,13 +562,18 @@ public final class Remote {
         @Override
         public void write(int b) throws IOException {
             if (END == b) {
-                if (end > 0) {
-                    flush( );
-                    return;
+                end += 1;
+
+                if (end == 2) {
+                    flush();
+                    cnt = 0;
+                    return ;
+                }
+                if (end >= 3) {
+                    return ;
                 }
 
                 cnt += 1;
-                end  = 1;
             } else {
                 end  = 0;
             }
@@ -592,13 +597,13 @@ public final class Remote {
             accept(str);
 
             buf.clear();
-            end = 0;
-            cnt = 0;
         }
 
         @Override
         public void close() {
             flush();
+            end = 0;
+            cnt = 0;
         }
 
         public void accept(String str) {
@@ -613,22 +618,22 @@ public final class Remote {
                     break;
                 }
                 d = d + 1;
-
                 s = str.substring(b , d);
+                b = d + 0;
+
+                // 拆分键值, 跳过冒号开头的注释
                 p = s.indexOf(":");
-                if (p < 1) {// : 开头注释也要跳过
+                if (p < 1) {
                     continue;
                 }
 
-                k = s.substring(0,p).trim();
-                v = s.substring(1+p).trim();
-                if ("data".equals(k)) {
+                k = s.substring(0 , p).trim( );
+                v = s.substring(1 + p).trim( );
+                if ( "data".equals (k)) {
                     dat.append(v).append("\n");
                 } else {
                     map.put(k, v);
                 }
-
-                b = d;
             }
 
             // 一个块可以有多个 data
@@ -637,7 +642,10 @@ public final class Remote {
                 map.put("data", dat.toString());
             }
 
-            accept( map );
+            // 仅注释则可能为空
+            if (! map.isEmpty() ) {
+                accept ( map );
+            }
         }
 
         public void accept(Map<String, String> map) {

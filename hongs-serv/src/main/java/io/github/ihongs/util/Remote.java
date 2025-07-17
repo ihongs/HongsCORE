@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,7 +39,7 @@ import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.NameValuePair;
-import org.apache.hc.core5.http.ParseException;
+import org.apache.hc.core5.http.HttpException;
 import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
@@ -80,12 +79,11 @@ public final class Remote {
      *
      * @param url
      * @return
-     * @throws CruxException
      * @throws StatusException
      * @throws SimpleException
      */
     public static String get (String url)
-            throws CruxException, StatusException, SimpleException {
+            throws StatusException, SimpleException {
         return request(METHOD.GET , FORMAT.FORM, url, null, null);
     }
 
@@ -100,12 +98,11 @@ public final class Remote {
      * @param url
      * @param data
      * @return
-     * @throws CruxException
      * @throws StatusException
      * @throws SimpleException
      */
     public static String get (String url, Map<String, Object> data)
-            throws CruxException, StatusException, SimpleException {
+            throws StatusException, SimpleException {
         return request(METHOD.GET , FORMAT.FORM, url, data, null);
     }
 
@@ -121,12 +118,11 @@ public final class Remote {
      * @param url
      * @param data
      * @return
-     * @throws CruxException
      * @throws StatusException
      * @throws SimpleException
      */
     public static String post(String url, Map<String, Object> data)
-            throws CruxException, StatusException, SimpleException {
+            throws StatusException, SimpleException {
         return request(METHOD.POST, FORMAT.FORM, url, data, null);
     }
 
@@ -142,12 +138,11 @@ public final class Remote {
      * @param url
      * @param data
      * @return
-     * @throws CruxException
      * @throws StatusException
      * @throws SimpleException
      */
     public static String part(String url, Map<String, Object> data)
-            throws CruxException, StatusException, SimpleException {
+            throws StatusException, SimpleException {
         return request(METHOD.POST, FORMAT.PART, url, data, null);
     }
 
@@ -156,12 +151,11 @@ public final class Remote {
      *
      * @param url
      * @param file
-     * @throws CruxException
      * @throws StatusException
      * @throws SimpleException
      */
     public static void save(String url, File file)
-            throws CruxException, StatusException, SimpleException {
+            throws StatusException, SimpleException {
         request( METHOD.GET , FORMAT.FORM, url, null, null, file);
     }
 
@@ -174,24 +168,14 @@ public final class Remote {
      * @param data
      * @param head
      * @return
-     * @throws CruxException
      * @throws StatusException
      * @throws SimpleException
      */
     public static String request(METHOD type, FORMAT kind, String url, Map data, Map head)
-            throws CruxException, StatusException, SimpleException {
-        final String         [ ] txt = new String         [1];
-        final SimpleException[ ] err = new SimpleException[1];
-        request(type, kind, url, data, head, (rsp) -> {
-            try {
-                txt[0] = EntityUtils.toString(rsp.getEntity(), StandardCharsets.UTF_8).trim();
-            } catch (IOException | ParseException ex) {
-                err[0] = new SimpleException(url, ex);
-            }
+            throws StatusException, SimpleException {
+        return request(type, kind, url, data, head, (rsp) -> {
+            return EntityUtils.toString(rsp.getEntity(), StandardCharsets.UTF_8).trim();
         });
-        if (null != err[0]) {
-            throw   err[0];
-        }   return  txt[0];
     }
 
     /**
@@ -203,13 +187,11 @@ public final class Remote {
      * @param data
      * @param head
      * @param file
-     * @throws CruxException
      * @throws StatusException
      * @throws SimpleException
      */
     public static void request(METHOD type, FORMAT kind, String url, Map data, Map head, File file)
-            throws CruxException, StatusException, SimpleException {
-        final SimpleException[ ] err = new SimpleException[1];
+            throws StatusException, SimpleException {
         request(type, kind, url, data, head, (rsp) -> {
             // 建立目录
             File dir = file.getParentFile();
@@ -221,14 +203,11 @@ public final class Remote {
             try (
                 OutputStream out = new FileOutputStream(file);
             ) {
-                rsp.getEntity( ).writeTo(out);
-            } catch (IOException ex) {
-                err[0] = new SimpleException (url, ex);
+                rsp.getEntity().writeTo(out);
             }
+
+            return null;
         });
-        if (null != err[0]) {
-            throw   err[0];
-        }
     }
 
     /**
@@ -240,41 +219,43 @@ public final class Remote {
      * @param data
      * @param head
      * @param out
-     * @throws CruxException
      * @throws StatusException
      * @throws SimpleException
      */
     public static void request(METHOD type, FORMAT kind, String url, Map data, Map head, OutputStream out)
-            throws CruxException, StatusException, SimpleException {
-        final SimpleException[ ] err = new SimpleException[1];
+            throws StatusException, SimpleException {
         request(type, kind, url, data, head, (rsp) -> {
-            try {
-                rsp.getEntity( ).writeTo(out);
+            HttpEntity ent = rsp.getEntity();
+
+            if (out instanceof EntryStream ) {
+                EntryStream sst = (EntryStream) out;
+                sst.enter  (ent);
+                ent.writeTo(out);
+                sst.eject  (   );
+            } else {
+                ent.writeTo(out);
             }
-            catch (IOException ex) {
-                err[0] = new SimpleException (url, ex);
-            }
+
+            return null;
         });
-        if (null != err[0]) {
-            throw   err[0];
-        }
     }
 
     /**
      * 简单请求
      *
+     * @param <T>
      * @param type
      * @param kind
      * @param url
      * @param data
      * @param head
-     * @param con
-     * @throws CruxException
+     * @param fun
+     * @return
      * @throws StatusException
      * @throws SimpleException
      */
-    public static void request(METHOD type, FORMAT kind, String url, Map data, Map head, Consumer<ClassicHttpResponse> con)
-            throws CruxException, StatusException, SimpleException {
+    public static <T> T request(METHOD type, FORMAT kind, String url, Map data, Map head, ResultHandler<T> fun)
+            throws StatusException, SimpleException {
         if (null == url) {
             throw new NullPointerException("Request url can not be null");
         }
@@ -291,7 +272,7 @@ public final class Remote {
                     url = url +"&"+ que ;
                 }
             }
-            data  = null;
+            data = null ;
         }
 
         try {
@@ -350,38 +331,47 @@ public final class Remote {
 
             // 执行请求
             try (
-                CloseableHttpClient hc = HttpClientBuilder.create ( )
+                CloseableHttpClient hc = HttpClientBuilder.create()
                     .setDefaultRequestConfig(rb.build())
                     .setConnectionManager(cm)
                     .build();
             ) {
-                final String rel = url ;
-                final StatusException[ ] se = new StatusException [1];
-                hc.execute ( req , rsp -> {
-                    // 异常处理
-                    int sta  = rsp.getCode();
-                    if (sta >= 300 && sta <= 399) {
-                        Header hea = rsp.getFirstHeader( "Location" );
-                        String loc = hea != null ? hea.getValue(): "";
-                        se[0]= new StatusException(rel, loc, sta);
-                        return null;
-                    }
-                    if (sta >= 400 || sta <= 199) {
-                        HttpEntity t = rsp.getEntity();
-                        String txt = EntityUtils.toString(t, "UTF-8");
-                        se[0]= new StatusException(rel, txt, sta);
-                        return null;
-                    }
+                String rel = url ;
+                return hc.execute(req, rsp -> {
+                    try {
+                        // 异常状态
+                        int sta  = rsp.getCode();
+                        if (sta >= 400) {
+                            HttpEntity t = rsp.getEntity();
+                            String txt = EntityUtils.toString(t, "UTF-8");
+                            throw  new StatusException(rel, txt, sta);
+                        }
+                        if (sta >= 300) {
+                            Header hea = rsp.getFirstHeader( "Location" );
+                            String loc = hea != null ? hea.getValue(): "";
+                            throw  new StatusException(rel, loc, sta);
+                        }
 
-                    con.accept(rsp);
-
-                    return null;
+                        return fun.apply(rsp);
+                    } catch (Exception ex) {
+                        throw new RuntimeException(ex);
+                    }
                 });
-                if (null != se [0]) {
-                    throw   se [0];
+            } catch ( RuntimeException ex) {
+                Throwable ax = ex.getCause ();
+                if (ax != null) {
+                    if (ax instanceof StatusException) {
+                        throw ( StatusException )  ax ;
+                    }
+                    if (ax instanceof SimpleException) {
+                        throw ( SimpleException )  ax ;
+                    }
+                    throw new SimpleException(url, ax);
+                } else {
+                    throw new SimpleException(url, ex);
                 }
             }
-        } catch (URISyntaxException | IOException ex) {
+        } catch ( IOException | URISyntaxException ex) {
             throw new SimpleException(url, ex);
         }
     }
@@ -429,8 +419,8 @@ public final class Remote {
     public static String queryText(Map data) {
         try {
             return EntityUtils.toString(buildPost(data), StandardCharsets.UTF_8);
-        } catch (ParseException | IOException ex) {
-            throw  new CruxExemption ( ex, 1111 );
+        } catch (HttpException | IOException ex) {
+            throw  new CruxExemption (ex , 1111);
         }
     }
 
@@ -541,22 +531,35 @@ public final class Remote {
     /**
      * event-stream 协议支持
      */
-    public static class EventStream extends OutputStream {
+    public static class EventStream extends EntryStream {
 
         private final static int END = "\n".getBytes()[0];
         private              int end = 0; // 连续换行计数
         private              int cnt = 0; // 有效的行计数
+        private       Charset    enc = StandardCharsets.UTF_8;
         private final List<Byte> buf = new ArrayList();
-        private final Charset    chs ;
         private final Map<String, Consumer<String>> aps = new HashMap(1);
 
-        public EventStream () {
+        public EventStream ( ) {
             this(StandardCharsets.UTF_8);
         }
 
-        public EventStream (Charset chs) {
+        public EventStream (Charset enc) {
             super();
-            this.chs = chs;
+            this.enc = enc;
+        }
+
+        public EventStream on(String evt, Consumer<String> app) {
+            aps.put(evt, app);
+            return this;
+        }
+
+        @Override
+        public void enter(HttpEntity ent) {
+            String enc = ent.getContentEncoding();
+            if ( null != enc && ! enc.isEmpty() ) {
+                this.enc = Charset.forName( enc );
+            }
         }
 
         @Override
@@ -593,17 +596,22 @@ public final class Remote {
                 bts[i++] = c ;
             }
 
-            String str = new String(bts, chs);
+            String str = new String(bts, enc);
             accept(str);
 
             buf.clear();
         }
 
         @Override
-        public void close() {
+        public void eject() {
             flush();
             end = 0;
             cnt = 0;
+        }
+
+        @Override
+        public void close() {
+            eject();
         }
 
         public void accept(String str) {
@@ -661,10 +669,35 @@ public final class Remote {
             }
         }
 
-        public EventStream on (String evt, Consumer<String> app) {
-            aps.put(evt, app);
-            return this;
-        }
+    }
+
+    /**
+     * 响应流预处理
+     */
+    public static abstract class EntryStream extends OutputStream {
+
+        /**
+         * 准备传输
+         * @param ent
+         */
+        public void enter(HttpEntity ent) {}
+
+        /**
+         * 传输结束
+         */
+        public void eject() {}
+
+    }
+
+    /**
+     * 返回数据处理
+     *
+     * @param <T>
+     */
+    @FunctionalInterface
+    public static interface ResultHandler<T> {
+
+        public T apply(ClassicHttpResponse rsp) throws CruxException, HttpException, IOException;
 
     }
 
@@ -712,7 +745,7 @@ public final class Remote {
      *
      * 可使用 getUrl() 得到当前请求的网址,
      * 可通过 getCuase() 获取具体异常对象,
-     * 通常为 URISyntaxException, IOException
+     * 通常为 IOException, HttpException
      */
     public static class SimpleException extends CruxException {
 

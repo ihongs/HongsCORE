@@ -389,7 +389,7 @@ public abstract class CoreSerial
      */
     public default boolean isModified() {
         return  dataModified()
-            >=  fileModified();
+             <  fileModified();
     }
 
   }

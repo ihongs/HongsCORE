@@ -71,7 +71,7 @@ public class TestCore {
             }
             ids.add (id);
         }}
-        System.out.println(ids);
+        //System.out.println(ids);
     }
 
 }

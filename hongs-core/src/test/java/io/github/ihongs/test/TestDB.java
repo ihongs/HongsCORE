@@ -130,7 +130,7 @@ public class TestDB {
                 "se", "abc?Def*xy_"
             )
         ));
-        System.out.println(fc.toString());
+        //System.out.println(fc.toString());
         assertEquals(fc.toString(), "SELECT `table1`.`id` AS `id`, `table1`.`name` AS `name` FROM `a_table` AS `table1` WHERE (`table1`.`word` LIKE '%abc%' ESCAPE '/' AND `table1`.`word` LIKE '%def%' ESCAPE '/' AND `table1`.`word` LIKE '%xyz%' ESCAPE '/') AND (`table1`.`txt0` LIKE '%abc%' ESCAPE '/' OR `table1`.`txt0` LIKE '%def%' ESCAPE '/' OR `table1`.`txt0` LIKE '%xyz%' ESCAPE '/') AND LOWER(`table1`.`txt1`) LIKE 'abc_def%xy/_' ESCAPE '/'");
     }
 

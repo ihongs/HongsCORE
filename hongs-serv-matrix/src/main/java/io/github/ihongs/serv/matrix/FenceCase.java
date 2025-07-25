@@ -48,7 +48,7 @@ public class FenceCase {
     }
 
     public FetchCase fetchCase() {
-        return table.fetchCase().filter("`form_id`=?", data.getFormId());
+        return table.fetchCase().filter("form_id = ?", data.getFormId());
     }
 
     public Map getOne() throws CruxException {

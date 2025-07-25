@@ -511,22 +511,22 @@ public class Data extends SearchEntity {
             && (ab.contains("older")
             ||  ab.contains("newer"))) {
                 Object id = inf.get("id");
-                long ctime = Synt.declare(inf.get("ctime"), 0L);
+                long ctime = Synt.declare( inf.get("ctime"), 0L );
                 if (ab.contains("older")) {
                     Map row = fetchCase()
-                       .filter("`id` = ? AND `ctime` < ?", id, ctime )
-                       .assort("`ctime` DESC")
-                       .select("`ctime`")
+                       .filter("id = ? AND ctime < ?", id, ctime)
+                       .assort("ctime DESC")
+                       .select("ctime")
                        .getOne();
-                    inf.put("older", !row.isEmpty() ? row.get("ctime") : null);
+                    inf.put("older", ! row.isEmpty() ? row.get("ctime") : null);
                 }
                 if (ab.contains("newer")) {
                     Map row = fetchCase()
-                       .filter("`id` = ? AND `ctime` > ?", id, ctime )
-                       .assort("`ctime`  ASC")
-                       .select("`ctime`")
+                       .filter("id = ? AND ctime > ?", id, ctime)
+                       .assort("ctime  ASC")
+                       .select("ctime")
                        .getOne();
-                    inf.put("newer", !row.isEmpty() ? row.get("ctime") : null);
+                    inf.put("newer", ! row.isEmpty() ? row.get("ctime") : null);
                 }
             }
         }}
@@ -666,7 +666,7 @@ public class Data extends SearchEntity {
         }
 
         Object[] param = new String[] {id, "0"};
-        String   where = "`id`=? AND `etime`=?";
+        String   where = "id = ? AND etime = ?";
 
         Map od = sc
             .filter( where,param )
@@ -746,7 +746,7 @@ public class Data extends SearchEntity {
         }
 
         Object[] param = new String[] {id, "0"};
-        String   where = "`id`=? AND `etime`=?";
+        String   where = "id = ? AND etime = ?";
 
         Map od = sc
             .filter( where,param )
@@ -844,11 +844,11 @@ public class Data extends SearchEntity {
         }
 
         Object[] param = new String[] {id, "0"};
-        String   where = "`id`=? AND `etime`=?";
+        String   where = "id = ? AND etime = ?";
 
         Map od = sc
             .filter( where,param )
-            .select("ctime,state,data,name")
+            .select("*")
             .getOne( );
         if (od.isEmpty()
         ||  Synt.declare(od.get("state"), 0  ) ==  0   ) {
@@ -907,11 +907,11 @@ public class Data extends SearchEntity {
         }
 
         Object[] param = new String[] {id, "0"};
-        String   where = "`id`=? AND `etime`=?";
+        String   where = "id = ? AND etime = ?";
 
         Map od = sc
             .filter( where,param )
-            .select("ctime,state,data,name")
+            .select("*")
             .getOne( );
         if (od.isEmpty()
         ||  Synt.declare(od.get("state"), 0  ) ==  0   ) {
@@ -990,9 +990,9 @@ public class Data extends SearchEntity {
 
         long     rtime = Synt.declare (rd.get("rtime"), 0L);
         Object[] para2 = new Object[] {id, rtime};
-        String   wher2 = "`id`=? AND `ctime`=?";
+        String   wher2 = "id = ? AND ctime = ?";
         Object[] param = new String[] {id, "0"};
-        String   where = "`id`=? AND `etime`=?";
+        String   where = "id = ? AND etime = ?";
 
         // 恢复最终数据
         if (rtime == 0L) {
@@ -1105,9 +1105,9 @@ public class Data extends SearchEntity {
     public FetchCase fetchCase() throws CruxException {
         Model model = getModel();
         if (model == null) {
-            throw new CruxException( 405 , "@matrix:matrix.rev.unsupported" , getFormId());
+            throw new CruxException(405, "@matrix:matrix.rev.unsupported", getFormId());
         }
-        return model.fetchCase().filter("`"+model.table.name+"`.`form_id`=?", getFormId());
+        return model.fetchCase().filter(DB.Q(model.table.name, "form_id")+" = ?", getFormId());
     }
 
     /**

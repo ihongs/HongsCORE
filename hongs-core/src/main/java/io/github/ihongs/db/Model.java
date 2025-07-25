@@ -524,7 +524,7 @@ implements IEntity
       throw new CruxException(1086, "Field " + n + " is not exists");
     }
 
-    caze.filter("`"+this.table.name+"`.`"+n+"` = ?", v);
+    caze.filter(DB.Q(this.table.name, n)+" = ?", v );
 
     Iterator it = rd.entrySet().iterator();
     while (it.hasNext())
@@ -538,12 +538,13 @@ implements IEntity
       {
       if (value != null && ! value.equals(""))
       {
-        caze.filter("`"+this.table.name+"`.`"+this.table.primaryKey+"` != ?", value);
+          field  = this.table.primaryKey;
+        caze.filter(DB.Q(this.table.name, field)+" != ?", value);
       }
       }
       else if (columns.containsKey(field))
       {
-        caze.filter("`"+this.table.name+"`.`"+field+"` = ?", value);
+        caze.filter(DB.Q(this.table.name, field)+" = ?" , value);
       }
     }
 
@@ -651,8 +652,8 @@ implements IEntity
     }
 
     // 更新主数据
-    rd.remove(this.table.primaryKey);
-    int an = this.table.update ( rd, "`"+this.table.primaryKey+"` = ?", id );
+    rd.remove (this.table.primaryKey);
+    int an = this.table.update ( rd, DB.Q(this.table.primaryKey)+" = ?", id);
 
     // 更新子数据
     rd.put(this.table.primaryKey, id);
@@ -698,11 +699,11 @@ implements IEntity
     int an;
     if (caze == null || ! caze.getOption("INCLUDE_REMOVED", false))
     {
-      an = this.table.remove("`"+this.table.primaryKey+"` = ?", id);
+      an = this.table.remove(DB.Q(this.table.primaryKey)+" = ?", id);
     }
     else
     {
-      an = this.table.delete("`"+this.table.primaryKey+"` = ?", id);
+      an = this.table.delete(DB.Q(this.table.primaryKey)+" = ?", id);
     }
 
     // 删除子数据
@@ -1050,7 +1051,8 @@ implements IEntity
             int p = fn.lastIndexOf(".");
             String  k  ;
             if (p > -1) {
-                k = fn.substring(0 , p)+".*";
+                k = fn.substring(0 , p);
+                k = DB.Q(k) + ".*" ;
             } else {
                 k = "*";
             }
@@ -1095,7 +1097,8 @@ implements IEntity
                 if (xc == ec) {
                     int p  = fn.lastIndexOf(".");
                     if (p != -1) {
-                        fn = fn.substring(0 , p)+".*";
+                        fn = fn.substring(0 , p);
+                        fn = DB.Q(fn) + ".*";
                     } else {
                         fn = "*";
                     }
@@ -1120,7 +1123,7 @@ implements IEntity
             String    ln = (String   ) fa[1]; // 别名
             FetchCase fc = (FetchCase) fa[2]; // 用例
             if (fn != null && ln != null) {
-                fc.select(fn + " AS `" + ln + "`");
+                fc.select( fn +" AS "+ DB.Q(ln) );
             }
 
             tc.add( fc.getName( ) );
@@ -1156,7 +1159,8 @@ implements IEntity
     private void allow(Table table, Table assoc, Map ac, Map pc,
         FetchCase caze, String tn, String qn, String pn, Map al) {
         String tx, ax, az;
-        tx = "`"+tn+"`." ;
+
+        tx = DB.Q( tn ) + ".";
 
         if (null ==  qn  ) {
             qn = "";
@@ -1166,7 +1170,7 @@ implements IEntity
             qn = tn;
             ax = qn + ".";
         } else {
-            qn = qn + "."+ tn ;
+            qn = qn + "."+ tn;
             ax = qn + ".";
         }
 
@@ -1178,13 +1182,13 @@ implements IEntity
             pn = tn;
             az = pn + ".";
         } else {
-            pn = pn + "."+ tn ;
+            pn = pn + "."+ tn;
             az = pn + ".";
         }
 
         if (pc != null && pc.containsKey( "fields" )) {
             al.put(az+"*", new Object[] {
-                null, null, caze
+                null,null, caze
             });
         } else try {
             Map fs = assoc.getFields( );
@@ -1192,10 +1196,12 @@ implements IEntity
                 String f = (String) n;
                 String k = f;
                 String l = f;
-                f = tx +"`"+ f +"`"; // 字段完整名
-                l = az +/**/ l /**/; // 字段别名
-                k = ax +/**/ k /**/; // 外部键
-                al.put(k , new Object[] {f, l, caze});
+                f = tx + DB.Q(f); // 字段全名
+                l = az +      l ; // 字段别名
+                k = ax +      k ; // 外部键名
+                al.put(k , new Object[] {
+                    f, l , caze
+                });
             }
         } catch (CruxException e ) {
             throw e.toExemption(  );

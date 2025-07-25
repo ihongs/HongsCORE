@@ -292,7 +292,7 @@ public class UserAction {
               .getInstance("master")
               .getTable("user_sign")
               .fetchCase()
-              .filter("`user_id` = ? AND `unit` = ?", id, unit);
+              .filter("user_id = ? AND unit = ?" , id, unit);
         if (fc.update(Synt.mapOf("code", code)) == 0) {
             fc.insert(Synt.mapOf("code", code, "unit", unit, "user_id", id));
         }

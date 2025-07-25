@@ -2,6 +2,7 @@ package io.github.ihongs.db.util;
 
 import io.github.ihongs.Core;
 import io.github.ihongs.CruxException;
+import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.util.Synt;
 import java.util.ArrayList;
@@ -124,14 +125,14 @@ public class AssocMore {
     if (xn == null) {
         caze.setOption("__HAS_FIELD__", caze.hasField());
         if (! caze.hasField() && (params == null || ! params.containsKey("fields"))) {
-            caze.field( an+".*" );
+            caze.field(DB.Q(an)+ ".*");
         }
     } else
     if (caze.getOption("__HAS_FIELD__", false) == false) {
         if (! caze.hasField() && (params == null || ! params.containsKey("fields"))) {
             Set<String> fs = table.getFields().keySet( );
             for(String  fn : fs ) {
-                caze.select( "`" + an + "`.`" + fn + "` AS `" + xn + "." + fn+"`" );
+                caze.select( DB.Q(an, fn) +" AS "+ DB.Q(xn +"."+ fn) );
             }
         }
     }
@@ -209,27 +210,27 @@ public class AssocMore {
         case "BLS_TO": {
             // 上级外键连接下级主键
             if (pk == null) pk = table2.primaryKey;
-            fk = "`"+tn+"`.`"+fk+"`";
-            pk = "`"+an+"`.`"+pk+"`";
+            fk = DB.Q(tn, fk);
+            pk = DB.Q(an, pk);
         } break;
         case "HAS_ONE": {
             // 上级主键连接下级外键
             if (pk == null) pk = table .primaryKey;
-            pk = "`"+tn+"`.`"+pk+"`";
-            fk = "`"+an+"`.`"+fk+"`";
+            pk = DB.Q(tn, pk);
+            fk = DB.Q(an, fk);
         } break;
         case "HAS_MANY":
         case "HAS_MORE": {
             // 上级主键连接下级外键
             if (pk == null) pk = table .primaryKey;
-            pk = "`"+tn+"`.`"+pk+"`";
-            fk = "`"+an+"`.`"+fk+"`";
+            pk = DB.Q(tn, pk);
+            fk = DB.Q(an, fk);
         //  throw new CruxException(1171,  "Unsupported assoc type '"+tp+"'");
         } break;
         default:
             throw new CruxException(1171, "Unrecognized assoc type '"+tp+"'");
         }
-        caze2.on( pk +"="+ fk );
+        caze2.on(pk+" = "+fk);
 
         // 转化关联类型
         byte ji;
@@ -433,7 +434,7 @@ public class AssocMore {
       String wh = (String) config.get("filter");
       if (wh != null && wh.length() != 0)
       {
-        Pattern pat = Pattern.compile("(?:`(.*?)`|(\\w+))\\s*=\\s*(?:'(.*?)'|(\\d+(?:\\.\\d+)?))");
+        Pattern pat = Pattern.compile("(?:\"(.*?)\"|(\\w+))\\s*=\\s*(?:'(.*?)'|(-?\\d+(?:\\.\\d+)?))");
         Matcher mat = pat.matcher(wh);
         Map     map = new HashMap();
         while ( mat.find()) {
@@ -455,11 +456,11 @@ public class AssocMore {
           subValues3.putAll(map);
         }
         // 附加条件
-        wh = "`"+foreignKey+"`=? AND " + wh ;
+        wh = DB.Q(foreignKey)+" = ? AND "+wh;
       }
       else
       {
-        wh = "`"+foreignKey+"`=?";
+        wh = DB.Q(foreignKey)+" = ?";
       }
 
       /**
@@ -517,7 +518,7 @@ public class AssocMore {
       else
       {
         // 先删除旧数据
-        tb.remove("`"+foreignKey+"`=?" , id);
+        tb.remove(DB.Q(foreignKey)+" = ?", id);
 
         // 再插入新数据
         Iterator it2 = subValues2.iterator();
@@ -582,8 +583,8 @@ public class AssocMore {
         List<Map> lst  =  tbl.fetchMore
         (
           new FetchCase()
-            .select("`" + tbl.primaryKey + "`"/**/)
-            .filter("`" + foreignKey + "`=?", ids )
+            . select(DB.Q(tbl.primaryKey))
+            . filter(DB.Q(foreignKey)+" = ?", ids)
         );
         idx = new ArrayList();
         for ( Map row : lst )
@@ -593,7 +594,7 @@ public class AssocMore {
       }
 
       // 下级伪删除同样有效
-      tbl.remove("`"+foreignKey+"`=?",ids);
+      tbl.remove(DB.Q(foreignKey)+" = ?" , ids);
 
       // 递归删除下级的下级
       if (idx != null && ! idx.isEmpty() )
@@ -629,11 +630,11 @@ public class AssocMore {
         String        where3;
         for (String k : keys)
         {
-            where2.append(" AND `").append(k).append("` = ?");
+            where2.append(" AND ").append(DB.Q(k)).append(" = ?");
         }
-        where3 = where2.toString( );
-        List ids = new ArrayList( );
-        String sql = "SELECT `" + table.primaryKey + "` FROM `" + table.tableName + "` WHERE " + where2;
+        where3 = where2.toString();
+        List ids = new ArrayList();
+        String sql = "SELECT " + DB.Q(table.primaryKey) + " FROM " + DB.Q(table.tableName) + " WHERE " + where2;
 
         // 状态键值, 2015/12/15
         String rstat = table.getField( "state" );
@@ -677,8 +678,7 @@ public class AssocMore {
         }
 
         // 删除多余
-        where2  = new StringBuilder(where);
-        where2.append(" AND `").append(table.primaryKey).append("` NOT IN (?)");
+        where2  = new StringBuilder(where).append(" AND ").append(DB.Q(table.primaryKey)).append(" NOT IN (?)");
         params2 = new ArrayList( params1 ); params2.add( ids );
         table .remove(  where2.toString( ), params2.toArray());
     }

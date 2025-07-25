@@ -105,11 +105,11 @@ public class Furl extends TreeModel {
 
         // 从导航表中取单元ID
         Set<String> us = new HashSet();
-        NaviMap     nv = NaviMap.getInstance(centra);
-        getSubFurls(nv.menus, nv.getUserRoles ( ) , us);
+        NaviMap     nv = NaviMap.getInstance ( centra );
+        getSubFurls(nv.menus, nv.getUserRoles( ) , us );
 
         // 限制为有权限的单元
-        caze.filter("`"+table.name+"`.`id` IN (?)", us);
+        caze.filter(DB.Q(table.name)+".id IN (?)", us );
     }
 
     private static final Pattern FURL_CODE = Pattern.compile("\\Wx=(\\w+)");

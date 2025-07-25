@@ -13,7 +13,7 @@ import org.apache.lucene.util.automaton.Automaton;
 
 /**
  * 非空查询
- * 类似 SQL 的 `fn` IS NOT NULL AND `fn` != ''
+ * 类似 SQL 的 fn IS NOT NULL AND fn != ''
  * @author Kevin
  */
 public class IsNotNone extends Query {

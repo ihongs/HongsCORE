@@ -215,9 +215,9 @@ public class AuthKit {
         Table ub = db.getTable("user");
         Map   ud = tb.fetchCase()
                      .from(tb.tableName, "s")
-                     .join(ub.tableName, "u", "`u`.`id` = `s`.`user_id`", FetchCase.LEFT)
-                     .filter("`s`.`unit` = ? AND `s`.`code` = ?", unit, code)
-                     .select("`u`.`id`, `u`.`name`, `u`.`head`, `u`.`state`")
+                     .join(ub.tableName, "u", "u.id = s.user_id", FetchCase.LEFT)
+                     .filter("s.unit = ? AND s.code = ?" , unit , code)
+                     .select("u.id, u.name, u.head, u.state")
                      .getOne(   );
 
         int     stat  = Synt.declare(ud.get("state"), 0);

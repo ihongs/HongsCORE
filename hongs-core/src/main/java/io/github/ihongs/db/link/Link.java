@@ -450,7 +450,7 @@ abstract public class Link
       String field = (String)entry.getKey();
       paramz.add((Object)entry.getValue());
 
-      vs += ", " + quoteField(field) + " = ?";
+      vs += ", "+ quoteField(field) +" = ?" ;
     }
 
     String sql = "UPDATE " + table
@@ -663,23 +663,44 @@ abstract public class Link
   //** 静态工具 **/
 
   /**
-   * 引用字段名
+   * 引用标识符, 不转义引号, 勿用于外部参数
+   * @param field
+   * @return
+   */
+  public static String Q(String field)
+  {
+    return "\"" + field + "\"";
+  }
+
+  /**
+   * 引用标识符, 不转义引号, 勿用于外部参数
+   * @param table
+   * @param field
+   * @return
+   */
+  public static String Q(String table, String field)
+  {
+    return "\"" + table + "\".\"" + field + "\"";
+  }
+
+  /**
+   * 引用字段名, 转义双引号
    * @param field
    * @return 引用后的串
    */
   public static String quoteField(String field)
   {
-    return "`" + Syno.escape(field, "`") + "`";
+    return "\"" + Syno.escape(field, "\"","\"") + "\"";
   }
 
   /**
-   * 引用值
+   * 引用查询值, 转义单引号
    * @param value
    * @return 引用后的串
    */
   public static String quoteValue(String value)
   {
-    return "'" + Syno.escape(value, "'") + "'";
+    return "\'" + Syno.escape(value, "\'","\'") + "\'";
   }
 
   /**

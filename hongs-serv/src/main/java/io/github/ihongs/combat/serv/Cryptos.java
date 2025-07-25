@@ -124,8 +124,8 @@ public class Cryptos {
         Consumer <Map> becrypt = ((PrivTable) tb).becrypt();
 
         // 获取总数以计算进度
-        Map row = db.fetchOne ("SELECT COUNT(*) AS `cnt` FROM `"+tb.tableName+"`");
-        int cnt = Synt.declare(row.get("cnt"), 0) - start;
+        Map row = db.fetchOne ("SELECT COUNT(*) AS _cnt_ FROM "+DB.Q(tb.tableName));
+        int cnt = Synt.declare(row.get("_cnt_"), 0) - start;
         int fin = 0;
         int ok  = 0;
         int er  = 0;
@@ -244,7 +244,7 @@ public class Cryptos {
         try {
             try (ResultSet rs = db.open().getMetaData().getTables(null, null, newTab.tableName, new String[] {"TABLE"})) {
                 if ( ! rs.next( ) ) {
-                    db.execute("CREATE TABLE `"+newTab.tableName+"` LIKE `"+oldTab.tableName+"`");
+                    db.execute("CREATE TABLE "+DB.Q(newTab.tableName)+" LIKE "+DB.Q(oldTab.tableName));
                 }
             }
         } catch (CruxException ex) {
@@ -254,15 +254,15 @@ public class Cryptos {
         }
 
         // 检查目标表是否为空
-        Map one = db.fetchOne ("SELECT COUNT(1) AS `cnt` FROM `"+newTab.tableName+"`");
-        int cxt = Synt.declare(one.get("cnt"), 0) - start;
+        Map one = db.fetchOne ("SELECT COUNT(1) AS _cnt_ FROM " + DB.Q(newTab.tableName));
+        int cxt = Synt.declare(one.get("_cnt_"), 0) - start;
         if (cxt > 0) {
             throw new CruxException("Verify new table failed, please truncate table first.");
         }
 
         // 获取总数以计算进度
-        Map row = db.fetchOne ("SELECT COUNT(1) AS `cnt` FROM `"+oldTab.tableName+"`");
-        int cnt = Synt.declare(row.get("cnt"), 0) - start;
+        Map row = db.fetchOne ("SELECT COUNT(1) AS _cnt_ FROM " + DB.Q(oldTab.tableName));
+        int cnt = Synt.declare(row.get("_cnt_"), 0) - start;
         int fin = 0;
         CombatHelper.progres(fin, cnt);
 
@@ -292,7 +292,7 @@ public class Cryptos {
 
     private static Loop query(DB db, Table tb, String sql, int start, int limit) throws CruxException {
         if (sql == null || sql.isEmpty()) {
-            return db.query("SELECT * FROM `"+ tb.tableName +"`" , start, limit);
+            return db.query("SELECT * FROM " + DB.Q(tb.tableName), start, limit);
         } else {
             return db.query(Syno.inject(sql, start, limit), 0, 0);
         }

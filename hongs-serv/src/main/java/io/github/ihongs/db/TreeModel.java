@@ -181,33 +181,33 @@ public class TreeModel extends Model
         caze.setOption("ASSOCS", new HashSet());
       }
 
-      caze.select("`"+this.table.name+"`.`" + this.table.primaryKey + "`")
-          .select("`"+this.table.name+"`.`" + this.pidKey  + "`")
-          .select("`"+this.table.name+"`.`" + this.nameKey + "`");
+      caze.select(DB.Q(this.table.name, this.table.primaryKey))
+          .select(DB.Q(this.table.name, this.pidKey ))
+          .select(DB.Q(this.table.name, this.nameKey));
 
       if (this.noteKey != null)
       {
-        caze.select("`"+this.table.name+"`.`" + this.noteKey + "`");
+        caze.select(DB.Q(this.table.name, this.noteKey));
       }
       if (this.typeKey != null)
       {
-        caze.select("`"+this.table.name+"`.`" + this.typeKey + "`");
+        caze.select(DB.Q(this.table.name, this.typeKey));
       }
       if (this.cnumKey != null)
       {
-        caze.select("`"+this.table.name+"`.`" + this.cnumKey + "`");
+        caze.select(DB.Q(this.table.name, this.cnumKey));
       }
       else
       {
-        caze.select("'1' AS `cnum`");
+        caze.select("1 AS cnum");
       }
       if (this.snumKey != null)
       {
-        caze.select("`"+this.table.name+"`.`" + this.snumKey + "`");
+        caze.select(DB.Q(this.table.name, this.snumKey));
       }
       else
       {
-        caze.select("'0' AS `snum`");
+        caze.select("0 AS snum");
       }
     }
 
@@ -485,19 +485,15 @@ public class TreeModel extends Model
     {
       if (this.snumKey != null)
       {
-        caze.assort("`"
-            + this.table.name
-            +"`.`"
-            + this.snumKey
-            + "`");
+        caze.assort(
+              DB.Q (this.table.name, this.snumKey)
+            );
       } else
       if (this.cnumKey != null)
       {
-        caze.assort("(CASE WHEN `"
-            + this.table.name
-            + "`.`"
-            + this.cnumKey
-            + "` > 0 THEN 1 END) DESC");
+        caze.assort("(CASE WHEN "
+            + DB.Q (this.table.name, this.cnumKey)
+            + " > 0 THEN 1 END) DESC");
       }
     }
   }
@@ -507,13 +503,13 @@ public class TreeModel extends Model
   public String getParentId(String id)
     throws CruxException
   {
-    String sql = "SELECT `"
-            + this.pidKey +
-            "` FROM `"
-            + this.table.tableName +
-            "` WHERE `"
-            + this.table.primaryKey +
-            "` = ?";
+    String sql = "SELECT "
+            + DB.Q (this.pidKey)
+            + " FROM "
+            + DB.Q (this.table.tableName )
+            + " WHERE "
+            + DB.Q (this.table.primaryKey)
+            + " = ?";
     for(Map row : this.db.query(sql, 0, 1, id )) {
         return Synt.asString (row.get(this.pidKey));
     }
@@ -555,11 +551,11 @@ public class TreeModel extends Model
     List<Map>    nds = new ArrayList(ids.size());
     Map          map = new  HashMap (ids.size());
     if (ids.isEmpty()) return nds;
-    String sql = "SELECT * FROM `"
-            + this.table.tableName +
-            "` WHERE `"
-            + this.table.primaryKey +
-            "` IN (?)";
+    String sql = "SELECT * FROM "
+            + DB.Q (this.table.tableName )
+            + " WHERE "
+            + DB.Q (this.table.primaryKey)
+            + " IN (?)";
     for(Map row : this.db.query(sql, 0, 0, ids)) {
         id = Synt.asString (row.get(this.table.primaryKey));
         map.put(id, row);
@@ -586,27 +582,27 @@ public class TreeModel extends Model
     String sql;
     if (this.cnumKey == null)
     {
-      sql = "SELECT `"
-            + this.table.primaryKey +
-            "` FROM `"
-            + this.table.tableName +
-            "` WHERE `"
-            + this.pidKey +
-            "` = ?";
+      sql = "SELECT "
+            + DB.Q (this.table.primaryKey)
+            + " FROM "
+            + DB.Q (this.table.tableName )
+            + " WHERE "
+            + DB.Q (this.pidKey )
+            + " = ?";
     }
     else
     {
-      sql = "SELECT `"
-            + this.cnumKey +
-            "`, `"
-            + this.table.primaryKey +
-            "` FROM `"
-            + this.table.tableName +
-            "` WHERE `"
-            + this.pidKey +
-            "` = ?";
+      sql = "SELECT "
+            + DB.Q (this.cnumKey)
+            + ", "
+            + DB.Q (this.table.primaryKey)
+            + " FROM "
+            + DB.Q (this.table.tableName )
+            + " WHERE "
+            + DB.Q (this.pidKey )
+            + " = ?";
     }
-    List list = this.db.fetchAll(sql,id);
+    List list = this.db.fetchAll(sql, id );
 
     FetchMore join = new FetchMore(list);
     List      cids = new ArrayList(join.maping(this.table.primaryKey).keySet());
@@ -650,12 +646,12 @@ public class TreeModel extends Model
     throws CruxException
   {
     String sql;
-    sql = "SELECT * FROM `"
-            + this.table.tableName +
-            "` WHERE `"
-            + this.pidKey +
-            "` = ?";
-    List list = this.db.fetchAll(sql,id);
+    sql = "SELECT * FROM "
+            + DB.Q (this.table.tableName )
+            + " WHERE "
+            + DB.Q (this.pidKey )
+            + " = ?";
+    List list = this.db.fetchAll(sql, id );
 
     if (all)
     {
@@ -696,13 +692,13 @@ public class TreeModel extends Model
       return this.getRealChildsNum(id, null);
     }
 
-    String sql = "SELECT `"
-            + this.cnumKey +
-            "` FROM `"
-            + this.table.tableName +
-            "` WHERE `"
-            + this.table.primaryKey +
-            "` = ?";
+    String sql = "SELECT "
+            + DB.Q (this.cnumKey)
+            + " FROM "
+            + DB.Q (this.table.tableName )
+            + " WHERE "
+            + DB.Q (this.table.primaryKey)
+            + " = ?";
     List params = new ArrayList();
     params.add(id);
 
@@ -725,19 +721,19 @@ public class TreeModel extends Model
   public int getRealChildsNum(String id, Collection excludeIds)
     throws CruxException
   {
-    String sql = "SELECT COUNT(`"
-            + this.table.primaryKey +
-            "`) AS __count__ FROM `"
-            + this.table.tableName +
-            "` WHERE `"
-            + this.pidKey +
-            "` = ?";
+    String sql = "SELECT COUNT("
+            + DB.Q (this.table.primaryKey)
+            + ") AS __count__ FROM "
+            + DB.Q (this.table.tableName )
+            + " WHERE "
+            + DB.Q (this.pidKey )
+            + " = ?";
     List params = new ArrayList();
     params.add(id);
 
     if (excludeIds != null)
     {
-      sql += " `" + this.table.primaryKey + "` NOT IN (?)";
+      sql += " " + DB.Q(this.table.primaryKey) + " NOT IN (?)";
       params.add(excludeIds);
     }
 
@@ -764,14 +760,14 @@ public class TreeModel extends Model
       num = this.getRealChildsNum(id) + Math.abs(num);
     }
 
-    String sql = "UPDATE `"
-            + this.table.tableName +
-            "` SET `"
-            + this.cnumKey +
-            "` = ?" +
-            " WHERE `"
-            + this.table.primaryKey +
-            "` = ?";
+    String sql = "UPDATE "
+            + DB.Q (this.table.tableName )
+            + " SET "
+            + DB.Q (this.cnumKey)
+            + " = ?"
+            + " WHERE"
+            + DB.Q (this.table.primaryKey)
+            + " = ?";
     this.db.execute(sql, num, id);
   }
 
@@ -783,17 +779,16 @@ public class TreeModel extends Model
       return;
     }
 
-    String sql = "UPDATE `"
-            + this.table.tableName +
-            "` SET `"
-            + this.cnumKey +
-            "` = `"
-            + this.cnumKey +
-            "` "
-            + (off > 0 ? "+ "+off : "- "+Math.abs(off)) +
-            " WHERE `"
-            + this.table.primaryKey +
-            "` = ?";
+    String sql = "UPDATE "
+            + DB.Q (this.table.tableName )
+            + " SET "
+            + DB.Q (this.cnumKey) 
+            + " = "
+            + DB.Q (this.cnumKey)
+            + (0 < off ? " + "+off : " - "+Math.abs(off))
+            + " WHERE "
+            + DB.Q (this.table.primaryKey)
+            + " = ?";
     this.db.execute(sql, id);
   }
 
@@ -807,13 +802,13 @@ public class TreeModel extends Model
       return 0;
     }
 
-    String sql = "SELECT `"
-            + this.snumKey +
-            "` FROM `"
-            + this.table.tableName +
-            "` WHERE `"
-            + this.table.primaryKey +
-            "` = ?";
+    String sql = "SELECT "
+            + DB.Q (this.snumKey)
+            + " FROM "
+            + DB.Q (this.table.tableName )
+            + " WHERE "
+            + DB.Q (this.table.primaryKey)
+            + " = ?";
 
     Map info = this.db.fetchOne(sql, id);
     if (info.isEmpty())
@@ -839,23 +834,23 @@ public class TreeModel extends Model
       return this.getRealChildsNum(pid, excludeIds);
     }
 
-    String sql = "SELECT `"
-            + this.snumKey +
-            "` FROM `"
-            + this.table.tableName +
-            "` WHERE `"
-            + this.pidKey +
-            "` = ?";
+    String sql = "SELECT "
+            + DB.Q (this.snumKey)
+            + " FROM "
+            + DB.Q (this.table.tableName )
+            + " WHERE "
+            + DB.Q (this.pidKey )
+            + " = ?";
     List params = new ArrayList();
     params.add(pid);
 
     if (excludeIds != null)
     {
-      sql += " AND `" + this.table.primaryKey + "` NOT IN (?)";
+      sql += " AND " + DB.Q(this.table.primaryKey) + " NOT IN (?)";
       params.add(excludeIds);
     }
 
-    sql += " ORDER BY `" + this.snumKey + "` DESC";
+    sql += " ORDER BY " + DB.Q(this.snumKey) + " DESC";
 
     Map info = this.db.fetchOne(sql, params.toArray());
     if (info.isEmpty())
@@ -883,14 +878,14 @@ public class TreeModel extends Model
       num = this.getLastSerialNum(pid, ids) + Math.abs(num);
     }
 
-    String sql = "UPDATE `"
-            + this.table.tableName +
-            "` SET `"
-            + this.snumKey +
-            "` = ?" +
-            " WHERE `"
-            + this.table.primaryKey +
-            "` = ?";
+    String sql = "UPDATE "
+            + DB.Q (this.table.tableName )
+            + " SET "
+            + DB.Q (this.snumKey)
+            + " = ?"
+            + " WHERE "
+            + DB.Q (this.table.primaryKey)
+            + " = ?";
     this.db.execute(sql, num, id);
   }
 
@@ -914,17 +909,16 @@ public class TreeModel extends Model
       this.chgSerialNum(pid, -1, oldNum + 1, newNum);
     }
 
-    String sql = "UPDATE `"
-            + this.table.tableName +
-            "` SET `"
-            + this.snumKey +
-            "` = `"
-            + this.snumKey +
-            "` "
-            + (off > 0 ? "+ "+off : "- "+Math.abs(off)) +
-            " WHERE `"
-            + this.table.primaryKey +
-            "` = ?";
+    String sql = "UPDATE "
+            + DB.Q (this.table.tableName )
+            + " SET "
+            + DB.Q (this.snumKey)
+            + " = "
+            + DB.Q (this.snumKey)
+            + (0 < off ? " + "+off : " - "+Math.abs(off))
+            + " WHERE "
+            + DB.Q (this.table.primaryKey)
+            + " = ?";
     this.db.execute(sql, id);
   }
 
@@ -943,25 +937,24 @@ public class TreeModel extends Model
       pos2 = pos3;
     }
 
-    String sql = "UPDATE `"
-            + this.table.tableName +
-            "` SET `"
-            + this.snumKey +
-            "` = `"
-            + this.snumKey +
-            "` "
-            + (off > 0 ? "+ "+off : "- "+Math.abs(off)) +
-            " WHERE `"
-            + this.pidKey +
-            "` = ?";
+    String sql = "UPDATE "
+            + DB.Q (this.table.tableName )
+            + " SET "
+            + DB.Q (this.snumKey)
+            + " = "
+            + DB.Q (this.snumKey)
+            + (0 < off ? " + "+off : " - "+Math.abs(off))
+            + " WHERE "
+            + DB.Q (this.pidKey )
+            + " = ?";
 
     if (pos1 > -1)
     {
-      sql += " AND `"+this.snumKey+"` >= "+pos1;
+      sql += " AND "+DB.Q(this.snumKey)+" >= "+pos1;
     }
     if (pos2 > -1)
     {
-      sql += " AND `"+this.snumKey+"` <= "+pos2;
+      sql += " AND "+DB.Q(this.snumKey)+" <= "+pos2;
     }
 
     this.db.execute(sql, pid);
@@ -981,38 +974,38 @@ public class TreeModel extends Model
 
     if (this.cnumKey != null)
     {
-      sql = "SELECT COUNT(`"+this.table.primaryKey  +"`) AS _count_"+
-            " FROM  `"      +this.table.tableName   +"`"+
-            " WHERE `"      +this.pidKey            +"` = '"+pid+"'"+
-            " GROUP BY `"   +this.pidKey            +"`";
+      sql = "SELECT COUNT("+DB.Q(this.table.primaryKey)+") AS _count_"+
+            " FROM "       +DB.Q(this.table.tableName )+
+            " WHERE "      +DB.Q(this.pidKey          )+" = '"+pid+"'"+
+            " GROUP BY "   +DB.Q(this.pidKey          );
       List<Map> rows = this.db.fetch(sql, 0, 1);
       Iterator<Map> it = rows.iterator();
       while (it . hasNext())
       {
         Map row = it.next( );
-        num = Synt.declare ( row.get( "_count_" ), num );
-        sql = "UPDATE `"    +this.table.tableName   +"`"+
-              "  SET  `"    +this.cnumKey           +"` = '"+num+"'"+
-              " WHERE `"    +this.table.primaryKey  +"` = '"+pid+"'";
+        num = Synt.declare ( row.get("_count_") , num );
+        sql = "UPDATE "    +DB.Q(this.table.tableName )+
+               " SET "     +DB.Q(this.cnumKey         )+" = '"+num+"'"+
+              " WHERE "    +DB.Q(this.table.primaryKey)+" = '"+pid+"'";
         this.db.execute(sql);
       }
     }
 
     if (this.snumKey != null)
     {
-      sql = "SELECT `"      +this.table.primaryKey  +"`"+
-            " FROM  `"      +this.table.tableName   +"`"+
-            " WHERE `"      +this.pidKey            +"` = '"+pid+"'"+
-            " ORDER BY `"   +this.snumKey           +"`";
+      sql = "SELECT "      +DB.Q(this.table.primaryKey)+
+            " FROM "       +DB.Q(this.table.tableName )+
+            " WHERE "      +DB.Q(this.pidKey          )+" = '"+pid+"'"+
+            " ORDER BY "   +DB.Q(this.snumKey         );
       List<Map> rows = this.db.fetch(sql, 0, 0);
       Iterator<Map> it = rows.iterator();
       while (it . hasNext())
       {
         Map row = it.next( );
-        cid = row.get(this.table.primaryKey).toString( );
-        sql = "UPDATE `"    +this.table.tableName   +"`"+
-              "  SET  `"    +this.snumKey           +"` = '"+num+"'"+
-              " WHERE `"    +this.table.primaryKey  +"` = '"+cid+"'";
+        cid = row.get(this.table.primaryKey).toString();
+        sql = "UPDATE "    +DB.Q(this.table.tableName )+
+               " SET "     +DB.Q(this.snumKey         )+" = '"+num+"'"+
+              " WHERE "    +DB.Q(this.table.primaryKey)+" = '"+cid+"'";
         this.db.execute(sql);
 
         // 向下递归

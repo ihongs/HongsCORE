@@ -154,7 +154,7 @@ public class SourceCombat {
             int  rn = 0; // 行号
             String  ln ;
 
-            while(null != (ln = in.readLine())) {
+            while(null != (ln = in.readLine( ))) {
                 rn += 1;
             //  rl += ln.length();
                 ln  = CMT_PAT.matcher(ln).replaceAll("").trim(); // 清理行注释
@@ -163,8 +163,8 @@ public class SourceCombat {
                     continue; // 空行
                 }
                 if (sb.length() == 0) {
-                    if (ln.startsWith("--DB=")) {
-                        db = DB.getInstance ( ln.substring(5) ); // 切换数据库
+                    if (ln.startsWith("-- DB=")) {
+                        db = DB.getInstance ( ln.substring(6) ); // 切换数据库
                         continue;
                     }
                     if (ln.startsWith("--")) {

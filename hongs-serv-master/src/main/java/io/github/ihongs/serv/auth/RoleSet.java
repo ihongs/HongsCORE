@@ -64,8 +64,8 @@ public class RoleSet extends CoreSerial implements CoreSerial.Mtimes, Set<String
         tb = db.getTable("user");
         fc = new FetchCase( FetchCase.STRICT )
                 .from  (tb.tableName, tb.name)
-                .select(tb.name+".state, "+tb.name+".rtime, "+tb.name+".ptime")
-                .filter(tb.name+".id = ?", userId);
+                .select(DB.Q(tb.name)+".state, "+DB.Q(tb.name)+".rtime, "+DB.Q(tb.name)+".ptime")
+                .filter(DB.Q(tb.name)+".id = ?", userId);
         rs = db.fetchLess(fc);
         st = Synt.declare(rs.get("state"), 0 );
         rt = Synt.declare(rs.get("rtime"), 0L);
@@ -142,7 +142,7 @@ public class RoleSet extends CoreSerial implements CoreSerial.Mtimes, Set<String
         tb = db.getTable("user_role");
         fc = new FetchCase( FetchCase.STRICT )
                 .from  (tb.tableName, tb.name)
-                .select(tb.name+".role")
+                .select(tb.name+"." + DB.Q("role"))
                 .filter(tb.name+".user_id = ?", userId);
         rz = db.fetchMore(fc);
         for (Map rm : rz) {
@@ -158,7 +158,7 @@ public class RoleSet extends CoreSerial implements CoreSerial.Mtimes, Set<String
                 .from  (tb.tableName, tb.name)
                 .join  (td.tableName, td.name , tb.name+".unit_id = "+td.name+".unit_id")
                 .join  (tt.tableName, tt.name , td.name+".unit_id = "+tt.name+".id" /**/)
-                .select(tb.name+".role")
+                .select(tb.name+"." + DB.Q("role"))
                 .filter(td.name+".user_id = ?", userId)
                 .filter(tt.name+".state > 0" );
         rz = db.fetchMore(fc);

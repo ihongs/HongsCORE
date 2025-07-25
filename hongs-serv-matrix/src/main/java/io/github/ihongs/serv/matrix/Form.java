@@ -181,23 +181,24 @@ public class Form extends Model {
      */
     protected int storeConf(String id, Object conf) throws CruxException {
         Object uid = ActionHelper.getInstance().getSessibute(Cnst.UID_SES);
-        long   now = System.currentTimeMillis() / 1000;
-        String tbl = db.getTable(  "data"  ).tableName;
+        long   now = System.currentTimeMillis() / 1000L ;
+        String tbl = DB.Q(db.getTable("data").tableName);
+        String dat = DB.Q("data"); // DATA 是 MySQL 关键词
         String sql ;
 
         if (conf != null) {
             // 配置未改变则不增加日志
-            sql = "SELECT `data` FROM `" + tbl + "` WHERE `etime` = ? AND `form_id` = ? AND `id` = ?";
-            Map row  = db.fetchOne(sql, "0", "-", id );
+            sql = "SELECT "+dat+" FROM "+tbl+ " WHERE etime = ? AND form_id = ? AND id = ?";
+            Map row  = db.fetchOne(sql, "0", "-", id);
             if (row != null && !row.isEmpty()
             &&  conf.equals(row.get("data"))) {
                 return 0;
             }
 
-            sql = "UPDATE `"+tbl+"` SET `etime` = ? WHERE `etime` = ? AND `form_id` = ? AND `id` = ?";
+            sql = "UPDATE "+tbl+" SET etime = ? WHERE etime = ? AND form_id = ? AND id = ?";
             db.updates(sql, now, "0", "-", id);
 
-            sql = "INSERT INTO `"+tbl+"` (`ctime`,`etime`,`form_id`,`id`,`user_id`,`data`,`state`) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            sql = "INSERT INTO "+tbl+" (ctime, etime, form_id, id, user_id, "+dat+", state) VALUES (?, ?, ?, ?, ?, ?, ?)";
             db.updates(sql, now, "0", "-", id, uid, conf, "1");
 
             /**
@@ -237,10 +238,10 @@ public class Form extends Model {
             return  i;
             */
         } else {
-            sql = "UPDATE `"+tbl+"` SET `etime` = ? WHERE `etime` = ? AND `form_id` = ? AND `id` = ?";
+            sql = "UPDATE "+tbl+" SET etime = ? WHERE etime = ? AND form_id = ? AND id = ?";
             db.updates(sql, now, "0", "-", id);
 
-            sql = "INSERT INTO `"+tbl+"` (`ctime`,`etime`,`form_id`,`id`,`user_id`,`data`,`state`) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            sql = "INSERT INTO "+tbl+" (ctime, etime, form_id, id, user_id, "+dat+", state) VALUES (?, ?, ?, ?, ?, ?, ?)";
             db.updates(sql, now, "0", "-", id, uid, "[]", "0");
         }
 
@@ -448,7 +449,7 @@ public class Form extends Model {
         }
 
         // 限制为有权限的表单
-        caze.filter("`"+table.name+"`.`id` IN (?)", rs);
+        caze.filter(DB.Q(table.name)+".id IN (?)", rs);
     }
 
     protected void insertAuthRole(String id) throws CruxException {
@@ -486,7 +487,7 @@ public class Form extends Model {
             Table tab = db.getTable(tan);
             tab.update(Synt.mapOf(
                 "rtime", System.currentTimeMillis() / 1000
-            ) , "`id` = ?" , uid );
+            ) , "id = ?" , uid);
         }
     }
 
@@ -499,7 +500,7 @@ public class Form extends Model {
         tan = (String) table.getParams().get("role.table");
         if (tan != null) {
             Table tab = db.getTable(tan);
-            tab.remove("`role` IN (?)", Synt.setOf(
+            tab.remove(DB.Q("role")+" IN (?)", Synt.setOf(
                 centra + "/" + id + "/search",
                 centra + "/" + id + "/create",
                 centra + "/" + id + "/update",
@@ -515,7 +516,7 @@ public class Form extends Model {
             Table tab = db.getTable(tan);
             tab.update(Synt.mapOf(
                 "rtime", System.currentTimeMillis() / 1000
-            ) , "`id` = ?" , uid );
+            ) , "id = ?" , uid);
         }
     }
 
@@ -1139,7 +1140,7 @@ public class Form extends Model {
      */
     protected String getFieldName(Map fc, Set fs) throws CruxException {
         Table  tab = db.getTable ("feed");
-        String sql = "SELECT `fn` FROM `"+tab.tableName+"` WHERE `ft` = ? AND `fn` NOT IN (?) ORDER BY `fn`";
+        String sql = "SELECT fn FROM "+DB.Q(tab.tableName)+" WHERE ft = ? AND fn NOT IN (?) ORDER BY fn";
 
         String ft1 = Synt.declare(fc.get ( "__type__" ),"string");
         String fn1 = (String) db.fetchOne(sql, ft1, fs).get("fn");

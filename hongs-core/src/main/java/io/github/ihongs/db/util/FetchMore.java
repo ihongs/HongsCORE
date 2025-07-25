@@ -156,7 +156,7 @@ public class FetchMore
     String rel = col;
     if (table.getFields().containsKey(col))
     {
-      col = "`" + name + "`.`" + col + "`";
+      col = DB.Q(name, col);
     }
     else
     {
@@ -165,7 +165,7 @@ public class FetchMore
       do
       {
         pattern = Pattern.compile(
-            "^(.+?)(?:\\s+AS)?\\s+`?(.+?)`?$",
+          "^(.+?)(?:\\s+AS)?\\s+\"?(.+?)\"?$" ,
             Pattern.CASE_INSENSITIVE );
         matcher = pattern.matcher(col);
         if (matcher.find())
@@ -176,7 +176,7 @@ public class FetchMore
         }
 
         pattern = Pattern.compile(
-            "^(.+?)\\.\\s*`?(.+?)`?$");
+          "^(.+?)\\.\\s*\"?(.+?)\"?$");
         matcher = pattern.matcher(col);
         if (matcher.find())
         {

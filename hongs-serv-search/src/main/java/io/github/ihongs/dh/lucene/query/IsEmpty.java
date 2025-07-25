@@ -13,7 +13,7 @@ import org.apache.lucene.util.automaton.Automaton;
 
 /**
  * 非空串查询
- * 类似 SQL 的 `fn` != ''
+ * 类似 SQL 的 fn != ''
  * @author Kevin
  */
 public class IsEmpty extends Query {

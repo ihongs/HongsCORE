@@ -69,15 +69,15 @@ public class UserCombat {
         tb = db.getTable("user_sign");
         tb.update(Synt.mapOf(
             "user_id", uid
-        ), "`user_id` IN (?)", uids );
+        ) , "user_id IN (?)" , uids );
 
         //** 用户权限 **/
 
         tb = db.getTable("user_role");
 
         lo = tb.fetchCase()
-               .filter("`user_id` = ?", uid)
-               .select("`role`")
+               .filter("user_id = ?", uid)
+               .select(DB.Q("role"))
                .select();
         Set rids = new HashSet();
         for(Map ro : lo) {
@@ -85,8 +85,8 @@ public class UserCombat {
         }
 
         lo = tb.fetchCase()
-               .filter("`user_id` IN (?) AND `role` NOT IN (?)", uids, rids)
-               .select("`role`")
+               .filter("user_id IN (?) AND role NOT IN (?)", uids, rids)
+               .select(DB.Q("role"))
                .select();
             rids.clear();
         for(Map ro : lo) {
@@ -105,8 +105,8 @@ public class UserCombat {
         tb = db.getTable("unit_user");
 
         lo = tb.fetchCase()
-               .filter("`user_id` = ?", uid)
-               .select("`unit_id`")
+               .filter("user_id = ?", uid)
+               .select("unit_id")
                .select();
         Set dids = new HashSet();
         for(Map ro : lo) {
@@ -114,8 +114,8 @@ public class UserCombat {
         }
 
         lo = tb.fetchCase()
-               .filter("`user_id` IN (?) AND `unit_id` NOT IN (?)", uids, dids)
-               .select("`unit_id`")
+               .filter("user_id IN (?) AND unit_id NOT IN (?)", uids, dids)
+               .select("unit_id")
                .select();
             dids.clear();
         for(Map ro : lo) {
@@ -134,8 +134,8 @@ public class UserCombat {
         tb = db.getTable("user");
 
         lo = tb.fetchCase()
-               .filter("`id` = ?", uid)
-               .select("`phone`,`phone_checked`,`email`,`email_checked`,`username`")
+               .filter("id = ?", uid)
+               .select("phone,phone_checked,email,email_checked,username")
                .select();
         Map info = new HashMap();
         boolean phoneChecked = false;
@@ -163,9 +163,9 @@ public class UserCombat {
         }
 
         lo = tb.fetchCase()
-               .filter("`id` IN (?)", uids )
-               .assort("`ctime` DESC, `mtime` DESC")
-               .select("`phone`,`phone_checked`,`email`,`email_checked`,`username`,`password`,`passcode`")
+               .filter("id IN (?)", uids )
+               .assort("ctime DESC, mtime DESC")
+               .select("phone,phone_checked,email,email_checked,username,password,passcode")
                .select();
         for(Map ro : lo) {
             if (! phoneChecked) {
@@ -200,14 +200,14 @@ public class UserCombat {
         long now = System.currentTimeMillis() / 1000;
         info.put("rtime", now);
         info.put("mtime", now);
-        tb.update(info, "`id`  =  ? " , uid );
+        tb.update(info, "id  =  ? " , uid );
 
         // 其他用户标记为删除
         info.clear();
         info.put("state",  0 );
         info.put("rtime", now);
         info.put("mtime", now);
-        tb.update(info, "`id` IN (?)" , uids);
+        tb.update(info, "id IN (?)" , uids);
 
         //** 其他关联 **/
 
@@ -230,7 +230,7 @@ public class UserCombat {
             String  f = n.substring(1 + p).trim();
 
             tb = db.getTable(t);
-            tb.db.execute("UPDATE `"+tb.tableName+"` SET `"+f+"` = ? WHERE `"+f+"` IN (?)", uid , uids);
+            tb.db.execute("UPDATE "+DB.Q(tb.tableName)+" SET "+DB.Q(f)+" = ? WHERE "+DB.Q(f)+" IN (?)", uid, uids);
         }
     }
 

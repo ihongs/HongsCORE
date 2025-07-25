@@ -70,6 +70,8 @@ extends Model {
     @Override
     protected void filter(FetchCase caze, Map req)
     throws CruxException {
+        String user = DB.Q("user"); // user 是关键词
+
         /**
          * 非超级管理员或在超级管理组
          * 限制查询为当前管辖范围以内
@@ -86,15 +88,15 @@ extends Model {
                 caze.setOption("SCOPE" , 2);
             } else
             if (pid. equals (Cnst.TOP_GID)) {
-                caze.filter ("`user`.`id` = ''"  ); // 空查询
+                caze.filter (user+ ".id is NULL" ); // 空查询
             } else
             if (pid. equals ("" ) || ! (pid instanceof String) ) {
                 caze.by     (FetchCase.DISTINCT  ); // 去重复
                 caze.gotJoin("units2")
                     .from   ("a_master_unit_user")
                     .by     (FetchCase.INNER)
-                    .on     ("`units2`.`user_id` = `user`.`id`")
-                    .filter ("`units2`.`unit_id` IN (?)" , set );
+                    .on     ("units2.user_id = "+user+".id")
+                    .filter ("units2.unit_id IN (?)" , set );
             } else
             if (set.contains(pid) == false) {
                 throw new CruxException(400, "@master:master.user.area.error");
@@ -114,15 +116,15 @@ extends Model {
                 caze.gotJoin("units2")
                     .from   ("a_master_unit_user")
                     .by     (FetchCase.INNER)
-                    .on     ("`units2`.`user_id` = `user`.`id`")
-                    .filter ("`units2`.`unit_id` IS NULL" /**/ );
+                    .on     ("units2.user_id = "+user+".id")
+                    .filter ("units2.unit_id IS NULL" /**/ );
             } else {
                 caze.by     (FetchCase.DISTINCT  ); // 去重复
                 caze.gotJoin("units2")
                     .from   ("a_master_unit_user")
                     .by     (FetchCase.INNER)
-                    .on     ("`units2`.`user_id` = `user`.`id`")
-                    .filter ("`units2`.`unit_id` IN (?)" , pid );
+                    .on     ("units2.user_id = "+user+".id")
+                    .filter ("units2.unit_id IN (?)" , pid );
             }
         }
 

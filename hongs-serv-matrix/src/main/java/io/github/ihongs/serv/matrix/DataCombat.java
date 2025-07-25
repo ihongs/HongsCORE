@@ -157,7 +157,7 @@ public class DataCombat {
         sd.put( "meno", "revert");
 
         Table  tb = dr.getTable();
-        String tn = tb.tableName ;
+        String tn = DB.Q(tb.tableName);
         PreparedStatement ps;
         ResultSet rs;
         Loop      lp;
@@ -165,32 +165,32 @@ public class DataCombat {
         int  i  = 0 ; // 变更计数
         int  j  = 0 ; // 事务计数
         if (ct != 0) {
-            String fx = "`x`.*"  ;
-            String fa = "`a`.id, MAX(a.ctime) AS ctime" ;
-            String fc = "COUNT(DISTINCT a.id) AS _cnt_" ;
-            String qa = "SELECT "+fa+" FROM `"+tn+"` AS `a` WHERE `a`.`form_id` = ? AND `a`.`ctime` <= ?";
-            String qc = "SELECT "+fc+" FROM `"+tn+"` AS `a` WHERE `a`.`form_id` = ? AND `a`.`ctime` <= ?";
-            String qx = " WHERE x.id = b.id AND x.ctime = b.ctime AND x.`form_id` = ? AND x.`ctime` <= ?";
+            String fx = "x.*" ;
+            String fa = "a.id , MAX(a.ctime) AS ctime" ;
+            String fc = "COUNT(DISTINCT a.id) AS _cnt_";
+            String qa = "SELECT "+fa+" FROM "+tn+" AS a WHERE a.form_id = ? AND a.ctime <= ?";
+            String qc = "SELECT "+fc+" FROM "+tn+" AS a WHERE a.form_id = ? AND a.ctime <= ?";
+            String qx = " WHERE x.id = b.id AND x.ctime = b.ctime AND x.form_id = ? AND x.ctime <= ?";
             if (! ds.isEmpty() ) {
                 c  = ds.size();
                 qa = qa + " AND a.id IN (?)";
                 qx = qx + " AND x.id IN (?)";
-                qa = qa + " GROUP BY `a`.id";
-                qx = "SELECT "+fx+" FROM `"+tn+"` AS `x`, ("+qa+") AS `b` "+qx;
+                qa = qa + " GROUP BY a.id"  ;
+                qx = "SELECT "+fx+" FROM "+tn+" AS x, ("+qa+") AS b "+qx;
                 ps = tb.db.prepare (qx, form, ct, ds, form, ct, ds);
             } else {
                 c  = Synt .declare (
                      tb.db.fetchOne(qc, form, ct    )
                           .get("_cnt_"), 0 );
-                qa = qa + " GROUP BY `a`.id";
-                qx = "SELECT "+fx+" FROM `"+tn+"` AS `x`, ("+qa+") AS `b` "+qx;
+                qa = qa + " GROUP BY a.id"  ;
+                qx = "SELECT "+fx+" FROM "+tn+" AS x, ("+qa+") AS b "+qx;
                 ps = tb.db.prepare (qx, form, ct    , form, ct    );
             }
         } else {
-            String fa = "`a`.*"  ;
+            String fa = "a.*" ;
             String fc = "COUNT(*) AS _cnt_" ;
-            String qa = "SELECT "+fa+" FROM `"+tn+"` AS `a` WHERE `a`.`form_id` = ? AND `a`.`etime`  = ?";
-            String qc = "SELECT "+fc+" FROM `"+tn+"` AS `a` WHERE `a`.`form_id` = ? AND `a`.`etime`  = ?";
+            String qa = "SELECT "+fa+" FROM "+tn+" AS a WHERE a.form_id = ? AND a.etime  = ?";
+            String qc = "SELECT "+fc+" FROM "+tn+" AS a WHERE a.form_id = ? AND a.etime  = ?";
             if (! ds.isEmpty() ) {
                 c  = ds.size();
                 qa = qa + " AND a.id IN (?)";
@@ -427,6 +427,7 @@ public class DataCombat {
         Data   dr = da.getInstance();
         Table  tb = dr.getTable ( );
         String fn = dr.getFormId( );
+        String tn = tb.tableName;
 
         int skip  = Synt.declare(opts.get("skip"), 0);
         int bufs  = Synt.declare(opts.get("bufs"), 0);
@@ -436,8 +437,8 @@ public class DataCombat {
             bufs  = 1000;
         }
         if (ends == 0) {
-            Map one = tb.db.fetchOne("SELECT MAX(`rnum`) AS `rnum` FROM `"+tb.tableName+"`");
-            ends  = Synt.declare(one.get("rnum"), ends );
+            Map one = tb.db.fetchOne("SELECT MAX(rnum) AS rnum FROM "+tn);
+            ends  = Synt.declare( one.get("rnum"), ends );
         }
 
         boolean p = Synt.declare(opts.get("progress"), false);
@@ -459,8 +460,8 @@ public class DataCombat {
         PreparedStatement ps;
         ResultSet         rs;
         Map               ro;
-        ps = tb.db.prepare("SELECT id, data, state FROM `"+tb.tableName+"` WHERE `form_id` = '"+fn+"' AND `etime` = 0 AND rnum > ? AND rnum <= ?");
         ro = new HashMap(02);
+        ps = tb.db.prepare("SELECT * FROM "+DB.quoteField(tn)+" WHERE form_id = "+DB.quoteValue(fn)+" AND etime = 0 AND rnum > ? AND rnum <= ?");
 
         // 计数计时
         int  i = 0;
@@ -848,9 +849,8 @@ public class DataCombat {
                 .getInstance("matrix")
                 .getTable   ( "form" )
                 .fetchCase  ( )
-                .filter("`state` > 0")
-                .filter("`furl_id` != '-'")
-                .select("`id`")
+                .filter("state > 0 AND furl_id != '-'")
+                .select("id")
                 .select();
             for(Map ro : lo ) {
                 String id = ro.get("id").toString();
@@ -895,9 +895,8 @@ public class DataCombat {
                 .getInstance("matrix")
                 .getTable   ( "form" )
                 .fetchCase  ( )
-                .filter("`state` > 0")
-                .filter("`furl_id` != '-'")
-                .select("`id`")
+                .filter("state > 0 AND furl_id != '-'")
+                .select("id")
                 .select();
             for(Map ro : lo ) {
                 String id = ro.get("id").toString();
@@ -988,8 +987,8 @@ public class DataCombat {
             if (rollback) {
                 FenceCase sc = that.fenceCase ( );
                 Object[] param = new Object[] {id, rtime};
-                String   where = "`id`=? AND `ctime`=?";
-                String   wher2 = "`id`=? AND `ctime`>?";
+                String   where = "id = ? AND ctime = ?";
+                String   wher2 = "id = ? AND ctime > ?";
 
                 Map ud = new HashMap();
                 ud.put("etime",   0  );
@@ -1002,7 +1001,7 @@ public class DataCombat {
             } else {
                 FenceCase sc = that.fenceCase ( );
                 Object[] param = new String[] {id, "0"};
-                String   where = "`id`=? AND `etime`=?";
+                String   where = "id = ? AND etime = ?";
 
                 Map ud = new HashMap();
                 ud.put("etime", ctime);
@@ -1059,8 +1058,8 @@ public class DataCombat {
             if (rollback) {
                 FenceCase sc = that.fenceCase ( );
                 Object[] param = new Object[] {id, rtime};
-                String   where = "`id`=? AND `ctime`=?";
-                String   wher2 = "`id`=? AND `ctime`>?";
+                String   where = "id = ? AND ctime = ?";
+                String   wher2 = "id = ? AND ctime > ?";
 
                 Map ud = new HashMap();
                 ud.put("etime",   0  );
@@ -1073,7 +1072,7 @@ public class DataCombat {
             } else {
                 FenceCase sc = that.fenceCase ( );
                 Object[] param = new String[] {id, "0"};
-                String   where = "`id`=? AND `etime`=?";
+                String   where = "id = ? AND etime = ?";
 
                 Map ud = new HashMap();
                 ud.put("etime", ctime);

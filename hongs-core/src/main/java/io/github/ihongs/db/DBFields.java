@@ -62,7 +62,7 @@ public class DBFields
     fields = new LinkedHashMap();
 
     try (
-      Loop rs = db.query("SELECT * FROM `"+ tn +"`", 0, 1);
+      Loop rs = db.query("SELECT * FROM " + DB.Q(tn), 0, 1);
     ) {
       ResultSetMetaData md = rs.getMetaData ();
 

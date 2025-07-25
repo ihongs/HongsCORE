@@ -51,9 +51,8 @@ public class JRoster<T> implements IRoster<T>, AutoCloseable {
         long now = System.currentTimeMillis() / 1000;
 
         try (
-            Loop lp = table.db.query("SELECT `data` FROM `"
-                    + table.tableName
-                    + "` WHERE id = ? AND (xtime > ? OR xtime = 0)"
+            Loop lp = table.db.query(
+                "SELECT " + DB.Q("data") + " FROM " + DB.Q(table.tableName) + " WHERE id = ? AND xtime > ? OR xtime = 0"
             , 0,1, key, now);
         ) {
             ResultSet rs = lp.getReusltSet ();
@@ -116,7 +115,7 @@ public class JRoster<T> implements IRoster<T>, AutoCloseable {
 
         try (
             PreparedStatement ps = table.db.prepare(
-                      "UPDATE `" + table.tableName + "` SET data= ?, xtime= ?, mtime= ? WHERE id = ?"
+                  "UPDATE " + DB.Q(table.tableName) + " SET " + DB.Q("data") + " = ?, xtime = ?, mtime = ? WHERE id = ?"
             );
         ) {
             if (arr != null) {
@@ -137,7 +136,7 @@ public class JRoster<T> implements IRoster<T>, AutoCloseable {
 
         try (
             PreparedStatement ps = table.db.prepare(
-                 "INSERT INTO `" + table.tableName + "` (data, xtime, mtime, id) VALUES (?, ?, ?, ?)"
+              "INSERT INTO "+ DB.Q(table.tableName) + " (" + DB.Q("data") + ", xtime, mtime, id) VALUES (?, ?, ?, ?)"
             );
         ) {
             if (arr != null) {
@@ -172,7 +171,7 @@ public class JRoster<T> implements IRoster<T>, AutoCloseable {
 
         try (
             PreparedStatement ps = table.db.prepare(
-                      "UPDATE `" + table.tableName + "` SET xtime = ?, mtime = ? WHERE id = ?"
+                  "UPDATE " + DB.Q(table.tableName) + " SET xtime = ?, mtime = ? WHERE id = ?"
             );
         ) {
             ps.setLong  (1, exp);
@@ -196,7 +195,7 @@ public class JRoster<T> implements IRoster<T>, AutoCloseable {
 
         try (
             PreparedStatement ps = table.db.prepare(
-                 "DELETE FROM `" + table.tableName + "` WHERE id = ?"
+              "DELETE FROM "+ DB.Q(table.tableName) + " WHERE id = ?"
             );
         ) {
             ps.setString(1, key);
@@ -218,7 +217,7 @@ public class JRoster<T> implements IRoster<T>, AutoCloseable {
 
         try (
             PreparedStatement ps = table.db.prepare(
-                 "DELETE FROM `" + table.tableName + "` WHERE xtime <= ? AND xtime != 0"
+              "DELETE FROM "+ DB.Q(table.tableName) + " WHERE xtime <= ? AND xtime != 0"
             );
         ) {
             ps.setLong  (1, exp);

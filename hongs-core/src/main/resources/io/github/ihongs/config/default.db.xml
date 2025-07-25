@@ -13,7 +13,7 @@ xsi:schemaLocation="http://ihongs.github.io/hongs-core db.xsd">
   <source jdbc="org.sqlite.JDBC"
           name="jdbc:sqlite:default.db">
       <param name="connectionProperties">
-          autoReconnect=true;useUnicode=true;useCursorFetch=true;characterEncoding=utf8;zeroDateTimeBehavior=convertToNull
+          autoReconnect=true;useUnicode=true;characterEncoding=utf8;zeroDateTimeBehavior=convertToNull;useCursorFetch=true
       </param>
   </source>
   <!--
@@ -22,7 +22,7 @@ xsi:schemaLocation="http://ihongs.github.io/hongs-core db.xsd">
       <param name="username">test</param>
       <param name="password">test</param>
       <param name="connectionProperties">
-          autoReconnect=true;useUnicode=true;characterEncoding=utf8;zeroDateTimeBehavior=convertToNull
+          autoReconnect=true;useUnicode=true;characterEncoding=utf8;zeroDateTimeBehavior=convertToNull;useCursorFetch=true;useSSL=false;sessionVariables=sql_mode=ANSI_QUOTES
       </param>
   </source>
   //-->
@@ -39,6 +39,7 @@ xsi:schemaLocation="http://ihongs.github.io/hongs-core db.xsd">
           password="密码"/>
   <!== 实例配置 ==>
   <config link="关联连接"
+          dock="写入连接"
           dbClass="[DB类, 仅在使用"DB.getInstance(dbName)"时有效]"
           tableClass="[Table类, 仅在使用"DB.getTable(tableName)"时有效]"
           modelClass="[Model类, 仅在使用"DB.getModel(tableName)"时有效]"

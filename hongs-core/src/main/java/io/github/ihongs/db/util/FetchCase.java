@@ -102,16 +102,16 @@ public class FetchCase
    * 查找列名加关联层级名
    */
   private static final Pattern SQL_ALIAS = Pattern
-        .compile("([\"'`\\w\\)]\\s+)?(?:`(\\w+)`|(\\w+))(\\s*,?$)");
+        .compile("([\"'\\w\\)]\\s+)?(?:\"(\\w+)\"|(\\w+))(\\s*,?$)");
 
   /**
-   * 查找与字段相关的元素, 如果存在字符串内含单引号将无法正确处理
+   * 查找与字段相关的元素
    */
   private static final Pattern SQL_FIELD = Pattern
-        .compile("(\\s*)(\".*?\"|'.*?'|`.*?`|\\w+|\\*|\\))(\\s*)" );
+        .compile("(\\s*)(\".*?\"|'.*?'|\\w+|\\*|\\))(\\s*)");
 
   /**
-   * 后面不跟字段可跟别名, \\d 换成 \\w 则仅处理被 '`' 包裹的字段
+   * 后面不跟字段可跟别名, \\d 换成 \\w 则仅处理被 '"' 包裹的字段
    */
   private static final Pattern SQL_FIELD_BEFORE_ALIAS = Pattern
         .compile("AS|END|NULL|TRUE|FALSE|\\)|\\d.*"
@@ -521,7 +521,7 @@ public class FetchCase
 
   /**
    * 查询字段前缀
-   * 比如 select("fn1,fn2").in("foo") 得到 `foo.fn1`,`foo.fn2`
+   * 比如 select("fn1,fn2").in("foo") 得到 "foo.fn1","foo.fn2"
    * 查询结果会按 . 自动拆解为层级结构, 如 foo={fn1=v1,fn2=v2}
    * 仅当选项 CLEVER_MODE 为 true 时才有效
    * @param name
@@ -573,14 +573,15 @@ public class FetchCase
     // 字段
     if (f.length() > 0)
     {
-      sql.append( " " )
+      sql.append( ' ' )
          .append(  f  );
     }
     else
     {
-      sql.append(" `" )
-         .append(getName())
-         .append("`.*");
+      sql.append( ' ' )
+         .append(Link.Q(getName()))
+         .append( '.' )
+         .append( '*' );
     }
 
     // 表名
@@ -628,20 +629,21 @@ public class FetchCase
                          boolean fixField,
                          boolean hasJoins)
   {
+    StringBuilder b ;
+
     // 表名
     String tn = this.tableName;
     if (tn == null || tn.length() == 0)
     {
         throw new CruxExemption(1162, "tableName can not be empty");
     }
-    StringBuilder b = new StringBuilder();
-    b .append("`").append(tn).append("`");
+    b = new StringBuilder( Link.Q(tn) );
 
     // 别名
     String an = this.name;
     if (an != null && an.length() != 0 && !an.equals(tn))
     {
-      b.append(" AS `").append(an).append("`");
+      b.append(" AS ").append( Link.Q(an) );
       tn = an;
     }
 
@@ -788,7 +790,7 @@ public class FetchCase
       StringBuffer b = new StringBuffer ( );
       StringBuffer f = new StringBuffer (s);
       Matcher      m = SQL_FIELD.matcher(f);
-      String       z = "$1`" +tn+ "`.$2$3" ;
+      String       z = "$1"+Link.Q(tn)+".$2$3";
       String       x ;
 
       /**
@@ -833,13 +835,13 @@ public class FetchCase
 
           x = m.group (2);
           if (x.charAt(0) == '\''
-          ||  x.charAt(0) == '"'
           ||  x.charAt(0) == ')') {
               // 字符串后不跟字段, 函数调用块也要跳过
               k  = j;
           } else
           if (x.charAt(0) == '*'
-          && (k == i || f.charAt(j) == ')')) {
+          && (f.charAt(j) == ')'
+          ||  k == i) ) {
               // 跳过乘号且不偏移, COUNT (*) 也要跳过
           } else
           if (SQL_FIELD_BEFORE_ALIAS.matcher(x).matches()) {
@@ -876,8 +878,8 @@ public class FetchCase
       StringBuilder b = new StringBuilder(); // 新的 SQL
       StringBuilder p = new StringBuilder(); // 字段单元
       boolean quoteBegin = false;
-      boolean quotaBegin = false;
       boolean fieldBegin = false;
+      boolean fieldStart = false;
       int     groupLevel = 0;
 
       for (int i = 0; i < s.length(); i++) {
@@ -890,13 +892,13 @@ public class FetchCase
               }
               continue;
           }
-          if (quotaBegin) {
-              if (c == '"') {
-                  quotaBegin = false;
+          if (fieldBegin) {
+              if (c == '\"') {
+                  fieldBegin = false;
               }
               continue;
           }
-          if (fieldBegin) {
+          if (fieldStart) {
               if (c == '`') {
                   fieldBegin = false;
               }
@@ -907,12 +909,12 @@ public class FetchCase
               quoteBegin = true;
               continue;
           }
-          if (c == '"') {
-              quotaBegin = true;
+          if (c == '\"') {
+              fieldBegin = true;
               continue;
           }
           if (c == '`') {
-              fieldBegin = true;
+              fieldStart = true;
               continue;
           }
 
@@ -959,9 +961,10 @@ public class FetchCase
               n = m.group(3);
           }
           if (m.group(1) == null) {
-              n = "`"+n+"` AS `"+an+"."+n+"`";
+              n = Link.Q(n)+" AS "
+                + Link.Q(an+"."+n);
           } else {
-              n = /* Alias */"`"+an+"."+n+"`";
+              n = Link.Q(an+"."+n);
           }
           n = Matcher.quoteReplacement(n);
           s = m.replaceFirst("$1"+n+"$4");
@@ -978,7 +981,7 @@ public class FetchCase
   private String delSQLTable (CharSequence s)
   {
       String n = Pattern.quote (getName());
-      String p = "('.*?')|(?:`"+ n +"`|"+ n +")\\s*\\.\\s*";
+      String p = "('.*?')|(?:\""+ n +"\"|`"+ n +"`|"+ n +")\\s*\\.\\s*";
       return Pattern.compile(p).matcher(s).replaceAll("$1");
   }
 

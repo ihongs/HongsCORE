@@ -91,8 +91,9 @@ public class Lump {
         if (limit != 0 || start != 0) {
             switch (pn.toUpperCase()) {
                 case "MYSQL"     :
-                case "MARIADB"   : {
-                    sql += " LIMIT ?,?";
+                case "MARIADB"   :
+                case "OCEANBASE" : {
+                    sql += " LIMIT ?, ?";
                     Object[] paramz = new Object[params.length + 2];
                     System.arraycopy (params, 0, paramz, 0, params.length);
                     paramz[params.length + 0] = start;
@@ -102,7 +103,6 @@ public class Lump {
                     limit  = 0;
                 } break;
                 case "SQLITE"    :
-                case "OCEANBASE" :
                 case "POSTGRESQL": {
                     sql += " LIMIT ? OFFSET ?";
                     Object[] paramz = new Object[params.length + 2];

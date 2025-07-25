@@ -133,11 +133,11 @@ public class MineAction {
         if (! fz.isEmpty()) {
             StringBuilder sb = new StringBuilder (   );
             for(String fn : fz.keySet()) {
-                sb.append(",`").append(fn).append("`");
-            }
+                sb.append(DB.Q(fn)).append(",");
+            }   sb.setLength( sb.length() - 1 );
             Map ud = ut.fetchCase()
-                .filter("`id` = ?" , id)
-                .select(sb.substring(1))
+                .select(sb.toString())
+                .filter("id = ?" , id)
                 .getOne( );
             for(Map.Entry<String, Object> et : fz.entrySet()) {
                 String fn = et.getKey(  );
@@ -173,7 +173,7 @@ public class MineAction {
               .getInstance("master")
               .getTable("user_sign")
               .fetchCase()
-              .filter("`user_id` = ? AND `unit` = ?", id, unit);
+              .filter("user_id = ? AND unit = ?", id , unit);
         if (fc.update(Synt.mapOf("code", code)) == 0) {
             fc.insert(Synt.mapOf("code", code, "unit", unit, "user_id", id));
         }

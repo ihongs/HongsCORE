@@ -3,6 +3,7 @@ package io.github.ihongs.db.util;
 import io.github.ihongs.Cnst;
 import io.github.ihongs.CruxException;
 import io.github.ihongs.CruxExemption;
+import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Model;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.dh.IFigure;
@@ -154,15 +155,15 @@ public class AssocCase {
 
             if ( fp.endsWith("_")) {
                  fp = fp.substring(0, fp.length() - 1);
-                 fp = "`" + fp +"`.";
+                 fp = DB.Q(fp) + ".";
             } else
             if (!fp.endsWith(".")) {
-                 fp = "`" + fp +"`.";
+                 fp = DB.Q(fp) + ".";
             }
 
             if (!kp.endsWith("." )
             &&  !kp.endsWith("_")) {
-                 kp = kp + ".";
+                 kp = /**/ kp  + ".";
             }
 
             return;
@@ -181,11 +182,11 @@ public class AssocCase {
             }
 
             // 补全前缀
-            if (kp != null && CNPT.matcher(k).matches()) {
-                k = kp +/**/ k /**/;
-            }
             if (fp != null && CNPT.matcher(f).matches()) {
-                f = fp +"`"+ f +"`";
+                f = fp + DB.Q(f);
+            }
+            if (kp != null && CNPT.matcher(k).matches()) {
+                k = kp + /**/ k ;
             }
 
             af.put( k, f);
@@ -356,7 +357,7 @@ public class AssocCase {
             String  k  ;
             int p = fn.lastIndexOf(".");
             if (p > -1) {
-                k = fn.substring(0 , p)+".*";
+                k = "\""+fn.substring(0 , p)+"\".*";
             } else {
                 k = "*";
             }
@@ -392,7 +393,8 @@ public class AssocCase {
                 if (xc == ec) {
                     int p  = fn.lastIndexOf(".");
                     if (p != -1) {
-                        fn = fn.substring(0 , p)+".*";
+                        fn = fn.substring(0 , p);
+                        fn = DB.Q(fn) + ".*";
                     } else {
                         fn = "*";
                     }
@@ -413,7 +415,7 @@ public class AssocCase {
 
         for(String  fn : ic) {
             String  fv = af.get(fn);
-            caze.select(fv +" AS `"+ fn +"`");
+            caze.select( fv +" AS "+ DB.Q(fn));
         }
     }
 
@@ -991,9 +993,8 @@ public class AssocCase {
             String k = (String) et.getKey(  );
             String f = (String) et.getValue();
             if (CNPT.matcher(f).matches()) {
-                f = "`"+n+"`.`"+ f +"`";
-            }
-                al.put(k, f);
+                f = DB.Q(n , f);
+            }   al. put (k , f);
         }
 
         return  al;
@@ -1007,7 +1008,7 @@ public class AssocCase {
             String k = (String) et.getKey(  );
             String f = (String) et.getValue();
             if (CNPT.matcher(f).matches()) {
-                al.put(k, f);
+                al. put (k , f);
             }
         }
 
@@ -1080,19 +1081,19 @@ public class AssocCase {
          * 第一层时, 无需加名前缀, 无关联表前缀也不用加
          * 第二层时, 需将表名作为名前缀, 下级需带层级名
          */
+        String tx, ax;
 
-        String  tx , ax  ;
-        tx = "`"+tn+"`." ;
+        tx = DB.Q( tn ) + ".";
 
-        if (null ==  qn  ) {
+        if (qn == null  ) {
             qn = "";
             ax = "";
         } else
-        if ("".equals(qn)) {
+        if (qn.isEmpty()) {
             qn = tn;
             ax = qn + ".";
         } else {
-            qn = qn + "."+ tn ;
+            qn = qn + "."+ tn;
             ax = qn + ".";
         }
 
@@ -1101,12 +1102,12 @@ public class AssocCase {
             for(Object n : fs.keySet()) {
                 String k = (String) n;
                 String f = (String) n;
-                k = ax +/**/ k /**/;
-                f = tx +"`"+ f +"`";
+                k = ax + /**/ k ;
+                f = tx + DB.Q(f);
                 al.put(k , f);
             }
-        } catch (CruxException e ) {
-            throw e.toExemption(  );
+        } catch ( CruxException e) {
+            throw e.toExemption( );
         }
 
         if (ac == null || ac.isEmpty()) {

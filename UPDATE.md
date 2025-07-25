@@ -1,5 +1,8 @@
 # 更新日志
 
+* 2025/07/25 改为 ANSI SQL 标准
+* 2025/07/11 增加 EventStream 支持
+* 2025/06/28 重写新的远程维护命令
 * 2024/12/08 升级 httpclient 到 5
 * 2024/11/09 升级 lucene 到 9.12, 增加向量类型支持
 * 2022/05/15 master dept 更名为 unit, matrix unit 更名为 furl

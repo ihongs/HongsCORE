@@ -208,7 +208,7 @@ public class Table
     if (rstat != null && rflag != null
     && !caze.getOption("INCLUDE_REMOVED" , false))
     {
-      caze.filter("`"+name+"`.`" + rstat +"` != ?", rflag);
+      caze.filter(DB.Q(name, rstat) + " != ?", rflag);
     }
 
     // 默认列表查询不包含对多的, 可用此开启
@@ -323,8 +323,8 @@ public class Table
    * <pre>
    * 如果状态有多个, 且希望删除后可恢复回以前的状态,
    * 可采用负值记录, 请自行构建和调用类似下面的 SQL:
-   * 删除: "UPDATE `"+tableName+"` SET `state` = 0 - `state` WHERE `state` &gt; 0 AND " + where
-   * 恢复: "UPDATE `"+tableName+"` SET `state` = 0 - `state` WHERE `state` &lt; 0 AND " + where
+   * 删除: "UPDATE \""+tableName+"\" SET \"state\" = 0 - \"state\" WHERE \"state\" &gt; 0 AND " + where
+   * 恢复: "UPDATE \""+tableName+"\" SET \"state\" = 0 - \"state\" WHERE \"state\" &lt; 0 AND " + where
    * </pre>
    * @param where
    * @param params
@@ -870,32 +870,32 @@ public class Table
   //** 私有方法 **/
 
   private CruxException nullException(String field) {
-    String error = "Value for field `$2` in table `$0.$1` can not be NULL";
+    String error = "Value for field \"$2\" in table \"$0.$1\" can not be NULL";
     return new CruxException(1074, error, db.name,name, field);
   }
 
   private CruxException sizeException(String field, String value, int size) {
-    String error = "Value for field `$2` in table `$0.$1` must be a less than $4, value: $3";
+    String error = "Value for field \"$2\" in table \"$0.$1\" must be a less than $4, value: $3";
     return new CruxException (1075, error, db.name,name, field, value, size);
   }
 
   private CruxException scleException(String field, String value, int scle) {
-    String error = "Scale for field `$2` in table `$0.$1` must be a less than $4, value: $3";
+    String error = "Scale for field \"$2\" in table \"$0.$1\" must be a less than $4, value: $3";
     return new CruxException (1076, error, db.name,name, field, value, scle);
   }
 
   private CruxException numeException(String field, String value) {
-    String error = "Value for field `$2` in table `$0.$1` must be a standard number, value: $3";
+    String error = "Value for field \"$2\" in table \"$0.$1\" must be a standard number, value: $3";
     return new CruxException (1077, error, db.name,name, field, value);
   }
 
   private CruxException unsiException(String field, String value) {
-    String error = "Value for field `$2` in table `$0.$1` must be a unsigned number, value: $3";
+    String error = "Value for field \"$2\" in table \"$0.$1\" must be a unsigned number, value: $3";
     return new CruxException (1078, error, db.name,name, field, value);
   }
 
   private CruxException dateException(String field, String value, String format) {
-    String error = "Value for field `$2` in table `$0.$1` must like '$4', value: $3";
+    String error = "Value for field \"$2\" in table \"$0.$1\" must like '$4', value: $3";
     return new CruxException (1079, error, db.name,name, field, value, format);
   }
 

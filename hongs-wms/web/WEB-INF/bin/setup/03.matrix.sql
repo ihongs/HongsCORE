@@ -6,8 +6,8 @@
 
 DROP TABLE IF EXISTS "a_matrix_furl" CASCADE;
 CREATE TABLE "a_matrix_furl" (
-  "id" VARCHAR(16) NOT NULL,
-  "pid" VARCHAR(16) DEFAULT NULL,
+  "id" CHAR(16) NOT NULL,
+  "pid"  CHAR(16) DEFAULT NULL,
   "name" VARCHAR(200) NOT NULL,
   "icon" VARCHAR(100) DEFAULT NULL,
   "note" TEXT,
@@ -32,8 +32,8 @@ CREATE UNIQUE INDEX "UK_a_matrix_furl_name" ON "a_matrix_furl" ("pid","name");
 
 DROP TABLE IF EXISTS "a_matrix_form" CASCADE;
 CREATE TABLE "a_matrix_form" (
-  "id" VARCHAR(16) NOT NULL,
-  "furl_id" VARCHAR(16) NOT NULL,
+  "id" CHAR(16) NOT NULL,
+  "furl_id" CHAR(16) NOT NULL,
   "name" VARCHAR(200) NOT NULL,
   "icon" VARCHAR(100) DEFAULT NULL,
   "note" TEXT,
@@ -59,9 +59,9 @@ CREATE UNIQUE INDEX "UK_a_matrix_form_name" ON "a_matrix_form" ("furl_id","name"
 
 DROP TABLE IF EXISTS "a_matrix_data";
 CREATE TABLE "a_matrix_data" (
-  "id" VARCHAR(16) NOT NULL,
-  "form_id" VARCHAR(16) NOT NULL,
-  "user_id" VARCHAR(16) NOT NULL,
+  "id" CHAR(16) NOT NULL,
+  "form_id" CHAR(16) NOT NULL,
+  "user_id" CHAR(16) NOT NULL,
   "name" VARCHAR(255) DEFAULT NULL,
   "memo" VARCHAR(255) DEFAULT NULL,
   "meno" VARCHAR(100) DEFAULT NULL,
@@ -89,8 +89,8 @@ CREATE UNIQUE INDEX "UK_a_matrix_data_uk" ON "a_matrix_data" ("form_id","id","et
 
 DROP TABLE IF EXISTS "a_matrix_feed";
 CREATE TABLE "a_matrix_feed" (
-  "fn" VARCHAR(16) NOT NULL,
-  "ft" VARCHAR(16) NOT NULL
+  "fn" CHAR(16) NOT NULL,
+  "ft" CHAR(16) NOT NULL
 );
 
 CREATE INDEX "IK_a_matrix_feed_fn" ON "a_matrix_feed" ("fn");

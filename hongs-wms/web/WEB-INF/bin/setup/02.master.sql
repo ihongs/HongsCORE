@@ -6,8 +6,8 @@
 
 DROP TABLE IF EXISTS "a_master_unit" CASCADE;
 CREATE TABLE "a_master_unit" (
-  "id" VARCHAR(16) NOT NULL,
-  "pid" VARCHAR(16) DEFAULT NULL,
+  "id" CHAR(16) NOT NULL,
+  "pid"  CHAR(16) DEFAULT NULL,
   "name" VARCHAR(200) NOT NULL,
   "note" TEXT,
   "ctime" INTEGER DEFAULT NULL,
@@ -36,7 +36,7 @@ INSERT INTO "a_master_unit" ("id","pid","name","note","ctime","mtime","rtime","s
 
 DROP TABLE IF EXISTS "a_master_unit_role" CASCADE;
 CREATE TABLE "a_master_unit_role" (
-  "unit_id" VARCHAR(16) NOT NULL,
+  "unit_id" CHAR(16) NOT NULL,
   "role" VARCHAR(80) NOT NULL,
   PRIMARY KEY ("unit_id","role"),
   FOREIGN KEY ("unit_id") REFERENCES "a_master_unit" ("id")
@@ -55,7 +55,7 @@ INSERT INTO "a_master_unit_role" VALUES ('CENTRE','centre');
 
 DROP TABLE IF EXISTS "a_master_user" CASCADE;
 CREATE TABLE "a_master_user" (
-  "id" VARCHAR(16) NOT NULL,
+  "id" CHAR(16) NOT NULL,
   "passcode" VARCHAR(128) DEFAULT NULL, /* 密码校验码 */
   "password" VARCHAR(128) DEFAULT NULL,
   "username" VARCHAR(200) DEFAULT NULL,
@@ -94,7 +94,7 @@ INSERT INTO "a_master_user" ("id","password","username","name","head","note","ct
 
 DROP TABLE IF EXISTS "a_master_user_role" CASCADE;
 CREATE TABLE "a_master_user_role" (
-  "user_id" VARCHAR(16) NOT NULL,
+  "user_id" CHAR(16) NOT NULL,
   "role" VARCHAR(80) NOT NULL,
   PRIMARY KEY ("user_id","role"),
   FOREIGN KEY ("user_id") REFERENCES "a_master_user" ("id") ON DELETE CASCADE
@@ -131,8 +131,8 @@ INSERT INTO "a_master_user_role" VALUES ('1','centra/matrix/furl/delete');
 
 DROP TABLE IF EXISTS "a_master_unit_user" CASCADE;
 CREATE TABLE "a_master_unit_user" (
-  "user_id" VARCHAR(16) NOT NULL,
-  "unit_id" VARCHAR(16) NOT NULL,
+  "user_id" CHAR(16) NOT NULL,
+  "unit_id" CHAR(16) NOT NULL,
   "type" SMALLINT DEFAULT '0', /* 0 所属部门, 1 管理部分 */
   PRIMARY KEY ("user_id","unit_id","type"),
   FOREIGN KEY ("user_id") REFERENCES "a_master_user" ("id") ON DELETE CASCADE,
@@ -151,7 +151,7 @@ INSERT INTO "a_master_unit_user" VALUES ('1','0','0');
 
 DROP TABLE IF EXISTS "a_master_user_sign" CASCADE;
 CREATE TABLE "a_master_user_sign" (
-  "user_id" VARCHAR(16) NOT NULL,
+  "user_id" CHAR(16) NOT NULL,
   "unit" VARCHAR(32) NOT NULL,
   "code" VARCHAR(64) NOT NULL,
   PRIMARY KEY ("user_id","unit"),

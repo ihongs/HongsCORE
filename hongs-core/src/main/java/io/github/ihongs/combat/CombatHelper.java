@@ -119,7 +119,7 @@ public class CombatHelper
   /**
    * 参数处理正则
    */
-  private static final Pattern RP = Pattern.compile("^([\\w\\.\\-\\|]*)(=|:|\\+|\\*)([sifb]|\\/(.+)\\/(i)?( .*)?)$");
+  private static final Pattern RP = Pattern.compile("^(.+?)(?:([=:+*])([sifb])?)?$");
   private static final Pattern BP = Pattern.compile("^(false|true|yes|no|y|n|1|0)$", Pattern.CASE_INSENSITIVE);
   private static final Pattern FP = Pattern.compile("^\\d+(\\.\\d+)?$");
   private static final Pattern IP = Pattern.compile("^\\d+$");
@@ -129,16 +129,15 @@ public class CombatHelper
    */
   private static final String[]
     GETERRS = {
-      "Can not parse rule '%chk'",
-      "Option '%opt' is required",
-      "Option '%opt' must be specified value",
-      "Option '%opt' can only have one value",
-      "Value for option '%opt' must be int",
-      "Value for option '%opt' must be float",
-      "Value for option '%opt' must be boolean",
-      "Value for option '%opt' not matches: %exp",
-      "Unrecognized option '%opt'",
-      "Unupport anonymous options"
+      "Can not parse rule '{}'",
+      "Option '{}' is required",
+      "Option '{}' must be specified value",
+      "Option '{}' can only have one value",
+      "Value for option '{}' must be int",
+      "Value for option '{}' must be float",
+      "Value for option '{}' must be boolean",
+      "Unrecognized option '{}'",
+      "Unupport surplus options"
     };
 
   /**
@@ -148,6 +147,8 @@ public class CombatHelper
    * <pre>
    * 规则描述:
    *    OPT[=:+*][sifb]
+   *    后两部分省略等同 :b
+   *    最后部分省略等同  s
    * 符号意义:
    *    = 必要参数
    *    : 可选参数
@@ -158,9 +159,11 @@ public class CombatHelper
    *    f 小数
    *    b 是或否
    * 举例说明:
-   *    str=s   匹配 --str abc 或 --str=abc, 必要
-   *    num:i   匹配 --num 123 或 --num=123, 可选
+   *    yes     等同 yes:b
+   *    str=    等同 str=s
    *    yes:b   匹配 --yes 或 --yes=true
+   *    str:s   匹配 --str abc 或 --str=abc, 可选
+   *    num=i   匹配 --num 123 或 --num=123, 必要
    *    abc+s   匹配 --abc xxx yyy 或 --abc xxx --abc yyy
    * 特殊标识:
    *    !Anonymous  允许匿名多余参数, 如 cmd --opt xyz 12 34 567, 后面的 12,34,567 将作为数组放入空选项中
@@ -186,52 +189,42 @@ public class CombatHelper
     boolean ub = true; // 禁止未知参数
 
     for (String chk : chks) {
-      Matcher m = RP.matcher(chk);
+      if (chk.equals("!A") || chk.equals("!Anonymous")) {
+          vb = false;
+          continue;
+      } else
+      if (chk.equals("!U") || chk.equals("!Undefined")) {
+          ub = false;
+          continue;
+      } else
+      if (chk.startsWith("?")) {
+          hlp = chk.substring(1);
+          continue;
+      }
 
+      Matcher m = RP.matcher(chk);
       if (!m.find()) {
-        if (chk.startsWith("?") ) {
-            hlp= chk.substring(1);
-        } else
-        if (chk.equals("!A") || chk.equals("!Anonymous")) {
-            vb = false;
-        } else
-        if (chk.equals("!U") || chk.equals("!Undefined")) {
-            ub = false;
-        } else
-        {
-            errMsgs.add(GETERRS[0].replace("%chk" , chk));
-        }
-        continue;
+          errMsgs.add(GETERRS[0].replace("{}" , chk));
+          continue;
       }
 
       String name = m.group(1);
       String sign = m.group(2);
       String type = m.group(3);
 
+      if (sign == null) {
+          sign = ":";
+          type = "b";
+      } else
+      if (type == null) {
+          type = "s";
+      }
+
       if ("=".equals(sign) || "+".equals(sign)) {
         reqOpts.add(name);
       }
 
-      if (type.startsWith("/")) {
-        String  reg = m.group(4);
-        String  mod = m.group(5);
-        String  err = m.group(6);
-        Pattern pat;
-        if (mod != null) {
-          pat = Pattern.compile(reg, Pattern.CASE_INSENSITIVE);
-        } else {
-          pat = Pattern.compile(reg);
-        }
-        if (err != null) {
-          err = err.trim();
-        } else {
-          err = GETERRS[7];
-        }
-        reg = "/"+reg+"/"+mod;
-        chkz.put(name, new Object[] {sign.charAt(0),'r',pat,reg,err});
-      } else {
-        chkz.put(name, new Object[] {sign.charAt(0), type.charAt(0)});
-      }
+      chkz.put(name, new Object[] {sign.charAt(0), type.charAt(0)});
     }
 
     F:for (int i = 0; i < args.length; i++) {
@@ -258,30 +251,22 @@ public class CombatHelper
                     switch (type) {
                         case 'b':
                             if (!BP.matcher(val).matches()) {
-                                errMsgs.add(GETERRS[6].replace("%opt", key));
+                                errMsgs.add(GETERRS[6].replace("{}", key));
                                 continue;
                             }
                             break;
                         case 'i':
                             if (!IP.matcher(val).matches()) {
-                                errMsgs.add(GETERRS[4].replace("%opt", key));
+                                errMsgs.add(GETERRS[4].replace("{}", key));
                                 continue;
                             }
                             break;
                         case 'f':
                             if (!FP.matcher(val).matches()) {
-                                errMsgs.add(GETERRS[5].replace("%opt", key));
+                                errMsgs.add(GETERRS[5].replace("{}", key));
                                 continue;
                             }
                             break;
-                        case 'r':
-                            Pattern rp  = (Pattern) chk[2];
-                            String  reg = (String ) chk[3];
-                            String  err = (String ) chk[4];
-                            if (!rp.matcher(val).matches()) {
-                                errMsgs.add(err.replace("%exp", reg).replace("%opt", key));
-                                continue;
-                            }
                     }
 
                     if ('+' == sign || '*' == sign) {
@@ -294,17 +279,17 @@ public class CombatHelper
                         vals.add(val);
                     } else {
                         if ('=' == sign && val.isEmpty()) {
-                            errMsgs.add(GETERRS[2].replace("%opt", key));
+                            errMsgs.add(GETERRS[2].replace("{}", key));
                         } else
                         if (opts.containsKey(key ) ) {
-                            errMsgs.add(GETERRS[3].replace("%opt", key));
+                            errMsgs.add(GETERRS[3].replace("{}", key));
                         } else {
                             opts.put(key, val);
                         }
                     }
                 } else if (ub) {
                     // 未知参数
-                    errMsgs.add(GETERRS[8].replace("%opt", key));
+                    errMsgs.add(GETERRS[7].replace("{}", key));
                 } else {
                     newArgs.add(args[i]);
                 }
@@ -313,21 +298,11 @@ public class CombatHelper
                     Object[] chk = chkz.get (key);
                     char sign = (Character) chk[0];
                     char type = (Character) chk[1];
-
-                    Pattern rp = null;
-                    String reg = null;
-                    String err = null;
-                    List  vals = null;
+                    List vals = null;
 
                     if ('b' == type) {
-                        opts.put(key,true);
+                        opts.put(key, true);
                         continue;
-                    }
-
-                    if ('r' == type) {
-                        rp  = (Pattern) chk[2];
-                        reg = (String ) chk[3];
-                        err = (String ) chk[4];
                     }
 
                     if ('+' == sign || '*' == sign) {
@@ -338,11 +313,11 @@ public class CombatHelper
                         }
                     }
 
-                    W:while (i < args.length - 1) {
+                    while (i < args.length - 1) {
                         val = args [i + 1];
                         if (val.startsWith("--")) {
                             if (vals == null || vals.isEmpty()) { // 缺少取值
-                                errMsgs.add(GETERRS[2].replace("%opt", key));
+                                errMsgs.add(GETERRS[2].replace("{}", key));
                             }
                             break;
                         } else {
@@ -352,31 +327,26 @@ public class CombatHelper
                         switch (type) {
                             case 'i':
                                 if (!IP.matcher(val).matches()) {
-                                    errMsgs.add(GETERRS[4].replace("%opt", key));
+                                    errMsgs.add(GETERRS[4].replace("{}", key));
                                     continue;
                                 }
                                 break;
                             case 'f':
                                 if (!FP.matcher(val).matches()) {
-                                    errMsgs.add(GETERRS[5].replace("%opt", key));
+                                    errMsgs.add(GETERRS[5].replace("{}", key));
                                     continue;
                                 }
                                 break;
-                            case 'r':
-                                if (!rp.matcher(val).matches()) {
-                                    errMsgs.add(err.replace("%exp", reg).replace("%opt", key));
-                                    continue;
-                                }
                         }
 
                         if ('+' == sign || '*' == sign) {
                             vals.add(val);
                         } else {
                             if ('=' == sign && val.isEmpty()) {
-                                errMsgs.add(GETERRS[2].replace("%opt", key));
+                                errMsgs.add(GETERRS[2].replace("{}", key));
                             } else
                             if (opts.containsKey(key ) ) {
-                                errMsgs.add(GETERRS[3].replace("%opt", key));
+                                errMsgs.add(GETERRS[3].replace("{}", key));
                             } else {
                                 opts.put(key, val);
                             }
@@ -385,14 +355,14 @@ public class CombatHelper
                     }
                 } else if (ub) {
                     // 未知参数
-                    errMsgs.add(GETERRS[8].replace("%opt", key));
+                    errMsgs.add(GETERRS[7].replace("{}", key));
                 } else {
                     newArgs.add(args[i]);
                 }
             }
         } else if (vb) {
             // 匿名参数
-            errMsgs.add(GETERRS[9]);
+            errMsgs.add(GETERRS[8]);
         } else {
             newArgs.add(args[i]);
         }
@@ -401,7 +371,7 @@ public class CombatHelper
     for (String name : reqOpts) {
       if (! opts.containsKey(name)) {
         Set<String> err = new LinkedHashSet();
-        err.add(GETERRS[1].replace("%opt", name));
+        err.add(GETERRS[1].replace("{}", name));
         err.addAll( errMsgs );
         errMsgs  =  err ;
       }

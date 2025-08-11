@@ -20,23 +20,29 @@ public class Tests {
     public void testGetOpts() {
         Map opts = CombatHelper.getOpts(
             new String[] {
-                "--enable",
+                "--help",
+                "--bool",
                 "--number=123",
-                "--regexp", "abc",
-                "--repeat", "def", "--repeat=--xyz", "--",
+                "--string=abc",
+                "--repeat", "def",
+                "--repeat=--xyz" , "--",
                 "--others", "456", "789"
             },
-            "enable:b",
+            "help",
+            "bool:b",
+            "string:",
             "number=i",
             "repeat+s",
-            "regexp=/^abc$/i",
             "!U",
             "!A"
         );
-        assertTrue(Synt.asBool(opts.get("enable")));
-        assertTrue(Synt.asInt (opts.get("number")) == 123);
-        assertEquals(Dist.toString(opts.get("repeat")), Dist.toString(Arrays.asList("def", "--xyz")));
-        assertEquals(Dist.toString(opts.get(   ""   )), Dist.toString(new String[] {"--others", "456", "789"}));
+        CombatHelper.println(opts);
+        assertTrue(Synt.declare(opts.get("help"), false));
+        assertTrue(Synt.declare(opts.get("bool"), false));
+        assertTrue(Synt.asInt(opts.get("number")) == 123);
+        assertTrue(Synt.declare(opts.get("string"),"").equals("abc"));
+        assertEquals(Dist.toString(opts.get("repeat")), Dist.toString(Arrays.asList( "def" , "--xyz" )));
+        assertEquals(Dist.toString(opts.get("")), Dist.toString(new String[]{"--others", "456", "789"}));
     }
 
     @Test

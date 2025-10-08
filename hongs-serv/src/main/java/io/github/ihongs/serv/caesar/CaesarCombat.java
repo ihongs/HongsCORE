@@ -258,8 +258,9 @@ public class CaesarCombat {
 
         // 等待任务结束
         while (true) {
-            Thread.sleep(500L);
-            if (!JOBS.containsKey(id)) {
+            Thread.sleep(1000L);
+            if (CombatHelper.aborted()
+            ||  !JOBS.containsKey(id)) {
                 break;
             }
         }

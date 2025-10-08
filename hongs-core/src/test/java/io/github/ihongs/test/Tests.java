@@ -36,7 +36,6 @@ public class Tests {
             "!U",
             "!A"
         );
-        CombatHelper.println(opts);
         assertTrue(Synt.declare(opts.get("help"), false));
         assertTrue(Synt.declare(opts.get("bool"), false));
         assertTrue(Synt.asInt(opts.get("number")) == 123);

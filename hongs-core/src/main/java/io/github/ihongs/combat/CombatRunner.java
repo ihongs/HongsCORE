@@ -237,7 +237,8 @@ public class CombatRunner implements Runnable
   {
     Map<String, Object> opts;
     opts = CombatHelper.getOpts(args,
-           "DEBUG:i" , "COREPATH:s" ,
+           "DEBUG:i" ,
+        "SERVERID:s" , "COREPATH:s" ,
         "CONFPATH:s" , "DATAPATH:s" ,
         "BASEPATH:s" , "BASEHREF:s" ,
         "LANGUAGE:s" , "TIMEZONE:s" ,

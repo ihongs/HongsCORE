@@ -2,6 +2,7 @@ package io.github.ihongs.serv.matrix;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
+import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.CruxException;
 import io.github.ihongs.CruxExemption;
@@ -12,6 +13,11 @@ import io.github.ihongs.db.Model;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.db.util.FetchCase;
 import io.github.ihongs.dh.search.SearchEntity;
+import io.github.ihongs.serv.matrix.util.DataCascade;
+import io.github.ihongs.serv.matrix.util.DataCascader;
+import io.github.ihongs.serv.matrix.util.DataDiffuser;
+import io.github.ihongs.serv.matrix.util.FenceCase;
+import io.github.ihongs.serv.matrix.util.MixedData;
 import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Syno;
@@ -975,6 +981,10 @@ public class Data extends SearchEntity {
 
     /**
      * 恢复记录
+     *
+     * 注意:
+     * ctime = 0 纯恢复, 不登记.
+     *
      * @param id
      * @param rd
      * @param ctime
@@ -995,7 +1005,7 @@ public class Data extends SearchEntity {
         String   where = "id = ? AND etime = ?";
 
         // 恢复最终数据
-        if (rtime == 0L) {
+        if (ctime == 0 || rtime == 0) {
             Map od = sc
                 .filter( where, param)
             //  .assort("ctime  DESC")
@@ -1125,17 +1135,25 @@ public class Data extends SearchEntity {
     }
 
     /**
-     * 提交但不执行级联操作
+     * 提交并选择性执行级联
+     * @param cas 执行级联
+     * @param ces 广播变更
      */
-    public void submit() {
+    public void commit(boolean cas, boolean ces) {
         super.commit();
+        if (ces) diffuses(setIds, delIds);
+        if (cas) cascades(setIds, delIds);
         setIds.clear();
         delIds.clear();
     }
 
+    /**
+     * 同 commit(true, true)
+     */
     @Override
     public void commit() {
         super.commit();
+        diffuses(setIds, delIds);
         cascades(setIds, delIds);
         setIds.clear();
         delIds.clear();
@@ -1218,7 +1236,7 @@ public class Data extends SearchEntity {
      * @throws CruxException
      */
     protected int padDif(Map dd, Map rd) throws CruxException {
-        Map xd = new DataCascade.Mix(rd, dd);
+        Map xd = new MixedData(rd, dd);
 
         // 填充关联冗余
         includes(xd);
@@ -1570,7 +1588,38 @@ public class Data extends SearchEntity {
     }
 
     /**
-     * 级联操作,
+     * 扩散操作
+     * 用于广播数据变更以同步
+     * @param us
+     * @param rs
+     */
+    protected void diffuses(Set us, Set rs) {
+        if (us == null || us.isEmpty()) {
+        if (rs == null || rs.isEmpty()) {
+            return;
+        }}
+
+        String cn = CoreConfig.getInstance("matrix").getProperty("matrix.data.diffuser");
+        if (cn == null || cn.isEmpty()) {
+            return;
+        }
+
+        DataDiffuser co = (DataDiffuser) Core.getInstance(cn);
+
+        if (rs != null && ! rs.isEmpty()) {
+            for(Object id : rs) {
+                co.delete(getConf(), getForm(), Synt.asString(id));
+            }
+        }
+        if (us != null && ! us.isEmpty()) {
+            for(Object id : us) {
+                co.update(getConf(), getForm(), Synt.asString(id));
+            }
+        }
+    }
+
+    /**
+     * 级联操作
      * 异步更新或删除引用资源
      * @param us 已更新的
      * @param rs 已删除的
@@ -1612,16 +1661,24 @@ public class Data extends SearchEntity {
             }
         }
 
+        String cn = CoreConfig.getInstance("matrix").getProperty("matrix.data.cascader");
+        DataCascader co;
+        if (cn != null && ! cn.isEmpty()) {
+            co = (DataCascader) Core.getInstance(cn);
+        } else {
+            co =  DataCascade . getInstance( );
+        }
+
         // 放入队列, 异步处理
         if (rs != null && ! rs.isEmpty()) {
             for(Object id : rs) {
-                DataCascade.delete(rq,id);
-                DataCascade.update(vq,id);
+                co.delete(rq, id);
+                co.update(vq, id);
             }
         }
         if (us != null && ! us.isEmpty()) {
             for(Object id : us) {
-                DataCascade.update(uq,id);
+                co.update(uq, id);
             }
         }
     }

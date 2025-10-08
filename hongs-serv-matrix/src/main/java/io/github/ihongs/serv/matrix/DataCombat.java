@@ -12,10 +12,12 @@ import io.github.ihongs.db.DB;
 import io.github.ihongs.db.PrivTable;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.db.link.Loop;
+import io.github.ihongs.serv.matrix.util.FenceCase;
 import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Inst;
 import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -96,7 +98,7 @@ public class DataCombat {
             args[3] = ln.substring(1+p);
             CombatHelper.println("revert "+Syno.concat(" ",(Object[])args));
             try {
-                revert( args );
+                revert(args);
             }
             catch (CruxException e) {
                 String s;
@@ -382,7 +384,7 @@ public class DataCombat {
             args[3] = ln.substring(1+p);
             CombatHelper.println("repair "+Syno.concat(" ",(Object[])args));
             try {
-                revert( args );
+                repair(args);
             }
             catch (CruxException e) {
                 String s;
@@ -400,7 +402,8 @@ public class DataCombat {
     }
 
     @Combat("repair")
-    public static void repair(String[] args) throws CruxException, IOException, SQLException {
+    public static void repair(String[] args)
+    throws CruxException {
         Map opts = CombatHelper.getOpts(args, new String[] {
             "conf=s",
             "form=s",
@@ -423,7 +426,10 @@ public class DataCombat {
 
         repair(da, opts);
     }
-    public static void repair(Casc da, Map opts) throws CruxException, IOException, SQLException {
+    public static void repair(Casc da, Map opts)
+    throws CruxException {
+        try {
+
         Data   dr = da.getInstance();
         Table  tb = dr.getTable ( );
         String fn = dr.getFormId( );
@@ -437,7 +443,7 @@ public class DataCombat {
             bufs  = 1000;
         }
         if (ends == 0) {
-            Map one = tb.db.fetchOne("SELECT MAX(rnum) AS rnum FROM "+tn);
+            Map one = tb.db.fetchOne("SELECT MAX(rnum) AS rnum FROM "+DB.quoteField(tn)+" WHERE form_id = "+DB.quoteValue(fn));
             ends  = Synt.declare( one.get("rnum"), ends );
         }
 
@@ -456,12 +462,24 @@ public class DataCombat {
             }
         }
 
+        // 处理不同库的 Limit
+        String sql = "SELECT * FROM "+DB.quoteField(tn)+" WHERE form_id = "+DB.quoteValue(fn)+" AND etime = 0 AND rnum > ? AND rnum <= ? ORDER BY rnum";
+        String dbp = tb.db.open().getMetaData().getDatabaseProductName();
+        switch(dbp) {
+            case "ORACLE":
+            case "SQLSERVER":
+                sql += "FETCH NEXT ? ROWS ONLY";
+                break;
+            default:
+                sql += "LIMIT ?";
+        }
+
         // 查询准备
         PreparedStatement ps;
         ResultSet         rs;
         Map               ro;
         ro = new HashMap(02);
-        ps = tb.db.prepare("SELECT * FROM "+DB.quoteField(tn)+" WHERE form_id = "+DB.quoteValue(fn)+" AND etime = 0 AND rnum > ? AND rnum <= ?");
+        ps = tb.db.prepare(sql);
 
         // 计数计时
         int  i = 0;
@@ -470,21 +488,19 @@ public class DataCombat {
         int  l = ends - skip;
         long t = System.currentTimeMillis( );
 
-        for ( ; skip < ends ; skip += bufs ) {
-            int lens = skip + bufs ;
-            if (lens > ends) {
-                lens = ends ;
-            }
-
-            ps.setInt(1, skip);
-            ps.setInt(2, lens);
+        while (true) {
+            ps.setInt(1, k );
+            ps.setInt(2, ends);
+            ps.setInt(3, bufs);
             rs = ps.executeQuery( );
 
-            da.begin ( );
+            int n = 0 ;
+            da.begin();
             while (rs.next()) {
                 String id = rs.getString( "id" );
                 String ds = rs.getString("data");
-                int    st = rs.getInt( "state" );
+                int st = rs.getInt("state");
+                k = rs.getInt("rnum");
                 ro.put( "id" , id);
                 ro.put("data", ds);
                 if (st > 0) {
@@ -494,23 +510,33 @@ public class DataCombat {
                     da.del(id, ro);
                     j ++;
                 }
+                n ++;
             }
             rs.close ( );
             da.commit( );
 
             if (p) {
-                float per = (float) (lens - k) / l;
-                CombatHelper.progres(per, lens+" +"+i+",-"+j+" "+ Inst.phrase(System.currentTimeMillis() - t));
+                float per = (float) (k - skip) / l;
+                CombatHelper.progres(per, k+" +"+i+",-"+j+" "+ Inst.phrase(System.currentTimeMillis() - t));
             } else {
-                CombatHelper.println(/**/ lens+" +"+i+",-"+j+" "+ Inst.phrase(System.currentTimeMillis() - t));
+                CombatHelper.println(/**/ k+" +"+i+",-"+j+" "+ Inst.phrase(System.currentTimeMillis() - t));
             }
 
+            if (n < bufs) {
+                break;
+            }
             if (CombatHelper.aborted()) {
                 CombatHelper.println("Task aborted!");
                 break;
             }
         }
+
         CombatHelper.printed();
+
+        }
+        catch (SQLException e) {
+            throw new CruxException (e);
+        }
     }
 
     @Combat("import")
@@ -863,7 +889,7 @@ public class DataCombat {
         // 增加额外定制的表
         Set<String> incl = Synt.toSet(
             CoreConfig.getInstance("matrix")
-                      .getProperty("core.matrix.revert.include")
+                      .getProperty("matrix.forms")
         );
         if (incl != null && ! incl.isEmpty()) {
             ents.   addAll(incl);
@@ -872,7 +898,7 @@ public class DataCombat {
         // 排除特殊处理的表
         Set<String> excl = Synt.toSet(
             CoreConfig.getInstance("matrix")
-                      .getProperty("core.matrix.revert.exclude")
+                      .getProperty("matrix.revert.ignore.forms")
         );
         if (excl != null && ! excl.isEmpty()) {
             ents.removeAll(excl);
@@ -909,7 +935,7 @@ public class DataCombat {
         // 增加额外定制的表
         Set<String> incl = Synt.toSet(
             CoreConfig.getInstance("matrix")
-                      .getProperty("core.matrix.uproot.include")
+                      .getProperty("matrix.forms")
         );
         if (incl != null && ! incl.isEmpty()) {
             ents.   addAll(incl);
@@ -918,7 +944,7 @@ public class DataCombat {
         // 排除特殊处理的表
         Set<String> excl = Synt.toSet(
             CoreConfig.getInstance("matrix")
-                      .getProperty("core.matrix.uproot.exclude")
+                      .getProperty("matrix.uproot.ignore.forms")
         );
         if (excl != null && ! excl.isEmpty()) {
             ents.removeAll(excl);
@@ -1136,9 +1162,9 @@ public class DataCombat {
 
         public void commit() {
             if (cascades) {
-                that.commit( );
+                that.commit(true , false);
             } else {
-                that.submit( );
+                that.commit(false, false);
             }
             if (table != null) {
                 table.db.commit();

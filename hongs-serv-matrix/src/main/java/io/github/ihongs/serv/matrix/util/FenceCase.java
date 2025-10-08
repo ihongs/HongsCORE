@@ -1,8 +1,10 @@
-package io.github.ihongs.serv.matrix;
+package io.github.ihongs.serv.matrix.util;
 
+import io.github.ihongs.Core;
 import io.github.ihongs.CruxException;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.db.util.FetchCase;
+import io.github.ihongs.serv.matrix.Data;
 import java.util.Map;
 
 /**
@@ -82,8 +84,9 @@ public class FenceCase {
     }
 
     public int insert(Map<String, Object> dat) throws CruxException {
-        dat.put( "user_id", data.getUserId() );
         dat.put( "form_id", data.getFormId() );
+        dat.put( "user_id", data.getUserId() );
+        dat.put( "serv_id", Core.SERVER_ID );
         return table.insert(dat);
     }
 

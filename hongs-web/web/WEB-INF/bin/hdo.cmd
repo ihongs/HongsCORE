@@ -9,7 +9,7 @@ set KLASSPATH=%CLASSPATH%;%CORE_PATH%\classes;%CORE_PATH%\lib\classes;%CORE_PATH
 
 set LINES=
 set COLUMNS=
-for /F "skip=4 tokens=2 delims=: " %%A in (
+for /F "skip=3 tokens=2 delims=: " %%A in (
   'mode con'
 ) do (
   if not defined LINES (

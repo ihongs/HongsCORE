@@ -52,7 +52,7 @@ public class JRoster<T> implements IRoster<T>, AutoCloseable {
 
         try (
             Loop lp = table.db.query(
-                "SELECT " + DB.Q("data") + " FROM " + DB.Q(table.tableName) + " WHERE id = ? AND xtime > ? OR xtime = 0"
+                "SELECT " + DB.Q("data") + " FROM " + DB.Q(table.tableName) + " WHERE id = ? AND (xtime > ? OR xtime = 0)"
             , 0,1, key, now);
         ) {
             ResultSet rs = lp.getReusltSet ();

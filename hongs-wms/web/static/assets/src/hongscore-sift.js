@@ -306,9 +306,9 @@ HsSift.prototype = {
             var fvs = $(this).closest(".sift-zelect").find(".value");
             var fno = that.getOpt(fns);
             var fro = that.getOpt(frs);
-            var fvo = that.getOpt(fvs);
-            var val = fvo .val ();
-            var txt = fvo .text();
+            var val = fvi .val () || "" ;
+            var fvo = that.getOpt(fvs, val);
+            var txt = fvo .text() || "" ;
             if (val === "") {
                 that.note(that._empty_value_error,"warning");
                 return;

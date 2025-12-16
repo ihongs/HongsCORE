@@ -317,9 +317,18 @@ HsSift.prototype = {
             fvs .val ([""]);
             fvi .val ( "" );
         };
+        var zed = function(e) {
+            // 回车即确认
+            if ( 13 === e.keyCode ) {
+                zel . call ( this );
+                e.stopPropagation();
+                return false;
+            }
+        };
         fvx.on("focus" , ">.sift-zelect .input", zei);
         fvx.on("click" , ">.sift-zelect .ensue", zel);
         fvx.on("change", ">.sift-zelect"       , zel);
+        fvx.on("keydown",">.sift-zelect"       , zed);
 
         // 定制类
         fvx.on("click", ">[data-kind=sift] .btn", function() {

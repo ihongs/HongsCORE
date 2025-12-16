@@ -309,7 +309,7 @@ HsSift.prototype = {
             var val = fvi .val () || "" ;
             var fvo = that.getOpt(fvs, val);
             var txt = fvo .text() || "" ;
-            if (val === "") {
+            if (val === "" || txt === "") {
                 that.note(that._empty_value_error,"warning");
                 return;
             }

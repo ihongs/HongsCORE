@@ -783,6 +783,31 @@ function hsBeFormData (elem) {
 }
 
 /**
+ * 取布尔值
+ * @param {Object} val
+ * @param {boolean|undefined} def 当 val 未指定时返回 def, 注意空串返回 false
+ * @returns {boolean} 对于字符串, 空串及 0|O|N|F|NO|OFF|FALSE 为 false, 1|I|Y|T|ON|YES|TRUE 为 true
+ */
+function hsToBool(val, def) {
+    if (val === undefined || val === null) {
+        return def;
+    }
+    if (typeof val === "boolean") {
+        return val;
+    }
+    if (typeof val === "number" ) {
+        return val !== 0;
+    }
+    if ( /(1|I|Y|T|ON|YES|TRUE)/i .test(val)) {
+        return true ;
+    }
+    if (/(|0|O|N|F|NO|OFF|FALSE)/i.test(val)) {
+        return false;
+    }
+    throw new Error("hsGetBool: Unknown boolean: "+val);
+}
+
+/**
  * 获取多个参数值
  * @param {String} url
  * @param {String} name

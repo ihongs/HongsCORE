@@ -289,7 +289,19 @@ HsSift.prototype = {
         fvx.on("change", ">.sift-select"       , sel);
 
         // 搜选类
-        var sch = function( ) {
+        var zei = function( ) {
+            var fvi = $(this).closest(".sift-zelect").find(".input");
+            var fvs = $(this).closest(".sift-zelect").find(".value");
+            var id  = fvi.attr("list");
+            if (! id && id == "-") {
+                id  = "datalist-"
+                  + (new Date().getTime().toString(16))+"-"
+                  + (Math.random().toString(16).substr(2));
+                fvi.attr("list", id);
+                fvs.attr( "id" , id);
+            }
+        }
+        var zel = function( ) {
             var fvi = $(this).closest(".sift-zelect").find(".input");
             var fvs = $(this).closest(".sift-zelect").find(".value");
             var fno = that.getOpt(fns);
@@ -305,19 +317,9 @@ HsSift.prototype = {
             fvs .val ([""]);
             fvi .val ( "" );
         };
-        (function() {
-            var fvi = fvx.find(".input");
-            var fvs = fvx.find(".value");
-            var id  = fvi.attr("list");
-            if (! id && id == "-") {
-                id  = "datalist-"
-                  + (new Date().getTime().toString(16))+"-"
-                  + (Math.random().toString(16).substr(2));
-                fvs.attr("id", id);
-            }
-        })();
-        fvx.on("click" , ">.sift-zelect .ensue", sch);
-        fvx.on("change", ">.sift-zelect"       , sch);
+        fvx.on("focus" , ">.sift-zelect .input", zei);
+        fvx.on("click" , ">.sift-zelect .ensue", zel);
+        fvx.on("change", ">.sift-zelect"       , zel);
 
         // 定制类
         fvx.on("click", ">[data-kind=sift] .btn", function() {

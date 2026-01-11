@@ -558,10 +558,11 @@ public class UploadHelper {
      * 参数为临时文件名或结果链接
      * 注意: 如果有 URL encode 务必先 decode
      * @param name
+     * @param lead 仅在转移临时文件时有用
      * @return
      * @throws Wrong
      */
-    public File upload(String name) throws Wrong {
+    public File upload(String name, String lead) throws Wrong {
         if (name == null || name.length( ) == 0) {
             setResultName("", null);
             return  null;
@@ -585,7 +586,6 @@ public class UploadHelper {
 
         String href = getResultHref(uploadHref) + "/";
         String path = getResultPath(uploadPath) + "/";
-        String lead ;
 
         if (name.startsWith(href)) {
             lead = name.substring(href.length());
@@ -593,7 +593,7 @@ public class UploadHelper {
                 throw new Wrong("@core.file.upload.not.allows");
             }
             name = path + lead;
-            return upload(new File(name), lead );
+            return upload(new File(name), lead);
         }
 
         if (name.startsWith(path)) {
@@ -602,7 +602,7 @@ public class UploadHelper {
                 throw new Wrong("@core.file.upload.not.allows");
             }
         //  name = path + lead;
-            return upload(new File(name), lead );
+            return upload(new File(name), lead);
         }
 
         /* 临时文件 */
@@ -614,8 +614,24 @@ public class UploadHelper {
                 throw new Wrong("@core.file.upload.not.allows");
             }
             name = temp + name;
-            return upload(new File(name));
+            if (lead != null) {
+                return upload(new File(name), lead);
+            } else {
+                return upload(new File(name));
+            }
         }
+    }
+
+    /**
+     * 检查临时文件或目标链接情况
+     * 参数为临时文件名或结果链接
+     * 注意: 如果有 URL encode 务必先 decode
+     * @param name
+     * @return
+     * @throws Wrong
+     */
+    public File upload(String name) throws Wrong {
+        return  upload(name , null);
     }
 
     /**

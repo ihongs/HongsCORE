@@ -206,8 +206,8 @@ public class IsFile extends Rule {
             }
 
             File file;
-            file = hlpr.upload(href);
-            size = file.length(/**/);
+            file = hlpr.upload(href, lead);
+            size = file.length();
         }
 
         path = hlpr.getResultPath();
@@ -469,6 +469,7 @@ public class IsFile extends Rule {
                         sp = null;
                 }
 
+                // 取值
                     ob  = vars.get (st);
                 if (ob != null) {
                     st  = ob.toString();

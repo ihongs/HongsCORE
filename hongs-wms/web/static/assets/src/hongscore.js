@@ -1928,7 +1928,8 @@ $.hsAjax = function(url, settings) {
     if (typeof(url) ===  "object") {
         settings = url;
         if (typeof(url["url"]) !== "undefined") {
-            url  = url["url"];
+            url  = url["url"] ;
+            delete(url["url"]);
         }
     }
     url = hsFixUri(url);

@@ -3,13 +3,12 @@ package io.github.ihongs;
 import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Properties;
-import java.util.Collection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Arrays;
 import java.time.ZoneId;
 import java.time.DateTimeException;
 

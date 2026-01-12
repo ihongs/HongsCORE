@@ -835,7 +835,7 @@ HsForm.prototype = {
                 continue;
             }
             var opt = jQuery('<option></option>');
-                opt.val(k).text(t).data("data", v[i]);
+            opt.val(k).text(t).data("data", v[i]);
             inp.append(opt);
         }
     },

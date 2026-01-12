@@ -3152,18 +3152,26 @@ $.fn.hsRoll = function(body, setHeight, minHeight) {
     part.css("overflow-y", "auto");
     part.css("max-height", "none");
     var viewHeight = parseFloat(body.prop("clientHeight") || 0);
-    part.height ( viewHeight ); // 规避内容不够而计算不对
+    part.height( viewHeight ); // 规避内容不够而计算不对
     var bodyHeight = parseFloat(body.prop("scrollHeight") || 0);
     var partHeight = parseFloat(part.prop("offsetHeight") || 0);
-    var rollHeight = viewHeight - bodyHeight + partHeight;
+
+    viewHeight = viewHeight
+        -  parseFloat(body.css("padding-top"   ) || 0)
+        -  parseFloat(body.css("padding-bottom") || 0);
+    bodyHeight = bodyHeight
+        -  parseFloat(body.css("padding-top"   ) || 0)
+        -  parseFloat(body.css("padding-bottom") || 0);
 
     // 需区分是否包含 border
     if (part.css("box-sizing") !== "border-box") {
-        rollHeight = rollHeight
+        partHeight = partHeight
             -  parseFloat(part.css("border-top-width"   ) || 0)
             -  parseFloat(part.css("border-bottom-width") || 0);
     }
 
+    var rollHeight = viewHeight - bodyHeight + partHeight;
+    
     // 可以是容器比例
     if (minHeight === undefined) {
         minHeight  = 0.5;

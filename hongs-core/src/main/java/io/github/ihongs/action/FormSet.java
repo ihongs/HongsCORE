@@ -444,6 +444,10 @@ public class FormSet
     if (name . startsWith ("@")) {
         return  ( Map  )  Core.getInstance(name.substring(1));
     }
+    if (name .  contains  (":")) {
+        int p = name.indexOf(":");
+        return getInstance(name.substring(0 , p)).getEnum(name.substring(1 + p));
+    }
     throw new CruxException(913, "Enum "+name+" in "+this.name+" is not exists");
   }
 
@@ -461,6 +465,10 @@ public class FormSet
     }
     if (name . startsWith ("@")) {
         return  ( Map  )  Core.getInstance(name.substring(1));
+    }
+    if (name .  contains  (":")) {
+      int p = name.indexOf(":");
+        return getInstance(name.substring(0 , p)).getForm(name.substring(1 + p));
     }
     throw new CruxException(912, "Form "+name+" in "+this.name+" is not exists");
   }

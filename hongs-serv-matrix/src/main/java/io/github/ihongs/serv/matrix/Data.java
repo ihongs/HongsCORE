@@ -262,6 +262,15 @@ public class Data extends SearchEntity {
                 break;
             }
 
+            // 已设继承, 无需合并
+            try {
+                if (null != Dict.get(FormSet.getInstance(conf).enums, null, "__form__", form)) {
+                    break;
+                }
+            } catch (CruxException ex) {
+                throw ex.toExemption();
+            }
+
             try {
                 fieldx = FormSet.getInstance(cnf).getForm(form);
             } catch (CruxException ex) {
@@ -280,6 +289,7 @@ public class Data extends SearchEntity {
             }
 
             /**
+             * 2026/02/01 改用继承
              * 注意:
              * 1. 不可破坏原始配置
              * 2. 当前的覆盖后台的
@@ -322,6 +332,7 @@ public class Data extends SearchEntity {
      * 当前表单不在管理区之内时,
      * 会用当前表单覆盖管理表单,
      * 此可获取对内配置, 用于 getFields
+     * @deprecated 已被表单继承取代
      * @return
      */
     protected String getBgConf() {
@@ -549,7 +560,12 @@ public class Data extends SearchEntity {
      */
     @Override
     public String add(Map rd) throws CruxException {
-        String id = Core.newIdentity();
+        String id = Synt.asString(rd.get(Cnst.ID_KEY));
+        if (id == null || id.length() == 0) {
+            id  =  Core.newIdentity();
+            rd.put(Cnst.ID_KEY , id );
+        }
+
         add(id,rd , System.currentTimeMillis() / 1000);
         return id ;
     }
@@ -604,6 +620,9 @@ public class Data extends SearchEntity {
     public int add(String id, Map rd, long ctime) throws CruxException {
         Map dd = new HashMap();
         padDif(dd, rd);
+
+        // 检查唯一
+        unique(dd, id);
 
         // 保存到文档库
         dd.put(Cnst.ID_KEY , id);
@@ -660,6 +679,9 @@ public class Data extends SearchEntity {
         if (i  ==  0) {
             return 0;
         }
+
+        // 检查唯一
+        unique(dd, id);
 
         // 保存到文档库
         dd.put(Cnst.ID_KEY , id);
@@ -740,6 +762,9 @@ public class Data extends SearchEntity {
         if (i  ==  0) {
             return 0;
         }
+
+        // 检查唯一
+        unique(dd, id);
 
         // 保存到文档库
         dd.put(Cnst.ID_KEY , id);
@@ -1524,6 +1549,12 @@ public class Data extends SearchEntity {
      * @return
      */
     protected Map<String, Object> getCascades() {
+        Map cas  = Synt.toMap(getParams().get("cascades"));
+        if (cas != null) {
+            return cas ;
+        }
+
+        // 旧版模式
         do {
             try {
                 return FormSet.getInstance(conf).getEnum(form+".cascade");
@@ -1559,6 +1590,12 @@ public class Data extends SearchEntity {
      * @return
      */
     protected Map<String, Object> getIncludes() {
+        Map inc  = Synt.toMap(getParams().get("includes"));
+        if (inc != null) {
+            return inc ;
+        }
+
+        // 旧版模式
         do {
             try {
                 return FormSet.getInstance(conf).getEnum(form+".include");
@@ -1599,13 +1636,15 @@ public class Data extends SearchEntity {
             return;
         }}
 
-        String cn = CoreConfig.getInstance("matrix").getProperty("matrix.data.diffuser");
+        String cn = Synt.asString(getParams().get( "diffuser" )); // 单设
+        if (cn == null || cn.isEmpty()) {
+            cn  = CoreConfig.getInstance("matrix")
+                            .getProperty("matrix.data.diffuser"); // 全局
         if (cn == null || cn.isEmpty()) {
             return;
-        }
+        }}
 
         DataDiffuser co = (DataDiffuser) Core.getInstance(cn);
-
         if (rs != null && ! rs.isEmpty()) {
             for(Object id : rs) {
                 co.delete(getConf(), getForm(), Synt.asString(id));

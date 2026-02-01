@@ -8,6 +8,7 @@
   <xs:attribute name="text" type="xs:string"/>
   <xs:attribute name="type" type="xs:string"/>
   <xs:attribute name="rule" type="xs:string"/>
+  <xs:attribute name="extend" type="xs:string"/>
   <xs:attribute name="required" type="xs:string"/>
   <xs:attribute name="repeated" type="xs:string"/>
 
@@ -38,6 +39,7 @@
   <xs:element name="form">
     <xs:complexType>
       <xs:attribute ref="name" use="required"/>
+      <xs:attribute ref="extend"/>
       <xs:all>
         <xs:element ref="field" maxOccurs="unbounded"/>
       </xs:all>
@@ -56,6 +58,7 @@
   <xs:element name="enum">
     <xs:complexType>
       <xs:attribute ref="name" use="required"/>
+      <xs:attribute ref="extend"/>
       <xs:all>
         <xs:element ref="value" maxOccurs="unbounded"/>
       </xs:all>

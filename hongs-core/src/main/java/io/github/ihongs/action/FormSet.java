@@ -18,8 +18,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -59,8 +61,14 @@ import org.xml.sax.SAXException;
         "enum_name" : {
             "value_code" : "Label"
             ...
-        }
+        },
         ...
+        "__form__" : {
+            "form_name" : "parent:form|@form.class"
+        },
+        "__enum__" : {
+            "enum_name" : "parent:form|@form.class"
+        },
     }
  * </pre>
  *
@@ -277,6 +285,19 @@ public class FormSet
         Map items = new LinkedHashMap();
         this.parse(element2, null, items);
         enums.put(namz, items);
+
+        // 继承
+        String extn = element2.hasAttribute("extend")
+                    ? element2.getAttribute("extend")
+                    : "" ;
+        if ( ! extn.isEmpty()) {
+            Map exts  = (Map) enums.get("__enum__");
+            if (exts == null) {
+                exts  = new LinkedHashMap();
+                enums.put("__enum__", exts);
+            }
+            exts.put(namz, extn);
+        }
       } else
       if ("form".equals(tagName2))
       {
@@ -286,6 +307,19 @@ public class FormSet
         Map items = new LinkedHashMap();
         this.parse(element2, items, null);
         forms.put(namz, items);
+
+        // 继承
+        String extn = element2.hasAttribute("extend")
+                    ? element2.getAttribute("extend")
+                    : "" ;
+        if (! extn.isEmpty()) {
+            Map exts  = (Map) enums.get("__form__");
+            if (exts == null) {
+                exts  = new LinkedHashMap();
+                enums.put("__form__", exts);
+            }
+            exts.put(namz, extn);
+        }
       } else
       if ("field".equals(tagName2))
       {
@@ -433,20 +467,36 @@ public class FormSet
     if (null == name) {
         throw new NullPointerException( "Enum name can not be null" );
     }
+    Map enum0 = null ;
+    Map enum1 = enums.get(name);
     Map names = enums.get("__enum__");
     if (null != names
     &&  names.containsKey(name)) {
         name  = (String)  names.get(name);
+        if (enums.containsKey(name)) {
+            enum0 = enums.get(name);
+        } else
+        if (name.startsWith("@")) {
+            enum0 = (Map) Core.getInstance(name.substring(1));
+        } else
+        if (name. contains (":")) {
+            int p = name.indexOf(":");
+            enum0 = getInstance(name.substring(0,p)).getEnum(name.substring(1+p));
+        }
+
+        if (null != enum1 && ! enum1.isEmpty()) {
+        if (null != enum0 && ! enum0.isEmpty()) {
+            // 合并枚举
+            enum0 = new LinkedHashMap(enum0);
+            enum0.putAll(enum1);
+            enum1 = enum0;
+        }} else {
+        if (null != enum0 && ! enum0.isEmpty()) {
+            enum1 = enum0;
+        }}
     }
-    if (enums.containsKey(name)) {
-        return  ( Map  )  enums.get(name);
-    }
-    if (name . startsWith ("@")) {
-        return  ( Map  )  Core.getInstance(name.substring(1));
-    }
-    if (name .  contains  (":")) {
-        int p = name.indexOf(":");
-        return getInstance(name.substring(0 , p)).getEnum(name.substring(1 + p));
+    if (null != enum1) {
+        return  enum1;
     }
     throw new CruxException(913, "Enum "+name+" in "+this.name+" is not exists");
   }
@@ -455,20 +505,56 @@ public class FormSet
     if (null == name) {
         throw new NullPointerException( "Form name can not be null" );
     }
+    Map form0 = null ;
+    Map form1 = forms.get(name);
     Map names = enums.get("__form__");
     if (null != names
     &&  names.containsKey(name)) {
         name  = (String)  names.get(name);
+        if (forms.containsKey(name)) {
+            form0 = forms.get(name);
+        } else
+        if (name.startsWith("@")) {
+            form0 = (Map) Core.getInstance(name.substring(1));
+        } else
+        if (name. contains (":")) {
+            int p = name.indexOf(":");
+            form0 = getInstance(name.substring(0,p)).getForm(name.substring(1+p));
+        }
+
+        if (null != form1 && ! form1.isEmpty()) {
+        if (null != form0 && ! form0.isEmpty()) {
+            /**
+             * 合并表单, 深入两层
+             * 1.不可破坏原始配置
+             * 2.当前的覆盖父级的
+             */
+            Set fnMix = new LinkedHashSet( );
+                fnMix.addAll(form0.keySet());
+                fnMix.addAll(form1.keySet());
+            Map form2 = new LinkedHashMap(fnMix.size());
+            for(Object fn : fnMix) {
+                Map fild0 = (Map) form0.get(fn);
+                Map fild1 = (Map) form1.get(fn);
+                if (null != fild1 && ! fild1.isEmpty()) {
+                if (null != fild0 && ! fild0.isEmpty()) {
+                    fild0 = new LinkedHashMap(fild0);
+                    fild0.putAll(fild1);
+                    fild1 = fild0;
+                }} else {
+                if (null != fild0 && ! fild0.isEmpty()) {
+                    fild1 = fild0;
+                }}
+                form2.put(fn, fild1);
+            }
+            form1 = form2;
+        }} else {
+        if (null != form0 && ! form0.isEmpty()) {
+            form1 = form0;
+        }}
     }
-    if (forms.containsKey(name)) {
-        return  ( Map  )  forms.get(name);
-    }
-    if (name . startsWith ("@")) {
-        return  ( Map  )  Core.getInstance(name.substring(1));
-    }
-    if (name .  contains  (":")) {
-      int p = name.indexOf(":");
-        return getInstance(name.substring(0 , p)).getForm(name.substring(1 + p));
+    if (null != form1) {
+        return  form1;
     }
     throw new CruxException(912, "Form "+name+" in "+this.name+" is not exists");
   }

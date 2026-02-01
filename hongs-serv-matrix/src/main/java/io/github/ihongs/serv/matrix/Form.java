@@ -754,6 +754,7 @@ public class Form extends Model {
             form = docm.createElement("form");
             root.appendChild ( form );
             form.setAttribute("name" ,  id  );
+            form.setAttribute("extend", centra+"/"+ id +":"+ id); // 新版继承规则
 
             /**
              * 1 为内部资源, 改名使其失效
@@ -763,6 +764,26 @@ public class Form extends Model {
             } else {
             //  docm.renameNode(form, null, "form");
             }
+
+            // 限定读范围
+            defs = docm.createElement("enum");
+            root.appendChild ( defs );
+            defs.setAttribute("name", id+".defense");
+            defi = docm.createElement("value");
+            defs.appendChild ( defi );
+            defi.setAttribute("code", Cnst.AR_KEY+".x.cuser");
+            defi.appendChild ( docm.createTextNode("($session.uid||\"*\")"));
+
+            /*
+            // 保护写接口, 字段默认值可限制
+            defs = docm.createElement("enum");
+            root.appendChild ( defs );
+            defs.setAttribute("name", id+".defence");
+            defi = docm.createElement("value");
+            defs.appendChild ( defi );
+            defi.setAttribute("code", Cnst.AR_KEY+".x.cuser");
+            defi.appendChild ( docm.createTextNode("($session.uid||\"*\")"));
+            */
 
             /*
             // 全局性保护, 改用 VarsFilter 限制
@@ -782,24 +803,6 @@ public class Form extends Model {
             defi.setAttribute("code", Cnst.OR_KEY);
             defi.appendChild ( docm.createTextNode("(void)"));
             */
-
-            // 限定读范围
-            defs = docm.createElement("enum");
-            root.appendChild ( defs );
-            defs.setAttribute("name", id+".defense");
-            defi = docm.createElement("value");
-            defs.appendChild ( defi );
-            defi.setAttribute("code", Cnst.AR_KEY+".x.cuser");
-            defi.appendChild ( docm.createTextNode("($session.uid||\"*\")"));
-
-            // 保护写接口
-            defs = docm.createElement("enum");
-            root.appendChild ( defs );
-            defs.setAttribute("name", id+".defence");
-            defi = docm.createElement("value");
-            defs.appendChild ( defi );
-            defi.setAttribute("code", Cnst.AR_KEY+".x.cuser");
-            defi.appendChild ( docm.createTextNode("($session.uid||\"*\")"));
         }
 
         saveDocument(file , docm);

@@ -15,6 +15,6 @@ import java.lang.annotation.Target;
 public @interface Preset {
     String   conf() default "default";
     String   form() default "";
-    String[] deft() default {};
-    String[] defs() default {};
+    String[] defa() default {};
+    String[] defe() default {};
 }

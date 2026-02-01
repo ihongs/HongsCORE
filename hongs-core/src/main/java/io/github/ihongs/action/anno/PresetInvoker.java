@@ -29,10 +29,10 @@ public class PresetInvoker implements FilterInvoker {
         Preset   ann  = (Preset) anno;
         String   conf = ann.conf();
         String   form = ann.form();
-        String[] deft = ann.deft();
-        String[] defs = ann.defs();
+        String[] defa = ann.defa();
+        String[] defe = ann.defe();
 
-        if (deft == null || deft.length == 0) {
+        if (defa == null || defa.length == 0) {
             Map req = helper.getRequestData();
             Set<String> abz = Synt.toTerms(req.get(Cnst.AB_KEY));
         if (abz != null &&  ! abz.isEmpty() ) {
@@ -50,19 +50,17 @@ public class PresetInvoker implements FilterInvoker {
                     Core.getInstance().put(Cnst.STRING_MODE, true );
                 } else
                 */
-                if (ab.length() > 1) {
-                char c  =  ab.charAt(0);
-                if ( c != '_' && c != '.' && c != ':' && c != '!' ) {
-                    abs .  add  (form+".def."+ab); // 外部默认
-                }}
+                if (ab.startsWith("def.")) {
+                    abs .  add  (form+"." + ab  ); // 外部默认
+                }
             }
                     abs .  add  (form+".default"); // 内部默认
-            deft =  abs .toArray(new String [0] );
+            defa =  abs .toArray(new String [0] );
         } else {
-            deft =  new String[]{form+".default"}; // 内部默认
+            defa =  new String[]{form+".default"}; // 内部默认
         }}
-        if (defs == null || defs.length == 0) {
-            defs =  new String[]{form+".defense"}; // 内部防御
+        if (defe == null || defe.length == 0) {
+            defe =  new String[]{form+".defense"}; // 内部防御
         }
 
         // 识别路径
@@ -84,7 +82,7 @@ public class PresetInvoker implements FilterInvoker {
 
             req = helper.getRequestData();
             pre = new PresetHelper();
-            pre.addItemsByForm(conf, form, deft, defs);
+            pre.addItemsByForm(conf, form, defa, defe);
             pre.preset(req, helper );
         } catch (CruxException  ex ) {
             int  ec  = ex.getErrno();

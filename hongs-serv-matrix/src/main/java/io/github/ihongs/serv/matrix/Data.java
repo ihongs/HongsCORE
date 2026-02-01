@@ -1038,9 +1038,9 @@ public class Data extends SearchEntity {
                 .getOne( );
             if (Synt.declare(od.get("state"), 0) > 0) {
                 Map dd = getData((String) od.get("data"));
-                Map xd = new HashMap(00);
+                padDif(dd, rd);
+
                 dd.put(Cnst.ID_KEY , id);
-                padDif(dd, xd);
                 Document dc = padDoc(dd);
                 setDoc(id, dc);
             } else {
@@ -1095,8 +1095,7 @@ public class Data extends SearchEntity {
 
         // 从快照再构建
         Map dd = getData((String) sd.get("data"));
-        Map xd = new HashMap(00);
-        padDif(dd, xd);
+        padDif(dd, rd);
 
         // 保存到文档库
         dd.put(Cnst.ID_KEY , id);

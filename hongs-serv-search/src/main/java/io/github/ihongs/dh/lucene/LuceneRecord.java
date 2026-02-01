@@ -1126,7 +1126,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      */
     protected void padQry(BooleanQuery.Builder qr, Map rd) throws CruxException {
         try {
-            padQry(qr, rd, 0);
+            padQry(qr, rd, QUERY_DEPTH);
         } catch (IndexSearcher.TooManyClauses | ClassCastException | NullPointerException ex) {
             throw new CruxException(ex, 400);
         }
@@ -1138,7 +1138,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      *
      * @param qr
      * @param rd
-     * @param rl 递归层级
+     * @param rl 递归剩余层级
      * @throws CruxException
      */
     protected void padQry(BooleanQuery.Builder qr, Map rd, int rl) throws CruxException {
@@ -1260,7 +1260,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
         v = rd.get(Cnst.AR_KEY);
         if ( v != null ) {
-            if (rl > QUERY_DEPTH) {
+            if (rl <= 0) {
                 throw new CruxException(400, "Key '" + Cnst.AR_KEY + "' can not exceed " + QUERY_DEPTH + " layers");
             }
             Set<Map> set = Synt.asSet(v);
@@ -1269,7 +1269,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 if ( map == null) continue; // 规避 NullPointerException
 
                 BooleanQuery.Builder qx = new Queries();
-                padQry(qx, map, rl + 1 );
+                padQry(qx, map, rl - 1 );
 
                 BooleanQuery qa = qx.build();
                 if (! qa.clauses().isEmpty()) {
@@ -1288,7 +1288,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
         v = rd.get(Cnst.NR_KEY);
         if ( v != null ) {
-            if (rl > QUERY_DEPTH) {
+            if (rl <= 0) {
                 throw new CruxException(400, "Key '" + Cnst.NR_KEY + "' can not exceed " + QUERY_DEPTH + " layers");
             }
             Set<Map> set = Synt.asSet(v);
@@ -1297,7 +1297,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 if ( map == null) continue; // 规避 NullPointerException
 
                 BooleanQuery.Builder qx = new Queries();
-                padQry(qx, map, rl + 1 );
+                padQry(qx, map, rl - 1 );
 
                 BooleanQuery qa = qx.build();
                 if (! qa.clauses().isEmpty()) {
@@ -1316,7 +1316,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
         v = rd.get(Cnst.SR_KEY);
         if ( v != null ) {
-            if (rl > QUERY_DEPTH) {
+            if (rl <= 0) {
                 throw new CruxException(400, "Key '" + Cnst.SR_KEY + "' can not exceed " + QUERY_DEPTH + " layers");
             }
             Set<Map> set = Synt.asSet(v);
@@ -1325,7 +1325,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 if ( map == null) continue; // 规避 NullPointerException
 
                 BooleanQuery.Builder qx = new Queries();
-                padQry(qx, map, rl + 1 );
+                padQry(qx, map, rl - 1 );
 
                 BooleanQuery qa = qx.build();
                 if (! qa.clauses().isEmpty()) {
@@ -1344,7 +1344,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
         v = rd.get(Cnst.OR_KEY);
         if ( v != null ) {
-            if (rl > QUERY_DEPTH) {
+            if (rl <= 0) {
                 throw new CruxException(400, "Key '" + Cnst.OR_KEY + "' can not exceed " + QUERY_DEPTH + " layers");
             }
             Set<Map> set = Synt.asSet(v);
@@ -1354,7 +1354,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 if ( map == null) continue; // 规避 NullPointerException
 
                 BooleanQuery.Builder qx = new Queries();
-                padQry(qx, map, rl + 1 );
+                padQry(qx, map, rl - 1 );
 
                 BooleanQuery qa = qx.build();
                 if (! qa.clauses().isEmpty()) {

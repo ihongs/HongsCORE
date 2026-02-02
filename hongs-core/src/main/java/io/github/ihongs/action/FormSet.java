@@ -467,37 +467,28 @@ public class FormSet
     if (null == name) {
         throw new NullPointerException( "Enum name can not be null" );
     }
-    Map enum0 = null ;
-    Map enum1 = enums.get(name);
-    Map names = enums.get("__enum__");
-    if (null != names
-    &&  names.containsKey(name)) {
-        name  = (String)  names.get(name);
-        if (enums.containsKey(name)) {
-            enum0 = enums.get(name);
-        } else
-        if (name.startsWith("@")) {
-            enum0 = (Map) Core.getInstance(name.substring(1));
-        } else
-        if (name. contains (":")) {
-            int p = name.indexOf(":");
-            enum0 = getInstance(name.substring(0,p)).getEnum(name.substring(1+p));
-        }
 
-        if (null != enum1 && ! enum1.isEmpty()) {
-        if (null != enum0 && ! enum0.isEmpty()) {
-            // 合并枚举
-            enum0 = new LinkedHashMap(enum0);
-            enum0.putAll(enum1);
-            enum1 = enum0;
-        }} else {
-        if (null != enum0 && ! enum0.isEmpty()) {
-            enum1 = enum0;
-        }}
-    }
+    Map enum1 = getSub(name, enums);
+    Map enum0 = getSub(name, enums, enums.get("__enum__")); // 父级枚举
+
+    if (null != enum1 && ! enum1.isEmpty()) {
+    if (null != enum0 && ! enum0.isEmpty()) {
+        // 合并枚举
+        enum0 = new LinkedHashMap(enum0);
+        enum0.putAll(enum1);
+        enum1 = enum0;
+    }} else {
+    if (null != enum0 && ! enum0.isEmpty()) {
+        enum1 = enum0;
+    }}
+
     if (null != enum1) {
         return  enum1;
     }
+    if (null != enum0) {
+        return  enum0;
+    }
+
     throw new CruxException(913, "Enum "+name+" in "+this.name+" is not exists");
   }
 
@@ -505,58 +496,76 @@ public class FormSet
     if (null == name) {
         throw new NullPointerException( "Form name can not be null" );
     }
-    Map form0 = null ;
-    Map form1 = forms.get(name);
-    Map names = enums.get("__form__");
-    if (null != names
-    &&  names.containsKey(name)) {
-        name  = (String)  names.get(name);
-        if (forms.containsKey(name)) {
-            form0 = forms.get(name);
-        } else
-        if (name.startsWith("@")) {
-            form0 = (Map) Core.getInstance(name.substring(1));
-        } else
-        if (name. contains (":")) {
-            int p = name.indexOf(":");
-            form0 = getInstance(name.substring(0,p)).getForm(name.substring(1+p));
-        }
 
-        if (null != form1 && ! form1.isEmpty()) {
-        if (null != form0 && ! form0.isEmpty()) {
-            /**
-             * 合并表单, 深入两层
-             * 1.不可破坏原始配置
-             * 2.当前的覆盖父级的
-             */
-            Set fnMix = new LinkedHashSet( );
-                fnMix.addAll(form0.keySet());
-                fnMix.addAll(form1.keySet());
-            Map form2 = new LinkedHashMap(fnMix.size());
-            for(Object fn : fnMix) {
-                Map fild0 = (Map) form0.get(fn);
-                Map fild1 = (Map) form1.get(fn);
-                if (null != fild1 && ! fild1.isEmpty()) {
-                if (null != fild0 && ! fild0.isEmpty()) {
-                    fild0 = new LinkedHashMap(fild0);
-                    fild0.putAll(fild1);
-                    fild1 = fild0;
-                }} else {
-                if (null != fild0 && ! fild0.isEmpty()) {
-                    fild1 = fild0;
-                }}
-                form2.put(fn, fild1);
-            }
-            form1 = form2;
-        }} else {
-        if (null != form0 && ! form0.isEmpty()) {
-            form1 = form0;
-        }}
-    }
+    Map form1 = getSub(name, forms);
+    Map form0 = getSub(name, forms, enums.get("__form__")); // 父级表单
+
+    if (null != form1 && ! form1.isEmpty()) {
+    if (null != form0 && ! form0.isEmpty()) {
+        /**
+         * 合并表单, 深入两层
+         * 1.不可破坏原始配置
+         * 2.当前的覆盖父级的
+         */
+        Set fnMix = new LinkedHashSet( );
+            fnMix.addAll(form0.keySet());
+            fnMix.addAll(form1.keySet());
+        Map form2 = new LinkedHashMap(fnMix.size());
+        for(Object fn : fnMix) {
+            Map fild0 = (Map) form0.get(fn);
+            Map fild1 = (Map) form1.get(fn);
+            if (null != fild1 && ! fild1.isEmpty()) {
+            if (null != fild0 && ! fild0.isEmpty()) {
+                fild0 = new LinkedHashMap(fild0);
+                fild0.putAll(fild1);
+                fild1 = fild0;
+            }} else {
+            if (null != fild0 && ! fild0.isEmpty()) {
+                fild1 = fild0;
+            }}
+            form2.put(fn, fild1);
+        }
+        form1 = form2;
+    }} else {
+    if (null != form0 && ! form0.isEmpty()) {
+        form1 = form0;
+    }}
+
     if (null != form1) {
         return  form1;
     }
+    if (null != form0) {
+        return  form0;
+    }
+
     throw new CruxException(912, "Form "+name+" in "+this.name+" is not exists");
+  }
+
+  private Map getSub(String key, Map top) throws CruxException {
+    if (top != null) {
+    Map sub  = (Map) top.get(key);
+    if (sub != null) {
+        return sub;
+    }}
+    if (key.startsWith("@")) {
+        return (Map) Core.getInstance(key.substring(1));
+    }
+    if (key. contains (":")) {
+        int p = key.indexOf(":");
+        return (Map) getInstance(key.substring(0,p)).getEnum(key.substring(1+p));
+    }
+    return null;
+  }
+
+  private Map getSub(String key, Map top, Map map) throws CruxException {
+    if (map == null) {
+        return null;
+    }
+    key = (String) map.get (key);
+    if (key == null) {
+        return null;
+    }
+    return getSub(key, top);
   }
 
   /**

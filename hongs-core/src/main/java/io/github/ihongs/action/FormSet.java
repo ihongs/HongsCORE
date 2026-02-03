@@ -468,8 +468,8 @@ public class FormSet
         throw new NullPointerException( "Enum name can not be null" );
     }
 
-    Map enum1 = getSub(name, enums);
-    Map enum0 = getSub(name, enums, enums.get("__enum__")); // 父级枚举
+    Map enum1 = getRecentEnum(name);
+    Map enum0 = getParentEnum(name);
 
     if (null != enum1 && ! enum1.isEmpty()) {
     if (null != enum0 && ! enum0.isEmpty()) {
@@ -492,13 +492,40 @@ public class FormSet
     throw new CruxException(913, "Enum "+name+" in "+this.name+" is not exists");
   }
 
+  private Map getRecentEnum(String key) throws CruxException {
+    Map sub  = (Map) enums.get(key);
+    if (sub != null) {
+        return sub;
+    }
+    if (key.startsWith("@")) {
+        return (Map) Core.getInstance(key.substring(1));
+    }
+    if (key. contains (":")) {
+        int p = key.indexOf(":");
+        return (Map) getInstance(key.substring(0,p)).getEnum(key.substring(1+p));
+    }
+    return null;
+  }
+
+  private Map getParentEnum(String key) throws CruxException {
+    Map map = enums.get("__enum__");
+    if (map == null) {
+        return null;
+    }
+    key = (String) map.get(key);
+    if (key == null) {
+        return null;
+    }
+    return getRecentEnum(key);
+  }
+
   public Map getForm(String name) throws CruxException {
     if (null == name) {
         throw new NullPointerException( "Form name can not be null" );
     }
 
-    Map form1 = getSub(name, forms);
-    Map form0 = getSub(name, forms, enums.get("__form__")); // 父级表单
+    Map form1 = getRecentForm(name);
+    Map form0 = getParentForm(name);
 
     if (null != form1 && ! form1.isEmpty()) {
     if (null != form0 && ! form0.isEmpty()) {
@@ -541,31 +568,31 @@ public class FormSet
     throw new CruxException(912, "Form "+name+" in "+this.name+" is not exists");
   }
 
-  private Map getSub(String key, Map top) throws CruxException {
-    if (top != null) {
-    Map sub  = (Map) top.get(key);
+  private Map getRecentForm(String key) throws CruxException {
+    Map sub  = (Map) forms.get(key);
     if (sub != null) {
         return sub;
-    }}
+    }
     if (key.startsWith("@")) {
         return (Map) Core.getInstance(key.substring(1));
     }
     if (key. contains (":")) {
         int p = key.indexOf(":");
-        return (Map) getInstance(key.substring(0,p)).getEnum(key.substring(1+p));
+        return (Map) getInstance(key.substring(0,p)).getForm(key.substring(1+p));
     }
     return null;
   }
 
-  private Map getSub(String key, Map top, Map map) throws CruxException {
+  private Map getParentForm(String key) throws CruxException {
+    Map map = enums.get("__form__");
     if (map == null) {
         return null;
     }
-    key = (String) map.get (key);
+    key = (String) map.get(key);
     if (key == null) {
         return null;
     }
-    return getSub(key, top);
+    return getRecentForm(key);
   }
 
   /**

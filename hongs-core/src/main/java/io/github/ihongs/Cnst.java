@@ -16,13 +16,10 @@ package io.github.ihongs;
  */
 public final class Cnst {
 
-    public static final int    RN_DEF =  20 ; // 默认每页行数
-
     @Deprecated
     public static final int    PN_DEF =   1 ;
 
-    @Deprecated
-    public static final int    QN_DEF =   0 ;
+    public static final int    RN_DEF =  20 ; // 默认每页行数
 
     //** 查询参数 **/
 
@@ -30,19 +27,21 @@ public final class Cnst {
 
     public static final String WD_KEY = "wd"; // 查询      (Word)
 
-    public static final String CB_KEY = "cb"; // 回调名称  (Callback)
-
     public static final String RN_KEY = "rn"; // 每页行数  (Rows num)
+
+    public static final String QN_KEY = "qn"; // 跳过行数  (Past num)
 
     public static final String PN_KEY = "pn"; // 页码编号  (Page num)
 
-    public static final String QN_KEY = "qn"; // 探测页数  (Quiz num)
+    public static final String PM_KEY = "pm"; // 探测页数  (Pace num)
 
     public static final String OB_KEY = "ob"; // 排序字段  (Order by)
 
-    public static final String RB_KEY = "rb"; // 应答字段  (Reply with)
+    public static final String RB_KEY = "rb"; // 应答字段  (Reply by)
 
-    public static final String AB_KEY = "ab"; // 应用约束  (Apply with)
+    public static final String AB_KEY = "ab"; // 应用约束  (Apply by)
+
+    public static final String CB_KEY = "cb"; // 回调名称  (Callback)
 
     public static final String OR_KEY = "or"; // 或条件    (Or )
 

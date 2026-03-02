@@ -155,6 +155,13 @@ implements IEntity
       rows = Synt.declare(rd.get(Cnst.RN_KEY), rows);
     }
 
+    // 跳过行数, 默认跳过零行
+    int past = 0;
+    if (rd.containsKey(Cnst.QN_KEY))
+    {
+      past = Synt.declare(rd.get(Cnst.QN_KEY), past);
+    }
+
     // 获取页码, 默认为第一页
     int page = 1;
     if (rd.containsKey(Cnst.PN_KEY))
@@ -163,15 +170,15 @@ implements IEntity
     }
 
     // 续查页数, 默认查总页数
-    int plus = 0;
-    if (rd.containsKey(Cnst.QN_KEY))
+    int pace = 0;
+    if (rd.containsKey(Cnst.PM_KEY))
     {
-      plus = Synt.declare(rd.get(Cnst.QN_KEY), plus);
+      pace = Synt.declare(rd.get(Cnst.PM_KEY), pace);
     }
 
     Map data = new HashMap (6); // {ok, ern, err, msg, list, page}
 
-    // 页码等于 0 则不要列表数据
+    // 行数等于 0 则不要使用分页
     if (rows == 0)
     {
       List list = table.fetchMore(caze);
@@ -182,10 +189,11 @@ implements IEntity
     caze.from (table.tableName , table.name );
     FetchPage fp = new FetchPage(caze, table);
     fp.setPage(page);
-    fp.setQues(plus);
+    fp.setPace(pace);
+    fp.setPast(past);
     fp.setRows(Math.abs(rows));
 
-    // 行数等于 0 则不要使用分页
+    // 页码等于 0 则不要列表数据
     if (page != 0)
     {
       List list = fp.getList();

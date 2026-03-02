@@ -206,13 +206,17 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         if (rn < 0) {
             throw new CruxException (400 , "Wrong param " + Cnst.RN_KEY);
         }
+        int qn = Synt.declare(rd.get(Cnst.QN_KEY),  0 );
+        if (qn < 0) {
+            throw new CruxException (400 , "Wrong param " + Cnst.QN_KEY);
+        }
         int pn = Synt.declare(rd.get(Cnst.PN_KEY),  1 );
         if (pn < 0) {
             throw new CruxException (400 , "Wrong param " + Cnst.PN_KEY);
         }
-        int qn = Synt.declare(rd.get(Cnst.QN_KEY), -1 );
-        if (qn > 0) {
-            throw new CruxException (400 , "Wrong param " + Cnst.QN_KEY);
+        int pm = Synt.declare(rd.get(Cnst.PM_KEY), -1 );
+        if (pm > 0) {
+            throw new CruxException (400 , "Wrong param " + Cnst.PM_KEY);
         }
 
         // 指定行数 0, 则获取全部
@@ -223,28 +227,29 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             return data;
         }
 
-        // 指定页码 0, 仅获取分页
-        int bn  = 0;
-        if (pn != 0) {
-            bn  = ((pn - 01) * rn);
+        if (qn == 0
+        &&  pn != 0) {
+            qn  = ((pn - 01) * rn);
         }
 
         Map  resp = new HashMap(6);
         Map  page = new HashMap(5);
         page.put(Cnst.RN_KEY , rn);
+        page.put(Cnst.QN_KEY , qn);
         page.put(Cnst.PN_KEY , pn);
 
-        Loop roll = search(rd, bn, rn);
+        Loop roll = search(rd, qn, rn);
 
+        // 指定页码 0, 仅获取分页
         if (pn != 0) {
             List list = roll.toList( );
             resp.put ( "list" , list );
         }   resp.put ( "page" , page );
 
         // 分页信息
-        long rc = qn > -1 ? roll.count() : roll.total();
+        long rc = pm > -1 ? roll.count() : roll.total();
         long pc = (long) Math.ceil ( (double) rc / rn );
-        int  st = rc > bn ? (roll.truly() ? 1 : 2) : 0 ;
+        int  st = rc > qn ? (roll.truly() ? 1 : 2) : 0 ;
 
         page.put("count", rc );
         page.put("total", pc );

@@ -6,6 +6,7 @@ import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.db.link.Link;
 import io.github.ihongs.db.link.Lump;
+import io.github.ihongs.util.Synt;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,9 +28,11 @@ public final class FetchPage
 
   private int rows = Cnst.RN_DEF;
 
+  private int past = 0;
+
   private int page = 1;
 
-  private int ques = 0;
+  private int pace = 0;
 
   public FetchPage(FetchCase caze)
   {
@@ -59,8 +62,26 @@ public final class FetchPage
   }
 
   /**
+   * 每页条数
+   * @param rows
+   */
+  public void setRows(int rows)
+  {
+    this.rows = rows;
+  }
+
+  /**
+   * 跳过条数
+   * @param past
+   */
+  public void setPast(int past)
+  {
+    this.past = past;
+  }
+
+  /**
    * 当前页码
-   * @param page 
+   * @param page
    */
   public void setPage(int page)
   {
@@ -69,20 +90,11 @@ public final class FetchPage
 
   /**
    * 续查页数
-   * @param ques 
+   * @param pace
    */
-  public void setQues(int ques)
+  public void setPace(int pace)
   {
-    this.ques = ques;
-  }
-
-  /**
-   * 每页条数
-   * @param rows 
-   */
-  public void setRows(int rows)
-  {
-    this.rows = rows;
+    this.pace = pace;
   }
 
   private void chkInit()
@@ -92,22 +104,28 @@ public final class FetchPage
       throw new NullPointerException("FetchPage: FetchCase param required.");
     }
 
-    Object page2 = caze.getOption(Cnst.PN_KEY);
-    if (page2 != null && page2.equals(""))
-    {
-      this.setPage(Integer.parseInt(page2.toString()));
-    }
-
-    Object lnks2 = caze.getOption(Cnst.QN_KEY);
-    if (lnks2 != null && lnks2.equals(""))
-    {
-      this.setQues(Integer.parseInt(lnks2.toString()));
-    }
-
     Object rows2 = caze.getOption(Cnst.RN_KEY);
     if (rows2 != null && rows2.equals(""))
     {
-      this.setRows(Integer.parseInt(rows2.toString()));
+      this.setRows(Synt.asInt(rows2));
+    }
+
+    Object past2 = caze.getOption(Cnst.QN_KEY);
+    if (past2 != null && past2.equals(""))
+    {
+      this.setPast(Synt.asInt(past2));
+    }
+
+    Object page2 = caze.getOption(Cnst.PN_KEY);
+    if (page2 != null && page2.equals(""))
+    {
+      this.setPage(Synt.asInt(page2));
+    }
+
+    Object pace2 = caze.getOption(Cnst.PM_KEY);
+    if (pace2 != null && pace2.equals(""))
+    {
+      this.setPace(Synt.asInt(pace2));
     }
   }
 
@@ -149,7 +167,12 @@ public final class FetchPage
     throws CruxException
   {
     // 设置分页
-    caze.limit((this.page - 1) * this.rows, this.rows);
+    int qn = this.past;
+    if (this.past == 0 && this.page > 0)
+    {
+        qn = this.rows * (this.page - 1);
+    }
+    caze.limit(qn, this.rows );
 
     // 获取行数
     List list = this.gotList();
@@ -174,9 +197,14 @@ public final class FetchPage
   public Map getPage()
     throws CruxException
   {
-    this.info.put(Cnst.PN_KEY, this.page);
-    this.info.put(Cnst.QN_KEY, this.ques);
     this.info.put(Cnst.RN_KEY, this.rows);
+    this.info.put(Cnst.QN_KEY, this.past);
+
+    if (this.page > 0)
+        this.info.put(Cnst.PN_KEY, this.page);
+
+    if (this.pace > 0)
+        this.info.put(Cnst.PM_KEY, this.pace);
 
     // 列表为空则不用再计算了
     if (this.info.containsKey("count")
@@ -188,10 +216,10 @@ public final class FetchPage
     // 有探查数则不用查全部了
     int start;
     int limit;
-    if (this.ques > 0)
+    if (this.pace > 0)
     {
       start = rows * (page - 1);
-      limit = rows *  ques + 1 ;
+      limit = rows *  pace + 1 ;
     }
     else
     {

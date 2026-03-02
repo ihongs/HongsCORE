@@ -21,7 +21,7 @@ function HsList(context, opts) {
     this.pageKey = hsGetValue(opts, "pageKey", hsGetConf("pn.key", "pn"));
     this.rowsKey = hsGetValue(opts, "rowsKey", hsGetConf("rn.key", "rn"));
     this.rowsNum = hsGetValue(opts, "rowsNum", hsGetConf("rows.per.page", 20));
-    this.pugsNum = hsGetValue(opts, "pugsNum", hsGetConf("pugs.for.page", 5 ));
+    this.paceNum = hsGetValue(opts, "paceNum", hsGetConf("pace.for.page", 5 ));
 
     this.context = context;
     this.loadBox = loadBox;
@@ -246,11 +246,11 @@ HsList.prototype = {
         t = page[this._rc_key] ? parseInt(page[this._rc_key]) : 0;
         t = Math.ceil( t / r );
         }
-        pmin = p - Math.floor(this.pugsNum / 2);
+        pmin = p - Math.floor(this.paceNum / 2);
         if (pmin < 1) pmin = 1;
-        pmax = pmin + this.pugsNum - 1;
+        pmax = pmin + this.paceNum - 1;
         if (pmax > t) pmax = t;
-        pmin = pmax - this.pugsNum + 1;
+        pmin = pmax - this.paceNum + 1;
         if (pmin < 1) pmin = 1;
 
         this.pageBox.empty ( );
@@ -269,7 +269,7 @@ HsList.prototype = {
         {
             qbox.append(jQuery('<span></span>').text(hsGetLang("list.page.state", page)));
         }
-///     if (t >  this.pugsNum) {
+///     if (t >  this.paceNum) {
             qbox.append(jQuery('<a href="javascript:;" class="bi bi-hi-page"></a>'));
 ///     }
 

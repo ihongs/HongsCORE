@@ -96,15 +96,18 @@ public class Defer<T> implements Future<T>, AutoCloseable {
     @Override
     public T get() throws InterruptedException, ExecutionException {
         int st = stat.getAndUpdate(t -> t < 2 ? t + 2 : t);
-        if (st <  4) { // 未结束则等待
+        // 未结束则等待
+        if (st <  4) {
             synchronized (this) {
                 wait ( );
             }
             st = stat.get( );
-            if (st <  4) { // 未结束则取消
+            // 未结束则取消
+            if (st <  4) {
                 cancel(true);
             }
-            if (st == 4) { // 取消则抛异常
+            // 取消则抛异常
+            if (st == 4 && fail == null) {
                 throw new CancellationException();
             }
         }
@@ -122,15 +125,18 @@ public class Defer<T> implements Future<T>, AutoCloseable {
     @Override
     public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
         int st = stat.getAndUpdate(t -> t < 2 ? t + 2 : t);
-        if (st <  4) { // 未结束则等待
+        // 未结束则等待
+        if (st <  4) {
             synchronized (this) {
                 wait(unit.convert(timeout, TimeUnit.MILLISECONDS));
             }
             st = stat.get( );
-            if (st <  4) { // 未结束则超时
+            // 未结束则超时
+            if (st <  4) {
                 throw new TimeoutException (/**/);
             }
-            if (st == 4) { // 取消则抛异常
+            // 取消则抛异常
+            if (st == 4 && fail == null) {
                 throw new CancellationException();
             }
         }

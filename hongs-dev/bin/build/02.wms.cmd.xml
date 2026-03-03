@@ -27,6 +27,28 @@
         <arg opt="output">$DST_DIR/hongsedit.min.js</arg>
         <arg>$SRC_DIR/hongsedit.js</arg>
     </combat>
+    <!--
+    <combat system="no">
+        <cmd>minify.build</cmd>
+        <arg opt="output">$DST_DIR/hongsextr-dateinput.min.js</arg>
+        <arg>$SRC_DIR/hongsextr-dateinput.js</arg>
+    </combat>
+    <combat system="no">
+        <cmd>minify.build</cmd>
+        <arg opt="output">$DST_DIR/hongsextr-fileinput.min.js</arg>
+        <arg>$SRC_DIR/hongsextr-fileinput.js</arg>
+    </combat>
+    <combat system="no">
+        <cmd>minify.build</cmd>
+        <arg opt="output">$DST_DIR/hongsextr-sugginput.min.js</arg>
+        <arg>$SRC_DIR/hongsextr-sugginput.js</arg>
+    </combat>
+    <combat system="no">
+        <cmd>minify.build</cmd>
+        <arg opt="output">$DST_DIR/hongsextr-tagsinput.min.js</arg>
+        <arg>$SRC_DIR/hongsextr-tagsinput.js</arg>
+    </combat>
+    -->
     <combat system="no">
         <cmd>minify.build</cmd>
         <arg opt="output">*.min</arg>

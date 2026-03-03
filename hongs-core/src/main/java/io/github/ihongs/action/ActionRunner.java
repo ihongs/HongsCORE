@@ -8,6 +8,7 @@ import io.github.ihongs.CruxException;
 import io.github.ihongs.CruxExemption;
 import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.action.anno.Assign;
+import io.github.ihongs.action.anno.AutoAdapter;
 import io.github.ihongs.action.anno.Filter;
 import io.github.ihongs.action.anno.FilterInvoker;
 import io.github.ihongs.dh.IActing;
@@ -160,6 +161,7 @@ public class ActionRunner {
             /**
              * 当前动作并不存在
              * 尝试逐级向上查找
+             * 仅支持 AutoAdapter 的动作
              */
             if (!ad.containsKey(at)) {
                 String   mt; // 方法
@@ -170,9 +172,14 @@ public class ActionRunner {
                     ot = ot.substring(0,ps);
                 while (0 < (ps = ot.lastIndexOf("/"))) {
                     ot = ot.substring(0,ps);
-                         ap = ot  +  mt;
+                         ap =  ot + mt ;
                     if ( ad.containsKey(ap)) {
-                         at = ap; break;
+                        Mathod ma = (Mathod) ad.get(ap);
+                        if (ma.getMclass().isAnnotationPresent(AutoAdapter.class)
+                        ||  ma.getMethod().isAnnotationPresent(AutoAdapter.class)) {
+                            at = ap;
+                            break  ;
+                        }
                     }
                 }}
             }

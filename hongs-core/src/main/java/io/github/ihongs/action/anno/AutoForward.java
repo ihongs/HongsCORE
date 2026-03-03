@@ -6,10 +6,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * 操作成功才提交数据更改
+ * 转发动作
+ *
+ * AutoAction 里将会 forward, 无此则 include
+ *
  * @author Hongs
  */
-@Target(ElementType.METHOD)
+@Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-@Filter(CommitInvoker.class)
-public @interface CustomReplies { }
+public @interface AutoForward { }

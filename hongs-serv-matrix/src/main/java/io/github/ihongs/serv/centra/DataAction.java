@@ -5,6 +5,7 @@ import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
 import io.github.ihongs.action.anno.Action;
+import io.github.ihongs.action.anno.AutoAdapter;
 import io.github.ihongs.action.anno.Select;
 import io.github.ihongs.action.anno.Verify;
 import io.github.ihongs.action.anno.CommitSuccess;
@@ -21,6 +22,7 @@ import java.util.Map;
  * @author Hongs
  */
 @Action("centra/data")
+@AutoAdapter
 public class DataAction extends SearchAction {
 
     /**

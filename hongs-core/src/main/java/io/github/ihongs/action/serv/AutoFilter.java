@@ -7,7 +7,6 @@ import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
 import io.github.ihongs.action.anno.Action;
-import io.github.ihongs.action.anno.CustomReplies;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -23,6 +22,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import io.github.ihongs.action.anno.AutoForward;
 
 /**
  * 自动处理过滤器
@@ -306,7 +306,8 @@ public class AutoFilter extends ActionDriver {
                 } else {
                     uri = "/"+ mtd.getName();
                 }
-                if (mtd.isAnnotationPresent(CustomReplies.class)) {
+                if (cls.isAnnotationPresent(AutoForward.class)
+                ||  mtd.isAnnotationPresent(AutoForward.class)) {
                     cstset.add(uri);
                 }
                     actset.add(uri);

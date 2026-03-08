@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 
 /**
  * 极简模板引擎
@@ -45,7 +46,8 @@ import java.util.function.Function;
 public class Template {
 
     private final List<Block> blocks;
-    private Map<String, Function<Object[], Object>> functions;
+    private final Map<String, Function<Object[], Object>> functions;
+    private final static Pattern TEMP_LINE = Pattern.compile("^\\s*(\\{%(?!\\s*include\\s+).*?%\\}|\\{#.*?#\\})\\s*$");
 
     private Template(List<Block> blocks) {
         this.blocks = blocks;
@@ -119,23 +121,20 @@ public class Template {
     }
 
     private static List<Block> parseTemplate(String template, Path basePath) {
+        // 为规避多余的空行影响格式
         // 清理独行指令标签前后空白及末尾换行
-        // 规避输出空行影响格式
         // 方法简单但对字符串有修改会造成拷贝
-        // 以后再尝试更高效的吧
-        template = template.replaceAll("(?<=\n)[ \t]*(\\{%.*?%\\}|\\{#.*?#\\})[ \t]*\n", "$1");
+        //template = template.replaceAll("(?<=\n)[ \t]*(\\{%.*?%\\}|\\{#.*?#\\})[ \t]*\n", "$1");
 
-        return parseTemplate(template, basePath, 1);
+        return parseTemplate(template, basePath, 0, template.length());
     }
 
-    private static List<Block> parseTemplate(String template, Path basePath, int startLine) {
+    private static List<Block> parseTemplate(String baseTemp, Path basePath, int bPos, int ePos) {
+        String template = baseTemp.substring(bPos, ePos);
         List<Block> blocks = new ArrayList<>();
         int index = 0;
 
         while (index < template.length()) {
-            // Calculate current line number
-            int currentLine = startLine + countLines(template.substring(0, index));
-
             int varStart = template.indexOf("{{", index);
             int dirStart = template.indexOf("{%", index);
             int comStart = template.indexOf("{#", index);
@@ -146,17 +145,40 @@ public class Template {
             if (dirStart != -1 && (nextStart == -1 || dirStart < nextStart)) nextStart = dirStart;
             if (comStart != -1 && (nextStart == -1 || comStart < nextStart)) nextStart = comStart;
 
+            // No more directives, add remaining text
             if (nextStart == -1) {
-                // No more directives, add remaining text
-                if (index < template.length()) {
-                    blocks.add(new TxtBlock(template.substring(index)));
+            if (index < template.length()) {
+                // 清理独行指令空白
+                int end = template.length();
+                int p0  = baseTemp.lastIndexOf("\n", bPos + end);
+                int p1  = baseTemp.    indexOf("\n", bPos + end);
+                if (p0 != -1 && p1 != -1) {
+                    String line = baseTemp.substring(p0, p1);
+                    if (TEMP_LINE.matcher(line).matches()) {
+                        end = p0 - bPos;
+                    }
                 }
+
+                String text = template.substring(index, end);
+                blocks.add(new TxtBlock(text));
+            }
                 break;
             }
 
             // Add plain text before the directive
             if (nextStart > index) {
-                String text = template.substring(index, nextStart);
+                // 清理独行指令空白
+                int end = nextStart;
+                int p0  = baseTemp.lastIndexOf("\n", bPos + end);
+                int p1  = baseTemp.    indexOf("\n", bPos + end);
+                if (p0 != -1 && p1 != -1) {
+                    String line = baseTemp.substring(p0, p1);
+                    if (TEMP_LINE.matcher(line).matches()) {
+                        end = p0 - bPos;
+                    }
+                }
+
+                String text = template.substring(index, end);
                 blocks.add(new TxtBlock(text));
             }
 
@@ -172,6 +194,7 @@ public class Template {
                     end++;
                 }
                 if (end >= template.length()) {
+                    int currentLine = countLines(baseTemp.substring(0, bPos + dirStart)) + 1;
                     throw new IllegalArgumentException("Line " + currentLine + ": Unclosed directive");
                 }
                 end += 2;
@@ -185,10 +208,12 @@ public class Template {
                     // Find matching endif
                     int endifStart = findMatchingEnd(template, end, "endif");
                     if (endifStart == -1) {
+                        int currentLine = countLines(baseTemp.substring(0, bPos + dirStart)) + 1;
                         throw new IllegalArgumentException("Line " + currentLine + ": Unclosed if statement");
                     }
                     int endifEnd = template.indexOf("%}", endifStart);
                     if (endifEnd == -1) {
+                        int currentLine = countLines(baseTemp.substring(0, bPos + dirStart)) + 1;
                         throw new IllegalArgumentException("Line " + currentLine + ": Unclosed if statement");
                     }
                     endifEnd += 2;
@@ -207,8 +232,8 @@ public class Template {
                         int nextDirectiveStart = template.indexOf("{%", currentPos);
                         if (nextDirectiveStart == -1 || nextDirectiveStart >= endifStart) {
                             // No more directives, process the last condition
-                            String content = template.substring(currentStart, endifStart);
-                            List<Block> innerBlocks = parseTemplate(content, basePath, startLine + countLines(template.substring(0, currentStart)));
+                            //String content = template.substring(currentStart, endifStart);
+                            List<Block> innerBlocks = parseTemplate(baseTemp, basePath, bPos + currentStart, bPos + endifStart);
                             conditionalBlocks.get(conditionalBlocks.size() - 1).setBlocks(innerBlocks);
                             break;
                         }
@@ -216,25 +241,26 @@ public class Template {
                         // Check if this is an else or elif directive
                         int directiveEnd = template.indexOf("%}", nextDirectiveStart);
                         if (directiveEnd == -1) {
+                            int currentLine = countLines(baseTemp.substring(0, bPos + currentPos)) + 1;
                             throw new IllegalArgumentException("Line " + currentLine + ": Unclosed directive");
                         }
                         String nextDirective = template.substring(nextDirectiveStart + 2, directiveEnd).trim();
 
                         if (nextDirective.equals("else")) {
                             // Process the current condition's content
-                            String content = template.substring(currentStart, nextDirectiveStart);
-                            List<Block> innerBlocks = parseTemplate(content, basePath, startLine + countLines(template.substring(0, currentStart)));
+                            //String content = template.substring(currentStart, nextDirectiveStart);
+                            List<Block> innerBlocks = parseTemplate(baseTemp, basePath, bPos + currentStart, bPos + nextDirectiveStart);
                             conditionalBlocks.get(conditionalBlocks.size() - 1).setBlocks(innerBlocks);
 
                             // Process else block
-                            String elseContent = template.substring(directiveEnd + 2, endifStart);
-                            elseBlocks = parseTemplate(elseContent, basePath, startLine + countLines(template.substring(0, directiveEnd + 2)));
+                            //String elseContent = template.substring(directiveEnd + 2, endifStart);
+                            elseBlocks = parseTemplate(baseTemp, basePath, bPos + directiveEnd + 2, bPos + endifStart);
                             break;
                         } else
                         if (nextDirective.startsWith("elif ")) {
                             // Process the current condition's content
-                            String content = template.substring(currentStart, nextDirectiveStart);
-                            List<Block> innerBlocks = parseTemplate(content, basePath, startLine + countLines(template.substring(0, currentStart)));
+                            //String content = template.substring(currentStart, nextDirectiveStart);
+                            List<Block> innerBlocks = parseTemplate(baseTemp, basePath, bPos + currentStart, bPos + nextDirectiveStart);
                             conditionalBlocks.get(conditionalBlocks.size() - 1).setBlocks(innerBlocks);
 
                             // Add a new conditional block for elif
@@ -256,6 +282,7 @@ public class Template {
                     // For block
                     String[] parts = directive.substring(4).trim().split("\\s+in\\s+");
                     if (parts.length != 2) {
+                        int currentLine = countLines(baseTemp.substring(0, bPos + dirStart)) + 1;
                         throw new IllegalArgumentException("Line " + currentLine + ": Invalid for statement: " + directive);
                     }
                     String variableName = parts[0].trim();
@@ -263,10 +290,12 @@ public class Template {
                     // Find matching endfor
                     int endforStart = findMatchingEnd(template, end, "endfor");
                     if (endforStart == -1) {
+                        int currentLine = countLines(baseTemp.substring(0, bPos + dirStart)) + 1;
                         throw new IllegalArgumentException("Line " + currentLine + ": Unclosed for statement");
                     }
                     int endforEnd = template.indexOf("%}", endforStart);
                     if (endforEnd == -1) {
+                        int currentLine = countLines(baseTemp.substring(0, bPos + dirStart)) + 1;
                         throw new IllegalArgumentException("Line " + currentLine + ": Unclosed for statement");
                     }
                     endforEnd += 2;
@@ -328,22 +357,23 @@ public class Template {
 
                     if (elseStart != -1 && elseStart < endforStart) {
                         // Found else clause
-                        String loopContent = template.substring(end, elseStart);
-                        innerBlocks = parseTemplate(loopContent, basePath, startLine + countLines(template.substring(0, end)));
+                        //String loopContent = template.substring(end, elseStart);
+                        innerBlocks = parseTemplate(baseTemp, basePath, bPos + end, bPos + elseStart);
 
                         // Find the end of else directive
                         int elseEnd = template.indexOf("%}", elseStart);
                         if (elseEnd == -1) {
+                            int currentLine = countLines(baseTemp.substring(0, bPos + currentPos)) + 1;
                             throw new IllegalArgumentException("Line " + currentLine + ": Unclosed else directive");
                         }
                         elseEnd += 2;
 
-                        String elseContent = template.substring(elseEnd, endforStart);
-                        elseBlocks = parseTemplate(elseContent, basePath, startLine + countLines(template.substring(0, elseEnd)));
+                        //String elseContent = template.substring(elseEnd, endforStart);
+                        elseBlocks = parseTemplate(baseTemp, basePath, bPos + elseStart, bPos + endforStart);
                     } else {
                         // No else clause
-                        String content = template.substring(end, endforStart);
-                        innerBlocks = parseTemplate(content, basePath, startLine + countLines(template.substring(0, end)));
+                        //String content = template.substring(end, endforStart);
+                        innerBlocks = parseTemplate(baseTemp, basePath, bPos + end, bPos + endforStart);
                     }
 
                     blocks.add(new ForBlock(variableName, collectionName, innerBlocks, elseBlocks));
@@ -353,6 +383,7 @@ public class Template {
                     // Set block
                     String[] parts = directive.substring(4).trim().split("\\s*=\\s*");
                     if (parts.length != 2) {
+                        int currentLine = countLines(baseTemp.substring(0, bPos + dirStart)) + 1;
                         throw new IllegalArgumentException("Line " + currentLine + ": Invalid set statement: " + directive);
                     }
                     String variableName = parts[0].trim();
@@ -369,13 +400,15 @@ public class Template {
                     // Find the first quote
                     int firstQuote = includePart.indexOf('"');
                     if (firstQuote == -1) {
+                        int currentLine = countLines(baseTemp.substring(0, bPos + dirStart)) + 1;
                         throw new IllegalArgumentException("Line " + currentLine + ": Include template name must be quoted");
                     }
 
                     // Find the matching closing quote
                     int lastQuote = includePart.indexOf('"', firstQuote + 1);
                     if (lastQuote == -1) {
-                        throw new IllegalArgumentException("Line " + currentLine + ": Unclosed quote in include template name");
+                        int currentLine = countLines(baseTemp.substring(0, bPos + dirStart)) + 1;
+                        throw new IllegalArgumentException("Line " + currentLine + ": Include template name quote unclosed");
                     }
 
                     // Extract the template name
@@ -395,9 +428,11 @@ public class Template {
                 ||  directive.equals("endfor")) {
                     // Else directive - should only be found by the if or for block parser
                     // End directive - should only be found by findMatchingEnd
+                    int currentLine = countLines(baseTemp.substring(0, bPos + dirStart)) + 1;
                     throw new IllegalArgumentException("Line " + currentLine + ": Unexpected directive: " + directive);
                 } else {
                     // Unknown directive
+                    int currentLine = countLines(baseTemp.substring(0, bPos + dirStart)) + 1;
                     throw new IllegalArgumentException("Line " + currentLine + ": Unknown directive: " + directive);
                 }
             } else
@@ -405,6 +440,7 @@ public class Template {
                 // Variable block
                 int end = template.indexOf("}}", varStart);
                 if (end == -1) {
+                    int currentLine = countLines(baseTemp.substring(0, bPos + varStart)) + 1;
                     throw new IllegalArgumentException("Line " + currentLine + ": Unclosed variable");
                 }
                 String variableName = template.substring(varStart + 2, end).trim();
@@ -415,7 +451,8 @@ public class Template {
                 // Comment block - skip
                 int end = template.indexOf("#}", comStart);
                 if (end == -1) {
-                    throw new IllegalArgumentException("Line " + currentLine + ": Unclosed comment");
+                    int currentLine = countLines(baseTemp.substring(0, bPos + comStart)) + 1;
+                    throw new IllegalArgumentException("Line " + currentLine + ": Unclosed comments");
                 }
                 index = end + 2;
             }

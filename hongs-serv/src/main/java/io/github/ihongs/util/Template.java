@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -47,7 +48,7 @@ public class Template {
 
     private final List<Block> blocks;
     private final Map<String, Function<Object[], Object>> functions;
-    private final static Pattern TEMP_LINE = Pattern.compile("^\\s*(\\{%(?!\\s*include\\s+).*?%\\}|\\{#.*?#\\})\\s*$");
+    private final static Pattern TEMP_LINE = Pattern.compile("(\\{%(?!\\s*include\\s+).*?%\\}|\\{#.*?#\\})");
 
     private Template(List<Block> blocks) {
         this.blocks = blocks;
@@ -150,15 +151,8 @@ public class Template {
             if (index < template.length()) {
                 // 清理独行指令空白
                 int end = template.length();
-                int p0  = baseTemp.lastIndexOf("\n", bPos + end);
-                int p1  = baseTemp.    indexOf("\n", bPos + end);
-                if (p0 != -1 && p1 != -1) {
-                    String line = baseTemp.substring(p0, p1);
-                    if (TEMP_LINE.matcher(line.trim()).matches()) {
-                        end = p0 - bPos;
-                    }
-                }
-                if (index < end) {
+                    end = findTxtEnd(baseTemp, bPos, end);
+                if (end > index) {
                     String text = template.substring(index, end);
                     blocks.add(new TxtBlock(text));
                 }
@@ -170,15 +164,8 @@ public class Template {
             if (nextStart > index) {
                 // 清理独行指令空白
                 int end = nextStart;
-                int p0  = baseTemp.lastIndexOf("\n", bPos + end);
-                int p1  = baseTemp.    indexOf("\n", bPos + end);
-                if (p0 != -1 && p1 != -1) {
-                    String line = baseTemp.substring(p0, p1);
-                    if (TEMP_LINE.matcher(line.trim()).matches()) {
-                        end = p0 - bPos;
-                    }
-                }
-                if (index < end) {
+                    end = findTxtEnd(baseTemp, bPos, end);
+                if (end > index) {
                     String text = template.substring(index, end);
                     blocks.add(new TxtBlock(text));
                 }
@@ -525,6 +512,19 @@ public class Template {
         }
 
         return -1;
+    }
+
+    private static int findTxtEnd(String template, int start, int end) {
+        int p0  = template.lastIndexOf("\n", start + end);
+        int p1  = template.    indexOf("\n", start + end);
+        if (p0 != -1 && p1 != -1) {
+            String line = template.substring(p0, p1).trim();
+            Matcher mat = TEMP_LINE.matcher(line);
+            if (mat.find() && mat.start() == 0 && mat.end() == line.length()) {
+                return p0 - start;
+            }
+        }
+        return end;
     }
 
     private static int countLines(String text) {

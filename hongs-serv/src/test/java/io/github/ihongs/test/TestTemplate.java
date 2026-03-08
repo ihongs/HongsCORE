@@ -322,11 +322,7 @@ public class TestTemplate {
         String template = """
         <h2>For with else test</h2>
         <ul>
-            {%for item in items%}
-            <li>{{item}}</li>
-            {%else%}
-            <li>No items found</li>
-            {%endfor%}
+            {%for item in items%}<li>{{item}}</li>{%else%}<li>No items found</li>{%endfor%}
         </ul>
         """;
     

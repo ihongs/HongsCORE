@@ -119,6 +119,12 @@ public class Template {
     }
 
     private static List<Block> parseTemplate(String template, Path basePath) {
+        // 清理独行指令标签前后空白及末尾换行
+        // 规避输出空行影响格式
+        // 方法简单但对字符串有修改会造成拷贝
+        // 以后再尝试更高效的吧
+        template = template.replaceAll("(?<=\n)[ \t]*(\\{%.*?%\\}|\\{#.*?#\\})[ \t]*\n", "$1");
+
         return parseTemplate(template, basePath, 1);
     }
 
@@ -150,19 +156,11 @@ public class Template {
 
             // Add plain text before the directive
             if (nextStart > index) {
-                blocks.add(new TxtBlock(template.substring(index, nextStart)));
+                String text = template.substring(index, nextStart);
+                blocks.add(new TxtBlock(text));
             }
 
-            if (nextStart == varStart) {
-                // Variable block
-                int end = template.indexOf("}}", varStart);
-                if (end == -1) {
-                    throw new IllegalArgumentException("Line " + currentLine + ": Unclosed variable expression");
-                }
-                String variableName = template.substring(varStart + 2, end).trim();
-                blocks.add(new VarBlock(variableName));
-                index = end + 2;
-            } else if (nextStart == dirStart) {
+            if (nextStart == dirStart) {
                 // Directive block
                 // Find the end of the directive by scanning for %}
                 int end = dirStart + 2;
@@ -195,11 +193,11 @@ public class Template {
                     }
                     endifEnd += 2;
 
-                    List<IfBlock.ConditionalBlock> conditionalBlocks = new ArrayList<>();
+                    List<IfBlock.InBlock> conditionalBlocks = new ArrayList<>();
                     List<Block> elseBlocks = new ArrayList<>();
 
                     // Add the first condition
-                    conditionalBlocks.add(new IfBlock.ConditionalBlock(condition, new ArrayList<>()));
+                    conditionalBlocks.add(new IfBlock.InBlock(condition, new ArrayList<>()));
 
                     int currentStart = end;
                     int currentPos = end;
@@ -222,24 +220,28 @@ public class Template {
                         }
                         String nextDirective = template.substring(nextDirectiveStart + 2, directiveEnd).trim();
 
-                        if (nextDirective.equals("else") || nextDirective.startsWith("elif ")) {
+                        if (nextDirective.equals("else")) {
                             // Process the current condition's content
                             String content = template.substring(currentStart, nextDirectiveStart);
                             List<Block> innerBlocks = parseTemplate(content, basePath, startLine + countLines(template.substring(0, currentStart)));
                             conditionalBlocks.get(conditionalBlocks.size() - 1).setBlocks(innerBlocks);
 
-                            if (nextDirective.equals("else")) {
-                                // Process else block
-                                String elseContent = template.substring(directiveEnd + 2, endifStart);
-                                elseBlocks = parseTemplate(elseContent, basePath, startLine + countLines(template.substring(0, directiveEnd + 2)));
-                                break;
-                            } else if (nextDirective.startsWith("elif ")) {
-                                // Add a new conditional block for elif
-                                String elifCondition = nextDirective.substring(5).trim();
-                                conditionalBlocks.add(new IfBlock.ConditionalBlock(elifCondition, new ArrayList<>()));
-                                currentStart = directiveEnd + 2;
-                                currentPos = currentStart;
-                            }
+                            // Process else block
+                            String elseContent = template.substring(directiveEnd + 2, endifStart);
+                            elseBlocks = parseTemplate(elseContent, basePath, startLine + countLines(template.substring(0, directiveEnd + 2)));
+                            break;
+                        } else
+                        if (nextDirective.startsWith("elif ")) {
+                            // Process the current condition's content
+                            String content = template.substring(currentStart, nextDirectiveStart);
+                            List<Block> innerBlocks = parseTemplate(content, basePath, startLine + countLines(template.substring(0, currentStart)));
+                            conditionalBlocks.get(conditionalBlocks.size() - 1).setBlocks(innerBlocks);
+
+                            // Add a new conditional block for elif
+                            String elifCondition = nextDirective.substring(5).trim();
+                            conditionalBlocks.add(new IfBlock.InBlock(elifCondition, new ArrayList<>()));
+                            currentStart = directiveEnd + 2;
+                            currentPos = currentStart;
                         } else {
                             // Not an else/elif, continue searching
                             currentPos = directiveEnd + 2;
@@ -249,10 +251,8 @@ public class Template {
                     // Create the IfBlock with all conditional blocks and else blocks
                     blocks.add(new IfBlock(conditionalBlocks, elseBlocks));
                     index = endifEnd;
-                } else if (directive.equals("else")) {
-                    // Else directive - should only be found by the if or for block parser
-                    throw new IllegalArgumentException("Line " + currentLine + ": Unexpected else directive: " + directive);
-                } else if (directive.startsWith("for ")) {
+                } else
+                if (directive.startsWith("for ")) {
                     // For block
                     String[] parts = directive.substring(4).trim().split("\\s+in\\s+");
                     if (parts.length != 2) {
@@ -301,13 +301,16 @@ public class Template {
 
                         if (nestedDirective.startsWith("for ")) {
                             nestedForCount++;
-                        } else if (nestedDirective.equals("endfor")) {
+                        } else
+                        if (nestedDirective.equals("endfor")) {
                             if (nestedForCount > 0) {
                                 nestedForCount--;
                             }
-                        } else if (nestedDirective.startsWith("if ")) {
+                        } else
+                        if (nestedDirective.startsWith("if ")) {
                             nestedIfCount++;
-                        } else if (nestedDirective.equals("endif")) {
+                        } else
+                        if (nestedDirective.equals("endif")) {
                             if (nestedIfCount > 0) {
                                 nestedIfCount--;
                             }
@@ -345,7 +348,8 @@ public class Template {
 
                     blocks.add(new ForBlock(variableName, collectionName, innerBlocks, elseBlocks));
                     index = endforEnd;
-                } else if (directive.startsWith("set ")) {
+                } else
+                if (directive.startsWith("set ")) {
                     // Set block
                     String[] parts = directive.substring(4).trim().split("\\s*=\\s*");
                     if (parts.length != 2) {
@@ -355,7 +359,8 @@ public class Template {
                     String valueExpression = parts[1].trim();
                     blocks.add(new SetBlock(variableName, valueExpression));
                     index = end;
-                } else if (directive.startsWith("include ")) {
+                } else
+                if (directive.startsWith("include ")) {
                     // Include block
                     String includePart = directive.substring(8).trim();
                     String includeName = null;
@@ -384,30 +389,35 @@ public class Template {
 
                     blocks.add(new SubBlock(basePath, includeName, subContext));
                     index = end;
-                } else if (directive.equals("endif") || directive.equals("endfor")) {
+                } else
+                if (directive.equals("else")
+                ||  directive.equals("endif")
+                ||  directive.equals("endfor")) {
+                    // Else directive - should only be found by the if or for block parser
                     // End directive - should only be found by findMatchingEnd
-                    throw new IllegalArgumentException("Line " + currentLine + ": Unexpected end directive: " + directive);
+                    throw new IllegalArgumentException("Line " + currentLine + ": Unexpected directive: " + directive);
                 } else {
                     // Unknown directive
                     throw new IllegalArgumentException("Line " + currentLine + ": Unknown directive: " + directive);
                 }
-            } else if (nextStart == comStart) {
+            } else
+            if (nextStart == varStart) {
+                // Variable block
+                int end = template.indexOf("}}", varStart);
+                if (end == -1) {
+                    throw new IllegalArgumentException("Line " + currentLine + ": Unclosed variable");
+                }
+                String variableName = template.substring(varStart + 2, end).trim();
+                blocks.add(new VarBlock(variableName));
+                index = end + 2;
+            } else
+            if (nextStart == comStart) {
                 // Comment block - skip
                 int end = template.indexOf("#}", comStart);
                 if (end == -1) {
                     throw new IllegalArgumentException("Line " + currentLine + ": Unclosed comment");
                 }
                 index = end + 2;
-            }
-        }
-
-        // Clear whitespace around directive blocks
-        for (int i = 0; i < blocks.size(); i++) {
-            Block currentBlock = blocks.get(i);
-            if (currentBlock instanceof TxtBlock) {
-                Block previousBlock = i > 0 ? blocks.get(i - 1) : null;
-                Block nextBlock = i < blocks.size() - 1 ? blocks.get(i + 1) : null;
-                ((TxtBlock) currentBlock).clear(previousBlock, nextBlock);
             }
         }
 
@@ -445,12 +455,14 @@ public class Template {
                 if (endDirective.equals("endif")) {
                     count++;
                 }
-            } else if (directive.startsWith("for ")) {
+            } else
+            if (directive.startsWith("for ")) {
                 // Nested for
                 if (endDirective.equals("endfor")) {
                     count++;
                 }
-            } else if (directive.equals("endif")) {
+            } else
+            if (directive.equals("endif")) {
                 // Endif directive
                 if (endDirective.equals("endif")) {
                     count--;
@@ -458,7 +470,8 @@ public class Template {
                         return dirStart;
                     }
                 }
-            } else if (directive.equals("endfor")) {
+            } else
+            if (directive.equals("endfor")) {
                 // Endfor directive
                 if (endDirective.equals("endfor")) {
                     count--;
@@ -500,40 +513,6 @@ public class Template {
             this.text = text;
         }
 
-        public void clear(Block prevBlock, Block nextBlock) {
-            if (text == null || text.isEmpty()) {
-                return;
-            }
-
-            // Check if both previous and next blocks are directive blocks
-            // 子块内部首个也需要清理（不好区分也没必要区分是顶级还是子级）
-            boolean isPrevDirective = prevBlock == null || (prevBlock instanceof IfBlock || prevBlock instanceof ForBlock || prevBlock instanceof SetBlock);
-            boolean isNextDirective = nextBlock != null && (nextBlock instanceof IfBlock || nextBlock instanceof ForBlock || nextBlock instanceof SetBlock);
-
-            if (isPrevDirective) {
-                // Check if previous block is a directive block (if/for/set)
-                // Clear whitespace before first newline
-                int firstNewline = text.indexOf('\n');
-                if (firstNewline != -1) {
-                    // Keep everything after the first newline
-                    if (text.substring(0, firstNewline).isBlank()) {
-                        text = text.substring(firstNewline + 1);
-                    }
-                }
-            }
-            if (isNextDirective) {
-                // Check if next block is a directive block (if/for/set)
-                // Clear whitespace after last newline
-                int lastNewline = text.lastIndexOf('\n');
-                if (lastNewline != -1) {
-                    // Keep everything up to and including the last newline
-                    if (text.substring(lastNewline + 1).isBlank()) {
-                        text = text.substring(0, lastNewline + 1);
-                    }
-                }
-            }
-        }
-
         @Override
         public void render(Map<String, Object> context, Writer writer) throws IOException {
             writer.write(text);
@@ -559,17 +538,17 @@ public class Template {
 
     // If block
     private static class IfBlock implements Block {
-        private final List<ConditionalBlock> conditionalBlocks;
+        private final List<InBlock> innerBlocks;
         private final List<Block> elseBlocks;
 
-        public IfBlock(List<ConditionalBlock> conditionalBlocks, List<Block> elseBlocks) {
-            this.conditionalBlocks = conditionalBlocks;
+        public IfBlock(List<InBlock> innerBlocks, List<Block> elseBlocks) {
+            this.innerBlocks = innerBlocks;
             this.elseBlocks = elseBlocks;
         }
 
         @Override
         public void render(Map<String, Object> context, Writer writer) throws IOException {
-            for (ConditionalBlock block : conditionalBlocks) {
+            for (InBlock block : innerBlocks) {
                 if (evaluateCondition(block.condition, context)) {
                     for (Block innerBlock : block.blocks) {
                         innerBlock.render(context, writer);
@@ -580,20 +559,6 @@ public class Template {
             // If none of the conditions are true, render the else blocks
             for (Block block : elseBlocks) {
                 block.render(context, writer);
-            }
-        }
-
-        static class ConditionalBlock {
-            private final String condition;
-            private List<Block> blocks;
-
-            public ConditionalBlock(String condition, List<Block> blocks) {
-                this.condition = condition;
-                this.blocks = blocks;
-            }
-
-            public void setBlocks(List<Block> blocks) {
-                this.blocks = blocks;
             }
         }
 
@@ -613,6 +578,20 @@ public class Template {
                 return ((Number) result).doubleValue() != 0;
             } else {
                 return true;
+            }
+        }
+
+        static class InBlock {
+            private final String condition;
+            private List<Block> blocks;
+
+            public InBlock(String condition, List<Block> blocks) {
+                this.condition = condition;
+                this.blocks = blocks;
+            }
+
+            public void setBlocks(List<Block> blocks) {
+                this.blocks = blocks;
             }
         }
 
@@ -1256,6 +1235,7 @@ public class Template {
 
     /**
      * 默认模板函数
+     * 默认: default(变量1, 变量2...) 跳过空值、空串和数字 0
      * 缩进: indent(文本, 缩进几格) 或 indent(文本) 缩进两格
      * 连词: concat(列表, 连词符号) 或 indent(列表) 逗号连接
      * 格式: format(格式, 变量1, 变量2...)
@@ -1272,6 +1252,24 @@ public class Template {
      */
     public static final Map<String, Function<Object[], Object>> FUNCTIONS = new HashMap();
     static {
+        FUNCTIONS.put("default", args -> {
+            for (Object arg : args) {
+                if (arg != null) {
+                    if (arg instanceof String str ) {
+                        if (! "".equals(str)) {
+                            return arg;
+                        }
+                    } else
+                    if (arg instanceof Number num ) {
+                        if (0 != num.doubleValue()) {
+                            return arg;
+                        }
+                    }
+                }
+            }
+            return null;
+        });
+
         FUNCTIONS.put("indent", args -> {
             String s = Synt.asString(args[0]);
             if (s == null || "".equals(s)) {

@@ -18,7 +18,7 @@ import org.junit.Test;
  */
 public class TestTemplate {
     
-    //@Test
+    @Test
     public void test() throws IOException {
         Map<String, Object> context = new HashMap<>();
         context.put("title", "My Template");
@@ -32,7 +32,8 @@ public class TestTemplate {
         context.put("footerText", "Copyright 2026");
 
         // include files
-        Path dir = Path.of("target/test-template");
+        String basePath = "target/var/test-template";
+        Path dir = Path.of(basePath);
         Files.createDirectories(dir);
         FileWriter writer;
         writer = new FileWriter(new File(dir.toString(), "header.html"));
@@ -63,10 +64,10 @@ public class TestTemplate {
         // Test 1: Basic template rendering
         String template1 = """
         <h1>{{title}}</h1>
-        {%set greeting = "Hello"%}
-        {%if showWelcome%}
+          {%set greeting = "Hello"%}
+          {%if showWelcome%}
           <p>{{greeting}}, {{user.name}}!</p>
-        {%endif%}
+          {%endif%}
         <p>Count: {{count}}</p>
         <p>Price: {{price}}</p>
         <p>Is Active: {{isActive}}</p>
@@ -105,7 +106,6 @@ public class TestTemplate {
 
         try {
             System.out.println("\nTest 2: Include directive with basePath");
-            String basePath = "var/template-test";
             Template engine2 = Template.compile(template2, Path.of(basePath));
             String result2 = engine2.render(context);
             System.out.println(result2);
@@ -200,7 +200,6 @@ public class TestTemplate {
 
         try {
             System.out.println("\nTest 7: Include with subContext");
-            String basePath = "var/template-test";
             Template engine7 = Template.compile(template7, Path.of(basePath));
             String result7 = engine7.render(context);
             System.out.println(result7);
@@ -216,7 +215,6 @@ public class TestTemplate {
 
         try {
             System.out.println("\nTest 8: Include with template name containing 'with'");
-            String basePath = "var/template-test";
             Template engine8 = Template.compile(template8, Path.of(basePath));
             String result8 = engine8.render(context);
             System.out.println(result8);
@@ -592,6 +590,10 @@ public class TestTemplate {
         // Test inner function call
         {%set num = 199.543%}
         {{format("Price: %.2f", num)}}
+                            
+        // Test inline if
+        - {%if true%}abc{%endif%}
+        - syz
         """;
 
         System.out.println("\nTest 17: Function calls");

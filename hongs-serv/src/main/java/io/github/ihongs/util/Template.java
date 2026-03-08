@@ -23,7 +23,7 @@ import java.util.function.Function;
  * @see https://jinja.flask.org.cn/en/3.1.x/templates/#base-template
  * 支持 {{}},{%%},{##} 三种标签
  * 支持 if/elif/else/endif, for/else/endfor, set, include 指令
- * 其中 include 略有不同，传数据用: {%include "sub.temp" with subContext%}
+ * 其中 include 支持指定的上下文，如 {%include "sub.temp" with subContext%} subContext 为传递给子模板的上下文变量
  *
  * 范例:
  * <code>
@@ -49,7 +49,7 @@ public class Template {
 
     private Template(List<Block> blocks) {
         this.blocks = blocks;
-        functions = new HashMap<>(FUNCTIONS);
+        this.functions = new HashMap<>(FUNCTIONS);
     }
 
     /**
@@ -102,7 +102,7 @@ public class Template {
     }
 
     public void render(Map<String, Object> context, Writer writer) throws IOException {
-        context.put("__functions__", functions);
+        context.put("__FUNC__", functions);
         for (Block block : blocks) {
             block.render(context, writer);
         }
@@ -724,7 +724,7 @@ public class Template {
                 } else {
                     renderContext = new HashMap();
                 }
-                renderContext.put("__functions__", context.get("__functions__"));
+                renderContext.put("__FUNC__", context.get("__FUNC__"));
             }
 
             // Render the included template
@@ -1085,7 +1085,7 @@ public class Template {
                 pos++;
 
                 // Call function
-                Map<String, Function<Object[], Object>> functions = (Map) context.get("__functions__");
+                Map<String, Function<Object[], Object>> functions = (Map) context.get("__FUNC__");
                 if (functions == null) {
                     throw new IllegalArgumentException("Unknown function! " + name);
                 }

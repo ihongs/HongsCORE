@@ -588,6 +588,10 @@ public class TestTemplate {
         // Test complex nested functions
         {%set complex = abs(max(count - 10, price - 5))%}
         <p>set complex = abs(max(count - 10, price - 5)) = {{complex}}</p>
+
+        // Test inner function call
+        {%set num = 199.543%}
+        {{format("Price: %.2f", num)}}
         """;
 
         System.out.println("\nTest 17: Function calls");

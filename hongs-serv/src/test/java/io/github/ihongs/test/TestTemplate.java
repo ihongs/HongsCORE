@@ -323,6 +323,7 @@ public class TestTemplate {
         <h2>For with else test</h2>
         <ul>
             {%for item in items%}<li>{{item}}</li>{%else%}<li>No items found</li>{%endfor%}
+            {%for entry in user%}{%set a = entry.value%}{%endfor%}
         </ul>
         """;
     

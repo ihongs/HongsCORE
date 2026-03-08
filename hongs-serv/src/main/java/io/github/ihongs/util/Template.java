@@ -48,7 +48,7 @@ public class Template {
 
     private final List<Block> blocks;
     private final Map<String, Function<Object[], Object>> functions;
-    private final static Pattern TEMP_LINE = Pattern.compile("(\\{%(?!\\s*include\\s+).*?%\\}|\\{#.*?#\\})");
+    private final static Pattern TEMP_LINE = Pattern.compile("(\\{%(?!\\s*include\\s+).*?%\\}|\\{#.*?#\\})+");
 
     private Template(List<Block> blocks) {
         this.blocks = blocks;

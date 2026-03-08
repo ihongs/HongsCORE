@@ -112,6 +112,10 @@ public class TestTemplate {
             <li>{{item}}</li>
           {%endfor%}
           </ul>
+        {%elif count > 10%}
+          <p>Count is greater than 10</p>
+        {%else%}
+          <p>No items to display</p>
         {%endif%}
         """;
 
@@ -132,8 +136,12 @@ public class TestTemplate {
         String template = """
         <h2>For nested with if</h2>
         <ul>{%for item in items%}
-          {%if item != "Item 2"%}
-            <li>{{item}}</li>
+          {%if item == "Item 1"%}
+            <li class="first">{{item}}</li>
+          {%elif item == "Item 2"%}
+            <li class="second">{{item}}</li>
+          {%else%}
+            <li class="other">{{item}}</li>
           {%endif%}
         {%endfor%}
         </ul>
@@ -142,8 +150,9 @@ public class TestTemplate {
         String expected = """
         <h2>For nested with if</h2>
         <ul>
-            <li>Item 1</li>
-            <li>Item 3</li>
+            <li class="first">Item 1</li>
+            <li class="second">Item 2</li>
+            <li class="other">Item 3</li>
         </ul>
         """;
 
@@ -163,8 +172,8 @@ public class TestTemplate {
         {%set product = 4 * 6%}
         <p>4 * 6 = {{product}}</p>
         
-        {%set quotient = 10 / 2%}
-        <p>10 / 2 = {{quotient}}</p>
+        {%set quotient = 10 / 3%}
+        <p>10 / 3 = {{format("%.2f", quotient)}}</p>
         """;
 
         String expected = """
@@ -175,7 +184,7 @@ public class TestTemplate {
         
         <p>4 * 6 = 24.0</p>
         
-        <p>10 / 2 = 5.0</p>
+        <p>10 / 3 = 3.33</p>
         """;
 
         testTemplate(template, context, expected);
@@ -278,6 +287,58 @@ public class TestTemplate {
 //            System.out.println("Error message: " + message);
         }
         assertTrue("Expected exception was not thrown", thrown);
+    }
+    
+    @Test
+    public void testIfElifElse() {
+        // 测试if-elif-else条件分支
+        String template = """
+        <h2>If-elif-else test</h2>
+        {%if count > 10%}
+        <p>Count is greater than 10</p>
+        {%elif count > 5%}
+        <p>Count is greater than 5 but less than or equal to 10</p>
+        {%elif count > 0%}
+        <p>Count is greater than 0 but less than or equal to 5</p>
+        {%else%}
+        <p>Count is 0 or negative</p>
+        {%endif%}
+        """;
+
+        String expected = """
+        <h2>If-elif-else test</h2>
+        <p>Count is greater than 0 but less than or equal to 5</p>
+        """;
+
+        testTemplate(template, context, expected);
+    }
+    
+    @Test
+    public void testForElse() {
+        // 测试for循环的else分支
+        // 注意：模板引擎的for-else功能目前存在bug，暂时注释掉
+        Map<String, Object> emptyContext = new HashMap<>(context);
+        emptyContext.put("items", List.of());
+        
+        String template = """
+        <h2>For with else test</h2>
+        <ul>
+            {%for item in items%}
+            <li>{{item}}</li>
+            {%else%}
+            <li>No items found</li>
+            {%endfor%}
+        </ul>
+        """;
+    
+        String expected = """
+        <h2>For with else test</h2>
+        <ul>
+            <li>No items found</li>
+        </ul>
+        """;
+    
+        testTemplate(template, emptyContext, expected);
     }
     
 }

@@ -154,13 +154,14 @@ public class Template {
                 int p1  = baseTemp.    indexOf("\n", bPos + end);
                 if (p0 != -1 && p1 != -1) {
                     String line = baseTemp.substring(p0, p1);
-                    if (TEMP_LINE.matcher(line).matches()) {
+                    if (TEMP_LINE.matcher(line.trim()).matches()) {
                         end = p0 - bPos;
                     }
                 }
-
-                String text = template.substring(index, end);
-                blocks.add(new TxtBlock(text));
+                if (index < end) {
+                    String text = template.substring(index, end);
+                    blocks.add(new TxtBlock(text));
+                }
             }
                 break;
             }
@@ -173,13 +174,14 @@ public class Template {
                 int p1  = baseTemp.    indexOf("\n", bPos + end);
                 if (p0 != -1 && p1 != -1) {
                     String line = baseTemp.substring(p0, p1);
-                    if (TEMP_LINE.matcher(line).matches()) {
+                    if (TEMP_LINE.matcher(line.trim()).matches()) {
                         end = p0 - bPos;
                     }
                 }
-
-                String text = template.substring(index, end);
-                blocks.add(new TxtBlock(text));
+                if (index < end) {
+                    String text = template.substring(index, end);
+                    blocks.add(new TxtBlock(text));
+                }
             }
 
             if (nextStart == dirStart) {
@@ -343,7 +345,8 @@ public class Template {
                             if (nestedIfCount > 0) {
                                 nestedIfCount--;
                             }
-                        } else if (nestedDirective.equals("else") && nestedForCount == 0 && nestedIfCount == 0) {
+                        } else
+                        if (nestedDirective.equals("else") && nestedForCount == 0 && nestedIfCount == 0) {
                             // Found else directive for this for loop
                             elseStart = nestedDirStart;
                             break;
@@ -369,7 +372,7 @@ public class Template {
                         elseEnd += 2;
 
                         //String elseContent = template.substring(elseEnd, endforStart);
-                        elseBlocks = parseTemplate(baseTemp, basePath, bPos + elseStart, bPos + endforStart);
+                        elseBlocks = parseTemplate(baseTemp, basePath, bPos + elseEnd, bPos + endforStart);
                     } else {
                         // No else clause
                         //String content = template.substring(end, endforStart);

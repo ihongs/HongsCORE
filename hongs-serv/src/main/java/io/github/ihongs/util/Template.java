@@ -1,16 +1,16 @@
 package io.github.ihongs.util;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
+import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -713,12 +713,11 @@ public class Template {
 
             try {
                 // Load the included template file
-                File curFile = new File(basePath.toString(), subPath);
-                if (!curFile.exists()) {
-                    throw new IOException("Template file not found: " + curFile.getAbsolutePath());
+                Path curPath = Path.of(basePath.toString(), subPath);
+                if (!curPath.toFile().exists()) {
+                    throw new IOException("Template file not found: " + curPath.toAbsolutePath());
                 }
 
-                Path curPath = curFile.toPath();
                 this.subBlocks = parseTemplate(Files.readString(curPath), curPath.getParent());
                 this.subContext = subContext;
             }
@@ -1327,8 +1326,7 @@ public class Template {
 
         FUNCTIONS.put("format", args -> {
             String s = Synt.asString(args[0]);
-            Object[] newArgs = new Object[args.length - 1];
-            System.arraycopy(args, 1, newArgs, 0, args.length - 1);
+            Object[] newArgs = Arrays.copyOfRange(args, 1, args.length);
             return String.format(s, newArgs);
         });
 

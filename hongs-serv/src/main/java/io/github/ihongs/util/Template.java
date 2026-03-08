@@ -1277,6 +1277,7 @@ public class Template {
      * 连词: concat(列表, 连词符号) 或 indent(列表) 逗号连接
      * 格式: format(格式, 变量1, 变量2...)
      * 日期格式: date_format(时间, 格式) 时间变量可以是 Date/Instant 或时间戳(毫秒)
+     * 获取大小: count(变量) 可取字典/列表/数组/字符串的长度
      * 文本清理: strip(文本, 模式) 模式取值:
      *   trim 清除首尾
      *   tags 清除 html 标签
@@ -1375,6 +1376,23 @@ public class Template {
                 }
             }
             return  st;
+        });
+
+        FUNCTIONS.put("count", args -> {
+            Object o = args[0];
+            if (o instanceof Map m) {
+                return m.size();
+            }
+            if (o instanceof Collection c) {
+                return c.size();
+            }
+            if (o instanceof Object [ ] a) {
+                return a.length;
+            }
+            if (o instanceof String s) {
+                return s.length();
+            }
+            return 0;
         });
     }
 

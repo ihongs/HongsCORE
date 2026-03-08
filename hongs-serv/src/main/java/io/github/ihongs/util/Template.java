@@ -30,16 +30,14 @@ import java.util.regex.Pattern;
  * 范例:
  * <code>
  * # {{title}}
- * {%for item in list%}
- * - {{item.name}}: {{item.msg}}
- *   {%if item.age > 18%}
- *   Adult
- *   {%else%}
- *   Child
- *   {%endif%}
- * {%else%}
- * **Empty!**
- * {%endfor%}
+ * {%set greeting = "Hello"%}
+ * {%if showWelcome%}
+ * {{greeting}}, {{user.name}}!
+ * {%endif%}
+ * - Count: {{count}}
+ * - Price: {{price}}
+ * - Is Active: {{isActive}}
+ * {{footerText}}
  * </code>
  *
  * @author Hongs

@@ -316,7 +316,6 @@ public class TestTemplate {
     @Test
     public void testForElse() {
         // 测试for循环的else分支
-        // 注意：模板引擎的for-else功能目前存在bug，暂时注释掉
         Map<String, Object> emptyContext = new HashMap<>(context);
         emptyContext.put("items", List.of());
         
@@ -339,6 +338,81 @@ public class TestTemplate {
         """;
     
         testTemplate(template, emptyContext, expected);
+    }
+    
+    @Test
+    public void testNestedCombinations() {
+        // 测试for/if、for/else、if/else的嵌套组合
+        String template = """
+        <h2>Nested combinations test</h2>
+        
+        <!-- For with nested if-else -->
+        <h3>For with nested if-else</h3>
+        <ul>
+        {%for item in items%}
+            {%if item == "Item 1"%}
+            <li class="first">{{item}}</li>
+            {%elif item == "Item 2"%}
+            <li class="second">{{item}}</li>
+            {%else%}
+            <li class="other">{{item}}</li>
+            {%endif%}
+        {%endfor%}
+        </ul>
+        
+        <!-- If-else with nested for -->
+        <h3>If-else with nested for</h3>
+        {%if showItems%}
+            <ul>
+            {%for item in items%}
+                <li>{{item}}</li>
+            {%endfor%}
+            </ul>
+        {%else%}
+            <p>No items to display</p>
+        {%endif%}
+        
+        <!-- For with else and nested if -->
+        <h3>For with else and nested if</h3>
+        <ul>
+        {%for item in items%}
+            {%if item != "Item 2"%}
+            <li>{{item}}</li>
+            {%endif%}
+        {%else%}
+            <li>No items found</li>
+        {%endfor%}
+        </ul>
+        """;
+
+        String expected = """
+        <h2>Nested combinations test</h2>
+        
+        <!-- For with nested if-else -->
+        <h3>For with nested if-else</h3>
+        <ul>
+            <li class="first">Item 1</li>
+            <li class="second">Item 2</li>
+            <li class="other">Item 3</li>
+        </ul>
+        
+        <!-- If-else with nested for -->
+        <h3>If-else with nested for</h3>
+            <ul>
+                <li>Item 1</li>
+                <li>Item 2</li>
+                <li>Item 3</li>
+            </ul>
+        
+        <!-- For with else and nested if -->
+        <h3>For with else and nested if</h3>
+        <ul>
+            <li>Item 1</li>
+            <li>Item 3</li>
+        </ul>
+        """;
+
+        testTemplate(template, context, expected);
     }
     
 }

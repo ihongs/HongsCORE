@@ -209,7 +209,7 @@ public class Template {
     }
 
     /**
-     * 模板勾在
+     * 模板构造
      * @param path 模板路径
      * @return
      * @throws IOException
@@ -223,19 +223,29 @@ public class Template {
      * 注册函数
      * @param name
      * @param function
+     * @return 
      */
-    public void regist(String name, Function<Object[], Object> function ) {
+    public Template regist(String name, Function<Object[], Object> function ) {
         this.functions.put(name, function);
+        return this;
     }
 
     /**
      * 注册函数
      * @param functions
+     * @return 
      */
-    public void regist(Map<String, Function<Object[], Object>> functions) {
+    public Template regist(Map<String, Function<Object[], Object>> functions) {
         this.functions.putAll( functions );
+        return this;
     }
 
+    /**
+     * 模板渲染
+     * @param context
+     * @param writer
+     * @throws IOException 
+     */
     public void render(Map<String, Object> context, Writer writer) throws IOException {
         context.put("__FUNC__", functions);
         for (Block block : blocks) {
@@ -243,6 +253,11 @@ public class Template {
         }
     }
 
+    /**
+     * 模板渲染
+     * @param context
+     * @return 
+     */
     public String render(Map<String, Object> context) {
         StringWriter writer = new StringWriter();
         try {

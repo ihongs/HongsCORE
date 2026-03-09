@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 /**
  * 极简模板引擎
  *
- * 兼容最基础的 Jinja 语法
+ * 类似 Jinja 语法
  * @see https://jinja.flask.org.cn/en/3.1.x/templates/#base-template
  *
  * ==================== 基本语法 ====================
@@ -105,9 +105,6 @@ import java.util.regex.Pattern;
  * {%if (a && b) || (c && d)%}
  * {%set result = (a + b) * (c - d)%}
  *
- * in 运算符:
- * {%if item in items%}
- *
  * ==================== 内置函数 ====================
  *
  * default(变量1, 变量2...) - 返回第一个非空值
@@ -117,6 +114,9 @@ import java.util.regex.Pattern;
  * ternary(条件, 变量1, 变量2) - 三元运算符
  * {{ternary(isAdmin, "Admin", "User")}}
  *
+ * contain(集合, 选项) - 包含, 集合也可以是字典或字符串
+ * {%if contain(users, "Kevin")%}
+ * 
  * indent(文本, 缩进几格) - 缩进文本
  * {{indent(content, 4)}}
  * {{indent(content)}}  # 默认缩进2格
@@ -223,7 +223,7 @@ public class Template {
      * 注册函数
      * @param name
      * @param function
-     * @return 
+     * @return
      */
     public Template regist(String name, Function<Object[], Object> function ) {
         this.functions.put(name, function);
@@ -233,7 +233,7 @@ public class Template {
     /**
      * 注册函数
      * @param functions
-     * @return 
+     * @return
      */
     public Template regist(Map<String, Function<Object[], Object>> functions) {
         this.functions.putAll( functions );
@@ -244,7 +244,7 @@ public class Template {
      * 模板渲染
      * @param context
      * @param writer
-     * @throws IOException 
+     * @throws IOException
      */
     public void render(Map<String, Object> context, Writer writer) throws IOException {
         context.put("__FUNC__", functions);
@@ -256,7 +256,7 @@ public class Template {
     /**
      * 模板渲染
      * @param context
-     * @return 
+     * @return
      */
     public String render(Map<String, Object> context) {
         StringWriter writer = new StringWriter();
@@ -1145,14 +1145,6 @@ public class Template {
 
         private String parseOperator() {
             StringBuilder op = new StringBuilder();
-            // Check for 'in' operator first
-            if (pos + 2 < expression.length() &&
-                expression.charAt(pos    ) == 'i' &&
-                expression.charAt(pos + 1) == 'n' &&
-                Character.isWhitespace(expression.charAt(pos + 2))) {
-                pos += 2;
-                return "in";
-            }
 
             // Parse other operators
             while (pos < expression.length() &&
@@ -1332,16 +1324,14 @@ public class Template {
                     return  equals(left, right);
                 case "!=":
                     return !equals(left, right);
-                case ">":
+                case ">" :
                     return compare(left, right) >  0;
-                case "<":
+                case "<" :
                     return compare(left, right) <  0;
                 case ">=":
                     return compare(left, right) >= 0;
                 case "<=":
                     return compare(left, right) <= 0;
-                case "in":
-                    return  within(left, right);
                 default:
                     throw new IllegalArgumentException("Unknown comparison operator: " + op);
             }
@@ -1350,23 +1340,22 @@ public class Template {
         private boolean isCompareOp(String op) {
             return op.equals("==") || op.equals("!=") ||
                    op.equals(">=") || op.equals("<=") ||
-                   op.equals(">" ) || op.equals("<" ) ||
-                   op.equals("in");
+                   op.equals(">" ) || op.equals("<" );
         }
 
         private int compare(Object left, Object right) {
             if (left == null || right == null) {
                 if (left == null && right == null) {
-                    return 0;
+                    return  0;
                 } else if (left == null) {
                     return -1;
                 } else {
-                    return 1;
+                    return  1;
                 }
             }
 
             if (left instanceof Number && right instanceof Number) {
-                double leftValue = ((Number) left).doubleValue();
+                double leftValue  = ((Number) left ).doubleValue();
                 double rightValue = ((Number) right).doubleValue();
                 return Double.compare(leftValue, rightValue);
             }
@@ -1382,18 +1371,6 @@ public class Template {
                 return false;
             }
             return left.equals(right);
-        }
-
-        private boolean within(Object left, Object right) {
-            if (right == null) {
-                return false;
-            }
-            if (right instanceof java.util.Collection) {
-                return ((java.util.Collection<?>) right).contains(left);
-            } else if (right instanceof java.util.Map) {
-                return ((java.util.Map<?, ?>) right ).containsKey(left);
-            }
-            return false;
         }
 
         private boolean toBoolean(Object obj) {
@@ -1458,6 +1435,21 @@ public class Template {
                 }
             }
             return null;
+        });
+
+        FUNCTIONS.put("contain", args -> {
+            Object a = args[0];
+            Object o = args[1];
+            if (a instanceof String) {
+                return ((String) a).contains((String) o);
+            } else
+            if (a instanceof Collection) {
+                return ((Collection) a).contains(o);
+            } else
+            if (a instanceof Map) {
+                return ((Map) a).containsKey(o);
+            }
+            return false;
         });
 
         FUNCTIONS.put("indent", args -> {

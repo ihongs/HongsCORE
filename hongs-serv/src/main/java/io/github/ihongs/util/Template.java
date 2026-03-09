@@ -107,21 +107,20 @@ import java.util.regex.Pattern;
  *
  * ==================== 内置函数 ====================
  *
- * default(变量1, 变量2...) - 返回第一个非空值
- * {{default(title, "Default Title")}}
- * {%for item in default(items, fallbackItems)%}
- *
  * ternary(条件, 变量1, 变量2) - 三元运算符
  * {{ternary(isAdmin, "Admin", "User")}}
  *
- * contain(集合, 选项) - 包含, 集合也可以是字典或字符串
+ * default(变量1, 变量2...) - 返回第一个非空值
+ * {{default(title, "Default Title")}}
+ *
+ * contain(集合, 选项) - 包含, 也可用于字典或字串
  * {%if contain(users, "Kevin")%}
  * 
  * indent(文本, 缩进几格) - 缩进文本
- * {{indent(content, 4)}}
- * {{indent(content)}}  # 默认缩进2格
+ * {{indent(texts, 4)}}
+ * {{indent(texts)}}  # 默认缩进两格
  *
- * concat(列表, 连词符号) - 连接列表元素
+ * concat(列表, 连词符号) - 连接多个
  * {{concat(items, " | ")}}
  * {{concat(items)}}  # 默认逗号连接
  *
@@ -1405,8 +1404,9 @@ public class Template {
 
     /**
      * 默认模板函数
-     * 默认: default(变量1, 变量2...) 跳过空值、空串和数字 0
      * 选择: ternary(条件, 变量1, 变量2) 等同 条件 ? 变量1 : 变量2
+     * 默认: default(变量1, 变量2...) 跳过空值、空串和数字 0
+     * 包含: contain(集合, 选项) 是否包含选项，可用于字符串
      * 缩进: indent(文本, 缩进几格) 或 indent(文本) 缩进两格
      * 连词: concat(列表, 连词符号) 或 indent(列表) 逗号连接
      * 格式: format(格式, 变量1, 变量2...)

@@ -65,13 +65,13 @@ public class TestTemplate {
     private void testTemplate(String template, Map<String, Object> ctx, String expected) {
         Template engine = Template.compile(template);
         String result = engine.render(ctx);
-        
-//        System.out.println("======");
+
+//        System.out.println("====== EXPECTED ======");
 //        System.out.println(expected);
-//        System.out.println("------");
+//        System.out.println("======  ACTUAL  ======");
 //        System.out.println( result );
 //        System.out.println("======");
-        
+
         // 直接比较，不清理空白字符
         assertEquals("Template rendering failed", expected, result);
     }
@@ -135,7 +135,8 @@ public class TestTemplate {
     public void testForNestedWithIf() {
         String template = """
         <h2>For nested with if</h2>
-        <ul>{%for item in items%}
+        <ul>
+        {%for item in items%}
           {%if item == "Item 1"%}
             <li class="first">{{item}}</li>
           {%elif item == "Item 2"%}
@@ -178,11 +179,11 @@ public class TestTemplate {
 
         String expected = """
         <h2>Arithmetic operations</h2>
-        <p>1 + 2 = 3.0</p>
+        <p>1 + 2 = 3</p>
         
-        <p>5 - 3 = 2.0</p>
+        <p>5 - 3 = 2</p>
         
-        <p>4 * 6 = 24.0</p>
+        <p>4 * 6 = 24</p>
         
         <p>10 / 3 = 3.33</p>
         """;
@@ -372,9 +373,11 @@ public class TestTemplate {
         <!-- For with else and nested if -->
         <h3>For with else and nested if</h3>
         <ul>
+            {% set i = 0 %}
         {%for item in items%}
             {%if item != "Item 2"%}
-            <li>{{item}}</li>
+                {% set i = i + 1 %}
+            <li>{{i}}. {{item}}</li>
             {%endif%}
         {%else%}
             <li>No items found</li>
@@ -404,8 +407,8 @@ public class TestTemplate {
         <!-- For with else and nested if -->
         <h3>For with else and nested if</h3>
         <ul>
-            <li>Item 1</li>
-            <li>Item 3</li>
+            <li>1. Item 1</li>
+            <li>2. Item 3</li>
         </ul>
         """;
 

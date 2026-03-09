@@ -181,7 +181,7 @@ public class Template {
                     end++;
                 }
                 if (end >= template.length()) {
-                    int currentLine = countLines(baseTemp.substring(0, bPos + dirStart)) + 1;
+                    int currentLine = countLines(baseTemp, bPos + dirStart);
                     throw new IllegalArgumentException("Line " + currentLine + ": Unclosed directive");
                 }
                 end += 2;
@@ -195,12 +195,12 @@ public class Template {
                     // Find matching endif
                     int endifStart = findMatchingEnd(template, end, "endif");
                     if (endifStart == -1) {
-                        int currentLine = countLines(baseTemp.substring(0, bPos + dirStart)) + 1;
+                        int currentLine = countLines(baseTemp, bPos + dirStart);
                         throw new IllegalArgumentException("Line " + currentLine + ": Unclosed if statement");
                     }
                     int endifEnd = template.indexOf("%}", endifStart);
                     if (endifEnd == -1) {
-                        int currentLine = countLines(baseTemp.substring(0, bPos + dirStart)) + 1;
+                        int currentLine = countLines(baseTemp, bPos + dirStart);
                         throw new IllegalArgumentException("Line " + currentLine + ": Unclosed if statement");
                     }
                     endifEnd += 2;
@@ -228,7 +228,7 @@ public class Template {
                         // Check if this is an else or elif directive
                         int directiveEnd = template.indexOf("%}", nextDirectiveStart);
                         if (directiveEnd == -1) {
-                            int currentLine = countLines(baseTemp.substring(0, bPos + currentPos)) + 1;
+                            int currentLine = countLines(baseTemp, bPos + currentPos);
                             throw new IllegalArgumentException("Line " + currentLine + ": Unclosed directive");
                         }
                         String nextDirective = template.substring(nextDirectiveStart + 2, directiveEnd).trim();
@@ -269,7 +269,7 @@ public class Template {
                     // For block
                     String[] parts = directive.substring(4).trim().split("\\s+in\\s+");
                     if (parts.length != 2) {
-                        int currentLine = countLines(baseTemp.substring(0, bPos + dirStart)) + 1;
+                        int currentLine = countLines(baseTemp, bPos + dirStart);
                         throw new IllegalArgumentException("Line " + currentLine + ": Invalid for statement: " + directive);
                     }
                     String variableName = parts[0].trim();
@@ -277,12 +277,12 @@ public class Template {
                     // Find matching endfor
                     int endforStart = findMatchingEnd(template, end, "endfor");
                     if (endforStart == -1) {
-                        int currentLine = countLines(baseTemp.substring(0, bPos + dirStart)) + 1;
+                        int currentLine = countLines(baseTemp, bPos + dirStart);
                         throw new IllegalArgumentException("Line " + currentLine + ": Unclosed for statement");
                     }
                     int endforEnd = template.indexOf("%}", endforStart);
                     if (endforEnd == -1) {
-                        int currentLine = countLines(baseTemp.substring(0, bPos + dirStart)) + 1;
+                        int currentLine = countLines(baseTemp, bPos + dirStart);
                         throw new IllegalArgumentException("Line " + currentLine + ": Unclosed for statement");
                     }
                     endforEnd += 2;
@@ -351,7 +351,7 @@ public class Template {
                         // Find the end of else directive
                         int elseEnd = template.indexOf("%}", elseStart);
                         if (elseEnd == -1) {
-                            int currentLine = countLines(baseTemp.substring(0, bPos + currentPos)) + 1;
+                            int currentLine = countLines(baseTemp, bPos + currentPos);
                             throw new IllegalArgumentException("Line " + currentLine + ": Unclosed else directive");
                         }
                         elseEnd += 2;
@@ -371,7 +371,7 @@ public class Template {
                     // Set block
                     String[] parts = directive.substring(4).trim().split("\\s*=\\s*");
                     if (parts.length != 2) {
-                        int currentLine = countLines(baseTemp.substring(0, bPos + dirStart)) + 1;
+                        int currentLine = countLines(baseTemp, bPos + dirStart);
                         throw new IllegalArgumentException("Line " + currentLine + ": Invalid set statement: " + directive);
                     }
                     String variableName = parts[0].trim();
@@ -388,14 +388,14 @@ public class Template {
                     // Find the first quote
                     int firstQuote = includePart.indexOf('"');
                     if (firstQuote == -1) {
-                        int currentLine = countLines(baseTemp.substring(0, bPos + dirStart)) + 1;
+                        int currentLine = countLines(baseTemp, bPos + dirStart);
                         throw new IllegalArgumentException("Line " + currentLine + ": Include template name must be quoted");
                     }
 
                     // Find the matching closing quote
                     int lastQuote = includePart.indexOf('"', firstQuote + 1);
                     if (lastQuote == -1) {
-                        int currentLine = countLines(baseTemp.substring(0, bPos + dirStart)) + 1;
+                        int currentLine = countLines(baseTemp, bPos + dirStart);
                         throw new IllegalArgumentException("Line " + currentLine + ": Include template name quote unclosed");
                     }
 
@@ -416,11 +416,11 @@ public class Template {
                 ||  directive.equals("endfor")) {
                     // Else directive - should only be found by the if or for block parser
                     // End directive - should only be found by findMatchingEnd
-                    int currentLine = countLines(baseTemp.substring(0, bPos + dirStart)) + 1;
+                    int currentLine = countLines(baseTemp, bPos + dirStart);
                     throw new IllegalArgumentException("Line " + currentLine + ": Unexpected directive: " + directive);
                 } else {
                     // Unknown directive
-                    int currentLine = countLines(baseTemp.substring(0, bPos + dirStart)) + 1;
+                    int currentLine = countLines(baseTemp, bPos + dirStart);
                     throw new IllegalArgumentException("Line " + currentLine + ": Unknown directive: " + directive);
                 }
             } else
@@ -428,7 +428,7 @@ public class Template {
                 // Variable block
                 int end = template.indexOf("}}", varStart);
                 if (end == -1) {
-                    int currentLine = countLines(baseTemp.substring(0, bPos + varStart)) + 1;
+                    int currentLine = countLines(baseTemp, bPos + varStart);
                     throw new IllegalArgumentException("Line " + currentLine + ": Unclosed variable");
                 }
                 String variableName = template.substring(varStart + 2, end).trim();
@@ -439,7 +439,7 @@ public class Template {
                 // Comment block - skip
                 int end = template.indexOf("#}", comStart);
                 if (end == -1) {
-                    int currentLine = countLines(baseTemp.substring(0, bPos + comStart)) + 1;
+                    int currentLine = countLines(baseTemp, bPos + comStart);
                     throw new IllegalArgumentException("Line " + currentLine + ": Unclosed comments");
                 }
                 index = end + 2;
@@ -525,17 +525,38 @@ public class Template {
         return end;
     }
 
-    private static int countLines(String text) {
-        if (text == null || text.isEmpty()) {
+    private static int countLines(String template, int length) {
+        if (template == null || template.isEmpty()) {
             return 0;
         }
-        int count = 0;
-        for (int i = 0; i < text.length(); i++) {
-            if (text.charAt(i) == '\n') {
-                count++;
+        int cnt  = 1; // first line
+        if (length > template.length()) {
+            length = template.length();
+        }
+        for (int i = 0; i < length; i++) {
+            if (template.charAt(i) == '\n') {
+                cnt ++;
             }
         }
-        return count;
+        return  cnt;
+    }
+
+    private static boolean decide(Object obj) {
+        if (obj == null) {
+            return false;
+        } else if (obj instanceof Boolean) {
+            return (Boolean) obj;
+        } else if (obj instanceof Number ) {
+            return ((Number) obj).doubleValue() != 0;
+        } else if (obj instanceof String ) {
+            return !((String    ) obj).isEmpty();
+        } else if (obj instanceof Collection) {
+            return !((Collection) obj).isEmpty();
+        } else if (obj instanceof Map) {
+            return !((Map       ) obj).isEmpty();
+        } else {
+            return true;
+        }
     }
 
     // Block interface
@@ -569,7 +590,7 @@ public class Template {
         public void render(Map<String, Object> context, Writer writer) throws IOException {
             Object value = getValue(name, context);
             if (value != null) {
-                writer.write(value.toString());
+                writer.write(Synt.asString(value));
             }
         }
     }
@@ -587,7 +608,10 @@ public class Template {
         @Override
         public void render(Map<String, Object> context, Writer writer) throws IOException {
             for (InBlock block : innerBlocks) {
-                if (evaluateCondition(block.condition, context)) {
+                // Parse and evaluate complex expression
+                String condi = block.condition.trim();
+                Object value = getValue(condi, context);
+                if (decide(value)) {
                     for (Block innerBlock : block.blocks) {
                         innerBlock.render(context, writer);
                     }
@@ -597,25 +621,6 @@ public class Template {
             // If none of the conditions are true, render the else blocks
             for (Block block : elseBlocks) {
                 block.render(context, writer);
-            }
-        }
-
-        private boolean evaluateCondition(String condition, Map<String, Object> context) {
-            // Parse and evaluate complex expression
-            condition = condition.trim();
-            Object result = getValue(condition, context);
-
-            // Convert result to boolean
-            if (result == null) {
-                return false;
-            } else if (result instanceof Boolean) {
-                return (Boolean) result;
-            } else if (result instanceof String) {
-                return !((String) result).isEmpty();
-            } else if (result instanceof Number) {
-                return ((Number) result).doubleValue() != 0;
-            } else {
-                return true;
             }
         }
 
@@ -657,8 +662,8 @@ public class Template {
             if (collection instanceof List<?>) {
                 List<?> list = (List<?>) collection;
                 hasItems = !list.isEmpty();
+                Map<String, Object> loopContext = context; // new HashMap<>(context); 变量名覆盖不算问题，何况还需要内部计数
                 for (Object item : list) {
-                    Map<String, Object> loopContext = new HashMap<>(context);
                     loopContext.put(variableName, item);
                     for (Block block : innerBlocks) {
                         block.render(loopContext, writer);
@@ -667,8 +672,8 @@ public class Template {
             } else if (collection instanceof Map<?, ?>) {
                 Map<?, ?> map = (Map<?, ?>) collection;
                 hasItems = !map.isEmpty();
+                Map<String, Object> loopContext = context; // new HashMap<>(context); 变量名覆盖不算问题，何况还需要内部计数
                 for (Map.Entry<?, ?> entry : map.entrySet()) {
-                    Map<String, Object> loopContext = new HashMap<>(context);
                     loopContext.put(variableName, entry);
                     for (Block block : innerBlocks) {
                         block.render(loopContext, writer);
@@ -780,11 +785,11 @@ public class Template {
             return new Expression(expression).evaluate(context);
         } catch (Exception e) {
             // Not an expression, try to get from context
-            return fetchVari(expression, context);
+            return fetchData(expression, context);
         }
     }
 
-    private static Object fetchVari(String path, Map<String, Object> context) {
+    private static Object fetchData(String path, Map<String, Object> context) {
         String[] parts = path.split("\\.");
         Object value = context.get(parts[0]);
 
@@ -825,7 +830,7 @@ public class Template {
                     } else if (element.matches("\\d+\\.\\d+")) {
                         value = Double.parseDouble(element);
                     } else {
-                        value = fetchVari(element, context);
+                        value = fetchData(element, context);
                     }
                     list.add(value);
                 }
@@ -851,7 +856,7 @@ public class Template {
                         } else if (textVal.matches("\\d+\\.\\d+")) {
                             value = Double.parseDouble(textVal);
                         } else {
-                            value = fetchVari(textVal, context);
+                            value = fetchData(textVal, context);
                         }
                         map.put(elemKey, value);
                     }
@@ -1114,7 +1119,7 @@ public class Template {
             }
 
             // Otherwise, it's a variable
-            return fetchVari(name, context);
+            return fetchData(name, context);
         }
 
         private List<Object> parseArgs(Map<String, Object> context) {
@@ -1273,6 +1278,7 @@ public class Template {
     /**
      * 默认模板函数
      * 默认: default(变量1, 变量2...) 跳过空值、空串和数字 0
+     * 选择: ternary(条件, 变量1, 变量2) 等同 条件 ? 变量1 : 变量2
      * 缩进: indent(文本, 缩进几格) 或 indent(文本) 缩进两格
      * 连词: concat(列表, 连词符号) 或 indent(列表) 逗号连接
      * 格式: format(格式, 变量1, 变量2...)
@@ -1290,19 +1296,14 @@ public class Template {
      */
     public static final Map<String, Function<Object[], Object>> FUNCTIONS = new HashMap();
     static {
+        FUNCTIONS.put("ternary", args -> {
+            return decide(args[0]) ? args[1] : args[2];
+        });
+
         FUNCTIONS.put("default", args -> {
             for (Object arg : args) {
-                if (arg != null) {
-                    if (arg instanceof String str ) {
-                        if (! "".equals(str)) {
-                            return arg;
-                        }
-                    } else
-                    if (arg instanceof Number num ) {
-                        if (0 != num.doubleValue()) {
-                            return arg;
-                        }
-                    }
+                if (decide(arg)) {
+                    return arg;
                 }
             }
             return null;

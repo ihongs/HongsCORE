@@ -23,21 +23,155 @@ import java.util.regex.Pattern;
  *
  * 兼容最基础的 Jinja 语法
  * @see https://jinja.flask.org.cn/en/3.1.x/templates/#base-template
- * 支持 {{}},{%%},{##} 三种标签
- * 支持 if/elif/else/endif, for/else/endfor, set, include 指令
- * 其中 include 支持指定的上下文，如 {%include "sub.temp" with subContext%} subContext 为传递给子模板的上下文变量
  *
- * 范例:
+ * ==================== 基本语法 ====================
+ *
+ * 三种标签类型:
+ * - {{}}  : 变量输出，如 {{title}}, {{user.name}}
+ * - {%%}  : 控制指令，如 {%if condition%}, {%for item in items%}
+ * - {##}  : 注释，如 {# This is a comment #}
+ *
+ * ==================== 变量输出 ====================
+ *
+ * 简单变量: {{title}}
+ * 字典访问: {{config.theme}}
+ * 嵌套访问: {{user.profile.avatar}}
+ *
+ * ==================== 条件语句 ====================
+ *
+ * if 语句:
+ * {%if condition%}
+ *   Content when true
+ * {%endif%}
+ *
+ * if-elif-else:
+ * {%if count > 10%}
+ *   Count > 10
+ * {%elif count > 5%}
+ *   Count > 5
+ * {%else%}
+ *   Count <= 5
+ * {%endif%}
+ *
+ * ==================== 循环语句 ====================
+ *
+ * for 循环:
+ * {%for item in items%}
+ *   {{item}}
+ * {%endfor%}
+ *
+ * for-else (循环为空时执行else):
+ * {%for item in items%}
+ *   {{item}}
+ * {%else%}
+ *   No items found
+ * {%endfor%}
+ *
+ * 遍历字典:
+ * {%for entry in config%}
+ *   {{entry.key}}: {{entry.value}}
+ * {%endfor%}
+ *
+ * ==================== 变量设置 ====================
+ *
+ * 设置变量:
+ * {%set greeting = "Hello"%}
+ * {%set total = count * price%}
+ * {%set items = ["A", "B", "C"]%}
+ *
+ * ==================== 模板包含 ====================
+ *
+ * 包含子模板:
+ * {%include "header.html"%}
+ *
+ * 使用指定上下文:
+ * {%include "sub.temp" with subContext%}
+ *
+ * ==================== 表达式 ====================
+ *
+ * 算术运算: +, -, *, /
+ * {%set sum = a + b%}
+ * {%set avg = total / count%}
+ *
+ * 比较运算: ==, !=, >, <, >=, <=
+ * {%if count > 10%}
+ * {%if name == "admin"%}
+ *
+ * 逻辑运算: &&, ||, !
+ * {%if a && b%}
+ * {%if !isAdmin%}
+ *
+ * 括号分组:
+ * {%if (a && b) || (c && d)%}
+ * {%set result = (a + b) * (c - d)%}
+ *
+ * in 运算符:
+ * {%if item in items%}
+ *
+ * ==================== 内置函数 ====================
+ *
+ * default(变量1, 变量2...) - 返回第一个非空值
+ * {{default(title, "Default Title")}}
+ * {%for item in default(items, fallbackItems)%}
+ *
+ * ternary(条件, 变量1, 变量2) - 三元运算符
+ * {{ternary(isAdmin, "Admin", "User")}}
+ *
+ * indent(文本, 缩进几格) - 缩进文本
+ * {{indent(content, 4)}}
+ * {{indent(content)}}  # 默认缩进2格
+ *
+ * concat(列表, 连词符号) - 连接列表元素
+ * {{concat(items, " | ")}}
+ * {{concat(items)}}  # 默认逗号连接
+ *
+ * format(格式, 变量1, 变量2...) - 格式化字符串
+ * {{format("Hello %s", name)}}
+ * {{format("%.2f", price)}}
+ *
+ * date_format(时间, 格式) - 日期格式化
+ * {{date_format(now, "yyyy-MM-dd")}}
+ * {{date_format(timestamp, "HH:mm:ss")}}
+ *
+ * count(变量) - 获取长度
+ * {{count(items)}}  # 列表长度
+ * {{count(text)}}   # 字符串长度
+ *
+ * strip(文本, 模式) - 文本清理
+ * {{strip(text, "trim")}}    # 清除首尾空格
+ * {{strip(html, "tags")}}     # 清除HTML标签
+ * {{strip(html, "html")}}     # 清除脚本、标签、首尾空格
+ * {{strip(text, "gaps")}}     # 清除空行
+ * {{strip(text, "ends")}}     # 清除换行
+ * {{strip(text, "unis")}}     # 统一换行符
+ * {{strip(text, "trim,tags")}}  # 多个模式
+ *
+ * ==================== 注意事项 ====================
+ *
+ * - 变量名需区分大小写
+ * - 支持嵌套条件和循环
+ * - 支持表达式嵌套运算
+ * - 不支持对象属性访问
+ * - include 指令需指定 basePath
+ * - 独占一行的指令标签 {%%} 和注释标签 {##} 不会输出空行
+ *
+ * ==================== 完整示例 ====================
+ *
  * <code>
  * # {{title}}
  * {%set greeting = "Hello"%}
  * {%if showWelcome%}
  * {{greeting}}, {{user.name}}!
  * {%endif%}
- * - Count: {{count}}
- * - Price: {{price}}
- * - Is Active: {{isActive}}
- * {{footerText}}
+ *
+ * {%set i = 0%}
+ * {%for item in items%}
+ * {%set i = i + 1%}
+ * - {{i}}. {{item}}
+ * {%endfor%}
+ *
+ * Total: {{count(items)}} items
+ * Price: {{format("%.2f", price)}}
  * </code>
  *
  * @author Hongs

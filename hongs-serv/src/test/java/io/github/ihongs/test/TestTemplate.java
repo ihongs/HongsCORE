@@ -415,4 +415,82 @@ public class TestTemplate {
         testTemplate(template, context, expected);
     }
     
+    @Test
+    public void testModuloOperator() {
+        // 测试取模运算符，特别测试不会与%}标签结束符冲突
+        Map<String, Object> ctx = new HashMap<>(context);
+        
+        String template = """
+        <h2>Modulo operator test</h2>
+        
+        <!-- Basic modulo -->
+        <p>10 % 3 = {{10 % 3}}</p>
+        <p>15 % 4 = {{15 % 4}}</p>
+        <p>20 % 5 = {{20 % 5}}</p>
+        
+        <!-- Modulo with variables -->
+        {%set a = 17%}
+        {%set b = 5%}
+        <p>{{a}} % {{b}} = {{a % b}}</p>
+        
+        <!-- Modulo in expression -->
+        {%set total = 23%}
+        {%set divisor = 7%}
+        <p>{{total}} % {{divisor}} = {{total % divisor}}</p>
+        
+        <!-- Modulo in condition -->
+        {%set num = 15%}
+        {%if num % 3 == 0%}
+        <p>{{num}} is divisible by 3</p>
+        {%else%}
+        <p>{{num}} is not divisible by 3</p>
+        {%endif%}
+        
+        <!-- Modulo with parentheses -->
+        <p>(10 + 5) % 4 = {{(10 + 5) % 4}}</p>
+        <p>10 + (5 % 4) = {{10 + (5 % 4)}}</p>
+        
+        <!-- Important: Test that % doesn't conflict with %} tag end -->
+        {%set remainder = 10 % 3%}
+        <p>Remainder: {{remainder}}</p>
+        
+        <!-- Complex expression with % and other operators -->
+        {%set x = 25%}
+        {%set y = 6%}
+        <p>{{x}} % {{y}} = {{x % y}}</p>
+        <p>({{x}} + {{y}}) % 4 = {{(x + y) % 4}}</p>
+        """;
+
+        String expected = """
+        <h2>Modulo operator test</h2>
+        
+        <!-- Basic modulo -->
+        <p>10 % 3 = 1</p>
+        <p>15 % 4 = 3</p>
+        <p>20 % 5 = 0</p>
+        
+        <!-- Modulo with variables -->
+        <p>17 % 5 = 2</p>
+        
+        <!-- Modulo in expression -->
+        <p>23 % 7 = 2</p>
+        
+        <!-- Modulo in condition -->
+        <p>15 is not divisible by 3</p>
+        
+        <!-- Modulo with parentheses -->
+        <p>(10 + 5) % 4 = 3</p>
+        <p>10 + (5 % 4) = 11</p>
+        
+        <!-- Important: Test that % doesn't conflict with %} tag end -->
+        <p>Remainder: 1</p>
+        
+        <!-- Complex expression with % and other operators -->
+        <p>25 % 6 = 1</p>
+        <p>(25 + 6) % 4 = 3</p>
+        """;
+
+        testTemplate(template, ctx, expected);
+    }
+    
 }

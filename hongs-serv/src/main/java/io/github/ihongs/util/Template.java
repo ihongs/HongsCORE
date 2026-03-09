@@ -89,7 +89,7 @@ import java.util.regex.Pattern;
  *
  * ==================== 表达式 ====================
  *
- * 算术运算: +, -, *, /
+ * 算术运算: +, -, *, /, %
  * {%set sum = a + b%}
  * {%set avg = total / count%}
  *
@@ -138,13 +138,13 @@ import java.util.regex.Pattern;
  * {{count(text)}}   # 字符串长度
  *
  * strip(文本, 模式) - 文本清理
- * {{strip(text, "trim")}}    # 清除首尾空格
- * {{strip(html, "tags")}}     # 清除HTML标签
- * {{strip(html, "html")}}     # 清除脚本、标签、首尾空格
- * {{strip(text, "gaps")}}     # 清除空行
- * {{strip(text, "ends")}}     # 清除换行
- * {{strip(text, "unis")}}     # 统一换行符
- * {{strip(text, "trim,tags")}}  # 多个模式
+ * {{strip(text, "trim")}}      - 清除首尾空格
+ * {{strip(html, "tags")}}      - 清除HTML标签
+ * {{strip(html, "html")}}      - 清除脚本、标签、首尾空格
+ * {{strip(text, "gaps")}}      - 清除空行
+ * {{strip(text, "ends")}}      - 清除换行
+ * {{strip(text, "unis")}}      - 统一换行符
+ * {{strip(text, "trim,tags")}} - 多个模式
  *
  * ==================== 注意事项 ====================
  *
@@ -1075,7 +1075,7 @@ public class Template {
                 skipWhitespace();
                 if (pos >= expression.length()) break;
                 char op = expression.charAt(pos);
-                if (op != '*' && op != '/') break;
+                if (op != '*' && op != '/' && op != '%') break;
                 pos++;
                 Object right = parsePrimary(context);
                 left = evaluateNumericOp(left, op, right);
@@ -1300,6 +1300,8 @@ public class Template {
                         return leftVal * rightVal;
                     case '/':
                         return leftVal / rightVal;
+                    case '%':
+                        return leftVal % rightVal;
                     default :
                         throw new IllegalArgumentException("Unknown operator: " + op);
                 }

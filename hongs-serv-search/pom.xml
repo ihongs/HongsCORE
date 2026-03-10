@@ -26,7 +26,7 @@
             <version>${lucene.version}</version>
         </dependency>
         <dependency>
-            <artifactId>lucene-sandbox</artifactId>
+            <artifactId>lucene-join</artifactId>
             <groupId>org.apache.lucene</groupId>
             <version>${lucene.version}</version>
         </dependency>

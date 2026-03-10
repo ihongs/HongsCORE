@@ -104,6 +104,11 @@ import java.util.regex.Pattern;
  * 括号分组:
  * {%if (a && b) || (c && d)%}
  * {%set result = (a + b) * (c - d)%}
+ * 
+ * 简单JSON:
+ * {%set result = ["abc", "def"]%}
+ * {%set result = {"key": "val"}%}
+ * {%include "xxx.html" with {"list": sub_list}%}
  *
  * ==================== 内置函数 ====================
  *
@@ -151,6 +156,7 @@ import java.util.regex.Pattern;
  * - 支持嵌套条件和循环
  * - 支持表达式嵌套运算
  * - 不支持对象属性访问
+ * - 不支持简单JSON嵌套
  * - include 指令需指定 basePath
  * - 独占一行的指令标签 {%%} 和注释标签 {##} 不会输出空行
  *
@@ -1122,7 +1128,8 @@ public class Template {
                 Object value = parsePrimary(context);
                 if (value instanceof Number) {
                     return -((Number) value).doubleValue();
-                } else if (value instanceof String) {
+                } else
+                if (value instanceof String) {
                     try {
                         return -Double.parseDouble((String) value);
                     } catch (NumberFormatException e) {

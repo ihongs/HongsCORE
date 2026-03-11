@@ -104,7 +104,7 @@ import java.util.regex.Pattern;
  * 括号分组:
  * {%if (a && b) || (c && d)%}
  * {%set result = (a + b) * (c - d)%}
- * 
+ *
  * 简单JSON:
  * {%set result = ["abc", "def"]%}
  * {%set result = {"key": "val"}%}
@@ -112,15 +112,15 @@ import java.util.regex.Pattern;
  *
  * ==================== 内置函数 ====================
  *
- * ternary(条件, 变量1, 变量2) - 三元运算符
- * {{ternary(isAdmin, "Admin", "User")}}
+ * te(条件, 变量1, 变量2) - 三元运算符
+ * {{te(isAdm, "Admin", "User")}}
  *
- * default(变量1, 变量2...) - 返回第一个非空值
- * {{default(title, "Default Title")}}
+ * or(变量1, 变量2...) - 返回第一个非空值
+ * {{or(title, "Default Title")}}
  *
- * contain(集合, 选项) - 包含, 也可用于字典或字串
- * {%if contain(users, "Kevin")%}
- * 
+ * in(选项, 集合) - 包含, 也可用于字典或字串
+ * {%if in(name, ["Kevin", "Lucie"])%}
+ *
  * indent(文本, 缩进几格) - 缩进文本
  * {{indent(texts, 4)}}
  * {{indent(texts)}}  # 默认缩进两格
@@ -153,12 +153,14 @@ import java.util.regex.Pattern;
  * ==================== 注意事项 ====================
  *
  * - 变量名需区分大小写
- * - 支持嵌套条件和循环
- * - 支持表达式嵌套运算
+ * - 支持条件和循环嵌套
+ * - 支持表达式括号嵌套
  * - 不支持对象属性访问
- * - 不支持简单JSON嵌套
+ * - 不支持对象方法调用
+ * - 不支持字符串内转义，如：\n,\t,\"，如特殊，请从 render context 传入
+ * - 支持 JSON 值为变量，如：{"a": b}，但不支持嵌套：{"abc": [1, 2, 3]}
  * - include 指令需指定 basePath
- * - 独占一行的指令标签 {%%} 和注释标签 {##} 不会输出空行
+ * - 独占一行的指令标签 {%%} 和注释 {##} 不空行，不影响 markdown 的段落
  *
  * ==================== 完整示例 ====================
  *
@@ -184,11 +186,13 @@ import java.util.regex.Pattern;
 public class Template {
 
     private final List<Block> blocks;
+    private final Map<String, Object> variables;
     private final Map<String, Function<Object[], Object>> functions;
     private final static Pattern TEMP_LINE = Pattern.compile("(\\{%(?!\\s*include\\s+).*?%\\}|\\{#.*?#\\})+");
 
     private Template(List<Block> blocks) {
-        this.blocks = blocks;
+        this.blocks    =  blocks;
+        this.variables = new HashMap<>();
         this.functions = new HashMap<>(FUNCTIONS);
     }
 
@@ -246,15 +250,53 @@ public class Template {
     }
 
     /**
+     * 登记变量
+     * @param name
+     * @param variable
+     * @return
+     */
+    public Template assign(String name, Object variable ) {
+        this.variables.put(name, variable);
+        return this;
+    }
+
+    /**
+     * 登记变量
+     * @param variables
+     * @return
+     */
+    public Template assign(Map<String, Object> variables) {
+        this.variables.putAll( variables );
+        return this;
+    }
+
+    /**
      * 模板渲染
      * @param context
      * @param writer
      * @throws IOException
      */
     public void render(Map<String, Object> context, Writer writer) throws IOException {
-        context.put("__FUNC__", functions);
+        Map<String, Object> newContext = new HashMap<>();
+        newContext.put("__FUNC__", functions);
+        newContext.putAll(variables);
+        newContext.putAll( context );
         for (Block block : blocks) {
-            block.render(context, writer);
+             block.render(newContext, writer);
+        }
+    }
+
+    /**
+     * 模板渲染
+     * @param writer
+     * @throws IOException
+     */
+    public void render(Writer writer) throws IOException {
+        Map<String, Object> newContext = new HashMap<>();
+        newContext.put("__FUNC__", functions);
+        newContext.putAll(variables);
+        for (Block block : blocks) {
+             block.render(newContext, writer);
         }
     }
 
@@ -267,6 +309,20 @@ public class Template {
         StringWriter writer = new StringWriter();
         try {
             render(context, writer);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return writer.toString();
+    }
+
+    /**
+     * 模板渲染
+     * @return
+     */
+    public String render() {
+        StringWriter writer = new StringWriter();
+        try {
+            render(writer);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -921,26 +977,43 @@ public class Template {
         if (expression.equals("false")) {
             return false;
         }
-        // Check if it's a string literal
-        if (expression.startsWith("\"")) {
-            return expression.substring(1, expression.length() - 1);
-        }
-        // Check if it's a JSON literal (array or object)
-        if (expression.startsWith("[")
-        ||  expression.startsWith("{")) {
-            try {
-                return parseJson(expression, context);
-            } catch (Exception ex) {
-                // Not a valid JSON literal, try expression evaluation
+
+        /**
+         * 此段快捷解析代码存在严重问题
+         * "Tony" == name && name != "John" 会被解析成一个字符串
+         * 两头为 JSON 也导致同样的问题
+        if (expression.length() > 1) {
+            // Check if it's a pure string literal (no operators)
+            if (expression.startsWith("\"") && expression.endsWith("\"")) {
+                return expression.substring(1, expression.length() - 1);
+            }
+
+            // Check if it's a JSON literal (array or object)
+            if (expression.startsWith("[") && expression.endsWith("]")) {
+                try {
+                    return parseJson(expression, context);
+                } catch (Exception ex) {
+                    // Not a valid JSON literal, try expression evaluation
+                }
+            }
+            if (expression.startsWith("{") && expression.endsWith("}")) {
+                try {
+                    return parseJson(expression, context);
+                } catch (Exception ex) {
+                    // Not a valid JSON literal, try expression evaluation
+                }
             }
         }
+        */
+
         // Try to evaluate as arithmetic expression
         try {
             return new Expression(expression).evaluate(context);
         } catch (Exception e) {
             // Not an expression, try to get from context
-            return fetchData(expression, context);
         }
+
+        return fetchData(expression, context);
     }
 
     private static Object fetchData(String path, Map<String, Object> context) {
@@ -1411,9 +1484,9 @@ public class Template {
 
     /**
      * 默认模板函数
-     * 选择: ternary(条件, 变量1, 变量2) 等同 条件 ? 变量1 : 变量2
-     * 默认: default(变量1, 变量2...) 跳过空值、空串和数字 0
-     * 包含: contain(集合, 选项) 是否包含选项，可用于字符串
+     * 选择: te(条件, 变量1, 变量2) 等同 条件 ? 变量1 : 变量2
+     * 默认: or(变量1, 变量2...) 同 Javascript 变量1 || 变量2
+     * 包含: in(选项, 集合) 选项是否在集合中，也可用于字符串
      * 缩进: indent(文本, 缩进几格) 或 indent(文本) 缩进两格
      * 连词: concat(列表, 连词符号) 或 indent(列表) 逗号连接
      * 格式: format(格式, 变量1, 变量2...)
@@ -1431,11 +1504,11 @@ public class Template {
      */
     public static final Map<String, Function<Object[], Object>> FUNCTIONS = new HashMap();
     static {
-        FUNCTIONS.put("ternary", args -> {
+        FUNCTIONS.put("te", args -> {
             return decide(args[0]) ? args[1] : args[2];
         });
 
-        FUNCTIONS.put("default", args -> {
+        FUNCTIONS.put("or", args -> {
             for (Object arg : args) {
                 if (decide(arg)) {
                     return arg;
@@ -1444,9 +1517,9 @@ public class Template {
             return null;
         });
 
-        FUNCTIONS.put("contain", args -> {
-            Object a = args[0];
-            Object o = args[1];
+        FUNCTIONS.put("in", args -> {
+            Object o = args[0];
+            Object a = args[1];
             if (a instanceof String) {
                 return ((String) a).contains((String) o);
             } else
@@ -1478,6 +1551,7 @@ public class Template {
         });
 
         FUNCTIONS.put("format", args -> {
+            System.err.println(Dist.toString(args));
             String s = Synt.asString(args[0]);
             Object[] newArgs = Arrays.copyOfRange(args, 1, args.length);
             return String.format(s, newArgs);

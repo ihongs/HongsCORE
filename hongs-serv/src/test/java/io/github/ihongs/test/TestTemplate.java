@@ -18,10 +18,10 @@ import static org.junit.Assert.*;
  * @author Hongs
  */
 public class TestTemplate {
-    
+
     private Map<String, Object> context;
     private String basePath;
-    
+
     @Before
     public void setUp() throws IOException {
         // 初始化测试上下文
@@ -40,7 +40,7 @@ public class TestTemplate {
         basePath = "target/var/test-template";
         Path dir = Path.of(basePath);
         Files.createDirectories(dir);
-        
+
         // 创建 header.html
         try (FileWriter writer = new FileWriter(new File(dir.toString(), "header.html"))) {
             writer.write("""
@@ -50,7 +50,7 @@ public class TestTemplate {
             </header>
             """);
         }
-        
+
         // 创建 subtemplate.html
         try (FileWriter writer = new FileWriter(new File(dir.toString(), "subtemplate.html"))) {
             writer.write("""
@@ -61,11 +61,12 @@ public class TestTemplate {
             """);
         }
     }
-    
+
     private void testTemplate(String template, Map<String, Object> ctx, String expected) {
         Template engine = Template.compile(template);
         String result = engine.render(ctx);
 
+        // 如不清楚，接触注释做对比
 //        System.out.println("====== EXPECTED ======");
 //        System.out.println(expected);
 //        System.out.println("======  ACTUAL  ======");
@@ -75,7 +76,7 @@ public class TestTemplate {
         // 直接比较，不清理空白字符
         assertEquals("Template rendering failed", expected, result);
     }
-    
+
     @Test
     public void testBasicTemplateRendering() {
         String template = """
@@ -101,7 +102,7 @@ public class TestTemplate {
 
         testTemplate(template, context, expected);
     }
-    
+
     @Test
     public void testIfNestedWithFor() {
         String template = """
@@ -130,7 +131,7 @@ public class TestTemplate {
 
         testTemplate(template, context, expected);
     }
-    
+
     @Test
     public void testForNestedWithIf() {
         String template = """
@@ -159,20 +160,20 @@ public class TestTemplate {
 
         testTemplate(template, context, expected);
     }
-    
+
     @Test
     public void testArithmeticOperations() {
         String template = """
         <h2>Arithmetic operations</h2>
         {%set sum = 1 + 2%}
         <p>1 + 2 = {{sum}}</p>
-        
+
         {%set difference = 5 - 3%}
         <p>5 - 3 = {{difference}}</p>
-        
+
         {%set product = 4 * 6%}
         <p>4 * 6 = {{product}}</p>
-        
+
         {%set quotient = 10 / 3%}
         <p>10 / 3 = {{format("%.2f", quotient)}}</p>
         """;
@@ -180,17 +181,17 @@ public class TestTemplate {
         String expected = """
         <h2>Arithmetic operations</h2>
         <p>1 + 2 = 3</p>
-        
+
         <p>5 - 3 = 2</p>
-        
+
         <p>4 * 6 = 24</p>
-        
+
         <p>10 / 3 = 3.33</p>
         """;
 
         testTemplate(template, context, expected);
     }
-    
+
     @Test
     public void testIncludeDirectiveWithBasePath() throws Exception {
         String template = """
@@ -216,11 +217,11 @@ public class TestTemplate {
 
         Template engine = Template.compile(template, Path.of(basePath));
         String result = engine.render(context);
-        
+
         // 直接比较，不清理空白字符
         assertEquals("Include directive test failed", expected, result);
     }
-    
+
     @Test
     public void testIncludeWithSubContext() throws Exception {
         Map<String, Object> subContext = new HashMap<>();
@@ -240,12 +241,12 @@ public class TestTemplate {
             <h3>Sub Template</h3>
             <p>Hello from subcontext!</p>
         </div>
-        
+
         """;
 
         Template engine = Template.compile(template, Path.of(basePath));
         String result = engine.render(ctx);
-        
+
         // 直接比较，不清理空白字符
         assertEquals("Include with subContext test failed", expected, result);
     }
@@ -266,7 +267,7 @@ public class TestTemplate {
         }
         assertTrue("Expected exception was not thrown", thrown);
     }
-    
+
     @Test
     public void testTemplateSyntaxError() {
         // 模板格式错误：缺少结束标签
@@ -289,7 +290,7 @@ public class TestTemplate {
         }
         assertTrue("Expected exception was not thrown", thrown);
     }
-    
+
     @Test
     public void testIfElifElse() {
         // 测试if-elif-else条件分支
@@ -313,13 +314,13 @@ public class TestTemplate {
 
         testTemplate(template, context, expected);
     }
-    
+
     @Test
     public void testForElse() {
         // 测试for循环的else分支
         Map<String, Object> emptyContext = new HashMap<>(context);
         emptyContext.put("items", List.of());
-        
+
         String template = """
         <h2>For with else test</h2>
         <ul>
@@ -327,23 +328,23 @@ public class TestTemplate {
             {%for entry in user%}{%set a = entry.value%}{%endfor%}
         </ul>
         """;
-    
+
         String expected = """
         <h2>For with else test</h2>
         <ul>
             <li>No items found</li>
         </ul>
         """;
-    
+
         testTemplate(template, emptyContext, expected);
     }
-    
+
     @Test
     public void testNestedCombinations() {
         // 测试for/if、for/else、if/else的嵌套组合
         String template = """
         <h2>Nested combinations test</h2>
-        
+
         <!-- For with nested if-else -->
         <h3>For with nested if-else</h3>
         <ul>
@@ -357,7 +358,7 @@ public class TestTemplate {
             {%endif%}
         {%endfor%}
         </ul>
-        
+
         <!-- If-else with nested for -->
         <h3>If-else with nested for</h3>
         {%if showItems%}
@@ -369,7 +370,7 @@ public class TestTemplate {
         {%else%}
             <p>No items to display</p>
         {%endif%}
-        
+
         <!-- For with else and nested if -->
         <h3>For with else and nested if</h3>
         <ul>
@@ -387,7 +388,7 @@ public class TestTemplate {
 
         String expected = """
         <h2>Nested combinations test</h2>
-        
+
         <!-- For with nested if-else -->
         <h3>For with nested if-else</h3>
         <ul>
@@ -395,7 +396,7 @@ public class TestTemplate {
             <li class="second">Item 2</li>
             <li class="other">Item 3</li>
         </ul>
-        
+
         <!-- If-else with nested for -->
         <h3>If-else with nested for</h3>
             <ul>
@@ -403,7 +404,7 @@ public class TestTemplate {
                 <li>Item 2</li>
                 <li>Item 3</li>
             </ul>
-        
+
         <!-- For with else and nested if -->
         <h3>For with else and nested if</h3>
         <ul>
@@ -414,30 +415,30 @@ public class TestTemplate {
 
         testTemplate(template, context, expected);
     }
-    
+
     @Test
     public void testModuloOperator() {
         // 测试取模运算符，特别测试不会与%}标签结束符冲突
         Map<String, Object> ctx = new HashMap<>(context);
-        
+
         String template = """
         <h2>Modulo operator test</h2>
-        
+
         <!-- Basic modulo -->
         <p>10 % 3 = {{10 % 3}}</p>
         <p>15 % 4 = {{15 % 4}}</p>
         <p>20 % 5 = {{20 % 5}}</p>
-        
+
         <!-- Modulo with variables -->
         {%set a = 17%}
         {%set b = 5%}
         <p>{{a}} % {{b}} = {{a % b}}</p>
-        
+
         <!-- Modulo in expression -->
         {%set total = 23%}
         {%set divisor = 7%}
         <p>{{total}} % {{divisor}} = {{total % divisor}}</p>
-        
+
         <!-- Modulo in condition -->
         {%set num = 15%}
         {%if num % 3 == 0%}
@@ -445,52 +446,62 @@ public class TestTemplate {
         {%else%}
         <p>{{num}} is not divisible by 3</p>
         {%endif%}
-        
+
         <!-- Modulo with parentheses -->
         <p>(10 + 5) % 4 = {{(10 + 5) % 4}}</p>
         <p>10 + (5 % 4) = {{10 + (5 % 4)}}</p>
-        
+
         <!-- Important: Test that % doesn't conflict with %} tag end -->
         {%set remainder = 10 % 3%}
         <p>Remainder: {{remainder}}</p>
-        
+
         <!-- Complex expression with % and other operators -->
         {%set x = 25%}
         {%set y = 6%}
         <p>{{x}} % {{y}} = {{x % y}}</p>
         <p>({{x}} + {{y}}) % 4 = {{(x + y) % 4}}</p>
+
+        <!-- Quick parsing of test expressions -->
+        {%if "Tony" == user.name && user.name ！= "John"%}
+        I am Tony
+        {%else%}
+        I am John
+        {%endif%}
         """;
 
         String expected = """
         <h2>Modulo operator test</h2>
-        
+
         <!-- Basic modulo -->
         <p>10 % 3 = 1</p>
         <p>15 % 4 = 3</p>
         <p>20 % 5 = 0</p>
-        
+
         <!-- Modulo with variables -->
         <p>17 % 5 = 2</p>
-        
+
         <!-- Modulo in expression -->
         <p>23 % 7 = 2</p>
-        
+
         <!-- Modulo in condition -->
         <p>15 is not divisible by 3</p>
-        
+
         <!-- Modulo with parentheses -->
         <p>(10 + 5) % 4 = 3</p>
         <p>10 + (5 % 4) = 11</p>
-        
+
         <!-- Important: Test that % doesn't conflict with %} tag end -->
         <p>Remainder: 1</p>
-        
+
         <!-- Complex expression with % and other operators -->
         <p>25 % 6 = 1</p>
         <p>(25 + 6) % 4 = 3</p>
+
+        <!-- Quick parsing of test expressions -->
+        I am John
         """;
 
         testTemplate(template, ctx, expected);
     }
-    
+
 }

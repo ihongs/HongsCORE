@@ -978,6 +978,11 @@ public class Template {
             return false;
         }
 
+        // Fetch data fast
+        if (expression.matches("^\\w+(\\.\\w+)$")) {
+            return fetchData(expression, context);
+        }
+
         /**
          * 此段快捷解析代码存在严重问题
          * "Tony" == name && name != "John" 会被解析成一个字符串
@@ -1010,10 +1015,8 @@ public class Template {
         try {
             return new Expression(expression).evaluate(context);
         } catch (Exception e) {
-            // Not an expression, try to get from context
+            throw  new UnsupportedOperationException(e);
         }
-
-        return fetchData(expression, context);
     }
 
     private static Object fetchData(String path, Map<String, Object> context) {

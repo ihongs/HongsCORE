@@ -979,9 +979,10 @@ public class Template {
         }
 
         /**
-         * 此段快捷解析代码存在严重问题
-         * "Tony" == name && name != "John" 会被解析成一个字符串
-         * 两头为 JSON 也导致同样的问题
+         * "abc" == def && def != "xyz" 会被解析成一个字符串,
+         * 两头为 JSON 也导致同样的问题.
+         * 虽可用 contains 速判边界中断,
+         * 但这就与下方解析的效率差不多.
         if (expression.length() > 1) {
             // Check if it's a pure string literal (no operators)
             if (expression.startsWith("\"") && expression.endsWith("\"")) {
@@ -1009,8 +1010,8 @@ public class Template {
         // Try to evaluate as arithmetic expression
         try {
             return new Expression(expression).evaluate(context);
-        } catch (Exception e) {
-            throw  new UnsupportedOperationException(e.getMessage()+" EXPR: "+expression);
+        } catch (Exception ex) {
+            throw  new IllegalArgumentException(ex.getMessage()+" EXPR: "+expression, ex);
         }
     }
 

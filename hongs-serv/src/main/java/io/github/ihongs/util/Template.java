@@ -133,9 +133,13 @@ import java.util.regex.Pattern;
  * {{format("Hello %s", name)}}
  * {{format("%.2f", price)}}
  *
- * date_format(时间, 格式) - 日期格式化
- * {{date_format(now, "yyyy-MM-dd")}}
+ * date_format(时间, 格式) - 日期格式化, 支持时间戳(毫秒), Date, Instant
  * {{date_format(timestamp, "HH:mm:ss")}}
+ * {{date_format(date, "yyyy-MM-dd")}}
+ *
+ * range(开始, 结束, 步长) - 范围迭代, 步长默认 1
+ * {%for i in range(0, 10, 2)%}
+ * {%for i in range(0, 10)%}
  *
  * count(变量) - 获取长度
  * {{count(items)}}  # 列表长度
@@ -1185,32 +1189,17 @@ public class Template {
             if (c == '!') {
                 pos++;
                 Object value = parsePrimary(context);
-                return !toBoolean(value);
+                return ! decide(value);
             } else if (c == '(') {
                 pos++;
-                Object result = parseLogical(context);
+                Object value = parseLogical(context);
                 skipWhitespace();
                 if (pos >= expression.length() || expression.charAt(pos) != ')') {
                     throw new IllegalArgumentException("Missing closing parenthesis");
                 }
                 pos++;
-                return result;
-            } else if (c == '-') {
-                pos++;
-                Object value = parsePrimary(context);
-                if (value instanceof Number) {
-                    return -((Number) value).doubleValue();
-                } else
-                if (value instanceof String) {
-                    try {
-                        return -Double.parseDouble((String) value);
-                    } catch (NumberFormatException e) {
-                        throw new IllegalArgumentException("Cannot apply negative operator to non-number: " + value);
-                    }
-                } else {
-                    throw new IllegalArgumentException("Cannot apply negative operator to: " + value);
-                }
-            } else if (Character.isDigit(c) || c == '.') {
+                return value;
+            } else if (Character.isDigit(c)) {
                 return parseNumber();
             } else if (c == '"') {
                 return parseString();
@@ -1358,14 +1347,17 @@ public class Template {
         }
 
         private Object evaluateLogicalOp(Object left, String op, Object right) {
-            boolean leftBool = toBoolean(left);
-            boolean rightBool = toBoolean(right);
-
             switch (op) {
                 case "&&":
-                    return leftBool && rightBool;
+                    if (! decide(left)) {
+                        return left;
+                    }
+                    return right;
                 case "||":
-                    return leftBool || rightBool;
+                    if (decide(left)) {
+                        return left;
+                    }
+                    return right;
                 default:
                     throw new IllegalArgumentException("Unknown logical operator: " + op);
             }
@@ -1483,14 +1475,15 @@ public class Template {
 
     /**
      * 默认模板函数
-     * 选择: te(条件, 变量1, 变量2) 等同 条件 ? 变量1 : 变量2
-     * 默认: or(变量1, 变量2...) 同 Javascript 变量1 || 变量2
+     * 选择: te(条件, 变量1, 变量2) 条件 ? 变量1 : 变量2
+     * 正则: re(文本, 正则) 若文本能匹配正则，则返回 true
      * 包含: in(选项, 集合) 选项是否在集合中，也可用于字符串
      * 缩进: indent(文本, 缩进几格) 或 indent(文本) 缩进两格
      * 连词: concat(列表, 连词符号) 或 indent(列表) 逗号连接
      * 格式: format(格式, 变量1, 变量2...)
      * 日期格式: date_format(时间, 格式) 时间变量可以是 Date/Instant 或时间戳(毫秒)
      * 获取大小: count(变量) 可取字典/列表/数组/字符串的长度
+     * 范围迭代: range(开始, 结束, 步长) 生成从开始到结束(不包含)的整数列表
      * 文本清理: strip(文本, 模式) 模式取值:
      *   trim 清除首尾
      *   tags 清除 html 标签
@@ -1507,13 +1500,10 @@ public class Template {
             return decide(args[0]) ? args[1] : args[2];
         });
 
-        FUNCTIONS.put("or", args -> {
-            for (Object arg : args) {
-                if (decide(arg)) {
-                    return arg;
-                }
-            }
-            return null;
+        FUNCTIONS.put("re", args -> {
+            String s = Synt.asString(args[0]);
+            String r = Synt.asString(args[1]);
+            return s.matches(r);
         });
 
         FUNCTIONS.put("in", args -> {
@@ -1617,6 +1607,17 @@ public class Template {
                 return s.length();
             }
             return 0;
+        });
+
+        FUNCTIONS.put("range", args -> {
+            int s = Synt.declare(args[0], 0); // 开始
+            int e = Synt.declare(args[1], 0); // 结束
+            int d = Synt.declare(args.length > 2 ? args[2] : 1, 1); // 步长
+            List<Integer> list = new ArrayList<>();
+            for (int i = s; i < e; i += d) {
+                list.add(i);
+            }
+            return list;
         });
     }
 

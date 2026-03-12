@@ -1408,23 +1408,6 @@ public class Template {
             return args;
         }
 
-        private Object evaluateLogicalOp(Object left, String op, Object right) {
-            switch (op) {
-                case "&&":
-                    if (! decide(left)) {
-                        return left;
-                    }
-                    return right;
-                case "||":
-                    if (decide(left)) {
-                        return left;
-                    }
-                    return right;
-                default:
-                    throw new IllegalArgumentException("Unknown logical operator: " + op);
-            }
-        }
-
         private Object evaluateNumericOp(Object left, char op, Object right) {
             double leftVal = toNumber(left);
             double rightVal = toNumber(right);
@@ -1465,7 +1448,24 @@ public class Template {
                 case "<=":
                     return compare(left, right) <= 0;
                 default:
-                    throw new IllegalArgumentException("Unknown comparison operator: " + op);
+                    throw new IllegalArgumentException("Unknown compare operator: " + op);
+            }
+        }
+
+        private Object evaluateLogicalOp(Object left, String op, Object right) {
+            switch (op) {
+                case "&&":
+                    if (! decide(left)) {
+                        return left;
+                    }
+                    return right;
+                case "||":
+                    if (decide(left)) {
+                        return left;
+                    }
+                    return right;
+                default:
+                    throw new IllegalArgumentException("Unknown logical operator: " + op);
             }
         }
 
@@ -1500,28 +1500,23 @@ public class Template {
                 }
             }
 
-            try {
-                double leftVal  = toNumber(left );
-                double rightVal = toNumber(right);
-                return Double.compare(leftVal, rightVal);
-            } catch (IllegalArgumentException e ) {
-                throw new IllegalArgumentException("Cannot compare non-numeric values. " + e.getMessage());
-            }
+            double leftVal  = toNumber(left );
+            double rightVal = toNumber(right);
+            return Double.compare(leftVal, rightVal);
         }
 
         private double toNumber(Object obj) {
-            if (obj instanceof Number) {
-                return ((Number) obj).doubleValue();
-            } else
-            if (obj instanceof String) {
-                try {
+            try {
+                if (obj instanceof Number) {
+                    return ((Number) obj).doubleValue();
+                } else
+                if (obj instanceof String) {
                     return Double.parseDouble((String) obj);
-                } catch (NumberFormatException e) {
-                    throw new IllegalArgumentException("Cannot convert to number: " + obj);
                 }
-            } else {
-                throw new IllegalArgumentException("Cannot convert to number: " + obj);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Cannot convert to number: " + obj, e);
             }
+            throw new IllegalArgumentException("Cannot convert to number: " + obj);
         }
 
     }

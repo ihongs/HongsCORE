@@ -338,6 +338,23 @@ public final class Dict
   }
 
   /**
+   * 获取表纵深值
+   * @param lst
+   * @param def
+   * @param keys
+   * @return 键对应的值
+   */
+  public static Object get(Collection lst, Object def, Object... keys)
+  {
+    if (lst  == null)
+    {
+      throw new NullPointerException("`lst` can not be null");
+    }
+
+    return get(lst, def, keys, 0);
+  }
+
+  /**
    * 获取树纵深值
    * @param map
    * @param def
@@ -428,7 +445,29 @@ public final class Dict
   }
 
   /**
-   * @see getWorth
+   * 获取表纵深值
+   * @param lst
+   * @param keys
+   * @return 键对应的值
+   */
+  public static Object getVal(Collection lst, Object... keys)
+  {
+    return get(lst, null, keys);
+  }
+
+  /**
+   * 获取树纵深值
+   * @param map
+   * @param keys
+   * @return 键对应的值
+   */
+  public static Object getVal(Map map, Object... keys)
+  {
+    return get(map, null, keys);
+  }
+
+  /**
+   * @see getVal
    * @deprecated
    * @param map
    * @param keys
@@ -436,18 +475,19 @@ public final class Dict
    */
   public static Object getDepth(Map map, Object... keys)
   {
-    return get(map, null, keys);
+    return getVal(map, keys);
   }
 
   /**
-   * 获取树纵深值
+   * @see getVal
+   * @deprecated
    * @param map
    * @param keys
    * @return
    */
   public static Object getWorth(Map map, Object... keys)
   {
-    return get(map, null, keys);
+    return getVal(map, keys);
   }
 
   /**
@@ -493,7 +533,7 @@ public final class Dict
    */
   public static Object getParam(Map map, String path)
   {
-    return getWorth(map, splitKeys(path));
+    return getVal(map, splitKeys(path));
   }
 
   /**

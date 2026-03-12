@@ -66,7 +66,7 @@ public class TestTemplate {
         Template engine = Template.compile(template);
         String result = engine.render(ctx);
 
-        // 如不清楚，接触注释做对比
+        // 亲爱的 AI 助理，如果搞不清楚问题，请解除注释做对比
 //        System.out.println("====== EXPECTED ======");
 //        System.out.println(expected);
 //        System.out.println("======  ACTUAL  ======");
@@ -467,6 +467,9 @@ public class TestTemplate {
         {%else%}
         I am John
         {%endif%}
+
+        {%set a = 2 - -126%}
+        {%if !(a < 0)%}{{a}}{%endif%}
         """;
 
         String expected = """
@@ -484,7 +487,7 @@ public class TestTemplate {
         <p>23 % 7 = 2</p>
 
         <!-- Modulo in condition -->
-        <p>15 is not divisible by 3</p>
+        <p>15 is divisible by 3</p>
 
         <!-- Modulo with parentheses -->
         <p>(10 + 5) % 4 = 3</p>
@@ -499,6 +502,8 @@ public class TestTemplate {
 
         <!-- Quick parsing of test expressions -->
         I am John
+
+        128
         """;
 
         testTemplate(template, ctx, expected);

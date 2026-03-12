@@ -7,10 +7,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.Date;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -100,6 +101,9 @@ import java.util.regex.Pattern;
  * 逻辑运算: &&, ||, !
  * {%if a && b%}
  * {%if !isAdmin%}
+ * 类似 JS 的 &&, ||
+ * {{abc || def}}
+ * 如过 abc 为空则用 def
  *
  * 括号分组:
  * {%if (a && b) || (c && d)%}
@@ -112,14 +116,11 @@ import java.util.regex.Pattern;
  *
  * ==================== 内置函数 ====================
  *
- * te(条件, 变量1, 变量2) - 三元运算符
- * {{te(isAdm, "Admin", "User")}}
+ * contains(集合, 选项) - 包含, 也可用于字典或字串
+ * {%if contains(list, name)%}
  *
- * or(变量1, 变量2...) - 返回第一个非空值
+ * matches(字串, 正则) - 正则匹配
  * {{or(title, "Default Title")}}
- *
- * in(选项, 集合) - 包含, 也可用于字典或字串
- * {%if in(name, ["Kevin", "Lucie"])%}
  *
  * indent(文本, 缩进几格) - 缩进文本
  * {{indent(texts, 4)}}
@@ -805,7 +806,25 @@ public class Template {
             Object value = getValue(name, context);
             if (value != null) {
                 writer.write(Synt.asString(value));
+                //writer.write(value.toString());
             }
+        }
+    }
+
+    // Set variable block
+    private static class SetBlock implements Block {
+        private final String variableName;
+        private final String valueExpression;
+
+        public SetBlock(String variableName, String valueExpression) {
+            this.variableName = variableName;
+            this.valueExpression = valueExpression;
+        }
+
+        @Override
+        public void render(Map<String, Object> context, Writer writer) throws IOException {
+            Object value = getValue(valueExpression, context);
+            context.put(variableName, value);
         }
     }
 
@@ -857,42 +876,54 @@ public class Template {
     // For block
     private static class ForBlock implements Block {
         private final String variableName;
-        private final String collectionName;
+        private final String iterableName;
         private final List<Block> innerBlocks;
         private final List<Block> elseBlocks;
 
-        public ForBlock(String variableName, String collectionName, List<Block> innerBlocks, List<Block> elseBlocks) {
+        public ForBlock(String variableName, String iterableName, List<Block> innerBlocks, List<Block> elseBlocks) {
             this.variableName = variableName;
-            this.collectionName = collectionName;
+            this.iterableName = iterableName;
             this.innerBlocks = innerBlocks;
             this.elseBlocks = elseBlocks;
         }
 
         @Override
         public void render(Map<String, Object> context, Writer writer) throws IOException {
-            Object collection = getValue(collectionName, context);
+            Object loop = getValue(iterableName, context);
             boolean hasItems = false;
 
-            if (collection instanceof List<?>) {
-                List<?> list = (List<?>) collection;
+            if (loop instanceof Collection<?>) {
+                Collection<?> list = (Collection<?>) loop;
                 hasItems = !list.isEmpty();
-                Map<String, Object> loopContext = context; // new HashMap<>(context); 变量名覆盖不算问题，何况还需要内部计数
-                for (Object item : list) {
-                    loopContext.put(variableName, item);
+                for (Object entry : list ) {
+                    context.put(variableName, entry );
                     for (Block block : innerBlocks) {
-                        block.render(loopContext, writer);
+                        block.render(context, writer);
                     }
                 }
-            } else if (collection instanceof Map<?, ?>) {
-                Map<?, ?> map = (Map<?, ?>) collection;
-                hasItems = !map.isEmpty();
-                Map<String, Object> loopContext = context; // new HashMap<>(context); 变量名覆盖不算问题，何况还需要内部计数
-                for (Map.Entry<?, ?> entry : map.entrySet()) {
-                    loopContext.put(variableName, entry);
+            } else if (loop instanceof Map<?,?>) {
+                Map<?,?> dict = (Map<?,?>) loop;
+                hasItems = !dict.isEmpty();
+                for (Map.Entry<?,?> entry : dict.entrySet()) {
+                    context.put(variableName, entry );
                     for (Block block : innerBlocks) {
-                        block.render(loopContext, writer);
+                        block.render(context, writer);
                     }
                 }
+            } else if (loop instanceof Iterator) {
+                Iterator iter = (Iterator) loop;
+                while (iter.hasNext()) {
+                    Object entry = iter.next();
+                    context.put(variableName, entry );
+                    for (Block block : innerBlocks) {
+                        block.render(context, writer);
+                    }
+                    if (! hasItems) {
+                        hasItems = true;
+                    }
+                }
+            } else if (loop != null) {
+                throw new UnsupportedOperationException("Non-iterable type for `"+iterableName+"`: "+loop.getClass().getName());
             }
 
             // If collection is null or empty, render else blocks
@@ -901,23 +932,6 @@ public class Template {
                     block.render(context, writer);
                 }
             }
-        }
-    }
-
-    // Set block
-    private static class SetBlock implements Block {
-        private final String variableName;
-        private final String valueExpression;
-
-        public SetBlock(String variableName, String valueExpression) {
-            this.variableName = variableName;
-            this.valueExpression = valueExpression;
-        }
-
-        @Override
-        public void render(Map<String, Object> context, Writer writer) throws IOException {
-            Object value = getValue(valueExpression, context);
-            context.put(variableName, value);
         }
     }
 
@@ -1055,9 +1069,9 @@ public class Template {
                     Object value;
                     if (element.startsWith("\"")) {
                         value = element.substring(1, element.length() - 1);
-                    } else if (element.matches("\\d+")) {
+                    } else if (element.matches("-?\\d+")) {
                         value = Integer.parseInt(element);
-                    } else if (element.matches("\\d+\\.\\d+")) {
+                    } else if (element.matches("-?\\d+\\.\\d+")) {
                         value = Double.parseDouble(element);
                     } else {
                         value = fetchData(element, context);
@@ -1081,9 +1095,9 @@ public class Template {
                         Object value;
                         if (textVal.startsWith("\"")) {
                             value = textVal.substring(1, textVal.length() - 1);
-                        } else if (textVal.matches("\\d+")) {
+                        } else if (textVal.matches("-?\\d+")) {
                             value = Integer.parseInt(textVal);
-                        } else if (textVal.matches("\\d+\\.\\d+")) {
+                        } else if (textVal.matches("-?\\d+\\.\\d+")) {
                             value = Double.parseDouble(textVal);
                         } else {
                             value = fetchData(textVal, context);
@@ -1123,13 +1137,26 @@ public class Template {
                 skipWhitespace();
                 if (pos >= expression.length()) break;
                 String op = parseOperator();
-                if (!op.equals("&&") && !op.equals("||")) {
+                if (!isLogicalOp(op)) {
                     // Not a logical operator, put the operator back
                     pos -= op.length();
                     break;
                 }
-                Object right = parseCompare(context);
-                left = evaluateLogicalOp(left, op, right);
+                //Object right = parseCompare(context);
+                //left = evaluateLogicalOp(left, op, right);
+
+                // 惰性求值，左边满足条件则不再继续
+                if ("&&".equals(op)) {
+                    if (! decide(left)) {
+                        return left;
+                    }
+                } else
+                if ("||".equals(op)) {
+                    if (decide(left)) {
+                        return left;
+                    }
+                }
+                left = parseCompare(context);
             }
             return left;
         }
@@ -1199,7 +1226,7 @@ public class Template {
                 }
                 pos++;
                 return value;
-            } else if (Character.isDigit(c)) {
+            } else if (Character.isDigit(c) || c == '-' || c == '+') {
                 return parseNumber();
             } else if (c == '"') {
                 return parseString();
@@ -1227,19 +1254,15 @@ public class Template {
 
         private Object parseNumber() {
             int start = pos;
+            // 正负号
+            if (pos < expression.length() && (expression.charAt(pos) == '-' || expression.charAt(pos) == '+')) {
+                pos++;
+            }
             while (pos < expression.length() && (Character.isDigit(expression.charAt(pos)) || expression.charAt(pos) == '.')) {
                 pos++;
             }
             String numStr = expression.substring(start, pos);
-            try {
-                if (numStr.contains(".")) {
-                    return Double.parseDouble(numStr);
-                } else {
-                    return Integer.parseInt(numStr);
-                }
-            } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("Invalid number: " + numStr);
-            }
+            return toNumber(numStr);
         }
 
         private String parseString() {
@@ -1327,7 +1350,10 @@ public class Template {
             }
 
             // Otherwise, it's a variable
-            return fetchData(name, context);
+            if (! name.isEmpty()) {
+                return fetchData(name, context);
+            }
+            return null;
         }
 
         private List<Object> parseArgs(Map<String, Object> context) {
@@ -1407,10 +1433,24 @@ public class Template {
             }
         }
 
+        private boolean isLogicalOp(String op) {
+            return op.equals("&&") || op.equals("||");
+        }
+
         private boolean isCompareOp(String op) {
             return op.equals("==") || op.equals("!=") ||
                    op.equals(">=") || op.equals("<=") ||
                    op.equals(">" ) || op.equals("<" );
+        }
+
+        private boolean equals(Object left, Object right) {
+            if (left == null && right == null) {
+                return true;
+            }
+            if (left == null || right == null) {
+                return false;
+            }
+            return left.equals(right);
         }
 
         private int compare(Object left, Object right) {
@@ -1424,36 +1464,12 @@ public class Template {
                 }
             }
 
-            if (left instanceof Number && right instanceof Number) {
-                double leftValue  = ((Number) left ).doubleValue();
-                double rightValue = ((Number) right).doubleValue();
-                return Double.compare(leftValue, rightValue);
-            }
-
-            throw new IllegalArgumentException("Cannot compare non-numeric values: " + left.getClass() + " and " + right.getClass());
-        }
-
-        private boolean equals(Object left, Object right) {
-            if (left == null && right == null) {
-                return true;
-            }
-            if (left == null || right == null) {
-                return false;
-            }
-            return left.equals(right);
-        }
-
-        private boolean toBoolean(Object obj) {
-            if (obj == null) {
-                return false;
-            } else if (obj instanceof Boolean) {
-                return (Boolean) obj;
-            } else if (obj instanceof String) {
-                return ((String) obj).isEmpty() == false;
-            } else if (obj instanceof Number) {
-                return ((Number) obj).doubleValue() != 0;
-            } else {
-                return true;
+            try {
+                double leftVal  = toNumber(left );
+                double rightVal = toNumber(right);
+                return Double.compare(leftVal, rightVal);
+            } catch (IllegalArgumentException e ) {
+                throw new IllegalArgumentException("Cannot compare non-numeric values. " + e.getMessage());
             }
         }
 
@@ -1471,13 +1487,13 @@ public class Template {
                 throw new IllegalArgumentException("Cannot convert to number: " + obj);
             }
         }
+
     }
 
     /**
      * 默认模板函数
-     * 选择: te(条件, 变量1, 变量2) 条件 ? 变量1 : 变量2
-     * 正则: re(文本, 正则) 若文本能匹配正则，则返回 true
-     * 包含: in(选项, 集合) 选项是否在集合中，也可用于字符串
+     * 包含: contains(选项, 集合) 选项是否在集合中，也可用于字典和字串
+     * 正则: matches(文本, 正则) 文本是否匹配正则
      * 缩进: indent(文本, 缩进几格) 或 indent(文本) 缩进两格
      * 连词: concat(列表, 连词符号) 或 indent(列表) 逗号连接
      * 格式: format(格式, 变量1, 变量2...)
@@ -1496,19 +1512,9 @@ public class Template {
      */
     public static final Map<String, Function<Object[], Object>> FUNCTIONS = new HashMap();
     static {
-        FUNCTIONS.put("te", args -> {
-            return decide(args[0]) ? args[1] : args[2];
-        });
-
-        FUNCTIONS.put("re", args -> {
-            String s = Synt.asString(args[0]);
-            String r = Synt.asString(args[1]);
-            return s.matches(r);
-        });
-
-        FUNCTIONS.put("in", args -> {
-            Object o = args[0];
+        FUNCTIONS.put("contains", args -> {
             Object a = args[1];
+            Object o = args[0];
             if (a instanceof String) {
                 return ((String) a).contains((String) o);
             } else
@@ -1519,6 +1525,12 @@ public class Template {
                 return ((Map) a).containsKey(o);
             }
             return false;
+        });
+
+        FUNCTIONS.put("matches", args -> {
+            String s = Synt.asString(args[0]);
+            String r = Synt.asString(args[1]);
+            return s.matches(r);
         });
 
         FUNCTIONS.put("indent", args -> {

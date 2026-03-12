@@ -105,6 +105,10 @@ import java.util.regex.Pattern;
  * {{abc || def}}
  * 如过 abc 为空则用 def
  *
+ * 三元操作:
+ * {{a && b ? c : d}}
+ * {%set x = a ? b : (c ? d : e)%}
+ *
  * 括号分组:
  * {%if (a && b) || (c && d)%}
  * {%set result = (a + b) * (c - d)%}
@@ -1122,7 +1126,7 @@ public class Template {
 
         public Object evaluate(Map<String, Object> context) {
             this.pos = 0;
-            return parseLogical(context);
+            return parseTernary(context);
         }
 
         private void skipWhitespace() {
@@ -1131,11 +1135,39 @@ public class Template {
             }
         }
 
+        private Object parseTernary(Map<String, Object> context) {
+            Object cond = parseLogical(context);
+            skipWhitespace();
+            if (pos < expression.length() && expression.charAt(pos) == '?') {
+                pos++;
+                Object left = parseTernary(context);
+                skipWhitespace();
+                if (pos < expression.length() && expression.charAt(pos) == ':') {
+                    pos++;
+                } else {
+                    throw new IllegalArgumentException("Missing colon in ternary operator");
+                }
+                //Object right = parseTernary(context);
+                //return decide(cond) ? left : right;
+
+                // 惰性求值, 满足条件则不再处理右边
+                if (decide(cond)) {
+                    return left;
+                }
+                return parseTernary(context);
+            }
+            return cond;
+        }
+
         private Object parseLogical(Map<String, Object> context) {
             Object left = parseCompare(context);
             while (pos < expression.length()) {
                 skipWhitespace();
                 if (pos >= expression.length()) break;
+                // 检查是否是三元操作符的开始
+                if (expression.charAt(pos) == '?') {
+                    break;
+                }
                 String op = parseOperator();
                 if (!isLogicalOp(op)) {
                     // Not a logical operator, put the operator back
@@ -1166,6 +1198,10 @@ public class Template {
             while (pos < expression.length()) {
                 skipWhitespace();
                 if (pos >= expression.length()) break;
+                // 检查是否是三元操作符的开始
+                if (expression.charAt(pos) == '?') {
+                    break;
+                }
                 String op = parseOperator();
                 if (!isCompareOp(op)) {
                     // Not a comparison operator, put the operator back
@@ -1219,7 +1255,7 @@ public class Template {
                 return ! decide(value);
             } else if (c == '(') {
                 pos++;
-                Object value = parseLogical(context);
+                Object value = parseTernary(context);
                 skipWhitespace();
                 if (pos >= expression.length() || expression.charAt(pos) != ')') {
                     throw new IllegalArgumentException("Missing closing parenthesis");
@@ -1552,7 +1588,6 @@ public class Template {
         });
 
         FUNCTIONS.put("format", args -> {
-            System.err.println(Dist.toString(args));
             String s = Synt.asString(args[0]);
             Object[] newArgs = Arrays.copyOfRange(args, 1, args.length);
             return String.format(s, newArgs);

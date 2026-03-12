@@ -509,4 +509,61 @@ public class TestTemplate {
         testTemplate(template, ctx, expected);
     }
 
+    @Test
+    public void testTernaryOperator() {
+        // 测试三元操作符
+        String template = """
+        <h2>Ternary operator test</h2>
+
+        <!-- Basic ternary -->
+        <p>Is active: {{isActive ? "Yes" : "No"}}</p>
+        
+        <!-- Ternary with variables -->
+        <p>Count is {{count > 5 ? "greater than 5" : "less than or equal to 5"}}</p>
+        
+        <!-- Nested ternary -->
+        <p>Status: {{count > 10 ? "High" : (count > 5 ? "Medium" : "Low")}}</p>
+        
+        <!-- Ternary with arithmetic -->
+        <p>Result: {{count + 5 > 10 ? count + 5 : count - 5}}</p>
+        
+        <!-- Ternary in variable setting -->
+        {%set result = isActive ? "Active" : "Inactive"%}
+        <p>Set variable: {{result}}</p>
+        
+        <!-- Ternary with logical operators -->
+        <p>Complex: {{isActive && count > 0 ? "Valid" : "Invalid"}}</p>
+        
+        <!-- Ternary with function calls -->
+        <p>Function: {{count > 3 ? concat(items, " | ") : "Not enough items"}}</p>
+        """;
+
+        String expected = """
+        <h2>Ternary operator test</h2>
+
+        <!-- Basic ternary -->
+        <p>Is active: Yes</p>
+        
+        <!-- Ternary with variables -->
+        <p>Count is less than or equal to 5</p>
+        
+        <!-- Nested ternary -->
+        <p>Status: Low</p>
+        
+        <!-- Ternary with arithmetic -->
+        <p>Result: 0</p>
+        
+        <!-- Ternary in variable setting -->
+        <p>Set variable: Active</p>
+        
+        <!-- Ternary with logical operators -->
+        <p>Complex: Valid</p>
+        
+        <!-- Ternary with function calls -->
+        <p>Function: Item 1 | Item 2 | Item 3</p>
+        """;
+
+        testTemplate(template, context, expected);
+    }
+
 }

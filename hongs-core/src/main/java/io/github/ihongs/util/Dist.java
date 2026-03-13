@@ -181,25 +181,29 @@ public final class Dist
     {
       append(sb, pre, (Object[]) val);
     }
-    else if (val instanceof Iterator)
+    else if (val instanceof Collection)
     {
-      append(sb, pre, (Iterator) val);
+      append(sb, pre, (Collection) val);
     }
     else if (val instanceof Enumeration)
     {
       append(sb, pre, (Enumeration) val);
     }
-    else if (val instanceof Collection)
+    else if (val instanceof Map)
     {
-      append(sb, pre, (Collection) val);
+      append(sb, pre, (Map) val);
     }
     else if (val instanceof Dictionary)
     {
       append(sb, pre, (Dictionary) val);
     }
-    else if (val instanceof Map)
+    else if (val instanceof Iterator)
     {
-      append(sb, pre, (Map) val);
+      append(sb, pre, (Iterator) val);
+    }
+    else if (val instanceof Iterable)
+    {
+      append(sb, pre,((Iterable) val).iterator());
     }
     else if (val instanceof Boolean)
     {

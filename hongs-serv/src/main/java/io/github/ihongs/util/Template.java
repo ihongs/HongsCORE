@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 /**
  * 极简模板引擎
  *
- * 类似 Jinja 语法
+ * 由 AI 辅助编写, 类似 Jinja 语法
  * @see https://jinja.flask.org.cn/en/3.1.x/templates/#base-template
  *
  * ==================== 基本语法 ====================
@@ -1689,31 +1689,45 @@ public class Template {
         });
 
         FUNCTIONS.put("range", args -> {
-            int s = Synt.declare(args[0], 0); // 开始
-            int e = Synt.declare(args[1], 0); // 结束
-            int d = Synt.declare(args.length > 2 ? args[2] : 1, 1); // 步长
-            return new Iterable() {
-                @Override
-                public Iterator iterator() {
-                    return new  Iterator() {
-                        int ss = s;
-                        int ee = e;
-                        int dd = d;
+            final int s = Synt.declare(args[0], 0); // 开始
+            final int e = Synt.declare(args[1], 0); // 结束
+            final int d = Synt.declare(args.length > 2 ? args[2] : 1, 1); // 步长
+            if (d == 0) {
+                throw new IllegalArgumentException("Range step can not be 0");
+            }
+            if (d <  0) {
+                return new Iterator () {
+                    int i = s;
 
-                        @Override
-                        public boolean hasNext() {
-                            return ee < ss;
-                        }
+                    @Override
+                    public boolean hasNext() {
+                        return i > e && i <= s;
+                    }
 
-                        @Override
-                        public Object next() {
-                            int  ii = ss;
-                            ss = ss + dd;
-                            return ii;
-                        }
-                    };
-                }
-            };
+                    @Override
+                    public Object next() {
+                        int j = i;
+                        i = i + d;
+                        return  j;
+                    }
+                };
+            } else {
+                return new Iterator () {
+                    int i = s;
+
+                    @Override
+                    public boolean hasNext() {
+                        return i < e && i >= s;
+                    }
+
+                    @Override
+                    public Object next() {
+                        int j = i;
+                        i = i + d;
+                        return  j;
+                    }
+                };
+            }
         });
     }
 

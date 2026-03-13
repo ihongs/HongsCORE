@@ -566,4 +566,294 @@ public class TestTemplate {
         testTemplate(template, context, expected);
     }
 
+    @Test
+    public void testStringNumberConcatenation() {
+        // 测试字符串与数字相加（连接）
+        String template = """
+        <h2>String and number concatenation test</h2>
+
+        <!-- String with number -->
+        <p>String + number: {{"Hello " + count}}</p>
+
+        <!-- Number with string -->
+        <p>Number + string: {{count + " items"}}</p>
+
+        <!-- Multiple concatenations -->
+        <p>Multiple: {{"Count: " + count + ", Price: " + price}}</p>
+
+        <!-- Concatenation in variable setting -->
+        {%set message = "Total: " + (count * price)%}
+        <p>Set variable: {{message}}</p>
+
+        <!-- Concatenation with other operations -->
+        <p>With arithmetic: {{"Result: " + (count + 10)}}</p>
+        """;
+
+        String expected = """
+        <h2>String and number concatenation test</h2>
+
+        <!-- String with number -->
+        <p>String + number: Hello 5</p>
+
+        <!-- Number with string -->
+        <p>Number + string: 5 items</p>
+
+        <!-- Multiple concatenations -->
+        <p>Multiple: Count: 5, Price: 9.99</p>
+
+        <!-- Concatenation in variable setting -->
+        <p>Set variable: Total: 49.95</p>
+
+        <!-- Concatenation with other operations -->
+        <p>With arithmetic: Result: 15</p>
+        """;
+
+        testTemplate(template, context, expected);
+    }
+
+    @Test
+    public void testStringNumberComparison() {
+        // 测试字符串与数字比较
+        String template = """
+        <h2>String and number comparison test</h2>
+
+        <!-- String vs number comparison -->
+        <p>"5" == 5: {{"5" == 5}}</p>
+        <p>"5" != 5: {{"5" != 5}}</p>
+        <p>"10" > 5: {{"10" > 5}}</p>
+        <p>"10" < 15: {{"10" < 15}}</p>
+
+        <!-- Comparison in if statements -->
+        {%if "5" == count%}
+        <p>String "5" equals count (5)</p>
+        {%endif%}
+
+        {%if "10" > count%}
+        <p>String "10" greater than count (5)</p>
+        {%endif%}
+
+        {%if "3" < count%}
+        <p>String "3" less than count (5)</p>
+        {%endif%}
+
+        <!-- Comparison with variables -->
+        {%set strNum = "5"%}
+        <p>strNum ("5") == count (5): {{strNum == count}}</p>
+        <p>strNum ("5") > 3: {{strNum > 3}}</p>
+        <p>strNum ("5") < 10: {{strNum < 10}}</p>
+        """;
+
+        String expected = """
+        <h2>String and number comparison test</h2>
+
+        <!-- String vs number comparison -->
+        <p>"5" == 5: true</p>
+        <p>"5" != 5: false</p>
+        <p>"10" > 5: true</p>
+        <p>"10" < 15: true</p>
+
+        <!-- Comparison in if statements -->
+        <p>String "5" equals count (5)</p>
+
+        <p>String "10" greater than count (5)</p>
+
+        <p>String "3" less than count (5)</p>
+
+        <!-- Comparison with variables -->
+        <p>strNum ("5") == count (5): true</p>
+        <p>strNum ("5") > 3: true</p>
+        <p>strNum ("5") < 10: true</p>
+        """;
+
+        testTemplate(template, context, expected);
+    }
+
+    @Test
+    public void testRangeFunction() {
+        // 测试内置的 range 函数
+        String template = """
+        <h2>Range function test</h2>
+
+        <!-- Basic range -->
+        <h3>Basic range (0-5)</h3>
+        <ul>
+        {%for i in range(0, 5)%}
+            <li>{{i}}</li>
+        {%endfor%}
+        </ul>
+
+        <!-- Range with step -->
+        <h3>Range with step (0-10, step 2)</h3>
+        <ul>
+        {%for i in range(0, 10, 2)%}
+            <li>{{i}}</li>
+        {%endfor%}
+        </ul>
+
+        <!-- Range with start > end -->
+        <h3>Range with start > end (5-0)</h3>
+        <ul>
+        {%for i in range(5, 0)%}
+            <li>{{i}}</li>
+        {%else%}
+            <li>No items</li>
+        {%endfor%}
+        </ul>
+
+        <!-- Range with negative step -->
+        <h3>Range with negative step (10-0, step -2)</h3>
+        <ul>
+        {%for i in range(10, 0, -2)%}
+            <li>{{i}}</li>
+        {%endfor%}
+        </ul>
+
+        <!-- Range with variables -->
+        <h3>Range with variables</h3>
+        {%set start = 1%}
+        {%set end = 6%}
+        {%set step = 1%}
+        <ul>
+        {%for i in range(start, end, step)%}
+            <li>{{i}}</li>
+        {%endfor%}
+        </ul>
+
+        <!-- Range in nested loops -->
+        <h3>Nested range loops</h3>
+        <div>
+        {%for i in range(1, 3)%}
+            <h4>Group {{i}}</h4>
+            <ul>
+            {%for j in range(1, 4)%}
+                <li>Item {{i}}-{{j}}</li>
+            {%endfor%}
+            </ul>
+        {%endfor%}
+        </div>
+
+        <!-- Edge cases -->
+        <h3>Edge cases</h3>
+        
+        <!-- Start == end -->
+        <h4>Start == end</h4>
+        <ul>
+        {%for i in range(5, 5)%}
+            <li>{{i}}</li>
+        {%else%}
+            <li>No items (start == end)</li>
+        {%endfor%}
+        </ul>
+
+        <!-- Step is negative but start < end -->
+        <h4>Negative step with start < end</h4>
+        <ul>
+        {%for i in range(0, 5, -1)%}
+            <li>{{i}}</li>
+        {%else%}
+            <li>No items (negative step with start < end)</li>
+        {%endfor%}
+        </ul>
+
+        <!-- Large step -->
+        <h4>Large step</h4>
+        <ul>
+        {%for i in range(0, 10, 5)%}
+            <li>{{i}}</li>
+        {%endfor%}
+        </ul>
+        """;
+
+        String expected = """
+        <h2>Range function test</h2>
+
+        <!-- Basic range -->
+        <h3>Basic range (0-5)</h3>
+        <ul>
+            <li>0</li>
+            <li>1</li>
+            <li>2</li>
+            <li>3</li>
+            <li>4</li>
+        </ul>
+
+        <!-- Range with step -->
+        <h3>Range with step (0-10, step 2)</h3>
+        <ul>
+            <li>0</li>
+            <li>2</li>
+            <li>4</li>
+            <li>6</li>
+            <li>8</li>
+        </ul>
+
+        <!-- Range with start > end -->
+        <h3>Range with start > end (5-0)</h3>
+        <ul>
+            <li>No items</li>
+        </ul>
+
+        <!-- Range with negative step -->
+        <h3>Range with negative step (10-0, step -2)</h3>
+        <ul>
+            <li>10</li>
+            <li>8</li>
+            <li>6</li>
+            <li>4</li>
+            <li>2</li>
+        </ul>
+
+        <!-- Range with variables -->
+        <h3>Range with variables</h3>
+        <ul>
+            <li>1</li>
+            <li>2</li>
+            <li>3</li>
+            <li>4</li>
+            <li>5</li>
+        </ul>
+
+        <!-- Range in nested loops -->
+        <h3>Nested range loops</h3>
+        <div>
+            <h4>Group 1</h4>
+            <ul>
+                <li>Item 1-1</li>
+                <li>Item 1-2</li>
+                <li>Item 1-3</li>
+            </ul>
+            <h4>Group 2</h4>
+            <ul>
+                <li>Item 2-1</li>
+                <li>Item 2-2</li>
+                <li>Item 2-3</li>
+            </ul>
+        </div>
+
+        <!-- Edge cases -->
+        <h3>Edge cases</h3>
+        
+        <!-- Start == end -->
+        <h4>Start == end</h4>
+        <ul>
+            <li>No items (start == end)</li>
+        </ul>
+
+        <!-- Step is negative but start < end -->
+        <h4>Negative step with start < end</h4>
+        <ul>
+            <li>No items (negative step with start < end)</li>
+        </ul>
+
+        <!-- Large step -->
+        <h4>Large step</h4>
+        <ul>
+            <li>0</li>
+            <li>5</li>
+        </ul>
+        """;
+
+        testTemplate(template, context, expected);
+    }
+
 }

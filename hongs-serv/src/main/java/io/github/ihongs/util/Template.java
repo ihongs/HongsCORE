@@ -914,8 +914,29 @@ public class Template {
                         block.render(context, writer);
                     }
                 }
+            } else if (loop instanceof Object[]) {
+                Object[] list = (Object[]) loop;
+                hasItems = list.length > 0;
+                for (Object entry : list ) {
+                    context.put(variableName, entry );
+                    for (Block block : innerBlocks) {
+                        block.render(context, writer);
+                    }
+                }
             } else if (loop instanceof Iterator) {
                 Iterator iter = (Iterator) loop;
+                while (iter.hasNext()) {
+                    Object entry = iter.next();
+                    context.put(variableName, entry );
+                    for (Block block : innerBlocks) {
+                        block.render(context, writer);
+                    }
+                    if (! hasItems) {
+                        hasItems = true;
+                    }
+                }
+            } else if (loop instanceof Iterable) {
+                Iterator iter = ((Iterable) loop).iterator();
                 while (iter.hasNext()) {
                     Object entry = iter.next();
                     context.put(variableName, entry );
@@ -1409,7 +1430,14 @@ public class Template {
         }
 
         private Object evaluateNumericOp(Object left, char op, Object right) {
-            double leftVal = toNumber(left);
+            // 一边是字符串则可连接
+            if (op == '+'
+            && (left instanceof String
+            || right instanceof String)) {
+                return toString(left) + toString(right);
+            }
+
+            double leftVal  = toNumber(left );
             double rightVal = toNumber(right);
 
             try {
@@ -1486,6 +1514,13 @@ public class Template {
             if (left == null || right == null) {
                 return false;
             }
+
+            // 一边是数字则比对数值
+            if (left  instanceof Number
+            ||  right instanceof Number) {
+                return compare(left, right) == 0;
+            }
+
             return left.equals(right);
         }
 
@@ -1506,17 +1541,19 @@ public class Template {
         }
 
         private double toNumber(Object obj) {
-            try {
-                if (obj instanceof Number) {
-                    return ((Number) obj).doubleValue();
-                } else
-                if (obj instanceof String) {
-                    return Double.parseDouble((String) obj);
-                }
-            } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("Cannot convert to number: " + obj, e);
+            Number n = Synt.asDouble(obj);
+            if (n == null) {
+                throw new ClassCastException("Null can not be cast to number");
             }
-            throw new IllegalArgumentException("Cannot convert to number: " + obj);
+            return n.doubleValue();
+        }
+
+        private String toString(Object obj) {
+            String s = Synt.asString(obj);
+            if (s == null) {
+                return "";
+            }
+            return s;
         }
 
     }
@@ -1530,7 +1567,7 @@ public class Template {
      * 格式: format(格式, 变量1, 变量2...)
      * 日期格式: date_format(时间, 格式) 时间变量可以是 Date/Instant 或时间戳(毫秒)
      * 获取大小: count(变量) 可取字典/列表/数组/字符串的长度
-     * 范围迭代: range(开始, 结束, 步长) 生成从开始到结束(不包含)的整数列表
+     * 范围迭代: range(开始, 结束, 步长)
      * 文本清理: strip(文本, 模式) 模式取值:
      *   trim 清除首尾
      *   tags 清除 html 标签
@@ -1655,11 +1692,28 @@ public class Template {
             int s = Synt.declare(args[0], 0); // 开始
             int e = Synt.declare(args[1], 0); // 结束
             int d = Synt.declare(args.length > 2 ? args[2] : 1, 1); // 步长
-            List<Integer> list = new ArrayList<>();
-            for (int i = s; i < e; i += d) {
-                list.add(i);
-            }
-            return list;
+            return new Iterable() {
+                @Override
+                public Iterator iterator() {
+                    return new  Iterator() {
+                        int ss = s;
+                        int ee = e;
+                        int dd = d;
+
+                        @Override
+                        public boolean hasNext() {
+                            return ee < ss;
+                        }
+
+                        @Override
+                        public Object next() {
+                            int  ii = ss;
+                            ss = ss + dd;
+                            return ii;
+                        }
+                    };
+                }
+            };
         });
     }
 

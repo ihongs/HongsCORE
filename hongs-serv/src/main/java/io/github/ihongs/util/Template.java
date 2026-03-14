@@ -433,7 +433,7 @@ public class Template {
                     List<Block> elseBlocks = new ArrayList<>();
 
                     // Add the first condition
-                    conditionalBlocks.add(new IfBlock.Group(condition, new ArrayList<>()));
+                    conditionalBlocks.add(new IfBlock.Group(condition));
 
                     int currentStart = end;
                     int currentPos = end;
@@ -476,7 +476,7 @@ public class Template {
 
                             // Add a new conditional block for elif
                             String elifCondition = nextDirective.substring(5).trim();
-                            conditionalBlocks.add(new IfBlock.Group(elifCondition, new ArrayList<>()));
+                            conditionalBlocks.add(new IfBlock.Group(elifCondition));
                             currentStart = directiveEnd + 2;
                             currentPos = currentStart;
                         } else {
@@ -822,18 +822,18 @@ public class Template {
 
     // Set variable block
     private static class SetBlock implements Block {
-        private final String name;
-        private final String expr;
+        private final String variableName;
+        private final String expression;
 
-        public SetBlock(String name, String expression) {
-            this.name = name;
-            this.expr = expression;
+        public SetBlock(String variableName, String expression) {
+            this.variableName = variableName;
+            this.expression = expression;
         }
 
         @Override
         public void render(Map<String, Object> context, Writer writer) throws IOException {
-            Object value = getValue(expr, context);
-            context.put(name, value);
+            Object value = getValue(expression, context);
+            context.put(variableName, value);
         }
     }
 
@@ -851,11 +851,14 @@ public class Template {
         public void render(Map<String, Object> context, Writer writer) throws IOException {
             for (Group group : innerGroups) {
                 // Parse and evaluate complex expression
-                String expr  = group.condition.trim();
-                Object value = getValue(expr, context);
+                String condition = group.condition;
+                Object value = getValue(condition, context);
                 if (decide(value)) {
-                    for (Block innerBlock : group.blocks) {
-                        innerBlock.render(context, writer);
+                    List<Block> innerBlocks = group.blocks;
+                    if (innerBlocks != null) {
+                        for (Block block : innerBlocks) {
+                            block.render(context, writer);
+                        }
                     }
                     return;
                 }
@@ -870,9 +873,8 @@ public class Template {
             private final String condition;
             private List<Block> blocks;
 
-            public Group(String condition, List<Block> blocks) {
+            public Group (String condition) {
                 this.condition = condition;
-                this.blocks = blocks;
             }
 
             public void setBlocks(List<Block> blocks) {

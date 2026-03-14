@@ -37,8 +37,9 @@ import java.util.regex.Pattern;
  * ==================== 变量输出 ====================
  *
  * 简单变量: {{title}}
- * 字典访问: {{config.theme}}
- * 嵌套访问: {{user.profile.avatar}}
+ * 字典访问: {{user.name}}
+ * 数组访问: {{items.1}}
+ * 嵌套访问: {{users.0.name}}
  *
  * ==================== 条件语句 ====================
  *
@@ -1069,17 +1070,35 @@ public class Template {
 
         for (int i = 1; i < parts.length && value != null; i++) {
             String part = parts[i];
-            if (value instanceof Map.Entry<?, ?>) {
-                if ("key".equals(part)) {
-                    value = ((Map.Entry<?, ?>) value).getKey();
+            if (value instanceof Map.Entry) {
+                if ( "key" .equals(part)) {
+                    value = ((Map.Entry) value).getKey(  );
                 } else
                 if ("value".equals(part)) {
-                    value = ((Map.Entry<?, ?>) value).getValue();
+                    value = ((Map.Entry) value).getValue();
                 } else {
                     value = null;
                 }
-            } else if (value instanceof Map<?, ?>) {
-                value = ((Map<?, ?>) value).get(part);
+            } else if (value instanceof Map ) {
+                value = ((Map) value).get(part);
+            } else if (value instanceof List) {
+                int j = Integer.parseInt (part);
+               List a = (List) value;
+                if (j < a.size()) {
+                    value = a.get(j);
+                } else {
+                    value = null;
+                }
+            } else if (value instanceof Object[]) {
+                int j = Integer.parseInt (part);
+               Object[] a = (Object[]) value;
+                if (j < a.length) {
+                    value = a[j];
+                } else {
+                    value = null;
+                }
+            } else {
+                value = null;
             }
         }
 

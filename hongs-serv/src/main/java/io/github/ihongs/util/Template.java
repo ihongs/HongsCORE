@@ -412,7 +412,7 @@ public class Template {
                     // If block
                     String condition = directive.substring(3).trim();
                     // Find matching endif
-                    int endifStart = findMatchingEnd(template, end, "endif");
+                    int endifStart = findTagEnd(template, end, "endif");
                     if (endifStart == -1) {
                         int currentLine = countLines(baseTemp, bPos + dirStart);
                         throw new IllegalArgumentException("Line " + currentLine + ": Unclosed if statement");
@@ -494,7 +494,7 @@ public class Template {
                     String variableName = parts[0].trim();
                     String collectionName = parts[1].trim();
                     // Find matching endfor
-                    int endforStart = findMatchingEnd(template, end, "endfor");
+                    int endforStart = findTagEnd(template, end, "endfor");
                     if (endforStart == -1) {
                         int currentLine = countLines(baseTemp, bPos + dirStart);
                         throw new IllegalArgumentException("Line " + currentLine + ": Unclosed for statement");
@@ -668,7 +668,7 @@ public class Template {
         return blocks;
     }
 
-    private static int findMatchingEnd(String template, int start, String endDirective) {
+    private static int findTagEnd(String template, int start, String endDirective) {
         int count = 1;
         int index = start;
 

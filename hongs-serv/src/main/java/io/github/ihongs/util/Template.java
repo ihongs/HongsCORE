@@ -429,11 +429,11 @@ public class Template {
                     }
                     endifEnd += 2;
 
-                    List<IfBlock.InBlock> conditionalBlocks = new ArrayList<>();
+                    List<IfBlock.Group> conditionalBlocks = new ArrayList<>();
                     List<Block> elseBlocks = new ArrayList<>();
 
                     // Add the first condition
-                    conditionalBlocks.add(new IfBlock.InBlock(condition, new ArrayList<>()));
+                    conditionalBlocks.add(new IfBlock.Group(condition, new ArrayList<>()));
 
                     int currentStart = end;
                     int currentPos = end;
@@ -476,7 +476,7 @@ public class Template {
 
                             // Add a new conditional block for elif
                             String elifCondition = nextDirective.substring(5).trim();
-                            conditionalBlocks.add(new IfBlock.InBlock(elifCondition, new ArrayList<>()));
+                            conditionalBlocks.add(new IfBlock.Group(elifCondition, new ArrayList<>()));
                             currentStart = directiveEnd + 2;
                             currentPos = currentStart;
                         } else {
@@ -822,39 +822,39 @@ public class Template {
 
     // Set variable block
     private static class SetBlock implements Block {
-        private final String variableName;
-        private final String valueExpression;
+        private final String name;
+        private final String expr;
 
-        public SetBlock(String variableName, String valueExpression) {
-            this.variableName = variableName;
-            this.valueExpression = valueExpression;
+        public SetBlock(String name, String expression) {
+            this.name = name;
+            this.expr = expression;
         }
 
         @Override
         public void render(Map<String, Object> context, Writer writer) throws IOException {
-            Object value = getValue(valueExpression, context);
-            context.put(variableName, value);
+            Object value = getValue(expr, context);
+            context.put(name, value);
         }
     }
 
     // If block
     private static class IfBlock implements Block {
-        private final List<InBlock> innerBlocks;
+        private final List<Group> innerGroups;
         private final List<Block> elseBlocks;
 
-        public IfBlock(List<InBlock> innerBlocks, List<Block> elseBlocks) {
-            this.innerBlocks = innerBlocks;
+        public IfBlock(List<Group> innerBlocks, List<Block> elseBlocks) {
+            this.innerGroups = innerBlocks;
             this.elseBlocks = elseBlocks;
         }
 
         @Override
         public void render(Map<String, Object> context, Writer writer) throws IOException {
-            for (InBlock block : innerBlocks) {
+            for (Group group : innerGroups) {
                 // Parse and evaluate complex expression
-                String condi = block.condition.trim();
-                Object value = getValue(condi, context);
+                String expr  = group.condition.trim();
+                Object value = getValue(expr, context);
                 if (decide(value)) {
-                    for (Block innerBlock : block.blocks) {
+                    for (Block innerBlock : group.blocks) {
                         innerBlock.render(context, writer);
                     }
                     return;
@@ -866,11 +866,11 @@ public class Template {
             }
         }
 
-        static class InBlock {
+        static class Group {
             private final String condition;
             private List<Block> blocks;
 
-            public InBlock(String condition, List<Block> blocks) {
+            public Group(String condition, List<Block> blocks) {
                 this.condition = condition;
                 this.blocks = blocks;
             }

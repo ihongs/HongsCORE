@@ -429,12 +429,12 @@ public class Template {
                     endifEnd += 2;
 
                     List<Block> elifBlocks ;
-                    List<Block> elseBlocks = new ArrayList<>();
-                    List<IfBlock.Group> elifGroups = new ArrayList<>();
+                    List<Block> elseBlocks = new ArrayList( );
+                    List<IfBlock.Group> elifGroups = new ArrayList( );
 
                     int elifStart;
                     int elifEnd = end;
-                    String condition = directive.substring(3).trim();
+                    String condition = directive.substring(3).trim( );
 
                     do {
                         elifStart = findDirEls(template, elifEnd, endifStart);
@@ -498,7 +498,7 @@ public class Template {
                     String iterableName = parts[1].trim();
 
                     List<Block> baseBlocks ;
-                    List<Block> elseBlocks = new ArrayList<>();
+                    List<Block> elseBlocks = new ArrayList();
 
                     // 寻找同级的 else
                     int elseStart = findDirEls(template, end, endforStart);

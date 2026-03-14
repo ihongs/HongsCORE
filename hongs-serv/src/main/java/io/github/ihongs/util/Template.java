@@ -1031,7 +1031,7 @@ public class Template {
          * "abc" == def && def != "xyz" 会被解析成一个字符串,
          * 两头为 JSON 也导致同样的问题.
          * 虽可用 contains 速判边界中断,
-         * 但这与遍历解析的效率也差不多.
+         * 但这也需要遍历字符串.
         if (expression.length() > 1) {
             // Check if it's a pure string literal (no operators)
             if (expression.startsWith("\"") && expression.endsWith("\"")) {

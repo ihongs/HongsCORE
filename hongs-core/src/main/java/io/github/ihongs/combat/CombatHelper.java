@@ -494,7 +494,7 @@ public class CombatHelper
     printed  (  );
 
     PrintStream out = OUT.get();
-    Dist.append(out,data,false);
+    Dist.append(out, data, "" );
     out.println();
     out.flush(  );
   }

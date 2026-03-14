@@ -978,7 +978,7 @@ public class ActionHelper implements Cloneable
                 out.append("<script type=\"text/javascript\">");
                 out.append( fun);
                 out.append("(" );
-                Dist.append(out, this.responseData);
+                Dist.append(out, this.responseData, 4 != (4 & Core.DEBUG) ? null : "");
                 out.append(");");
                 out.append("</script>");
             } else {
@@ -990,7 +990,7 @@ public class ActionHelper implements Cloneable
 
                 out.append( fun);
                 out.append("(" );
-                Dist.append(out, this.responseData);
+                Dist.append(out, this.responseData, 4 != (4 & Core.DEBUG) ? null : "");
                 out.append(");");
             }
         } else {
@@ -1000,7 +1000,7 @@ public class ActionHelper implements Cloneable
                     this.response.setContentType("application/json");
                 }
 
-                Dist.append(out, this.responseData);
+                Dist.append(out, this.responseData, 4 != (4 & Core.DEBUG) ? null : "");
         }
 
         out.flush( );

@@ -5,18 +5,15 @@ import io.github.ihongs.CruxExemption;
 
 import java.io.Reader;
 import java.io.IOException;
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.time.Instant;
-import java.util.Map;
-import java.util.List;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Collection;
 import java.util.Dictionary;
 import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 import org.json.simple.parser.JSONParser;
@@ -87,31 +84,6 @@ public final class Dist
   }
 
   /**
-   * 将Java对象转换为JSON字符串
-   * @param obj 基础类型,集合框架,数组
-   * @param compact 紧凑模式
-   * @return JSON字符串
-   */
-  public static String toString(Object obj, boolean compact)
-  {
-    StringBuilder out = new StringBuilder();
-    append(out, obj, compact);
-    return out.toString();
-  }
-
-  /**
-   * 将Java对象转换为JSON字符串
-   * @param obj 基础类型,集合框架,数组
-   * @return JSON字符串
-   */
-  public static String toString(Object obj)
-  {
-    StringBuilder out = new StringBuilder();
-    append(out, obj);
-    return out.toString();
-  }
-
-  /**
    * 将Java文本转义为JSON字符串
    * @param str 待JSON转义的Java字符串
    * @return 不含双引号
@@ -124,27 +96,40 @@ public final class Dist
   }
 
   /**
-   * 将Java对象输出到指定输出流
-   * 非开发环境将会启用紧凑模式
-   * @param obj
-   * @param out
+   * 将Java对象转换为JSON字符串
+   * 非调试模式将会启用紧凑模式
+   * @param obj 基础类型,集合框架,数组
+   * @return JSON字符串
    */
-  public static void append(Appendable out, Object obj)
+  public static String toString(Object obj)
   {
-    append(out, obj, 2 > Core.DEBUG);
+    return toString(obj, 4 != (4 & Core.DEBUG));
+  }
+
+  /**
+   * 将Java对象转换为JSON字符串
+   * @param obj 基础类型,集合框架,数组
+   * @param compact 紧凑模式
+   * @return JSON字符串
+   */
+  public static String toString(Object obj, boolean compact)
+  {
+    StringBuilder out = new StringBuilder();
+    append(out, obj , compact ? null : "" );
+    return out.toString();
   }
 
   /**
    * 将Java对象输出到指定输出流
    * @param out
    * @param obj
-   * @param compact 紧凑模式
+   * @param pre 缩进, null 紧凑
    */
-  public static void append(Appendable out, Object obj, boolean compact)
+  public static void append(Appendable out, Object obj, String pre)
   {
     try
     {
-      append(out, compact ? null : "", null, obj, false);
+      append(out, pre, null, obj, false);
     }
     catch (IOException e)
     {
@@ -177,6 +162,14 @@ public final class Dist
     {
       sb.append("null");
     }
+    else if (val instanceof Map)
+    {
+      append(sb, pre, (Map) val);
+    }
+    else if (val instanceof Dictionary)
+    {
+      append(sb, pre, (Dictionary) val);
+    }
     else if (val instanceof Object[])
     {
       append(sb, pre, (Object[]) val);
@@ -189,14 +182,6 @@ public final class Dist
     {
       append(sb, pre, (Enumeration) val);
     }
-    else if (val instanceof Map)
-    {
-      append(sb, pre, (Map) val);
-    }
-    else if (val instanceof Dictionary)
-    {
-      append(sb, pre, (Dictionary) val);
-    }
     else if (val instanceof Iterator)
     {
       append(sb, pre, (Iterator) val);
@@ -205,28 +190,21 @@ public final class Dist
     {
       append(sb, pre,((Iterable) val).iterator());
     }
-    else if (val instanceof Boolean)
-    {
-      sb.append(val.toString( ));
-    }
-    else if (val instanceof Number )
+    else if (val instanceof Number)
     {
       sb.append(Synt.asString((Number) val));
+    }
+    else if (val instanceof Date)
+    {
+      sb.append(Synt.asString(((Date) val).getTime()));
     }
     else if (val instanceof Instant)
     {
       sb.append(Synt.asString(((Instant) val).toEpochMilli()));
     }
-    else if (val instanceof  Date  )
+    else if (val instanceof Boolean)
     {
-      sb.append(Synt.asString((( Date  ) val).  getTime   ()));
-    }
-    else if (val instanceof Serializable
-      &&  ! (val instanceof CharSequence)
-      &&  ! (val instanceof Character)
-      &&  ! (val instanceof Throwable)  )
-    {
-      append(sb, pre, val); // 反射钻取之
+      sb.append(val.toString());
     }
     else
     {
@@ -241,9 +219,9 @@ public final class Dist
     }
 
     if (pre != null
-    && !pre.isEmpty( ))
+    && !pre.isEmpty())
     {
-      sb.append("\r\n");
+      sb.append("\n");
     }
   }
 
@@ -255,8 +233,8 @@ public final class Dist
         pra  = pre;
     if (pre != null)
     {
-      sb.append("\r\n");
-      pra = pre + "\t" ;
+      sb.append("\n");
+      pra = pre+"\t" ;
     }
 
     for (int i = 0, j = arr.length; i < j ; i ++)
@@ -279,8 +257,8 @@ public final class Dist
         pra  = pre;
     if (pre != null)
     {
-      sb.append("\r\n");
-      pra = pre + "\t" ;
+      sb.append("\n");
+      pra = pre+"\t" ;
     }
 
     boolean hasNext = itr.hasNext();
@@ -306,8 +284,8 @@ public final class Dist
         pra  = pre;
     if (pre != null)
     {
-      sb.append("\r\n");
-      pra = pre + "\t" ;
+      sb.append("\n");
+      pra = pre+"\t" ;
     }
 
     boolean hasNext = enu.hasMoreElements();
@@ -333,8 +311,8 @@ public final class Dist
         pra  = pre;
     if (pre != null)
     {
-      sb.append("\r\n");
-      pra = pre + "\t" ;
+      sb.append("\n");
+      pra = pre+"\t" ;
     }
 
     Iterator itr = col.iterator(  );
@@ -361,8 +339,8 @@ public final class Dist
         pra  = pre;
     if (pre != null)
     {
-      sb.append("\r\n");
-      pra = pre + "\t" ;
+      sb.append("\n");
+      pra = pre+"\t" ;
     }
 
     Enumeration enu = dic.keys( );
@@ -391,8 +369,8 @@ public final class Dist
         pra  = pre;
     if (pre != null)
     {
-      sb.append("\r\n");
-      pra = pre + "\t" ;
+      sb.append("\n");
+      pra = pre+"\t" ;
     }
 
     Iterator itr = map.entrySet().iterator();
@@ -413,68 +391,6 @@ public final class Dist
     }
     sb.append("}");
   }
-
-    private static void append(Appendable sb, String pre, Object obj) throws IOException {
-        String  pra;
-        Field[] fds;
-        Class   cls = obj.getClass();
-
-        sb.append("{");
-            pra  = pre;
-        if (pre != null) {
-            sb.append("\r\n");
-            pra = pre + "\t" ;
-        }
-
-        // 读取公共属性
-        fds = cls.getFields();
-        for (int i = 0, j = fds.length; i < j; i ++) {
-            try {
-                Field fld = fds[i];
-                int   mod = fld.getModifiers();
-                if (Modifier.isTransient(mod )
-                ||  Modifier.isStatic(mod )
-                ||  Modifier.isFinal (mod)) {
-                    continue;
-                }
-                String key = fld.getName();
-                Object val = fld.get (obj);
-                append(sb, pra, key, val, i < j - 1);
-            } catch (
-              IllegalArgumentException
-              | IllegalAccessException ex) {
-                throw  new IOException(ex);
-            }
-        }
-
-        // 读取非公属性
-        fds = cls.getDeclaredFields();
-        for (int i = 0, j = fds.length; i < j; i ++) {
-            try {
-                Field fld = fds[i];
-                int   mod = fld.getModifiers();
-                if (Modifier.isTransient(mod )
-                ||  Modifier.isPublic(mod )
-                ||  Modifier.isStatic(mod )
-                ||  Modifier.isFinal (mod)) {
-                    continue;
-                }
-                fld.setAccessible ( true );
-                String key = fld.getName();
-                Object val = fld.get (obj);
-                append(sb, pra, key, val, i < j - 1);
-            } catch (
-              IllegalArgumentException
-              | IllegalAccessException ex) {
-                throw  new IOException(ex);
-            }
-        }
-
-        if (pre != null) {
-            sb.append(pre);
-        }
-        sb.append("}");
-    }
 
     private static void excape(Appendable sb, String s) {
         try {
@@ -542,7 +458,7 @@ public final class Dist
         }
         @Override
         public List creatArrayContainer() {
-            return new  ArrayList ();
+            return new ArrayList();
         }
     };
 

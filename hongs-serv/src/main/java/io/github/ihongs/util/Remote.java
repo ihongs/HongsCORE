@@ -68,7 +68,7 @@ public final class Remote {
 
     public static enum METHOD { GET, PUT, POST, PATCH, DELETE };
 
-    public static enum FORMAT { JSON, FORM, PART };
+    public static enum FORMAT { FORM, PART, JSON, JSON_FORMAT };
 
     /**
      * 简单远程请求
@@ -294,6 +294,7 @@ public final class Remote {
             if (null != data) {
             if (null != kind) {
                 switch (kind) {
+                case JSON_FORMAT: req.setEntity(buildJson(data, true)); break;
                 case JSON  : req.setEntity(buildJson(data)); break;
                 case PART  : req.setEntity(buildPart(data)); break;
                 default    : req.setEntity(buildPost(data)); break;
@@ -431,10 +432,24 @@ public final class Remote {
      * Content-Type: application/json; charset=utf-8
      *
      * @param data
+     * @param format 是否格式化JSON
+     * @return
+     */
+    public static HttpEntity buildJson(Map<String, Object> data, boolean format) {
+        return new StringEntity(Dist.toString(data, ! format), ContentType.APPLICATION_JSON);
+    }
+
+    /**
+     * 构建JSON实体
+     *
+     * 将数据处理成JSON格式,
+     * Content-Type: application/json; charset=utf-8
+     *
+     * @param data
      * @return
      */
     public static HttpEntity buildJson(Map<String, Object> data) {
-        return new StringEntity(Dist.toString(data), ContentType.APPLICATION_JSON);
+        return new StringEntity(Dist.toString(data, true), ContentType.APPLICATION_JSON);
     }
 
     /**

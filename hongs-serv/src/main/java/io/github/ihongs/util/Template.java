@@ -1019,7 +1019,10 @@ public class Template {
         // Trim whitespace
         expression = expression.trim();
 
-        // Check if it's a boolean literal
+        // Check if it's a null or boolean literal
+        if (expression.equals("null")) {
+            return null;
+        } else
         if (expression.equals("true")) {
             return true;
         } else

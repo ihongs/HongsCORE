@@ -155,8 +155,9 @@ import java.util.regex.Pattern;
  * {%for i in range(0, 10)%}
  *
  * count(变量) - 获取长度
- * {{count(items)}}  # 列表长度
- * {{count(text)}}   # 字符串长度
+ * {{count(text)}}  # 字符串长度
+ * {{count(list)}}  # 列表长度
+ * {{count(dict)}}  # 字典大小
  *
  * strip(文本, 模式) - 文本清理
  * {{strip(text, "trim")}} - 清除首尾空格

@@ -939,4 +939,404 @@ public class TestTemplate {
         testTemplate(template, testContext, expected);
     }
 
+    @Test
+    public void testComplexNestedIfElifElse() {
+        // 测试多层 if-elif-else 嵌套
+        Map<String, Object> ctx = new HashMap<>(context);
+        ctx.put("score", 85);
+        ctx.put("level", "advanced");
+
+        String template = """
+        <h2>Complex nested if-elif-else test</h2>
+        {%if score >= 90%}
+            <p>Grade: A</p>
+            {%if level == "advanced"%}
+                <p>Excellent advanced student!</p>
+            {%elif level == "intermediate"%}
+                <p>Good intermediate student!</p>
+            {%else%}
+                <p>Keep practicing!</p>
+            {%endif%}
+        {%elif score >= 80%}
+            <p>Grade: B</p>
+            {%if level == "advanced"%}
+                <p>Good advanced student!</p>
+            {%elif level == "intermediate"%}
+                <p>Average intermediate student!</p>
+            {%else%}
+                <p>Need more practice!</p>
+            {%endif%}
+        {%elif score >= 70%}
+            <p>Grade: C</p>
+            {%if level == "advanced"%}
+                <p>Below average for advanced!</p>
+            {%else%}
+                <p>Keep working hard!</p>
+            {%endif%}
+        {%else%}
+            <p>Grade: F</p>
+            <p>Needs improvement!</p>
+        {%endif%}
+        """;
+
+        String expected = """
+        <h2>Complex nested if-elif-else test</h2>
+            <p>Grade: B</p>
+                <p>Good advanced student!</p>
+        """;
+
+        testTemplate(template, ctx, expected);
+    }
+
+    @Test
+    public void testComplexNestedForElse() {
+        // 测试多层 for-else 嵌套
+        Map<String, Object> ctx = new HashMap<>(context);
+        ctx.put("categories", List.of(
+            Map.of("name", "Electronics", "products", List.of("Phone", "Laptop", "Tablet")),
+            Map.of("name", "Books", "products", List.of("Novel", "Textbook")),
+            Map.of("name", "Empty", "products", List.of())
+        ));
+
+        String template = """
+        <h2>Complex nested for-else test</h2>
+        {%for category in categories%}
+        <div class="category">
+            <h3>{{category.name}}</h3>
+            <ul>
+            {%for product in category.products%}
+                <li>{{product}}</li>
+            {%else%}
+                <li>No products in this category</li>
+            {%endfor%}
+            </ul>
+        </div>
+        {%else%}
+        <p>No categories available</p>
+        {%endfor%}
+        """;
+
+        String expected = """
+        <h2>Complex nested for-else test</h2>
+        <div class="category">
+            <h3>Electronics</h3>
+            <ul>
+                <li>Phone</li>
+                <li>Laptop</li>
+                <li>Tablet</li>
+            </ul>
+        </div>
+        <div class="category">
+            <h3>Books</h3>
+            <ul>
+                <li>Novel</li>
+                <li>Textbook</li>
+            </ul>
+        </div>
+        <div class="category">
+            <h3>Empty</h3>
+            <ul>
+                <li>No products in this category</li>
+            </ul>
+        </div>
+        """;
+
+        testTemplate(template, ctx, expected);
+    }
+
+    @Test
+    public void testIfForElifForElse() {
+        // 测试 if-elif-else 中嵌套 for 循环，且 for 带有 else
+        Map<String, Object> ctx = new HashMap<>(context);
+        ctx.put("type", "A");
+        ctx.put("listA", List.of("Item A1", "Item A2"));
+        ctx.put("listB", List.of("Item B1"));
+        ctx.put("listC", List.of());
+
+        String template = """
+        <h2>If-elif-else with nested for-else test</h2>
+        {%if type == "A"%}
+            <h3>Type A Items:</h3>
+            <ul>
+            {%for item in listA%}
+                <li>{{item}}</li>
+            {%else%}
+                <li>No Type A items</li>
+            {%endfor%}
+            </ul>
+        {%elif type == "B"%}
+            <h3>Type B Items:</h3>
+            <ul>
+            {%for item in listB%}
+                <li>{{item}}</li>
+            {%else%}
+                <li>No Type B items</li>
+            {%endfor%}
+            </ul>
+        {%else%}
+            <h3>Other Items:</h3>
+            <ul>
+            {%for item in listC%}
+                <li>{{item}}</li>
+            {%else%}
+                <li>No other items</li>
+            {%endfor%}
+            </ul>
+        {%endif%}
+        """;
+
+        String expected = """
+        <h2>If-elif-else with nested for-else test</h2>
+            <h3>Type A Items:</h3>
+            <ul>
+                <li>Item A1</li>
+                <li>Item A2</li>
+            </ul>
+        """;
+
+        testTemplate(template, ctx, expected);
+    }
+
+    @Test
+    public void testForIfElifElseNested() {
+        // 测试 for 循环中嵌套 if-elif-else
+        Map<String, Object> ctx = new HashMap<>(context);
+        ctx.put("numbers", List.of(5, 15, 25, 35, 45));
+
+        String template = """
+        <h2>For with nested if-elif-else test</h2>
+        <ul>
+        {%for num in numbers%}
+            {%if num < 10%}
+                <li class="small">{{num}} is small</li>
+            {%elif num < 20%}
+                <li class="medium">{{num}} is medium</li>
+            {%elif num < 30%}
+                <li class="large">{{num}} is large</li>
+            {%else%}
+                <li class="xlarge">{{num}} is extra large</li>
+            {%endif%}
+        {%else%}
+            <li>No numbers to process</li>
+        {%endfor%}
+        </ul>
+        """;
+
+        String expected = """
+        <h2>For with nested if-elif-else test</h2>
+        <ul>
+                <li class="small">5 is small</li>
+                <li class="medium">15 is medium</li>
+                <li class="large">25 is large</li>
+                <li class="xlarge">35 is extra large</li>
+                <li class="xlarge">45 is extra large</li>
+        </ul>
+        """;
+
+        testTemplate(template, ctx, expected);
+    }
+
+    @Test
+    public void testDeepNestedIfForCombinations() {
+        // 测试深层嵌套：if 中包含 for，for 中包含 if-elif-else
+        Map<String, Object> ctx = new HashMap<>(context);
+        ctx.put("showData", true);
+        ctx.put("dataType", "numbers");
+        ctx.put("values", List.of(3, 7, 12, 18, 25));
+
+        String template = """
+        <h2>Deep nested if-for combinations test</h2>
+        {%if showData%}
+            {%if dataType == "numbers"%}
+                <h3>Number Analysis:</h3>
+                <ul>
+                {%for val in values%}
+                    <li>
+                        {{val}}:
+                        {%if val < 5%}
+                            Very small
+                        {%elif val < 10%}
+                            Small
+                        {%elif val < 15%}
+                            Medium
+                        {%elif val < 20%}
+                            Large
+                        {%else%}
+                            Very large
+                        {%endif%}
+                    </li>
+                {%else%}
+                    <li>No values available</li>
+                {%endfor%}
+                </ul>
+            {%elif dataType == "strings"%}
+                <p>String data type selected</p>
+            {%else%}
+                <p>Unknown data type</p>
+            {%endif%}
+        {%else%}
+            <p>Data display is disabled</p>
+        {%endif%}
+        """;
+
+        String expected = """
+        <h2>Deep nested if-for combinations test</h2>
+                <h3>Number Analysis:</h3>
+                <ul>
+                    <li>
+                        3:
+                            Very small
+                    </li>
+                    <li>
+                        7:
+                            Small
+                    </li>
+                    <li>
+                        12:
+                            Medium
+                    </li>
+                    <li>
+                        18:
+                            Large
+                    </li>
+                    <li>
+                        25:
+                            Very large
+                    </li>
+                </ul>
+        """;
+
+        testTemplate(template, ctx, expected);
+    }
+
+    @Test
+    public void testMultipleForLoopsWithConditions() {
+        // 测试多个 for 循环嵌套，每个都有条件判断
+        Map<String, Object> ctx = new HashMap<>(context);
+        ctx.put("matrix", List.of(
+            List.of(1, 2, 3),
+            List.of(4, 5, 6),
+            List.of(7, 8, 9)
+        ));
+
+        String template = """
+        <h2>Multiple for loops with conditions test</h2>
+        <table>
+        {%for row in matrix%}
+            <tr>
+            {%for cell in row%}
+                {%if cell % 2 == 0%}
+                    <td class="even">{{cell}}</td>
+                {%else%}
+                    <td class="odd">{{cell}}</td>
+                {%endif%}
+            {%else%}
+                <td>Empty cell</td>
+            {%endfor%}
+            </tr>
+        {%else%}
+            <tr><td>Empty matrix</td></tr>
+        {%endfor%}
+        </table>
+        """;
+
+        String expected = """
+        <h2>Multiple for loops with conditions test</h2>
+        <table>
+            <tr>
+                    <td class="odd">1</td>
+                    <td class="even">2</td>
+                    <td class="odd">3</td>
+            </tr>
+            <tr>
+                    <td class="even">4</td>
+                    <td class="odd">5</td>
+                    <td class="even">6</td>
+            </tr>
+            <tr>
+                    <td class="odd">7</td>
+                    <td class="even">8</td>
+                    <td class="odd">9</td>
+            </tr>
+        </table>
+        """;
+
+        testTemplate(template, ctx, expected);
+    }
+
+    @Test
+    public void testIfWithMultipleNestedFor() {
+        // 测试 if 中包含多个并行的 for 循环
+        Map<String, Object> ctx = new HashMap<>(context);
+        ctx.put("showAll", true);
+        ctx.put("list1", List.of("A", "B"));
+        ctx.put("list2", List.of("X", "Y", "Z"));
+        ctx.put("emptyList", List.of());
+
+        String template = """
+        <h2>If with multiple nested for test</h2>
+        {%if showAll%}
+            <div class="section1">
+                <h3>List 1:</h3>
+                <ul>
+                {%for item in list1%}
+                    <li>{{item}}</li>
+                {%else%}
+                    <li>List 1 is empty</li>
+                {%endfor%}
+                </ul>
+            </div>
+            <div class="section2">
+                <h3>List 2:</h3>
+                <ul>
+                {%for item in list2%}
+                    <li>{{item}}</li>
+                {%else%}
+                    <li>List 2 is empty</li>
+                {%endfor%}
+                </ul>
+            </div>
+            <div class="section3">
+                <h3>Empty List:</h3>
+                <ul>
+                {%for item in emptyList%}
+                    <li>{{item}}</li>
+                {%else%}
+                    <li>Empty list has no items</li>
+                {%endfor%}
+                </ul>
+            </div>
+        {%else%}
+            <p>Display is disabled</p>
+        {%endif%}
+        """;
+
+        String expected = """
+        <h2>If with multiple nested for test</h2>
+            <div class="section1">
+                <h3>List 1:</h3>
+                <ul>
+                    <li>A</li>
+                    <li>B</li>
+                </ul>
+            </div>
+            <div class="section2">
+                <h3>List 2:</h3>
+                <ul>
+                    <li>X</li>
+                    <li>Y</li>
+                    <li>Z</li>
+                </ul>
+            </div>
+            <div class="section3">
+                <h3>Empty List:</h3>
+                <ul>
+                    <li>Empty list has no items</li>
+                </ul>
+            </div>
+        """;
+
+        testTemplate(template, ctx, expected);
+    }
+
 }

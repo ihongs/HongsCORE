@@ -135,17 +135,17 @@ import java.util.regex.Pattern;
  * matches(文本, 正则) - 正则匹配
  * {%if matches(name, "[Tt]ony")}}
  *
+ * concat(列表, 连词符号) - 连接多个
+ * {{concat(list, " | ")}}
+ * {{concat(list)}}  # 默认逗号连接
+ *
+ * indent(文本, 缩进字符) - 缩进文本
+ * {{indent(text, "   ")}}
+ * {{indent(text)}}  # 默认用制表符
+ *
  * substr(文本, 起始, 长度) - 文本截取, 起始为负反向截取
  * {{substr(text, 4, 2)}}
  * {{substr(text, 4)}}
- *
- * indent(文本, 缩进几格) - 缩进文本
- * {{indent(text, 4)}}
- * {{indent(text)}}  # 默认缩进两格
- *
- * concat(列表, 连词符号) - 连接多个
- * {{concat(list, "|")}}
- * {{concat(list)}}  # 默认逗号连接
  *
  * format(格式, 变量1, 变量2...) - 格式化字符串
  * {{format("Hello %s", name)}}
@@ -1615,6 +1615,24 @@ public class Template {
             return s.matches(r);
         });
 
+        FUNCTIONS.put("concat", args -> {
+            Collection o = Synt.asColl(args[0]);
+            if (o == null) {
+                return "";
+            }
+            String s = args.length > 1 ? Synt.declare(args[1], ", ") : ", ";
+            return Syno.concat(s, o).trim();
+        });
+
+        FUNCTIONS.put("indent", args -> {
+            String s = Synt.asString(args[0]);
+            if (s == null || "".equals(s)) {
+                return "";
+            }
+            String i = args.length > 1 ? Synt.declare(args[1], "\t") : "\t";
+            return Syno.indent(s, i).trim();
+        });
+
         FUNCTIONS.put("substr", args -> {
             String s = Synt.asString(args[0]);
                int b = Synt.asInt(args[1]);
@@ -1624,24 +1642,6 @@ public class Template {
             } else {
                return Syno.substr(s, b);
             }
-        });
-
-        FUNCTIONS.put("indent", args -> {
-            String s = Synt.asString(args[0]);
-            if (s == null || "".equals(s)) {
-                return "";
-            }
-            int n = args.length > 1 ? Synt.declare(args[1], 2) : 2;
-            return Syno.indent(s, " ".repeat(n)).trim();
-        });
-
-        FUNCTIONS.put("concat", args -> {
-            Collection o = Synt.asColl(args[0]);
-            if (o == null) {
-                return "";
-            }
-            String s = args.length > 1 ? Synt.declare(args[1], ", ") : ", ";
-            return Syno.concat(s, o).trim();
         });
 
         FUNCTIONS.put("format", args -> {

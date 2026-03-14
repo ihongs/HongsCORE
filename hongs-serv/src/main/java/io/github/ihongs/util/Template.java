@@ -871,7 +871,7 @@ public class Template {
 
         static class Group {
             private final String condition;
-            private List<Block> blocks;
+            private List <Block> blocks;
 
             public Group (String condition) {
                 this.condition = condition;

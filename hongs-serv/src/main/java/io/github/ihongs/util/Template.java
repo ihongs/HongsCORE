@@ -135,12 +135,12 @@ import java.util.regex.Pattern;
  * {{or(title, "Default Title")}}
  *
  * indent(文本, 缩进几格) - 缩进文本
- * {{indent(texts, 4)}}
- * {{indent(texts)}}  # 默认缩进两格
+ * {{indent(text, 4)}}
+ * {{indent(text)}}  # 默认缩进两格
  *
  * concat(列表, 连词符号) - 连接多个
- * {{concat(items, " | ")}}
- * {{concat(items)}}  # 默认逗号连接
+ * {{concat(list, "|")}}
+ * {{concat(list)}}  # 默认逗号连接
  *
  * format(格式, 变量1, 变量2...) - 格式化字符串
  * {{format("Hello %s", name)}}

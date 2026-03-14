@@ -1,5 +1,6 @@
 package io.github.ihongs.util;
 
+import io.github.ihongs.Core;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -118,6 +120,12 @@ import java.util.regex.Pattern;
  * {%set result = {"key": "val"}%}
  * {%include "xxx.html" with {"list": sub_list}%}
  *
+ * ==================== 内置变量 ====================
+ *
+ * SERVER_PATH - 服务路径, 如 /sample
+ * SERVER_HREF - 服务域名, 如 http://localhost
+ * BASE_HREF - 服务链接, 如 http://localhost/sample
+ *
  * ==================== 内置函数 ====================
  *
  * contains(集合, 选项) - 包含, 也可用于字典或字串
@@ -197,7 +205,7 @@ public class Template {
     private final List<Block> blocks;
     private final Map<String, Object> variables;
     private final Map<String, Function<Object[], Object>> functions;
-    private final static Pattern TEMP_LINE = Pattern.compile("(\\{%(?!\\s*include\\s+).*?%\\}|\\{#.*?#\\})+");
+    private final static Pattern DIR_LINE = Pattern.compile("(\\{%(?!\\s*include\\s+).*?%\\}|\\{#.*?#\\})+");
 
     private Template(List<Block> blocks) {
         this.blocks    =  blocks;
@@ -241,20 +249,21 @@ public class Template {
      * 注册函数
      * @param name
      * @param function
-     * @return
+     * @return this
      */
-    public Template regist(String name, Function<Object[], Object> function ) {
+    public Template regist(String name, Function<Object[], Object> function) {
         this.functions.put(name, function);
         return this;
     }
 
     /**
-     * 注册函数
-     * @param functions
-     * @return
+     * 登记变量
+     * @param name
+     * @param supplier
+     * @return this
      */
-    public Template regist(Map<String, Function<Object[], Object>> functions) {
-        this.functions.putAll( functions );
+    public Template assign(String name, Supplier<Object> supplier) {
+        this.variables.put(name, supplier);
         return this;
     }
 
@@ -262,20 +271,10 @@ public class Template {
      * 登记变量
      * @param name
      * @param variable
-     * @return
+     * @return this
      */
-    public Template assign(String name, Object variable ) {
+    public Template assign(String name, Object variable) {
         this.variables.put(name, variable);
-        return this;
-    }
-
-    /**
-     * 登记变量
-     * @param variables
-     * @return
-     */
-    public Template assign(Map<String, Object> variables) {
-        this.variables.putAll( variables );
         return this;
     }
 
@@ -288,8 +287,8 @@ public class Template {
     public void render(Map<String, Object> context, Writer writer) throws IOException {
         Map<String, Object> newContext = new HashMap<>();
         newContext.put("__FUNC__", functions);
-        newContext.putAll(variables);
-        newContext.putAll( context );
+        newContext.put("__VARS__", variables);
+        newContext.putAll(context);
         for (Block block : blocks) {
              block.render(newContext, writer);
         }
@@ -303,7 +302,7 @@ public class Template {
     public void render(Writer writer) throws IOException {
         Map<String, Object> newContext = new HashMap<>();
         newContext.put("__FUNC__", functions);
-        newContext.putAll(variables);
+        newContext.put("__VARS__", variables);
         for (Block block : blocks) {
              block.render(newContext, writer);
         }
@@ -736,12 +735,12 @@ public class Template {
         int p1  = template.    indexOf("\n", start + end);
         if (p0 != -1 && p1 != -1) {
             String line = template.substring(p0, p1).trim();
-            Matcher mat = TEMP_LINE.matcher(line);
+            Matcher mat = DIR_LINE.matcher(line);
             if (mat.find() && mat.start() == 0 && mat.end() == line.length()) {
                 return p0 - start;
             }
         }
-        return end;
+        return  end;
     }
 
     private static int countLines(String template, int length) {
@@ -999,6 +998,7 @@ public class Template {
                     renderContext = new HashMap();
                 }
                 renderContext.put("__FUNC__", context.get("__FUNC__"));
+                renderContext.put("__VARS__", context.get("__VARS__"));
             }
 
             // Render the included template
@@ -1290,7 +1290,7 @@ public class Template {
             } else if (c == '[' || c == '{') {
                 return parseJson(context);
             } else {
-                return parseVari(context);
+                return parseFunc(context);
             }
         }
 
@@ -1375,7 +1375,7 @@ public class Template {
             return Template.parseJson(jsonStr, context);
         }
 
-        private Object parseVari(Map<String, Object> context) {
+        private Object parseFunc(Map<String, Object> context) {
             int start = pos;
             while (pos < expression.length() && (Character.isLetterOrDigit(expression.charAt(pos)) || expression.charAt(pos) == '.' || expression.charAt(pos) == '_')) {
                 pos++;
@@ -1408,7 +1408,19 @@ public class Template {
 
             // Otherwise, it's a variable
             if (! name.isEmpty()) {
-                return fetchData(name, context);
+                Object  val = fetchData(name, context);
+
+                // Get global variable
+                if (val == null) {
+                    Map<String,Object> globals = (Map) context.get("__VARS__");
+                    if (globals != null) {
+                        val = fetchData(name, globals);
+                    if (val instanceof Supplier) {
+                        val = ( (Supplier) val ).get();
+                    }}
+                }
+
+                return val;
             }
             return null;
         }
@@ -1558,26 +1570,13 @@ public class Template {
 
     }
 
-    /**
-     * 默认模板函数
-     * 包含: contains(选项, 集合) 选项是否在集合中，也可用于字典和字串
-     * 正则: matches(文本, 正则) 文本是否匹配正则
-     * 缩进: indent(文本, 缩进几格) 或 indent(文本) 缩进两格
-     * 连词: concat(列表, 连词符号) 或 indent(列表) 逗号连接
-     * 格式: format(格式, 变量1, 变量2...)
-     * 日期格式: date_format(时间, 格式) 时间变量可以是 Date/Instant 或时间戳(毫秒)
-     * 范围迭代: range(开始, 结束, 步长) 类似 for (i = 0; i < 5; i ++)
-     * 获取大小: count(变量) 可取字典/列表/数组/字符串的长度
-     * 文本清理: strip(文本, 模式) 模式取值:
-     *   trim 清除首尾
-     *   tags 清除 html 标签
-     *   cros 清除 html 脚本
-     *   html 等同 cros,tags,trim
-     *   gaps 清除空行
-     *   ends 清除换行
-     *   unis 统一换行
-     *   可逗号分隔多个模式, 省略模式等同 trim
-     */
+    public static final Map<String, Supplier<Object>> VARIABLES = new HashMap();
+    static {
+        VARIABLES.put("SERVER_PATH", () -> Core.SERVER_PATH.get());
+        VARIABLES.put("SERVER_HREF", () -> Core.SERVER_HREF.get());
+        VARIABLES.put("BASE_HREF", () -> Core.SERVER_HREF.get() + Core.SERVER_PATH.get());
+    }
+
     public static final Map<String, Function<Object[], Object>> FUNCTIONS = new HashMap();
     static {
         FUNCTIONS.put("contains", args -> {

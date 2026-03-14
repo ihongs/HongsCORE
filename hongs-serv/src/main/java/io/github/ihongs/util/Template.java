@@ -212,6 +212,7 @@ public class Template {
     private final Map<String, Object> variables;
     private final Map<String, Function<Object[], Object>> functions;
     private final static Pattern DIR_LINE = Pattern.compile("(\\{%(?!\\s*include\\s+).*?%\\}|\\{#.*?#\\})+");
+    private static enum END {IF, FOR};
 
     private Template(List<Block> blocks) {
         this.blocks    =  blocks;
@@ -414,11 +415,8 @@ public class Template {
                 String directive = template.substring(dirStart + 2, end - 2).trim();
 
                 if (directive.startsWith("if ")) {
-                    // If block
-                    String condition = directive.substring(3).trim();
-
                     // Find matching endif
-                    int endifStart = findDirEnd(template, end, "endif");
+                    int endifStart = findDirEnd(template, end, template.length());
                     if (endifStart == -1) {
                         int currentLine = countLines(baseTemp, bPos + dirStart);
                         throw new IllegalArgumentException("Line " + currentLine + ": Unclosed if statement");
@@ -430,69 +428,56 @@ public class Template {
                     }
                     endifEnd += 2;
 
-                    List<IfBlock.Group> conditionalBlocks = new ArrayList<>();
+                    List<Block> elifBlocks ;
                     List<Block> elseBlocks = new ArrayList<>();
+                    List<IfBlock.Group> elifGroups = new ArrayList<>();
 
-                    int currentStart = end;
-                    int currentPos = end;
+                    int elifStart;
+                    int elifEnd = end;
+                    String condition = directive.substring(3).trim();
 
-                    while (currentPos < endifStart) {
-                        // Find the next else or elif directive
-                        int nextDirectiveStart = template.indexOf("{%", currentPos);
-                        if (nextDirectiveStart == -1 || nextDirectiveStart >= endifStart) {
-                            // No more directives, process the last condition
-                            List<Block> innerBlocks = parseTemplate(baseTemp, basePath, bPos + currentStart, bPos + endifStart);
-                            conditionalBlocks.add(new IfBlock.Group(condition, innerBlocks));
-                            break;
-                        }
+                    do {
+                        elifStart = findDirEls(template, elifEnd, endifStart);
+                        if (elifStart == -1) {
+                            elifBlocks = parseTemplate(baseTemp, basePath, bPos + elifEnd, bPos + endifStart);
+                            elifGroups.add(new IfBlock.Group(condition, elifBlocks));
 
-                        // Check if this is an else or elif directive
-                        int directiveEnd = template.indexOf("%}", nextDirectiveStart);
-                        if (directiveEnd == -1) {
-                            int currentLine = countLines(baseTemp, bPos + currentPos);
-                            throw new IllegalArgumentException("Line " + currentLine + ": Unclosed directive");
-                        }
-                        String nextDirective = template.substring(nextDirectiveStart + 2, directiveEnd).trim();
-
-                        if (nextDirective.equals("else")) {
-                            // Process the current condition's content
-                            List<Block> innerBlocks = parseTemplate(baseTemp, basePath, bPos + currentStart, bPos + nextDirectiveStart);
-                            conditionalBlocks.add(new IfBlock.Group(condition, innerBlocks));
-
-                            // Process else block
-                            elseBlocks = parseTemplate(baseTemp, basePath, bPos + directiveEnd + 2, bPos + endifStart);
-                            break;
-                        } else
-                        if (nextDirective.startsWith("elif ")) {
-                            // Process the current condition's content
-                            List<Block> innerBlocks = parseTemplate(baseTemp, basePath, bPos + currentStart, bPos + nextDirectiveStart);
-                            conditionalBlocks.add(new IfBlock.Group(condition, innerBlocks));
-
-                            // New conditional block for elif
-                            condition = nextDirective.substring(5).trim();
-                            currentStart = directiveEnd + 2;
-                            currentPos = directiveEnd + 2;
+                            elifEnd = endifEnd;
                         } else {
-                            // Not an else/elif, continue searching
-                            currentPos = directiveEnd + 2;
+                            elifBlocks = parseTemplate(baseTemp, basePath, bPos + elifEnd, bPos + elifStart );
+                            elifGroups.add(new IfBlock.Group(condition, elifBlocks));
+
+                            // else or elif directive
+                            int elseEnd = template.indexOf("%}", elifStart);
+                            if (elseEnd == -1) {
+                                int currentLine = countLines(baseTemp, bPos + elifStart);
+                                throw new IllegalArgumentException("Line " + currentLine + ": Unclosed statement");
+                            }
+                            elseEnd += 2;
+
+                            String dir = template.substring (elifStart + 2, elseEnd - 2).trim();
+                            if (dir.startsWith("elif ")) {
+                                condition  = dir.substring(5).trim(); // 下一个的条件
+                            } else
+                            if (dir.equals("else")) {
+                                elseBlocks = parseTemplate(baseTemp, basePath, bPos + elseEnd, bPos + endifStart );
+                                break;
+                            } else {
+                                int currentLine = countLines(baseTemp, bPos + elifStart);
+                                throw new IllegalArgumentException("Line " + currentLine + ": Invalid statement in if: " + dir);
+                            }
+
+                            elifEnd = elseEnd;
                         }
                     }
+                    while ( elifEnd < endifStart );
 
-                    // Create the IfBlock with all conditional blocks and else blocks
-                    blocks.add(new IfBlock(conditionalBlocks, elseBlocks));
+                    blocks.add(new IfBlock(elifGroups, elseBlocks));
                     index = endifEnd;
                 } else
                 if (directive.startsWith("for ")) {
-                    // For block
-                    String[] parts = directive.substring(4).trim().split("\\s+in\\s+");
-                    if (parts.length != 2) {
-                        int currentLine = countLines(baseTemp, bPos + dirStart);
-                        throw new IllegalArgumentException("Line " + currentLine + ": Invalid for statement: " + directive);
-                    }
-                    String variableName = parts[0].trim();
-                    String iterableName = parts[1].trim();
                     // Find matching endfor
-                    int endforStart = findDirEnd(template, end, "endfor");
+                    int endforStart = findDirEnd(template, end, template.length());
                     if (endforStart == -1) {
                         int currentLine = countLines(baseTemp, bPos + dirStart);
                         throw new IllegalArgumentException("Line " + currentLine + ": Unclosed for statement");
@@ -504,84 +489,42 @@ public class Template {
                     }
                     endforEnd += 2;
 
-                    // Check for else clause in for loop
-                    int elseStart = -1;
-                    int currentPos = end;
-                    int nestedForCount = 0;
-                    int nestedIfCount = 0;
-
-                    while (currentPos < endforStart) {
-                        int nestedDirStart = template.indexOf("{%", currentPos);
-                        if (nestedDirStart == -1 || nestedDirStart >= endforStart) {
-                            break;
-                        }
-
-                        // Find the correct closing %} by scanning character by character
-                        int nestedDirEnd = nestedDirStart + 2;
-                        while (nestedDirEnd < template.length()) {
-                            if (template.charAt(nestedDirEnd) == '%' && nestedDirEnd + 1 < template.length() && template.charAt(nestedDirEnd + 1) == '}') {
-                                // Found valid closing %}
-                                break;
-                            }
-                            nestedDirEnd++;
-                        }
-                        if (nestedDirEnd >= template.length() || nestedDirEnd >= endforStart) {
-                            break;
-                        }
-                        nestedDirEnd += 2;
-
-                        String nestedDirective = template.substring(nestedDirStart + 2, nestedDirEnd - 2).trim();
-
-                        if (nestedDirective.startsWith("for ")) {
-                            nestedForCount++;
-                        } else
-                        if (nestedDirective.equals("endfor")) {
-                            if (nestedForCount > 0) {
-                                nestedForCount--;
-                            }
-                        } else
-                        if (nestedDirective.startsWith("if ")) {
-                            nestedIfCount++;
-                        } else
-                        if (nestedDirective.equals("endif")) {
-                            if (nestedIfCount > 0) {
-                                nestedIfCount--;
-                            }
-                        } else
-                        if (nestedDirective.equals("else") && nestedForCount == 0 && nestedIfCount == 0) {
-                            // Found else directive for this for loop
-                            elseStart = nestedDirStart;
-                            break;
-                        }
-
-                        currentPos = nestedDirEnd;
+                    String[] parts = directive.substring(4).trim().split("\\s+in\\s+");
+                    if (parts.length != 2) {
+                        int currentLine = countLines(baseTemp, bPos + dirStart);
+                        throw new IllegalArgumentException("Line " + currentLine + ": Invalid for statement: " + directive);
                     }
+                    String variableName = parts[0].trim();
+                    String iterableName = parts[1].trim();
 
-                    List<Block> innerBlocks;
+                    List<Block> baseBlocks ;
                     List<Block> elseBlocks = new ArrayList<>();
 
-                    if (elseStart != -1 && elseStart < endforStart) {
-                        // Found else clause
-                        //String loopContent = template.substring(end, elseStart);
-                        innerBlocks = parseTemplate(baseTemp, basePath, bPos + end, bPos + elseStart);
+                    // 寻找同级的 else
+                    int elseStart = findDirEls(template, end, endforStart);
+                    if (elseStart == -1) {
+                        baseBlocks = parseTemplate(baseTemp, basePath, bPos + end, bPos + endforStart);
+                    } else {
+                        baseBlocks = parseTemplate(baseTemp, basePath, bPos + end, bPos + elseStart  );
 
-                        // Find the end of else directive
+                        // else directive
                         int elseEnd = template.indexOf("%}", elseStart);
                         if (elseEnd == -1) {
-                            int currentLine = countLines(baseTemp, bPos + currentPos);
-                            throw new IllegalArgumentException("Line " + currentLine + ": Unclosed else directive");
+                            int currentLine = countLines(baseTemp, bPos + elseStart);
+                            throw new IllegalArgumentException("Line " + currentLine + ": Unclosed statement");
                         }
                         elseEnd += 2;
 
-                        //String elseContent = template.substring(elseEnd, endforStart);
-                        elseBlocks = parseTemplate(baseTemp, basePath, bPos + elseEnd, bPos + endforStart);
-                    } else {
-                        // No else clause
-                        //String content = template.substring(end, endforStart);
-                        innerBlocks = parseTemplate(baseTemp, basePath, bPos + end, bPos + endforStart);
+                        String dir = template.substring (elseStart + 2, elseEnd - 2).trim();
+                        if (dir.equals("else")) {
+                            elseBlocks = parseTemplate(baseTemp, basePath, bPos + elseEnd, bPos + endforStart);
+                        } else {
+                            int currentLine = countLines(baseTemp, bPos + elseStart);
+                            throw new IllegalArgumentException("Line " + currentLine + ": Invalid statement in for: " + dir);
+                        }
                     }
 
-                    blocks.add(new ForBlock(variableName, iterableName, innerBlocks, elseBlocks));
+                    blocks.add(new ForBlock(variableName, iterableName, baseBlocks, elseBlocks));
                     index = endforEnd;
                 } else
                 if (directive.startsWith("set ")) {
@@ -666,11 +609,11 @@ public class Template {
         return blocks;
     }
 
-    private static int findDirEnd(String template, int start, String endDirective) {
+    private static int findDirEnd(String template, int start, int end) {
         int count = 1;
         int index = start;
 
-        while (index < template.length()) {
+        while (index < end) {
             int dirStart = template.indexOf("{%", index);
             if (dirStart == -1) {
                 break;
@@ -690,37 +633,90 @@ public class Template {
             }
             dirEnd += 2;
 
-            String directive = template.substring(dirStart + 2, dirEnd - 2).trim();
+            String dir = template.substring(dirStart + 2, dirEnd - 2).trim();
+            int pos = dir. indexOf ( " " );
+            if (pos > 0) {
+                dir = dir.substring(0,pos);
+            }
 
-            if (directive.startsWith("if ")) {
-                // Nested if
-                if (endDirective.equals("endif")) {
-                    count++;
-                }
-            } else
-            if (directive.startsWith("for ")) {
-                // Nested for
-                if (endDirective.equals("endfor")) {
-                    count++;
-                }
-            } else
-            if (directive.equals("endif")) {
-                // Endif directive
-                if (endDirective.equals("endif")) {
-                    count--;
+            switch (dir) {
+                case "if"    :
+                    count ++ ;
+                    break;
+                case "for"   :
+                    count ++ ;
+                    break;
+                case "endif" :
+                    count -- ;
                     if (count == 0) {
                         return dirStart;
-                    }
-                }
-            } else
-            if (directive.equals("endfor")) {
-                // Endfor directive
-                if (endDirective.equals("endfor")) {
-                    count--;
+                    }   break;
+                case "endfor":
+                    count -- ;
                     if (count == 0) {
                         return dirStart;
-                    }
+                    }   break;
+            }
+
+            index = dirEnd;
+        }
+
+        return -1;
+    }
+
+    private static int findDirEls(String template, int start, int end) {
+        int count = 1;
+        int index = start;
+
+        while (index < end) {
+            int dirStart = template.indexOf("{%", index);
+            if (dirStart == -1) {
+                break;
+            }
+
+            // Find the correct closing %} by scanning character by character
+            int dirEnd = dirStart + 2;
+            while (dirEnd < template.length()) {
+                if (template.charAt(dirEnd) == '%' && dirEnd + 1 < template.length() && template.charAt(dirEnd + 1) == '}') {
+                    // Found valid closing %}
+                    break;
                 }
+                dirEnd++;
+            }
+            if (dirEnd >= template.length()) {
+                break;
+            }
+            dirEnd += 2;
+
+            String dir = template.substring(dirStart + 2, dirEnd - 2).trim();
+            int pos = dir. indexOf ( " " );
+            if (pos > 0) {
+                dir = dir.substring(0,pos);
+            }
+
+            switch (dir) {
+                case "if"    :
+                    count ++ ;
+                    break;
+                case "for"   :
+                    count ++ ;
+                    break;
+                case "endif" :
+                    count -- ;
+                    break;
+                case "endfor":
+                    count -- ;
+                    break;
+                case "elif"  :
+                    // 只找同层的 elif
+                    if (count == 1) {
+                        return dirStart;
+                    }   break;
+                case "else"  :
+                    // 只找同层的 else
+                    if (count == 1) {
+                        return dirStart;
+                    }   break;
             }
 
             index = dirEnd;
@@ -834,13 +830,13 @@ public class Template {
     private static class ForBlock implements Block {
         private final String variableName;
         private final String iterableExpr;
-        private final List<Block> innerBlocks;
+        private final List<Block> baseBlocks;
         private final List<Block> elseBlocks;
 
-        public ForBlock(String variableName, String iterableExpr, List<Block> innerBlocks, List<Block> elseBlocks) {
+        public ForBlock(String variableName, String iterableExpr, List<Block> baseBlocks, List<Block> elseBlocks) {
             this.variableName = variableName;
             this.iterableExpr = iterableExpr;
-            this.innerBlocks = innerBlocks;
+            this.baseBlocks = baseBlocks;
             this.elseBlocks = elseBlocks;
         }
 
@@ -854,7 +850,7 @@ public class Template {
                 hasItems = !list.isEmpty();
                 for (Object entry : list ) {
                     context.put(variableName, entry );
-                    for (Block block : innerBlocks) {
+                    for (Block block : baseBlocks) {
                         block.render(context, writer);
                     }
                 }
@@ -863,7 +859,7 @@ public class Template {
                 hasItems = !dict.isEmpty();
                 for (Map.Entry<?,?> entry : dict.entrySet()) {
                     context.put(variableName, entry );
-                    for (Block block : innerBlocks) {
+                    for (Block block : baseBlocks) {
                         block.render(context, writer);
                     }
                 }
@@ -872,7 +868,7 @@ public class Template {
                 hasItems = list.length > 0;
                 for (Object entry : list ) {
                     context.put(variableName, entry );
-                    for (Block block : innerBlocks) {
+                    for (Block block : baseBlocks) {
                         block.render(context, writer);
                     }
                 }
@@ -881,7 +877,7 @@ public class Template {
                 while (iter.hasNext()) {
                     Object entry = iter.next();
                     context.put(variableName, entry );
-                    for (Block block : innerBlocks) {
+                    for (Block block : baseBlocks) {
                         block.render(context, writer);
                     }
                     if (! hasItems) {
@@ -893,7 +889,7 @@ public class Template {
                 while (iter.hasNext()) {
                     Object entry = iter.next();
                     context.put(variableName, entry );
-                    for (Block block : innerBlocks) {
+                    for (Block block : baseBlocks) {
                         block.render(context, writer);
                     }
                     if (! hasItems) {
@@ -915,24 +911,24 @@ public class Template {
 
     // If block
     private static class IfBlock implements Block {
-        private final List<Group> innerGroups;
+        private final List<Group> elifGroups;
         private final List<Block> elseBlocks;
 
-        public IfBlock(List<Group> innerBlocks, List<Block> elseBlocks) {
-            this.innerGroups = innerBlocks;
+        public IfBlock(List<Group> elifGroups, List<Block> elseBlocks) {
+            this.elifGroups = elifGroups;
             this.elseBlocks = elseBlocks;
         }
 
         @Override
         public void render(Map<String, Object> context, Writer writer) throws IOException {
-            for (Group group : innerGroups) {
+            for (Group group : elifGroups) {
                 // Parse and evaluate complex expression
                 String condition = group.condition;
                 Object value = getValue(condition, context);
                 if (decide(value)) {
-                    List<Block> innerBlocks = group.blocks;
-                    if (innerBlocks != null) {
-                        for (Block block : innerBlocks) {
+                    List<Block> elifBlocks = group.blocks;
+                    if (elifBlocks != null) {
+                        for (Block block : elifBlocks) {
                             block.render(context, writer);
                         }
                     }

@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -854,6 +855,88 @@ public class TestTemplate {
         """;
 
         testTemplate(template, context, expected);
+    }
+
+    @Test
+    public void testArrayAccessAndNestedVariables() {
+        // 测试数组访问和变量嵌套
+        Map<String, Object> testContext = new HashMap<>(context);
+        
+        // 添加测试数据
+        List<Map<String, Object>> users = new ArrayList<>();
+        users.add(Map.of("id", 1, "name", "John", "age", 30));
+        users.add(Map.of("id", 2, "name", "Alice", "age", 25));
+        users.add(Map.of("id", 3, "name", "Bob", "age", 35));
+        testContext.put("users", users);
+        
+        // 添加嵌套对象
+        Map<String, Object> company = Map.of(
+            "name", "Tech Corp",
+            "address", Map.of(
+                "street", "123 Main St",
+                "city", "New York",
+                "zip", "10001"
+            )
+        );
+        testContext.put("company", company);
+
+        String template = """
+        <h2>Array access and nested variables test</h2>
+
+        <!-- Array access by index -->
+        <p>First user: {{users.0.name}}</p>
+        <p>Second user: {{users.1.name}}</p>
+        <p>Third user: {{users.2.name}}</p>
+
+        <!-- Nested object access -->
+        <p>Company name: {{company.name}}</p>
+        <p>Company city: {{company.address.city}}</p>
+
+        <!-- Array access with nested properties -->
+        <p>First user age: {{users.0.age}}</p>
+        <p>Second user age: {{users.1.age}}</p>
+
+        <!-- Conditional with array access -->
+        <p>{%if users.0.age > 28%}First user is older than 28{%else%}First user is 28 or younger{%endif%}</p>
+
+        <!-- Looping through array -->
+        <h3>User list:</h3>
+        <ul>
+        {%for user in users%}
+            <li>{{user.name}} ({{user.age}})</li>
+        {%endfor%}
+        </ul>
+        """;
+
+        String expected = """
+        <h2>Array access and nested variables test</h2>
+
+        <!-- Array access by index -->
+        <p>First user: John</p>
+        <p>Second user: Alice</p>
+        <p>Third user: Bob</p>
+
+        <!-- Nested object access -->
+        <p>Company name: Tech Corp</p>
+        <p>Company city: New York</p>
+
+        <!-- Array access with nested properties -->
+        <p>First user age: 30</p>
+        <p>Second user age: 25</p>
+
+        <!-- Conditional with array access -->
+        <p>First user is older than 28</p>
+
+        <!-- Looping through array -->
+        <h3>User list:</h3>
+        <ul>
+            <li>John (30)</li>
+            <li>Alice (25)</li>
+            <li>Bob (35)</li>
+        </ul>
+        """;
+
+        testTemplate(template, testContext, expected);
     }
 
 }

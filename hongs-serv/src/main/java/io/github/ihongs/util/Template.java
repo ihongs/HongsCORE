@@ -131,8 +131,12 @@ import java.util.regex.Pattern;
  * contains(集合, 选项) - 包含, 也可用于字典或字串
  * {%if contains(list, name)%}
  *
- * matches(字串, 正则) - 正则匹配
- * {{or(title, "Default Title")}}
+ * matches(文本, 正则) - 正则匹配
+ * {%if matches(name, "[Tt]ony")}}
+ *
+ * substr(文本, 起始, 长度) - 文本截取, 起始为负反向截取
+ * {{substr(text, 4, 2)}}
+ * {{substr(text, 4)}}
  *
  * indent(文本, 缩进几格) - 缩进文本
  * {{indent(text, 4)}}
@@ -1599,6 +1603,17 @@ public class Template {
             String s = Synt.asString(args[0]);
             String r = Synt.asString(args[1]);
             return s.matches(r);
+        });
+
+        FUNCTIONS.put("substr", args -> {
+            String s = Synt.asString(args[0]);
+               int b = Synt.asInt(args[1]);
+            if (args.length > 2) {
+               int d = Synt.asInt(args[2]);
+               return Syno.substr(s, b, d);
+            } else {
+               return Syno.substr(s, b);
+            }
         });
 
         FUNCTIONS.put("indent", args -> {

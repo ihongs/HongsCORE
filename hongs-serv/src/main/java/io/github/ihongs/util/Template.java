@@ -416,6 +416,7 @@ public class Template {
                 if (directive.startsWith("if ")) {
                     // If block
                     String condition = directive.substring(3).trim();
+
                     // Find matching endif
                     int endifStart = findDirEnd(template, end, "endif");
                     if (endifStart == -1) {
@@ -432,9 +433,6 @@ public class Template {
                     List<IfBlock.Group> conditionalBlocks = new ArrayList<>();
                     List<Block> elseBlocks = new ArrayList<>();
 
-                    // Add the first condition
-                    conditionalBlocks.add(new IfBlock.Group(condition));
-
                     int currentStart = end;
                     int currentPos = end;
 
@@ -443,9 +441,8 @@ public class Template {
                         int nextDirectiveStart = template.indexOf("{%", currentPos);
                         if (nextDirectiveStart == -1 || nextDirectiveStart >= endifStart) {
                             // No more directives, process the last condition
-                            //String content = template.substring(currentStart, endifStart);
                             List<Block> innerBlocks = parseTemplate(baseTemp, basePath, bPos + currentStart, bPos + endifStart);
-                            conditionalBlocks.get(conditionalBlocks.size() - 1).setBlocks(innerBlocks);
+                            conditionalBlocks.add(new IfBlock.Group(condition, innerBlocks));
                             break;
                         }
 
@@ -459,26 +456,22 @@ public class Template {
 
                         if (nextDirective.equals("else")) {
                             // Process the current condition's content
-                            //String content = template.substring(currentStart, nextDirectiveStart);
                             List<Block> innerBlocks = parseTemplate(baseTemp, basePath, bPos + currentStart, bPos + nextDirectiveStart);
-                            conditionalBlocks.get(conditionalBlocks.size() - 1).setBlocks(innerBlocks);
+                            conditionalBlocks.add(new IfBlock.Group(condition, innerBlocks));
 
                             // Process else block
-                            //String elseContent = template.substring(directiveEnd + 2, endifStart);
                             elseBlocks = parseTemplate(baseTemp, basePath, bPos + directiveEnd + 2, bPos + endifStart);
                             break;
                         } else
                         if (nextDirective.startsWith("elif ")) {
                             // Process the current condition's content
-                            //String content = template.substring(currentStart, nextDirectiveStart);
                             List<Block> innerBlocks = parseTemplate(baseTemp, basePath, bPos + currentStart, bPos + nextDirectiveStart);
-                            conditionalBlocks.get(conditionalBlocks.size() - 1).setBlocks(innerBlocks);
+                            conditionalBlocks.add(new IfBlock.Group(condition, innerBlocks));
 
-                            // Add a new conditional block for elif
-                            String elifCondition = nextDirective.substring(5).trim();
-                            conditionalBlocks.add(new IfBlock.Group(elifCondition));
+                            // New conditional block for elif
+                            condition = nextDirective.substring(5).trim();
                             currentStart = directiveEnd + 2;
-                            currentPos = currentStart;
+                            currentPos = directiveEnd + 2;
                         } else {
                             // Not an else/elif, continue searching
                             currentPos = directiveEnd + 2;
@@ -497,7 +490,7 @@ public class Template {
                         throw new IllegalArgumentException("Line " + currentLine + ": Invalid for statement: " + directive);
                     }
                     String variableName = parts[0].trim();
-                    String collectionName = parts[1].trim();
+                    String iterableName = parts[1].trim();
                     // Find matching endfor
                     int endforStart = findDirEnd(template, end, "endfor");
                     if (endforStart == -1) {
@@ -588,7 +581,7 @@ public class Template {
                         innerBlocks = parseTemplate(baseTemp, basePath, bPos + end, bPos + endforStart);
                     }
 
-                    blocks.add(new ForBlock(variableName, collectionName, innerBlocks, elseBlocks));
+                    blocks.add(new ForBlock(variableName, iterableName, innerBlocks, elseBlocks));
                     index = endforEnd;
                 } else
                 if (directive.startsWith("set ")) {
@@ -599,15 +592,15 @@ public class Template {
                         throw new IllegalArgumentException("Line " + currentLine + ": Invalid set statement: " + directive);
                     }
                     String variableName = parts[0].trim();
-                    String valueExpression = parts[1].trim();
-                    blocks.add(new SetBlock(variableName, valueExpression));
+                    String variableExpr = parts[1].trim();
+                    blocks.add(new SetBlock(variableName, variableExpr));
                     index = end;
                 } else
                 if (directive.startsWith("include ")) {
                     // Include block
                     String includePart = directive.substring(8).trim();
                     String includeName = null;
-                    String subContext = null;
+                    String contentExpr = null;
 
                     // Find the first quote
                     int firstQuote = includePart.indexOf('"');
@@ -629,10 +622,10 @@ public class Template {
                     // Check for with clause after the closing quote
                     String remaining = includePart.substring(lastQuote + 1).trim();
                     if (remaining.startsWith("with ")) {
-                        subContext = remaining.substring(5).trim();
+                        contentExpr = remaining.substring(5).trim();
                     }
 
-                    blocks.add(new SubBlock(basePath, includeName, subContext));
+                    blocks.add(new InBlock(basePath, includeName, contentExpr));
                     index = end;
                 } else
                 if (directive.equals("else")
@@ -655,8 +648,8 @@ public class Template {
                     int currentLine = countLines(baseTemp, bPos + varStart);
                     throw new IllegalArgumentException("Line " + currentLine + ": Unclosed variable");
                 }
-                String variableName = template.substring(varStart + 2, end).trim();
-                blocks.add(new VarBlock(variableName));
+                String variableExpr = template.substring(varStart + 2, end).trim();
+                blocks.add(new VarBlock(variableExpr));
                 index = end + 2;
             } else
             if (nextStart == comStart) {
@@ -790,10 +783,10 @@ public class Template {
 
     // Plain text block
     private static class TxtBlock implements Block {
-        private String text;
+        private final String text;
 
         public TxtBlock(String text) {
-            this.text = text;
+            this. text = text ;
         }
 
         @Override
@@ -804,15 +797,15 @@ public class Template {
 
     // Variable block
     private static class VarBlock implements Block {
-        private final String name;
+        private final String variableExpr;
 
-        public VarBlock(String variableName) {
-            this.name = variableName;
+        public VarBlock(String variableExpr) {
+            this.variableExpr = variableExpr;
         }
 
         @Override
         public void render(Map<String, Object> context, Writer writer) throws IOException {
-            Object value = getValue(name, context);
+            Object value = getValue(variableExpr, context);
             if (value != null) {
                 writer.write(Synt.asString(value));
                 //writer.write(value.toString());
@@ -823,17 +816,100 @@ public class Template {
     // Set variable block
     private static class SetBlock implements Block {
         private final String variableName;
-        private final String expression;
+        private final String variableExpr;
 
-        public SetBlock(String variableName, String expression) {
+        public SetBlock(String variableName, String variableExpr) {
             this.variableName = variableName;
-            this.expression = expression;
+            this.variableExpr = variableExpr;
         }
 
         @Override
         public void render(Map<String, Object> context, Writer writer) throws IOException {
-            Object value = getValue(expression, context);
+            Object value = getValue(variableExpr, context);
             context.put(variableName, value);
+        }
+    }
+
+    // For block
+    private static class ForBlock implements Block {
+        private final String variableName;
+        private final String iterableExpr;
+        private final List<Block> innerBlocks;
+        private final List<Block> elseBlocks;
+
+        public ForBlock(String variableName, String iterableExpr, List<Block> innerBlocks, List<Block> elseBlocks) {
+            this.variableName = variableName;
+            this.iterableExpr = iterableExpr;
+            this.innerBlocks = innerBlocks;
+            this.elseBlocks = elseBlocks;
+        }
+
+        @Override
+        public void render(Map<String, Object> context, Writer writer) throws IOException {
+            Object value = getValue(iterableExpr, context);
+            boolean hasItems = false;
+
+            if (value instanceof Collection<?>) {
+                Collection<?> list = (Collection<?>) value;
+                hasItems = !list.isEmpty();
+                for (Object entry : list ) {
+                    context.put(variableName, entry );
+                    for (Block block : innerBlocks) {
+                        block.render(context, writer);
+                    }
+                }
+            } else if (value instanceof Map<?,?>) {
+                Map<?,?> dict = (Map<?,?>) value;
+                hasItems = !dict.isEmpty();
+                for (Map.Entry<?,?> entry : dict.entrySet()) {
+                    context.put(variableName, entry );
+                    for (Block block : innerBlocks) {
+                        block.render(context, writer);
+                    }
+                }
+            } else if (value instanceof Object[]) {
+                Object[] list = (Object[]) value;
+                hasItems = list.length > 0;
+                for (Object entry : list ) {
+                    context.put(variableName, entry );
+                    for (Block block : innerBlocks) {
+                        block.render(context, writer);
+                    }
+                }
+            } else if (value instanceof Iterator) {
+                Iterator iter = (Iterator) value;
+                while (iter.hasNext()) {
+                    Object entry = iter.next();
+                    context.put(variableName, entry );
+                    for (Block block : innerBlocks) {
+                        block.render(context, writer);
+                    }
+                    if (! hasItems) {
+                        hasItems = true;
+                    }
+                }
+            } else if (value instanceof Iterable) {
+                Iterator iter = ((Iterable) value).iterator();
+                while (iter.hasNext()) {
+                    Object entry = iter.next();
+                    context.put(variableName, entry );
+                    for (Block block : innerBlocks) {
+                        block.render(context, writer);
+                    }
+                    if (! hasItems) {
+                        hasItems = true;
+                    }
+                }
+            } else if (value != null) {
+                throw new UnsupportedOperationException("Non-iterable type for `"+iterableExpr+"`: "+value.getClass().getName());
+            }
+
+            // If collection is null or empty, render else blocks
+            if (!hasItems) {
+                for (Block block : elseBlocks) {
+                    block.render(context, writer);
+                }
+            }
         }
     }
 
@@ -873,119 +949,33 @@ public class Template {
             private final String condition;
             private List <Block> blocks;
 
-            public Group (String condition) {
+            public Group (String condition, List<Block> blocks) {
                 this.condition = condition;
-            }
-
-            public void setBlocks(List<Block> blocks) {
-                this.blocks = blocks;
+                this.blocks    = blocks;
             }
         }
 
-    }
-
-    // For block
-    private static class ForBlock implements Block {
-        private final String variableName;
-        private final String iterableName;
-        private final List<Block> innerBlocks;
-        private final List<Block> elseBlocks;
-
-        public ForBlock(String variableName, String iterableName, List<Block> innerBlocks, List<Block> elseBlocks) {
-            this.variableName = variableName;
-            this.iterableName = iterableName;
-            this.innerBlocks = innerBlocks;
-            this.elseBlocks = elseBlocks;
-        }
-
-        @Override
-        public void render(Map<String, Object> context, Writer writer) throws IOException {
-            Object loop = getValue(iterableName, context);
-            boolean hasItems = false;
-
-            if (loop instanceof Collection<?>) {
-                Collection<?> list = (Collection<?>) loop;
-                hasItems = !list.isEmpty();
-                for (Object entry : list ) {
-                    context.put(variableName, entry );
-                    for (Block block : innerBlocks) {
-                        block.render(context, writer);
-                    }
-                }
-            } else if (loop instanceof Map<?,?>) {
-                Map<?,?> dict = (Map<?,?>) loop;
-                hasItems = !dict.isEmpty();
-                for (Map.Entry<?,?> entry : dict.entrySet()) {
-                    context.put(variableName, entry );
-                    for (Block block : innerBlocks) {
-                        block.render(context, writer);
-                    }
-                }
-            } else if (loop instanceof Object[]) {
-                Object[] list = (Object[]) loop;
-                hasItems = list.length > 0;
-                for (Object entry : list ) {
-                    context.put(variableName, entry );
-                    for (Block block : innerBlocks) {
-                        block.render(context, writer);
-                    }
-                }
-            } else if (loop instanceof Iterator) {
-                Iterator iter = (Iterator) loop;
-                while (iter.hasNext()) {
-                    Object entry = iter.next();
-                    context.put(variableName, entry );
-                    for (Block block : innerBlocks) {
-                        block.render(context, writer);
-                    }
-                    if (! hasItems) {
-                        hasItems = true;
-                    }
-                }
-            } else if (loop instanceof Iterable) {
-                Iterator iter = ((Iterable) loop).iterator();
-                while (iter.hasNext()) {
-                    Object entry = iter.next();
-                    context.put(variableName, entry );
-                    for (Block block : innerBlocks) {
-                        block.render(context, writer);
-                    }
-                    if (! hasItems) {
-                        hasItems = true;
-                    }
-                }
-            } else if (loop != null) {
-                throw new UnsupportedOperationException("Non-iterable type for `"+iterableName+"`: "+loop.getClass().getName());
-            }
-
-            // If collection is null or empty, render else blocks
-            if (!hasItems) {
-                for (Block block : elseBlocks) {
-                    block.render(context, writer);
-                }
-            }
-        }
     }
 
     // Include block
-    private static class SubBlock implements Block {
-        private final List<Block> subBlocks;
-        private final String subContext;
+    private static class InBlock implements Block {
+        private final List<Block> innerBlocks;
+        private final String contextExpr;
 
-        public SubBlock(Path basePath, String subPath, String subContext) {
+        public InBlock(Path basePath, String includePath, String contextExpr) {
             if (basePath == null) {
                 throw new UnsupportedOperationException("Include directive requires a basePath to be set");
             }
 
             try {
                 // Load the included template file
-                Path curPath = Path.of(basePath.toString(), subPath);
-                if (!curPath.toFile().exists()) {
-                    throw new IOException("Template file not found: " + curPath.toAbsolutePath());
+                Path currPath = Path.of(basePath.toString(), includePath);
+                if (!currPath.toFile().exists()) {
+                    throw new IOException("Template file not found: "+currPath.toAbsolutePath());
                 }
 
-                this.subBlocks = parseTemplate(Files.readString(curPath), curPath.getParent());
-                this.subContext = subContext;
+                this.innerBlocks = parseTemplate(Files.readString(currPath), currPath.getParent());
+                this.contextExpr = contextExpr;
             }
             catch (IOException ex) {
                 throw new UnsupportedOperationException(ex);
@@ -996,11 +986,11 @@ public class Template {
         public void render(Map<String, Object> context, Writer writer) throws IOException {
             // Determine which context to use
             Map<String, Object> renderContext = context;
-            if (subContext != null) {
-                Object subValue = getValue(subContext, context);
-                if (subValue instanceof Map<?, ?>) {
+            if (contextExpr != null) {
+                Object value = getValue(contextExpr, context);
+                if (value instanceof Map<?, ?>) {
                     @SuppressWarnings("unchecked")
-                    Map<String, Object> subMap = (Map<String, Object>) subValue ;
+                    Map<String, Object> subMap = (Map<String, Object>) value;
                     renderContext = new HashMap(subMap);
                 } else {
                     renderContext = new HashMap();
@@ -1010,7 +1000,7 @@ public class Template {
             }
 
             // Render the included template
-            for (Block block : subBlocks) {
+            for (Block block : innerBlocks) {
                 block.render(renderContext, writer);
             }
         }

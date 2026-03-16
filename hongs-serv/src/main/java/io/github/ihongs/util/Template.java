@@ -215,8 +215,8 @@ public class Template {
     private static enum END {IF, FOR};
 
     private Template(List<Block> blocks) {
-        this.blocks    =  blocks;
-        this.variables = new HashMap<>();
+        this.blocks = blocks;
+        this.variables = new HashMap<>(VARIABLES);
         this.functions = new HashMap<>(FUNCTIONS);
     }
 

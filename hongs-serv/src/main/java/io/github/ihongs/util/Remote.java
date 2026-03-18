@@ -64,11 +64,11 @@ import org.apache.hc.core5.util.Timeout;
  */
 public final class Remote {
 
-    public static enum METHOD { GET, PUT, POST, PATCH, DELETE };
-
-    public static enum FORMAT { FORM, PART, JSON, JSONF };
-
     private Remote () {}
+
+    public static enum METHOD { GET , PUT , POST, PATCH, DELETE };
+
+    public static enum FORMAT { FORM, PART, JSON, JSONF, CUSTOM };
 
     /**
      * 简单远程请求
@@ -296,6 +296,7 @@ public final class Remote {
                 switch (kind) {
                 case JSONF : req.setEntity(buildJson(data, true)); break;
                 case JSON  : req.setEntity(buildJson(data)); break;
+                case CUSTOM: req.setEntity(buildCust(data)); break;
                 case PART  : req.setEntity(buildPart(data)); break;
                 default    : req.setEntity(buildPost(data)); break;
             }} else {
@@ -432,7 +433,7 @@ public final class Remote {
      * Content-Type: application/json; charset=utf-8
      *
      * @param data
-     * @param format 是否格式化JSON
+     * @param format 是否使用缩进格式
      * @return
      */
     public static HttpEntity buildJson(Map<String, Object> data, boolean format) {
@@ -450,6 +451,33 @@ public final class Remote {
      */
     public static HttpEntity buildJson(Map<String, Object> data) {
         return new StringEntity(Dist.toString(data, true), ContentType.APPLICATION_JSON);
+    }
+
+    /**
+     * 构建自定实体
+     *
+     * 用于 FORMAT.CUSTOM, 结构:
+     * data: 数据内容
+     * type: 数据类型; 字符编码
+     * charset: 字符编码(可与 type 一起, 也可分开)
+     *
+     * @param data
+     * @return
+     */
+    public static HttpEntity buildCust(Map<String, Object> data) {
+        String text = Synt.asString(data.get("data"));
+        String type = Synt.asString(data.get("type"));
+        String cset = Synt.asString(data.get("charset"));
+        if (cset == null || cset.isEmpty()) {
+            int p = type.indexOf(";");
+            if (p < 0) {
+                cset = "utf-8";
+            } else {
+                cset = type.substring(1+p).trim();
+                type = type.substring(0,p).trim();
+            }
+        }
+        return new StringEntity(text, ContentType.create(type, cset));
     }
 
     /**

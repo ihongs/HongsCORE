@@ -64,11 +64,11 @@ import org.apache.hc.core5.util.Timeout;
  */
 public final class Remote {
 
-    private Remote () {}
-
     public static enum METHOD { GET, PUT, POST, PATCH, DELETE };
 
-    public static enum FORMAT { FORM, PART, JSON, JSON_FORMAT };
+    public static enum FORMAT { FORM, PART, JSON, JSONF };
+
+    private Remote () {}
 
     /**
      * 简单远程请求
@@ -294,7 +294,7 @@ public final class Remote {
             if (null != data) {
             if (null != kind) {
                 switch (kind) {
-                case JSON_FORMAT: req.setEntity(buildJson(data, true)); break;
+                case JSONF : req.setEntity(buildJson(data, true)); break;
                 case JSON  : req.setEntity(buildJson(data)); break;
                 case PART  : req.setEntity(buildPart(data)); break;
                 default    : req.setEntity(buildPost(data)); break;

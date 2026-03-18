@@ -109,13 +109,13 @@ public final class Dist
   /**
    * 将Java对象转换为JSON字符串
    * @param obj 基础类型,集合框架,数组
-   * @param compact 紧凑模式
+   * @param cmp 紧凑模式
    * @return JSON字符串
    */
-  public static String toString(Object obj, boolean compact)
+  public static String toString(Object obj, boolean cmp)
   {
     StringBuilder out = new StringBuilder();
-    append(out, obj , compact ? null : "" );
+    append(out, obj, cmp ? null : "");
     return out.toString();
   }
 

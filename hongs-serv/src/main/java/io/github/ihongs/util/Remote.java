@@ -470,14 +470,23 @@ public final class Remote {
         String cset = Synt.asString(data.get("charset"));
         if (cset == null || cset.isEmpty()) {
             int p = type.indexOf(";");
-            if (p < 0) {
-                cset = "utf-8";
-            } else {
+            if (p > 0) {
                 cset = type.substring(1+p).trim();
                 type = type.substring(0,p).trim();
             }
         }
-        return new StringEntity(text, ContentType.create(type, cset));
+        if (type != null) {
+        if (cset != null) {
+            return new StringEntity(text, ContentType.create(type, cset));
+        } else {
+            return new StringEntity(text, ContentType.create(type));
+        }
+        } else
+        if (cset != null) {
+            return new StringEntity(text, Charset.forName(cset));
+        } else {
+            return new StringEntity(text);
+        }
     }
 
     /**

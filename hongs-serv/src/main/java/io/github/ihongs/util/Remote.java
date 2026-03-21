@@ -70,6 +70,8 @@ public final class Remote {
 
     public static enum FORMAT { FORM, PART, JSON, JSONF, CUSTOM };
 
+    private static final Pattern JSONP = Pattern.compile("^\\w+\\s*\\((.*)\\)\\s*;?$", Pattern.DOTALL);
+
     /**
      * 简单远程请求
      *
@@ -157,6 +159,18 @@ public final class Remote {
     public static void save(String url, File file)
             throws StatusException, SimpleException {
         request( METHOD.GET , FORMAT.FORM, url, null, null, file);
+    }
+
+    /**
+     * 简单流式处理
+     * @param url
+     * @param call on("message", msg -> { do.some.thing() }
+     * @throws StatusException
+     * @throws SimpleException
+     */
+    public static void stream(String url, EventStream call)
+            throws StatusException, SimpleException {
+        request( METHOD.GET , FORMAT.FORM, url, null, null, call);
     }
 
     /**
@@ -377,8 +391,6 @@ public final class Remote {
             throw new SimpleException(url, ex);
         }
     }
-
-    private static final Pattern JSONP = Pattern.compile("^\\w+\\s*\\((.*)\\)\\s*;?$", Pattern.DOTALL);
 
     /**
      * 解析响应数据

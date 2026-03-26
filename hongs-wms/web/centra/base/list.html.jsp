@@ -416,9 +416,9 @@
                 <div class="form-group">
                     <div class="btn-toolbar">
                         <div class="btn-group">
-                            <button type="button" class="btn btn-default" data-sift="lr" data-name="or" data-text="或: 以下 A 或 B...">+ 或</button>
-                            <button type="button" class="btn btn-default" data-sift="lr" data-name="ar" data-text="与: 以下 A 和 B...">+ 与</button>
-                            <button type="button" class="btn btn-default" data-sift="lr" data-name="nr" data-text="非: 排除以下的条件">+ 非</button>
+                            <button type="button" class="btn btn-default" data-sift="lr" data-name="or" data-text="或: 满足此组内任意条件">+ 或</button>
+                            <button type="button" class="btn btn-default" data-sift="lr" data-name="ar" data-text="与: 满足此组内所有条件">+ 与</button>
+                            <button type="button" class="btn btn-default" data-sift="lr" data-name="nr" data-text="非: 排除此组内所有条件">+ 非</button>
                         </div>
                         <div class="btn-group pull-right form-control-static">
                             <a href="javascript:;" onclick="alert('?'+$.param($(this).closest('form').find('.sift-root input:hidden')))">检查参数</a>

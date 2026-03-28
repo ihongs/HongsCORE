@@ -702,11 +702,158 @@ HsSift.prototype = {
     },
 
     _empty_field_error: '字段为空\r\n请先选择字段, 然后再取值',
-    _empty_value_error: '不可为空\r\n如需筛查空值, 请使用条件"为"'
+    _empty_value_error: '不可为空\r\n如需筛查空值, 请使用条件"为"',
+
+    /**
+     * 导出完整配置
+     * @returns {Array}
+     */
+    dump: function() {
+        var that  = this;
+        var root  = this.siftBox.find(".sift-unit:first").find(".sift-list:first");
+        var ipExp = /.*\.([^\.]+)\.([^\.]+)$/; // 取值 ar.0.name.eq
+        var ulExp = /.*\.([^\.]+)$/; // 分组 ar.0.or
+        var parse = function(ul) {
+            var list = [];
+
+            // 条件
+            ul.children('.sift-item').each(function() {
+                var li = $(this);
+                var ip = li.find("input:hidden");
+                var fa = ipExp.exec(ip.attr("name"));
+                if (! fa) return;
+
+                var fr = fa[2];
+                var fn = fa[1];
+                var fv = ip.val ();
+                var tv = li.find(".sift-fv").text();
+
+                var unit = { };
+                var item = { };
+                item[fr] = fv ;
+                item.text = tv;
+                unit[fn] = item;
+                list.push(unit);
+            });
+
+            // 分组
+            ul.children('.sift-unit').each(function() {
+                var li = $(this);
+                var sl = li.find(".sift-list:first");
+                var fa = ulExp.exec(sl.data("name"));
+                if (! fa) return;
+
+                var fr = fa[1];
+                var unit = { };
+                var lis2 = parse(sl); // 递归往下找
+                unit[fr] = lis2;
+                list.push(unit);
+            });
+
+            return list;
+        };
+
+        return parse(root);
+    },
+
+    /**
+     * 填充整体配置
+     * @param {Array} list
+     */
+    fill: function(list) {
+        var that  = this;
+        var root  = this.siftBox.find(".sift-unit:first").find(".sift-list:first");
+        var build = function(ul, list) {
+            // 分离条件和分组, 条件总在分组前
+            var inputs = [];
+            var groups = [];
+            for(var i = 0; i < list.length; i ++) {
+                var unit = list[i];
+                for(var k in unit) {
+                var item = unit[k];
+                    if (k == 'ar' || k == 'or' || k == 'nr') {
+                        groups.push([k, item]);
+                    } else {
+                        inputs.push([k, item]);
+                    }
+                }
+            }
+            list = undefined;
+
+            // 条件
+            for(var i = 0; i < inputs.length; i ++) {
+                var a = inputs[i];
+                var n = a[0];
+                var o = a[1];
+
+                for(var r in o) {
+                    if (r == "text") continue ; // 跳过 text
+                    var v  = o[r];
+                    var vt = o.text;
+                    var nt = that.getFnText(n);
+                    var rt = that.getFrText(r);
+                    that.addItem(ul, [n, nt], [r, rt], v, vt);
+                }
+            }
+
+            // 分组
+            for(var i = 0; i < groups.length; i ++) {
+                var a = groups[i];
+                var r = a[0];
+                var o = a[1];
+
+                var rt = that.getFrText(r);
+                var li = that.addList(ul, r, rt);
+                var sl = li.find(".sift-list:first");
+                build(sl, o); // 递归构建下级
+            }
+        };
+
+        // 清空内容, 重置计数, 准备写入
+        root.empty();
+        root.data ("cnt", 0);
+
+        build(root, list);
+    },
+
+    getFnText: function(fn) {
+        var text = this.context.find("[data-sift=fn] [value='"+fn+"']").text();
+        return text || this._labels[fn] || fn;
+    },
+    getFrText: function(fr) {
+        var text = this.context.find("[data-sift=fr] [value='"+fr+"']").text();
+        return text || this._labels[fr] || fr;
+    },
+
+    _labels: {
+        "is": "为",
+        "eq": "等于",
+        "ne": "不等于",
+        "se": "搜索",
+        "ns": "搜索排除",
+        "gt": "大于",
+        "ge": "大于或等于",
+        "lt": "小于",
+        "le": "小于或等于",
+        "in": "包含",
+        "no": "排除",
+        "on": "全包含",
+        "or": "或: 满足此组内任意条件",
+        "ar": "与: 满足此组内所有条件",
+        "nr": "非: 排除此组内所有条件"
+    }
 };
 jQuery.fn.hsSift = function(opts) {
     return this.hsBind(HsSift, opts);
 };
+
+function hsSiftParamString(context) {
+    return '?' + $.param($(context).find('.sift-root input:hidden'));
+}
+
+function hsSiftQueryString(context) {
+    return JSON.stringify({"ar": context.closest(".HsSift").hsSift().dump()});
+}
 
 /**
  * 列表统计筛选组件

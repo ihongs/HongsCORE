@@ -20,7 +20,7 @@ import java.util.Set;
  *
  * @author Hongs
  */
-public class JFigure implements IFigure {
+abstract public class JFigure implements IFigure {
 
     private Map _fields = null;
     private Map _params = null;

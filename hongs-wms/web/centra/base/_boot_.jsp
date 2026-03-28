@@ -2,7 +2,7 @@
 <%@page import="io.github.ihongs.CruxException"%>
 <%@page import="io.github.ihongs.action.ActionDriver"%>
 <%@page import="io.github.ihongs.action.FormSet"%>
-<%@page import="io.github.ihongs.dh.JFigure"%>
+<%@page import="io.github.ihongs.dh.Figure"%>
 <%@page import="io.github.ihongs.util.Synt"%>
 <%@page import="java.util.LinkedHashMap"%>
 <%@page import="java.util.Map"%>
@@ -20,7 +20,7 @@
             return /**/ Synt.setOf("word");
         }
 
-        Sample   _sample = new Sample( _fields  );
+        Figure   _sample = new Figure( _fields  );
         Set fs = _sample.getCaseNames("wordable");
         if (fs == null || fs.isEmpty()) {
             fs = _sample.getCaseNames("srchable");
@@ -32,15 +32,9 @@
      * 获取可搜索的字段
      */
     Set<String> getSrchable(Map _fields) throws CruxException {
-        Sample   _sample = new Sample( _fields  );
+        Figure   _sample = new Figure( _fields  );
         Set fs = _sample.getCaseNames("srchable");
         return fs;
-    }
-
-    private static class Sample extends JFigure {
-        public Sample(Map fields) {
-            setFields(/**/fields);
-        }
     }
 %>
 <%

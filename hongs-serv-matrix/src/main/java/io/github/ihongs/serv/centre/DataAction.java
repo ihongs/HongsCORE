@@ -83,9 +83,19 @@ public class DataAction extends SearchAction {
         ||  met.isAnnotationPresent(Verify.class)
         ||  met.isAnnotationPresent(TitlesHelper.Titles.class)
         )) {
-            Data dat = (Data) getEntity(helper);
-                 fco =  dat . getFields();
-            helper.setAttribute(fcn, fco);
+            try {
+                Data dat = (Data) getEntity(helper);
+                     fco =  dat . getFields();
+                helper.setAttribute(fcn, fco);
+            }
+            catch (CruxException ex) {
+                // 找不到配置或表单
+                int ec = ex.getErrno ();
+                if (ec == 910 || ec == 912) {
+                    ex = new CruxException(ex, 404);
+                }
+                throw ex;
+            }
         }
     }
 

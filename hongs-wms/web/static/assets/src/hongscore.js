@@ -1944,32 +1944,28 @@ $.hsAjax = function(url, settings) {
                 settings.processData  = false ;
                 settings.data = hsToFormData(settings.data);
                 break;
-            case "json":
-                if ($.isArray( /**/ settings.data)
+            case "form":
+                if ($.isArray(settings.data)
                 ||  $.isPlainObject(settings.data)
                 ||  settings.data instanceof jQuery
                 ||  settings.data instanceof Element
                 ||  settings.data instanceof FormData) {
-                    var hsSerialStr = JSON.stringify ;
+                    settings.data = hsSerialArr(settings.data);
+                }
+                break;
+            case "json":
+                if ($.isArray(settings.data)
+                ||  $.isPlainObject(settings.data)
+                ||  settings.data instanceof jQuery
+                ||  settings.data instanceof Element
+                ||  settings.data instanceof FormData) {
                     settings.data = hsSerialDat(settings.data);
-                    settings.data = hsSerialStr(settings.data);
+                    settings.data = JSON.stringify(settings.data);
                 }
                 settings.contentType = "application/json; charset=UTF-8";
                 break;
-            case "form":
-                if ($.isArray( /**/ settings.data)
-                ||  $.isPlainObject(settings.data)
-                ||  settings.data instanceof jQuery
-                ||  settings.data instanceof Element
-                ||  settings.data instanceof FormData) {
-                    var hsSerialStr = jQuery . param ;
-                    settings.data = hsSerialArr(settings.data);
-                    settings.data = hsSerialStr(settings.data);
-                }
-                settings.contentType = "application/x-www-form-urlencoded; charset=UTF-8";
-                break;
             default:
-                throw new Error ( "hsAjax: Unrecognized dataKind " + settings.dataKind ) ;
+                throw new Error("hsAjax: Unrecognized dataKind " + settings.dataKind);
         }
     } else
     // 统一自定义数据结构, 避免转换后出现偏差

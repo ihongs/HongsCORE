@@ -817,4 +817,60 @@ public final class Syno
     return  str;
   }
 
+    //** 比对 **/
+
+    /**
+     * 计算两个字符串的相似度（0~1 之间，值越高越相似）
+     * @param str1 字符串1
+     * @param str2 字符串2
+     * @return 相似度 0~1
+     */
+    public static double sameness(String str1, String str2) {
+        if (str1 == null || str2 == null) {
+            return 0.0;
+        }
+        // 空串直接判断
+        if (str1.isEmpty() && str2.isEmpty()) {
+            return 1.0;
+        }
+
+        int distance = distance(str1, str2);
+        // 公式：相似度 = 1 - 编辑距离 / 最大字符串长度
+        return 1.0 - (double) distance / Math.max(str1.length(), str2.length());
+    }
+
+    /**
+     * 计算两个字符串编辑距离（需修改几个字符才能相等）
+     * @param str1 字符串1
+     * @param str2 字符串2
+     * @return 编辑距离
+     */
+    public static int distance(String str1, String str2) {
+        int len1 = str1.length();
+        int len2 = str2.length();
+
+        // 创建二维数组：dp[i][j] 表示 str1前i个字符 → str2前j个字符 的距离
+        int[][] dp = new int[len1 + 1][len2 + 1];
+
+        // 初始化边界
+        for (int i = 0; i <= len1; i++) dp[i][0] = i;
+        for (int j = 0; j <= len2; j++) dp[0][j] = j;
+
+        // 动态规划计算
+        for (int i = 1; i <= len1; i++) {
+            char c1 = str1.charAt(i - 1);
+            for (int j = 1; j <= len2; j++) {
+                char c2 = str2.charAt(j - 1);
+                // 字符相同，无需操作
+                if (c1 == c2) {
+                    dp[i][j] = dp[i - 1][j - 1];
+                } else {
+                    // 字符不同，取 增/删/改 最小代价 +1
+                    dp[i][j] = Math.min(Math.min(dp[i - 1][j], dp[i][j - 1]), dp[i - 1][j - 1]) + 1;
+                }
+            }
+        }
+        return dp[len1][len2];
+    }
+
 }

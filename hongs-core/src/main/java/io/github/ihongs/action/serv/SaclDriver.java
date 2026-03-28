@@ -13,6 +13,7 @@ import io.github.ihongs.action.NaviMap;
 import io.github.ihongs.util.Dist;
 import io.github.ihongs.util.Synt;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -137,7 +138,7 @@ public class SaclDriver
 
     // 输出权限信息
     if ("json".equals(type)) {
-      helper.write("application/json", s);
+      write(helper, "application/json", s);
     } else {
       String c = req.getParameter("callback");
       if (c != null && !c.isEmpty()) {
@@ -145,10 +146,10 @@ public class SaclDriver
           helper.error(400, "Illegal callback function name!");
           return;
         }
-        helper.write("text/javascript", c +"("+ s +");");
+        write(helper, "text/javascript", c +"("+ s +");");
       } else {
-        c = "self.HsAUTH=Object.assign(self.HsAUTH||{}" ;
-        helper.write("text/javascript", c +","+ s +");");
+        c  = "self.HsAUTH=Object.assign(self.HsAUTH||{}" ;
+        write(helper, "text/javascript", c +","+ s +");");
       }
     }
   }
@@ -207,7 +208,7 @@ public class SaclDriver
     String s = mk.toString();
     if ("json".equals(type))
     {
-      helper.write("application/json", s);
+      write(helper, "application/json", s);
     }
     else
     {
@@ -219,12 +220,12 @@ public class SaclDriver
           helper.error(400, "Illegal callback function name!");
           return;
         }
-        helper.write("text/javascript", c +"("+ s +");");
+        write(helper, "text/javascript", c +"("+ s +");");
       }
       else
       {
-        c = "self.HsCONF=Object.assign(self.HsCONF||{}" ;
-        helper.write("text/javascript", c +","+ s +");");
+        c  = "self.HsCONF=Object.assign(self.HsCONF||{}" ;
+        write(helper, "text/javascript", c +","+ s +");");
       }
     }
   }
@@ -284,7 +285,7 @@ public class SaclDriver
     String s = mk.toString();
     if ("json".equals(type))
     {
-      helper.write("application/json", s);
+      write(helper, "application/json", s);
     }
     else
     {
@@ -296,14 +297,21 @@ public class SaclDriver
           helper.error(400, "Illegal callback function name!");
           return;
         }
-        helper.write("text/javascript", c +"("+ s +");");
+        write(helper, "text/javascript", c +"("+ s +");");
       }
       else
       {
-        c = "self.HsLANG=Object.assign(self.HsLANG||{}" ;
-        helper.write("text/javascript", c +","+ s +");");
+        c  = "self.HsLANG=Object.assign(self.HsLANG||{}" ;
+        write(helper, "text/javascript", c +","+ s +");");
       }
     }
+  }
+
+  private void write(ActionHelper helper, String type, String text) throws IOException {
+      helper.getResponse().setContentType(type);
+      Writer out = helper.getOutputWriter();
+      out.write(text);
+      out.flush();
   }
 
   private String etag(String n) {

@@ -500,6 +500,27 @@ public class ActionHelper implements Cloneable
   }
 
   /**
+   * 获取可用输出
+   * forward 后 getWriter 会抛 STREAM 异常, 此为解决方案
+   * @return
+   */
+  public Writer getUsableWriter()
+  {
+    // 动作调用了 forward 之后
+    // 这时再调用 getWriter 会抛 STREAM 异常
+    // 因容器调用 getOutputStream 来输出内容
+    // 所以必须将 OutputStream 包装成 Writer
+    try
+    {
+      return getOutputWriter();
+    }
+    catch (IllegalStateException e)
+    {
+      return new OutputStreamWriter(getOutputStream());
+    }
+  }
+
+  /**
    * 获取请求参数
    * @param name
    * @return 当前请求参数
@@ -930,6 +951,7 @@ public class ActionHelper implements Cloneable
   /**
    * 输出数据
    * 按情况以 JSON/JSONP 格式输出
+   * 与下方的 write 无关, 此方法用于 reply 的数据推出
    */
   public void flush()
   {
@@ -941,12 +963,7 @@ public class ActionHelper implements Cloneable
     // 这时再调用 getWriter 会抛 STREAM 异常
     // 因容器调用 getOutputStream 来输出内容
     // 所以必须将 OutputStream 包装成 Writer
-    Writer out;
-    try {
-        out = getOutputWriter();
-    } catch ( IllegalStateException e ) {
-        out = new OutputStreamWriter(getOutputStream());
-    }
+    Writer  out  = getUsableWriter();
 
     // 检查是否有 JSONP 的回调函数
     String  fun  = null;
@@ -963,7 +980,19 @@ public class ActionHelper implements Cloneable
     // 默认的数据输出的格式为 JSON
     // 有指定回调函数名则使用 JSONP
     // 特殊前缀则返回嵌 JS 的 XHTML
+    // 可通过 ok 标识为 custom 自定义类型
     try {
+        if ("custom".equals(this.responseData.get ("ok") )) {
+            String text = (String) this.responseData.get("text");
+            String type = (String) this.responseData.get("type");
+                this.response.setCharacterEncoding("UTF-8");
+            if (type != null) {
+                this.response.setContentType(type);
+            }
+            if (text != null) {
+                out .write( text );
+            }
+        } else
         if (fun != null && !fun.isEmpty() && !fun.equals("~") ) {
             if (fun.startsWith(   "top.")
             ||  fun.startsWith("parent.")
@@ -1009,51 +1038,6 @@ public class ActionHelper implements Cloneable
     }
 
     this.responseData = null;
-  }
-
-  /**
-   * 输出网页
-   * @param htm
-   */
-  public void write(String htm)
-  {
-    this.write("text/html",htm);
-  }
-
-  /**
-   * 输出内容
-   * @param ct Content-Type
-   * @param txt
-   */
-  public void write(String ct, String txt)
-  {
-    if (null != this.response) {
-        if (null != ct ) {
-            this.response.setContentType(ct);
-        if (! ct.contains("charset=") ) {
-            this.response.setCharacterEncoding("utf-8");
-        } } else {
-            this.response.setCharacterEncoding("utf-8");
-        }
-    }
-
-    // 动作调用了 forward 之后
-    // 这时再调用 getWriter 会抛 STREAM 异常
-    // 因容器调用 getOutputStream 来输出内容
-    // 所以必须将 OutputStream 包装成 Writer
-    Writer out;
-    try {
-        out = getOutputWriter();
-    } catch ( IllegalStateException e ) {
-        out = new OutputStreamWriter(getOutputStream());
-    }
-
-    try {
-        out.write(txt);
-        out.flush(   );
-    } catch ( IOException e ) {
-      throw new CruxExemption(e, 1110, "Can not send to client.");
-    }
   }
 
   /**

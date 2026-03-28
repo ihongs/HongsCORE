@@ -477,7 +477,7 @@ public final class Remote {
      * @return
      */
     public static HttpEntity buildCust(Map<String, Object> data) {
-        String text = Synt.asString(data.get("data"));
+        String text = Synt.asString(data.get("text"));
         String type = Synt.asString(data.get("type"));
         String cset = Synt.asString(data.get("charset"));
         if (cset == null || cset.isEmpty()) {

@@ -385,12 +385,9 @@ public class ActionDriver implements Filter, Servlet {
             }
         }
 
-        Map dat  = hlpr.getResponseData();
-        if (dat != null) {
-            req .setAttribute( Cnst.RESPON_ATTR, dat );
-            hlpr.updateHelper( req, rsp );
-            hlpr.flush();
-        }
+        req .setAttribute(Cnst.RESPON_ATTR, hlpr.getResponseData()); // flush 后会置空, 暂存以便调试查阅
+        hlpr.updateHelper(req , rsp);
+        hlpr.flush();
     }
 
     private void doLaunch(Core core, ActionHelper hlpr, HttpServletRequest req)

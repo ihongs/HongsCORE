@@ -1050,7 +1050,7 @@ public class ActionHelper implements Cloneable
 
     try {
         out.write(txt);
-    //  out.flush(   ); // 不必立即输出, 可能反复调用
+        out.flush(   );
     } catch ( IOException e ) {
       throw new CruxExemption(e, 1110, "Can not send to client.");
     }

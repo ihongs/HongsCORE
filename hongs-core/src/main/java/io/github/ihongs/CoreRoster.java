@@ -9,8 +9,10 @@ import java.io.File;
 import java.net.URL;
 import java.lang.reflect.Method;
 import java.util.Enumeration;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
@@ -45,6 +47,50 @@ public class CoreRoster {
         @Override
         public String  toString() {
             return mclass.getName()+"."+method.getName();
+        }
+    }
+
+    private static final class Expire {
+        private final List<String> exps0;
+        private final List<String> exps1;
+        private final List<String> exps2;
+        public Expire (String[] exps) {
+            exps0 = new ArrayList<>();
+            exps1 = new ArrayList<>();
+            exps2 = new ArrayList<>();
+            for (String exp : exps) {
+                if (exp.endsWith(".**")) {
+                    exps2.add(exp.substring(0, exp.length() - 2)); // xxx.xxx. 前缀
+                    exps1.add(exp.substring(0, exp.length() - 3)); // xxx.xxx
+                } else
+                if (exp.endsWith(".*" )) {
+                    exps1.add(exp.substring(0, exp.length() - 2)); // xxx.xxx
+                } else
+                {
+                    exps0.add(exp);
+                }
+            }
+        }
+        public boolean expClsn(String clsn) {
+            for (String exp : exps0) {
+                if (exp.equals    (clsn)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public boolean expPkgn(String pkgn) {
+            for (String exp : exps1) {
+                if (exp.equals    (pkgn)) {
+                    return true;
+                }
+            }
+            for (String exp : exps2) {
+                if (exp.startsWith(pkgn)) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 
@@ -102,14 +148,23 @@ public class CoreRoster {
     }
 
     private static void addHandles(Map<String, Mathod> acts, Map<String, Method> cmds, String[] pkgs, String[] exps) {
+        Expire expire = new Expire(exps); // 排除不要的类和包
+
         for(String pkgn : pkgs) {
             pkgn = pkgn.trim( );
             if (pkgn.isEmpty()) {
                 continue;
             }
+            if (expire.expPkgn(pkgn)) {
+                continue;
+            }
 
             Set<String> clss = getClasses(pkgn);
             for(String  clsn : clss) {
+                if (expire.expClsn(clsn)) {
+                    continue ;
+                }
+
                 Class   clso ;
                 try {
                     clso = Class.forName (clsn);
@@ -130,17 +185,6 @@ public class CoreRoster {
                     addCombats(cmds, cmdo, clsn, clso);
                 }
             }
-        }
-
-        // 删除不需要的服务
-        for(String expn : exps) {
-            expn = expn.trim( );
-            if (expn.isEmpty()) {
-                continue;
-            }
-
-            acts.remove(expn);
-            cmds.remove(expn);
         }
     }
 

@@ -361,9 +361,12 @@
                         <button type="button" class="btn btn-default" data-sift="lr" data-name="ar" data-text="与: 满足此组内所有条件">+ 与</button>
                         <button type="button" class="btn btn-default" data-sift="lr" data-name="nr" data-text="非: 排除此组内所有条件">+ 非</button>
                     </div>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default" onclick="hsSiftQueryConfig($(this).closest('.HsSift'))">快速配置</button>
+                    </div>
                     <div class="btn-group pull-right form-control-static">
-                        <a href="javascript:;" onclick="alert(hsSiftQueryString($(this).closest('.HsSift')))">配置</a>
-                        <a href="javascript:;" onclick="alert(hsSiftParamString($(this).closest('.HsSift')))">参数</a>
+                        <a href="javascript:;" onclick="hsNoteWithCopy('配置', hsSiftQueryString($(this).closest('.HsSift')))">配置</a>
+                        <a href="javascript:;" onclick="hsNoteWithCopy('预览', hsSiftHumanString($(this).closest('.HsSift')))">预览</a>
                     </div>
                 </div>
             </div>

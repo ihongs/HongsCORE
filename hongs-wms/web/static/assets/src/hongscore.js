@@ -2226,6 +2226,11 @@ $.hsMask = function(opt) {
         mod.remove(        );
     } );
 
+    // 绑定关闭
+    div.close = function() {
+       div.closest(".modal").modal("hide");
+    };
+
     btx = $( document.body );
     btx.append(mod);
     mod.modal (ini);
@@ -3167,7 +3172,7 @@ $.fn.hsRoll = function(body, setHeight, minHeight) {
     }
 
     var rollHeight = viewHeight - bodyHeight + partHeight;
-    
+
     // 可以是容器比例
     if (minHeight === undefined) {
         minHeight  = 0.5;
@@ -3193,7 +3198,8 @@ $.fn.hsRoll = function(body, setHeight, minHeight) {
  */
 $.fn.hsCopy = function() {
     if (window.clipboardData) {
-        clipboardData.setData("Text", $(this).prop("outerHTML"));
+        var htm = $(this).prop("outerHTML");
+        window.clipboardData.setData("text/html", htm);
     } else
     if (window.getSelection
     &&  document.execCommand
@@ -3226,8 +3232,7 @@ $.hsCanCopy = function() {
     &&  document.execCommand
     &&  document.createRange) {
         return true ;
-    } else
-    {
+    } else {
         return false;
     }
 };

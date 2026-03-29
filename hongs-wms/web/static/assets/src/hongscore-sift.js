@@ -851,6 +851,56 @@ jQuery.fn.hsSift = function(opts) {
     return this.hsBind(HsSift, opts);
 };
 
+function hsSiftQueryConfig(context) {
+    if ( ! context.is (".HsSift") ) return;
+    var siftObj = context.hsSift( );
+    var mask = $.hsMask({
+        mode : "warn",
+        glass: "alert-default",
+        title: "请粘贴配置...",
+        html : '<input type="text" class="form-control"/>',
+        backdrop: "hidden"
+    }, {
+        glass: "btn-primary",
+        label: "确定"
+    }, {
+        glass: "btn-default",
+        label: "取消"
+    });
+    var fill = function() {
+        var inp = mask.find("input");
+        var val = $.trim(inp.val( ));
+        setTimeout(function() {
+            if (! val ) {
+                $.hsNote("请粘贴配置", "warning");
+                return;
+            }
+            try {
+                val = JSON.parse(val);
+            } catch (e) {
+                $.hsNote("错误的格式 "+e, "danger" );
+                return;
+            }
+            siftObj.fill(val);
+        }, 0);
+    };
+    mask.find(".btn-primary").on("click", function() {
+            fill( );
+    });
+    mask.find( "input" ).on("keypress", function(ev) {
+        if (ev.keyCode == 13) {
+            fill( );
+            mask.close();
+        }
+    });
+}
+
+function hsSiftQueryString(context) {
+    if ( ! context.is (".HsSift") ) return "";
+    var siftObj = context.hsSift( );
+    return JSON.stringify( siftObj . dump() );
+}
+
 function hsSiftHumanString(context) {
     if ( ! context.is (".HsSift") ) return "";
     var siftObj = context.hsSift( );
@@ -888,15 +938,6 @@ function hsSiftHumanString(context) {
         return terms.join(sp);
     }
     return concat(siftObj.dump(), ' 与 ');
-}
-
-function hsSiftQueryString(context) {
-    if ( ! context.is (".HsSift") ) return "";
-    return JSON.stringify({"ar": context.hsSift().dump()});
-}
-
-function hsSiftParamString(context) {
-    return '?' + $.param($(context).find('.sift-root input:hidden'));
 }
 
 /**

@@ -243,6 +243,43 @@ jQuery.fn.hsVeil = function(hide) { this.hsToggleInput(hide !== undefined ? ! hi
 jQuery.fn.hsHide = jQuery.fn.hsHideValue;
 
 /**
+ * 显示文本且可拷贝
+ */
+function hsNoteWithCopy(tit, txt) {
+    if (txt === undefined) {
+        txt = tit;
+        tit = "" ;
+    }
+    if ($.hsCanCopy()) {
+        $.hsMask({
+            mode : "warn",
+            glass: "alert-default",
+            title:  tit  ,
+            text :  txt  ,
+            backdrop: "hidden"
+        }, {
+            glass: "btn-primary",
+            label: "拷贝",
+            click: function() {
+                $(this).closest(".dialog").find(".alert-body").hsCopy();
+                $.hsNote("已拷贝到剪贴板");
+            }
+        });
+    } else {
+        $.hsMask({
+            mode : "warn",
+            glass: "alert-default",
+            title:  tit  ,
+            text :  txt  ,
+            backdrop: "hidden"
+        }, {
+            glass: "btn-default",
+            label: "取消"
+        });
+    }
+}
+
+/**
  * 筛选列表填充数据
  */
 function hsListFillSele(x, v, n) {

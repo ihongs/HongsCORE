@@ -393,10 +393,7 @@
                    .css ("overflow-y", "auto");
             h = h - 80; // 去掉边框和底部高度
         if (h > 300) {
-            siftbox.find(".sift-body")
-                   .css ("max-height", h+"px")
-                   .css ("overflow-y", "auto");
-            siftbox.find(".filt-body")
+            siftbox.find(".rollbox")
                    .css ("max-height", h+"px")
                    .css ("overflow-y", "auto");
         }}

@@ -731,9 +731,13 @@ HsSift.prototype = {
                 var unit = { };
                 var item = { };
                 item[fr] = fv ;
-                item.text = tv;
                 unit[fn] = item;
                 list.push(unit);
+
+                // 显示文本, 针对 enum,fork,date
+                if ( tv != fv ) {
+                    item.text = tv;
+                }
             });
 
             // 分组
@@ -847,12 +851,13 @@ jQuery.fn.hsSift = function(opts) {
     return this.hsBind(HsSift, opts);
 };
 
-function hsSiftParamString(context) {
-    return '?' + $.param($(context).find('.sift-root input:hidden'));
+function hsSiftQueryString(context) {
+    if ( ! context.is (".HsSift") ) return "";
+    return JSON.stringify({"ar": context.hsSift().dump()});
 }
 
-function hsSiftQueryString(context) {
-    return JSON.stringify({"ar": context.closest(".HsSift").hsSift().dump()});
+function hsSiftParamString(context) {
+    return '?' + $.param($(context).find('.sift-root input:hidden'));
 }
 
 /**

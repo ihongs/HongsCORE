@@ -7,7 +7,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <div class="siftbox openbox invisible well">
     <div class="row" style="margin-top: -15px;">
-        <div class="col-xs-6 filt-body">
+        <div class="col-xs-6 rollbox filt-body">
             <form class="findbox" onsubmit="return false">
                 <%
                 Iterator it1 = _fields.entrySet().iterator();
@@ -133,7 +133,7 @@
                 <%} /*End For*/%>
             </form>
         </div>
-        <div class="col-xs-6 sift-body">
+        <div class="col-xs-6 rollbox sift-body">
             <ul class="list-unstyled clearfix">
                 <li class="sift-unit template">
                     <div>
@@ -362,8 +362,8 @@
                         <button type="button" class="btn btn-default" data-sift="lr" data-name="nr" data-text="非: 排除此组内所有条件">+ 非</button>
                     </div>
                     <div class="btn-group pull-right form-control-static">
-                        <a href="javascript:;" onclick="alert(hsSiftQueryString($(this).closest('.row').find('form')))">配置</a>
-                        <a href="javascript:;" onclick="alert(hsSiftParamString($(this).closest('.row').find('form')))">参数</a>
+                        <a href="javascript:;" onclick="alert(hsSiftQueryString($(this).closest('.HsSift')))">配置</a>
+                        <a href="javascript:;" onclick="alert(hsSiftParamString($(this).closest('.HsSift')))">参数</a>
                     </div>
                 </div>
             </div>

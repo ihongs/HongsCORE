@@ -604,12 +604,12 @@ HsList.prototype = {
 
             // 重置
             findBox.on("reset" , function() {
-                var form = jQuery (this);
-                    form.find("[data-fn].repeated")
-                        .empty( ).trigger("change");
-                setTimeout(function () {
-                    form.find(":submit").first().click();
-                } , 100);
+                findBox.find("[data-fn].repeated")
+                       .empty( ).trigger("change");
+                setTimeout( function () {
+                    findBox.find(":submit")
+                           .first().click();
+                }, 100);
             });
         }
     },

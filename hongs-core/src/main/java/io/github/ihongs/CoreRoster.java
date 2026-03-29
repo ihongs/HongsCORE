@@ -148,19 +148,25 @@ public class CoreRoster {
     }
 
     private static void addHandles(Map<String, Mathod> acts, Map<String, Method> cmds, String[] pkgs, String[] exps) {
-        Expire expire = new Expire(exps); // 排除不要的类和包
+        Expire expire = new Expire(exps);
 
         for(String pkgn : pkgs) {
             pkgn = pkgn.trim( );
             if (pkgn.isEmpty()) {
                 continue;
             }
-            if (expire.expPkgn(pkgn)) {
+
+            // 排除包
+            if (pkgn.endsWith(".**") && expire.expPkgn(pkgn.substring(0, pkgn.length() - 3))) {
+                continue;
+            }
+            if (pkgn.endsWith(".*" ) && expire.expPkgn(pkgn.substring(0, pkgn.length() - 2))) {
                 continue;
             }
 
             Set<String> clss = getClasses(pkgn);
             for(String  clsn : clss) {
+                // 排除类
                 if (expire.expClsn(clsn)) {
                     continue ;
                 }

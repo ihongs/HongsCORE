@@ -20,10 +20,10 @@
             return /**/ Synt.setOf("word");
         }
 
-        Figure   _sample = new Figure( _fields  );
-        Set fs = _sample.getCaseNames("wordable");
+        Figure   _figure = new Figure( _fields  );
+        Set fs = _figure.getCaseNames("wordable");
         if (fs == null || fs.isEmpty()) {
-            fs = _sample.getCaseNames("srchable");
+            fs = _figure.getCaseNames("srchable");
         }
         return fs;
     }
@@ -32,8 +32,8 @@
      * 获取可搜索的字段
      */
     Set<String> getSrchable(Map _fields) throws CruxException {
-        Figure   _sample = new Figure( _fields  );
-        Set fs = _sample.getCaseNames("srchable");
+        Figure   _figure = new Figure( _fields  );
+        Set fs = _figure.getCaseNames("srchable");
         return fs;
     }
 %>

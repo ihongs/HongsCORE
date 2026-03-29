@@ -66,9 +66,9 @@ public final class Remote {
 
     private Remote () {}
 
-    public static enum METHOD { GET , PUT , POST, PATCH, DELETE };
+    public static enum METHOD { GET, PUT, POST, PATCH, DELETE };
 
-    public static enum FORMAT { FORM, PART, JSON, JSONF, CUSTOM };
+    public static enum FORMAT { FORM, PART, TEXT, JSON, JSONF };
 
     private static final Pattern JSONP = Pattern.compile("^\\w+\\s*\\((.*)\\)\\s*;?$", Pattern.DOTALL);
 
@@ -310,7 +310,7 @@ public final class Remote {
                 switch (kind) {
                 case JSONF : req.setEntity(buildJson(data, true)); break;
                 case JSON  : req.setEntity(buildJson(data)); break;
-                case CUSTOM: req.setEntity(buildCust(data)); break;
+                case TEXT  : req.setEntity(buildText(data)); break;
                 case PART  : req.setEntity(buildPart(data)); break;
                 default    : req.setEntity(buildPost(data)); break;
             }} else {
@@ -468,15 +468,15 @@ public final class Remote {
     /**
      * 构建自定实体
      *
-     * 用于 FORMAT.CUSTOM, 结构:
-     * data: 数据内容
+     * 用于 FORMAT.TEXT, 结构:
+     * text: 数据文本
      * type: 数据类型; 字符编码
      * charset: 字符编码(可与 type 一起, 也可分开)
      *
      * @param data
      * @return
      */
-    public static HttpEntity buildCust(Map<String, Object> data) {
+    public static HttpEntity buildText(Map<String, Object> data) {
         String text = Synt.asString(data.get("text"));
         String type = Synt.asString(data.get("type"));
         String cset = Synt.asString(data.get("charset"));

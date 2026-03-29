@@ -851,6 +851,45 @@ jQuery.fn.hsSift = function(opts) {
     return this.hsBind(HsSift, opts);
 };
 
+function hsSiftHumanString(context) {
+    if ( ! context.is (".HsSift") ) return "";
+    var siftObj = context.hsSift( );
+    function concat(qs, sp) {
+        var terms = [];
+        for(var i = 0 ; i < qs.length ; i ++) {
+            var q = qs[ i ];
+            for(var n in q) {
+                var m  = q[n];
+                if (n == 'or') {
+                    var group = concat(m, ' 或 ');
+                    terms.push('(' + group + ')');
+                } else
+                if (n == 'ar') {
+                    var group = concat(m, ' 与 ');
+                    terms.push('(' + group + ')');
+                } else
+                if (n == 'nr') {
+                    var group = concat(m, ' 和 ');
+                    terms.push('非(' + group + ")");
+                } else {
+                    var nt = siftObj.getFnText(n) || n;
+                    for(var r in m) {
+                        var v  = m[r];
+                        if (r == 'text') {
+                            continue;
+                        }
+                        var rt = siftObj.getFrText(r) || r;
+                        var vt = m.text || v;
+                        terms.push(nt + " " + rt + " " + vt);
+                    }
+                }
+            }
+        }
+        return terms.join(sp);
+    }
+    return concat(siftObj.dump(), ' 与 ');
+}
+
 function hsSiftQueryString(context) {
     if ( ! context.is (".HsSift") ) return "";
     return JSON.stringify({"ar": context.hsSift().dump()});

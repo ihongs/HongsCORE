@@ -951,6 +951,7 @@ public class ActionHelper implements Cloneable
   /**
    * 输出数据
    * 按情况以 JSON/JSONP 格式输出
+   * 当返回有 cb=ECHO 时输出 text, 可指定 type,status
    * 与下方的 write 无关, 此方法用于 reply 的数据推出
    */
   public void flush()
@@ -968,7 +969,7 @@ public class ActionHelper implements Cloneable
     // 检查是否有 JSONP 的回调函数
     String  fun  = null;
     if (request != null) {
-        fun = request.getParameter (Cnst.CB_KEY);
+        fun = request.getParameter(Cnst.CB_KEY);
         if (fun == null) {
             fun  = request.getParameter (
                 CoreConfig.getInstance( )
@@ -980,9 +981,9 @@ public class ActionHelper implements Cloneable
     // 默认的数据输出的格式为 JSON
     // 有指定回调函数名则使用 JSONP
     // 特殊前缀则返回嵌 JS 的 XHTML
-    // 可通过 ok 标识为 custom 自定义类型
+    // 可通过 cb 标识为 custom 自定义类型
     try {
-        if ("custom".equals(this.responseData.get(Cnst.CB_KEY))) {
+        if ("ECHO".equals(this.responseData.get(Cnst.CB_KEY))) {
             Object text = this.responseData.get("text");
             Object type = this.responseData.get("type");
             Object stat = this.responseData.get("status");

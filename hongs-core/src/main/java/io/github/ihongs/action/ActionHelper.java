@@ -982,15 +982,22 @@ public class ActionHelper implements Cloneable
     // 特殊前缀则返回嵌 JS 的 XHTML
     // 可通过 ok 标识为 custom 自定义类型
     try {
-        if ("custom".equals(this.responseData.get ("ok") )) {
-            String text = (String) this.responseData.get("text");
-            String type = (String) this.responseData.get("type");
-                this.response.setCharacterEncoding("UTF-8");
+        if ("custom".equals(this.responseData.get(Cnst.CB_KEY))) {
+            Object text = this.responseData.get("text");
+            Object type = this.responseData.get("type");
+            Object stat = this.responseData.get("status");
+            if (stat != null) {
+                int  code = stat instanceof Number
+                          ? ( (Number) stat ).intValue( )
+                          : Integer.parseInt(stat.toString());
+                this.response.setStatus(code);
+            }
+                this.response.setCharacterEncoding( "UTF-8" );
             if (type != null) {
-                this.response.setContentType(type);
+                this.response.setContentType(type.toString());
             }
             if (text != null) {
-                out .write( text );
+                out.write(text.toString());
             }
         } else
         if (fun != null && !fun.isEmpty() && !fun.equals("~") ) {

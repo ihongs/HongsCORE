@@ -789,7 +789,7 @@ HsSift.prototype = {
                 for(var r in o) {
                     if (r == "text") continue ; // 跳过 text
                     var v  = o[r];
-                    var vt = o.text;
+                    var vt = o.text || v;
                     var nt = that.getFnText(n);
                     var rt = that.getFrText(r);
                     that.addItem(ul, [n, nt], [r, rt], v, vt);

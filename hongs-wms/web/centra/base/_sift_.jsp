@@ -3,12 +3,18 @@
 <%@page import="java.util.Map"%>
 <%@page import="java.util.Set"%>
 <%@page import="io.github.ihongs.Cnst"%>
+<%@page import="io.github.ihongs.dh.Figure"%>
 <%@page import="io.github.ihongs.util.Synt"%>
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <div class="siftbox openbox invisible well">
     <div class="row" style="margin-top: -15px;">
-        <div class="col-xs-6 rollbox filt-body">
-            <form class="findbox" onsubmit="return false">
+        <div class="col-xs-6 rollbox">
+            <form class="findbox filt-body" onsubmit="return false">
+                <div class="form-group">
+                    <label class="form-label control-label">
+                        快捷查询
+                    </label>
+                </div>
                 <%
                 Iterator it1 = _fields.entrySet().iterator();
                 while (it1.hasNext()) {
@@ -21,12 +27,8 @@
                     if ("@".equals(name) || "id".equals(name)) {
                         continue;
                     }
-                    // 明确不过滤或两种都不支持则跳过
-                    if (!Synt.declare(info.get("filtable"), true )) {
-                        continue;
-                    }
-                    if (!Synt.declare(info.get("filtable"), false)
-                    &&  !Synt.declare(info.get("siftable"), false)) {
+                    // 未开启筛选的都跳过
+                    if (!Synt.declare(info.get("filtable"), false)) {
                         continue;
                     }
                 %>
@@ -133,9 +135,19 @@
                 <%} /*End For*/%>
             </form>
         </div>
-        <div class="col-xs-6 rollbox sift-body">
-            <form class="findbox" onsubmit="return false">
+        <div class="col-xs-6 rollbox">
+            <form class="findbox sift-body" onsubmit="return false">
                 <ul class="list-unstyled clearfix">
+                    <li class="sift-unit sift-root active">
+                        <div class="form-group">
+                            <label class="sift-hand form-label control-label">
+                                高级查询
+                            </label>
+                            <div style="margin-bottom: 0;">
+                                <ul class="sift-list repeated labelbox" data-name="ar" data-fn></ul>
+                            </div>
+                        </div>
+                    </li>
                     <li class="sift-unit template">
                         <div>
                             <legend class="sift-hand">
@@ -154,23 +166,14 @@
                             </ul>
                         </div>
                     </li>
-                    <li class="sift-unit sift-root">
-                        <div class="form-group">
-                            <label  class="sift-hand form-label control-label">
-                                高级查询
-                            </label>
-                            <div class="form-control multiple">
-                                <ul class="sift-list repeated labelbox" data-name="ar" data-fn>
-                                </ul>
-                            </div>
-                        </div>
-                    </li>
                 </ul>
                 <div class="form-group">
                     <select data-sift="fn" class="form-control">
                         <option style="color: gray;" value="-" data-rels="-">字段...</option>
                         <%
+                        Figure _figure = new Figure(_fields);
                         Set<String> siftEnum = new HashSet();
+                        Set<String> findable = _figure.getFindable();
                         Iterator it2 = _fields.entrySet().iterator();
                         while (it2.hasNext()) {
                             Map.Entry et = (Map.Entry) it2.next();
@@ -182,12 +185,17 @@
                             if ("@".equals(name) || "id".equals(name)) {
                                 continue;
                             }
-                            // 明确不过滤或两种都不支持则跳过
+                            // 明确不能筛选则跳过
                             if (!Synt.declare(info.get("siftable"), true )) {
                                 continue;
                             }
-                            if (!Synt.declare(info.get("siftable"), false)
-                            &&  !Synt.declare(info.get("filtable"), false)) {
+                            // 排除不能查找的字段
+                            if (!findable.contains(name)) {
+                                continue;
+                            }
+                            // 没标签的字段也跳过
+                            if (text == null || text.isEmpty()
+                            ||  type == null || type.isEmpty()) {
                                 continue;
                             }
 

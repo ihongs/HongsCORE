@@ -264,6 +264,9 @@ function hsNoteWithCopy(tit, txt) {
                 $(this).closest(".dialog").find(".alert-body").hsCopy();
                 $.hsNote("已拷贝到剪贴板");
             }
+        }, {
+            glass: "btn-default",
+            label: "取消"
         });
     } else {
         $.hsMask({
@@ -274,7 +277,7 @@ function hsNoteWithCopy(tit, txt) {
             backdrop: "hidden"
         }, {
             glass: "btn-default",
-            label: "取消"
+            label: "关闭"
         });
     }
 }

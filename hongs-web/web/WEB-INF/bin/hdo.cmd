@@ -25,7 +25,7 @@ for /F "skip=3 tokens=2 delims=: " %%A in (
 "%JAVA_PATH%" %JAVA_OPTS% ^
   -classpath "%KLASSPATH%"^
   -Dfile.encoding="UTF-8" ^
-  -Duser.timezone="UTC+8" ^
+  -Duser.timezone="GMT+8" ^
   -Dtmps.dir="\\%CORE_PATH%\var\tmp"^
   -Dlogs.dir="\\%CORE_PATH%\var\log"^
   -Dlog4j.configurationFile="\\%CORE_PATH%\etc\log.xml"^

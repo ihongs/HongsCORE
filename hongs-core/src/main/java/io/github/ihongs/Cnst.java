@@ -103,7 +103,7 @@ public final class Cnst {
 
     public static final String LANG_DEF = "zh_CN"; // 默认语言
 
-    public static final String ZONE_DEF = "UTC+8"; // 默认时区
+    public static final String ZONE_DEF = "GMT+8"; // 默认时区
 
     public static final String LANG_KEY =  "lang"; // 语言代号
 

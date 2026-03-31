@@ -268,7 +268,7 @@ public final class Inst
    *    .parseDefaulting(ChronoField.DAY_OF_MONTH , 1 )
    *    .appendPattern("HH:mm:ss")
    *    .toFormatter(Locale.getDefault())
-   *    . withZone  (ZoneId.of("UTC+8" ));
+   *    . withZone  (ZoneId.of("GMT+8" ));
    * ZonedDateTime.parse("12:30:15", dtf)
    * </code>
    * 

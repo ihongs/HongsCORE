@@ -15,8 +15,6 @@ import io.github.ihongs.db.util.FetchCase;
 import io.github.ihongs.serv.master.Unit;
 import io.github.ihongs.serv.master.UserAction;
 import io.github.ihongs.util.Synt;
-import io.github.ihongs.util.verify.Wrong;
-import io.github.ihongs.util.verify.Wrongs;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
@@ -226,15 +224,19 @@ public class AuthKit {
         if (!ud.isEmpty()) {
             // 锁定或系统账号
             if (stat <= 0) {
-                throw new Wrongs(Synt.mapOf("state" ,
-                      new Wrong ("@master:core.sign.state.invalid")
-                ));
+                throw new CruxException("@master:core.sign.state.invalid");
             }
 
             uuid  = (String) ud.get( "id" );
             uname = (String) ud.get("name");
             uhead = (String) ud.get("head");
         } else {
+            // 不自动注册账号
+            if (uname == null
+            &&  uhead == null) {
+                throw new CruxException("@master:core.sign.oauth.lacking");
+            }
+
             ud  =  new HashMap( );
             ud.put("name", uname);
             ud.put("head", uhead);
@@ -282,7 +284,7 @@ public class AuthKit {
             }
         }
 
-        ud = userSign( ah , unit, uuid, uname, uhead );
+        ud = userSign( ah , unit , uuid, uname, uhead );
         ud.put("unit", /**/ unit);
         ud.put("regs", 0 == stat);
         return ud;

@@ -58,7 +58,12 @@ public class QQAction {
             AuthKit.redirect(helper, back);
         } catch (CruxException exc) {
             AuthKit.redirect(helper, exc );
-            CoreLogger.error(/*****/ exc );
+
+            // 记录错误
+            String ern = exc.getStage( );
+            if ( ! ern.startsWith("core.sign.") ) {
+                CoreLogger.error ( exc );
+            }
         }
     }
 
@@ -98,7 +103,12 @@ public class QQAction {
             AuthKit.redirect(helper, back);
         } catch (CruxException exc) {
             AuthKit.redirect(helper, exc );
-            CoreLogger.error(/*****/ exc );
+
+            // 记录错误
+            String ern = exc.getStage( );
+            if ( ! ern.startsWith("core.sign.") ) {
+                CoreLogger.error ( exc );
+            }
         }
     }
 

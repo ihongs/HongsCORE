@@ -9,12 +9,12 @@
  * 在表单配置区域添加:
  * data--0="_fill__fork:(hsFormFillFork)"
  * 在表单选项区域添加:
- * <input name="xx_id" type="hidden" data-topple="hsForkInit" data-ln="xx" data-vk="id" data-tk="name" data-pick-href="xx/pick.html" data-pick-target="@" data-link-href="xx/info.html" data-link-target="@"/>
+ * <input name="xx_id" type="hidden" data-toggle="hsFork" data-ln="xx" data-vk="id" data-tk="name" data-pick-href="xx/pick.html" data-pick-target="@" data-link-href="xx/info.html" data-link-target="@"/>
  *
  * 子表单加载构建用法:
  * 在表单配置区域添加:
- * data--1="_feed__form:(hsFormFeedFart)"
- * data--2="_fill__form:(hsFormFillFart)"
+ * data--1="_feed__form:(hsFormFeedPart)"
+ * data--2="_fill__form:(hsFormFillPart)"
  * 在表单分组区域添加:
  * <div class="form-subs" data-ft="_form" data-fn="xxxx" data-href="xxxx/form.html"></div>
  * <div class="row form-sub-add hide">
@@ -40,13 +40,9 @@
  * @param {jQuery} box 在哪填充
  * @param {Function} fil 填充函数
  * @param {Function} fet 读取函数
- * @returns {jQuery}
+ * @returns {jQuery} bin
  */
-jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
-    var btn  = jQuery(this);
-    if (bin) bin = btn.hsFind(bin);
-    if (box) box = btn.hsFind(box);
-
+hsPick = function(url, bin, box, fil, fet) {
     var v    = { };
     var n    = box.attr("data-fn") || "";
     var t    = box.attr("data-ft") || "";
@@ -57,7 +53,7 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
             || box.is("[data-multiple]")
             || box.is("[data-repeated]")
             || /(\[\]|\.\.|\.$)/.test(n);
-    var rel  = btn.closest(".openbox") [ 0 ];
+    var rel  = box.closest(".openbox") [ 0 ];
     var foo  = box.closest(".HsForm" ).data("HsForm") || {};
 
     if (! fil) {
@@ -264,64 +260,6 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
        . on ( "change" , ".checkone", select);
 
     return bin;
-};
-
-jQuery.fn.hsPickInit = function() {
-    var  $  = jQuery ;
-    var inp = $(this);
-    var box = inp.siblings("ul");
-    if (! box.size()) {
-        box = $(
-            '<div  class="multiple form-control">'
-          +   '<ul class="repeated labelbox forkbox"></ul>'
-          +   '<a href="javascript:;"></a>'
-          + '</div>'
-        );
-        box.insertBefore(inp).prepend(inp);
-        if (! inp.is(":hidden") )
-        inp.addClass("invisible");
-
-        var lis = box.children("ul");
-        var lnk = box.children("a" );
-
-        // 选取
-        lnk.attr("data-toggle", "hsFork");
-        lnk.attr("data-href"  , inp.attr("data-pick-href"  ) || "");
-        lnk.attr("data-target", inp.attr("data-pick-target") || "");
-        lnk.text( inp.attr("placeholder") || hsGetLang ("fork.select") );
-
-        // 填充和校验
-        lis.attr("data-fn"    , inp.attr("name"   ) || "");
-        lis.attr("data-ln"    , inp.attr("data-ln") || "");
-        lis.attr("data-vk"    , inp.attr("data-vk") || "");
-        lis.attr("data-tk"    , inp.attr("data-tk") || "");
-        lis.attr("data-at"    , inp.attr("data-at") || "");
-        lis.attr("data-ft"    , inp.attr("data-form-ft"    ) || "_fork");
-        lis.attr("data-href"  , inp.attr("data-link-href"  ) || "");
-        lis.attr("data-target", inp.attr("data-link-target") || "");
-        if (inp.attr("data-minrepeat")) {
-            lis.attr("data-minrepeat" , inp.attr("data-maxrepeat"));
-        }
-        if (inp.attr("data-maxrepeat")) {
-            lis.attr("data-maxrepeat" , inp.attr("data-maxrepeat"));
-        }
-
-        // 必选多选和只读等
-        if (inp.is("[required]")) {
-            lis.attr("data-required", "required");
-        }
-        if (inp.is("[multiple]")) {
-            lis.attr("data-multiple", "multiple");
-        }
-        if (inp.is("[readonly]")) {
-            lis.attr("data-readonly", "readonly");
-            box.find("a").remove( );
-        }
-
-        inp.removeAttr("required" );
-        inp.removeAttr("placeholder");
-        inp.removeAttr("data-toggle");
-    }
 };
 
 /**
@@ -882,6 +820,72 @@ function hsFormTestPart(box) {
 }
 
 (function($) {
+    // 兼容旧版
+    $.fn.hsPick = function(url, bin, box, fil, fet) {
+        if (bin) bin = $(this).hsFind(bin);
+        if (box) box = $(this).hsFind(box);
+        return hsPick(url, bin, box, fil, fet);
+    };
+
+    // 控件预构
+    $.fn.hsPickInit = function() {
+        var  $  = jQuery ;
+        var inp = $(this);
+        var box = inp.siblings("ul");
+        if (! box.size()) {
+            box = $(
+                '<div  class="multiple form-control">'
+              +   '<ul class="repeated labelbox forkbox"></ul>'
+              +   '<a href="javascript:;"></a>'
+              + '</div>'
+            );
+            box.insertBefore(inp).prepend(inp);
+            if (! inp.is(":hidden") )
+            inp.addClass("invisible");
+
+            var lis = box.children("ul");
+            var lnk = box.children("a" );
+
+            // 选取
+            lnk.attr("data-toggle", "hsPick");
+            lnk.attr("data-href"  , inp.attr("data-pick-href"  ) || "");
+            lnk.attr("data-target", inp.attr("data-pick-target") || "");
+            lnk.text( inp.attr("placeholder") || hsGetLang ("fork.select") );
+
+            // 填充和校验
+            lis.attr("data-fn"    , inp.attr("name"   ) || "");
+            lis.attr("data-ln"    , inp.attr("data-ln") || "");
+            lis.attr("data-vk"    , inp.attr("data-vk") || "");
+            lis.attr("data-tk"    , inp.attr("data-tk") || "");
+            lis.attr("data-at"    , inp.attr("data-at") || "");
+            lis.attr("data-ft"    , inp.attr("data-form-ft"    ) || "_fork");
+            lis.attr("data-href"  , inp.attr("data-link-href"  ) || "");
+            lis.attr("data-target", inp.attr("data-link-target") || "");
+            if (inp.attr("data-minrepeat")) {
+                lis.attr("data-minrepeat" , inp.attr("data-maxrepeat"));
+            }
+            if (inp.attr("data-maxrepeat")) {
+                lis.attr("data-maxrepeat" , inp.attr("data-maxrepeat"));
+            }
+
+            // 必选多选和只读等
+            if (inp.is("[required]")) {
+                lis.attr("data-required", "required");
+            }
+            if (inp.is("[multiple]")) {
+                lis.attr("data-multiple", "multiple");
+            }
+            if (inp.is("[readonly]")) {
+                lis.attr("data-readonly", "readonly");
+                box.find("a").remove( );
+            }
+
+            inp.removeAttr("required" );
+            inp.removeAttr("placeholder");
+            inp.removeAttr("data-toggle");
+        }
+    };
+
     $(document)
     .on("hsReady", function(e) {
         $(e.target)
@@ -908,7 +912,7 @@ function hsFormTestPart(box) {
             box = $(this). parent ( );
         }}
 
-        $(this).hsPick(url, bin, box);
+        hsPick(url, bin, box);
         return false;
     })
     .on("click", "[data-toggle=hsFormSubAdd]",
@@ -943,12 +947,13 @@ function hsFormTestPart(box) {
     })
     .on("change", ".forkbox", function() {
         var box = $(this);
+        var n = box.data("fn");
         var rol = box.is( ".pickrol" )
                || box.is("[data-readonly]");
         var mul = box.is( ".pickmul" )
                || box.is("[data-multiple]")
                || box.is("[data-repeated]")
-               || /(\[\]|\.\.|\.$)/.test(box.data("fn"));
+               || /(\[\]|\.\.|\.$)/.test(n);
 
         var btn = box.children("[data-toggle=hsPick],[data-toggle=hsFork]");
         if (btn.size() === 0) {
@@ -965,6 +970,7 @@ function hsFormTestPart(box) {
 })(jQuery);
 
 // 别名
+hsFork = hsPick;
 hsFormFillFork = hsFormFillPick;
 hsListFillFork = hsListFillPick;
 jQuery.fn.hsFork = jQuery.fn.hsPick;

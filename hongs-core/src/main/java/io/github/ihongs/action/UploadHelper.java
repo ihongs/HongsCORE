@@ -52,6 +52,7 @@ public class UploadHelper {
     private String requestKey = null;
     private Set <String> accept = null ;
     private Set <String> reject = null ;
+    private long maxSize = 0;
 
     private static final char[] DIGITS = {
         '0', '1', '2', '3', '4', '5', '6', '7',
@@ -111,6 +112,16 @@ public class UploadHelper {
     }
 
     /**
+     * 设置文件大小限定
+     * @param size
+     * @return
+     */
+    public UploadHelper setMaxSize(long size) {
+        this.maxSize = size;
+        return this;
+    }
+
+    /**
      * 设置许可的类型
      * 可以使用扩展名, 如 .png
      * 也可用MimeType, 如 image/png 或 image/*
@@ -140,7 +151,11 @@ public class UploadHelper {
         return this;
     }
 
-    private void chkTypeOrKind(String type, String kind) throws Wrong {
+    private void verify(long size, String type, String kind) throws Wrong {
+        if (maxSize > 0 && maxSize < size) {
+            throw new Wrong("@core.file.size.invalid", Synt.asString(maxSize));
+        }
+
         /**
          * 通配类型, 如 image/*
          */
@@ -373,13 +388,14 @@ public class UploadHelper {
     /**
      * 检查文件流并写入目标目录
      * @param xis  上传文件输入流
+     * @param size 上传文件大小
      * @param type 上传文件类型, 如 image/png
      * @param kind 上传文件扩展, 如 .png
      * @param lead 目标文件名称, 注意: 如果不含'/'或'.'会被当作ID进行拆分
      * @return
      * @throws Wrong
      */
-    public File upload(InputStream xis, String type, String kind, String lead) throws Wrong {
+    public File upload(InputStream xis, long size, String type, String kind, String lead) throws Wrong {
         int p  = type.indexOf(';');
         if (p != -1) {
             type = type.substring(0 , p);
@@ -389,7 +405,7 @@ public class UploadHelper {
             kind = kind.substring(0 + p);
         }
 
-        chkTypeOrKind(type, kind);
+        verify (size, type, kind);
         setResultName(lead, kind);
 
         File file = new File(getResultPath());
@@ -421,17 +437,18 @@ public class UploadHelper {
     /**
      * 检查文件流并写入目标目录
      * @param xis  上传文件输入流
+     * @param size 上传文件大小
      * @param type 上传文件类型, 如 image/png
      * @param kind 上传文件扩展, 如 .png
      * @return
      * @throws Wrong
      */
-    public File upload(InputStream xis, String type, String kind) throws Wrong {
+    public File upload(InputStream xis, long size, String type, String kind) throws Wrong {
         if (digestType == null) {
-            return upload(xis, type, kind, Core.newIdentity());
+            return upload(xis, size, type, kind, Core.newIdentity());
         }
 
-        File tmp = upload(xis, type, kind, Core.newIdentity()+".tmp.");
+        File tmp = upload(xis, size, type, kind, Core.newIdentity()+".tmp.");
 
         return getDigestFile(tmp);
     }
@@ -452,13 +469,14 @@ public class UploadHelper {
         /**
          * 从上传项中获取类型并提取扩展名
          */
+        long   size = part.getSize ( );
         String type = part.getContentType( /**/ );
                type = getTypeByMime( type );
         String kind = part.getSubmittedFileName();
                kind = getKindByName( kind );
 
         try {
-            return upload(part.getInputStream(), type, kind, lead);
+            return upload(part.getInputStream(), size, type, kind, lead);
         }
         catch ( IOException ex) {
             throw new Wrong(ex, "@fore.file.upload.failed");
@@ -501,11 +519,12 @@ public class UploadHelper {
         /**
          * 从文件名中解析类型和提取扩展名
          */
+        long   size = file. length ();
         String name = file. getName();
         String type = getTypeByName(name);
         String kind = getKindByName(name);
 
-        chkTypeOrKind(type, kind);
+        verify(size , type, kind);
         setResultName(lead, kind);
 
         /**

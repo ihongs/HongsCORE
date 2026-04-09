@@ -131,6 +131,8 @@ public class IsFile extends Rule {
         if (para != null && !"".equals(para)) hlpr.setAccept(Synt.toSet(para));
         para = getParam("reject");
         if (para != null && !"".equals(para)) hlpr.setReject(Synt.toSet(para));
+        size = getParam("size", 0);
+        if (size != 0) hlpr.setMaxSize(size);
 
         // 命名方式, 兼容旧版
         para = Synt.defoult(getParam("naming"), getParam("digest"));
@@ -216,12 +218,6 @@ public class IsFile extends Rule {
         // 没新上传, 不必检查
         if (null == name) {
             return  href  +  hash  ;
-        }
-
-        // 大小检查, 超限报错
-        long max = getParam("size" , Long.MAX_VALUE);
-        if ( max < size ) {
-            throw new Wrong("@core.file.size.invalid", String.valueOf(max));
         }
 
         /**

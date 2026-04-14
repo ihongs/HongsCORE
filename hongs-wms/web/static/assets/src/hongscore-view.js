@@ -2,8 +2,8 @@
 /**
  * 填充数据、渲染元素
  * TODO: 写一份说明
- * @param {Element|jQuery} element 
- * @param {Object} data 
+ * @param {Element|jQuery} element
+ * @param {Object} data
  */
 function hsFill(element, data) {
     if (window.jQuery && element instanceof jQuery) {
@@ -20,19 +20,19 @@ function hsFill(element, data) {
     // 内部渲染函数
     function render(element, data, inFor = false) {
         if (!element || !data) return;
-        
+
         // 处理注释节点
         if (element.nodeType === 8) {
             renderComment(element, data);
             return;
         }
-        
+
         // 处理文本节点
         if (element.nodeType === 3) {
             renderText(element, data);
             return;
         }
-        
+
         // 处理元素节点
         if (element.nodeType === 1) {
             // 排除 for-item 已渲染元素
@@ -44,19 +44,19 @@ function hsFill(element, data) {
 
             // 处理属性
             renderAttr(element, data);
-            
+
             // 处理 if 指令
             if (element.hasAttribute('data-if' )) {
                 renderIf (element, data);
                 return;
             }
-            
+
             // 处理 for 指令
             if (element.hasAttribute('data-for')) {
                 renderFor(element, data);
                 return;
             }
-            
+
             // 递归处理子元素
             var children = element.childNodes;
             for (var i = 0; i < children.length; i++) {
@@ -124,7 +124,7 @@ function hsFill(element, data) {
     function renderIf(element, data) {
         var condition = element.getAttribute('data-if');
         var evaluated = evaluate(condition, data);
-        
+
         // 记录原始的 display 值
         var oldDisplay = element.getAttribute('data-display');
         if (! oldDisplay) {
@@ -154,20 +154,20 @@ function hsFill(element, data) {
         var forExpr = element.getAttribute('data-for');
         var match = forExpr.match(/(\w+)\s+in\s+(.+)/);
         if (!match) return;
-        
+
         var itemName = match[1];
         var listExpr = match[2];
         var list = evaluate(listExpr, data);
-        
+
         if (!list) return;
-        
+
         // 生成随机的 for-id
         var forId = element.getAttribute('data-for-id');
         if (! forId) {
             forId = 'for-' + Math.random().toString(36).substring(2);
             element.setAttribute('data-for-id' , forId);
         }
-        
+
         // 记录原始的 display 值
         var oldDisplay = element.getAttribute('data-display');
         if (! oldDisplay) {
@@ -183,7 +183,7 @@ function hsFill(element, data) {
 
         var reserve = element.hasAttribute("data-for-reserve");
         var reverse = element.hasAttribute("data-for-reverse");
-        
+
         // 插入定位
         var endElement = element;
         var parElement = element.parentNode;
@@ -217,7 +217,7 @@ function hsFill(element, data) {
             // 这样会导致无限循环渲染
             endElement = element.nextSibling;
         }
-        
+
         // 保存原始元素作为模板
         var template = element.cloneNode(true);
 
@@ -226,7 +226,7 @@ function hsFill(element, data) {
             for(var i = 0; i < list.length; i ++) {
                 data.$index = i; // 隐含索引
                 data[itemName] = list[i];
-                
+
                 // 创建新元素
                 var newElement = template.cloneNode(true);
                 newElement.removeAttribute('data-for');
@@ -250,7 +250,7 @@ function hsFill(element, data) {
                 data.$index = i; // 隐含索引
                 data.$value = v; // 隐含取值
                 data[itemName] = k;
-                
+
                 // 创建新元素
                 var newElement = template.cloneNode(true);
                 newElement.removeAttribute('data-for');
@@ -288,14 +288,14 @@ function hsFill(element, data) {
             return undefined;
         }
     }
-    
+
     // 开始渲染
     render(element, data);
 }
 
 /**
  * 视图组件
- * @param {Element|jQuery} context 
+ * @param {Element|jQuery} context
  */
 function HsView(context) {
     this.context = context;

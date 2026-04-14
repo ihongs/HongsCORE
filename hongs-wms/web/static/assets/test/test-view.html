@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Test</title>
+        <meta charset="UTF-8">
+        <script src="../jQuery.min.js"></script>
+        <script src="./data/config.js"></script>
+        <script src="../src/hongscore.js"></script>
+        <script src="../src/hongscore-view.js"></script>
+    </head>
+    <body>
+        <div id="app">
+            <h1>{{ title }}</h1>
+            <p>{{ message }}</p>
+            <div data-if="showInfo">
+                <p>显示的信息</p>
+            </div>
+            <ul>
+                <li data-for="item in items" data-for-reserve data-for-reverse>
+                {{ $index + 1 }}. {{ item.name }} - {{ item.value }}
+                </li>
+            </ul>
+            <div>
+                <!--set name = "HsView"-->
+                <!--set age = 18-->
+                <!--set isAdult = age >= 18-->
+                <h1>Hello, {{ name }}!</h1>
+                <p>Age: {{ age }}</p>
+                <p data-if="isAdult">You are an adult.</p>
+                <p data-if="! isAdult">You are not an adult yet.</p>
+                <p>Current Date: {{ htime(new Date()) }}</p>
+            </div>
+        </div>
+
+        <script>
+        var vm = new HsView(document.getElementById('app'));
+        vm.data.hdate = function(v) {
+            return hsFmtDate(v, "HDATE");
+        };
+        vm.data.htime = function(v) {
+            return hsFmtDate(v, "HTIME");
+        };
+        vm.fill({
+            title: '测试标题',
+            message: 'Hello, HsView!',
+            showInfo: true,
+            items: [
+                { name: 'Item 1', value: 'Value 1' },
+                { name: 'Item 2', value: 'Value 2' },
+                { name: 'Item 3', value: 'Value 3' }
+            ]
+        });
+        setTimeout(() => {
+            vm.fill({
+                message: 'Hello, HsView! 2',
+                showInfo: false,
+                items: [
+                    { name: 'Item 4', value: 'Value 4' },
+                    { name: 'Item 5', value: 'Value 5' },
+                    { name: 'Item 6', value: 'Value 6' }
+                ]
+            });
+        }, 2000);
+        </script>
+    </body>
+</html>

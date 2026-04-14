@@ -1692,6 +1692,37 @@ function hsFmtDate(date, format) {
   if (K == 12) K = 0;
   if (h == 0) h = 12;
 
+  // 预定格式
+  switch (format) {
+    case "DATE":
+      format = hsGetLang("date.format");
+      break;
+    case "TIME":
+      format = hsGetLang("time.format");
+      break;
+    case "DATETIME":
+      format = hsGetLang("datetime.format");
+      break;
+    case "HTIME":
+      // 当天返回时间，否则返回日期
+      var now = new Date();
+      if (y == now.getFullYear() && M == now.getMonth() && d == now.getDate()) {
+        format = hsGetLang("time.format");
+      } else {
+        format = hsGetLang("date.format");
+      }
+      break;
+    case "HDATE":
+      // 当前返回今天，否则返回日期
+      var now = new Date();
+      if (y == now.getFullYear() && M == now.getMonth() && d == now.getDate()) {
+        return   hsGetLang("date.today" );
+      } else {
+        format = hsGetLang("date.format");
+      }
+      break;
+  }
+
   function _addzero(num, len) {
     num = num ? num : "";
     num = num.toString();

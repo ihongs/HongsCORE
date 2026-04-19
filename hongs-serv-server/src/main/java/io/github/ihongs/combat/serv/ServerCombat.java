@@ -55,6 +55,10 @@ public class ServerCombat {
             if ("start".equals(args[0])) {
                  start(opts);
                 return ;
+            } else
+            if ("stop" .equals(args[0])) {
+                ServerStop.stop ( opts );
+                return ;
             }
         }
         System.err.println("Usage: server {start|share} [PORT]");

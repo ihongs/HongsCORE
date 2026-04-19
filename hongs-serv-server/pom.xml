@@ -40,5 +40,16 @@
             <groupId>org.eclipse.jetty</groupId>
             <version>${jetty.version}</version>
         </dependency>
+        <!-- server.stop, send sigint(ctrl+c) -->
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna</artifactId>
+            <version>5.18.1</version>
+        </dependency>
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna-platform</artifactId>
+            <version>5.18.1</version>
+        </dependency>
     </dependencies>
 </project>

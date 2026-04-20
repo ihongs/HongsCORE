@@ -2,12 +2,12 @@ package io.github.ihongs.combat.serv;
 
 import io.github.ihongs.Core;
 import io.github.ihongs.CruxException;
+import io.github.ihongs.combat.CombatHelper;
 import io.github.ihongs.combat.anno.Combat;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Platform;
-import com.sun.jna.platform.win32.Kernel32;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -32,9 +32,8 @@ public class ServerStop {
         int     GetLastError ();
     }
 
-    private static final int SIGINT = 2; // Linux/MacOS/Windows 都代表 Ctrl+C
-    private static final int CTRL_C_EVENT = 0;
-    private static final int ATTACH_PARENT_PROCESS = -1;
+    private static final int SIGINT = 2; // Linux/MacOS 的 Ctrl+C 信号量
+    private static final int CTRL_C = 0; // Windows 下中止控制台进程事件
 
     @Combat("__main__")
     public static void stop(String[] args) throws CruxException {
@@ -42,8 +41,7 @@ public class ServerStop {
         File   ppid = new  File(serd + File.separator + "ppid" ) ;
 
         if (ppid.exists() == false) {
-            System.err.println("ERROR: The server has stopped.") ;
-            return;
+            throw new CruxException ( "The server has stopped" ) ;
         }
 
         try {
@@ -56,17 +54,18 @@ public class ServerStop {
                 Win32 win32 = Native.load("kernel32", Win32.class);
                 try {
                     // 1. 先释放当前进程控制台（解决错误码 5）
-                    win32.FreeConsole();
-        
+                    if (! win32.FreeConsole()) {
+                        throw new CruxException("Server stop error($1): $0", win32.GetLastError(), "FreeConsole");
+                    }
+
                     // 2. 附加到目标进程控制台 (解决错误码 87)
                     if (! win32.AttachConsole(pid)) {
-                        System.err.println("ERROR: stop error! " + win32.GetLastError());
-                        return;
+                        throw new CruxException("Server stop error($1): $0", win32.GetLastError(), "AttachConsole");
                     }
-                    
+
                     // 3. 关键：不能传 PID！传 0 表示当前控制台所有进程
-                    if (! win32.GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0)) {
-                        System.err.println("ERROR: stop error: " + win32.GetLastError());
+                    if (! win32.GenerateConsoleCtrlEvent(CTRL_C, 0)) {
+                        throw new CruxException("Server stop error($1): $0", win32.GetLastError(), "GenerateConsole");
                     }
                 } finally {
                     // 4. 分离控制台
@@ -75,24 +74,22 @@ public class ServerStop {
             } else {
                 // Linux/MacOS：JNA 直接调用 libc kill()
                 Libc libc = Native.load("c", Libc.class);
-                int  code = libc.kill ( pid, SIGINT );
-                if ( code != 0 ) {
-                    System.err.println("ERROR: stop error: " + code );
-                    return;
+                int  code =  libc .kill(pid, SIGINT );
+                if ( code != 00 ) {
+                    throw new CruxException("Server stop error($1): $0", code, "kill");
                 }
             }
 
             // 等待服务终止
             int i = 0;
-            while (ppid.exists( )) {
+            while (ppid.exists()) {
                 if (20 < i++) {
-                    System.err.println("ERROR: stop timeout!");
-                    return;
+                    throw new CruxException("Server stop timeout!");
                 }
-                Thread.sleep(500L);
+                Thread.sleep(500);
             }
 
-            System.err.print("Server stopped!");
+            CombatHelper.println( "Server stopped!" );
         }
         catch (IOException | InterruptedException ex) {
             throw new CruxException(ex);

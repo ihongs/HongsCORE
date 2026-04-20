@@ -298,6 +298,13 @@ public class ServerCombat {
 
         @Override
         public void run() {
+            /*
+            try {
+                // 模拟超时, 测试 server.stop
+                Thread.sleep(15000);
+            } catch (InterruptedException ex) {
+            }
+            */
             System.out.println( "" );
             if (server.isStopping()) {
                 if (Core.DEBUG == 0) {

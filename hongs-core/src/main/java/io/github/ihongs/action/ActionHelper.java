@@ -305,7 +305,14 @@ public class ActionHelper implements Cloneable
         return null;
     }
     try {
-        return (Map) Dist.toObject(request.getReader());
+        Object obj = Dist.toObject(request.getReader());
+        if (! (obj instanceof Map) ) {
+            Map map = new HashMap(1);
+            map.put("" , obj);
+            return  map;
+        } else {
+            return (Map) obj ;
+        }
     } catch (RuntimeException ex) {
         throw new CruxExemption(ex, 400 );
     } catch (IOException ex) {

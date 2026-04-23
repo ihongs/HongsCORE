@@ -18,6 +18,7 @@
         <!--
         <import>centra/data/upland</import>
         //-->
+        <import>centra/cust</import>
         <import>centra/data</import>
     </menu>
 </root>

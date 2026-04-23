@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <rsname>#centre</rsname>
+    <!-- 引入自定义导航 -->
+    <import>centre/data/test1</import>
+</root>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <!-- 继承后台表单 -->
+    <form name="test1" extend="test1">
+        <!-- 前台特有的字段 -->
+        <field name="front_field" text="前台字段" type="text">
+            <param name="maxlength">100</param>
+        </field>
+    </form>
+</root>

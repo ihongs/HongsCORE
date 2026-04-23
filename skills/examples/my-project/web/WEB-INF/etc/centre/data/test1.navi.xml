@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <rsname>#centre</rsname>
+    <menu text="测试1" href="centre/data/test1/">
+        <role name="centre">
+            <action>centre/data/test1/create.act</action>
+            <action>centre/data/test1/update.act</action>
+            <action>centre/data/test1/delete.act</action>
+        </role>
+    </menu>
+</root>

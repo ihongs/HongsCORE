@@ -13,6 +13,7 @@ import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
@@ -256,7 +257,14 @@ public class CombatRunner implements Runnable
     Core.DEBUG = Synt.declare(opts.get("DEBUG") , (byte) 0 );
     Core.SERVER_ID = Synt.declare(opts.get("SERVERID"), "0");
     Core.CORE_PATH = Synt.declare(opts.get("COREPATH"), System.getProperty("user.dir"));
-    Core.CORE_PATH = new File(Core.CORE_PATH).getAbsolutePath();
+
+    // 转绝对路径
+    try {
+        Core.CORE_PATH = new File(Core.CORE_PATH).getCanonicalPath();
+    } catch (IOException ex) {
+        Core.CORE_PATH = new File(Core.CORE_PATH).getAbsolutePath( );
+    }
+
     Core.CONF_PATH = Synt.declare(opts.get("CONFPATH"), Core.CORE_PATH + File.separator + "etc");
     Core.DATA_PATH = Synt.declare(opts.get("DATAPATH"), Core.CORE_PATH + File.separator + "var");
     Core.BASE_PATH = Synt.declare(opts.get("BASEPATH"), Core.CORE_PATH + File.separator + "web");
@@ -264,7 +272,7 @@ public class CombatRunner implements Runnable
     // 如果 web 目录不存在, 则视为在 WEB-INF 下
     File bp = new File(Core.BASE_PATH);
     if (!bp.exists()) {
-       Core.BASE_PATH = bp.getParent();
+       Core.BASE_PATH = bp.getParentFile().getParent();
     }
 
     /** 系统属性配置 **/

@@ -2,6 +2,12 @@
 <root>
     <rsname>roles</rsname>
     <!--
+    href 为页面链接, 不可重复
+    hrel 为资源链接, 通常为内部页
+    href/hrel !开头的菜单会被忽略
+    hrel 有些特殊值:
+        !MENU 菜单组, 包裹下面子级菜单
+        !MARK 标记组, 标记后面同级菜单
     <menu text="" href="" hrel="" icon="">
         <role text="" name="">
             <action></action>

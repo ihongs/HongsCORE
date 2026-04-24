@@ -34,7 +34,7 @@
             if (hrel != null
             &&  hrel.startsWith("!")
             && !hrel.equals("!MENU")
-            && !hrel.equals("!EDGE")) {
+            && !hrel.equals("!MARK")) {
                 continue;
             }
 
@@ -83,7 +83,7 @@
                 if (! href.startsWith("common/menu.")
                 &&  ! href.startsWith("centre/menu.")
                 &&  ! "!MENU".equals(hrel)) {
-                if (! "!EDGE".equals(hrel)) {
+                if (! "!MARK".equals(hrel)) {
                     actc = "actual "+actc ;
                     href = Core.SERV_PATH +"/"+ href;
                     hrel = Core.SERV_PATH +"/"+ hrel;

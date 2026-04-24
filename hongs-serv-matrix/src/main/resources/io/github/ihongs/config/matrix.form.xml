@@ -15,7 +15,7 @@
         <value code="1">内部</value>
         <value code="2">开放</value>
         <value code="4">开放(仅表单)</value>
-        <value code="6">开放(仅接口)</value>
+        <value code="6">开放(仅表单,可匿名)</value>
         <value code="8">冻结</value>
         <value code="0">删除</value>
     </enum>

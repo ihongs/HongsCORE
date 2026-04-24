@@ -1046,20 +1046,37 @@ public class Form extends Model {
 
             /**
              * 1 为内部资源, 改名使其失效
-             * 4 仅提供接口, 写入特殊属性
              */
             if ("1".equals(stat)) {
                 docm.renameNode(menu, null, "xxxx");
             } else {
                 docm.renameNode(menu, null, "menu");
             }
-            if ("4".equals(stat)) {
+            
+            /**
+             * 4/6 仅提供接口, 写入特殊属性
+             */
+            if ("4".equals(stat)
+            ||  "6".equals(stat)) {
                 menu.setAttribute("hrel" , "!HIDE");
-            } else
-            if ("6".equals(stat)) {
-                menu.setAttribute("hrel" , "!DENY");
             } else {
                 menu.setAttribute("hrel" ,   ""   );
+            }
+            
+            if ("6".equals(stat)) {
+                role = getNodeByTagNameAndAttr(menu, "role", "name", "centre");
+                actn = getNodeByTagNameAndText(role, "action", href +"create"+ Cnst.ACT_EXT);
+                if (actn != null) {
+                    role.removeChild ( actn );
+                }
+            } else {
+                role = getNodeByTagNameAndAttr(menu, "role", "name", "centre");
+                actn = getNodeByTagNameAndText(role, "action", href +"create"+ Cnst.ACT_EXT);
+                if (actn == null) {
+                    actn = docm.createElement("action");
+                    role.appendChild ( actn );
+                    actn.appendChild ( docm.createTextNode(href +"create"+ Cnst.ACT_EXT) );
+                }
             }
         } else {
             menu = docm.createElement("menu");
@@ -1069,18 +1086,19 @@ public class Form extends Model {
 
             /**
              * 1 为内部资源, 改名使其失效
-             * 4 仅提供接口, 写入特殊属性
              */
             if ("1".equals(stat)) {
                 docm.renameNode(menu, null, "xxxx");
             } else {
             //  docm.renameNode(menu, null, "menu");
             }
-            if ("4".equals(stat)) {
+            
+            /**
+             * 4/6 仅提供表单, 写入特殊属性
+             */
+            if ("4".equals(stat)
+            ||  "6".equals(stat)) {
                 menu.setAttribute("hrel" , "!HIDE");
-            } else
-            if ("6".equals(stat)) {
-                menu.setAttribute("hrel" , "!DENY");
             } else {
                 menu.setAttribute("hrel" ,   ""   );
             }
@@ -1099,9 +1117,12 @@ public class Form extends Model {
             role = docm.createElement( "role" );
             menu.appendChild ( role );
             role.setAttribute("name", "centre");
+            // 不可匿名则需登录才能添加
+            if (! "6".equals ( stat )) {
             actn = docm.createElement("action");
             role.appendChild ( actn );
             actn.appendChild ( docm.createTextNode(href +"create"+ Cnst.ACT_EXT) );
+            }
             actn = docm.createElement("action");
             role.appendChild ( actn );
             actn.appendChild ( docm.createTextNode(href +"update"+ Cnst.ACT_EXT) );
@@ -1315,6 +1336,26 @@ public class Form extends Model {
                 continue;
             }
             if (!val.equals(e.getAttribute(att))) {
+                continue;
+            }
+            return e;
+        }
+        return  null;
+    }
+
+    private Element getNodeByTagNameAndText(Element elem, String tag, String val) {
+        NodeList a = elem.getChildNodes();
+        for (int i = 0; i < a.getLength(); i ++ ) {
+            Node n = a.item(i);
+            if ( n.getNodeType() != Node.ELEMENT_NODE ) {
+                continue;
+            }
+            Element e = (Element) n;
+            if (!tag.equals(e.getTagName(/***/))) {
+                continue;
+            }
+            n = e.getFirstChild();
+            if (!val.equals(n.getTextContent( ))) {
                 continue;
             }
             return e;

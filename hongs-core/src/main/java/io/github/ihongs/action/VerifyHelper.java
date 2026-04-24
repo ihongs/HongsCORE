@@ -127,15 +127,20 @@ public class VerifyHelper extends Verify {
 
             String[] list;
 
-            if (ruls == null || (ruls.length() == 0 )) {
+            if (ruls == null || ruls.isEmpty()) {
                 String type = (String) opts.get("__type__");
                 String item ;
                 if (ts.containsKey(type)) {
                     // 类名转换
-                    item = ( String ) ts.get (type);
-                    String c = item.substring(0, 1);
-                    String n = item.substring(   1);
-                    item = "Is"+c.toUpperCase()+ n ;
+                    String c = type.substring(0, 1);
+                    String n = type.substring(   1);
+                        item = "Is"+c.toUpperCase() + n;
+                    if (! hasRule(item)) {
+                        type = (String)ts.get(type);
+                           c = type.substring(0, 1);
+                           n = type.substring(   1);
+                        item = "Is"+c.toUpperCase() + n;
+                    }
                 } else
                 if (ps.containsKey(type)) {
                     // 类型正则
@@ -144,7 +149,6 @@ public class VerifyHelper extends Verify {
                 } else {
                     item = "IsString";
                 }
-
                 list = new String[]{item};
             } else {
             if (ruls . startsWith( "@" )) {
@@ -229,6 +233,15 @@ public class VerifyHelper extends Verify {
         }}
 
         return this;
+    }
+
+    private boolean hasRule(String typeClass) {
+        try {
+            return Rule.class.isAssignableFrom(Class.forName(typeClass));
+        }
+        catch (ClassNotFoundException ex) {
+            return false;
+        }
     }
 
 }

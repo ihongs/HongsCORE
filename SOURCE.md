@@ -6,7 +6,7 @@
 
 ## 文件体系
 
-### 目录结构:
+### 目录结构
 
 - bin               运维脚本
 - lib               运行包库(启动时可指定 -classpath)
@@ -41,7 +41,7 @@
 - public
 - static
 
-### 类库结构:
+### 类库结构
 
 - `io.github.ihongs`            核心
 - `io.github.ihongs.action`     动作支持

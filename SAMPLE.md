@@ -28,18 +28,7 @@
         - addons    前端扩展组件
         - upload    默认上传目录
 
-这是 hongs-web 和 hongs-wms 的目录结构, 由 pom.xml 中的 maven-antrun-plugin 构建. 如不做转移, 则是经典的 java webapp 结构:
-
-- WEB-INF
-    - bin
-    - lib
-    - etc
-    - var
-        - log
-        - tmp
-    - web.xml
-- public
-- static
+这是 hongs-web 和 hongs-wms 的目录结构, 由 pom.xml 中的 maven-antrun-plugin 构建. 如不做转移, 则是典型的 java webapp 结构，bin/lib/etc/var 都在 WEB-INF 下面.
 
 ### 类库结构
 

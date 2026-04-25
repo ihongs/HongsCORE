@@ -1,9 +1,9 @@
 # HongsCORE framework for Java
 
-* 软件版本: 1.1.0
-* 文档版本: 20250101
-* 设计作者: 黄弘(Hongs)
-* 技术支持: kevin.hongs@gmail.com
+- 软件版本: 1.1.0
+- 文档版本: 20260425
+- 开发作者: 黄弘(Hongs)
+- 技术支持: kevin.hongs@gmail.com
 
 **HongsCORE** 即 **Hong's Common Object Requesting Engine**, 通用对象请求引擎, 拼凑的有些生硬. 在设计第一个原型框架时(PHP 版 2006 年), 我买了一台 Intel Core CPU 的笔记本电脑, 当时随意的给她取了个名字叫 Core, 后来觉得名字应该更有意义才扩展成了以上缩写.
 另一个原因是: 从最初的 PHP 版一直到现在的 Java 版, 都有设立一个核心工厂类, 用于请求和管理唯一对象, 以实现  Singleton (单例模式), 需要某对象时只管请求, 使对象的使用效率更高. 具体到这个 Java 版本中, 利用 ThreadLocal 以及 Tomcat,Jetty 等 Servlet 容器的单实例多线程特性来实现行之有效的单例模式 (根据实际情况分为全局单例和线程单例).
@@ -21,7 +21,7 @@
  9. 内含自助模块, 无需编程即可构建简单的信息管理系统;
 10. 内含统计模块, 可实现简单分类、区间及分组聚合统计.
 
-另见 [**更新日志**](UPDATE.md), 及 [**HongsCORE framework for Javascript**](hongs-wms/web/static/assets/src/).
+[**开发文档**](SOURCE.md), 另见 [**更新日志**](UPDATE.md), 及 [**HongsCORE framework for Javascript**](hongs-wms/web/static/assets/src/).
 
 ## 许可说明
 
@@ -36,21 +36,22 @@
 
 ## 类库依赖
 
-适用 Java 版本 JDK 1.8 及以上, 推荐使用 11; Java 库依赖情况请参见各个 module 中 pom.xml 的 dependencies 部分; Javascript 及 CSS 部分默认依赖 jQuery,jQueryUI,Bootstrap 等, 更多参见 [**Powered By**](hongs-web/web/power.html).
+适用 Java 版本 JDK 1.8 及以上, 推荐使用 17; Java 库依赖情况请参见各个 module 中 pom.xml 的 dependencies 部分; Javascript 及 CSS 部分默认依赖 jQuery,jQueryUI,Bootstrap 等, 更多参见 [**Powered By**](hongs-web/web/power.html).
 
 ## 使用方法
 
 请先安装 JDK 和 Maven, 然后进入您的工作目录, 按以下流程执行命令:
 
     # 获取并构建系统
-    git clone https://github.com/ihongs/HongsCORE.git
+    git clone --depth 1 https://github.com/ihongs/HongsCORE.git
     cd  HongsCORE
     mvn clean package
 
     # 设置和启动系统
     cd  hongs-serv-xxx/target/HongsXXX
     bin/app source setup
-    bin/app server start
+    bin/app server start --DEBUG 6
+    # 按 ctrl+c 停止运行
 
     # hongs-serv-web/target/HongsWeb 为基础系统, 仅包含基本的应用服务和前端组件等;
     # hongs-serv-wms/target/HongsWMS 为管理系统, 拥有全功能的用户管理和自助模块等.
@@ -58,7 +59,7 @@
 
 加 --DEBUG 6 可开启调试及警告输出模式, 可在控制台(命令行)显示执行过程(调试信息), server start 命令可跟数字表示启动端口, 默认 8080 端口. 同时为 windows 用户提供了 setup.bat 和 start.bat 两个快捷命令来执行以上同等任务, windows 用户只需双击即可.
 
-注意[1]: 退出运行应该用 Ctrl+C 而不应当直接关闭命令窗口, 后者可能导致直接死掉而无法执行退出清理, 再次启动需要删除 var/server 下端口对应的 .pid 文件才行.
+注意[1]: 退出运行应该用 Ctrl+C 而不应当直接关闭命令窗口, 后者可能导致直接死掉而无法执行退出清理, 再次启动需要删除 var/server 下端口对应的 `.pid` 文件才行. 也可用通过 `bin/hdo server stop` 命令来停止.
 
 注意[2]: 需要 JDK 而非 JRE(Java) 才能运行, 使用前请确保 JDK 已安装并加入 PATH 环境变量, 或设置 JAVA_HOME 环境变量为 jdk 的安装目录(Windows 必须设置). 在官网下载并使用安装程序安装的通常已自动设置好了.
 
@@ -68,9 +69,21 @@
 
 ## 定制开发
 
+### 开发理念
+
+首先必须承认，此项目核心思想并非独创，参考了 Django/MongoDB/CouchDB 等。
+
+迄今为止(2016年)，我做了上十年的 OLTP/OLAP 开发，大部分时候就是面对数据结构来回的倒腾，因此，我就想为什么要重复的写这些增删改查呢？这么多的业务逻辑有什么底层共性吗？万变不离其宗的宇宙终极规律没发现，但只要把应用范围缩小到一个特定的范围，**一般情况自动处理，特殊情况可以干预**，那么就能从占工作量大半的转换逻辑中抽身出来，从而可以去处理更多特别的事情。
+
+想象流程是从一个数据结构转换成另一个数据结构。比如从 URL `x?a=123&b[]=456&b[]=789` 转换成数据结构 `{a:123, b: [456,789]}` 再转成查询语句 `SELECT * FROM x WHERE a = 123 AND b IN (456, 789)`。把这个道理再扩大一点，如果在服务器这边拥有一个资源 x 的描述文件(scheme)，据此进行结构翻译（转换）。对这个 scheme 进一步丰富，还可以处理资源的关联、输入的校验、输出的处理等等。这个概念还可以扩展到 HTML 的表单、列表、详情展示等，从一个数据描述结构转换成另一种数据呈现结构。如果需要进行限制，中间环节改变数据流或进行一个深度合并即可。
+
+在这套系统里，这个 scheme 文件有两种：一是早期围绕关系数据库做的 [.db.xml](hongs-core/src/main/resources/io/github/ihongs/config/default.db.xml)，结合数据库的表结构，来描述资源模型；另一个是后定义的 [.form.xml](hongs-core/src/main/resources/io/github/ihongs/config/default.form.xml) 配置，旨在完整的描述数据结构、枚举数据、校验规则，这主要是受到 Protobuf 的启发。后者衍生出了针对 lucene 的模型, 亦可用于 neo4j,mongodb,couchdb 等。
+
+正确的解释并查询是一方面，但也需要在正确的存储后才能保障，故校验规则是这套体系里非常重要的部分。与别的校验框架理念并不相同，别人可能只在意数据能不能被许可往下传递，而这个系统更关注如何向下传递需要的数据。比如：传递过来一个文件，在这套系统并不仅仅关心这个文件的格式、尺寸对不对，更要处理存到哪里、如何组织 URL，如果是图片，可能还要按自定规则处理成缩略图。[Verify](hongs-core/src/main/java/io/github/ihongs/util/verify/Verify.java) 是校验入口，通过同包下的其他 Rule 类进行校验，也支持函数式的方式快速自定规则；另外利用 [VerifyHelper](hongs-core/src/main/java/io/github/ihongs/action/VerifyHelper.java) 可以将 .form.xml 中的设置"翻译"成实际的校验规则。
+
 ### 前端开发
 
-如果你是一位前端开发人员，别去想什么 Node.js,MongoDB 等 javascript 一统前后端的方案了, 你应该做的就是把体验做好, 神马增/删/改/查/接口/权限就不用费劲考虑了, 你只需:
+增/删/改/查/统计/权限在配置好表单后就有了, 接着只需:
 
 1. 登录系统，点击右上角菜单，进入"模型矩阵"
 2. 点击左侧单元区的添加，输入名称等，点击下方提交即创建了一个单元
@@ -103,19 +116,9 @@
 
 一个动作脚本即前端定制谈到的表单 ID 目录下的 \_\_main\_\_.jsp 文件，如果此文件存在，则对应资源的所有更新改查等操作均会转到此处，但仍然可以通过 ActionRunner 调用原始的动作程序，这时 \_\_main\_\_.jsp 充当一个过滤器的角色，可以通过 ActionHelper 对输入输出数据进行改写。
 
-想通过 java 进行更深入的定制开发也很简单，在包 io.github.ihongs.serv.centra (后台的叫 centra 公共的叫 centre) 下新建一个 Action 类，如 XxxAction.java，此类至少要提供一个公共的无参构造方法（不写就是默认有），通过类的注解 @Action("centra/xxx") 定义表单资源路径，通过方法注解 @Action("search") 定义动作路径名称。事实上这个类所在的包并非必须要是 io.github.ihongs.serv.centra 和 io.github.ihongs.serv.centre，只是默认会扫描这两个包而已，也可以通过 etc/defines.properties 中在 mount.serv 下增加包和类名，而其对应的访问路径是通过 @Action 注解来定义的。
+想通过 java 进行更深入的定制开发也很简单，在包 io.github.ihongs.serv.centra (后台的叫 centra 前台的叫 centre) 下新建一个 Action 类，如 XxxAction.java，此类至少要提供一个公共的无参构造方法（不写就是默认有），通过类的注解 @Action("centra/xxx") 定义表单资源路径，通过方法注解 @Action("search") 定义动作路径名称。事实上这个类所在的包并非必须要是 io.github.ihongs.serv.centra 和 io.github.ihongs.serv.centre，只是默认会扫描这两个包而已，也可以通过 etc/defines.properties 中在 mount.serv 下增加包和类名，甚至可用加上 your.package.** 扫你自建的全部包和类，而其对应的访问路径是通过 @Action 注解来定义的。
 
-### 开发理念
-
-首先必须承认，此项目核心思想并非独创，参考了 Django/MongoDB/CouchDB 等。
-
-迄今为止，我做了上十年的 OLTP/OLAP 开发，大部分时候就是面对数据结构来回的倒腾，因此，我就想为什么我要重复的写这些增删改查呢？这么多的业务逻辑有什么底层共性吗？万变不离其宗的宇宙终极规律我是没发现，但只要把应用范围缩小到一个特定的范围，**一般情况自动处理，特殊情况可以干预**，那么就能从占工作量大半的业务逻辑中抽身出来，从而可以去处理更多特别的事情。
-
-按照这个指导思想，想象流程就是从一个数据结构转换成另一个数据结构，数据流亦即结构流。比如从 URL `x?a=123&b[]=456&b[]=789` 转换成数据结构 `{a:123, b: [456,789]}` 再转成查询语句 `SELECT * FROM x WHERE a = 123 AND b IN (456, 789)`。把这个道理再扩大一点，如果在服务器这边拥有一个资源 x 的描述文件(scheme)，据此进行结构翻译（转换），那么这个概念还可以扩展到 HTML 的表单、列表、详情展示等。对这个 scheme 进一步丰富，还可以处理资源的关联、输入的校验、输出的处理等等。
-
-在这套系统里，这个 scheme 文件有两种：一是早期围绕关系数据库做的 [.db.xml](hongs-core/src/main/resources/io/github/ihongs/config/default.db.xml)，结合数据库的表结构，来描述资源模型；另一个是后定义的 [.form.xml](hongs-core/src/main/resources/io/github/ihongs/config/default.form.xml) 配置，旨在完整的描述数据结构、枚举数据、校验规则，这主要是受到 Protobuf 的启发。后者衍生出了针对 lucene 的模型, 亦可用于 neo4j,mongodb 等。
-
-正确的解释并查询是一方面，但也需要在正确的存储后才能保障，故校验规则是这套体系里非常重要的部分。与别的校验框架理念并不相同，别人可能只在意数据能不能被许可往下传递，而这个系统更关注如何向下传递需要的数据。比如：传递过来一个文件，在这套系统并不仅仅关心这个文件的格式、尺寸对不对，更要处理存到哪里、如何组织 URL，如果是图片，可能还要按自定规则处理成缩略图。[Verify](hongs-core/src/main/java/io/github/ihongs/util/verify/Verify.java) 是校验入口，通过同包下的其他 Rule 类进行校验，也支持函数式的方式快速自定规则；另外利用 [VerifyHelper](hongs-core/src/main/java/io/github/ihongs/action/VerifyHelper.java) 可以将 .form.xml 中的设置"翻译"成实际的校验规则。
+更多请参考 [**开发文档**](SOURCE.md).
 
 ## 文件体系
 
@@ -141,6 +144,17 @@
             - addons    前端扩展组件
             - upload    默认上传目录
 
+这是 hongs-web 和 hongs-wms 的目录结构, 由 pom.xml 中的 maven-antrun-plugin 构建. 如不做转移, 则是经典的 java webapp 结构:
+
+    - WEB-INF
+        - bin
+        - lib
+        - etc
+        - var
+        - web.xml
+    - public
+    - static
+
 ### 类库结构:
 
     io.github.ihongs            核心
@@ -152,7 +166,7 @@
     io.github.ihongs.util       辅助工具
     io.github.ihongs.serv       服务组件
 
-以上仅列举了主要的包, 更多框架信息请参考 API 文档. 另外在类的命名上遵循少许规则, 如 IXxx 为接口, JXxx 为接口默认的实现或抽象.
+以上仅列举了主要的包, 更多框架信息请参考源码文档. 另外在类的命名上遵循少许规则, 如 IXxx 为接口, JXxx 为接口默认的实现或抽象. 自行扩展定制的无需遵守这些规则, 我的对齐强迫症而已.
 
 ## 运行规则
 

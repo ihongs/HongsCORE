@@ -6,6 +6,26 @@
     <artifactId>hongs-base</artifactId>
     <groupId>io.github.ihongs</groupId>
     <version>1.1-SNAPSHOT</version>
+    <scm>
+        <url>https://github.com/ihongs/HongsCORE</url>
+        <connection>scm:git:https://github.com/ihongs/HongsCORE.git</connection>
+        <developerConnection>scm:git:https://github.com/ihongs/HongsCORE.git</developerConnection>
+    </scm>
+    <licenses>
+        <license>
+            <name>The MIT License (MIT)</name>
+            <url>https://mit-license.org/</url>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>Hongs</name>
+            <email>ihongs@live.cn</email>
+        </developer>
+    </developers>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
     <modules>
         <module>hongs-core</module>
         <module>hongs-serv</module>
@@ -18,9 +38,6 @@
         <module>hongs-wms</module>
         <module>hongs-dev</module>
     </modules>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
     <build>
         <plugins>
             <plugin>
@@ -48,6 +65,30 @@
                     <generateBackupPoms>false</generateBackupPoms>
                 </configuration>
             </plugin>
+            <!-- 签名插件
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>3.2.5</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin> -->
+            <!-- 发布插件
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.5.0</version>
+                <configuration>
+                    <publishingServerId>central</publishingServerId>
+                </configuration>
+            </plugin> -->
         </plugins>
     </build>
 </project>

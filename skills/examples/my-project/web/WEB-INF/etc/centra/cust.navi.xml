@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<root>
-    <rsname>#centra</rsname>
-    <!-- 引入自定义导航 -->
-    <import>centra/data/test1</import>
-</root>

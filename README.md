@@ -32,7 +32,7 @@
  9. 内含自助模块, 无需编程即可构建简单的信息管理系统;
 10. 内含统计模块, 可实现简单分类、区间及分组聚合统计.
 
-见 [**开发文档**](SOURCE.md)、[**更新日志**](UPDATE.md), 及 [**HongsCORE framework for Javascript**](hongs-wms/web/static/assets/src/).
+另见 [**开发文档**](SOURCE.md)、[**更新日志**](UPDATE.md), 及 [**HongsCORE framework for Javascript**](hongs-wms/web/static/assets/src/).
 
 ## 使用方法
 
@@ -76,6 +76,8 @@
 在这套系统里，这个 scheme 文件有两种：一是早期围绕关系数据库做的 [.db.xml](hongs-core/src/main/resources/io/github/ihongs/config/default.db.xml)，结合数据库的表结构，来描述资源模型；另一个是后定义的 [.form.xml](hongs-core/src/main/resources/io/github/ihongs/config/default.form.xml) 配置，旨在完整的描述数据结构、枚举数据、校验规则，这主要是受到 Protobuf 的启发。后者衍生出了针对 lucene 的模型, 亦可用于 neo4j,mongodb,couchdb 等。
 
 正确的解释并查询是一方面，但也需要在正确的存储后才能保障，故校验规则是这套体系里非常重要的部分。与别的校验框架理念并不相同，别人可能只在意数据能不能被许可往下传递，而这个系统更关注如何向下传递需要的数据。比如：传递过来一个文件，在这套系统并不仅仅关心这个文件的格式、尺寸对不对，更要处理存到哪里、如何组织 URL，如果是图片，可能还要按自定规则处理成缩略图。[Verify](hongs-core/src/main/java/io/github/ihongs/util/verify/Verify.java) 是校验入口，通过同包下的其他 Rule 类进行校验，也支持函数式的方式快速自定规则；另外利用 [VerifyHelper](hongs-core/src/main/java/io/github/ihongs/action/VerifyHelper.java) 可以将 .form.xml 中的设置"翻译"成实际的校验规则。
+
+参阅 [**开发文档**](SOURCE.md)
 
 ## 开发准则
 

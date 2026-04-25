@@ -139,23 +139,23 @@ public class Thumb {
             return this;
         }
         switch (str) {
-            case "center center": case "center":
+            case "center-center": case "center":
                 return setAlign(Positions.CENTER       );
-            case "top center"   : case "top"   :
+            case "top-center"   : case "top"   :
                 return setAlign(Positions.TOP_CENTER   );
-            case "center left"  : case "left"  :
+            case "center-left"  : case "left"  :
                 return setAlign(Positions.CENTER_LEFT  );
-            case "center right" : case "right" :
+            case "center-right" : case "right" :
                 return setAlign(Positions.CENTER_RIGHT );
-            case "bototm center": case "bottom":
+            case "bottom-center": case "bottom":
                 return setAlign(Positions.BOTTOM_CENTER);
-            case "top left"     :
+            case "top-left"     :
                 return setAlign(Positions.TOP_LEFT     );
-            case "top right"    :
+            case "top-right"    :
                 return setAlign(Positions.TOP_RIGHT    );
-            case "bottom left"  :
+            case "bottom-left"  :
                 return setAlign(Positions.BOTTOM_LEFT  );
-            case "bottom right" :
+            case "bottom-right" :
                 return setAlign(Positions.BOTTOM_RIGHT );
             default:
                 throw new CruxExemption("Unsupported place value: "+str);

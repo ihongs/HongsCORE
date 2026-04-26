@@ -396,22 +396,6 @@ function HsView(context) {
 HsView.prototype = {
     data: {},
     /**
-     * 初始化
-     */
-    init: function() {
-        this.blocks = [];
-
-        // 处理数组或类数组对象 (如 NodeList/jQuery 对象等)
-        if ( hsFill.isArr (this.context) ) {
-            for(var i = 0; i < this.context.length; i ++) {
-                this.parse(this.context[i] , this.blocks);
-            }
-        } else {
-            // 处理单个元素
-            this.parse(this.context, this.blocks);
-        }
-    },
-    /**
      * 填充数据
      * @param {Object} data
      */
@@ -419,11 +403,8 @@ HsView.prototype = {
         // 合并数据, 内联绑定
         data = this.proxy(this.merge(this.data, data));
 
-        // 首次调用时预解析
-        if (! this.blocks) this.init();
-
         // 渲染所有的模板块
-        hsFill(this.blocks, data);
+        hsFill(this.context, data);
     },
     /**
      * 数据代理
@@ -473,7 +454,7 @@ HsView.prototype = {
         if (source) for (var key in source) {
             if (source.hasOwnProperty(key)) {
                 if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
-                    if (!target[key]) target[key] = {};
+                    if (! target[key]) target[key] = { };
                     this.merge(target[key], source[key]);
                 } else {
                     target[key] = source[key];
@@ -481,70 +462,5 @@ HsView.prototype = {
             }
         }
         return target;
-    },
-    /**
-     * 递归解析
-     * @param {Element} element
-     * @param {Array} blocks
-     */
-    parse: function(element, blocks) {
-        if (!element) return;
-
-        // 处理文本节点
-        if (element.nodeType === 3) {
-            var text = element.nodeValue.trim();
-            if (/{{.*?}}/.test(text)) {
-                blocks.push(element);
-            }
-            return;
-        }
-
-        // 处理注释节点
-        if (element.nodeType === 8) {
-            var text = element.nodeValue.trim();
-            if (text.startsWith('{{') && text.endsWith('}}')) {
-                blocks.push(element);
-            } else
-            if (text.startsWith('{%') && text.endsWith('%}')) {
-                blocks.push(element);
-            }
-            return;
-        }
-
-        // 处理元素节点
-        if (element.nodeType === 1) {
-            // 排除 for item 已渲染元素
-            if (element.hasAttribute('data-for-id') && !element.hasAttribute('data-for')) {
-                return;
-            }
-
-            // 检查属性是否包含模板
-            var attrs = element.attributes;
-            for(var i = 0; i < attrs.length; i++) {
-                var attr = attrs[i];
-                if (/{{.*?}}/.test(attr.value)) {
-                    blocks.push(element);
-                    return;
-                }
-            }
-
-            // 登记 if 指令
-            if (element.hasAttribute('data-if' )) {
-                blocks.push(element);
-                return;
-            }
-
-            // 登记 for 指令
-            if (element.hasAttribute('data-for')) {
-                blocks.push(element);
-                return;
-            }
-
-            // 递归处理子元素
-            var children = element.childNodes;
-            for (var i = 0; i < children.length; i++) {
-                this.parse(children[i], blocks);
-            }
-        }
     }
 };

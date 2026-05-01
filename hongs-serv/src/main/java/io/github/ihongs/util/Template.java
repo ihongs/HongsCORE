@@ -1097,9 +1097,9 @@ public class Template {
 
                 // 计算 includePath 的目录部分（基于处理后的路径）
                 String includeDir = "";
-                int lastSlash = includePath.lastIndexOf('/');
-                if (lastSlash > 0) {
-                    includeDir = includePath.substring(0, lastSlash);
+                int lastSlas = includePath.lastIndexOf('/');
+                if (lastSlas > 0) {
+                    includeDir = includePath.substring(0, lastSlas);
                 }
 
                 // 为每个 basePath 都加上 includePath 的相对路径

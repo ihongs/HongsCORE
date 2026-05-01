@@ -1,0 +1,102 @@
+version: '3.8'
+
+services:
+  zookeeper:
+    image: zookeeper:3.6.3
+    container_name: hadoop-zookeeper
+    hostname: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      - ZOO_MY_ID=1
+      - ZOO_4LW_COMMANDS_WHITELIST=*
+    networks:
+      - hadoop-net
+
+  namenode:
+    image: apache/hadoop:3.3.6
+    container_name: hadoop-namenode
+    hostname: namenode
+    user: root
+    ports:
+      - "9870:9870"
+      - "9000:9000"
+      - "8020:8020"
+    environment:
+      - HDFS_NAMENODE_USER=root
+      - HDFS_DATANODE_USER=root
+      - USER=root
+    volumes:
+      - ./data/namenode:/hadoop/dfs/name
+      - ./config/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml
+      - ./config/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml
+    command: bash -c 'test -d /hadoop/dfs/name/current || hdfs namenode -format -force; hdfs namenode'
+    networks:
+      - hadoop-net
+
+  datanode1:
+    image: apache/hadoop:3.3.6
+    container_name: hadoop-datanode1
+    hostname: datanode1
+    user: root
+    ports:
+      - "9864:9864"
+      - "9866:9866"
+    environment:
+      - HDFS_NAMENODE_USER=root
+      - HDFS_DATANODE_USER=root
+      - USER=root
+    volumes:
+      - ./data/datanode1:/hadoop/dfs/data
+      - ./config/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml
+      - ./config/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml
+    command: ["hdfs", "datanode"]
+    depends_on:
+      - namenode
+    networks:
+      - hadoop-net
+
+  datanode2:
+    image: apache/hadoop:3.3.6
+    container_name: hadoop-datanode2
+    hostname: datanode2
+    user: root
+    ports:
+      - "9865:9864"
+      - "9867:9866"
+    environment:
+      - HDFS_NAMENODE_USER=root
+      - HDFS_DATANODE_USER=root
+      - USER=root
+    volumes:
+      - ./data/datanode2:/hadoop/dfs/data
+      - ./config/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml
+      - ./config/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml
+    command: ["hdfs", "datanode"]
+    depends_on:
+      - namenode
+    networks:
+      - hadoop-net
+
+  client:
+    image: apache/hadoop:3.3.6
+    container_name: hadoop-client
+    hostname: hadoop-client
+    user: root
+    environment:
+      - HDFS_NAMENODE_USER=root
+      - HDFS_DATANODE_USER=root
+      - USER=root
+    volumes:
+      - ./config/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml
+      - ./config/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml
+      - ./scripts:/scripts
+    command: ["bash", "-c", "sleep infinity"]
+    depends_on:
+      - namenode
+    networks:
+      - hadoop-net
+
+networks:
+  hadoop-net:
+    driver: bridge

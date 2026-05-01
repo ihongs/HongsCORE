@@ -239,6 +239,7 @@ abstract public class JFigure implements IFigure {
      * 获取可比对的字段 (用于区间查询)
      * @return
      */
+    @Override
     public Set<String> getRankable() {
         if (null != _at_fns) {
             return  _at_fns;
@@ -253,20 +254,13 @@ abstract public class JFigure implements IFigure {
      * 获取可搜索的字段 (用于模糊查询)
      * @return
      */
+    @Override
     public Set<String> getSrchable() {
         if (null != _se_fns) {
             return  _se_fns;
         }
         _se_fns = getCaseNames("srchable");
         return _se_fns;
-    }
-
-    /**
-     * 获取可搜索的字段 (用于整体搜索, 默认同 getSrchable)
-     * @return
-     */
-    public Set<String> getRschable() {
-        return getSrchable();
     }
 
 }

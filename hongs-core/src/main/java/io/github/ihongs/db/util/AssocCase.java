@@ -257,19 +257,19 @@ public class AssocCase {
         }
         return this;
     }
-    public AssocCase allow(JFigure fc) {
+
+    /**
+     * 从表单对象设置许可字段
+     * @param fc
+     * @return
+     */
+    public AssocCase allow(IFigure fc) {
         allow(LISTABLE, fc.getListable());
         allow(FINDABLE, fc.getFindable());
         allow(SORTABLE, fc.getSortable());
         allow(SRCHABLE, fc.getSrchable());
         allow(RSCHABLE, fc.getRschable());
         allow(RANKABLE, fc.getRankable());
-        return this;
-    }
-    public AssocCase allow(IFigure fc) {
-        allow(LISTABLE, fc.getListable());
-        allow(FINDABLE, fc.getFindable());
-        allow(SORTABLE, fc.getSortable());
         return this;
     }
 

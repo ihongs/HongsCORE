@@ -190,7 +190,7 @@ import java.util.regex.Pattern;
  *
  * ==================== 完整示例 ====================
  *
- * <code>
+ * ```
  * # {{title}}
  * {%set greeting = "Hello"%}
  * {%if showWelcome%}
@@ -205,7 +205,7 @@ import java.util.regex.Pattern;
  *
  * Total: {{count(items)}} items
  * Price: {{format("%.2f", price)}}
- * </code>
+ * ```
  *
  * @author Hongs
  */

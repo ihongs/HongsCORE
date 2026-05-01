@@ -285,8 +285,8 @@ public class Template {
             }
 
             // 计算相对路径
-            String basePath = null;
-            String basePack = null;
+            String basePath;
+            String basePack;
             int lastSlas = name.lastIndexOf('/');
             if (lastSlas > 0) {
                 String dir = name.substring(0, lastSlas);

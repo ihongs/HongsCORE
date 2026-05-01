@@ -1427,7 +1427,7 @@ public class TestTemplate {
         {%include "template/resource_header.html"%}
         """;
 
-        Template engine = Template.compile(template, "!");
+        Template engine = Template.compile(template, "!/");
         String result = engine.render(context);
 
         String expected = """
@@ -1441,33 +1441,13 @@ public class TestTemplate {
     }
 
     @Test
-    public void testCompileWithNamedResourcePath() throws Exception {
-        // 测试具名资源路径 "!xxx"
-        String template = """
-        {%include "resource_header.html"%}
-        """;
-
-        Template engine = Template.compile(template, "!template");
-        String result = engine.render(context);
-
-        String expected = """
-        <header class="resource">
-            <h1>My Template</h1>
-            <p>Welcome to our resource-based template!</p>
-        </header>
-        """;
-
-        assertEquals("compileWithNamedResourcePath test failed", expected, result);
-    }
-
-    @Test
-    public void testIncludeWithDotSlash() throws Exception {
+    public void testIncludeWithRecentPath() throws Exception {
         // 测试 ./ 相对路径
         String template = """
         {%include "./resource_header.html"%}
         """;
 
-        Template engine = Template.compile(template, "!template");
+        Template engine = Template.compile(template, "!/template");
         String result = engine.render(context);
 
         String expected = """
@@ -1487,7 +1467,7 @@ public class TestTemplate {
         {%include "../resource_header.html"%}
         """;
 
-        Template engine = Template.compile(template, "!template/sub");
+        Template engine = Template.compile(template, "!/template/sub");
         String result = engine.render(context);
 
         String expected = """
@@ -1507,7 +1487,7 @@ public class TestTemplate {
         {%include "../../template/resource_header.html"%}
         """;
 
-        Template engine = Template.compile(template, "!sub/sub2");
+        Template engine = Template.compile(template, "!/sub/sub2");
         String result = engine.render(context);
 
         String expected = """

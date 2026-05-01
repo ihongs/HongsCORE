@@ -830,9 +830,12 @@ public class Template {
         }
 
         String p = path;
-        boolean isResource = p.startsWith("!");
-        if (isResource) {
-            p = p.substring(1);
+        boolean isResource;
+        if (p.startsWith("!/")) {
+            p = p.substring(2);
+            isResource = true ;
+        } else {
+            isResource = false;
         }
 
         // 去掉末尾的 /
@@ -843,11 +846,11 @@ public class Template {
         // 查找最后的 /
         int lastSlas = p.lastIndexOf('/');
         if (lastSlas < 1) { // 已是根目录
-            return isResource ? "!" : "" ;
+            return isResource ? "!/" : "";
         }
 
         String parent = p.substring(0, lastSlas);
-        return isResource ? "!"+parent : parent ;
+        return isResource ? "!/"+parent : parent;
     }
 
     // Block interface
@@ -1067,16 +1070,12 @@ public class Template {
                         }
                     }
 
-                    if (basePath.startsWith("!")) {
-                        // 资源路径，去掉'!'后得到目录，去掉可能的前导'/'
-                            basePath = basePath.substring(1);
-                        if (basePath.startsWith("/")) {
-                            basePath = basePath.substring(1);
+                    if (basePath.startsWith("!/")) {
+                        basePath = basePath.substring(2);
+                        if ( ! basePath.isEmpty()) {
+                            basePath = (basePath + "/" );
                         }
-                        if ( ! basePath.isEmpty(  ) ) {
-                            basePath = basePath + "/";
-                        }
-                        URL resoUrl  = ClassLoader.getSystemClassLoader( ).getResource(basePath + includePath);
+                        URL resoUrl = ClassLoader.getSystemClassLoader().getResource(basePath + includePath);
                         if (resoUrl != null) {
                             templateContent = new String(resoUrl.openStream().readAllBytes(), StandardCharsets.UTF_8);
                             break;

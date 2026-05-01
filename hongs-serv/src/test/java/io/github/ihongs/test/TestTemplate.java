@@ -216,7 +216,7 @@ public class TestTemplate {
         <footer>Copyright 2026</footer>
         """;
 
-        Template engine = Template.compile(template, Path.of(basePath));
+        Template engine = Template.compile(template, basePath);
         String result = engine.render(context);
 
         // 直接比较，不清理空白字符
@@ -245,7 +245,7 @@ public class TestTemplate {
 
         """;
 
-        Template engine = Template.compile(template, Path.of(basePath));
+        Template engine = Template.compile(template, basePath);
         String result = engine.render(ctx);
 
         // 直接比较，不清理空白字符
@@ -1337,6 +1337,187 @@ public class TestTemplate {
         """;
 
         testTemplate(template, ctx, expected);
+    }
+
+    @Test
+    public void testCompileByPath() throws Exception {
+        // 测试 compileByPath 方法从文件加载模板
+        Path headerPath = Path.of(basePath, "header.html");
+        Template engine = Template.compileByPath(headerPath);
+        String result = engine.render(context);
+
+        String expected = """
+            <header>
+                <h1>My Template</h1>
+                <p>Welcome to my website!</p>
+            </header>
+            """;
+
+        assertEquals("compileByPath test failed", expected, result);
+    }
+
+    @Test
+    public void testCompileByName() throws Exception {
+        // 测试 compileByName 方法从资源加载模板
+        // 资源文件位于 src/test/resources/template/resource_header.html
+        // compileByName 优先从 Core.CONF_PATH + "/" + name 加载，然后从资源 "/" + name 加载
+        Template engine = Template.compileByName("template/resource_header.html");
+        String result = engine.render(context);
+
+        String expected = """
+        <header class="resource">
+            <h1>My Template</h1>
+            <p>Welcome to our resource-based template!</p>
+        </header>""";
+
+        assertEquals("compileByName test failed", expected, result);
+    }
+
+    @Test
+    public void testCompileWithMultipleBasePaths() throws Exception {
+        // 测试多路径搜索，basePath 优先于资源路径
+        String template = """
+        {%include "header.html"%}
+        {%include "resource_header.html"%}
+        """;
+
+        // header.html 在 basePath，resource_header.html 在资源
+        Template engine = Template.compile(template, basePath, "!/template");
+        String result = engine.render(context);
+
+        String expected = """
+        <header>
+            <h1>My Template</h1>
+            <p>Welcome to my website!</p>
+        </header>
+
+        <header class="resource">
+            <h1>My Template</h1>
+            <p>Welcome to our resource-based template!</p>
+        </header>
+        """;
+
+        assertEquals("compileWithMultipleBasePaths test failed", expected, result);
+    }
+
+    @Test
+    public void testCompileWithResourcePathOnly() throws Exception {
+        // 测试仅使用资源路径
+        String template = """
+        {%include "resource_header.html"%}
+        """;
+
+        Template engine = Template.compile(template, "!/template");
+        String result = engine.render(context);
+
+        String expected = """
+        <header class="resource">
+            <h1>My Template</h1>
+            <p>Welcome to our resource-based template!</p>
+        </header>
+        """;
+
+        assertEquals("compileWithResourcePathOnly test failed", expected, result);
+    }
+
+    @Test
+    public void testCompileWithRootResourcePath() throws Exception {
+        // 测试根资源路径 "!"
+        String template = """
+        {%include "template/resource_header.html"%}
+        """;
+
+        Template engine = Template.compile(template, "!");
+        String result = engine.render(context);
+
+        String expected = """
+        <header class="resource">
+            <h1>My Template</h1>
+            <p>Welcome to our resource-based template!</p>
+        </header>
+        """;
+
+        assertEquals("compileWithRootResourcePath test failed", expected, result);
+    }
+
+    @Test
+    public void testCompileWithNamedResourcePath() throws Exception {
+        // 测试具名资源路径 "!xxx"
+        String template = """
+        {%include "resource_header.html"%}
+        """;
+
+        Template engine = Template.compile(template, "!template");
+        String result = engine.render(context);
+
+        String expected = """
+        <header class="resource">
+            <h1>My Template</h1>
+            <p>Welcome to our resource-based template!</p>
+        </header>
+        """;
+
+        assertEquals("compileWithNamedResourcePath test failed", expected, result);
+    }
+
+    @Test
+    public void testIncludeWithDotSlash() throws Exception {
+        // 测试 ./ 相对路径
+        String template = """
+        {%include "./resource_header.html"%}
+        """;
+
+        Template engine = Template.compile(template, "!template");
+        String result = engine.render(context);
+
+        String expected = """
+        <header class="resource">
+            <h1>My Template</h1>
+            <p>Welcome to our resource-based template!</p>
+        </header>
+        """;
+
+        assertEquals("testIncludeWithDotSlash test failed", expected, result);
+    }
+
+    @Test
+    public void testIncludeWithParentPath() throws Exception {
+        // 测试 ../ 相对路径（从 sub 目录回到 template 目录）
+        String template = """
+        {%include "../resource_header.html"%}
+        """;
+
+        Template engine = Template.compile(template, "!template/sub");
+        String result = engine.render(context);
+
+        String expected = """
+        <header class="resource">
+            <h1>My Template</h1>
+            <p>Welcome to our resource-based template!</p>
+        </header>
+        """;
+
+        assertEquals("testIncludeWithParentPath test failed", expected, result);
+    }
+
+    @Test
+    public void testIncludeWithMultiParentPath() throws Exception {
+        // 测试 ../../ 多级相对路径
+        String template = """
+        {%include "../../template/resource_header.html"%}
+        """;
+
+        Template engine = Template.compile(template, "!sub/sub2");
+        String result = engine.render(context);
+
+        String expected = """
+        <header class="resource">
+            <h1>My Template</h1>
+            <p>Welcome to our resource-based template!</p>
+        </header>
+        """;
+
+        assertEquals("testIncludeWithMultiParentPath test failed", expected, result);
     }
 
 }

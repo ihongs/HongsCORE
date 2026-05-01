@@ -4,6 +4,9 @@ import io.github.ihongs.Core;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.io.File;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
@@ -233,11 +236,11 @@ public class Template {
     /**
      * 模板构造
      * @param template 模板文本
-     * @param basePath 基准目录, include 时相对此目录
+     * @param basePaths 基准路径表, include 时相对此目录, 以"!"开头的路径为资源路径, 优先级同数组先后顺序
      * @return
      */
-    public static Template compile(String template, Path basePath) {
-        List<Block> blocks = parseTemplate(template, basePath);
+    public static Template compile(String template, String... basePaths) {
+        List<Block> blocks = parseTemplate(template, basePaths);
         return new Template(blocks);
     }
 
@@ -245,11 +248,60 @@ public class Template {
      * 模板构造
      * @param path 模板路径
      * @return
-     * @throws IOException
      */
-    public static Template compile(Path path) throws IOException {
-        List<Block> blocks = parseTemplate(Files.readString(path), path.getParent());
-        return new Template(blocks);
+    public static Template compileByPath(Path path) {
+        try {
+            String templateContent = Files.readString(path);
+            String basePath = path.getParent( ).toString( );
+            List<Block> blocks = parseTemplate(templateContent, new String[] {basePath});
+            return new Template(blocks);
+        } catch (IOException ex) {
+            throw new UnsupportedOperationException(ex);
+        }
+    }
+
+    /**
+     * 模板构造
+     * @param name 模板名称, 相对于 Core.CONF_PATH 和 ! (根资源)
+     * @return
+     */
+    public static Template compileByName(String name) {
+        try {
+            String templateContent = null;
+
+            File file = new File(Core.CONF_PATH + "/" + name);
+            if ( file.exists( ) ) {
+                templateContent = Files.readString(file.toPath());
+            } else
+            {
+                URL resourceUrl = ClassLoader.getSystemClassLoader().getResource(name);
+                if (resourceUrl != null) {
+                    templateContent = new String(resourceUrl.openStream().readAllBytes(), StandardCharsets.UTF_8);
+                }
+            }
+
+            if (templateContent == null) {
+                throw new IOException("Template not found: " + name);
+            }
+
+            // 计算相对路径
+            String basePath = null;
+            String basePack = null;
+            int lastSlas = name.lastIndexOf('/');
+            if (lastSlas > 0) {
+                String dir = name.substring(0, lastSlas);
+                basePath = Core.CONF_PATH + "/" + dir;
+                basePack = "!" + dir;
+            } else {
+                basePath = Core.CONF_PATH;
+                basePack = "!";
+            }
+
+            List<Block> blocks = parseTemplate(templateContent, new String[] {basePath, basePack});
+            return new Template(blocks);
+        } catch (IOException ex) {
+            throw new UnsupportedOperationException(ex);
+        }
     }
 
     /**
@@ -344,16 +396,16 @@ public class Template {
         return writer.toString();
     }
 
-    private static List<Block> parseTemplate(String template, Path basePath) {
+    private static List<Block> parseTemplate(String template, String[] basePaths) {
         // 为规避多余的空行影响格式
         // 清理独行指令标签前后空白及末尾换行
         // 方法简单但对字符串有修改会造成拷贝
         //template = template.replaceAll("(?<=\n)[ \t]*(\\{%.*?%\\}|\\{#.*?#\\})[ \t]*\n", "$1");
 
-        return parseTemplate(template, basePath, 0, template.length());
+        return parseTemplate(template, basePaths, 0, template.length());
     }
 
-    private static List<Block> parseTemplate(String baseTemp, Path basePath, int bPos, int ePos) {
+    private static List<Block> parseTemplate(String baseTemp, String[] basePaths, int bPos, int ePos) {
         String template = baseTemp.substring(bPos, ePos);
         List<Block> blocks = new ArrayList<>();
         int index = 0;
@@ -439,12 +491,12 @@ public class Template {
                     do {
                         elifStart = findDirEls(template, elifEnd, endifStart);
                         if (elifStart == -1) {
-                            elifBlocks = parseTemplate(baseTemp, basePath, bPos + elifEnd, bPos + endifStart);
+                            elifBlocks = parseTemplate(baseTemp, basePaths, bPos + elifEnd, bPos + endifStart);
                             elifGroups.add(new IfBlock.Group(condition, elifBlocks));
 
                             elifEnd = endifEnd;
                         } else {
-                            elifBlocks = parseTemplate(baseTemp, basePath, bPos + elifEnd, bPos + elifStart );
+                            elifBlocks = parseTemplate(baseTemp, basePaths, bPos + elifEnd, bPos + elifStart );
                             elifGroups.add(new IfBlock.Group(condition, elifBlocks));
 
                             // else or elif directive
@@ -460,7 +512,7 @@ public class Template {
                                 condition  = dir.substring(5).trim(); // 下一个的条件
                             } else
                             if (dir.equals("else")) {
-                                elseBlocks = parseTemplate(baseTemp, basePath, bPos + elseEnd, bPos + endifStart );
+                                elseBlocks = parseTemplate(baseTemp, basePaths, bPos + elseEnd, bPos + endifStart );
                                 break;
                             } else {
                                 int currentLine = countLines(baseTemp, bPos + elifStart);
@@ -503,9 +555,9 @@ public class Template {
                     // 寻找同级的 else
                     int elseStart = findDirEls(template, end, endforStart);
                     if (elseStart == -1) {
-                        baseBlocks = parseTemplate(baseTemp, basePath, bPos + end, bPos + endforStart);
+                        baseBlocks = parseTemplate(baseTemp, basePaths, bPos + end, bPos + endforStart);
                     } else {
-                        baseBlocks = parseTemplate(baseTemp, basePath, bPos + end, bPos + elseStart  );
+                        baseBlocks = parseTemplate(baseTemp, basePaths, bPos + end, bPos + elseStart  );
 
                         // else directive
                         int elseEnd = template.indexOf("%}", elseStart);
@@ -517,7 +569,7 @@ public class Template {
 
                         String dir = template.substring (elseStart + 2, elseEnd - 2).trim();
                         if (dir.equals("else")) {
-                            elseBlocks = parseTemplate(baseTemp, basePath, bPos + elseEnd, bPos + endforStart);
+                            elseBlocks = parseTemplate(baseTemp, basePaths, bPos + elseEnd, bPos + endforStart);
                         } else {
                             int currentLine = countLines(baseTemp, bPos + elseStart);
                             throw new IllegalArgumentException("Line " + currentLine + ": Invalid statement in for: " + dir);
@@ -568,7 +620,7 @@ public class Template {
                         contentExpr = remaining.substring(5).trim();
                     }
 
-                    blocks.add(new InBlock(basePath, includeName, contentExpr));
+                    blocks.add(new InBlock(basePaths, includeName, contentExpr));
                     index = end;
                 } else
                 if (directive.equals("else")
@@ -772,6 +824,32 @@ public class Template {
         }
     }
 
+    private static String upward(String path) {
+        if (path == null || path.isEmpty()) {
+            return null;
+        }
+
+        String p = path;
+        boolean isResource = p.startsWith("!");
+        if (isResource) {
+            p = p.substring(1);
+        }
+
+        // 去掉末尾的 /
+        while (p.endsWith("/")) {
+            p = p.substring(0, p.length() - 1);
+        }
+
+        // 查找最后的 /
+        int lastSlas = p.lastIndexOf('/');
+        if (lastSlas < 1) { // 已是根目录
+            return isResource ? "!" : "" ;
+        }
+
+        String parent = p.substring(0, lastSlas);
+        return isResource ? "!"+parent : parent ;
+    }
+
     // Block interface
     private interface Block {
         void render(Map<String, Object> context, Writer writer) throws IOException;
@@ -958,19 +1036,105 @@ public class Template {
         private final List<Block> innerBlocks;
         private final String contextExpr;
 
-        public InBlock(Path basePath, String includePath, String contextExpr) {
-            if (basePath == null) {
-                throw new UnsupportedOperationException("Include directive requires a basePath to be set");
+        public InBlock(String[] basePaths, String includePath, String contextExpr) {
+            if (basePaths == null || basePaths.length == 0) {
+                throw new UnsupportedOperationException("Include directive requires basePaths to be set");
             }
 
             try {
-                // Load the included template file
-                Path currPath = Path.of(basePath.toString(), includePath);
-                if (!currPath.toFile().exists()) {
-                    throw new IOException("Template file not found: "+currPath.toAbsolutePath());
+                String templateContent = null;
+
+                // 处理相对路径, 计算上级层数
+                int upLevels = 0;
+                while (includePath.startsWith("../")) {
+                    upLevels ++ ;
+                    includePath = includePath.substring(3);
+                }
+                while (includePath.startsWith( "./")) {
+                    includePath = includePath.substring(2);
                 }
 
-                this.innerBlocks = parseTemplate(Files.readString(currPath), currPath.getParent());
+                IN: for (String basePath : basePaths) {
+                    if (basePath == null || basePath.isEmpty()) {
+                        continue;
+                    }
+
+                    // 处理上级目录 ../
+                    for (int i = 0; i < upLevels; i ++) {
+                        basePath = upward(basePath);
+                        if (basePath == null) {
+                            continue IN;
+                        }
+                    }
+
+                    if (basePath.startsWith("!")) {
+                        // 资源路径，去掉'!'后得到目录，去掉可能的前导'/'
+                            basePath = basePath.substring(1);
+                        if (basePath.startsWith("/")) {
+                            basePath = basePath.substring(1);
+                        }
+                        if ( ! basePath.isEmpty(  ) ) {
+                            basePath = basePath + "/";
+                        }
+                        URL resoUrl  = ClassLoader.getSystemClassLoader( ).getResource(basePath + includePath);
+                        if (resoUrl != null) {
+                            templateContent = new String(resoUrl.openStream().readAllBytes(), StandardCharsets.UTF_8);
+                            break;
+                        }
+                    } else {
+                        // 文件路径
+                        Path currPath = Path.of (basePath , includePath);
+                        if ( currPath.toFile().exists() ) {
+                            templateContent = Files.readString(currPath);
+                            break;
+                        }
+                    }
+                }
+
+                if (templateContent == null) {
+                    throw new IOException("Template not found: " + includePath);
+                }
+
+                // 计算 includePath 的目录部分（基于处理后的路径）
+                String includeDir = "";
+                int lastSlash = includePath.lastIndexOf('/');
+                if (lastSlash > 0) {
+                    includeDir = includePath.substring(0, lastSlash);
+                }
+
+                // 为每个 basePath 都加上 includePath 的相对路径
+                String[] newBasePaths;
+                if (upLevels == 0 && includeDir.isEmpty()) {
+                    // 未切换目录，直接使用原 basePaths
+                    newBasePaths = basePaths;
+                } else {
+                    newBasePaths = new String[basePaths.length];
+                    for (int i = 0; i < basePaths.length; i ++) {
+                        String bp = basePaths[i];
+                        if (bp == null || bp.isEmpty()) {
+                            newBasePaths[i] = bp;
+                        } else {
+                            String resolved = bp;
+                            for (int j = 0; j < upLevels; j ++) {
+                                resolved = upward(resolved);
+                                if (resolved == null) {
+                                    break;
+                                }
+                            }
+                            if (resolved == null) {
+                                newBasePaths[i] = null;
+                            } else {
+                                if (includeDir.isEmpty()) {
+                                    newBasePaths[i] = resolved;
+                                } else {
+                                    newBasePaths[i] = resolved +"/"+ includeDir;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                this.innerBlocks = parseTemplate(templateContent, newBasePaths);
                 this.contextExpr = contextExpr;
             }
             catch (IOException ex) {

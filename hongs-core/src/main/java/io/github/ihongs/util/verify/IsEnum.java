@@ -3,6 +3,7 @@ package io.github.ihongs.util.verify;
 import io.github.ihongs.CruxException;
 import io.github.ihongs.action.FormSet;
 import io.github.ihongs.util.Synt;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,6 +27,20 @@ public class IsEnum extends Rule {
             return PASS;
         }
 
+        // 内部 datalist 优先
+        List list = Synt.asList(getParam("datalist"));
+        if (null != list) {
+            String v = Synt.asString(value);
+            for(Object entry : list) {
+                List a = Synt.asList(entry);
+                String s = Synt.asString (a.get( 0 ));
+                if (v.equals(s)) {
+                    return value;
+                }
+            }
+            throw new Wrong("@fore.form.not.in.enum", value);
+        }
+
         String conf = Synt.asString(getParam("conf"));
         String name = Synt.asString(getParam("enum"));
         if (conf == null || "".equals(conf)) {
@@ -37,11 +52,11 @@ public class IsEnum extends Rule {
 
         Map data;
         try {
-            data = FormSet.getInstance(conf).getEnum(name);
+            data = FormSet.getInstance(conf).getEnum( name );
         } catch ( CruxException e) {
             throw e.toExemption( );
         }
-        if (! data.containsKey( value.toString( ) ) ) {
+        if (! data.containsKey(Synt.asString(value))) {
             throw new Wrong("@fore.form.not.in.enum", value);
         }
 

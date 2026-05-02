@@ -265,6 +265,18 @@ public class SelectHelper {
             if (null != type) {
                 switch (type) {
                 case "enum" : {
+                    // 内部 datalist 优先
+                    List list = Synt.asList(mt.get("datalist"));
+                    if (null != list) {
+                        Map xnum = new LinkedHashMap( );
+                        for (Object o : list) {
+                            List item = Synt.asList (o);
+                            xnum.put(item.get(0) , item.get(1));
+                        }
+                        enums.put(name , xnum);
+                        break;
+                    }
+
                     String xonf = (String) mt.get("conf");
                     String xame = (String) mt.get("enum");
                     String lead = (String) mt.get("data-ln");
@@ -1003,7 +1015,7 @@ public class SelectHelper {
      * 将字段值转换为字段的类型
      * @param val
      * @param type
-     * @return 
+     * @return
      */
     private Object infoAsType(String val, String type) {
         if (null != type) switch (type) {

@@ -68,6 +68,7 @@ services:
       - HDFS_NAMENODE_USER=root
       - HDFS_DATANODE_USER=root
       - USER=root
+      - HDFS_DATANODE_OPTS=-Ddfs.datanode.address=0.0.0.0:9867 -Ddfs.datanode.http.address=0.0.0.0:9865
     volumes:
       - ./data/datanode2:/hadoop/dfs/data
       - ./config/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml

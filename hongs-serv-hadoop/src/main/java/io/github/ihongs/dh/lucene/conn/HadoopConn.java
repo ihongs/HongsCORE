@@ -4,11 +4,10 @@ import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLogger;
-import io.github.ihongs.util.Syno;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Collection;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -36,6 +35,7 @@ import org.apache.lucene.store.Lock;
 import org.apache.lucene.store.LockFactory;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
+import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.ZooKeeper;
 
@@ -75,28 +75,62 @@ public class HadoopConn implements Conn {
 
     }
 
-    private HadoopConn(String dbpath, String dbname) {
-        String dataPath = CoreConfig.getInstance().getProperty("core.hadoop.data.path", "");
+    public HadoopConn(String dbpath, String dbname) {
+        this(dbpath, dbname, CoreConfig.getInstance());
+    }
 
-        Map mm = new HashMap(2);
-        mm.put("SERVER_ID" , Core.SERVER_ID);
-        mm.put("DATA_PATH" , dataPath  );
-        dbpath = Syno.inject(dbpath, mm);
-
-        if (! dbpath.startsWith("/")
-        &&  ! dbpath.startsWith("hdfs://")
-        &&  ! dbpath.startsWith("file://") ) {
-            dbpath = dataPath + "/" + dbpath;
-        }
+    public HadoopConn(String dbpath, String dbname, Properties cc) {
+        String dataPath = cc.getProperty("core.hadoop.data.path", "");
+        String lockPath = cc.getProperty("core.zookeeper.lock.path", "locks");
 
         this.dbname = dbname;
-        this.dbpath = dbpath;
+        this.dbpath = dataPath + "/" + dbpath;
+        this.lkpath = lockPath + "/" + dbname;
+        this.conf = new Configuration();
+        
+        // Hadoop 配置
+        String fsDefs = cc.getProperty("core.hadoop.fs.defaultFS");
+        if (fsDefs != null && !fsDefs.isEmpty()) {
+            conf.set("fs.defaultFS", fsDefs);
+        }
+        String nnAddr = cc.getProperty("core.hadoop.dfs.namenode.http-address");
+        if (nnAddr != null && !nnAddr.isEmpty()) {
+            conf.set("dfs.namenode.http-address", nnAddr);
+        }
+        String replication = cc.getProperty("core.hadoop.dfs.replication");
+        if (replication != null && !replication.isEmpty()) {
+            conf.set("dfs.replication", replication);
+        }
+        String blkSize = cc.getProperty("core.hadoop.dfs.blocksize");
+        if (blkSize != null && !blkSize.isEmpty()) {
+            conf.set("dfs.blocksize", blkSize);
+        }
+        String bufSize = cc.getProperty("core.hadoop.ram.buf.size");
+        if (bufSize != null && !bufSize.isEmpty()) {
+            conf.set("ram.buf.size", bufSize);
+        }
+        String bufDocs = cc.getProperty("core.hadoop.max.buf.docs");
+        if (bufDocs != null && !bufDocs.isEmpty()) {
+            conf.set("max.buf.docs", bufDocs);
+        }
+
+        // ZooKeeper 配置
+        String zkConnect = cc.getProperty("core.zookeeper.connect");
+        String zkTimeout = cc.getProperty("core.zookeeper.timeout");
+        if (zkConnect != null && !zkConnect.isEmpty()) {
+            conf.set("zookeeper.connect", zkConnect);
+        }
+        if (zkTimeout != null && !zkTimeout.isEmpty()) {
+            conf.set("zookeeper.timeout", zkTimeout);
+        }
     }
 
     private final ReentrantReadWriteLock WL = new ReentrantReadWriteLock();
     private final ReentrantReadWriteLock RL = new ReentrantReadWriteLock();
-    private final String dbpath;
     private final String dbname;
+    private final String dbpath;
+    private final String lkpath;
+    private final Configuration  conf;
     private IndexWriter writer = null;
     private IndexReader reader = null;
     private IndexSearcher finder = null;
@@ -115,42 +149,11 @@ public class HadoopConn implements Conn {
 
     private HdfsDirectory getDirectory() throws IOException {
         if (dfsDir == null) {
-            // 配置 hadoop 连接参数
-            Configuration conf = new Configuration();
-            CoreConfig cc = CoreConfig.getInstance();
-
-            String fsDefault = cc.getProperty("core.hadoop.fs.defaultFS");
-            if (fsDefault != null && !fsDefault.isEmpty()) {
-                conf.set("fs.defaultFS", fsDefault);
+            synchronized (this) {
+                if (dfsDir == null) {
+                    dfsDir = new HdfsDirectory(dbpath, lkpath, conf);
+                }
             }
-
-            String nnAddr = cc.getProperty("core.hadoop.dfs.namenode.http-address");
-            if (nnAddr != null && !nnAddr.isEmpty()) {
-                conf.set("dfs.namenode.http-address", nnAddr);
-            }
-
-            String replication = cc.getProperty("core.hadoop.dfs.replication");
-            if (replication != null && !replication.isEmpty()) {
-                conf.set("dfs.replication", replication);
-            }
-
-            String blockSize = cc.getProperty("core.hadoop.dfs.blocksize");
-            if (blockSize != null && !blockSize.isEmpty()) {
-                conf.set("dfs.blocksize", blockSize);
-            }
-
-            // ZooKeeper 配置传递
-            String zkConnect = cc.getProperty("core.zookeeper.connect");
-            String zkTimeout = cc.getProperty("core.zookeeper.timeout");
-            if (zkConnect != null && !zkConnect.isEmpty()) {
-                conf.set( "zookeeper.connect", zkConnect );
-            }
-            if (zkTimeout != null && !zkTimeout.isEmpty()) {
-                conf.set( "zookeeper.timeout", zkTimeout );
-            }
-            conf.set( "zookeeper.lock.root", "/hongs/locks/" + dbname );
-
-            dfsDir = new HdfsDirectory(new Path(dbpath), conf);
         }
         return dfsDir;
     }
@@ -172,15 +175,14 @@ public class HadoopConn implements Conn {
                 return writer;
             }
 
-            CoreConfig cc = CoreConfig.getInstance();
             IndexWriterConfig iwc = new IndexWriterConfig();
-            iwc.setRAMBufferSizeMB(cc.getProperty("core.hadoop.ram.buf.size", 16D));
-            iwc.setMaxBufferedDocs(cc.getProperty("core.hadoop.max.buf.docs", -1 ));
+            iwc.setRAMBufferSizeMB(conf.getDouble("core.hadoop.ram.buf.size", 16D));
+            iwc.setMaxBufferedDocs(conf.getInt   ("core.hadoop.max.buf.docs", -1 ));
             iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
             iwc.setCommitOnClose(true);
 
             HdfsDirectory dir = getDirectory();
-            writer = new IndexWriter( dir, iwc );
+            writer = new IndexWriter(dir, iwc);
 
             CoreLogger.trace("Start the lucene writer for {} on HDFS", dbname);
 
@@ -305,11 +307,11 @@ public class HadoopConn implements Conn {
         private final FileSystem fs;
         private final Path path;
 
-        public HdfsDirectory(Path path, Configuration conf) throws IOException {
-            super(new ZkLockFactory(conf));
+        public HdfsDirectory(String dbpath, String lkpath, Configuration conf) throws IOException {
+            super(new ZkLockFactory(lkpath, conf));
 
-            this.path  =  path ;
-            this.fs = path.getFileSystem( conf );
+            this.path = new Path (dbpath);
+            this.fs = path.getFileSystem(conf);
             if (fs.exists(path) == false) {
                 fs.mkdirs(path);
             }
@@ -504,18 +506,18 @@ public class HadoopConn implements Conn {
         private final ZooKeeper zk;
         private final String lockRoot;
 
-        public ZkLockFactory(Configuration conf) throws IOException {
-            int timeout = conf.getInt("zookeeper.timeout", 30000);
+        public ZkLockFactory(String lkpath, Configuration conf) throws IOException {
+            this. lockRoot = lkpath;
             String connect = conf.get("zookeeper.connect", "localhost:2181");
-            this.lockRoot = conf.get("zookeeper.lock.root", "/hongs/locks");
+            int    timeout = conf.getInt("zookeeper.timeout", 30000);
 
             try {
                 // 使用 CountDownLatch 等待连接建立
-                final CountDownLatch connectedLatch = new CountDownLatch(1);
-                this.zk = new org.apache.zookeeper.ZooKeeper(connect, timeout, new org.apache.zookeeper.Watcher() {
+                final CountDownLatch connectedLatch = new CountDownLatch (1);
+                this.zk = new ZooKeeper(connect, timeout, new Watcher() {
                     @Override
                     public void process(org.apache.zookeeper.WatchedEvent event) {
-                        if (event.getState() == org.apache.zookeeper.Watcher.Event.KeeperState.SyncConnected) {
+                        if (event.getState() == Watcher.Event.KeeperState.SyncConnected) {
                             connectedLatch.countDown();
                         }
                     }
@@ -569,18 +571,17 @@ public class HadoopConn implements Conn {
 
         private final ZooKeeper zk;
         private final String lockPath;
-        private volatile boolean isLocked = false;
 
         public ZkLock(ZooKeeper zk, String lockPath) {
             this.zk = zk;
             this.lockPath = lockPath;
         }
 
+        /**
+         * 尝试获取锁
+         * @throws IOException 如果锁已被其他进程持有或获取失败
+         */
         public void obtain() throws IOException {
-            if (isLocked) {
-                return;
-            }
-
             try {
                 // 创建临时节点获取锁
                 // EPHEMERAL: 会话断开时自动删除
@@ -588,7 +589,6 @@ public class HadoopConn implements Conn {
                     ZooDefs.Ids.OPEN_ACL_UNSAFE,
                     CreateMode.EPHEMERAL
                 );
-                isLocked = true;
             } catch (KeeperException.NodeExistsException e) {
                 throw new IOException("Lock already held: " + lockPath, e);
             } catch (Exception e) {
@@ -596,34 +596,33 @@ public class HadoopConn implements Conn {
             }
         }
 
+        /**
+         * 释放锁
+         * Lucene 的 Lock.close() 实际上是释放锁的操作
+         */
         @Override
         public void close() throws IOException {
-            if (isLocked) {
-                try {
-                    if (zk.exists(lockPath, false) != null) {
-                        zk.delete(lockPath, -1);
-                    }
-                } catch (Exception e) {
-                    // 忽略删除失败（可能已自动过期）
-                } finally {
-                    isLocked = false;
+            try {
+                if (zk.exists(lockPath, false) != null) {
+                    zk.delete(lockPath, -1);
                 }
+            } catch (Exception e) {
+                // 忽略删除失败（可能已自动过期或被其他进程删除）
             }
         }
 
+        /**
+         * 验证锁是否有效（仍被持有）
+         * Lucene 在写入过程中会调用此方法验证锁状态
+         */
         @Override
         public void ensureValid() throws IOException {
-            if (isLocked) {
-                try {
-                    if (zk.exists(lockPath, false) == null) {
-                        isLocked = false;
-                        throw new IOException("Lock not valid: " + lockPath);
-                    }
-                } catch (Exception e) {
-                    throw new IOException("Failed to check lock", e);
+            try {
+                if (zk.exists(lockPath, false) == null) {
+                    throw new IOException("Lock not held: " + lockPath);
                 }
-            } else {
-                throw new IOException("Lock not held");
+            } catch (Exception e) {
+                throw new IOException("Failed to check lock validity", e);
             }
         }
     }

@@ -14,11 +14,11 @@
     </property>
     <property>
         <name>dfs.namenode.http-address</name>
-        <value>namenode:9870</value>
+        <value>0.0.0.0:9870</value>
     </property>
     <property>
         <name>dfs.namenode.rpc-address</name>
-        <value>namenode:9000</value>
+        <value>0.0.0.0:9000</value>
     </property>
     <property>
         <name>dfs.datanode.http.address</name>
@@ -39,5 +39,10 @@
     <property>
         <name>dfs.namenode.datanode.registration.ip-hostname-check</name>
         <value>false</value>
+    </property>
+    <!-- 让客户端使用容器 hostname 访问 DataNode -->
+    <property>
+        <name>dfs.client.use.datanode.hostname</name>
+        <value>true</value>
     </property>
 </configuration>

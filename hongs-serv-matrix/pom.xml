@@ -12,6 +12,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <kafka.version>1.0.0</kafka.version>
     </properties>
     <dependencies>
         <dependency>
@@ -28,6 +29,25 @@
             <artifactId>hongs-serv-search</artifactId>
             <groupId>${project.groupId}</groupId>
             <version>${project.version}</version>
+        </dependency>
+        <!-- 广播同步 -->
+        <dependency>
+            <artifactId>kafka_2.12</artifactId>
+            <groupId>org.apache.kafka</groupId>
+            <version>${kafka.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <artifactId>kafka-clients</artifactId>
+            <groupId>org.apache.kafka</groupId>
+            <version>${kafka.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <artifactId>kafka-streams</artifactId>
+            <groupId>org.apache.kafka</groupId>
+            <version>${kafka.version}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

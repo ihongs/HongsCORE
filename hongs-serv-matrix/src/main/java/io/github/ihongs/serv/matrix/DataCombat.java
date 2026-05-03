@@ -868,6 +868,15 @@ public class DataCombat {
     public static Set<String> getRevertNames() {
         Set<String> ents = new LinkedHashSet();
 
+        // 增加独立配置的表
+        Set<String> incl = Synt.toSet(
+            CoreConfig.getInstance("matrix")
+                      .getProperty("matrix.forms")
+        );
+        if (incl != null && ! incl.isEmpty()) {
+            ents.   addAll(incl);
+        }
+
         // 提取所有表单记录
         try {
             // furl_id 为 - 表示这是一个内置关联项, 这样的无需处理
@@ -884,15 +893,6 @@ public class DataCombat {
             }
         } catch (CruxException ex) {
             throw ex.toExemption( );
-        }
-
-        // 增加额外定制的表
-        Set<String> incl = Synt.toSet(
-            CoreConfig.getInstance("matrix")
-                      .getProperty("matrix.forms")
-        );
-        if (incl != null && ! incl.isEmpty()) {
-            ents.   addAll(incl);
         }
 
         // 排除特殊处理的表
@@ -914,6 +914,15 @@ public class DataCombat {
     public static Set<String> getUprootNames() {
         Set<String> ents = new LinkedHashSet();
 
+        // 增加独立配置的表
+        Set<String> incl = Synt.toSet(
+            CoreConfig.getInstance("matrix")
+                      .getProperty("matrix.forms")
+        );
+        if (incl != null && ! incl.isEmpty()) {
+            ents.   addAll(incl);
+        }
+
         // 提取所有表单记录
         try {
             // furl_id 为 - 表示这是一个内置关联项, 这样的无需处理
@@ -930,15 +939,6 @@ public class DataCombat {
             }
         } catch (CruxException ex) {
             throw ex.toExemption( );
-        }
-
-        // 增加额外定制的表
-        Set<String> incl = Synt.toSet(
-            CoreConfig.getInstance("matrix")
-                      .getProperty("matrix.forms")
-        );
-        if (incl != null && ! incl.isEmpty()) {
-            ents.   addAll(incl);
         }
 
         // 排除特殊处理的表

@@ -62,6 +62,8 @@ CREATE TABLE "a_matrix_data" (
   "id" CHAR(16) NOT NULL,
   "form_id" CHAR(16) NOT NULL,
   "user_id" CHAR(16) NOT NULL,
+  "conf" VARCHAR(255) DEFAULT NULL,
+  "form" VARCHAR(255) DEFAULT NULL,
   "name" VARCHAR(255) DEFAULT NULL,
   "memo" VARCHAR(255) DEFAULT NULL,
   "meno" VARCHAR(100) DEFAULT NULL,

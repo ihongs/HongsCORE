@@ -10,9 +10,8 @@
     </parent>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <kafka.version>1.0.0</kafka.version>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
     </properties>
     <dependencies>
         <dependency>
@@ -30,23 +29,11 @@
             <groupId>${project.groupId}</groupId>
             <version>${project.version}</version>
         </dependency>
-        <!-- 广播同步 -->
+        <!-- Jakarta JMS API -->
         <dependency>
-            <artifactId>kafka_2.12</artifactId>
-            <groupId>org.apache.kafka</groupId>
-            <version>${kafka.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <artifactId>kafka-clients</artifactId>
-            <groupId>org.apache.kafka</groupId>
-            <version>${kafka.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <artifactId>kafka-streams</artifactId>
-            <groupId>org.apache.kafka</groupId>
-            <version>${kafka.version}</version>
+            <groupId>jakarta.jms</groupId>
+            <artifactId>jakarta.jms-api</artifactId>
+            <version>3.1.0</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

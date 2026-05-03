@@ -63,7 +63,12 @@ import org.apache.lucene.search.BooleanClause;
 public class Data extends SearchEntity {
 
     /**
-     * 分区字段名
+     * 存入时间字段名
+     */
+    public static final String  UP_TIME_KEY  =  "pt";
+
+    /**
+     * 数据分区字段名
      */
     public static final String  PART_ID_KEY  =  "pd";
 
@@ -644,6 +649,8 @@ public class Data extends SearchEntity {
         nd.put("__data__", dd);
         nd.put("data", getData(dd));
         nd.put("name", getTval(dd, "name"));
+        nd.put("conf", getConf());
+        nd.put("form", getForm());
 
         // 操作备注和终端代码
         if (rd.containsKey("memo")) {
@@ -726,6 +733,8 @@ public class Data extends SearchEntity {
         nd.put("__data__", dd);
         nd.put("data", getData(dd));
         nd.put("name", getTval(dd, "name"));
+        nd.put("conf", getConf());
+        nd.put("form", getForm());
 
         // 操作备注和终端代码
         if (rd.containsKey("memo")) {
@@ -838,6 +847,8 @@ public class Data extends SearchEntity {
         nd.put("__data__", dd);
         nd.put("data", getData(dd));
         nd.put("name", getTval(dd, "name"));
+        nd.put("conf", getConf());
+        nd.put("form", getForm());
 
         // 操作备注和终端代码
         if (rd.containsKey("memo")) {
@@ -901,6 +912,8 @@ public class Data extends SearchEntity {
         // 拷贝快照和日志标题
         nd.put("data", od.get("data"));
         nd.put("name", od.get("name"));
+        nd.put("conf", getConf());
+        nd.put("form", getForm());
 
         // 操作备注和终端代码
         if (rd.containsKey("memo")) {
@@ -989,6 +1002,8 @@ public class Data extends SearchEntity {
         // 拷贝快照和日志标题
         nd.put("data", od.get("data"));
         nd.put("name", od.get("name"));
+        nd.put("conf", getConf());
+        nd.put("form", getForm());
 
         // 操作备注和终端代码
         if (rd.containsKey("memo")) {
@@ -1115,6 +1130,8 @@ public class Data extends SearchEntity {
         // 数据快照和日志标题
         nd.put("data", sd.get("data"));
         nd.put("name", sd.get("name"));
+        nd.put("conf", getConf());
+        nd.put("form", getForm());
 
         // 操作备注和终端代码
         if (rd.containsKey("memo")) {
@@ -1248,6 +1265,9 @@ public class Data extends SearchEntity {
             doc.add(new StringField("@"+PART_ID_KEY, pd, Field.Store.NO));
             doc.add(new StoredField(/**/PART_ID_KEY, pd));
         }
+
+        // 写入变更时间
+        doc.add(new StoredField(UP_TIME_KEY, System.currentTimeMillis() / 1000L));
 
         super.padDoc(doc, map, rep);
     }
@@ -1626,8 +1646,8 @@ public class Data extends SearchEntity {
     /**
      * 扩散操作
      * 用于广播数据变更以同步
-     * @param us
-     * @param rs
+     * @param us 已更新的
+     * @param rs 已删除的
      */
     protected void diffuses(Set us, Set rs) {
         if (us == null || us.isEmpty()) {
@@ -1643,15 +1663,18 @@ public class Data extends SearchEntity {
             return;
         }}
 
+        String conf = getConf();
+        String form = getForm();
+
         DataDiffuser co = (DataDiffuser) Core.getInstance(cn);
-        if (rs != null && ! rs.isEmpty()) {
-            for(Object id : rs) {
-                co.delete(getConf(), getForm(), Synt.asString(id));
-            }
-        }
         if (us != null && ! us.isEmpty()) {
             for(Object id : us) {
-                co.update(getConf(), getForm(), Synt.asString(id));
+                co.update(conf, form, Synt.asString(id));
+            }
+        }
+        if (rs != null && ! rs.isEmpty()) {
+            for(Object id : rs) {
+                co.delete(conf, form, Synt.asString(id));
             }
         }
     }

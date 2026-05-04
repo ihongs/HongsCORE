@@ -22,6 +22,9 @@ import jakarta.jms.Message;
 import jakarta.jms.MessageConsumer;
 import jakarta.jms.Session;
 import jakarta.jms.Topic;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.lucene.document.Document;
 
 /**
@@ -37,6 +40,7 @@ public class SyncConsumer implements Runnable {
         Chore.getInstance().run(() -> {
             Core core = Core.getInstance();
             Core.ACTION_NAME.set("matrix.sync.consumer");
+            core.set(Cnst.REFLUX_MODE, true); // 开启事务, 分批提交
 
             ConnectionFactory factory   ;
             Connection        connection;
@@ -62,7 +66,28 @@ public class SyncConsumer implements Runnable {
                 DB       db  = DB.getInstance("matrix");
                 Table    tb  = db.getTable   ( "data" );
                 String   sql = "SELECT * FROM "+tb.tableName+" WHERE id = ? AND etime = ?";
-                Object[] pms = new Object[] {"", 00};
+                Object[] pms = new Object [] { "", 00 };
+
+                /**
+                 * 间隔一段时间或累计一定数量提交一次
+                 */
+                final Set <Data>   mods = new HashSet();
+                final AtomicInteger cnt = new AtomicInteger(0);
+                final int max = 1000; // 1000 条
+                final int sec = 60  ; // 60 秒
+                Chore.getInstance().ran(() -> {
+                    if (mods.isEmpty()) {
+                        return;
+                    }
+                    synchronized (mods) {
+                        for (Data mod : mods) {
+                            mod.commit();
+                            mod.close ();
+                        }
+                        mods.clear();
+                        cnt .set(00);
+                    }
+                }, sec, sec);
 
                 while (true) {
                     Message msg = consumer.receive();
@@ -100,7 +125,20 @@ public class SyncConsumer implements Runnable {
                             } else {
                                 mod . delDoc(id);
                             }
-                            mod.commit();
+                            mods.add(mod);
+
+                            // 达量提交
+                            int num  = cnt.incrementAndGet();
+                            if (num >= max) {
+                                synchronized (mods) {
+                                    for (Data mob : mods) {
+                                        mob.commit();
+                                        mob.close ();
+                                    }
+                                    mods.clear();
+                                    cnt .set(00);
+                                }
+                            }
                         }
                         catch (CruxException ex) {
                             CoreLogger.error(ex);
@@ -129,8 +167,8 @@ public class SyncConsumer implements Runnable {
             try {
                 DB       db  = DB.getInstance("matrix");
                 Table    tb  = db.getTable   ( "data" );
-                String   sql = "SELECT * FROM "+tb.tableName+" WHERE etime = ? AND ctime > ?" ;
-                Object[] pms = new Object[] {0, System.currentTimeMillis() / 1000 - 86400 * 2};
+                String   sql = "SELECT * FROM "+tb.tableName+" WHERE etime = ? AND ctime > ?";
+                Object[] pms = new Object[]{0, System.currentTimeMillis() / 1000 - 86400 * 2};
 
                 int l = 1000;
                 int i = 0;
@@ -139,6 +177,8 @@ public class SyncConsumer implements Runnable {
                     loop = db.query(sql, i, l, pms);
                     i = i + l;
 
+                    Set <Data> mods = new HashSet();
+
                     int j = 0;
                     for (Map one : loop) {
                         try {
@@ -146,6 +186,7 @@ public class SyncConsumer implements Runnable {
                             String conf = Synt.asString(one.get("conf"));
                             String form = Synt.asString(one.get("form"));
                             Data   mod  = Data.getInstance( conf, form );
+                            mods.add(mod);
 
                             if ( 0 != Synt.declare(one.get("state") , 1) ) {
                                 Map      map;
@@ -166,11 +207,17 @@ public class SyncConsumer implements Runnable {
 
                     // 提交此批次
                     if (j > 0) {
-                        CommitRunner.commit(core);
+                        for (Data mod : mods) {
+                            mod.commit();
+                        }
                     }
 
                     // 不足即完成
                     if (j < l) {
+                        break;
+                    }
+
+                    if (Thread.interrupted()) {
                         break;
                     }
                 }

@@ -23,3 +23,5 @@ nb-config*
 desktop.ini
 Thumbs.db
 .DS_Store
+hongs-serv-search/docker/hadoop/data
+hongs-serv-search/docker/hadoop/tmp

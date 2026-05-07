@@ -57,11 +57,14 @@
             <artifactId>hadoop-hdfs-client</artifactId>
             <groupId>org.apache.hadoop</groupId>
             <version>${hadoop.version}</version>
-            <scope>provided</scope>
             <exclusions>
-                <!-- 日志: 项目使用 SLF4J + Log4j2, 排除 Hadoop 的 reload4j 桥接 -->
+                <!-- 日志: 项目使用 SLF4J + Log4j2, 排除 Hadoop 的日志桥接 -->
                 <exclusion>
                     <artifactId>slf4j-reload4j</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>slf4j-log4j12</artifactId>
                     <groupId>org.slf4j</groupId>
                 </exclusion>
                 <exclusion>
@@ -78,11 +81,14 @@
             <artifactId>hadoop-common</artifactId>
             <groupId>org.apache.hadoop</groupId>
             <version>${hadoop.version}</version>
-            <scope>provided</scope>
             <exclusions>
-                <!-- 日志: 项目使用 SLF4J + Log4j2, 排除 Hadoop 的 reload4j 桥接 -->
+                <!-- 日志: 项目使用 SLF4J + Log4j2, 排除 Hadoop 的日志桥接 -->
                 <exclusion>
                     <artifactId>slf4j-reload4j</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>slf4j-log4j12</artifactId>
                     <groupId>org.slf4j</groupId>
                 </exclusion>
                 <exclusion>

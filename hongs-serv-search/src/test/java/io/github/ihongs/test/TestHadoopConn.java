@@ -1,104 +1,106 @@
 package io.github.ihongs.test;
 
 import io.github.ihongs.Cnst;
+import io.github.ihongs.Core;
+import io.github.ihongs.CruxException;
+import io.github.ihongs.dh.lucene.conn.Conn;
 import io.github.ihongs.dh.lucene.conn.HadoopConn;
-import java.util.HashMap;
+import io.github.ihongs.dh.search.SearchEntity;
+import io.github.ihongs.util.Synt;
 import java.util.Map;
-import java.util.Properties;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.StringField;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.TermQuery;
-import org.apache.lucene.search.TopDocs;
-import org.apache.lucene.index.Term;
-import static junit.framework.Assert.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import static junit.framework.Assert.assertEquals;
 
 public class TestHadoopConn {
 
-    String hdfsUri = "hdfs://localhost:9000";
+    int dataSize = 600; // 测试数据数量
+    int poolSize = 300; // 测试线程数量
+    int waitTime = 30;  // 测试等待时间(秒)
 
     //@Test
-    public void testHdfsDirectory() throws Exception {
-        Properties cc = new Properties();
-        cc.setProperty("core.hadoop.hdfs.uri", hdfsUri);
-        cc.setProperty("core.hadoop.data.path", "/hongs/data");
+    public void testWriter() throws CruxException, InterruptedException {
+        // 必要全局变量
+        if (Core.DATA_PATH == null) {
+            Core.DATA_PATH = "target/test/var";
+        }
 
-        String dbPath = "lucene/test/hadoop";
         String dbName = "test/hadoop";
+        String dbPath = "test/hadoop";
+        Map fields = Synt.mapOf(
+            "id"   , Synt.mapOf(
+                "__name__", "id",
+                "__type__", "hidden"
+            ),
+            "name" , Synt.mapOf(
+                "__name__", "name",
+                "__type__", "string"
+            ),
+            "time" , Synt.mapOf(
+                "__name__", "time",
+                "__type__", "datetime"
+            )
+        );
 
-        HadoopConn conn = new HadoopConn(dbPath, dbName, cc);
+        final ExecutorService es = Executors.newFixedThreadPool(poolSize);
+        final Runnable rn = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    SearchEntity se = new TestEntity(fields, dbPath, dbName);
 
-        try {
-            // 验证路径拼接: 相对路径应拼接 core.hadoop.data.path
-            assertEquals("/hongs/data/" + dbPath, conn.getDbPath());
-            assertEquals(dbName, conn.getDbName());
+                    se.begin ();
+                    String id = se.create(Synt.mapOf(
+                        "name" , "test",
+                        "time" , System.currentTimeMillis()
+                    ));
+                    se.commit();
 
-            // 写入测试文档
-            Map<String, Document> docs = new HashMap();
-            for (int i = 0; i < 10; i++) {
-                Document doc = new Document();
-                doc.add(new StringField("@" + Cnst.ID_KEY, "id-" + i, Field.Store.YES));
-                doc.add(new StringField("name", "test-" + i, Field.Store.YES));
-                docs.put("id-" + i, doc);
+                    Map  info = se.getOne(Synt.mapOf(
+                        Cnst.ID_KEY, id,
+                        Cnst.RB_KEY, Synt.setOf(Cnst.ID_KEY)
+                    ));
+                    assertEquals(id, info. get (Cnst.ID_KEY));
+                }
+                catch (CruxException ex) {
+                    ex.printStackTrace();
+                }
             }
-            conn.write(docs);
+        };
 
-            // 从内存索引读取
-            IndexSearcher finder = conn.getFinder();
-            TopDocs hits = finder.search(new TermQuery(new Term("name", "test-5")), 1);
-            assertEquals(1, hits.totalHits.value);
+        // 预设连接
+        new TestEntity(fields, dbPath, dbName).getDbConn();
 
-            // 合并到 HDFS
-            conn.merge();
-
-            // 合并后从 HDFS 读取
-            finder = conn.getFinder();
-            hits = finder.search(new TermQuery(new Term("name", "test-5")), 1);
-            assertEquals(1, hits.totalHits.value);
-
-            // 写入更多数据后再次合并
-            docs.clear();
-            for (int i = 10; i < 20; i++) {
-                Document doc = new Document();
-                doc.add(new StringField("@" + Cnst.ID_KEY, "id-" + i, Field.Store.YES));
-                doc.add(new StringField("name", "test-" + i, Field.Store.YES));
-                docs.put("id-" + i, doc);
-            }
-            conn.write(docs);
-            conn.merge();
-
-            // 验证合并后总数
-            finder = conn.getFinder();
-            hits = finder.search(new TermQuery(new Term("name", "test-15")), 1);
-            assertEquals(1, hits.totalHits.value);
-
-            System.out.println("TestHadoopConn passed: write, merge, read all OK");
-        } finally {
-            conn.close();
+        // 写入数据
+        for (int i = 0; i < dataSize; i ++) {
+            es.execute(() -> rn.run());
         }
+
+        // 等待结束
+        es.shutdown();
+        es.awaitTermination(waitTime, TimeUnit.SECONDS);
+
+        // 复查数量
+        SearchEntity se = new TestEntity(fields, dbPath, dbName);
+        assertEquals(dataSize, (int) se.search(Synt.mapOf(), 0, 0).count());
     }
 
-    //@Test
-    public void testAbsolutePath() throws Exception {
-        Properties cc = new Properties();
-        cc.setProperty("core.hadoop.hdfs.uri", hdfsUri);
-        cc.setProperty("core.hadoop.data.path", "/hongs/data");
+    private static class TestEntity extends SearchEntity {
 
-        // 绝对路径不拼接
-        HadoopConn conn = new HadoopConn("/absolute/path", "abs-test", cc);
-        try {
-            assertEquals("/absolute/path", conn.getDbPath());
-        } finally {
-            conn.close();
+        public TestEntity(Map form, String path, String name) {
+            super(form, path, name);
         }
-    }
 
-    public static void main(String[] args) throws Exception {
-        TestHadoopConn t = new TestHadoopConn();
-        t.testHdfsDirectory();
-        t.testAbsolutePath();
-        System.out.println("All tests passed!");
+        private Conn dbconn = null ;
+        @Override
+        public Conn getDbConn() {
+            if (dbconn == null) {
+                dbconn  = new  HadoopConn.Getter().get(getDbPath(), getDbName());
+            }
+            return dbconn;
+        }
+
     }
 
 }

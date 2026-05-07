@@ -548,8 +548,13 @@ public class HadoopConn implements Conn {
                     if (writer != null && writer.isOpen()) {
                         reader = DirectoryReader.open(writer);
                     } else {
-                        getWriter();
-                        writer.commit(); // 空提交以建立索引结构
+                        // 空提交以建立索引结构在 HDFS
+                        IndexWriterConfig iwc = new IndexWriterConfig();
+                        iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
+                        iwc.setCommitOnClose(true);
+                        IndexWriter hw = new IndexWriter(hdfsDir, iwc);
+                        hw.commit();
+                        hw.close();
                         reader = DirectoryReader.open(hdfsDir);
                     }
                 }
@@ -628,8 +633,26 @@ public class HadoopConn implements Conn {
         try {
             if (writer == null
             || !writer.isOpen()) {
+                CoreLogger.trace("No open writer, skip merge for {}", dbname);
                 return;
             }
+
+            // 如果没有文档, 跳过合并
+            int numDocs;
+            try {
+                try (IndexReader r = DirectoryReader.open(ramDir)) {
+                    numDocs = r.numDocs();
+                }
+            } catch (org.apache.lucene.index.IndexNotFoundException e) {
+                // 索引不存在，没有文档需要合并
+                CoreLogger.trace("No index in ram directory, skip merge for {}", dbname);
+                return;
+            }
+            if (numDocs == 0) {
+                CoreLogger.trace("No documents in ram index, skip merge for {}", dbname);
+                return;
+            }
+            CoreLogger.trace("Merging {} documents to HDFS for {}", numDocs, dbname);
 
             // 获取 HDFS 分布式锁
             distLock = new HdfsLock(hdfsFs, hdfsDir.getDirPath(), "merge-" + dbname + ".lock");
@@ -658,6 +681,11 @@ public class HadoopConn implements Conn {
                 CoreLogger.trace("Merge the lucene ram-index to hdfs for {}", dbname);
             } finally {
                 hdfsWriter.close();
+            }
+
+            // 验证合并结果
+            try (IndexReader r = DirectoryReader.open(hdfsDir)) {
+                CoreLogger.trace("After merge, HDFS index has {} documents for {}", r.numDocs(), dbname);
             }
 
             // 合并成功后清空内存索引

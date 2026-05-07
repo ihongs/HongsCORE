@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
@@ -44,7 +45,11 @@ public class DirectConn implements Conn {
 
     }
 
-    private DirectConn (String dbpath, String dbname) {
+    public DirectConn (String dbpath, String dbname) {
+        this(dbpath, dbname, CoreConfig.getInstance());
+    }
+
+    public DirectConn (String dbpath, String dbname, Properties cc) {
         // 处理路径中的变量
         Map mm = new HashMap(3);
         mm.put("SERVER_ID", Core.SERVER_ID);
@@ -56,16 +61,22 @@ public class DirectConn implements Conn {
 
         this.dbname = dbname;
         this.dbpath = dbpath;
+
+        this.ramBuf = Double .parseDouble(cc.getProperty("core.lucene.ram.buf.size", "16"));
+        this.maxBuf = Integer.parseInt   (cc.getProperty("core.lucene.max.buf.docs", "-1"));
     }
 
     private final ReentrantReadWriteLock WL = new ReentrantReadWriteLock();
     private final ReentrantReadWriteLock RL = new ReentrantReadWriteLock();
     private final String   dbpath;
     private final String   dbname;
+    private  Directory     dbdir  = null;
     private  IndexWriter   writer = null;
     private  IndexReader   reader = null;
     private  IndexSearcher finder = null;
     private volatile boolean vary = true; // 变更标识
+    private final    int   maxBuf ;       // 缓存数量
+    private final   double ramBuf ;       // 缓存容量(MB)
 
     @Override
     public String getDbName() {
@@ -94,18 +105,19 @@ public class DirectConn implements Conn {
                 return writer;
             }
 
-            CoreConfig cc = CoreConfig.getInstance();
             IndexWriterConfig iwc = new IndexWriterConfig();
         //  IndexWriterConfig iwc = new IndexWriterConfig(getAnalyzer());
-            iwc.setMaxBufferedDocs(cc.getProperty("core.lucene.max.buf.docs", -1 ));
-            iwc.setRAMBufferSizeMB(cc.getProperty("core.lucene.ram.buf.size", 16D));
             iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
-            iwc.setCommitOnClose(true);
+            iwc.setMaxBufferedDocs(maxBuf);
+            iwc.setRAMBufferSizeMB(ramBuf);
+            iwc.setCommitOnClose  ( true );
 
-            boolean   dix = new File(dbpath).exists();
-            Directory dir = FSDirectory.open(Paths.get(dbpath));
+            boolean dix = new File(dbpath).exists();
+            if (dbdir == null) {
+                dbdir = FSDirectory.open(Paths.get(dbpath));
+            }
 
-            writer = new IndexWriter(dir, iwc);
+            writer = new IndexWriter(dbdir, iwc);
 
             if (! dix) writer.commit(); // 初始化目录, 规避首次读报错
 
@@ -140,11 +152,13 @@ public class DirectConn implements Conn {
                 getWriter ( );
             }
 
-            Directory dir = FSDirectory.open(Paths.get(dbpath));
+            if (dbdir == null) {
+                dbdir = FSDirectory.open(Paths.get(dbpath));
+            }
 
             IndexReader readar = reader;
-            reader = DirectoryReader.open(dir);
-            finder = new IndexSearcher(reader);
+            reader = DirectoryReader.open(dbdir );
+            finder = new  IndexSearcher  (reader);
 
             // 释放旧的连接
             if (null != readar) try {
@@ -197,7 +211,7 @@ public class DirectConn implements Conn {
         if (docs == null || docs.isEmpty()) {
             return;
         }
-        
+
         RL.writeLock().lock();
         try {
             IndexWriter  iw = getWriter  ();
@@ -211,7 +225,7 @@ public class DirectConn implements Conn {
                     iw.deleteDocuments(new Term("@"+Cnst.ID_KEY, id)    );
                 }
             }
-            
+
             vary = true;
             iw.commit();
         //  iw. maybeMerge ();
@@ -234,6 +248,11 @@ public class DirectConn implements Conn {
                 reader.close ();
                 reader  = null ;
                 finder  = null ;
+            }
+
+            if (dbdir  != null) {
+                dbdir .close ();
+                dbdir   = null ;
             }
 
             CoreLogger.trace("Close the lucene conn for {}", dbname);

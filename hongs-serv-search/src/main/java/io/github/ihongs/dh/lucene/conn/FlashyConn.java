@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.apache.lucene.document.Document;
@@ -46,7 +47,11 @@ public class FlashyConn implements Conn {
 
     }
 
-    private FlashyConn (String dbpath, String dbname) {
+    public FlashyConn (String dbpath, String dbname) {
+        this(dbpath, dbname, CoreConfig.getInstance());
+    }
+
+    public FlashyConn (String dbpath, String dbname, Properties cc) {
         // 处理路径中的变量
         Map mm = new HashMap(3);
         mm.put("SERVER_ID", Core.SERVER_ID);
@@ -59,9 +64,10 @@ public class FlashyConn implements Conn {
         this.dbname = dbname;
         this.dbpath = dbpath;
 
-        CoreConfig cc = CoreConfig.getInstance();
-        this.limit  = cc.getProperty("core.lucene.flush.limit", 1000); // 超量刷新
-        int  timed  = cc.getProperty("core.lucene.flush.timed", 600 ); // 超时刷新
+        this.ramBuf = Double .parseDouble(cc.getProperty("core.lucene.ram.buf.size", "16"  ));
+        this.maxBuf = Integer.parseInt   (cc.getProperty("core.lucene.max.buf.docs", "-1"  ));
+        this.maxCnt = Integer.parseInt   (cc.getProperty("core.lucene.flush.limit" , "1000"));
+        int  maxSec = Integer.parseInt   (cc.getProperty("core.lucene.flush.timed" , "600" )); // 定时存盘
 
         final FlashyConn  that  = this ;
         this.flushr = new Runnable() {
@@ -78,7 +84,7 @@ public class FlashyConn implements Conn {
                 }
             }
         };
-        this.flushs = Chore.getInstance().ran(this.flushr, timed , timed );
+        this.flushs = Chore.getInstance().ran(this.flushr, maxSec, maxSec);
     }
 
     private final ReentrantReadWriteLock WL = new ReentrantReadWriteLock();
@@ -87,12 +93,15 @@ public class FlashyConn implements Conn {
     private final Runnable flushr;
     private final String   dbpath;
     private final String   dbname;
+    private  Directory     dbdir  = null;
     private  IndexWriter   writer = null;
     private  IndexReader   reader = null;
     private  IndexSearcher finder = null;
     private volatile boolean vary = true; // 变更标识
     private volatile int    count = 0;    // 冲刷计数
-    private final    int    limit    ;    // 冲刷限定
+    private final    int   maxCnt ;       // 冲刷限定
+    private final    int   maxBuf ;       // 缓冲数量
+    private final   double ramBuf ;       // 缓冲容量
 
     @Override
     public String getDbName() {
@@ -121,18 +130,19 @@ public class FlashyConn implements Conn {
                 return writer;
             }
 
-            CoreConfig cc = CoreConfig.getInstance();
             IndexWriterConfig iwc = new IndexWriterConfig();
         //  IndexWriterConfig iwc = new IndexWriterConfig(getAnalyzer());
-            iwc.setMaxBufferedDocs(cc.getProperty("core.lucene.max.buf.docs", -1 ));
-            iwc.setRAMBufferSizeMB(cc.getProperty("core.lucene.ram.buf.size", 16D));
             iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
-            iwc.setCommitOnClose(true);
+            iwc.setMaxBufferedDocs(maxBuf);
+            iwc.setRAMBufferSizeMB(ramBuf);
+            iwc.setCommitOnClose  ( true );
 
-            boolean   dix = new File(dbpath).exists();
-            Directory dir = FSDirectory.open(Paths.get(dbpath));
+            boolean dix = new File(dbpath).exists();
+            if (dbdir == null) {
+                dbdir = FSDirectory.open(Paths.get(dbpath));
+            }
 
-            writer = new IndexWriter(dir, iwc);
+            writer = new IndexWriter(dbdir, iwc);
 
             if (! dix) writer.commit(); // 初始化目录, 规避首次读报错
 
@@ -218,7 +228,7 @@ public class FlashyConn implements Conn {
         if (docs == null || docs.isEmpty()) {
             return;
         }
-        
+
         RL.writeLock().lock();
         try {
             IndexWriter  iw = getWriter  ();
@@ -238,7 +248,7 @@ public class FlashyConn implements Conn {
             vary = true;
 
             // 超量冲刷, 后台执行
-            if (count >= limit) {
+            if (count >= maxCnt) {
                 count  = 0;
                 Chore.getInstance()
                      .exe( flushr );
@@ -284,6 +294,11 @@ public class FlashyConn implements Conn {
                 reader.close ();
                 reader  = null ;
                 finder  = null ;
+            }
+
+            if (dbdir  != null) {
+                dbdir .close ();
+                dbdir   = null ;
             }
 
             CoreLogger.trace("Close the lucene conn for {}", dbname);

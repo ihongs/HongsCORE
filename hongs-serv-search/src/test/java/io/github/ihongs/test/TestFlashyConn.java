@@ -3,9 +3,9 @@ package io.github.ihongs.test;
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CruxException;
+import io.github.ihongs.dh.lucene.LuceneRecord;
 import io.github.ihongs.dh.lucene.conn.Conn;
 import io.github.ihongs.dh.lucene.conn.FlashyConn;
-import io.github.ihongs.dh.search.SearchEntity;
 import io.github.ihongs.util.Synt;
 import java.io.File;
 import java.io.IOException;
@@ -52,7 +52,7 @@ public class TestFlashyConn {
             @Override
             public void run() {
                 try {
-                    SearchEntity se = new TestEntity(fields, dbPath, dbName);
+                    LuceneRecord se = new TestEntity(fields, dbPath, dbName);
 
                     se.begin ();
                     String id = se.create(Synt.mapOf(
@@ -86,7 +86,7 @@ public class TestFlashyConn {
         es.awaitTermination(waitTime, TimeUnit.SECONDS);
 
         // 复查数量
-        SearchEntity se = new TestEntity(fields, dbPath, dbName);
+        LuceneRecord se = new TestEntity(fields, dbPath, dbName);
         assertEquals(dataSize, (int) se.search(Synt.mapOf(), 0, 0).count());
     }
 
@@ -99,7 +99,7 @@ public class TestFlashyConn {
         }
     }
 
-    private static class TestEntity extends SearchEntity {
+    private static class TestEntity extends LuceneRecord {
 
 
         public TestEntity(Map form, String path, String name) {
@@ -115,6 +115,11 @@ public class TestFlashyConn {
             return dbconn;
         }
 
+    }
+
+    public static void main(String[] args) throws Exception {
+        TestFlashyConn t = new TestFlashyConn();
+        t.testWriter();
     }
 
 }

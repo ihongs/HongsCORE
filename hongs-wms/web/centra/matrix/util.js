@@ -630,9 +630,15 @@ $.fn.hsCols = function() {
         records.find(":submit").click( );
     });
 
-    // 删除字段
-    targetz.on("click", ".bi-hi-close" , function() {
-        $(this).closest(".form-group").remove();
+    // 添加全部
+    widgets.on("click", ".addall", function() {
+        $(this).closest("form").find(".form-group.base-field").each(function() {
+            var type = $ (this).attr("data-type");
+            var item = targetz.find("[data-type='"+type+"']");
+            if (item.size() === 0) {
+                $(this).clone().appendTo(targetz);
+            }
+        });
     });
 
     // 添加字段
@@ -704,6 +710,11 @@ $.fn.hsCols = function() {
 
         loadConf(modal, field);
         modal.modal( "show"  );
+    });
+
+    // 删除字段
+    targetz.on("click", ".bi-hi-close" , function() {
+        $(this).closest(".form-group").remove();
     });
 
     // 完成设置

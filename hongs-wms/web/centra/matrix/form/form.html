@@ -88,7 +88,7 @@
                             <span class="bi bi-hi-update pull-right"></span>
                             <span class="bi bi-hi-create pull-right"></span>
                         </label>
-                        <input class="form-control" name="-" type="text" placeholder="请输入..."/>
+                        <input class="form-control" name="-" type="text" data-listable="yes" placeholder="请输入..."/>
                     </div>
                     <div class="form-group" data-type="email">
                         <label class="control-label clearfix" style="display: block;">
@@ -97,7 +97,7 @@
                             <span class="bi bi-hi-update pull-right"></span>
                             <span class="bi bi-hi-create pull-right"></span>
                         </label>
-                        <input class="form-control" name="-" type="email" placeholder="请输入电子邮箱"/>
+                        <input class="form-control" name="-" type="email" data-listable="yes" placeholder="请输入电子邮箱"/>
                     </div>
                     <div class="form-group" data-type="url">
                         <label class="control-label clearfix" style="display: block;">
@@ -106,7 +106,7 @@
                             <span class="bi bi-hi-update pull-right"></span>
                             <span class="bi bi-hi-create pull-right"></span>
                         </label>
-                        <input class="form-control" name="-" type="url" placeholder="请输入链接地址"/>
+                        <input class="form-control" name="-" type="url" data-listable="yes" placeholder="请输入链接地址"/>
                     </div>
                     <div class="form-group" data-type="tel">
                         <label class="control-label clearfix" style="display: block;">
@@ -115,7 +115,7 @@
                             <span class="bi bi-hi-update pull-right"></span>
                             <span class="bi bi-hi-create pull-right"></span>
                         </label>
-                        <input class="form-control" name="-" type="tel" placeholder="请输入电话号码"/>
+                        <input class="form-control" name="-" type="tel" data-listable="yes" placeholder="请输入电话号码"/>
                     </div>
                     <div class="form-group" data-type="number">
                         <label class="control-label clearfix" style="display: block;">
@@ -124,7 +124,7 @@
                             <span class="bi bi-hi-update pull-right"></span>
                             <span class="bi bi-hi-create pull-right"></span>
                         </label>
-                        <input class="form-control" name="-" type="number" placeholder="请输入数字"/>
+                        <input class="form-control" name="-" type="number" data-listable="yes" data-sortable="yes" placeholder="请输入数字"/>
                     </div>
                     <div class="form-group" data-type="date">
                         <label class="control-label clearfix" style="display: block;">
@@ -133,7 +133,7 @@
                             <span class="bi bi-hi-update pull-right"></span>
                             <span class="bi bi-hi-create pull-right"></span>
                         </label>
-                        <input class="form-control" name="-" type="date" data-type="timestamp"/>
+                        <input class="form-control" name="-" type="date" data-type="timestamp" data-listable="yes" data-sortable="yes"/>
                     </div>
                     <div class="form-group" data-type="select">
                         <label class="control-label clearfix" style="display: block;">
@@ -142,7 +142,7 @@
                             <span class="bi bi-hi-update pull-right"></span>
                             <span class="bi bi-hi-create pull-right"></span>
                         </label>
-                        <select class="form-control" name="-" style="min-height: auto; max-height: 4em;">
+                        <select class="form-control" name="-" style="min-height: auto; max-height: 4em;" data-listable="yes" data-statable="yes">
                             <option value="">--请选择--</option>
                         </select>
                     </div>
@@ -153,7 +153,7 @@
                             <span class="bi bi-hi-update pull-right"></span>
                             <span class="bi bi-hi-create pull-right"></span>
                         </label>
-                        <div class="check checkbox" data-fn="-" data-ft="_check" data-repeated="yes">
+                        <div class="check checkbox" data-fn="-" data-ft="_check" data-listable="yes" data-statable="yes" data-repeated="yes">
                             <label><input type="checkbox" name="-" value="1"/><span>选项1</span></label>
                             <label><input type="checkbox" name="-" value="2"/><span>选项2</span></label>
                         </div>
@@ -165,7 +165,7 @@
                             <span class="bi bi-hi-update pull-right"></span>
                             <span class="bi bi-hi-create pull-right"></span>
                         </label>
-                        <div class="check radio" data-fn="-" data-ft="_radio" data-repeated="no">
+                        <div class="check radio" data-fn="-" data-ft="_radio" data-listable="yes" data-statable="yes" data-repeated="no">
                             <label><input type="radio" name="-" value="1"/><span>选项1</span></label>
                             <label><input type="radio" name="-" value="2"/><span>选项2</span></label>
                         </div>
@@ -195,7 +195,7 @@
                             <span class="bi bi-hi-update pull-right"></span>
                             <span class="bi bi-hi-create pull-right"></span>
                         </label>
-                        <ul class="repeated labelbox pictbox" data-fn="-" data-ft="_pict" data-__type__="image" data-__rule__="Thumb" data-thumb-mode="" data-thumb-size=""></ul>
+                        <ul class="repeated labelbox pictbox" data-fn="-" data-ft="_pict" data-listable="yes" data-__type__="image" data-__rule__="Thumb" data-thumb-mode="" data-thumb-size=""></ul>
                         <input type="file" name="-" class="invisible" accept="image/*"/>
                         <button class="btn btn-default form-control" type="button" data-toggle="hsPict">浏览...</button>
                     </div>
@@ -206,7 +206,7 @@
                             <span class="bi bi-hi-update pull-right"></span>
                             <span class="bi bi-hi-create pull-right"></span>
                         </label>
-                        <ul class="repeated labelbox filebox" data-fn="-" data-ft="_file"></ul>
+                        <ul class="repeated labelbox filebox" data-fn="-" data-ft="_file" data-listable="yes"></ul>
                         <input type="file" name="-" class="invisible"/>
                         <button class="btn btn-default form-control" type="button" data-toggle="hsFile">浏览...</button>
                     </div>
@@ -217,7 +217,7 @@
                             <span class="bi bi-hi-update pull-right"></span>
                             <span class="bi bi-hi-create pull-right"></span>
                         </label>
-                        <ul class="repeated labelbox forkbox" data-fn="-" data-ft="_fork"></ul>
+                        <ul class="repeated labelbox forkbox" data-fn="-" data-ft="_fork" data-listable="yes"></ul>
                         <input type="text" name="-" class="invisible"/>
                         <button class="btn btn-default form-control" type="button" data-toggle="hsPick" data-target="@" data-href="centra/matrix/form/pick.html" data-vk="id" data-tk="name">选择...</button>
                     </div>
@@ -255,7 +255,7 @@
                             <span class="bi bi-hi-update pull-right"></span>
                             <span class="bi bi-hi-create pull-right"></span>
                         </label>
-                        <input class="form-control" name="note" type="text" placeholder="请输入..." data-wordable="true" data-sortable="false"/>
+                        <input class="form-control" name="note" type="text" placeholder="请输入..." data-listable="true" data-wordable="true" data-sortable="false"/>
                     </div>
                     <div class="form-group base-field" data-type="tags">
                         <label class="control-label clearfix" style="display: block;">
@@ -264,8 +264,9 @@
                             <span class="bi bi-hi-update pull-right"></span>
                             <span class="bi bi-hi-create pull-right"></span>
                         </label>
-                        <input class="form-control" name="tags" type="text" placeholder="请输入..." data-listable="true" data-statable="true" data-__repeated__="true" data-deverse="true" data-split="," data-slice=","/>
+                        <input class="form-control" name="tags" type="text" placeholder="请输入..." data-listable="true" data-wordable="true" data-statable="true" data-__repeated__="true" data-deverse="true" data-split="," data-slice=","/>
                     </div>
+                    <!--
                     <div class="form-group base-field" data-type="word">
                         <label class="control-label clearfix" style="display: block;">
                             <span>词汇</span>
@@ -273,7 +274,7 @@
                             <span class="bi bi-hi-update pull-right"></span>
                             <span class="bi bi-hi-create pull-right"></span>
                         </label>
-                        <input class="form-control" name="word" type="text" placeholder="请输入..." data-srchable="true" data-sortable="false" data-lucene-query-filter.0="Lowercase" data-lucene-token-filter.0="Lowercase"/>
+                        <input class="form-control" name="word" type="text" placeholder="请输入..." data-listable="true" data-srchable="true" data-sortable="false" data-lucene-query-filter.0="Lowercase" data-lucene-token-filter.0="Lowercase"/>
                     </div>
                     <div class="form-group base-field" data-type="logo">
                         <label class="control-label clearfix" style="display: block;">
@@ -286,6 +287,7 @@
                         <input type="file" name="logo" class="invisible" accept="image/*"/>
                         <button class="btn btn-default form-control" type="button" data-toggle="hsPict"><i class="bi bi-hi-file"></i>浏览...</button>
                     </div>
+                    -->
                     <div class="form-group base-field" data-type="boost">
                         <label class="control-label clearfix" style="display: block;">
                             <span>权重</span>
@@ -293,7 +295,7 @@
                             <span class="bi bi-hi-update pull-right"></span>
                             <span class="bi bi-hi-create pull-right"></span>
                         </label>
-                        <input  class="form-control" name="boost" data-default="0" data-type="long" type="number"/>
+                        <input  class="form-control" name="boost" data-default="0" data-type="long" data-listable="true" data-sortable="true" type="number"/>
                     </div>
                     <div class="form-group base-field" data-type="state">
                         <label class="control-label clearfix" style="display: block;">
@@ -302,7 +304,7 @@
                             <span class="bi bi-hi-update pull-right"></span>
                             <span class="bi bi-hi-create pull-right"></span>
                         </label>
-                        <select class="form-control" name="state" data-default="1" data-type="byte">
+                        <select class="form-control" name="state" data-default="1" data-type="byte" data-listable="true" data-statable="true">
                             <option value="1">正常</option>
                         </select>
                     </div>
@@ -318,7 +320,7 @@
                             <span class="bi bi-hi-update pull-right"></span>
                             <span class="bi bi-hi-create pull-right"></span>
                         </label>
-                        <input class="invisible" type="datetime" name="ctime" data-type="timestamp" data-default="@now" data-deforce="create" data-readonly="yes"/>
+                        <input class="invisible" type="datetime" name="ctime" data-type="timestamp" data-default="@now" data-deforce="create" data-readonly="yes" data-listable="true" data-sortable="true"/>
                     </div>
                     <div class="form-group base-field" data-type="mtime">
                         <label class="control-label clearfix" style="display: block;">
@@ -327,7 +329,7 @@
                             <span class="bi bi-hi-update pull-right"></span>
                             <span class="bi bi-hi-create pull-right"></span>
                         </label>
-                        <input class="invisible" type="datetime" name="mtime" data-type="timestamp" data-default="@now" data-deforce="always" data-readonly="yes"/>
+                        <input class="invisible" type="datetime" name="mtime" data-type="timestamp" data-default="@now" data-deforce="always" data-readonly="yes" data-listable="true" data-sortable="true"/>
                     </div>
                     <div class="form-group base-field" data-type="cuser">
                         <label class="control-label clearfix" style="display: block;">
@@ -336,7 +338,7 @@
                             <span class="bi bi-hi-update pull-right"></span>
                             <span class="bi bi-hi-create pull-right"></span>
                         </label>
-                        <input class="invisible" type="fork" name="cuser" data-default="@uid" data-deforce="create" data-readonly="yes" data-unopenable="yes" data-pass-id="yes" data-ln="cuser" data-vk="id" data-tk="name" data-at="centra/master/user/list" data-st="centra/master/user/pick.html"/>
+                        <input class="invisible" type="fork" name="cuser" data-default="@uid" data-deforce="create" data-readonly="yes" data-listable="true" data-unopenable="yes" data-pass-id="yes" data-ln="cuser" data-vk="id" data-tk="name" data-at="centra/master/user/list" data-st="centra/master/user/pick.html"/>
                     </div>
                     <div class="form-group base-field" data-type="muser">
                         <label class="control-label clearfix" style="display: block;">
@@ -345,7 +347,7 @@
                             <span class="bi bi-hi-update pull-right"></span>
                             <span class="bi bi-hi-create pull-right"></span>
                         </label>
-                        <input class="invisible" type="fork" name="muser" data-default="@uid" data-deforce="always" data-readonly="yes" data-unopenable="yes" data-pass-id="yes" data-ln="muser" data-vk="id" data-tk="name" data-at="centra/master/user/list" data-st="centra/master/user/pick.html"/>
+                        <input class="invisible" type="fork" name="muser" data-default="@uid" data-deforce="always" data-readonly="yes" data-listable="true" data-unopenable="yes" data-pass-id="yes" data-ln="muser" data-vk="id" data-tk="name" data-at="centra/master/user/list" data-st="centra/master/user/pick.html"/>
                     </div>
                     <div class="form-group base-field" data-type="_">
                         <label class="control-label clearfix" style="display: block;">
@@ -364,6 +366,11 @@
                             <span class="bi bi-hi-create pull-right"></span>
                         </label>
                         <input class="invisible" type="" name="-"/>
+                    </div>
+                    <div class="form-group">
+                        <legend class="clearfix" data-valtype="text">
+                        </legend>
+                        <a href="javascript:;" class="addall">一键全设</a>
                     </div>
                 </form>
             </div>

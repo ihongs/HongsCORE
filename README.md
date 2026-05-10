@@ -44,7 +44,7 @@
     mvn clean package
 
     # 设置和启动系统
-    cd  hongs-serv-xxx/target/HongsXXX
+    cd  hongs-wms/target/HongsXXX
     bin/app source setup
     bin/app server start --DEBUG 6
     # 按 ctrl+c 停止运行

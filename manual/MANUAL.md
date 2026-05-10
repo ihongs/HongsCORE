@@ -1,4 +1,4 @@
-# HongsCORE 开发文档
+# HongsCORE 开发手册
 
 - 文档版本: 20260425
 - 编写作者: 黄弘(Hongs)

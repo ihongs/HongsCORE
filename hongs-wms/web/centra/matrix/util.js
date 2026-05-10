@@ -635,7 +635,7 @@ $.fn.hsCols = function() {
         $(this).closest("form").find(".form-group.base-field").each(function() {
             var type = $ (this).attr("data-type");
             var item = targetz.find("[data-type='"+type+"']");
-            if (item.size() === 0) {
+            if (item.size() == 0 && type != '-' ) {
                 $(this).clone().appendTo(targetz);
             }
         });

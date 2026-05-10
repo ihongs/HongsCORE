@@ -56,7 +56,7 @@ current-project/    # 当前项目
         <dependency>
             <groupId>io.github.ihongs</groupId>
             <artifactId>hongs-wms</artifactId>
-            <version>1.1-SNAPSHOT</version>
+            <version>1.2-SNAPSHOT</version>
             <type>war</type>
         </dependency>
     </dependencies>
@@ -447,6 +447,8 @@ cd /path/to/current-project/target/release-name/WEB-INF
 bin/hdo source setup
 ```
 
+AI 自动测试可导入密钥, 执行 `bin/hdo source test/00.ai.sql`，之后测试可带上请求头 `Authorization: Bearer I-AM-THE-KING`。
+
 ## 8. 启动服务器
 
 ```bash
@@ -526,8 +528,9 @@ bin/hdo server stop
 ## 注意事项
 
 1. **表单与导航路径**：如果表单名称与导航最后一级目录相同，导航路径要省略最后一级（如表单是 class，导航用 `centra/data/class/` 而不是 `centra/data/class/class/`）
-2. **回看和恢复权限**：回看（reveal）依赖查询（search），恢复（revert）依赖更新（update）
+2. **回看和恢复权限**：回看（reveal）依赖查询（search），恢复（revert）依赖更新（update）。
 3. **权限控制**：未在 `.navi.xml` 中配置的动作不受限制，若动作明确谁也不让用，将其放入 `_deny_` 角色下面。
+4. **接口权限**: 初始化数据时导入密钥，请求头带上 `Authorization: Bearer I-AM-THE-KING`。
 
 ## 扩展开发
 

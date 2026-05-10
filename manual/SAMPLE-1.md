@@ -530,7 +530,7 @@ bin/hdo server stop
 1. **表单与导航路径**：如果表单名称与导航最后一级目录相同，导航路径要省略最后一级（如表单是 class，导航用 `centra/data/class/` 而不是 `centra/data/class/class/`）
 2. **回看和恢复权限**：回看（reveal）依赖查询（search），恢复（revert）依赖更新（update）。
 3. **权限控制**：未在 `.navi.xml` 中配置的动作不受限制，若动作明确谁也不让用，将其放入 `_deny_` 角色下面。
-4. **接口权限**: 初始化数据时导入密钥，请求头带上 `Authorization: Bearer I-AM-THE-KING`。
+4. **接口权限**: 初始化数据时导入密钥，请求头带上 `Authorization: Bearer I-AM-THE-KING` 和 `X-Requested-With: AJAX`。
 
 ## 扩展开发
 

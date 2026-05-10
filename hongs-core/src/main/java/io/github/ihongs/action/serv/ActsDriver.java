@@ -6,9 +6,9 @@ import io.github.ihongs.CruxExemption;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
 import io.github.ihongs.action.ActionDriver;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * 动作启动器
@@ -45,7 +45,7 @@ public class ActsDriver
    *
    * @param req
    * @param rsp
-   * @throws javax.servlet.ServletException
+   * @throws jakarta.servlet.ServletException
    */
   @Override
   public void service(HttpServletRequest req, HttpServletResponse rsp)

@@ -11,9 +11,9 @@
     String      href ;
     CoreLocale  lang = CoreLocale.getInstance();
 
-    code = (Integer ) request.getAttribute("javax.servlet.error.status_code");
-    text = (String  ) request.getAttribute("javax.servlet.error.message");
-    href = (String  ) request.getAttribute("javax.servlet.location");
+    code = (Integer ) request.getAttribute("jakarta.servlet.error.status_code");
+    text = (String  ) request.getAttribute("jakarta.servlet.error.message");
+    href = (String  ) request.getAttribute("jakarta.servlet.location");
     if (href == null) {
         href  = request.getContextPath() + "/";
     }

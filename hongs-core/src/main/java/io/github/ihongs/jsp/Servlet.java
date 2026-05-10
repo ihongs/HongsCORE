@@ -3,7 +3,7 @@ package io.github.ihongs.jsp;
 import io.github.ihongs.Core;
 import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.ActionHelper;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * 动作代理

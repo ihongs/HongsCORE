@@ -69,6 +69,20 @@ public final class CoreLogger
     }
 
     /**
+     * 格式化的异常信息
+     * 等同 client()+" "+action()+" "+e.printStackTrace()
+     * 下列 info,warn,trace,debug,error 均已调此, 无需再加
+     * @param e
+     * @return
+     */
+    public static String mark (Throwable e) {
+        ByteArrayOutputStream b = new ByteArrayOutputStream ( );
+        e.printStackTrace(new PrintStream (b));
+        String s = b.toString().replaceAll("\r\n|\r|\n","$0\t");
+        return mark(s);
+    }
+
+    /**
      * 信息
      * @param text
      */
@@ -222,15 +236,10 @@ public final class CoreLogger
      * @param flaw
      */
     public static void error(Throwable flaw) {
-        String text ;
-        ByteArrayOutputStream buff = new ByteArrayOutputStream();
-        flaw.printStackTrace( new  PrintStream (buff));
-        text = buff.toString().replaceAll("\r\n|\r|\n", "$0\t" );
-
         if (1 == (1 & Core.DEBUG)) {
-            getLogger(Cnst.LOG_NAME).error(mark(text));
+            getLogger(Cnst.LOG_NAME).error(mark(flaw));
         } else {
-            getLogger(Cnst.OUT_NAME).error(mark(text));
+            getLogger(Cnst.OUT_NAME).error(mark(flaw));
         }
     }
 

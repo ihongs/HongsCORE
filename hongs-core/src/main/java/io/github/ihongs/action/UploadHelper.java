@@ -29,7 +29,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.servlet.http.Part;
+import jakarta.servlet.http.Part;
 
 /**
  * 文件上传助手

@@ -14,10 +14,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * 应用接口类
@@ -139,7 +139,7 @@ public class ApisDriver
      * 将非通用键值放到 data 下
      * 通用键有: ok,ern,err,msg
      * @param resp
-     * @throws javax.servlet.ServletException
+     * @throws jakarta.servlet.ServletException
      */
     public static void wrapData(Map resp) throws ServletException {
         Map    data;

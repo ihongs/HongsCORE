@@ -10,11 +10,11 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.servlet.DispatcherType;
-import javax.servlet.annotation.WebFilter;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.annotation.WebListener;
-import javax.servlet.annotation.WebInitParam;
+import jakarta.servlet.DispatcherType;
+import jakarta.servlet.annotation.WebFilter;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.annotation.WebListener;
+import jakarta.servlet.annotation.WebInitParam;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -27,8 +27,7 @@ public class Loader implements Initer {
 
     @Override
     public void init(ServletContextHandler context) {
-        String pkgx  = CoreConfig.getInstance("defines"   )
-                                 .getProperty("apply.serv");
+        String pkgx  = CoreConfig.getInstance("defines").getProperty("apply.serv");
         if  (  pkgx != null ) {
             String[]   pkgs = pkgx.split(";");
             for(String pkgn : pkgs) {

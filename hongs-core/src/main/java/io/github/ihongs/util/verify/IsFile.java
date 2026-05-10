@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.servlet.http.Part;
+import jakarta.servlet.http.Part;
 
 /**
  * 文件校验

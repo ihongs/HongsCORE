@@ -6,11 +6,11 @@ import io.github.ihongs.CruxException;
 import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.ActionHelper;
 import java.io.IOException;
-import javax.servlet.ServletException;
-import javax.servlet.jsp.HttpJspPage;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.HttpJspPage;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequestWrapper;
 
 /**
  * 动作JSP类

@@ -26,12 +26,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.Part;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.Part;
 
 /**
  * 动作助手类
@@ -1128,9 +1128,9 @@ public class ActionHelper implements Cloneable
     String p = CoreConfig.getInstance().getProperty("core.redirect", "/300.jsp");
     if ( ! p.isEmpty() && new File(Core.BASE_PATH + p).exists())
     {
-      this.request.setAttribute("javax.servlet.location" , url);
-      this.request.setAttribute("javax.servlet.error.message", msg);
-      this.request.setAttribute("javax.servlet.error.status_code", sc);
+      this.request.setAttribute("jakarta.servlet.location", url);
+      this.request.setAttribute("jakarta.servlet.error.message", msg);
+      this.request.setAttribute("jakarta.servlet.error.status_code",sc);
       try {
         this.request.getRequestDispatcher(p).forward(request, response);
       } catch ( IOException|ServletException e ) {

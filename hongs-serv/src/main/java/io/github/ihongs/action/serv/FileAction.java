@@ -10,7 +10,7 @@ import io.github.ihongs.util.Synt;
 import java.io.File;
 import java.util.List;
 import java.util.ArrayList;
-import javax.servlet.http.Part;
+import jakarta.servlet.http.Part;
 
 /**
  * 公共文件上传

@@ -13,7 +13,7 @@ import io.github.ihongs.util.Synt;
 import java.lang.annotation.Annotation;
 import java.util.Map;
 import java.util.Set;
-import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
+import static jakarta.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 
 /**
  * 数据校验处理器

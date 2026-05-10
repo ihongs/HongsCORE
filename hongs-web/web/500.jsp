@@ -35,17 +35,17 @@
     String      trac ;
     CoreLocale  lang = CoreLocale.getInstance();
 
-    code = (Integer ) request.getAttribute("javax.servlet.error.status_code");
+    code = (Integer ) request.getAttribute("jakarta.servlet.error.status_code");
     if (null != code) {
         response.setStatus(code); // 不知何故 sendError 之后总是 500, 此为修正
     }
     if (null == exception) {
-        exception = (Throwable) request.getAttribute("javax.servlet.error.exception");
+        exception = (Throwable) request.getAttribute("jakarta.servlet.error.exception");
     }
     if (null == exception) {
-        text  = (String) request.getAttribute( "javax.servlet.error.message");
+        text  = (String) request.getAttribute("jakarta.servlet.error.message");
         if (text == null ) {
-            text  = lang.translate( "core.error.undef" );
+            text  = lang.translate("core.error.undef");
         }   trac  = null;
     } else {
         text  = exception.getLocalizedMessage();

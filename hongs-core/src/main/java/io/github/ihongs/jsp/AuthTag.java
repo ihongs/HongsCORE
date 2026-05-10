@@ -3,10 +3,10 @@ package io.github.ihongs.jsp;
 import io.github.ihongs.CruxException;
 import io.github.ihongs.action.NaviMap;
 import java.io.IOException;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.BodyContent;
-import javax.servlet.jsp.tagext.BodyTagSupport;
+import jakarta.servlet.jsp.JspWriter;
+import jakarta.servlet.jsp.JspException;
+import jakarta.servlet.jsp.tagext.BodyContent;
+import jakarta.servlet.jsp.tagext.BodyTagSupport;
 
 /**
  * 动作权限判断标签

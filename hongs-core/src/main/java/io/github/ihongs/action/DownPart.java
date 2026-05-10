@@ -14,7 +14,7 @@ import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.servlet.http.Part;
+import jakarta.servlet.http.Part;
 
 /**
  * 反向下载 Part

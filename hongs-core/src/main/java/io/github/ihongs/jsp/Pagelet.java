@@ -16,11 +16,11 @@ import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.regex.Pattern;
-import javax.servlet.DispatcherType;
-import javax.servlet.ServletException;
-import javax.servlet.jsp.HttpJspPage;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.DispatcherType;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.HttpJspPage;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * 抽象JSP类
@@ -60,10 +60,10 @@ abstract public class Pagelet extends ActionDriver implements HttpJspPage
      */
     if (req.getDispatcherType() == DispatcherType.ERROR)
     {
-        Integer ern = (Integer) req.getAttribute("javax.servlet.error.status_code");
+        Integer ern = (Integer) req.getAttribute("jakarta.servlet.error.status_code");
         if (ern != null && inAjax(req)) {
-            Object err = req.getAttribute("javax.servlet.error.exception");
-            Object msg = req.getAttribute("javax.servlet.error.message"  );
+            Object err = req.getAttribute("jakarta.servlet.error.exception");
+            Object msg = req.getAttribute("jakarta.servlet.error.message"  );
 
             if (err != null) {
                 Throwable ex = (Throwable)err;
@@ -105,10 +105,10 @@ abstract public class Pagelet extends ActionDriver implements HttpJspPage
           eo  = HttpServletResponse.SC_INTERNAL_SERVER_ERROR ;
       }
 
-      req.setAttribute("javax.servlet.error.status_code", eo);
-      req.setAttribute("javax.servlet.error.message"    , er);
-      req.setAttribute("javax.servlet.error.exception"  , ax);
-      req.setAttribute("javax.servlet.error.exception_type", ax.getClass().getName());
+      req.setAttribute("jakarta.servlet.error.status_code", eo);
+      req.setAttribute("jakarta.servlet.error.message"    , er);
+      req.setAttribute("jakarta.servlet.error.exception"  , ax);
+      req.setAttribute("jakarta.servlet.error.exception_type", ax.getClass().getName());
       rsp.sendError(eo, er);
     }
     catch (RuntimeException ax )
@@ -120,10 +120,10 @@ abstract public class Pagelet extends ActionDriver implements HttpJspPage
           eo  = HttpServletResponse.SC_INTERNAL_SERVER_ERROR ;
       }
 
-      req.setAttribute("javax.servlet.error.status_code", eo);
-      req.setAttribute("javax.servlet.error.message"    , er);
-      req.setAttribute("javax.servlet.error.exception"  , ax);
-      req.setAttribute("javax.servlet.error.exception_type", ax.getClass().getName());
+      req.setAttribute("jakarta.servlet.error.status_code", eo);
+      req.setAttribute("jakarta.servlet.error.message"    , er);
+      req.setAttribute("jakarta.servlet.error.exception"  , ax);
+      req.setAttribute("jakarta.servlet.error.exception_type", ax.getClass().getName());
       rsp.sendError(eo, er);
     }
   }

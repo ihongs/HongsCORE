@@ -2,9 +2,9 @@ package io.github.ihongs.jsp;
 
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.util.Syno;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.TagSupport;
+import jakarta.servlet.jsp.JspWriter;
+import jakarta.servlet.jsp.JspException;
+import jakarta.servlet.jsp.tagext.TagSupport;
 
 /**
  * 配置信息读取标签

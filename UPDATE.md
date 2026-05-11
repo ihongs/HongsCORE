@@ -1,5 +1,6 @@
 # 更新日志
 
+* 2026/05/10 javax.servlet 改为 jakarta.servlet
 * 2025/07/25 改为 ANSI SQL 标准
 * 2025/07/11 增加 EventStream 支持
 * 2025/06/28 重写新的远程维护命令

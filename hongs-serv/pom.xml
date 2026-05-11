@@ -20,6 +20,19 @@
             <groupId>${project.groupId}</groupId>
             <version>${project.version}</version>
         </dependency>
+        <!-- servlet 由 server 提供, 无需打包 -->
+        <dependency>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <groupId>jakarta.servlet</groupId>
+            <version>6.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <artifactId>jakarta.servlet.jsp-api</artifactId>
+            <groupId>jakarta.servlet.jsp</groupId>
+            <version>4.0.0</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <artifactId>httpclient5</artifactId>
             <groupId>org.apache.httpcomponents.client5</groupId>

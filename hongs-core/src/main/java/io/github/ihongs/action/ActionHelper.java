@@ -330,8 +330,8 @@ public class ActionHelper implements Cloneable
         Object obj = Dist.toObject(request.getReader());
         if (! (obj instanceof Map) ) {
             Map map = new HashMap(2);
-            map.put(Cnst.CB_KEY , "CORE");
-            map.put("data", obj);
+            map.put(Cnst.CB_KEY,"~");
+            map.put( "data" , obj  );
             return  map;
         } else {
             return (Map) obj;

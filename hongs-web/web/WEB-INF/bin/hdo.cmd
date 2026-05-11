@@ -5,6 +5,7 @@ SETLOCAL
 set CURR_PATH=%~DP0
 set CORE_PATH=%CURR_PATH%..
 set JAVA_PATH=%JAVA_HOME%\bin\java
+set JAVA_OPTS=%JAVA_OPTS% --add-modules jdk.incubator.vector
 set KLASSPATH=%CLASSPATH%;%CORE_PATH%\classes;%CORE_PATH%\lib\classes;%CORE_PATH%\lib\*
 
 set LINES=

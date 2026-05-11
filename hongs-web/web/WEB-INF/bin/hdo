@@ -4,6 +4,7 @@ CURR_PATH="$(dirname "$0")"
 CURR_PATH="$(cd "$CURR_PATH"/. ; pwd)"
 CORE_PATH="$(cd "$CURR_PATH"/..; pwd)"
 JAVA_PATH="$JAVA_HOME/bin/java"
+JAVA_OPTS="$JAVA_OPTS --add-modules jdk.incubator.vector"
 KLASSPATH="$CLASSPATH:$CORE_PATH/classes:$CORE_PATH/lib/classes:$CORE_PATH/lib/*"
 
 export COLUMNS=`stty size | awk '{print $2}'`

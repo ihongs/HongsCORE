@@ -43,6 +43,28 @@ import jakarta.servlet.http.Part;
  * error,ensue 方法会立即发往终端然后关闭流, write 并不会关闭流, 可以在一次动作中反复调用输出.
  * </p>
  *
+ * <p>
+ * 接收非 Map 数据: cb=~, data
+ * <code>
+ * {
+ *   "cb": "~" ,
+ *   "data": []  // 请求数据, 也可能其他类型
+ * }
+ * </code>
+ * </p>
+ * <p>
+ * 返回非 Map 数据: cb=~, data 或 text
+ * <code>
+ * {
+ *   "cb": "~" ,
+ *   "data": [], // 响应数据, 能转 JSON 都行
+ *   "text": "", // 响应文本
+ *   "type": "Content-Type",
+ *   "status" : "Http Code"
+ * }
+ * </code>
+ * </p>
+ *
  * @author Hongs
  */
 public class ActionHelper implements Cloneable
@@ -307,11 +329,12 @@ public class ActionHelper implements Cloneable
     try {
         Object obj = Dist.toObject(request.getReader());
         if (! (obj instanceof Map) ) {
-            Map map = new HashMap(1);
-            map.put("" , obj);
+            Map map = new HashMap(2);
+            map.put(Cnst.CB_KEY , "CORE");
+            map.put("data", obj);
             return  map;
         } else {
-            return (Map) obj ;
+            return (Map) obj;
         }
     } catch (RuntimeException ex) {
         throw new CruxExemption(ex, 400 );
@@ -988,9 +1011,10 @@ public class ActionHelper implements Cloneable
     // 默认的数据输出的格式为 JSON
     // 有指定回调函数名则使用 JSONP
     // 特殊前缀则返回嵌 JS 的 XHTML
-    // 可通过 cb 标识为 custom 自定义类型
+    // 可通过 cb 标识为 ~ 自定义类型
     try {
-        if ("ECHO".equals(this.responseData.get(Cnst.CB_KEY))) {
+        if ("~".equals(this.responseData.get(Cnst.CB_KEY))) {
+            Object data = this.responseData.get("data");
             Object text = this.responseData.get("text");
             Object type = this.responseData.get("type");
             Object stat = this.responseData.get("status");
@@ -1000,23 +1024,33 @@ public class ActionHelper implements Cloneable
                           : Integer.parseInt(stat.toString());
                 this.response.setStatus(code);
             }
-                this.response.setCharacterEncoding( "UTF-8" );
-            if (type != null) {
-                this.response.setContentType(type.toString());
-            }
             if (text != null) {
-                out.write(text.toString());
+                String typa = type != null ? type.toString()
+                            : "text/plain; charset=UTF-8";
+                if ( ! typa.contains(";") ) {
+                       typa = typa + "; charset=UTF-8";
+                }
+                this.response.setContentType(typa);
+                out.append(text.toString());
+            } else
+            if (data != null) {
+                String typa = type != null ? type.toString()
+                            : "application/json; charset=UTF-8";
+                if ( ! typa.contains(";") ) {
+                       typa = typa + "; charset=UTF-8";
+                }
+                this.response.setContentType(typa);
+                Dist.append(out, data, 4 != (4 & Core.DEBUG) ? null : "");
             }
         } else
-        if (fun != null && !fun.isEmpty() && !fun.equals("~") ) {
+        if (fun != null && ! fun.isEmpty() && ! fun.equals("~")) {
             if (fun.startsWith(   "top.")
             ||  fun.startsWith("parent.")
             ||  fun.startsWith("opener.")
-            ||  fun.startsWith("frames.")  ) {
+            ||  fun.startsWith("frames.")) {
                 if (this.response != null
                 && !this.response.isCommitted( )) {
-                    this.response.setCharacterEncoding("UTF-8");
-                    this.response.setContentType( "text/html" );
+                    this.response.setContentType( "text/html; charset=UTF-8");
                 }
 
                 out.append("<script type=\"text/javascript\">");
@@ -1028,8 +1062,7 @@ public class ActionHelper implements Cloneable
             } else {
                 if (this.response != null
                 && !this.response.isCommitted( )) {
-                    this.response.setCharacterEncoding("UTF-8");
-                    this.response.setContentType( "text/javascript");
+                    this.response.setContentType( "text/javascript; charset=UTF-8");
                 }
 
                 out.append( fun);
@@ -1040,8 +1073,7 @@ public class ActionHelper implements Cloneable
         } else {
                 if (this.response != null
                 && !this.response.isCommitted( )) {
-                    this.response.setCharacterEncoding("UTF-8");
-                    this.response.setContentType("application/json");
+                    this.response.setContentType("application/json; charset=UTF-8");
                 }
 
                 Dist.append(out, this.responseData, 4 != (4 & Core.DEBUG) ? null : "");

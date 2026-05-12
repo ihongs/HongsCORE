@@ -257,7 +257,7 @@ public class ServerCombat {
         }
 
         // 中止机制
-        Runtime.getRuntime().addShutdownHook(new Stoper(server, ppid));
+        Runtime.getRuntime().addShutdownHook(new Stoper( server, ppid ));
 
         // 启动服务
         try {

@@ -15,6 +15,7 @@ import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.annotation.WebListener;
 import jakarta.servlet.annotation.WebInitParam;
+import java.lang.reflect.InvocationTargetException;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -99,11 +100,19 @@ public class Loader implements Initer {
 
     private void addListener(ServletContextHandler context, Class clso, WebListener anno) {
         try {
-            EventListener evto = (EventListener) clso.newInstance();
+            EventListener evto = (EventListener) clso.getDeclaredConstructor().newInstance();
             context.addEventListener(evto);
+        } catch ( SecurityException e) {
+            throw new CruxExemption(e);
+        } catch ( NoSuchMethodException e) {
+            throw new CruxExemption(e);
         } catch (InstantiationException e) {
             throw new CruxExemption(e);
         } catch (IllegalAccessException e) {
+            throw new CruxExemption(e);
+        } catch (IllegalArgumentException  e) {
+            throw new CruxExemption(e);
+        } catch (InvocationTargetException e) {
             throw new CruxExemption(e);
         }
     }

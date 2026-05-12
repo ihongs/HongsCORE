@@ -219,6 +219,10 @@ public class TestTemplate {
         Template engine = Template.compile(template, basePath);
         String result = engine.render(context);
 
+        // 规避换行影响对比
+        expected = expected.replaceAll("(\\r\\n|\\r)", "\n");
+        result   = result  .replaceAll("(\\r\\n|\\r)", "\n");
+
         // 直接比较，不清理空白字符
         assertEquals("Include directive test failed", expected, result);
     }
@@ -247,6 +251,10 @@ public class TestTemplate {
 
         Template engine = Template.compile(template, basePath);
         String result = engine.render(ctx);
+
+        // 规避换行影响对比
+        expected = expected.replaceAll("(\\r\\n|\\r)", "\n");
+        result   = result  .replaceAll("(\\r\\n|\\r)", "\n");
 
         // 直接比较，不清理空白字符
         assertEquals("Include with subContext test failed", expected, result);
@@ -735,7 +743,7 @@ public class TestTemplate {
 
         <!-- Edge cases -->
         <h3>Edge cases</h3>
-        
+
         <!-- Start == end -->
         <h4>Start == end</h4>
         <ul>
@@ -833,7 +841,7 @@ public class TestTemplate {
 
         <!-- Edge cases -->
         <h3>Edge cases</h3>
-        
+
         <!-- Start == end -->
         <h4>Start == end</h4>
         <ul>
@@ -861,14 +869,14 @@ public class TestTemplate {
     public void testArrayAccessAndNestedVariables() {
         // 测试数组访问和变量嵌套
         Map<String, Object> testContext = new HashMap<>(context);
-        
+
         // 添加测试数据
         List<Map<String, Object>> users = new ArrayList<>();
         users.add(Map.of("id", 1, "name", "John", "age", 30));
         users.add(Map.of("id", 2, "name", "Alice", "age", 25));
         users.add(Map.of("id", 3, "name", "Bob", "age", 35));
         testContext.put("users", users);
-        
+
         // 添加嵌套对象
         Map<String, Object> company = Map.of(
             "name", "Tech Corp",
@@ -1370,6 +1378,10 @@ public class TestTemplate {
             <p>Welcome to our resource-based template!</p>
         </header>""";
 
+        // 规避换行影响对比
+        expected = expected.replaceAll("(\\r\\n|\\r)", "\n");
+        result   = result  .replaceAll("(\\r\\n|\\r)", "\n");
+
         assertEquals("compileByName test failed", expected, result);
     }
 
@@ -1397,6 +1409,10 @@ public class TestTemplate {
         </header>
         """;
 
+        // 规避换行影响对比
+        expected = expected.replaceAll("(\\r\\n|\\r)", "\n");
+        result   = result  .replaceAll("(\\r\\n|\\r)", "\n");
+
         assertEquals("compileWithMultipleBasePaths test failed", expected, result);
     }
 
@@ -1416,6 +1432,10 @@ public class TestTemplate {
             <p>Welcome to our resource-based template!</p>
         </header>
         """;
+
+        // 规避换行影响对比
+        expected = expected.replaceAll("(\\r\\n|\\r)", "\n");
+        result   = result  .replaceAll("(\\r\\n|\\r)", "\n");
 
         assertEquals("compileWithResourcePathOnly test failed", expected, result);
     }
@@ -1437,6 +1457,10 @@ public class TestTemplate {
         </header>
         """;
 
+        // 规避换行影响对比
+        expected = expected.replaceAll("(\\r\\n|\\r)", "\n");
+        result   = result  .replaceAll("(\\r\\n|\\r)", "\n");
+
         assertEquals("compileWithRootResourcePath test failed", expected, result);
     }
 
@@ -1456,6 +1480,10 @@ public class TestTemplate {
             <p>Welcome to our resource-based template!</p>
         </header>
         """;
+
+        // 规避换行影响对比
+        expected = expected.replaceAll("(\\r\\n|\\r)", "\n");
+        result   = result  .replaceAll("(\\r\\n|\\r)", "\n");
 
         assertEquals("testIncludeWithDotSlash test failed", expected, result);
     }
@@ -1477,6 +1505,10 @@ public class TestTemplate {
         </header>
         """;
 
+        // 规避换行影响对比
+        expected = expected.replaceAll("(\\r\\n|\\r)", "\n");
+        result   = result  .replaceAll("(\\r\\n|\\r)", "\n");
+
         assertEquals("testIncludeWithParentPath test failed", expected, result);
     }
 
@@ -1496,6 +1528,10 @@ public class TestTemplate {
             <p>Welcome to our resource-based template!</p>
         </header>
         """;
+
+        // 规避换行影响对比
+        expected = expected.replaceAll("(\\r\\n|\\r)", "\n");
+        result   = result  .replaceAll("(\\r\\n|\\r)", "\n");
 
         assertEquals("testIncludeWithMultiParentPath test failed", expected, result);
     }

@@ -13,9 +13,13 @@ import jakarta.websocket.Session;
 
 /**
  * WebSocket 动作
- * 必须有一个无参构造器
- * 必须开放可访问和构造
- * 务必设置注解 @Action
+ *
+ * 必须有一个无参构造器,
+ * 必须开放可访问和构造,
+ * 务必设置注解 @Action.
+ *
+ * onXxx(SocketHelper, xxx) 方法已包裹 SocketHelper 环境初始化, 执行完成自动释放.
+ *
  * @author Hongs
  */
 abstract public class SocketAction extends Endpoint {

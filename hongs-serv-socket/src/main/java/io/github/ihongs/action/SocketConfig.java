@@ -8,8 +8,13 @@ import jakarta.websocket.server.ServerEndpointConfig;
 
 /**
  * WebSocket 配置器
+ *
  * 用于初始化请求环境和记录 HttpSession 等
- * 用于 \@ServerEndpoint(value="/xxx" configurator=SocketConfig)
+ * <code>
+ * \@ServerEndpoint(value="/xxx" configurator=SocketConfig)
+ * </code>
+ *
+ * @author Hongs
  */
 public class SocketConfig extends ServerEndpointConfig.Configurator {
 

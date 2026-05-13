@@ -68,7 +68,7 @@ common 下那几个 `.js` 路径, 将扩展名 `.js` 换成 `.json` 即可得到
 
 ### 标准动作
 
-请求动作以 `.act` 结尾或以 `api/` 开头，一个完整的动作名为 `path/path/to/entity/action.act`，对应 `api/path/to/entity/action`。其他常用 action 如下：
+请求动作以 `.act` 结尾或以 `api/` 开头，一个完整的动作名为 `path/to/entity/action.act`，对应 `api/path/to/entity/action`。常用 action 如下：
 
 - `search` 查询、筛选
 - `recite` 获取详情
@@ -83,7 +83,7 @@ common 下那几个 `.js` 路径, 将扩展名 `.js` 换成 `.json` 即可得到
 
 其中 `acount`,`assort`,`reveal`,`revert` 为 hongs-serv-search 模块独有功能。
 
-### 请求规则
+### 查询规则
 
 支持 Content-Type 为 `application/x-www-form-urlencoded`, `multipart/form-data` 和 `application/json` 的请求, 组成结构为:
 ```
@@ -723,3 +723,7 @@ matrix.sync.topic.name=matrix.sync
 想通过 java 进行更深入的定制开发也很简单，在包 io.github.ihongs.serv.centra(后台的叫 centra 前台的叫 centre) 下新建一个 Action 类，如 XxxAction.java，此类至少要提供一个公共的无参构造方法（不写就是默认有），通过类的注解 @Action("xx/xxx") 定义表单资源路径，通过方法注解 @Action("search") 定义动作路径名称。
 
 事实上这个类所在的包并非必须要是 io.github.ihongs.serv.centra 和 io.github.ihongs.serv.centre，只是默认会扫描这两个包而已，也可以通过 etc/defines.properties 中在 mount.serv 下增加包和类名，甚至可用加上 your.package.** 扫你自建的全部包和类，而其对应的访问路径是通过 @Action 注解来定义的。
+
+### 开发范例
+
+- [SAMPLE-1](SAMPLE-1.md) 学生档案管理系统

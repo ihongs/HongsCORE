@@ -14,8 +14,8 @@ import jakarta.websocket.Session;
 /**
  * WebSocket 动作
  * 必须有一个无参构造器
- * 必须设置注解 @Action
- * 必须要实现 onMessage
+ * 必须开放可访问和构造
+ * 务必设置注解 @Action
  * @author Hongs
  */
 abstract public class SocketAction extends Endpoint {

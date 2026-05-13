@@ -3,12 +3,10 @@ package io.github.ihongs.server.init;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import java.io.File;
-import java.util.Arrays;
 import org.apache.tomcat.InstanceManager;
 import org.apache.tomcat.SimpleInstanceManager;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.apache.jsp.JettyJasperInitializer;
-import org.eclipse.jetty.plus.annotation.ContainerInitializer;
 
 /**
  * JSP 初始器
@@ -25,14 +23,14 @@ public class Jasper implements Initer {
                dn = Core.DATA_PATH + File.separator + dn ;
                dh = new File(dn);
         }
-        if ( ! dh.exists() /**/) {
+        if ( ! dh.exists() ) {
                dh.mkdirs();
         }
 
-        sc.setAttribute("javax.servlet.context.tempdir", dh);
-        sc.setAttribute("org.eclipse.jetty.containerInitializers",
-          Arrays.asList(new ContainerInitializer(new JettyJasperInitializer(),null)));
+        sc.setAttribute(  "javax.servlet.context.tempdir", dh);
+        sc.setAttribute("jakarta.servlet.context.tempdir", dh);
         sc.setAttribute(InstanceManager.class.getName(), new SimpleInstanceManager());
+        sc.addServletContainerInitializer(new JettyJasperInitializer());
     }
 
 }

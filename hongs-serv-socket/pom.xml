@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <packaging>jar</packaging>
+    <artifactId>hongs-serv-socket</artifactId>
+    <parent>
+        <artifactId>hongs-base</artifactId>
+        <groupId>io.github.ihongs</groupId>
+        <version>1.2-SNAPSHOT</version>
+    </parent>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <websocket.version>2.2.0</websocket.version>
+    </properties>
+    <dependencies>
+        <dependency>
+            <artifactId>hongs-core</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- servlet 由 server 提供, 无需打包 -->
+        <dependency>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <groupId>jakarta.servlet</groupId>
+            <version>6.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- websocket 由 server 提供, 无需打包 -->
+        <dependency>
+            <artifactId>jakarta.websocket-api</artifactId>
+            <groupId>jakarta.websocket</groupId>
+            <version>${websocket.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <artifactId>jakarta.websocket-client-api</artifactId>
+            <groupId>jakarta.websocket</groupId>
+            <version>${websocket.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+</project>

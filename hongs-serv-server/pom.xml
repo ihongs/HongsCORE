@@ -40,6 +40,17 @@
             <groupId>org.eclipse.jetty</groupId>
             <version>${jetty.version}</version>
         </dependency>
+        <!-- websocket -->
+        <dependency>
+            <artifactId>websocket-jakarta-server</artifactId>
+            <groupId>org.eclipse.jetty.websocket</groupId>
+            <version>${jetty.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>websocket-jakarta-client</artifactId>
+            <groupId>org.eclipse.jetty.websocket</groupId>
+            <version>${jetty.version}</version>
+        </dependency>
         <!-- server.stop, send sigint(ctrl+c) -->
         <dependency>
             <groupId>net.java.dev.jna</groupId>

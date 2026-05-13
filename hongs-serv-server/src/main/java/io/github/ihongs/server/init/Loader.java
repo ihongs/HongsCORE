@@ -4,7 +4,9 @@ import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreRoster;
 import io.github.ihongs.CruxExemption;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.EventListener;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashSet;
@@ -15,10 +17,11 @@ import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.annotation.WebListener;
 import jakarta.servlet.annotation.WebInitParam;
-import java.lang.reflect.InvocationTargetException;
+import jakarta.websocket.server.ServerEndpoint;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.websocket.jakarta.server.config.JakartaWebSocketServletContainerInitializer;
 
 /**
  * 应用加载器
@@ -30,7 +33,9 @@ public class Loader implements Initer {
     public void init(ServletContextHandler context) {
         String pkgx  = CoreConfig.getInstance("defines").getProperty("apply.serv");
         if  (  pkgx != null ) {
-            String[]   pkgs = pkgx.split(";");
+            List<Class> ses = new ArrayList();
+
+            String [ ] pkgs = pkgx.split(";");
             for(String pkgn : pkgs) {
                 pkgn = pkgn.trim  ( );
                 if  (  pkgn.length( ) == 0  ) {
@@ -55,7 +60,21 @@ public class Loader implements Initer {
                     if (null != wl) {
                         addListener(context, clso, wl);
                     }
+
+                    ServerEndpoint se = (ServerEndpoint) clso.getAnnotation(ServerEndpoint.class);
+                    if (null != se) {
+                        ses.add(clso);
+                    }
                 }
+            }
+
+            // 注册 WebSocket
+            if (! ses.isEmpty()) {
+                JakartaWebSocketServletContainerInitializer.configure(context, (sc, ct) -> {
+                    for(Class  sec  :  ses) {
+                        ct.addEndpoint(sec);
+                    }
+                });
             }
         }
     }

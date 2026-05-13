@@ -38,7 +38,7 @@ import jakarta.websocket.server.ServerEndpointConfig;
  * WebSocket 助手类
  *
  * <code>
- *  // 协议升级示例, 在任意 Action 或 Servlet 内:
+ *  // 协议升级示例, 可在任意 Action 或 Servlet 内:
  *  HttpServletRequest  req = helper.getRequest ();
  *  HttpServletResponse rsp = helper.getResponse();
  *  SocketHelper.upgrade(req, rsp, YourEndpoint.class); // YourEndpoint 需继承 Endpoint 并实现 onOpen，必须可访问、可构造。

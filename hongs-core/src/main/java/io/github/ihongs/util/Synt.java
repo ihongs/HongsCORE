@@ -554,7 +554,7 @@ public final class Synt {
      * 与 asString 不同在于可以处理数字、集合、字典等多个值的对象
      * 集合转为 1,2
      * 字典转为 a:1,b:2
-     * 支持递归 1,[2,3],{a:4,b:5}
+     * 支持递归 1,(2,3),(a:4,b:5)
      * 另外不同的是 null 转为空串
      * </pre>
      * @param val
@@ -596,16 +596,11 @@ public final class Synt {
             }
             // 集合包裹
             if (o instanceof Object[]
-            ||  o instanceof Collection) {
-                sb.append("[")
+            ||  o instanceof Collection
+            ||  o instanceof Map ) {
+                sb.append("(")
                   .append( s )
-                  .append(']')
-                  .append(',');
-            } else
-            if (o instanceof Map) {
-                sb.append("{")
-                  .append( s )
-                  .append('}')
+                  .append(')')
                   .append(',');
             } else {
                 sb.append( s )
@@ -630,16 +625,11 @@ public final class Synt {
             }
             // 集合包裹
             if (o instanceof Object[]
-            ||  o instanceof Collection) {
-                sb.append("[")
+            ||  o instanceof Collection
+            ||  o instanceof Map ) {
+                sb.append("(")
                   .append( s )
-                  .append(']')
-                  .append(',');
-            } else
-            if (o instanceof Map) {
-                sb.append("{")
-                  .append( s )
-                  .append('}')
+                  .append(')')
                   .append(',');
             } else {
                 sb.append( s )
@@ -668,16 +658,11 @@ public final class Synt {
               .append(":");
             // 集合包裹
             if (o instanceof Object[]
-            ||  o instanceof Collection) {
-                sb.append("[")
+            ||  o instanceof Collection
+            ||  o instanceof Map ) {
+                sb.append("(")
                   .append( s )
-                  .append(']')
-                  .append(',');
-            } else
-            if (o instanceof Map) {
-                sb.append("{")
-                  .append( s )
-                  .append('}')
+                  .append(')')
                   .append(',');
             } else {
                 sb.append( s )

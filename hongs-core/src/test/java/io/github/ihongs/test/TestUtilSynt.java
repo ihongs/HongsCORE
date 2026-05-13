@@ -37,7 +37,7 @@ public class TestUtilSynt {
              Synt.toString(new Number[] {1, 2})
         );
         assertEquals(
-            "1,2,[3,4],{a:5,b:6}",
+            "1,2,(3,4),(a:5,b:6)",
              Synt.toString(new Object[] {1, 2, Synt.listOf(3, 4), Synt.mapOf("a",5, "b",6)})
         );
     }

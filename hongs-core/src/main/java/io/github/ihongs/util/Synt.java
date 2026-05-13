@@ -454,6 +454,7 @@ public final class Synt {
 
     /**
      * 数字转为字符串
+     * 会去掉末尾的.0
      * @param val
      * @return
      */
@@ -489,7 +490,7 @@ public final class Synt {
     }
 
     /**
-     * 确定转为字符串
+     * 转字符串
      * 数组和集合仅取第一个
      * @param val
      * @return
@@ -545,6 +546,148 @@ public final class Synt {
         }
 
         return val;
+    }
+
+    /**
+     * 转字符串
+     * <pre>
+     * 与 asString 不同在于可以处理数字、集合、字典等多个值的对象
+     * 集合转为 1,2
+     * 字典转为 a:1,b:2
+     * 支持递归 1,[2,3],{a:4,b:5}
+     * 另外不同的是 null 转为空串
+     * </pre>
+     * @param val
+     * @return
+     */
+    public static String toString(Object val) {
+        if (val == null) {
+            return "";
+        }
+
+        if (val instanceof Number) {
+            return asString((Number) val);
+        }
+
+        if (val instanceof Object[]) {
+            return toString((Object[]) val);
+        }
+
+        if (val instanceof Collection) {
+            return toString((Collection) val);
+        }
+
+        if (val instanceof Map) {
+            return toString((Map) val);
+        }
+
+        return val.toString();
+    }
+
+    public static String toString(Object[] val) {
+        if (val == null) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        for(Object o :(Object[]) val) {
+            String s = toString(o);
+            if (s.isEmpty()) {
+                continue;
+            }
+            // 集合包裹
+            if (o instanceof Object[]
+            ||  o instanceof Collection) {
+                sb.append("[")
+                  .append( s )
+                  .append(']')
+                  .append(',');
+            } else
+            if (o instanceof Map) {
+                sb.append("{")
+                  .append( s )
+                  .append('}')
+                  .append(',');
+            } else {
+                sb.append( s )
+                  .append(',');
+            }
+        }
+        if (sb.length() > 0) {
+            sb.setLength(sb.length() - 1);
+        }
+        return sb.toString();
+    }
+
+    public static String toString(Collection val) {
+        if (val == null) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        for(Object o :(Collection) val) {
+            String s = toString(o);
+            if (s.isEmpty()) {
+                continue;
+            }
+            // 集合包裹
+            if (o instanceof Object[]
+            ||  o instanceof Collection) {
+                sb.append("[")
+                  .append( s )
+                  .append(']')
+                  .append(',');
+            } else
+            if (o instanceof Map) {
+                sb.append("{")
+                  .append( s )
+                  .append('}')
+                  .append(',');
+            } else {
+                sb.append( s )
+                  .append(',');
+            }
+        }
+        if (sb.length() > 0) {
+            sb.setLength(sb.length() - 1);
+        }
+        return sb.toString();
+    }
+
+    public static String toString(Map val) {
+        if (val == null) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        for(Object o : ((Map) val).entrySet()) {
+            Map.Entry n = (Map.Entry) o;
+            String k = toString(n.getKey  ( ));
+            String s = toString(n.getValue( ));
+            if (s.isEmpty()) {
+                continue;
+            }
+            sb.append( k )
+              .append(":");
+            // 集合包裹
+            if (o instanceof Object[]
+            ||  o instanceof Collection) {
+                sb.append("[")
+                  .append( s )
+                  .append(']')
+                  .append(',');
+            } else
+            if (o instanceof Map) {
+                sb.append("{")
+                  .append( s )
+                  .append('}')
+                  .append(',');
+            } else {
+                sb.append( s )
+                  .append(',');
+            }
+        }
+        if (sb.length() > 0) {
+            sb.setLength(sb.length() - 1);
+        }
+        return sb.toString();
     }
 
     /**

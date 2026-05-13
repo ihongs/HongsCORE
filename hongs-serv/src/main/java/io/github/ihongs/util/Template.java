@@ -884,7 +884,7 @@ public class Template {
         public void render(Map<String, Object> context, Writer writer) throws IOException {
             Object value = getValue(variableExpr, context);
             if (value != null) {
-                writer.write(Synt.asString(value));
+                writer.write(Synt.toString(value));
                 //writer.write(value.toString());
             }
         }

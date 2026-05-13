@@ -29,7 +29,19 @@ public class TestUtilSynt {
             Synt.toWords(Synt.setOf(1, "a", Synt.setOf("b"), Synt.mapOf("b", "c")))
         );
     }
-    
+
+    @Test
+    public void testToString() {
+        assertEquals(
+            "1,2",
+             Synt.toString(new Number[] {1, 2})
+        );
+        assertEquals(
+            "1,2,[3,4],{a:5,b:6}",
+             Synt.toString(new Object[] {1, 2, Synt.listOf(3, 4), Synt.mapOf("a",5, "b",6)})
+        );
+    }
+
     @Test
     public void testAsString() {
         assertEquals(

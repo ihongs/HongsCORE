@@ -1,5 +1,8 @@
 package io.github.ihongs.util;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -815,6 +818,67 @@ public final class Syno
     pat = Pattern.compile("(\\son\\w+=('.*?'|\".*?\"))", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
     str = pat.matcher(str).replaceAll("" );
     return  str;
+  }
+
+  //** 编码 **/
+
+  /**
+   * 转义XML/HTML文本
+   * @param str
+   * @return
+   */
+  public static String escapeXML(String str) {
+      if (str == null) return "";
+      StringBuilder b = new StringBuilder( );
+      char c ;
+      int  i = 0;
+      int  l = str.length(/**/);
+      while( l >  i) {
+           c = str.charAt(i ++);
+          switch (c) {
+            case '<': b.append("&lt;" ); break;
+            case '>': b.append("&gt;" ); break;
+            case '&': b.append("&amp;"); break;
+            case 34 : b.append("&#34;"); break; // 双引号
+            case 39 : b.append("&#39;"); break; // 单引号
+            default :
+                if (c < 32) {
+                    b.append("&#")
+                     .append((int) c);
+                } else {
+                    b.append(/***/ c);
+                }
+          }
+      }
+      return b.toString();
+  }
+
+  /**
+   * 编码URL文本
+   * @param str
+   * @return
+   */
+  public static String encodeURL(String str) {
+      if (str == null) return "";
+      try {
+          return URLEncoder.encode(str, "UTF-8");
+      } catch (UnsupportedEncodingException ex ) {
+          throw new UnsupportedOperationException(ex);
+      }
+  }
+
+  /**
+   * 解码URL文本
+   * @param str
+   * @return
+   */
+  public static String decodeURL(String str) {
+      if (str == null) return "";
+      try {
+          return URLDecoder.decode(str, "UTF-8");
+      } catch (UnsupportedEncodingException ex ) {
+          throw new UnsupportedOperationException(ex);
+      }
   }
 
     //** 比对 **/

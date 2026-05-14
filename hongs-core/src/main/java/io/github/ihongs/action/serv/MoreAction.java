@@ -3,6 +3,7 @@ package io.github.ihongs.action.serv;
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CruxCause;
+import io.github.ihongs.CruxExemption;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.dh.MergeMore;
@@ -45,6 +46,31 @@ import jakarta.servlet.http.HttpServletResponse;
  * 当顶层 at 未给出时, 顶层资源平行无关联.
  * </p>
  *
+ * <p>
+ * 还可以通过 common/more/call 调用 JSON-RPC 2.0 接口:
+ * </p>
+ * <pre>
+ * {
+ *   "jsonrpc": "2.0",
+ *   "method": "path/to/action",
+ *   "params": {"a": 1, "b": 2},
+ *   "id": "0"
+ * }
+ * </pre>
+ * <p>
+ * 支持一次调用多个:
+ * </p>
+ * <pre>
+ * [
+ *   {
+ *     "jsonrpc": "2.0",
+ *     "method": "path/to/action",
+ *     "params": {"a": 1, "b": 2},
+ *     "id": "0"
+ *   }
+ * ]
+ * </pre>
+ *
  * @author Hongs
  */
 @Action("common/more")
@@ -73,6 +99,55 @@ public class MoreAction {
         }
 
         helper.reply(rs0);
+    }
+
+    @Action("call")
+    public void call(ActionHelper helper) {
+        HttpServletRequest  req = helper.getRequest( );
+        HttpServletResponse rsp = helper.getResponse();
+        Core  core = Core.getInstance();
+        Wrap  wrap = new Wrap( helper );
+        String act = null;
+
+        try {
+            act = Core.ACTION_NAME.get();
+            core.put(ActionHelper.class.getName(),  wrap );
+
+            Object data;
+            String c = helper.getParameter ( Cnst.CB_KEY );
+            if ("~".equals(c)) {
+                data = helper.getRequestData().get("data");
+            } else {
+                data = helper.getRequestData();
+            }
+
+            if (data instanceof Map ) {
+                Map  dict  = (Map ) data;
+                Map  rsto  = call(helper, dict, req, rsp );
+                if ( rsto != null ) {
+                    helper.reply(Synt.mapOf(
+                        Cnst.CB_KEY, "~",
+                        "data", rsto
+                    ));
+                }
+            } else
+            if (data instanceof List) {
+                List list  = (List) data;
+                List rsts  = call(helper, list, req, rsp );
+                if ( rsts != null ) {
+                    helper.reply(Synt.mapOf(
+                        Cnst.CB_KEY, "~",
+                        "data", rsts
+                    ));
+                }
+            } else
+            {
+                throw new CruxExemption(400, "Wrong request, must be array or object");
+            }
+        } finally {
+            Core.ACTION_NAME.set ( act );
+            core.put(ActionHelper.class.getName(), helper);
+        }
     }
 
     private void more(ActionHelper helper, String sub, HttpServletRequest req, HttpServletResponse rsp, Map re0, Map rs0, MergeMore meg, int l) {
@@ -228,12 +303,12 @@ public class MoreAction {
 
     private void call(ActionHelper helper, String act, HttpServletRequest req, HttpServletResponse rsp) {
         // 重设路径
-        act = act + Cnst.ACT_EXT ;
-        Core.ACTION_NAME.set(act);
+        String url = "/" + act + Cnst.ACT_EXT ;
+        Core.ACTION_NAME.set(url.substring(1));
         helper.setAttribute(Cnst.ACTION_ATTR, null);
 
         try {
-            req.getRequestDispatcher("/" + act).include(req, rsp);
+            req.getRequestDispatcher(url).include(req, rsp);
         } catch (ServletException | IOException ex) {
             if (ex.getCause() instanceof CruxCause) {
                 CruxCause ez = (CruxCause) ex.getCause();
@@ -253,6 +328,96 @@ public class MoreAction {
                 helper.reply(map);
             }
         }
+    }
+
+    private Map  call(ActionHelper helper, Map  dict, HttpServletRequest req, HttpServletResponse rsp) {
+        String id = null;
+        try {
+            id = Synt.asString(dict.get("id"));
+            float ver = Synt.declare(dict.get("jsonrpc"), 2.0f);
+            if (ver != 2.0f) {
+                throw new CruxExemption(400, "Only support jsonrpc 2.0");
+            }
+
+            String method = Synt.asString(dict.get("method"));
+            Map    params = Synt.asMap   (dict.get("params"));
+
+            helper.reply ( ( Map ) null );
+            helper.setRequestData(params);
+
+            // 重设路径
+            String url = "/"+ method+ Cnst.ACT_EXT;
+            Core.ACTION_NAME.set(url.substring(1));
+            helper.setAttribute(Cnst.ACTION_ATTR, null);
+
+            // 请求转发
+            req.getRequestDispatcher(url).include( req, rsp );
+
+            Map    result = helper.getResponseData();
+
+            if (id != null) {
+                return Synt.mapOf(
+                    "jsonrpc", "2.0",
+                    "result", result,
+                    "id", id
+                );
+            } else {
+                return Synt.mapOf(
+                    "jsonrpc", "2.0",
+                    "result", result
+                );
+            }
+        }
+        catch (Exception ex) {
+            int sc ;
+            if (ex instanceof CruxCause) {
+                switch (((CruxCause) ex).getState()) {
+                    case 400:
+                        sc = -32600;
+                    case 401:
+                        sc = -32001;
+                    case 403:
+                        sc = -32003;
+                    case 404:
+                        sc = -32601;
+                    case 500:
+                    default :
+                        sc = -32603;
+                }
+            } else {
+                sc = -32603;
+            }
+            if (id != null) {
+                return Synt.mapOf(
+                    "jsonrpc", "2.0",
+                    "error", Synt.mapOf(
+                        "code", sc,
+                        "message", ex.getMessage()
+                    ),
+                    "id", id
+                );
+            } else {
+                return Synt.mapOf(
+                    "jsonrpc", "2.0",
+                    "error", Synt.mapOf(
+                        "code", sc,
+                        "message", ex.getMessage()
+                    )
+                );
+            }
+        }
+    }
+
+    private List call(ActionHelper helper, List list, HttpServletRequest req, HttpServletResponse rsp) {
+        List rsts = new ArrayList(list.size());
+        for (Object item : list) {
+            Map red = Synt.asMap(item);
+            Map rst = call(helper, red, req, rsp);
+            if (rst != null) {
+                rsts.add(rst);
+            }
+        }
+        return rsts;
     }
 
     private static class Wrap extends ActionHelper {

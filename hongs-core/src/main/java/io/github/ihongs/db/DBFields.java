@@ -109,13 +109,14 @@ public class DBFields
         String  fn = rs.getString("COLUMN_NAME");
         int     dt = rs.getInt   (  "DATA_TYPE");
         Map     fd = fields.get(fn);
-        if ( null != fd ) continue ;
-        fd.put("required" , ( null == rs.getString("COLUMN_DEF"        ))
-                    && ! "YES".equals(rs.getString("IS_NULLABLE"       ))
-                    && ! "YES".equals(rs.getString("IS_AUTOINCREMENT"  ))
-                    && ! "YES".equals(rs.getString("IS_GENERATEDCOLUMN"))
-                    && dt != Types.TIMESTAMP && dt != Types.TIMESTAMP_WITH_TIMEZONE
-        );
+        if ( null != fd ) {
+            fd.put( "required" , (rs.getString("COLUMN_DEF") == null)
+                && ! "YES".equals(rs.getString("IS_NULLABLE"       ))
+                && ! "YES".equals(rs.getString("IS_AUTOINCREMENT"  ))
+                && ! "YES".equals(rs.getString("IS_GENERATEDCOLUMN"))
+                && dt != Types.TIMESTAMP && dt != Types.TIMESTAMP_WITH_TIMEZONE
+            );
+        }
       }
     }
     catch (SQLException ex)

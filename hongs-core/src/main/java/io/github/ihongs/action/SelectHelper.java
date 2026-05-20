@@ -265,6 +265,12 @@ public class SelectHelper {
             if (null != type) {
                 switch (type) {
                 case "enum" : {
+                    // 默认 selected
+                    List sels = Synt.asList(mt.get("selected"));
+                    if (null != sels) {
+                        infos.put(name , sels);
+                    }
+
                     // 内部 datalist 优先
                     List list = Synt.asList(mt.get("datalist"));
                     if (null != list) {

@@ -6,7 +6,6 @@ import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.CruxException;
 import io.github.ihongs.CruxExemption;
-import io.github.ihongs.action.CommitRunner;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.db.link.Loop;
@@ -52,6 +51,8 @@ public class SyncConsumer implements Runnable {
             String className = cc.getProperty("matrix.sync.connection");
             String brokerUrl = cc.getProperty("matrix.sync.broker.url");
             String topicName = cc.getProperty("matrix.sync.topic.name" , "matrix.sync");
+            int max = cc.getProperty("matrix.sync.capacity", 1000); // 最多这么多条就同步
+            int sec = cc.getProperty("matrix.sync.interval", 60  ); // 间隔这么多秒就同步
 
             try {
                 factory = JmsFactory.createConnectionFactory( className, brokerUrl );
@@ -73,8 +74,6 @@ public class SyncConsumer implements Runnable {
                  */
                 final Set <Data>   mods = new HashSet();
                 final AtomicInteger cnt = new AtomicInteger(0);
-                final int max = 1000; // 1000 条
-                final int sec = 60  ; // 60 秒
                 Chore.getInstance().ran(() -> {
                     if (mods.isEmpty()) {
                         return;

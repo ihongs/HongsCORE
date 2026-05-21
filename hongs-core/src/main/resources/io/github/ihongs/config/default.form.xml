@@ -57,14 +57,14 @@
         <value code="datetime">date</value>
         <!-- Enum -->
         <value code="enum">enum</value>
-        <value code="type">enum</value><!-- enum 的别名 -->
+        <value code="menu">enum</value><!-- enum 的别名 -->
         <value code="select">enum</value>
         <value code="switch">enum</value>
         <value code="check">enum</value>
         <value code="radio">enum</value>
         <!-- File -->
         <value code="file">file</value>
-        <value code="path">file</value>
+        <value code="path">file</value><!-- file 的别名 -->
         <value code="image">file</value>
         <value code="video">file</value>
         <value code="audio">file</value>
@@ -129,7 +129,7 @@
             <param name="conf"></param>
             <param name="form">demo-form</param>
         </field>
-        <field name="enum" text="枚举" type="enum,type,select,check,radio">
+        <field name="enum" text="枚举" type="enum,menu,select,check,radio">
             <param name="conf"></param>
             <param name="enum">demo-enum</param>
         </field>

@@ -3,7 +3,6 @@ package io.github.ihongs.util.verify;
 import io.github.ihongs.CruxException;
 import io.github.ihongs.action.FormSet;
 import io.github.ihongs.util.Synt;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,20 +26,18 @@ public class IsEnum extends Rule {
             return PASS;
         }
 
-        // 内部 datalist 优先
-        List list = Synt.asList(getParam("datalist"));
-        if (null != list) {
-            String v = Synt.asString(value);
-            for(Object entry : list) {
-                List a = Synt.asList(entry);
-                String s = Synt.asString (a.get( 0 ));
-                if (v.equals(s)) {
-                    return value;
-                }
+        String v = Synt.asString(value);
+
+        // 内部 menu 优先
+        Map data  = Synt.asMap(getParam("menu"));
+        if (data != null) {
+            if ( ! data.containsKey(v)) {
+                throw new Wrong("@fore.form.not.in.enum", value);
             }
-            throw new Wrong("@fore.form.not.in.enum", value);
+            return value;
         }
 
+        // 查找 enum 配置
         String conf = Synt.asString(getParam("conf"));
         String name = Synt.asString(getParam("enum"));
         if (conf == null || "".equals(conf)) {
@@ -50,16 +47,14 @@ public class IsEnum extends Rule {
             name = Synt.asString(getParam("__name__"));
         }
 
-        Map data;
         try {
-            data = FormSet.getInstance(conf).getEnum( name );
-        } catch ( CruxException e) {
-            throw e.toExemption( );
+            data = FormSet.getInstance(conf).getEnum(name);
+            if ( ! data.containsKey(v)) {
+                throw new Wrong("@fore.form.not.in.enum", value);
+            }
+            return value;
+        } catch (CruxException ex) {
+            throw ex.toExemption();
         }
-        if (! data.containsKey(Synt.asString(value))) {
-            throw new Wrong("@fore.form.not.in.enum", value);
-        }
-
-        return value;
     }
 }

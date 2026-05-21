@@ -265,21 +265,10 @@ public class SelectHelper {
             if (null != type) {
                 switch (type) {
                 case "enum" : {
-                    // 默认 selected
-                    List sels = Synt.asList(mt.get("selected"));
-                    if (null != sels) {
-                        infos.put(name , sels);
-                    }
-
-                    // 内部 datalist 优先
-                    List list = Synt.asList(mt.get("datalist"));
-                    if (null != list) {
-                        Map xnum = new LinkedHashMap( );
-                        for (Object o : list) {
-                            List item = Synt.asList (o);
-                            xnum.put(item.get(0) , item.get(1));
-                        }
-                        enums.put(name , xnum);
+                    // 内部 menu 优先
+                    Map menu  = Synt.asMap(mt.get("menu"));
+                    if (null != menu) {
+                        enums.put(name , menu);
                         break;
                     }
 

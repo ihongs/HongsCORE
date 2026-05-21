@@ -97,16 +97,23 @@ public class TitlesHelper {
             ||  "date".equals(type)
             ||"number".equals(type)
             ||"hidden".equals(type)) {
-                String xc = Synt.defxult( (String) mt.get("conf") , conf);
-                String xn = Synt.defxult( (String) mt.get("enum") , name);
-                Map    fe ;
+                // 内部 menu 优先
+                Map menu  = Synt.asMap(mt.get("menu"));
+                if (menu != null) {
+                    enums.put(name, menu);
+                    continue;
+                }
+
+                String xc = Synt.defxult((String) mt.get("conf"), conf);
+                String xn = Synt.defxult((String) mt.get("enum"), name);
+                Map fe ;
                 try {
-                       fe = FormSet.getInstance(xc).getEnum( xn ) ;
-                } catch ( CruxException ex) {
-                if (ex.getErrno() == 913 ) {
+                    fe = FormSet.getInstance(xc).getEnum(xn);
+                } catch (CruxException e) {
+                if (e.getErrno( ) == 913) { // 忽略表单不存在
                     continue;
                 } else {
-                    throw ex;
+                    throw e ;
                 }}
                 enums.put(name, fe);
             } else

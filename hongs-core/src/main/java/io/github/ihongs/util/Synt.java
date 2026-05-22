@@ -413,6 +413,10 @@ public final class Synt {
             return ( Number ) val;
         }
 
+        if (val instanceof Boolean) {
+            return ((Boolean) val) ? 1 : 0;
+        }
+
         // 日期转为时间戳
         if (val instanceof Date) {
             return ((Date) val ).getTime();

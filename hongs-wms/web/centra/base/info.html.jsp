@@ -219,7 +219,7 @@
                         }
                     %>
                     <div class="form-control-static" data-fn="<%=name%>" data-ft="<%=kind%>"></div>
-                <%} else if ("enum".equals(type) || "type".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
+                <%} else if ("enum".equals(type) || "menu".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
                     <%
                         name += "_text";
                         if (rptd) {

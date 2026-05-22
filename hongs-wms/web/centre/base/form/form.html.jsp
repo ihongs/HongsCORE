@@ -227,7 +227,7 @@
                         }
                     %>
                     <input type="file" name="<%=name%>" accept="<%=typa%>" data-toggle="<%=mode%>"<%=extr%> class="invisible"/>
-                <%} else if ("enum".equals(type) || "type".equals(type) || "select".equals(type)) {%>
+                <%} else if ("enum".equals(type) || "menu".equals(type) || "select".equals(type)) {%>
                     <%
                         String extr = "";
                         if (info.containsKey("data-ln")) {

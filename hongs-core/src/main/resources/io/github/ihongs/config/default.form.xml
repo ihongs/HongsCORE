@@ -4,28 +4,28 @@
     <enum name="__cases__">
         <value code="listable" type="set">
             string,stored,hidden,text,email,url,tel,sms,
-            number,range,color,
+            number,integer,boolean,range,
             date,time,datetime,
-            enum,type,select,switch,check,radio,
+            enum,menu,select,switch,check,radio,
             file,image,audio,video,
             fork,pick
         </value>
         <value code="findable" type="set">
             string,search,hidden,text,email,url,tel,sms,
-            number,range,color,
+            number,integer,boolean,range,
             date,time,datetime,
-            enum,type,select,switch,check,radio,
+            enum,menu,select,switch,check,radio,
             fork,pick
         </value>
         <value code="sortable" type="set">
             string,sorted,hidden,text,email,url,tel,sms,
-            number,range,color,
+            number,integer,boolean,range,
             date,time,datetime,
-            enum,type,select,switch,check,radio,
+            enum,menu,select,switch,check,radio,
             fork,pick
         </value>
         <value code="rankable" type="set">
-            number,range,color,
+            number,integer,boolean,range,
             date,time,datetime
         </value>
         <value code="srchable" type="set">

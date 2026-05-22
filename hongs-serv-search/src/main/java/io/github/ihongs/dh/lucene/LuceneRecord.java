@@ -46,6 +46,7 @@ import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.BoostQuery;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.FieldExistsQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
@@ -1084,7 +1085,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                     for (Object w: a) {
                         doc.add(f.whr(k, w));
                     }
-                } else {
+                } else
+                if (f instanceof StringStock
+                ||  f instanceof ObjectStock) {
                     // 不可查也要放, 以便判断空/非空/空串
                     doc.add(f.whr(k, v.equals("")?"":"0"));
                 }
@@ -1101,7 +1104,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 }
                 if (q) {
                     doc.add(f.whr(k, v));
-                } else {
+                } else
+                if (f instanceof StringStock
+                ||  f instanceof ObjectStock) {
                     // 不可查也要放, 以便判断空/非空/空串
                     doc.add(f.whr(k, v.equals("")?"":"0"));
                 }
@@ -1424,38 +1429,82 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
         //** 空值查询 **/
 
+        /**
+         * 1. String/Search 通过封装过的 AnyBinary 等来进行判断
+         * 2. Numebr 可排序则通过 FieldExistsQuery 查询排序数值
+         * 3. Vector 总是可以通过 FieldExistsQuery 查询
+         */
+
         v = vd.get(Cnst.IS_REL);
         if ( v != null && !"".equals(v) ) {
             String a = Synt.asString(v).toUpperCase();
-            String b = "@" + k ;
-            Query  p ;
-            switch (a) {
-                case "NOT-NULL":
-                    p = new IsNotNull(b);
-                    qr.add(p, BooleanClause.Occur.MUST);
-                    break;
-                case "NULL":
-                    p = new IsNotNull(b);
-                    qr.add(p, BooleanClause.Occur.MUST_NOT);
-                    break;
-                case "NOT-NONE":
-                    p = new IsNotNone(b);
-                    qr.add(p, BooleanClause.Occur.MUST);
-                    break;
-                case "NONE":
-                    p = new IsNotNone(b);
-                    qr.add(p, BooleanClause.Occur.MUST_NOT);
-                    break;
-                case "EMPTY":
-                    p = new IsEmpty(b);
-                    qr.add(p, BooleanClause.Occur.MUST);
-                    break;
-                case "NOT-EMPTY":
-                    p = new IsEmpty(b);
-                    qr.add(p, BooleanClause.Occur.MUST_NOT);
-                    break;
-                default:
-                    throw new CruxException(400, "Unsupported `is`: "+v);
+            if (qa instanceof StringQuest
+            ||  qa instanceof SearchQuest) {
+                String b = "@" + k ;
+                Query  p ;
+                switch (a) {
+                    case "NOT-NULL":
+                        p = new IsNotNull(b);
+                        qr.add(p, BooleanClause.Occur.MUST);
+                        break;
+                    case "NULL":
+                        p = new IsNotNull(b);
+                        qr.add(p, BooleanClause.Occur.MUST_NOT);
+                        break;
+                    case "NOT-NONE":
+                        p = new IsNotNone(b);
+                        qr.add(p, BooleanClause.Occur.MUST);
+                        break;
+                    case "NONE":
+                        p = new IsNotNone(b);
+                        qr.add(p, BooleanClause.Occur.MUST_NOT);
+                        break;
+                    case "EMPTY":
+                        p = new IsEmpty(b);
+                        qr.add(p, BooleanClause.Occur.MUST);
+                        break;
+                    case "NOT-EMPTY":
+                        p = new IsEmpty(b);
+                        qr.add(p, BooleanClause.Occur.MUST_NOT);
+                        break;
+                    default:
+                        throw new CruxException(400, "Unsupported "+k+".is:"+v);
+                }
+            } else
+            if (qa instanceof NumberQuest) {
+                String b = "#" + k ;
+                Query  p = new FieldExistsQuery(b);
+                switch (a) {
+                    case "NOT-NULL":
+                    case "NOT-NONE":
+                        qr.add(p, BooleanClause.Occur.MUST);
+                        break;
+                    case "NULL":
+                    case "NONE":
+                        qr.add(p, BooleanClause.Occur.MUST_NOT);
+                        break;
+                    default:
+                        throw new CruxException(400, "Unsupported "+k+".is:"+v);
+                }
+            } else
+            if (qa instanceof VectorQuest) {
+                String b = "@" + k ;
+                Query  p = new FieldExistsQuery(b);
+                switch (a) {
+                    case "NOT-NULL":
+                    case "NOT-NONE":
+                        qr.add(p, BooleanClause.Occur.MUST);
+                        break;
+                    case "NULL":
+                    case "NONE":
+                        qr.add(p, BooleanClause.Occur.MUST_NOT);
+                        break;
+                    default:
+                        throw new CruxException(400, "Unsupported "+k+".is:"+v);
+                }
+            } else
+            {
+                throw new CruxException(400, "Unsupported `is` for field " + k);
             }
         }
 

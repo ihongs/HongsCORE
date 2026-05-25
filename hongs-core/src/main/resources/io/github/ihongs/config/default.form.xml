@@ -32,6 +32,9 @@
             string,search,text,
             textarea,textview
         </value>
+        <value code="unstored" type="set">
+            ignore,legend,figure
+        </value>
     </enum>
     <!-- 字段校验类型映射 -->
     <enum name="__types__">
@@ -48,8 +51,9 @@
         <value code="stored">string</value><!-- Lucene 特有仅存不查 -->
         <!-- Number -->
         <value code="number">number</value>
+        <value code="integer">number</value>
+        <value code="boolean">number</value>
         <value code="range">number</value>
-        <value code="color">number</value>
         <value code="sorted">number</value><!-- Lucene 特有仅能排序 -->
         <!-- Date -->
         <value code="date">date</value>

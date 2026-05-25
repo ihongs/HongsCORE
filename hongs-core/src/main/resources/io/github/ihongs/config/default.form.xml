@@ -32,9 +32,6 @@
             string,search,text,
             textarea,textview
         </value>
-        <value code="unstored" type="set">
-            ignore,legend,figure
-        </value>
     </enum>
     <!-- 字段校验类型映射 -->
     <enum name="__types__">

@@ -203,7 +203,7 @@
                         name = name +"."+ subn;
                     %>
                     <th data-fn="<%=name%>" <%=ob%> class="<%=oc%>"><%=text%></th>
-                <%} else if ("enum".equals(type) || "type".equals(type) || "check".equals(type) || "radio".equals(type) || "select".equals(type)) {%>
+                <%} else if ("enum".equals(type) || "menu".equals(type) || "check".equals(type) || "radio".equals(type) || "select".equals(type)) {%>
                     <%
                         name = name + "_text" ;
                     %>

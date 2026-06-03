@@ -66,7 +66,7 @@
                             <ul class="repeated labelbox labelist forkbox" data-ft="_fork" data-fn="<%=name%>.<%=Cnst.EQ_REL%>" data-ln="<%=ln%>" data-tk="<%=tk%>" data-vk="<%=vk%>"></ul>
                             <a href="javascript:;" data-toggle="hsFork" data-target="@" data-href="<%=st%>"><%=_locale.translate("fore.fork.select", text)%></a>
                         </div>
-                    <%} else if ("enum".equals(type) || "type".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
+                    <%} else if ("enum".equals(type) || "menu".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
                         <%
                             String ln = info.containsKey("data-ln") ? (String) info.get("data-ln") : name;
                         %>
@@ -249,7 +249,7 @@
                                 rels =  "is,eq,ne";
                                 kind =  "fork";
                             } else
-                            if ("enum".equals(type) || "type".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {
+                            if ("enum".equals(type) || "menu".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {
                                 String ln = info.containsKey("data-ln") ? (String) info.get("data-ln") : name;
                                 siftEnum.add(ln); // 需从后端获取数据
                                 extr = " data-ln=\""+ln+"\"";

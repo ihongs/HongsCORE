@@ -146,7 +146,7 @@
                 %>
                 <ul class="pickbox pickmul" data-ft="_fork" data-fn="<%=name%>.<%=Cnst.IN_REL%>." data-ln="<%=ln%>" data-tk="<%=tk%>" data-vk="<%=vk%>" data-item-class="btn btn-sm btn-info" data-icon-class="-"></ul>
                 <button type="button" class="btn btn-sm btn-default form-control" data-toggle="hsFork" data-target="@" data-href="<%=st%>"><%=_locale.translate("fore.fork.select", text)%></button>
-            <%} else if ("enum".equals(type) || "type".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
+            <%} else if ("enum".equals(type) || "menu".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
                 <%
                     String ln = info.containsKey("data-ln") ? (String) info.get("data-ln") : name;
                 %>

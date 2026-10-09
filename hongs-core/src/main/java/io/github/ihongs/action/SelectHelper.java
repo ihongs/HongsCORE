@@ -504,7 +504,7 @@ public class SelectHelper {
     }
 
     public void injectTime(Map info) {
-        injectLink(info, dates);
+        injectTime(info, dates);
     }
 
     public void injectLink(Map info) {
